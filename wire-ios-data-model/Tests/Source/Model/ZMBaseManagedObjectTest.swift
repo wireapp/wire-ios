@@ -43,6 +43,30 @@ extension ZMBaseManagedObjectTest {
         return message
     }
 
+    @objc( createClientForUser:createSessionWithSelfUser:onMOC:)
+    func createClient(for user: ZMUser, createSessionWithSelfUser: Bool, onMOC moc: NSManagedObjectContext) -> UserClient {
+        if user.remoteIdentifier == nil {
+            user.remoteIdentifier = UUID.create()
+        }
+        let userClient = UserClient.insertNewObject(in: moc)
+        userClient.remoteIdentifier = NSString.createAlphanumerical()
+        userClient.user = user
+
+        if createSessionWithSelfUser {
+            let selfClient = ZMUser.selfUser(in: moc).selfClient()
+            performPretendingUiMocIsSyncMoc {
+                do {
+                    let prekey = try moc.zm_cryptKeyStore.lastPreKey()
+                    let selfClient = try XCTUnwrap(selfClient)
+                    _ = selfClient.establishSession(through: moc.zm_cryptKeyStore, sessionId: userClient.sessionIdentifier!, preKey: prekey)
+                } catch {
+                    XCTFail("unexpected error: \(String(reflecting: error))")
+                }
+            }
+        }
+        return userClient
+    }
+
     @objc
     func createCoreDataStack() -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)

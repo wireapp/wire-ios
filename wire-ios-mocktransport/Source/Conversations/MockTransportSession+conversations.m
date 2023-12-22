@@ -158,8 +158,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     NSDictionary *missedClients = [self missedClients:recipients conversation:conversation sender:senderClient onlyForUserId:onlyForUser];
     NSDictionary *deletedClients = [self deletedClients:recipients conversation:conversation];
     
-    NSDictionary *responsePayload = @{@"missing": missedClients, @"deleted": deletedClients, @"time": [NSDate date].transportString};
-    
+    NSDictionary *responsePayload = @{@"redundant": @{}, @"missing": missedClients, @"deleted": deletedClients, @"time": [NSDate date].transportString};
+
     NSInteger statusCode = 412;
     if (missedClients.count == 0) {
         statusCode = 201;

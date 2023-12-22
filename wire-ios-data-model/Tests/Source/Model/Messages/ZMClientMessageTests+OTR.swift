@@ -17,7 +17,9 @@
 //
 
 import XCTest
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 

@@ -50,12 +50,15 @@ extension XCTestCase {
     public typealias ThrowingBlock = () throws -> Void
     public typealias EquatableError = Error & Equatable
 
-    public func assertItThrows<T: EquatableError>(error expectedError: T, block: AsyncThrowingBlock) async {
+    public func assertItThrows<T: EquatableError>(error expectedError: T,
+                                                  file: StaticString = #filePath,
+                                                  line: UInt = #line,
+                                                  block: AsyncThrowingBlock) async {
         do {
             try await block()
-            XCTFail("No error was thrown")
+            XCTFail("No error was thrown", file: file, line: line)
         } catch {
-            assertError(error, equals: expectedError)
+            assertError(error, equals: expectedError, file: file, line: line)
         }
     }
 
@@ -65,11 +68,40 @@ extension XCTestCase {
         }
     }
 
-    public func assertError<T: EquatableError>(_ error: Error, equals expectedError: T) {
+    public func assertError<T: EquatableError>(_ error: Error,
+                                               equals expectedError: T,
+                                               file: StaticString = #filePath,
+                                               line: UInt = #line) {
         guard let error = error as? T else {
-            return XCTFail("Unexpected error: \(String(describing: error))")
+            return XCTFail("Unexpected error: \(String(describing: error))", file: file, line: line)
         }
 
-        XCTAssertEqual(error, expectedError)
+        XCTAssertEqual(error, expectedError, file: file, line: line)
     }
+
+    public func assertSuccess<Value, Failure>(
+        result: Swift.Result<Value, Failure>,
+        message: (Failure) -> String = { "Expected to be a success but got a failure with \($0) "},
+        file: StaticString = #filePath,
+        line: UInt = #line) {
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                XCTFail(message(error), file: file, line: line)
+            }
+        }
+
+    public func assertFailure<Value, Failure: Equatable>(
+        result: Swift.Result<Value, Failure>,
+        expectedFailure: Failure,
+        file: StaticString = #filePath,
+        line: UInt = #line) {
+            switch result {
+            case .success:
+                XCTFail("Expected a failure of type \(expectedFailure) but got a success", file: file, line: line)
+            case .failure(let failure):
+                XCTAssertEqual(expectedFailure, failure, file: file, line: line)
+            }
+        }
 }

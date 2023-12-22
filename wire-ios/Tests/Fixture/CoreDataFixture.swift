@@ -310,7 +310,7 @@ extension CoreDataFixtureTestHelper {
 }
 
 extension CoreDataFixture {
-    func mockUserClient(fingerprintString: String = "102030405060708090102030405060708090102030405060708090") -> UserClient! {
+    func mockUserClient() -> UserClient! {
         let client = UserClient.insertNewObject(in: uiMOC)
         client.remoteIdentifier = "102030405060708090"
 
@@ -319,9 +319,6 @@ extension CoreDataFixture {
         client.model = "Simulator"
         client.label = "Bill's MacBook Pro"
 
-        let fingerprint: Data? = fingerprintString.data(using: .utf8)
-
-        client.fingerprint = fingerprint
         client.activationDate = Date(timeIntervalSince1970: 1664717723)
         return client
     }

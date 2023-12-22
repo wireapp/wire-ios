@@ -112,17 +112,17 @@ static NSTimeInterval const PerformWarningTimeout = 10;
     [self.dispatchGroupContext addGroup:dispatchGroup];
 }
 
-- (NSArray *)allGroups
+- (NSArray<ZMSDispatchGroup*> *)allGroups
 {
     return self.dispatchGroupContext.groups;
 }
 
-- (NSArray *)enterAllGroups
+- (NSArray<ZMSDispatchGroup*> *)enterAllGroups
 {
     return [self.dispatchGroupContext enterAllExcept:nil];
 }
 
-- (void)leaveAllGroups:(NSArray *)groups
+- (void)leaveAllGroups:(NSArray<ZMSDispatchGroup*> *)groups
 {
     [self.dispatchGroupContext leaveGroups:groups];
 }

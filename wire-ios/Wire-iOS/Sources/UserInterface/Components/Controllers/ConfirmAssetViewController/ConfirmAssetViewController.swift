@@ -230,11 +230,11 @@ final class ConfirmAssetViewController: UIViewController {
         bottomPanel.addSubview(confirmButtonsStack)
 
         rejectImageButton.addTarget(self, action: #selector(rejectImage(_:)), for: .touchUpInside)
-        rejectImageButton.setTitle(NSLocalizedString("image_confirmer.cancel", comment: ""), for: .normal)
+        rejectImageButton.setTitle(L10n.Localizable.ImageConfirmer.cancel, for: .normal)
         confirmButtonsStack.addArrangedSubview(rejectImageButton)
 
         acceptImageButton.addTarget(self, action: #selector(acceptImage(_:)), for: .touchUpInside)
-        acceptImageButton.setTitle(NSLocalizedString("image_confirmer.confirm", comment: ""), for: .normal)
+        acceptImageButton.setTitle(L10n.Localizable.ImageConfirmer.confirm, for: .normal)
         confirmButtonsStack.addArrangedSubview(acceptImageButton)
     }
 

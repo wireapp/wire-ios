@@ -82,6 +82,13 @@
     self.ignoreLogErrors = NO;
 }
 
+- (void)disableZMLogError:(BOOL)disabled {
+    if(!disabled) {
+        [ZMSLog sync];
+    }
+    self.ignoreLogErrors = disabled;
+}
+
 - (void)registerLogErrorHook
 {
     self.ignoreLogErrors = NO;

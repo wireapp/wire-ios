@@ -33,6 +33,7 @@ final class DeleteSubgroupActionHandlerTests: ActionHandlerTestBase<DeleteSubgro
             domain: domain,
             subgroupType: subgroupType
         )
+        handler = DeleteSubgroupActionHandler(context: syncMOC)
     }
 
     override func tearDown() {

@@ -141,7 +141,7 @@ final class ConversationListTopBarViewController: UIViewController {
         button.setIconColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
 
         button.setLegalHoldAccessibility()
-        button.accessibilityValue = "legalhold_request.button.accessibility".localized
+        button.accessibilityValue = L10n.Localizable.LegalholdRequest.Button.accessibility
 
         button.addTarget(self, action: #selector(presentLegalHoldRequest), for: .touchUpInside)
 

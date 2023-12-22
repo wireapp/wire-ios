@@ -196,12 +196,6 @@ extension VoiceChannelV3: CallActions {
     public func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {
         guard let conversation = conversation else { return }
         conversation.acknowledgePrivacyWarning(withResendIntent: false)
-        userSession.syncManagedObjectContext.performGroupedBlock {
-            let conversationId = conversation.objectID
-            if let syncConversation = (try? userSession.syncManagedObjectContext.existingObject(with: conversationId)) as? ZMConversation {
-                userSession.syncStrategy?.callingRequestStrategy?.dropPendingCallMessages(for: syncConversation)
-            }
-        }
         leave(userSession: userSession, completion: nil)
     }
 

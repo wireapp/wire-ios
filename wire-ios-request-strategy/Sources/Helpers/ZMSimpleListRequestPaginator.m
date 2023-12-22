@@ -104,6 +104,22 @@ ZM_EMPTY_ASSERTING_INIT()
     components.queryItems = queryItems;
 
     ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:components.string apiVersion:apiVersion];
+
+    ZM_WEAK(self);
+    [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.moc block:^(ZMTransportResponse * response) {
+        ZM_STRONG(self);
+
+        if (response.result == ZMTransportResponseStatusPermanentError ||
+            response.result == ZMTransportResponseStatusSuccess) {
+            return;
+        }
+
+        id strongTranscoder = self.transcoder;
+        if ([strongTranscoder respondsToSelector:@selector(parseTemporaryErrorForResponse:)]) {
+            [strongTranscoder parseTemporaryErrorForResponse:response];
+        }
+    }]];
+    
     return request;
 }
 

@@ -21,7 +21,6 @@ import Foundation
 @objcMembers public class MockTeamMemberEvent: NSObject {
 
     public enum Kind: String {
-        case join = "team.member-join"
         case leave = "team.member-leave"
     }
 
@@ -45,11 +44,7 @@ import Foundation
             .subtracting(currentMembers)
             .map { MockTeamMemberEvent(kind: .leave, team: team, user: $0.user) }
 
-        let addedMembersEvents = currentMembers
-            .subtracting(previousMembers)
-            .map { MockTeamMemberEvent(kind: .join, team: team, user: $0.user) }
-
-        return removedMembersEvents + addedMembersEvents
+        return removedMembersEvents
     }
 
     public init(kind: Kind, team: MockTeam, user: MockUser) {

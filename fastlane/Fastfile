@@ -441,7 +441,7 @@ platform :ios do
         end
         
         output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
-        paths = output.split(/[\r,\n]/).map { |line| line.gsub(/\n/, '').gsub(/\*/, '').match(/s3:\/\/.*ipa$/)}.compact!.map{ |match| match[0] }.uniq.join(' \n')
+        paths = output.split(/[\r,\n]/).map { |line| line.gsub(/\n/, '').gsub(/\*/, '').match(/s3:\/\/.*ipa$/)}.compact!.map{ |match| match[0] }.uniq.join(' ')
         `export TEMP='S3_PATHS=#{Base64.strict_encode64(paths)}' && echo $TEMP >> ./.post_build/.env`
     end
 

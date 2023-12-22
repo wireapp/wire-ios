@@ -27,7 +27,6 @@ import WireDataModel
 import WireRequestStrategy
 
 private let log = WireLogger(tag: "SessionManager")
-private let pushLog = ZMSLog(tag: "Push")
 
 public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
 
@@ -54,7 +53,7 @@ public protocol SessionManagerDelegate: SessionActivationObserver {
                                        from selectedAccount: Account?,
                                        userSessionCanBeTornDown: @escaping () -> Void)
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
-    func sessionManagerDidFailToLoadDatabase()
+    func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
@@ -244,6 +243,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
+
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
     internal var authenticatedSessionFactory: AuthenticatedSessionFactory
@@ -728,6 +728,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteTemporaryData() {
+        // TODO: [F] replace with TemporaryFileServiceInterface
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
         try? manager
@@ -842,30 +843,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                 onWorkDone()
                 group?.leave()
             } else {
-                let coreDataStack = CoreDataStack(
-                    account: account,
-                    applicationContainer: self.sharedContainerURL,
-                    dispatchGroup: self.dispatchGroup
-                )
-
-                if coreDataStack.needsMigration {
-                    self.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
-                }
-
-                coreDataStack.loadStores { error in
-                    if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
-                        // flip off the flag in order not to be stuck in failure
-                        var flag = DeveloperFlag.forceDatabaseLoadingFailure
-                        flag.isOn = false
-                        self.delegate?.sessionManagerDidFailToLoadDatabase()
-                    }
-                    else if error != nil {
-                        self.delegate?.sessionManagerDidFailToLoadDatabase()
-                    } else {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack
-                        )
+                self.setupUserSession(account: account) { userSession in
+                    if let userSession {
                         completion(userSession)
                     }
 
@@ -878,6 +857,38 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public func retryStart() {
         self.delegate?.sessionManagerAsksToRetryStart()
+    }
+
+    private func setupUserSession(
+        account: Account,
+        onCompletion: @escaping (ZMUserSession?) -> Void
+    ) {
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup
+        )
+        coreDataStack.setup(
+            onStartMigration: { [weak self] in
+                self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
+
+            }, onFailure: { [weak self] error in
+                self?.delegate?.sessionManagerDidFailToLoadDatabase(error: error)
+                onCompletion(nil)
+
+            }, onCompletion: { [weak self] coreDataStack in
+                guard let self else {
+                    assertionFailure("expected 'self' to continue!")
+                    return
+                }
+
+                let userSession = self.startBackgroundSession(
+                    for: account,
+                    with: coreDataStack
+                )
+                onCompletion(userSession)
+            }
+        )
     }
 
     private func clearCacheDirectory() {
@@ -1034,7 +1045,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func updateProfileImage(imageData: Data) {
         activeUserSession?.enqueue {
-            self.activeUserSession?.userProfileImage?.updateImage(imageData: imageData)
+            self.activeUserSession?.userProfileImage.updateImage(imageData: imageData)
         }
     }
 

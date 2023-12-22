@@ -226,7 +226,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     }
 
     private func buildCallQualitySurvey(with callDuration: TimeInterval) -> CallQualityViewController {
-        let questionLabelText = NSLocalizedString("calling.quality_survey.question", comment: "")
+        let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         let qualityController = CallQualityViewController(questionLabelText: questionLabelText,
                                                           callDuration: Int(callDuration))
         qualityController.delegate = callQualityController

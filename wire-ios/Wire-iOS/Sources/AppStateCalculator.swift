@@ -27,7 +27,7 @@ enum AppState: Equatable {
     case unauthenticated(error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
-    case databaseFailure
+    case databaseFailure(reason: Error)
     case migrating
     case loading(account: Account, from: Account?)
 
@@ -179,8 +179,8 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .jailbroken)
     }
 
-    func sessionManagerDidFailToLoadDatabase() {
-        transition(to: .databaseFailure)
+    func sessionManagerDidFailToLoadDatabase(error: Error) {
+        transition(to: .databaseFailure(reason: error))
     }
 
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void) {

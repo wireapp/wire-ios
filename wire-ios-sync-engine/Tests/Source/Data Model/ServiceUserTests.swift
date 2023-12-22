@@ -294,14 +294,16 @@ final class ServiceUserTests: IntegrationTest {
         let conversation = self.conversation(for: self.groupConversation)!
 
         // when
-        conversation.add(serviceUser: service, in: userSession!) { (result) in
-            XCTAssertNil(result.error)
+        var result: Swift.Result<Void, Error>!
+        conversation.add(serviceUser: service, in: userSession!) {
+            result = $0
             jobIsDone.fulfill()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertNoThrow(try result.get())
     }
 
     func testThatItCreatesConversationAndAddsUser() {

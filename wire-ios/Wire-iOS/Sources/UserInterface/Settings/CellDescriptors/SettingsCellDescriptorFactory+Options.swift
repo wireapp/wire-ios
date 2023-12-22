@@ -46,7 +46,7 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsGroupCellDescriptor(
             items: descriptors,
-            title: "self.settings.options_menu.title".localized,
+            title: L10n.Localizable.Self.Settings.OptionsMenu.title,
             icon: .settingsOptions,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description
         )
@@ -55,7 +55,7 @@ extension SettingsCellDescriptorFactory {
     // MARK: - Sections
     private var shareContactsDisabledSection: SettingsSectionDescriptorType {
         let settingsButton = SettingsButtonCellDescriptor(
-            title: "self.settings.privacy_contacts_menu.settings_button.title".localized,
+            title: L10n.Localizable.Self.Settings.PrivacyContactsMenu.SettingsButton.title,
             isDestructive: false,
             selectAction: { _ in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
@@ -63,8 +63,8 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: [settingsButton],
-            header: "self.settings.privacy_contacts_section.title".localized,
-            footer: "self.settings.privacy_contacts_menu.description_disabled.title".localized,
+            header: L10n.Localizable.Self.Settings.PrivacyContactsSection.title,
+            footer: L10n.Localizable.Self.Settings.PrivacyContactsMenu.DescriptionDisabled.title,
             visibilityAction: { _ in
                 return AddressBookHelper.sharedHelper.isAddressBookAccessDisabled
         })
@@ -72,7 +72,7 @@ extension SettingsCellDescriptorFactory {
 
     private var clearHistorySection: SettingsSectionDescriptorType {
         let clearHistoryButton = SettingsButtonCellDescriptor(
-            title: "self.settings.privacy.clear_history.title".localized,
+            title: L10n.Localizable.Self.Settings.Privacy.ClearHistory.title,
             isDestructive: false,
             selectAction: { _ in
                 // erase history is not supported yet
@@ -81,7 +81,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsSectionDescriptor(
             cellDescriptors: [clearHistoryButton],
             header: .none,
-            footer: "self.settings.privacy.clear_history.subtitle".localized,
+            footer: L10n.Localizable.Self.Settings.Privacy.ClearHistory.subtitle,
             visibilityAction: { _ in return false }
         )
     }
@@ -94,8 +94,8 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: [notificationToggle],
-            header: "self.settings.notifications.push_notification.title".localized,
-            footer: "self.settings.notifications.push_notification.footer".localized
+            header: L10n.Localizable.Self.Settings.Notifications.PushNotification.title,
+            footer: L10n.Localizable.Self.Settings.Notifications.PushNotification.footer
         )
     }
 
@@ -108,7 +108,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsSectionDescriptor(
             cellDescriptors: [chatHeadsToggle],
             header: nil,
-            footer: "self.settings.notifications.chat_alerts.footer".localized
+            footer: L10n.Localizable.Self.Settings.Notifications.ChatAlerts.footer
         )
     }
 
@@ -124,8 +124,8 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: [callKitToggle],
-            header: "self.settings.callkit.title".localized,
-            footer: "self.settings.callkit.description".localized,
+            header: L10n.Localizable.Self.Settings.Callkit.title,
+            footer: L10n.Localizable.Self.Settings.Callkit.description,
             visibilityAction: { _ in !SecurityFlags.forceCallKitDisabled.isEnabled }
         )
     }
@@ -159,7 +159,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsSectionDescriptor(
             cellDescriptors: [VBRToggle],
             header: .none,
-            footer: "self.settings.vbr.description".localized,
+            footer: L10n.Localizable.Self.Settings.Vbr.description,
             visibilityAction: .none
         )
     }
@@ -192,7 +192,7 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: [callSoundGroup, messageSoundGroup, pingSoundGroup],
-            header: "self.settings.sound_menu.sounds.title".localized
+            header: L10n.Localizable.Self.Settings.SoundMenu.Sounds.title
         )
     }
 
@@ -217,7 +217,7 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: descriptors,
-            header: "self.settings.external_apps.header".localized
+            header: L10n.Localizable.Self.Settings.ExternalApps.header
         )
     }
 
@@ -229,8 +229,8 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: [sendButtonToggle],
-            header: "self.settings.popular_demand.title".localized,
-            footer: "self.settings.popular_demand.send_button.footer".localized
+            header: L10n.Localizable.Self.Settings.PopularDemand.title,
+            footer: L10n.Localizable.Self.Settings.PopularDemand.SendButton.footer
         )
     }
 
@@ -239,7 +239,7 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: [darkThemeSection],
-            footer: "self.settings.popular_demand.dark_mode.footer".localized
+            footer: L10n.Localizable.Self.Settings.PopularDemand.DarkMode.footer
         )
     }
 
@@ -264,7 +264,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsSectionDescriptor(
             cellDescriptors: [linkPreviewToggle],
             header: nil,
-            footer: "self.settings.privacy_security.disable_link_previews.footer".localized
+            footer: L10n.Localizable.Self.Settings.PrivacySecurity.DisableLinkPreviews.footer
         )
     }
 
@@ -326,7 +326,7 @@ extension SettingsCellDescriptorFactory {
             )
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType }, header: nil, footer: "open_link.maps.footer".localized, visibilityAction: nil)
+        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType }, header: nil, footer: L10n.Localizable.OpenLink.Maps.footer, visibilityAction: nil)
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
             guard let option = value.flatMap({ MapsOpeningOption(rawValue: $0) }) else { return .text(MapsOpeningOption.apple.displayString) }
@@ -373,7 +373,7 @@ extension SettingsCellDescriptorFactory {
     private var appLockSectionSubtitle: String {
         let timeout = TimeInterval(settingsPropertyFactory.timeout)
         guard let amount = SettingsCellDescriptorFactory.appLockFormatter.string(from: timeout) else { return "" }
-        let lockDescription = "self.settings.privacy_security.lock_app.subtitle.lock_description".localized(args: amount)
+        let lockDescription = L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.lockDescription(amount)
         let typeKey: String = {
             switch AuthenticationType.current {
             case .touchID: return "self.settings.privacy_security.lock_app.subtitle.touch_id"

@@ -22,6 +22,8 @@ public enum ClientUpdatePhase {
     case done
     case fetchingClients
     case deletingClients
+    case waitingForPrekeys
+    case generatingPrekeys
 }
 
 let ClientUpdateErrorDomain = "ClientManagement"
@@ -46,7 +48,10 @@ public enum ClientUpdateError: NSInteger {
     fileprivate var isFetchingClients = false
     fileprivate var isWaitingToDeleteClients = false
     fileprivate var needsToVerifySelfClient = false
+    fileprivate var isGeneratingPrekeys = false
     fileprivate var internalCredentials: ZMEmailCredentials?
+
+    var prekeys: [IdPrekeyTuple]?
 
     open var credentials: ZMEmailCredentials? {
         return internalCredentials
@@ -55,7 +60,9 @@ public enum ClientUpdateError: NSInteger {
     public init(syncManagedObjectContext: NSManagedObjectContext) {
         self.syncManagedObjectContext = syncManagedObjectContext
         super.init()
+    }
 
+    func determineInitialClientStatus() {
         let hasSelfClient = !ZMClientRegistrationStatus.needsToRegisterClient(in: self.syncManagedObjectContext)
 
         needsToFetchClients(andVerifySelfClient: hasSelfClient)
@@ -79,6 +86,13 @@ public enum ClientUpdateError: NSInteger {
         if isWaitingToDeleteClients {
             return .deletingClients
         }
+        if isGeneratingPrekeys && prekeys == nil {
+            return .generatingPrekeys
+        }
+        if prekeys == nil {
+            return .waitingForPrekeys
+        }
+
         return .done
     }
 
@@ -186,5 +200,19 @@ public enum ClientUpdateError: NSInteger {
         let selfClient = selfUser.selfClient()
         let remainingClients = selfUser.clients.filter {$0 != selfClient && !$0.isZombieObject}
         return Array(remainingClients)
+    }
+
+    public func willGeneratePrekeys() {
+        isGeneratingPrekeys = true
+    }
+
+    public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple]) {
+        self.prekeys = prekeys
+        self.isGeneratingPrekeys = false
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
+    }
+
+    public func didUploadPrekeys() {
+        self.prekeys = nil
     }
 }

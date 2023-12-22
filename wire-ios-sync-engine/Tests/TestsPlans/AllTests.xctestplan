@@ -48,7 +48,6 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "AnalyticsTests",
         "AvailabilityTests",
         "EventProcessingPerformanceTests",
         "SessionManagerTests\/testThatSessionManagerSetsUpAPNSEnvironmentOnLaunch()",
@@ -64,6 +63,7 @@
       "skippedTests" : [
         "AvailabilityTests",
         "ConnectionTests_Swift\/testThatConnectionRequestsToTwoUsersAreAddedToPending()",
+        "SessionManagerTests\/testThatItMarksConversationsAsRead()",
         "UserRichProfileIntegrationTests\/testThatItHandlesErrorWhenUpdatingRichInfo()",
         "UserTests"
       ],

@@ -33,6 +33,7 @@ final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<LeaveS
             domain: domain,
             subconversationType: subconversationType
         )
+        handler = LeaveSubconversationActionHandler(context: syncMOC)
     }
 
     override func tearDown() {

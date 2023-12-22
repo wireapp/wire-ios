@@ -21,13 +21,13 @@ import Foundation
 /// In memory cache with support for generics.
 
 public class Cache<Key: Hashable, Value> {
-    private var cache: [Key: EntryMetadata<Value>] = [:]
+    private var cache: [Key: EntryMetadata] = [:]
     private var cacheBuffer: CircularArray<Key>
     private let maxCost: Int
     private let maxElementsCount: Int
     private var currentCost: Int = 0
 
-    private struct EntryMetadata<Value> {
+    private struct EntryMetadata {
         let value: Value
         let cost: Int
     }

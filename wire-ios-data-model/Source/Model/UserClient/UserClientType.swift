@@ -34,14 +34,6 @@ import Foundation
     var model: String? { get }
     /// The device class (phone, desktop, ...)
     var deviceClass: DeviceClass? { get }
-    /// Estimated address of where the device was activated, , this information is only available for your own clients
-    var activationAddress: String? { get }
-    /// Estimated latitude of where the device was activated, this information is only available for your own clients
-    var activationLatitude: Double { get }
-    /// Estimated longitude of where the device was activated, this information is only available for your own clients
-    var activationLongitude: Double { get }
-    /// Unique fingerprint which can be used to identify & verify the client
-    var fingerprint: Data? { get }
     /// True if the self user has verfied the client
     var verified: Bool { get }
 
@@ -50,7 +42,4 @@ import Foundation
 
     /// Returns true if this is the active client of the self user
     func isSelfClient() -> Bool
-
-    /// Fetches the fingerprint or the prekeys of the device.
-    func fetchFingerprintOrPrekeys()
 }

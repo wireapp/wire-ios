@@ -159,25 +159,25 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         }
     }
 
-    func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedWhenMessageFromUpdateEventIsInserted() {
+    func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedWhenMessageFromUpdateEventIsInserted() throws {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        try syncMOC.performGroupedAndWait { syncMOC in
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
             let nonce = UUID.create()
             let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-            let contentData = try? message.serializedData()
-            let data = contentData?.base64String()
+            let contentData = try XCTUnwrap(message.serializedData())
+            let data = contentData.base64String()
 
-            let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: data!)
+            let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: data)
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
             XCTAssertNotNil(event)
 
             // when
             var sut: ZMClientMessage?
-            sut = ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+            sut = ZMClientMessage.createOrUpdate(from: event!, in: syncMOC, prefetchResult: nil)
 
             // then
             XCTAssertEqual(sut?.conversation, conversation)
@@ -384,7 +384,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         let systemMessage1 = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage1.systemMessageType = .missedCall
         systemMessage1.visibleInConversation = conversation
-        systemMessage1.updateTimestamp(with: 10)
+        systemMessage1.updateServerTimestamp(with: 10)
 
         conversation.lastReadServerTimeStamp = systemMessage1.serverTimestamp
 
@@ -393,7 +393,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         systemMessage2.systemMessageType = .missedCall
         systemMessage2.hiddenInConversation = conversation
         systemMessage2.parentMessage = systemMessage1
-        systemMessage2.updateTimestamp(with: 20)
+        systemMessage2.updateServerTimestamp(with: 20)
 
         // then
         XCTAssertEqual(conversation.firstUnreadMessage as? ZMSystemMessage, systemMessage1)

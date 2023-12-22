@@ -25,6 +25,7 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
     override func setUp() {
         super.setUp()
         action = FetchBackendMLSPublicKeysAction()
+        handler = FetchBackendMLSPublicKeysActionHandler(context: syncMOC)
     }
 
     override func tearDown() {

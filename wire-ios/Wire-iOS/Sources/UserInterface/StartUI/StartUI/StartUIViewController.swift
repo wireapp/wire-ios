@@ -70,7 +70,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
         self.searchResultsViewController = SearchResultsViewController(userSelection: UserSelection(),
-                                                                       selfUser: userSession.selfUser,
+                                                                       userSession: userSession,
                                                                        isAddingParticipants: false,
                                                                        shouldIncludeGuests: true,
                                                                        isFederationEnabled: isFederationEnabled)

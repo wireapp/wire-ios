@@ -45,12 +45,12 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
     // MARK: - performMigration
 
-    public var performMigrationAccountDirectorySyncContext_Invocations: [(accountDirectory: URL, syncContext: NSManagedObjectContext)] = []
+    public var performMigrationAccountDirectorySyncContext_Invocations: [(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol)] = []
     public var performMigrationAccountDirectorySyncContext_MockError: Error?
-    public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, NSManagedObjectContext) throws -> Void)?
+    public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, SafeCoreCryptoProtocol) throws -> Void)?
 
-    public func performMigration(accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
-        performMigrationAccountDirectorySyncContext_Invocations.append((accountDirectory: accountDirectory, syncContext: syncContext))
+    public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) throws {
+        performMigrationAccountDirectorySyncContext_Invocations.append((accountDirectory: accountDirectory, coreCrypto: coreCrypto))
 
         if let error = performMigrationAccountDirectorySyncContext_MockError {
             throw error
@@ -60,27 +60,6 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
             fatalError("no mock for `performMigrationAccountDirectorySyncContext`")
         }
 
-        try mock(accountDirectory, syncContext)
+        try mock(accountDirectory, coreCrypto)
     }
-
-    // MARK: - completeMigration
-
-    public var completeMigrationSyncContext_Invocations: [NSManagedObjectContext] = []
-    public var completeMigrationSyncContext_MockError: Error?
-    public var completeMigrationSyncContext_MockMethod: ((NSManagedObjectContext) throws -> Void)?
-
-    public func completeMigration(syncContext: NSManagedObjectContext) throws {
-        completeMigrationSyncContext_Invocations.append(syncContext)
-
-        if let error = completeMigrationSyncContext_MockError {
-            throw error
-        }
-
-        guard let mock = completeMigrationSyncContext_MockMethod else {
-            fatalError("no mock for `completeMigrationSyncContext`")
-        }
-
-        try mock(syncContext)
-    }
-
 }

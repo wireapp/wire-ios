@@ -316,7 +316,11 @@
 				BFF0578B1D25434D004A2C29 /* Products */,
 				BF3DD26D1D25445600D51DED /* Resources */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		BFF0578B1D25434D004A2C29 /* Products */ = {
 			isa = PBXGroup;
@@ -541,6 +545,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		E9EBFEE1276218B700F0DEBC /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

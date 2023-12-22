@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ class ResultTests: XCTestCase {
         let sut = Result<Int>.success(42)
 
         // When
-        let transformed = sut.map(String.init)
+        let transformed = sut.map(String.init) as ZMResult<String>
 
         // Then
         XCTAssertEqual(transformed.value, "42")
@@ -37,7 +37,7 @@ class ResultTests: XCTestCase {
         let sut = Result<Int>.success(42)
 
         // When
-        let transformed = sut.map { _ in throw error }
+        let transformed: ZMResult<Int> = sut.map { _ in throw error }
 
         // Then
         XCTAssertEqual(transformed.error as NSError?, error)
@@ -49,49 +49,10 @@ class ResultTests: XCTestCase {
         let sut = Result<Int>.failure(error)
 
         // When
-        let transformed = sut.map(String.init)
+        let transformed: ZMResult<String> = sut.map(String.init)
 
         // Then
         XCTAssertEqual(transformed.error as NSError?, error)
-    }
-
-    func testThatItReturnsAVoidResultForAGenericResult() {
-        // Given
-        let sut = Result<Int>.success(42)
-
-        // When
-        let transformed = VoidResult(result: sut)
-
-        // Then
-        XCTAssertNil(transformed.error)
-    }
-
-    func testThatItReturnsAVoidResultForAGenericResult_Error() {
-        // Given
-        let error = NSError(domain: "", code: 0, userInfo: nil)
-        let sut = Result<Int>.failure(error)
-
-        // When
-        let transformed = VoidResult(result: sut)
-
-        // Then
-        XCTAssertEqual(transformed.error as NSError?, error)
-    }
-
-    func testThatItCanInitializeAVoidResultFromAnError() {
-        // Given
-        let error = NSError(domain: "", code: 0, userInfo: nil)
-
-        // When
-        let result = VoidResult(error: error)
-
-        // Then
-        XCTAssertEqual(result.error as NSError?, error)
-    }
-
-    func testThatItCanInitializeAVoidResultFromAnError_Nil() {
-        // When & Then
-        XCTAssertNil(VoidResult(error: nil).error)
     }
 
 }

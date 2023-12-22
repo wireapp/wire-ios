@@ -41,36 +41,38 @@ final class MockTeam: TeamType {
     }
 }
 
-final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
-    var coreDataFixture: CoreDataFixture!
+final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
+    var userSession: UserSessionMock!
+    var mockSelfUser: MockUserType!
 
     var sut: AddParticipantsViewController!
 
     override func setUp() {
         super.setUp()
-        coreDataFixture = CoreDataFixture()
+        SelfUser.setupMockSelfUser(inTeam: UUID())
+        mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
+        userSession = UserSessionMock(mockUser: mockSelfUser)
     }
 
     override func tearDown() {
         sut = nil
-        SelfUser.provider = nil
-
-        coreDataFixture = nil
+        userSession = nil
+        mockSelfUser = nil
 
         super.tearDown()
     }
 
     func testForEveryOneIsHere() {
-        let newValues = ConversationCreationValues(name: "", participants: [], allowGuests: true, selfUser: selfUser)
+        let newValues = ConversationCreationValues(name: "", participants: [], allowGuests: true, selfUser: mockSelfUser)
 
-        sut = AddParticipantsViewController(context: .create(newValues), selfUser: selfUser)
+        sut = AddParticipantsViewController(context: .create(newValues), userSession: userSession)
         verify(matching: sut)
     }
 
     func testForAddParticipantsButtonIsShown() {
-        let conversation = createGroupConversation()
-        sut = AddParticipantsViewController(context: .add(conversation), selfUser: selfUser)
-        let user = createUser(name: "Bill")
+        let conversation = MockGroupDetailsConversation()
+        sut = AddParticipantsViewController(context: .add(conversation), userSession: userSession)
+        let user = MockUserType.createUser(name: "Bill")
         sut.userSelection.add(user)
         sut.userSelection(UserSelection(), didAddUser: user)
 
@@ -86,7 +88,7 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase, Co
         mockConversation.teamType = MockTeam()
         mockConversation.allowServices = true
 
-        sut = AddParticipantsViewController(context: .add(mockConversation), selfUser: selfUser)
+        sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
 
         // THEN
         verify(matching: sut)

@@ -125,7 +125,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
 
             if let users = connectionUsers as? [ZMUser] {
                 currentConnectionRequestsCount = newCount
-                let title = String(format: NSLocalizedString("list.connect_request.people_waiting", comment: ""), newCount)
+                let title = L10n.Localizable.List.ConnectRequest.peopleWaiting(newCount)
                 itemView.configure(with: NSAttributedString(string: title), subtitle: NSAttributedString(), users: users)
             }
         }

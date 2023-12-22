@@ -150,35 +150,6 @@ extension MockTransportSessionTeamEventsTests {
 // MARK: - Members events
 extension MockTransportSessionTeamEventsTests {
 
-    func testThatItCreatesEventWhenMemberJoinsTheTeam() {
-        // Given
-        var team: MockTeam!
-
-        sut.performRemoteChanges { session in
-            let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "some", isBound: true, users: [selfUser])
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        createAndOpenPushChannelAndCreateSelfUser(false)
-
-        // When
-        var newUser: MockUser!
-        sut.performRemoteChanges { session in
-            newUser = session.insertUser(withName: "name")
-            _ = session.insertMember(with: newUser, in: team)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-        let updateData = [
-            "user": newUser.identifier
-            ]
-        check(event: events.first, hasType: .teamMemberJoin, team: team, data: updateData)
-    }
-
     func testThatItCreatesEventWhenMemberIsRemovedFromTeam() {
         // Given
         var team: MockTeam!

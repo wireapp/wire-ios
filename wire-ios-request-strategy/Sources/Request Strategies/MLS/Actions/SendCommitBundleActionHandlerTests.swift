@@ -26,6 +26,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
     override func setUp() {
         super.setUp()
         action = SendCommitBundleAction(commitBundle: commitBundle)
+        handler = SendCommitBundleActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation

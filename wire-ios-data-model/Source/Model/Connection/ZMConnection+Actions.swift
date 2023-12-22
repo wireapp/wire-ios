@@ -70,16 +70,13 @@ public struct UpdateConnectionAction: EntityAction {
 public extension ZMUser {
 
     func sendConnectionRequest(to user: UserType, completion: @escaping ConnectToUserAction.ResultHandler) {
-        guard
-            let userID = user.remoteIdentifier,
-            let context = managedObjectContext
-        else {
+        guard let userID = user.remoteIdentifier, let managedObjectContext else {
             return completion(.failure(.internalInconsistency))
         }
 
         var action = ConnectToUserAction(userID: userID, domain: user.domain)
         action.onResult(resultHandler: completion)
-        action.send(in: context.notificationContext)
+        action.send(in: managedObjectContext.notificationContext)
     }
 
 }

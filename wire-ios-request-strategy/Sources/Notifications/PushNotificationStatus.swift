@@ -38,9 +38,10 @@ open class PushNotificationStatus: NSObject {
     private var completionHandlers: [UUID: FetchCompletion] = [:]
     private let managedObjectContext: NSManagedObjectContext
     private let lastEventIDRepository: LastEventIDRepositoryInterface
+    private var isFetching = false
 
     public var hasEventsToFetch: Bool {
-        return eventIdRanking.count > 0
+        return eventIdRanking.count > 0 && !isFetching
     }
 
     public init(
@@ -91,6 +92,10 @@ open class PushNotificationStatus: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
+    public func didStartFetching() {
+        isFetching = true
+    }
+
     /// Report events that has successfully been downloaded from the notification stream
     ///
     /// - parameter eventIds: List of UUIDs for events that been downloaded
@@ -102,23 +107,29 @@ open class PushNotificationStatus: NSObject {
         highestRankingEventId.apply(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
-        guard finished else { return }
-
         WireLogger.updateEvent.info("finished fetching all available events, last event id: \(lastEventId)")
 
         if let lastEventId = lastEventId {
             lastEventIDRepository.storeLastEventID(lastEventId)
         }
 
+        guard finished else { return }
+
         // We take all events that are older than or equal to lastEventId and add highest ranking event ID
         for eventId in completionHandlers.keys.filter({  self.lastEventIdIsNewerThan(lastEventId: lastEventId, eventId: $0) || highestRankingEventId == $0 }) {
             let completionHandler = completionHandlers.removeValue(forKey: eventId)
             completionHandler?(.success(()))
         }
+
+        isFetching = false
     }
 
-    /// Report that events couldn't be fetched due to a permanent error
-    public func didFailToFetchEvents() {
+    /// Report that events couldn't be fetched due to an error
+    public func didFailToFetchEvents(recoverable: Bool) {
+        defer { isFetching = false }
+
+        guard !recoverable else { return }
+
         for completionHandler in completionHandlers.values {
             completionHandler(.failure(.unknown))
         }

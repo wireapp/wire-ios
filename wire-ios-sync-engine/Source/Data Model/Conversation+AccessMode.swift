@@ -128,9 +128,8 @@ extension ZMConversation {
 
                 if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                     // Process `conversation.code-update` event
-                    userSession.syncManagedObjectContext.performGroupedBlock {
-                        userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
-                    }
+                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    userSession.processUpdateEvents([event])
                 }
             } else if response.httpStatus == 200,
                       let payload = response.payload?.asDictionary(),
@@ -180,7 +179,7 @@ extension ZMConversation {
     }
 
     /// Deletes the existing wireless link.
-    public func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (VoidResult) -> Void) {
+    public func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -193,7 +192,7 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200 {
-                completion(.success)
+                completion(.success(()))
             } else {
                 let error = WirelessLinkError(response: response) ?? .unknown
                 zmLog.debug("Error creating wireless link: \(error)")
@@ -205,7 +204,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow guests.
-    public func setAllowGuests(_ allowGuests: Bool, in userSession: ZMUserSession, _ completion: @escaping (VoidResult) -> Void) {
+    public func setAllowGuests(_ allowGuests: Bool, in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -218,7 +217,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow services.
-    public func setAllowServices(_ allowServices: Bool, in userSession: ZMUserSession, _ completion: @escaping (VoidResult) -> Void) {
+    public func setAllowServices(_ allowServices: Bool, in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(SetAllowServicesError.invalidOperation))
         }
@@ -232,7 +231,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow services.
-    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (VoidResult) -> Void) {
+    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         let request = WirelessRequestFactory.setAccessRoles(allowGuests: allowGuests, allowServices: allowServices, for: self, apiVersion: apiVersion)
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
@@ -240,11 +239,10 @@ extension ZMConversation {
                let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                 self.allowGuests = allowGuests
                 self.allowServices = allowServices
+
                 // Process `conversation.access-update` event
-                userSession.syncManagedObjectContext.performGroupedBlock {
-                    userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
-                }
-                completion(.success)
+                userSession.processUpdateEvents([event])
+                completion(.success(()))
             } else {
                 zmLog.debug("Error setting access role:  \(response)")
                 completion(.failure(SetAllowServicesError.unknown))

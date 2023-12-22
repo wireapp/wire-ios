@@ -92,6 +92,8 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
 
 - (void)enqueueOneTimeRequest:(ZMTransportRequest *)searchRequest NS_SWIFT_NAME(enqueueOneTime(_:));
 
+- (void)enqueueRequest:(ZMTransportRequest *)request queue:(nonnull id<ZMSGroupQueue>)queue completionHandler:(void (^)(ZMTransportResponse *))completionHandler;
+
 - (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(NS_NOESCAPE ZMTransportRequestGenerator)requestGenerator NS_SWIFT_NAME(attemptToEnqueueSyncRequest(generator:));
 
 - (void)setNetworkStateDelegate:(nullable id<ZMNetworkStateDelegate>)delegate;

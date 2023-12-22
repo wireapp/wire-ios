@@ -37,7 +37,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
         sut = MockCallQualityController()
         sut.router = router
 
-        let questionLabelText = NSLocalizedString("calling.quality_survey.question", comment: "")
+        let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
 

@@ -22,10 +22,12 @@ import ZipArchive
 import WireUtilities
 import WireCryptobox
 
+private let zmLog = ZMSLog(tag: "SessionManager")
+
 extension SessionManager {
 
     public typealias BackupResultClosure = (Result<URL>) -> Void
-    public typealias RestoreResultClosure = (VoidResult) -> Void
+    public typealias RestoreResultClosure = (Swift.Result<Void, Error>) -> Void
 
     static private let workerQueue = DispatchQueue(label: "history-backup")
 
@@ -99,7 +101,7 @@ extension SessionManager {
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
     /// is called.
     public func restoreFromBackup(at location: URL, password: String, completion: @escaping RestoreResultClosure) {
-        func complete(_ result: VoidResult) {
+        func complete(_ result: Swift.Result<Void, Error>) {
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(result)
             }
@@ -111,8 +113,16 @@ extension SessionManager {
         guard BackupFileExtensions.allCases.contains(where: { $0.rawValue == location.pathExtension }) else { return completion(.failure(BackupError.invalidFileExtension)) }
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
-            guard let `self` = self else { return }
+            guard let `self` = self else {
+                completion(.failure(NSError(code: .unknownError, userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"])))
+                return
+            }
+
             let decryptedURL = SessionManager.temporaryURL(for: location)
+
+            zmLog.safePublic(SanitizedString(stringLiteral: "coordinated file access at: \(location.absoluteString)"), level: .debug)
+            WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
+
             do {
                 try SessionManager.decrypt(from: location, to: decryptedURL, password: password, accountId: userId)
             } catch {
@@ -131,9 +141,10 @@ extension SessionManager {
                 accountIdentifier: userId,
                 from: url,
                 applicationContainer: self.sharedContainerURL,
-                dispatchGroup: self.dispatchGroup,
-                completion: completion >>> VoidResult.init
-            )
+                dispatchGroup: self.dispatchGroup
+            ) { result in
+                completion(result.map { _ in })
+            }
         }
     }
 

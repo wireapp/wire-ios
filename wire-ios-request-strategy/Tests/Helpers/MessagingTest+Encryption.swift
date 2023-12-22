@@ -62,7 +62,16 @@ extension MessagingTestBase {
         // this makes sure the client has remote identifier
         _ = self.encryptionContext(for: client)
 
-        if client.hasSessionWithSelfClient {
+        var hasSessionWithSelfClient: Bool = false
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+            if let id = client.sessionIdentifier {
+              hasSessionWithSelfClient = sessionsDirectory.hasSession(for: id)
+            } else {
+              hasSessionWithSelfClient = false
+            }
+        }
+
+        if hasSessionWithSelfClient {
             // done!
             return
         }

@@ -19,10 +19,17 @@
 import Foundation
 import LocalAuthentication
 @testable import Wire
+import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
     typealias Preference = AppLockPasscodePreference
     typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
+
+    lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
+        let mock = MockGetUserClientFingerprintUseCaseProtocol()
+        mock.invokeUserClient_MockMethod = { _ in return "102030405060708090102030405060708090102030405060708090".data(using: .utf8) }
+        return mock
+    }()
 
     var _authenticationResult: AppLockAuthenticationResult = .unavailable
     var _evaluationContext = LAContext()
@@ -212,9 +219,7 @@ final class UserSessionMock: UserSession {
 
     func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (
-            VoidResult
-        ) -> Void
+        completion: @escaping (Swift.Result<Void, Error>) -> Void
     ) {
 
     }
@@ -239,4 +244,11 @@ final class UserSessionMock: UserSession {
 
     }
 
+    var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
+        mockGetUserClientFingerprintUseCaseProtocol
+    }
+
+    var selfUserClient: UserClient? {
+        return nil
+    }
 }

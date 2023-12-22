@@ -18,10 +18,11 @@
 
 import Foundation
 
-public class LinkPreviewUpdateRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
+    let managedObjectContext: NSManagedObjectContext
     let modifiedKeysSync: ModifiedKeyObjectSync<LinkPreviewUpdateRequestStrategy>
-    let messageSync: MessageSync<ZMClientMessage>
+    let messageSender: MessageSenderInterface
 
     static func linkPreviewIsUploadedPredicate(context: NSManagedObjectContext) -> NSPredicate {
         return NSPredicate(format: "%K == %@ AND %K == %d",
@@ -29,33 +30,24 @@ public class LinkPreviewUpdateRequestStrategy: AbstractRequestStrategy, ZMContex
                            #keyPath(ZMClientMessage.linkPreviewState), ZMLinkPreviewState.uploaded.rawValue)
     }
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                         applicationStatus: ApplicationStatus) {
+    public init(managedObjectContext: NSManagedObjectContext,
+                messageSender: MessageSenderInterface) {
 
         let modifiedPredicate = Self.linkPreviewIsUploadedPredicate(context: managedObjectContext)
         self.modifiedKeysSync = ModifiedKeyObjectSync(trackedKey: ZMClientMessage.linkPreviewStateKey,
                                                       modifiedPredicate: modifiedPredicate)
 
-        self.messageSync = MessageSync<ZMClientMessage>(
-            context: managedObjectContext,
-            appStatus: applicationStatus
-        )
+        self.managedObjectContext = managedObjectContext
+        self.messageSender = messageSender
 
-        super.init(withManagedObjectContext: managedObjectContext,
-                   applicationStatus: applicationStatus)
+        super.init()
 
-        self.configuration = .allowsRequestsWhileOnline
         self.modifiedKeysSync.transcoder = self
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedKeysSync] + messageSync.contextChangeTrackers
+        return [modifiedKeysSync]
     }
-
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return messageSync.nextRequest(for: apiVersion)
-    }
-
 }
 
 extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
@@ -63,9 +55,19 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func synchronize(key: String, for object: ZMClientMessage, completion: @escaping () -> Void) {
-        messageSync.sync(object) { (_, _) in
-            object.linkPreviewState = .done
-            completion()
+        // Enter groups to enable waiting for message sending to complete in tests
+        let groups = managedObjectContext.enterAllGroupsExceptSecondary()
+        Task {
+            do {
+                try await messageSender.sendMessage(message: object)
+            } catch {
+                WireLogger.calling.error("failed to send message: \(String(reflecting: error))")
+            }
+            await managedObjectContext.perform {
+                object.linkPreviewState = .done
+                completion()
+            }
+            managedObjectContext.leaveAllGroups(groups)
         }
     }
 

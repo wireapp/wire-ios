@@ -32,6 +32,9 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     @objc(enqueueOneTimeRequest:)
     func enqueueOneTime(_ request: ZMTransportRequest)
 
+    @objc(enqueueRequest:queue:completionHandler:)
+    func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse
+
     @objc(attemptToEnqueueSyncRequestWithGenerator:)
     func attemptToEnqueueSyncRequest(generator: ZMTransportRequestGenerator) -> ZMTransportEnqueueResult
 

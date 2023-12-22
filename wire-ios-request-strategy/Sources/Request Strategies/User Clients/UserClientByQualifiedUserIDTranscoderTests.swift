@@ -118,8 +118,7 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
             // When
             sut.didReceive(
                 response: response,
-                for: identifiers
-            )
+                for: identifiers) { }
 
             // Then all clients are marked as updated, even if response was empty.
             XCTAssertFalse(otherClient.needsToBeUpdatedFromBackend)

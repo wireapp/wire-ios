@@ -310,6 +310,13 @@ static NSInteger const DefaultMaximumRequests = 6;
     [self enqueueTransportRequest:searchRequest];
 }
 
+- (void)enqueueRequest:(ZMTransportRequest *)request queue:(nonnull id<ZMSGroupQueue>)queue completionHandler:(void (^)(ZMTransportResponse *))completionHandler;
+{
+    [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:queue block:completionHandler]];
+    [self.numberOfRequestsInProgress increment];
+    [self enqueueTransportRequest:request];
+}
+
 - (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(NS_NOESCAPE ZMTransportRequestGenerator)requestGenerator;
 {
     //

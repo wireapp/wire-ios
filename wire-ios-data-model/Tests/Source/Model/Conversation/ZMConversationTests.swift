@@ -142,3 +142,24 @@ extension ZMConversationTests {
         }
     }
 }
+
+// MARK: - Helper Extension
+
+extension ZMConversationTestsBase {
+    @discardableResult
+    @objc(insertConversationWithUnread:context:)
+    func insertConversation(withUnread hasUnread: Bool, context: NSManagedObjectContext) -> ZMConversation {
+        let messageDate = Date(timeIntervalSince1970: 230000000)
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .oneOnOne
+        conversation.lastServerTimeStamp = messageDate
+        if hasUnread {
+            let message = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: context)
+            message.serverTimestamp = messageDate
+            conversation.lastReadServerTimeStamp = messageDate.addingTimeInterval(-1000)
+            conversation.append(message)
+        }
+        context.saveOrRollback()
+        return conversation
+    }
+}

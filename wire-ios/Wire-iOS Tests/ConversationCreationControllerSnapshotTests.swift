@@ -74,7 +74,8 @@ final class ConversationCreationControllerSnapshotTests: BaseSnapshotTestCase {
         userInterfaceStyle: UIUserInterfaceStyle = .light
     ) {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
-        sut = ConversationCreationController(preSelectedParticipants: nil, selfUser: mockSelfUser)
+        let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
+        sut = ConversationCreationController(preSelectedParticipants: nil, userSession: mockUserSession)
         sut.overrideUserInterfaceStyle = userInterfaceStyle
     }
 }

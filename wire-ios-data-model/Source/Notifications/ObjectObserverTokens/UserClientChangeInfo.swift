@@ -31,7 +31,6 @@ extension UserClient: ObjectInSnapshot {
         return Set([#keyPath(UserClient.trustedByClients),
                     #keyPath(UserClient.ignoredByClients),
                     #keyPath(UserClient.needsToNotifyUser),
-                    #keyPath(UserClient.fingerprint),
                     #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)])
     }
 
@@ -59,10 +58,6 @@ public enum UserClientChangeInfoKey: String {
 
     open var ignoredByClientsChanged: Bool {
         return changedKeysContain(keys: #keyPath(UserClient.ignoredByClients))
-    }
-
-    open var fingerprintChanged: Bool {
-        return changedKeysContain(keys: #keyPath(UserClient.fingerprint))
     }
 
     open var needsToNotifyUserChanged: Bool {

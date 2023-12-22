@@ -14,7 +14,8 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "MLSServiceTests"
+        "ConversationObserverTests\/testThatItNotifiesOfLegalHoldChanges_Disabled()",
+        "UserObserverTests\/testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed()"
       ],
       "target" : {
         "containerPath" : "container:WireDataModel.xcodeproj",

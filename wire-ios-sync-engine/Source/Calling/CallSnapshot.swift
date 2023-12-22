@@ -41,8 +41,8 @@ struct CallSnapshot {
     let activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker]
     let videoGridPresentationMode: VideoGridPresentationMode
     var conversationObserverToken: NSObjectProtocol?
-    var onConferenceInfoChangedToken: AnyCancellable?
     var mlsConferenceStaleParticipantsRemover: MLSConferenceStaleParticipantsRemover?
+    var updateConferenceInfoTask: Task<Void, Error>?
 
     var isDegradedCall: Bool {
         return degradedUser != nil
@@ -70,8 +70,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -97,8 +97,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -124,8 +124,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -151,8 +151,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -182,8 +182,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -209,8 +209,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -236,8 +236,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: presentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 }

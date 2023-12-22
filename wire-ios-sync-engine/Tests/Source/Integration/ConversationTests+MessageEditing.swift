@@ -37,10 +37,13 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
         XCTAssertEqual(conversation?.allMessages.count, messageCount+1)
         let receivedMessage = conversation?.lastMessage as? ZMClientMessage
         XCTAssertEqual(receivedMessage?.textMessageData?.messageText, "Foo")
-        let messageNonce = receivedMessage?.nonce
+        guard let messageNonce = receivedMessage?.nonce else {
+            XCTFail("missing expected nonce")
+            return
+        }
 
         // WHEN
-        let editMessage = GenericMessage(content: MessageEdit(replacingMessageID: messageNonce!, text: Text(content: "Bar")), nonce: .create())
+        let editMessage = GenericMessage(content: MessageEdit(replacingMessageID: messageNonce, text: Text(content: "Bar")), nonce: .create())
         guard let editedData = try? editMessage.serializedData() else {
             return XCTFail()
         }

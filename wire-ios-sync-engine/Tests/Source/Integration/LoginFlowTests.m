@@ -559,6 +559,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
         // "delete" the self client
         [self.userSession.managedObjectContext setPersistentStoreMetadata:nil forKey:ZMPersistedClientIdKey];
         [self.userSession.managedObjectContext saveOrRollback];
+        WaitForAllGroupsToBeEmpty(0.5);
 
         [self destroySessionManager];
         [self deleteAuthenticationCookie];

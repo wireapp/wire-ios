@@ -26,14 +26,31 @@ class StrategyFactory {
     unowned let syncContext: NSManagedObjectContext
     let applicationStatus: ApplicationStatus
     let linkPreviewPreprocessor: LinkPreviewPreprocessor
+    let messageSender: MessageSenderInterface
     private(set) var strategies = [AnyObject]()
 
     private var tornDown = false
 
-    init(syncContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, linkPreviewPreprocessor: LinkPreviewPreprocessor) {
+    init(syncContext: NSManagedObjectContext,
+         applicationStatus: ApplicationStatus,
+         linkPreviewPreprocessor: LinkPreviewPreprocessor,
+         transportSession: TransportSessionType
+    ) {
+        let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
+        let apiProvider = APIProvider(httpClient: httpClient)
+        let sessionEstablisher = SessionEstablisher(context: syncContext, apiProvider: apiProvider)
+        let messageDependencyResolver = MessageDependencyResolver(context: syncContext)
+        let quickSyncObserver = QuickSyncObserver(context: syncContext, applicationStatus: applicationStatus, notificationContext: syncContext.notificationContext)
         self.linkPreviewPreprocessor = linkPreviewPreprocessor
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
+        self.messageSender = MessageSender(
+            apiProvider: apiProvider,
+            clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate,
+            sessionEstablisher: sessionEstablisher,
+            messageDependencyResolver: messageDependencyResolver,
+            quickSyncObserver: quickSyncObserver,
+            context: syncContext)
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
 
@@ -53,7 +70,6 @@ class StrategyFactory {
     private func createStrategies(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> [AnyObject] {
         return [
             // Clients
-            createMissingClientsStrategy(),
             createFetchingClientsStrategy(),
             createVerifyLegalHoldStrategy(),
 
@@ -78,15 +94,12 @@ class StrategyFactory {
         return FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
-    private func createMissingClientsStrategy() -> MissingClientsRequestStrategy {
-        return MissingClientsRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
-    }
-
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {
         return ClientMessageRequestStrategy(
-            withManagedObjectContext: syncContext,
+            context: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
-            applicationStatus: applicationStatus
+            applicationStatus: applicationStatus,
+            messageSender: messageSender
         )
     }
 
@@ -103,7 +116,7 @@ class StrategyFactory {
     }
 
     private func createLinkPreviewUpdateRequestStrategy() -> LinkPreviewUpdateRequestStrategy {
-        return LinkPreviewUpdateRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        return LinkPreviewUpdateRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
     }
 
     // MARK: - Asset V3
@@ -129,6 +142,6 @@ class StrategyFactory {
     }
 
     private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
-        return AssetClientMessageRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        return AssetClientMessageRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
     }
 }

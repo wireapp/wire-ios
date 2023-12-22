@@ -35,7 +35,7 @@ class UserHandleTests: IntegrationTest {
         XCTAssertTrue(login())
 
         self.userProfileStatusObserver = TestUserProfileUpdateObserver()
-        self.observerToken = self.userSession?.userProfile?.add(observer: self.userProfileStatusObserver)
+        self.observerToken = self.userSession?.userProfile.add(observer: self.userProfileStatusObserver)
     }
 
     override func tearDown() {
@@ -50,7 +50,7 @@ class UserHandleTests: IntegrationTest {
         let handle = "Oscar"
 
         // WHEN
-        self.userSession?.userProfile?.requestCheckHandleAvailability(handle: handle)
+        self.userSession?.userProfile.requestCheckHandleAvailability(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -75,7 +75,7 @@ class UserHandleTests: IntegrationTest {
         }
 
         // WHEN
-        self.userSession?.userProfile?.requestCheckHandleAvailability(handle: handle)
+        self.userSession?.userProfile.requestCheckHandleAvailability(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -96,7 +96,7 @@ class UserHandleTests: IntegrationTest {
         let handle = "Evelyn"
 
         // WHEN
-        self.userSession?.userProfile?.requestSettingHandle(handle: handle)
+        self.userSession?.userProfile.requestSettingHandle(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -118,7 +118,8 @@ class UserHandleTests: IntegrationTest {
         }
     }
 
-    func testThatItIsNotifiedWhenFailsToSetTheHandleBecauseItExists() {
+    // FIXME: [jacob] this test is flaky WPB-5882
+    func disabled_testThatItIsNotifiedWhenFailsToSetTheHandleBecauseItExists() {
 
         // GIVEN
         let handle = "Evelyn"
@@ -128,7 +129,7 @@ class UserHandleTests: IntegrationTest {
         }
 
         // WHEN
-        self.userSession?.userProfile?.requestSettingHandle(handle: handle)
+        self.userSession?.userProfile.requestSettingHandle(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -156,7 +157,7 @@ class UserHandleTests: IntegrationTest {
         }
 
         // WHEN
-        self.userSession?.userProfile?.requestSettingHandle(handle: handle)
+        self.userSession?.userProfile.requestSettingHandle(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))

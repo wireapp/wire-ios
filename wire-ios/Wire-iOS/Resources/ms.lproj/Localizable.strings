@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Tap to send";
 "conversation.input_bar.audio_message.too_long.title" = "Recording Stopped";
 "conversation.input_bar.audio_message.too_long.message" = "Audio messages are limited to %@.";
+"conversation.ping.many_participants_confirmation.title" = "Are you sure you want to ping %d people?";
+"conversation.ping.action.title" = "Ping";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "File size for audio messages is limited to %@.";
 
@@ -1742,10 +1744,10 @@
 "jailbrokendevice.alert.message" = "For security reasons, Wire can't be used on this device. Any existing Wire data has been erased.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Not Enough Storage";
-"databaseloadingfailure.alert.message" = "The database could not be loaded due to insufficient storage. Review your device storage usage and try again.";
-"databaseloadingfailure.alert.settings" = "Go to Settings";
-"databaseloadingfailure.alert.delete_database" = "Delete Database";
+"databaseloadingfailure.alert.title" = "Update Data storage";
+"databaseloadingfailure.alert.message" = "The database could not be loaded.\n Error: %@";
+"databaseloadingfailure.alert.save-backup" = "Save my data";
+"databaseloadingfailure.alert.delete_database" = "Clear my data and continue";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "Meneruskan";
 "databaseloadingfailure.alert.retry" = "Retry";

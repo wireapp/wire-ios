@@ -84,13 +84,28 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         return requestFactory.upstreamRequestForFetchingClients(conversationId: conversationID, domain: conversation.domain, selfClient: selfClient, apiVersion: apiVersion)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<ZMConversation>) {
-        guard let conversation = identifiers.first else { return }
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<ZMConversation>, completionHandler: @escaping () -> Void) {
+        guard let conversation = identifiers.first else { return completionHandler() }
 
         let verifyClientsParser = VerifyClientsParser(context: managedObjectContext, conversation: conversation)
+        let clientChanges = verifyClientsParser.processEmptyUploadResponse(response, in: conversation, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
 
-        let changeSet = verifyClientsParser.processEmptyUploadResponse(response, in: conversation, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
-        conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: changeSet)
+        WaitingGroupTask(context: managedObjectContext) { [self] in
+            let newMissingClients = await clientChanges.missingClients.asyncFilter { await $0.hasSessionWithSelfClient == false }
+            await managedObjectContext.perform {
+                let selfClient = ZMUser.selfUser(in: self.managedObjectContext).selfClient()
+                selfClient?.addNewClientsToIgnored(Set(newMissingClients))
+            }
+
+            for deletedClient in clientChanges.deletedClients {
+                await deletedClient.deleteClientAndEndSession()
+            }
+            await managedObjectContext.perform {
+                conversation.updateSecurityLevelIfNeededAfterFetchingClients()
+                completionHandler()
+            }
+        }
+
     }
 
 }

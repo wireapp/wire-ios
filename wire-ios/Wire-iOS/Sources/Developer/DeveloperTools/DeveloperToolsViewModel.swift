@@ -234,7 +234,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     private func performQuickSync() {
         Task {
             guard let session = ZMUserSession.shared() else { return }
-            await session.syncStatus?.performQuickSync()
+            await session.syncStatus.performQuickSync()
         }
     }
 

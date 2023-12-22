@@ -42,36 +42,36 @@ extension ZMUserSession {
 
     public func accept(legalHoldRequest: LegalHoldRequest, password: String?, completionHandler: @escaping (_ error: LegalHoldActivationError?) -> Void) {
 
-        func complete(error: LegalHoldActivationError?) {
-            syncManagedObjectContext.saveOrRollback()
-
-            DispatchQueue.main.async {
-                completionHandler(error)
-            }
-        }
-
         guard let apiVersion = BackendInfo.apiVersion else {
-            return complete(error: .missingAPIVersion)
+            return completionHandler(.missingAPIVersion)
         }
 
-        syncManagedObjectContext.performGroupedBlock {
-            let selfUser = ZMUser.selfUser(in: self.syncManagedObjectContext)
+        // 1) Check the state
+        let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
 
-            // 1) Check the state
-            guard let teamID = selfUser.team?.remoteIdentifier else {
-                return complete(error: .selfUserNotInTeam)
-            }
+        guard let teamID = selfUser.team?.remoteIdentifier else {
+            return completionHandler(.selfUserNotInTeam)
+        }
 
-            guard let userID = selfUser.remoteIdentifier else {
-                return complete(error: .invalidSelfUser)
+        guard let userID = selfUser.remoteIdentifier else {
+            return completionHandler(.invalidSelfUser)
+        }
+
+        Task {
+            let selfUser = await syncManagedObjectContext.perform {
+                ZMUser.selfUser(in: self.syncManagedObjectContext)
             }
 
             // 2) Create the potential LH client
-            guard let legalHoldClient: UserClient = selfUser.addLegalHoldClient(from: legalHoldRequest) else {
-                return complete(error: .invalidState)
+            guard let legalHoldClient: UserClient = await selfUser.addLegalHoldClient(from: legalHoldRequest) else {
+                return await MainActor.run {
+                    completionHandler(.invalidState)
+                }
             }
 
-            self.syncManagedObjectContext.saveOrRollback()
+            _ = await self.syncManagedObjectContext.perform {
+                self.syncManagedObjectContext.saveOrRollback()
+            }
 
             // 3) Create the request
             var payload: [String: Any] = [:]
@@ -79,28 +79,34 @@ extension ZMUserSession {
 
             let path = "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())/approve"
             let request = ZMTransportRequest(path: path, method: .put, payload: payload as NSDictionary, apiVersion: apiVersion.rawValue)
+            let response = await self.transportSession.enqueue(request, queue: self.syncManagedObjectContext)
 
-            // 4) Handle the Response
-            request.add(ZMCompletionHandler(on: self.syncManagedObjectContext, block: { response in
-                guard response.httpStatus == 200 else {
-                    legalHoldClient.deleteClientAndEndSession()
-
-                    let errorLabel = response.payload?.asDictionary()?["label"] as? String
-
-                    switch errorLabel {
-                    case "access-denied", "invalid-payload":
-                        return complete(error: .invalidPassword)
-                    default:
-                        return complete(error: .invalidResponse(response.httpStatus, errorLabel))
-                    }
+            if response.httpStatus == 200 {
+                selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest)
+                _ = await self.syncContext.perform {
+                    self.syncContext.saveOrRollback()
+                }
+                await MainActor.run {
+                    completionHandler(nil)
+                }
+            } else {
+                await legalHoldClient.deleteClientAndEndSession()
+                _ = await self.syncContext.perform {
+                    self.syncContext.saveOrRollback()
                 }
 
-                selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest)
-                complete(error: nil)
-            }))
-
-            // 5) Schedule the Request
-            self.transportSession.enqueueOneTime(request)
+                let errorLabel = response.payload?.asDictionary()?["label"] as? String
+                switch errorLabel {
+                case "access-denied", "invalid-payload":
+                    await MainActor.run {
+                        completionHandler(.invalidPassword)
+                    }
+                default:
+                    await MainActor.run {
+                        completionHandler(.invalidResponse(response.httpStatus, errorLabel))
+                    }
+                }
+            }
         }
     }
 

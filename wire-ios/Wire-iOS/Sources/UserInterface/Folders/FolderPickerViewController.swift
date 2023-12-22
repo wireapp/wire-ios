@@ -87,7 +87,7 @@ final class FolderPickerViewController: UIViewController {
     }
 
     private func configureSubviews() {
-        hintLabel.text = "folder.picker.empty.hint".localized
+        hintLabel.text = L10n.Localizable.Folder.Picker.Empty.hint
         hintLabel.numberOfLines = 0
         hintLabel.textAlignment = .center
 

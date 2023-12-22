@@ -68,7 +68,6 @@ extension ZMConversation {
             return completion(.failure(ConversationJoinError.unknown))
         }
 
-        let syncContext = contextProvider.syncContext
         let viewContext = contextProvider.viewContext
 
         request.add(ZMCompletionHandler(on: viewContext, block: { response in
@@ -80,14 +79,15 @@ extension ZMConversation {
                     return completion(.failure(ConversationJoinError.unknown))
                 }
 
-                syncContext.performGroupedBlock {
-                    eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
-
+                Task {
+                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    try? await eventProcessor.processEvents([event])
                     viewContext.performGroupedBlock {
                         guard let conversationId = UUID(uuidString: conversationString),
                               let conversation = ZMConversation.fetch(with: conversationId, in: viewContext)
                         else {
-                            return completion(.failure(ConversationJoinError.unknown))
+                            completion(.failure(ConversationJoinError.unknown))
+                            return
                         }
 
                         completion(.success(conversation))
@@ -115,13 +115,11 @@ extension ZMConversation {
     ///   - key: stable conversation identifier
     ///   - code: conversation code
     ///   - transportSession: session to handle requests
-    ///   - eventProcessor: update event processor
     ///   - contextProvider: context provider
     ///   - completion: a handler when the network request completes with the response payload that contains the conversation ID and name
     static func fetchIdAndName(key: String,
                                code: String,
                                transportSession: TransportSessionType,
-                               eventProcessor: UpdateEventProcessor,
                                contextProvider: ContextProvider,
                                completion: @escaping (Result<(conversationId: UUID, conversationName: String)>) -> Void) {
 

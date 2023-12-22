@@ -93,7 +93,7 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeDomainsStoppedFederating
 };
 
-typedef NS_ENUM(int16_t, ZMParticipantsRemovedReason) {
+typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {
     ZMParticipantsRemovedReasonNone = 0,
     /// Users don't want / support LH
     ZMParticipantsRemovedReasonLegalHoldPolicyConflict = 1,

@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireDataModel
+@testable import WireDataModelSupport
 import XCTest
 
 class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
@@ -25,7 +26,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
     func test_performDoesNotBlockWithMock() throws {
         // GIVEN
         let tempURL = createTempFolder()
-        let mockCoreCrypto = MockCoreCrypto()
+        let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockRestoreFromDisk = {}
         let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
@@ -38,7 +39,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
 
     func test_performDoesCallRestoreFromDisk() throws {
         let tempURL = createTempFolder()
-        let mockCoreCrypto = MockCoreCrypto()
+        let mockCoreCrypto = MockCoreCryptoProtocol()
         var called = false
         mockCoreCrypto.mockRestoreFromDisk = {
             called = true
@@ -58,7 +59,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
     func test_mlsInitCallsCoreCrypto() throws {
         // GIVEN
         let tempURL = createTempFolder()
-        let mockCoreCrypto = MockCoreCrypto()
+        let mockCoreCrypto = MockCoreCryptoProtocol()
 
         var mlsInitCalled = false
         mockCoreCrypto.mockMlsInit = { _, _ in
@@ -77,7 +78,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
     func test_mlsInitDoesntCallCoreCryptoWhenAlreadyInitialised() throws {
         // GIVEN
         let tempURL = createTempFolder()
-        let mockCoreCrypto = MockCoreCrypto()
+        let mockCoreCrypto = MockCoreCryptoProtocol()
 
         var mlsInitCalls = 0
         mockCoreCrypto.mockMlsInit = { _, _ in

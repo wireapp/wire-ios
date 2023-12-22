@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -309,7 +309,11 @@
 				098CB1191B5FA6E100712DF9 /* Frameworks */,
 				09DD1EB31B5D41E1005EBCC4 /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		09DD1EB31B5D41E1005EBCC4 /* Products */ = {
 			isa = PBXGroup;
@@ -586,6 +590,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		AD4812A92AB9902400ED208C /* Run Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -747,7 +752,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
@@ -758,7 +767,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;

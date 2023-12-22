@@ -219,9 +219,11 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     [self prepareToSend];
 }
 
-- (void)setExpirationDate
+- (NSDate *)setExpirationDate;
 {
-    self.expirationDate = [NSDate dateWithTimeIntervalSinceNow:[self.class defaultExpirationTime]];
+    NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:[self.class defaultExpirationTime]];
+    self.expirationDate = expirationDate;
+    return expirationDate;
 }
 
 - (void)removeExpirationDate;

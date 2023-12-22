@@ -56,6 +56,11 @@ extension UserClient {
         }
     }
 
+    @objc
+    public var hasRegisteredMLSClient: Bool {
+        return mlsPublicKeys.ed25519 != nil && needsToUploadMLSPublicKeys == false
+    }
+
 }
 
 extension UserClient {

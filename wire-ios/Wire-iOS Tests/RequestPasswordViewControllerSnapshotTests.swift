@@ -23,17 +23,13 @@ final class RequestPasswordControllerSnapshotTests: XCTestCase, CoreDataFixtureT
     var coreDataFixture: CoreDataFixture!
 
     var sut: RequestPasswordController!
-    var fingerprint: Data!
 
     override func setUp() {
         super.setUp()
         coreDataFixture = CoreDataFixture()
-
-        fingerprint = coreDataFixture.mockUserClient(fingerprintString: "102030405060708090a0b0c0d0e0f0708090102030405060708090").fingerprint!
     }
 
     override func tearDown() {
-        fingerprint = nil
         sut = nil
 
         coreDataFixture = nil

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -166,7 +166,11 @@
 				096AD7EC1B68D8DF00E007A8 /* Frameworks */,
 				096AD7BC1B68D41D00E007A8 /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		096AD7BC1B68D41D00E007A8 /* Products */ = {
 			isa = PBXGroup;
@@ -438,6 +442,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		AD4812AB2AB9907100ED208C /* Run Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

@@ -17,15 +17,26 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireCoreCrypto
 import Combine
 
-class MockMLSActionExecutor: MLSActionExecutorProtocol {
+@testable import WireDataModel
+
+final class MockMLSActionExecutor: MLSActionExecutorProtocol {
+
+    // Using a serial dispatch queue for thread safe access to the properties.
+    // With `MLSActionExecutorProtocol.onEpochChanged` being declared async the
+    // `MockMLSActionExecutor` could be declared as actor.
+    private let serialQueue = DispatchQueue(label: "MockMLSActionExecutor")
 
     // MARK: - Add members
 
-    var mockAddMembers: (([Invitee], MLSGroupID) async throws -> [ZMUpdateEvent])?
+    typealias AddMembersMock = (([Invitee], MLSGroupID) async throws -> [ZMUpdateEvent])
+    private var _mockAddMembers: AddMembersMock?
+    var mockAddMembers: AddMembersMock? {
+        get { serialQueue.sync { _mockAddMembers } }
+        set { serialQueue.sync { _mockAddMembers = newValue } }
+    }
 
     func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockAddMembers else {
@@ -37,7 +48,12 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Remove clients
 
-    var mockRemoveClients: (([ClientId], MLSGroupID) async throws -> [ZMUpdateEvent])?
+    typealias RemoveClientsMock = (([ClientId], MLSGroupID) async throws -> [ZMUpdateEvent])
+    private var mockRemoveClients_: RemoveClientsMock?
+    var mockRemoveClients: RemoveClientsMock? {
+        get { serialQueue.sync { mockRemoveClients_ } }
+        set { serialQueue.sync { mockRemoveClients_ = newValue } }
+    }
 
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockRemoveClients else {
@@ -49,8 +65,18 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Update key material
 
-    var mockUpdateKeyMaterial: ((MLSGroupID) async throws -> [ZMUpdateEvent])?
-    var updateKeyMaterialCount = 0
+    typealias UpdateKeyMaterialMock = ((MLSGroupID) async throws -> [ZMUpdateEvent])
+    private var mockUpdateKeyMaterial_: UpdateKeyMaterialMock?
+    var mockUpdateKeyMaterial: UpdateKeyMaterialMock? {
+        get { serialQueue.sync { mockUpdateKeyMaterial_ } }
+        set { serialQueue.sync { mockUpdateKeyMaterial_ = newValue } }
+    }
+
+    private var updateKeyMaterialCount_ = 0
+    var updateKeyMaterialCount: Int {
+        get { serialQueue.sync { updateKeyMaterialCount_ } }
+        set { serialQueue.sync { updateKeyMaterialCount_ = newValue } }
+    }
 
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockUpdateKeyMaterial else {
@@ -63,8 +89,18 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Commit pending proposals
 
-    var mockCommitPendingProposals: ((MLSGroupID) async throws -> [ZMUpdateEvent])?
-    var commitPendingProposalsCount = 0
+    typealias CommitPendingProposalsMock = ((MLSGroupID) async throws -> [ZMUpdateEvent])
+    private var mockCommitPendingProposals_: CommitPendingProposalsMock?
+    var mockCommitPendingProposals: CommitPendingProposalsMock? {
+        get { serialQueue.sync { mockCommitPendingProposals_ } }
+        set { serialQueue.sync { mockCommitPendingProposals_ = newValue } }
+    }
+
+    private var commitPendingProposalsCount_ = 0
+    var commitPendingProposalsCount: Int {
+        get { serialQueue.sync { commitPendingProposalsCount_ } }
+        set { serialQueue.sync { commitPendingProposalsCount_ = newValue } }
+    }
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockCommitPendingProposals else {
@@ -77,8 +113,18 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Join group
 
-    var mockJoinGroup: ((MLSGroupID, Data) async throws -> [ZMUpdateEvent])?
-    var mockJoinGroupCount = 0
+    typealias JoinGroupMock = ((MLSGroupID, Data) async throws -> [ZMUpdateEvent])
+    private var mockJoinGroup_: JoinGroupMock?
+    var mockJoinGroup: JoinGroupMock? {
+        get { serialQueue.sync { mockJoinGroup_ } }
+        set { serialQueue.sync { mockJoinGroup_ = newValue } }
+    }
+
+    private var mockJoinGroupCount_ = 0
+    var mockJoinGroupCount: Int {
+        get { serialQueue.sync { mockJoinGroupCount_ } }
+        set { serialQueue.sync { mockJoinGroupCount_ = newValue } }
+    }
 
     func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
         guard let mock = mockJoinGroup else {
@@ -91,8 +137,18 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - On epoch changed
 
-    var mockOnEpochChanged: (() -> AnyPublisher<MLSGroupID, Never>)?
-    var mockOnEpochChangedCount = 0
+    typealias OnEpochChangedMock = () -> AnyPublisher<MLSGroupID, Never>
+    private var mockOnEpochChanged_: OnEpochChangedMock?
+    var mockOnEpochChanged: OnEpochChangedMock? {
+        get { serialQueue.sync { mockOnEpochChanged_ } }
+        set { serialQueue.sync { mockOnEpochChanged_ = newValue } }
+    }
+
+    private var mockOnEpochChangedCount_ = 0
+    var mockOnEpochChangedCount: Int {
+        get { serialQueue.sync { mockOnEpochChangedCount_ } }
+        set { serialQueue.sync { mockOnEpochChangedCount_ = newValue } }
+    }
 
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         guard let mock = mockOnEpochChanged else {

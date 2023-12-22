@@ -40,7 +40,6 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 key: key,
                 code: code,
                 transportSession: transportSession,
-                eventProcessor: eventProcessor,
                 contextProvider: contextProvider
             ) { [weak self] (response) in
 

@@ -45,7 +45,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     // MARK: - Properties
 
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
     private weak var context: NSManagedObjectContext?
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
@@ -59,10 +59,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     public init(
         context: NSManagedObjectContext,
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
-        self.coreCrypto = coreCrypto
+        self.coreCryptoProvider = coreCryptoProvider
         self.context = context
         self.subconverationGroupIDRepository = subconversationGroupIDRepository
     }
@@ -114,7 +114,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try coreCrypto.perform { try $0.decryptMessage(
+            let decryptedMessage = try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.decryptMessage(
                 conversationId: groupID.bytes,
                 payload: messageBytes
             ) }

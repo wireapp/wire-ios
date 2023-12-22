@@ -80,8 +80,13 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
                 return
             }
 
-            eventProcessor.processConversationEvents([updateEvent])
-            action.notifyResult(.success(Void()))
+            let success = {
+                action.notifyResult(.success(Void()))
+            }
+            Task {
+                await eventProcessor.processConversationEvents([updateEvent])
+                success()
+            }
 
         default:
             action.notifyResult(.failure(UpdateAccessRolesError(response: response) ?? .unknown))

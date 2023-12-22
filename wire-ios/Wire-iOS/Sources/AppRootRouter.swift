@@ -202,8 +202,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
             showJailbroken(completion: completionBlock)
-        case .databaseFailure:
-            showDatabaseLoadingFailure(completion: completionBlock)
+        case .databaseFailure(let error):
+            showDatabaseLoadingFailure(error: error, completion: completionBlock)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completionBlock)
         case .unauthenticated(error: let error):
@@ -282,10 +282,11 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showDatabaseLoadingFailure(completion: @escaping () -> Void) {
+    private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(
             context: .databaseFailure,
-            sessionManager: sessionManager
+            sessionManager: sessionManager,
+            error: error
         )
 
         rootViewController.set(childViewController: blockerViewController,
