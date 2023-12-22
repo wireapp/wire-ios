@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ extension ZMMessageTests_SystemMessages {
         ZMUser.selfUser(in: uiMOC).domain = selfUserDomain
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
-       conversation.conversationType = updateEventType == .conversationConnectRequest ? .connection : .group
+        conversation.conversationType = updateEventType == .conversationConnectRequest ? .connection : .group
 
         conversation.remoteIdentifier = NSUUID.create()
         let userID1 = UUID()
