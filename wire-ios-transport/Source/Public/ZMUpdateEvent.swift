@@ -68,11 +68,13 @@ import WireUtilities
     case userPropertiesDelete = 33
     case teamCreate = 23
     case teamDelete = 24
+    // TODO: remove event handling?
     case teamUpdate = 25
     // removed: teamMemberJoin = 26 [WPB-4538]: "team.member-join" should not be handled anymore
     // removed: teamMemberLeave = 27 [WPB-4538]: "team.member-leave" should not be handled anymore
     case teamConversationCreate = 28
     case teamConversationDelete = 29
+    // TODO: remove event handling?
     case teamMemberUpdate = 30
     case featureConfigUpdate = 40
     case federationDelete = 43
