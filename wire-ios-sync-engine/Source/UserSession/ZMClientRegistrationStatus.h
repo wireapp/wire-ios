@@ -43,7 +43,12 @@ typedef NS_ENUM(NSUInteger, ZMClientRegistrationPhase) {
     
     /// the user has registered with phone but needs to register an email address and password to register a second device - we wait until we have emailCredentials
     ZMClientRegistrationPhaseWaitingForEmailVerfication,
-    
+
+
+    ZMClientRegistrationPhaseWaitingForPrekeys,
+
+    ZMClientRegistrationPhaseGeneratingPrekeys,
+
     /// The client is registered
     ZMClientRegistrationPhaseRegistered
 };
@@ -55,12 +60,14 @@ extern NSString *const ZMPersistedClientIdKey;
 @interface ZMClientRegistrationStatus : NSObject <ClientRegistrationDelegate, TearDownCapable>
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                                      cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                  registrationStatusDelegate:(id<ZMClientRegistrationStatusDelegate>) registrationStatusDelegate;
+                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage;
+
+- (void)determineInitialRegistrationStatus;
 - (BOOL)needsToRegisterClient;
 + (BOOL)needsToRegisterClientInContext:(NSManagedObjectContext *)moc;
 
 - (void)didRegisterClient:(UserClient *)client;
+- (void)didRegisterMLSClient:(UserClient *)client;
 
 - (void)didDetectCurrentClientDeletion;
 - (BOOL)clientIsReadyForRequests;
@@ -71,11 +78,17 @@ extern NSString *const ZMPersistedClientIdKey;
 @property (nonatomic, readonly) ZMClientRegistrationPhase currentPhase;
 @property (nonatomic) ZMEmailCredentials *emailCredentials;
 
+@property (nonatomic) NSArray<NSDictionary<NSNumber *, NSString *> *> *prekeys;
+@property (nonatomic) NSString *lastResortPrekey;
+
 @property (nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, weak) id <ZMClientRegistrationStatusDelegate> registrationStatusDelegate;
 @property (nonatomic) BOOL needsToCheckCredentials;
 @property (nonatomic) BOOL needsToVerifySelfClient;
+@property (nonatomic, readonly) BOOL needsToRegisterMLSCLient;
+@property (nonatomic, readonly) BOOL isWaitingForLogin;
 @property (nonatomic) BOOL isWaitingForUserClients;
 @property (nonatomic) BOOL isWaitingForClientsToBeDeleted;
+@property (nonatomic) BOOL isGeneratingPrekeys;
 
 @end

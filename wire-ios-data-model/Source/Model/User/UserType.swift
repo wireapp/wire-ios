@@ -22,7 +22,7 @@ import Foundation
 public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// The identifier which uniquely idenitifies the user in its domain
-    var remoteIdentifier: UUID? { get }
+    var remoteIdentifier: UUID! { get }
 
     /// The domain which the user originates from
     var domain: String? { get }
@@ -50,6 +50,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// The availability of the user
     var availability: AvailabilityKind { get set }
+
+    /// Team membership for this user.
+    var membership: Member? { get }
 
     /// The name of the team the user belongs to.
     var teamName: String? { get }

@@ -29,7 +29,7 @@ extension ZMUserSession {
 
     @objc(setEmailCredentials:)
     func setEmailCredentials(_ emailCredentials: ZMEmailCredentials?) {
-        applicationStatusDirectory?.clientRegistrationStatus.emailCredentials = emailCredentials
+        applicationStatusDirectory.clientRegistrationStatus.emailCredentials = emailCredentials
     }
 
     /// `True` if the session is ready to be used.
@@ -84,7 +84,7 @@ extension ZMUserSession {
         syncMOC.performGroupedBlockAndWait {}
     }
 
-    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (VoidResult) -> Void) {
+    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
@@ -100,14 +100,14 @@ extension ZMUserSession {
             payload = [:]
         }
 
-        let request = ZMTransportRequest(path: "/clients/\(selfClientIdentifier)", method: .methodDELETE, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: "/clients/\(selfClientIdentifier)", method: .delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
 
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] (response) in
             guard let strongSelf = self else { return }
 
             if response.httpStatus == 200 {
                 self?.delegate?.userDidLogout(accountId: accountID)
-                completion(.success)
+                completion(.success(()))
             } else {
                 completion(.failure(strongSelf.errorFromFailedDeleteResponse(response)))
             }

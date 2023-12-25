@@ -34,8 +34,8 @@ extension ZMUser {
 
 extension SettingsCellDescriptorFactory {
 
-    func accountGroup(isTeamMember: Bool) -> SettingsCellDescriptorType {
-        var sections: [SettingsSectionDescriptorType] = [infoSection()]
+    func accountGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsCellDescriptorType {
+        var sections: [SettingsSectionDescriptorType] = [infoSection(userSession: userSession)]
 
         if userRightInterfaceType.selfUserIsPermitted(to: .editAccentColor) &&
            userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
@@ -70,7 +70,7 @@ extension SettingsCellDescriptorFactory {
 
     // MARK: - Sections
 
-    func infoSection() -> SettingsSectionDescriptorType {
+    func infoSection(userSession: UserSession) -> SettingsSectionDescriptorType {
         let federationEnabled = BackendInfo.isFederationEnabled
         var cellDescriptors: [SettingsCellDescriptorType] = []
         cellDescriptors = [nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),
@@ -79,19 +79,19 @@ extension SettingsCellDescriptorFactory {
                             federationEnabled: federationEnabled
                            )]
 
-        let user = SelfUser.current
+        if let user = SelfUser.provider?.providedSelfUser {
+            if !user.usesCompanyLogin {
+                if !user.hasTeam || user.phoneNumber?.isEmpty == false,
+                   let phoneElement = phoneElement() {
+                    cellDescriptors.append(phoneElement)
+                }
 
-        if !user.usesCompanyLogin {
-            if !user.hasTeam || user.phoneNumber?.isEmpty == false,
-               let phoneElement = phoneElement() {
-                cellDescriptors.append(phoneElement)
+                cellDescriptors.append(emailElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail), userSession: userSession))
             }
 
-            cellDescriptors.append(emailElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail)))
-        }
-
-        if user.hasTeam {
-            cellDescriptors.append(teamElement())
+            if user.hasTeam {
+                cellDescriptors.append(teamElement())
+            }
         }
 
         if federationEnabled {
@@ -105,7 +105,7 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: cellDescriptors,
-            header: "self.settings.account_details_group.info.title".localized,
+            header: L10n.Localizable.Self.Settings.AccountDetailsGroup.Info.title,
             footer: nil
         )
     }
@@ -113,7 +113,7 @@ extension SettingsCellDescriptorFactory {
     func appearanceSection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [pictureElement(), colorElement()],
-            header: "self.settings.account_appearance_group.title".localized
+            header: L10n.Localizable.Self.Settings.AccountAppearanceGroup.title
         )
     }
 
@@ -130,22 +130,22 @@ extension SettingsCellDescriptorFactory {
     func privacySection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [readReceiptsEnabledElement()],
-            header: "self.settings.privacy_section_group.title".localized,
-            footer: "self.settings.privacy_section_group.subtitle".localized
+            header: L10n.Localizable.Self.Settings.PrivacySectionGroup.title,
+            footer: L10n.Localizable.Self.Settings.PrivacySectionGroup.subtitle
         )
     }
 
     func personalInformationSection(isTeamMember: Bool) -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [dateUsagePermissionsElement(isTeamMember: isTeamMember)],
-            header: "self.settings.account_personal_information_group.title".localized
+            header: L10n.Localizable.Self.Settings.AccountPersonalInformationGroup.title
         )
     }
 
     func conversationsSection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [backUpElement()],
-            header: "self.settings.conversations.title".localized
+            header: L10n.Localizable.Self.Settings.Conversations.title
         )
     }
 
@@ -157,7 +157,7 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: cellDescriptors,
-            header: "self.settings.account_details.actions.title".localized,
+            header: L10n.Localizable.Self.Settings.AccountDetails.Actions.title,
             footer: .none
         )
     }
@@ -178,20 +178,24 @@ extension SettingsCellDescriptorFactory {
         return textValueCellDescriptor(propertyName: .profileName, enabled: enabled)
     }
 
-    func emailElement(enabled: Bool = true) -> SettingsCellDescriptorType {
+    func emailElement(enabled: Bool = true, userSession: UserSession) -> SettingsCellDescriptorType {
         if enabled {
             return SettingsExternalScreenCellDescriptor(
-                title: "self.settings.account_section.email.title".localized,
+                title: L10n.Localizable.Self.Settings.AccountSection.Email.title,
                 isDestructive: false,
                 presentationStyle: .navigation,
                 presentationAction: { () -> (UIViewController?) in
-                    return ChangeEmailViewController(user: ZMUser.selfUser())
+                    guard let selfUser = ZMUser.selfUser() else {
+                        assertionFailure("ZMUser.selfUser() is nil")
+                        return .none
+                    }
+                    return ChangeEmailViewController(user: selfUser, userSession: userSession)
                 },
                 previewGenerator: { _ in
-                    if let email = ZMUser.selfUser().emailAddress, !email.isEmpty {
+                    if let email = ZMUser.selfUser()?.emailAddress, !email.isEmpty {
                         return SettingsCellPreview.text(email)
                     } else {
-                        return SettingsCellPreview.text("self.add_email_password".localized)
+                        return SettingsCellPreview.text(L10n.Localizable.Self.addEmailPassword)
                     }
                 },
                 accessoryViewMode: .alwaysHide
@@ -202,7 +206,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     func phoneElement() -> SettingsCellDescriptorType? {
-        if let phoneNumber = ZMUser.selfUser().phoneNumber, !phoneNumber.isEmpty {
+        if let phoneNumber = ZMUser.selfUser()?.phoneNumber, !phoneNumber.isEmpty {
             return textValueCellDescriptor(propertyName: .phone, enabled: false)
         } else {
             return nil
@@ -261,7 +265,7 @@ extension SettingsCellDescriptorFactory {
     func pictureElement() -> SettingsCellDescriptorType {
         let profileImagePicker = ProfileImagePickerManager()
         let previewGenerator: PreviewGeneratorType = { _ in
-            guard let image = ZMUser.selfUser().imageSmallProfileData.flatMap(UIImage.init) else { return .none }
+            guard let image = ZMUser.selfUser()?.imageSmallProfileData.flatMap(UIImage.init) else { return .none }
             return .image(image)
         }
 
@@ -279,7 +283,13 @@ extension SettingsCellDescriptorFactory {
     func colorElement() -> SettingsCellDescriptorType {
         return SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
-            previewGenerator: { _ in .color(ZMUser.selfUser().accentColor) },
+            previewGenerator: { _ in
+                guard let selfUser = ZMUser.selfUser() else {
+                    assertionFailure("ZMUser.selfUser() is nil")
+                    return .none
+                }
+                return .color(selfUser.accentColor)
+            },
             presentationStyle: .navigation,
             presentationAction: AccentColorPickerController.init)
     }
@@ -298,19 +308,23 @@ extension SettingsCellDescriptorFactory {
 
     func backUpElement() -> SettingsCellDescriptorType {
         return SettingsExternalScreenCellDescriptor(
-            title: "self.settings.history_backup.title".localized,
+            title: L10n.Localizable.Self.Settings.HistoryBackup.title,
             isDestructive: false,
             presentationStyle: .navigation,
             presentationAction: {
-                if ZMUser.selfUser().hasValidEmail || ZMUser.selfUser()!.usesCompanyLogin {
+                guard let selfUser = ZMUser.selfUser() else {
+                    assertionFailure("ZMUser.selfUser() is nil")
+                    return .none
+                }
+                if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     return BackupViewController.init(backupSource: SessionManager.shared!)
                 } else {
                     let alert = UIAlertController(
-                        title: "self.settings.history_backup.set_email.title".localized,
-                        message: "self.settings.history_backup.set_email.message".localized,
+                        title: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.title,
+                        message: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.message,
                         preferredStyle: .alert
                     )
-                    let actionCancel = UIAlertAction(title: "general.ok".localized, style: .cancel, handler: nil)
+                    let actionCancel = UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: nil)
                     alert.addAction(actionCancel)
 
                     guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return nil }
@@ -318,8 +332,7 @@ extension SettingsCellDescriptorFactory {
                     controller.present(alert, animated: true)
                     return nil
                 }
-        }
-        )
+        })
     }
 
     func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {
@@ -327,7 +340,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     func resetPasswordElement() -> SettingsCellDescriptorType {
-        let resetPasswordTitle = "self.settings.password_reset_menu.title".localized
+        let resetPasswordTitle = L10n.Localizable.Self.Settings.PasswordResetMenu.title
         return SettingsExternalScreenCellDescriptor(title: resetPasswordTitle, isDestructive: false, presentationStyle: .modal, presentationAction: {
             return BrowserViewController(url: URL.wr_passwordReset.appendingLocaleParameter)
         }, previewGenerator: .none)
@@ -336,13 +349,13 @@ extension SettingsCellDescriptorFactory {
     func deleteAccountButtonElement() -> SettingsCellDescriptorType {
         let presentationAction: () -> UIViewController = {
             let alert = UIAlertController(
-                title: "self.settings.account_details.delete_account.alert.title".localized,
-                message: "self.settings.account_details.delete_account.alert.message".localized,
+                title: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.title,
+                message: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.message,
                 preferredStyle: .alert
             )
-            let actionCancel = UIAlertAction(title: "general.cancel".localized, style: .cancel, handler: nil)
+            let actionCancel = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel, handler: nil)
             alert.addAction(actionCancel)
-            let actionDelete = UIAlertAction(title: "general.ok".localized, style: .destructive) { _ in
+            let actionDelete = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive) { _ in
                 ZMUserSession.shared()?.enqueue {
                     ZMUserSession.shared()?.initiateUserDeletion()
                 }
@@ -352,7 +365,7 @@ extension SettingsCellDescriptorFactory {
         }
 
         return SettingsExternalScreenCellDescriptor(
-            title: "self.settings.account_details.delete_account.title".localized,
+            title: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.title,
             isDestructive: true,
             presentationStyle: .modal,
             presentationAction: presentationAction

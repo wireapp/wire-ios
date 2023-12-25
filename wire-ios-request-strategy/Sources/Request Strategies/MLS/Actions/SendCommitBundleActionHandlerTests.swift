@@ -26,6 +26,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
     override func setUp() {
         super.setUp()
         action = SendCommitBundleAction(commitBundle: commitBundle)
+        handler = SendCommitBundleActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation
@@ -33,7 +34,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/mls/commit-bundles",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             expectedData: commitBundle,
             expectedContentType: "message/mls",
             apiVersion: .v5

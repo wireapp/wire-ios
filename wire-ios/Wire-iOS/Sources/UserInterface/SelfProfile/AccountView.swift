@@ -145,7 +145,7 @@ class BaseAccountView: UIView {
         var result = "conversation_list.header.self_team.accessibility_value.\(selected ? "active" : "inactive")".localized
 
         if hasUnreadMessages {
-            result += " \("conversation_list.header.self_team.accessibility_value.has_new_messages".localized)"
+            result += "\(L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue.hasNewMessages)"
         }
 
         return result
@@ -164,7 +164,7 @@ class BaseAccountView: UIView {
         }
 
         if let userSession = SessionManager.shared?.activeUserSession {
-            selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.selfUser, in: userSession)
+            selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
         }
 
         selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
@@ -310,7 +310,7 @@ final class PersonalAccountView: AccountView {
 
     override func update() {
         super.update()
-        self.accessibilityValue = String(format: "conversation_list.header.self_team.accessibility_value".localized, self.account.userName) + " " + accessibilityState
+        self.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(self.account.userName) + " " + accessibilityState
         if let imageData = self.account.imageData {
             userImageView.avatar = UIImage(data: imageData).map(AvatarImageView.Avatar.image)
         } else {

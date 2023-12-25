@@ -20,17 +20,6 @@ import Foundation
 import WireRequestStrategy
 import WireDataModel
 
-// sourcery: AutoMockable
-public protocol GenericMessageSyncInterface {
-
-    var contextChangeTrackers: [ZMContextChangeTracker] { get }
-    func sync(_ message: GenericMessageEntity, completion: @escaping EntitySyncHandler)
-    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest?
-    func expireMessages(withDependency dependency: NSObject)
-}
-
-extension MessageSync<GenericMessageEntity>: GenericMessageSyncInterface {}
-
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
 
@@ -40,7 +29,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private let zmLog = ZMSLog(tag: "calling")
 
-    private let messageSync: GenericMessageSyncInterface
+    private let messageSender: MessageSenderInterface
     private let flowManager: FlowManagerType
     private let decoder = JSONDecoder()
 
@@ -68,9 +57,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         flowManager: FlowManagerType,
         callEventStatus: CallEventStatus,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
-        messageSync: GenericMessageSyncInterface? = nil
+        messageSender: MessageSenderInterface
     ) {
-        self.messageSync = messageSync ?? MessageSync(context: managedObjectContext, appStatus: applicationStatus)
+        self.messageSender = messageSender
         self.flowManager = flowManager
         self.callEventStatus = callEventStatus
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
@@ -101,14 +90,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         let request = callConfigRequestSync.nextRequest(for: apiVersion) ??
-        clientDiscoverySync.nextRequest(for: apiVersion) ??
-        messageSync.nextRequest(for: apiVersion)
+        clientDiscoverySync.nextRequest(for: apiVersion)
 
         return request
-    }
-
-    public func dropPendingCallMessages(for conversation: ZMConversation) {
-        messageSync.expireMessages(withDependency: conversation)
     }
 
     // MARK: - Single Request Transcoder
@@ -119,7 +103,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             zmLog.debug("Scheduling request to '/calls/config/v2'")
 
             return ZMTransportRequest(path: "/calls/config/v2",
-                                      method: .methodGET,
+                                      method: .get,
                                       binaryData: nil,
                                       type: "application/json",
                                       contentDisposition: nil,
@@ -197,7 +181,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     // MARK: - Context Change Tracker
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self] + messageSync.contextChangeTrackers
+        return [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
@@ -369,31 +353,28 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 }
 
                 message = GenericMessageEntity(
-                    conversation: selfConversation,
                     message: genericMessage,
+                    context: self.managedObjectContext,
+                    conversation: selfConversation,
                     targetRecipients: recipients,
                     completionHandler: nil
                 )
             } else {
                 message = GenericMessageEntity(
-                    conversation: conversation,
                     message: genericMessage,
+                    context: self.managedObjectContext,
+                    conversation: conversation,
                     targetRecipients: recipients,
                     completionHandler: nil
                 )
             }
 
-            switch (conversation.messageProtocol, recipients) {
-            case (.proteus, _), (.mls, .conversationParticipants):
-                message.send(with: self.messageSync, completion: completionHandler)
-
-            case (.mls, _):
-                // TODO: review the `isConferenceKey` case once subconversations are available
-                // to target all conference members
-                if message.isConferenceKey || overMLSSelfConversation {
-                    message.send(with: self.messageSync, completion: completionHandler)
-                } else {
-                    Logging.mls.info("ignoring targeted outgoing calling message b/c it's not CONFKEY nor sent over self conversation")
+            WaitingGroupTask(context: self.managedObjectContext) {
+                do {
+                    try await self.messageSender.sendMessage(message: message)
+                    completionHandler(200)
+                } catch {
+                    completionHandler(400)
                 }
             }
         }
@@ -643,15 +624,6 @@ extension CallingRequestStrategy {
 
 private extension GenericMessageEntity {
 
-    var isConferenceKey: Bool {
-        guard
-            message.hasCalling else {
-            return false
-        }
-
-        return message.calling.isConferenceKey
-    }
-
     var isRejected: Bool {
         guard
             message.hasCalling else {
@@ -660,28 +632,9 @@ private extension GenericMessageEntity {
 
         return message.calling.isRejected
     }
-
-    func send(with messageSync: GenericMessageSyncInterface, completion: @escaping (Int) -> Void) {
-        messageSync.sync(self) { result, response in
-            if case .success = result {
-                completion(response.httpStatus)
-            }
-        }
-    }
 }
 
 private extension Calling {
-
-    var isConferenceKey: Bool {
-        guard
-            let payload = content.data(using: .utf8, allowLossyConversion: false),
-            let callContent = CallEventContent(from: payload)
-        else {
-            return false
-        }
-
-        return callContent.isConferenceKey
-    }
 
     var isRejected: Bool {
         guard

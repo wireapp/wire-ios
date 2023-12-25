@@ -63,7 +63,7 @@ enum DebugActions {
     /// Shows the user ID of the self user
     static func showUserId(_ type: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared(),
-            let selfUser = (userSession.selfUser as? ZMUser)
+            let selfUser = (userSession.providedSelfUser as? ZMUser)
         else { return }
 
         alert(
@@ -251,7 +251,7 @@ enum DebugActions {
     }
 
     static func appendMessagesToDatabase(count: Int) {
-        let userSession = ZMUserSession.shared()!
+        guard let userSession = ZMUserSession.shared() else { return }
         let conversation = ZMConversationList.conversations(inUserSession: userSession).firstObject! as! ZMConversation
         let conversationId = conversation.objectID
 
@@ -313,7 +313,7 @@ enum DebugActions {
             preferredStyle: .alert
         )
 
-        let okAction = UIAlertAction(title: "general.ok".localized, style: .default) { [controller] _ in
+        let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { [controller] _ in
             callback(controller.textFields?.first?.text ?? "")
         }
 

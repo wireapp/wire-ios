@@ -18,36 +18,26 @@
 
 import XCTest
 @testable import WireSyncEngine
+@testable import WireDataModelSupport
 
 class EventProcessorTests: MessagingTest {
 
     struct MockError: Error { }
 
     var sut: EventProcessor!
-    var syncStatus: SyncStatus!
-    var syncStateDelegate: ZMSyncStateDelegate!
     var eventProcessingTracker: EventProcessingTracker!
     var mockEventsConsumers: [MockEventConsumer]!
+    var mockEventAsyncConsumers: [MockEventAsyncConsumer]!
     var earService: MockEARServiceInterface!
 
     override func setUp() {
         super.setUp()
-
         createSelfClient()
 
-        // simulate a completed slow sync
-        lastEventIDRepository.storeLastEventID(UUID())
-
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
+        mockEventAsyncConsumers = [MockEventAsyncConsumer(), MockEventAsyncConsumer()]
+
         eventProcessingTracker = EventProcessingTracker()
-
-        syncStateDelegate = MockSyncStateDelegate()
-
-        syncStatus = SyncStatus(
-            managedObjectContext: coreDataStack.syncContext,
-            syncStateDelegate: syncStateDelegate,
-            lastEventIDRepository: lastEventIDRepository
-        )
 
         earService = MockEARServiceInterface()
         earService.fetchPublicKeys_MockError = MockError()
@@ -55,18 +45,17 @@ class EventProcessorTests: MessagingTest {
 
         sut = EventProcessor(
             storeProvider: coreDataStack,
-            syncStatus: syncStatus,
             eventProcessingTracker: eventProcessingTracker,
-            earService: earService
+            earService: earService,
+            eventConsumers: mockEventsConsumers,
+            eventAsyncConsumers: mockEventAsyncConsumers
         )
-
-        sut.eventConsumers = mockEventsConsumers
     }
 
     override func tearDown() {
+        mockEventsConsumers = nil
+        mockEventAsyncConsumers = nil
         eventProcessingTracker = nil
-        syncStateDelegate = nil
-        syncStatus = nil
         earService = nil
         sut = nil
 
@@ -75,19 +64,13 @@ class EventProcessorTests: MessagingTest {
 
     // MARK: - Helpers
 
-    func completeQuickSync() {
-        syncStatus.currentSyncPhase = .done
-        syncStatus.pushChannelDidOpen()
-        syncStatus.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
-    }
-
     func createSampleEvents(conversationID: UUID  = UUID(), messageNonce: UUID = UUID()) -> [ZMUpdateEvent] {
         let payload1: [String: Any] = ["type": "conversation.member-join",
                                        "conversation": conversationID]
         let payload2: [String: Any] = ["type": "conversation.message-add",
-                                        "data": ["content": "www.wire.com",
-                                                 "nonce": messageNonce],
-                                        "conversation": conversationID]
+                                       "data": ["content": "www.wire.com",
+                                                "nonce": messageNonce],
+                                       "conversation": conversationID]
 
         let event1 = ZMUpdateEvent(fromEventStreamPayload: payload1 as ZMTransportData, uuid: nil)!
         let event2 = ZMUpdateEvent(fromEventStreamPayload: payload2 as ZMTransportData, uuid: nil)!
@@ -97,13 +80,12 @@ class EventProcessorTests: MessagingTest {
 
     // MARK: - Tests
 
-    func testThatEventsAreForwardedToAllEventConsumers_WhenProcessed() {
+    func testThatEventsAreForwardedToAllEventConsumers_WhenProcessed() async throws {
         // given
         let events = createSampleEvents()
-        completeQuickSync()
 
         // when
-        sut.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
+        try await sut.processEvents(events)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -112,14 +94,50 @@ class EventProcessorTests: MessagingTest {
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
         })
+
+        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+            XCTAssertTrue(mockEventConsumer.processEventsCalled)
+            XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
+        })
     }
 
-    func testThatEventsAreBuffered_WhenSyncIsInProgress() {
+    func testThatEventsAreNotForwardedToAllEventConsumers_WhenBuffered() async {
         // given
         let events = createSampleEvents()
 
         // when
-        sut.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
+        await sut.bufferEvents(events)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        mockEventsConsumers.forEach({ mockEventConsumer in
+            XCTAssertFalse(mockEventConsumer.processEventsWhileInBackgroundCalled)
+            XCTAssertFalse(mockEventConsumer.processEventsCalled)
+        })
+
+        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+            XCTAssertFalse(mockEventConsumer.processEventsCalled)
+        })
+    }
+
+    func testThatEventsAreNotForwardedToAllEventConsumers_WhenDatabaseIsLocked() async throws {
+        // given
+        let earService = EARService(
+            accountID: userIdentifier,
+            databaseContexts: [uiMOC, syncMOC],
+            sharedUserDefaults: UserDefaults.random()!
+        )
+        earService.setInitialEARFlagValue(true)
+        try earService.enableEncryptionAtRest(
+            context: syncMOC,
+            skipMigration: true
+        )
+        earService.lockDatabase()
+
+        let events = createSampleEvents()
+
+        // when
+        await sut.bufferEvents(events)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -129,15 +147,14 @@ class EventProcessorTests: MessagingTest {
         })
     }
 
-    func testThatItProcessBufferedEvents_WhenSyncCompletes() {
+    func testThatEventsAreForwardedToAllEventConsumers_WhenBufferedEventsAreProcessed() async throws {
         // given
         let events = createSampleEvents()
-        sut.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
+        await sut.bufferEvents(events)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        completeQuickSync()
-        _ = sut.processEventsIfReady()
+        try await sut.processBufferedEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -146,31 +163,21 @@ class EventProcessorTests: MessagingTest {
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
         })
-    }
 
-    func testThatEventsAreProcessedWhileInBackground_WhenSyncIsInProgress_And_IgnoreBufferIsTrue() {
-        // given
-        let events = createSampleEvents()
-
-        // when
-        sut.storeAndProcessUpdateEvents(events, ignoreBuffer: true)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        mockEventsConsumers.forEach({ mockEventConsumer in
-            XCTAssertTrue(mockEventConsumer.processEventsWhileInBackgroundCalled)
-            XCTAssertFalse(mockEventConsumer.processEventsCalled)
+        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+            XCTAssertTrue(mockEventConsumer.processEventsCalled)
+            XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
         })
     }
 
-    func testThatItCreatesAFetchBatchRequestWithTheNoncesAndRemoteIdentifiers_RequestedByEventsConsumers() {
+    func testThatItCreatesAFetchBatchRequestWithTheNoncesAndRemoteIdentifiers_RequestedByEventsConsumers() async {
         // given
         let converationID = UUID()
         let messageNonce = UUID()
         let events = createSampleEvents(conversationID: converationID, messageNonce: messageNonce)
 
         // when
-        let batchFetchRequest = sut.prefetchRequest(updateEvents: events)
+        let batchFetchRequest = await sut.prefetchRequest(updateEvents: events)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -179,65 +186,6 @@ class EventProcessorTests: MessagingTest {
         XCTAssertEqual(batchFetchRequest.remoteIdentifiersToFetch, conversationIdSet)
         XCTAssertEqual(batchFetchRequest.noncesToFetch, messageNonceSet)
     }
-
-    // MARK: - Is ready to process events
-
-    func test_IsNotReadyToProcessEvents_IfSyncing() throws {
-        try assertIsReadyToProccessEvents(
-            expectation: false,
-            isSyncing: true
-        )
-    }
-
-    func test_IsNotReadyToProcessEvents_IfDatabaseLocked() throws {
-        try assertIsReadyToProccessEvents(
-            expectation: false,
-            isDatabaseLocked: true
-        )
-    }
-
-    private func assertIsReadyToProccessEvents(
-        expectation: Bool,
-        isSyncing: Bool = false,
-        isDatabaseLocked: Bool = false
-    ) throws {
-        // Given
-        if isSyncing {
-            syncStatus.currentSyncPhase = .fetchingMissedEvents
-            syncStatus.pushChannelEstablishedDate = nil
-            XCTAssertTrue(syncStatus.isSyncing)
-        } else {
-            syncStatus.currentSyncPhase = .done
-            syncStatus.pushChannelEstablishedDate = Date()
-            XCTAssertFalse(syncStatus.isSyncing)
-        }
-
-        if isDatabaseLocked {
-            let earService = EARService(
-                accountID: userIdentifier,
-                databaseContexts: [uiMOC, syncMOC],
-                sharedUserDefaults: UserDefaults.random()!
-            )
-            earService.setInitialEARFlagValue(true)
-
-            try earService.enableEncryptionAtRest(
-                context: syncMOC,
-                skipMigration: true
-            )
-
-            earService.lockDatabase()
-
-            XCTAssertTrue(syncMOC.encryptMessagesAtRest)
-            XCTAssertTrue(syncMOC.isLocked)
-        } else {
-            XCTAssertFalse(syncMOC.encryptMessagesAtRest)
-            XCTAssertFalse(syncMOC.isLocked)
-        }
-
-        // Then
-        XCTAssertEqual(sut.isReadyToProcessEvents, expectation)
-    }
-
 }
 
 class MockOperationStateProvider: OperationStateProvider {

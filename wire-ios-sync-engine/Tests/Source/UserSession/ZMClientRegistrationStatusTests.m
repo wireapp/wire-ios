@@ -65,8 +65,8 @@
     [[[self.mockCookieStorage stub] andReturn:[NSData data]] authenticationCookieData];
     
     self.sut = [[ZMClientRegistrationStatus alloc] initWithManagedObjectContext:self.syncMOC
-                                                                  cookieStorage:self.mockCookieStorage
-                                                     registrationStatusDelegate:self.mockClientRegistrationDelegate];
+                                                                  cookieStorage:self.mockCookieStorage];
+    self.sut.registrationStatusDelegate = self.mockClientRegistrationDelegate;
 }
 
 - (void)tearDown
@@ -170,7 +170,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseUnregistered);
+    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
     [self.mockClientRegistrationDelegate verify];
 }
 
@@ -263,7 +263,7 @@
     [self.mockClientRegistrationDelegate verify];
 }
 
-- (void)testThatItTransitionsFrom_WaitingForEmail_To_Unregistered_WhenSelfUserChangesWithEmailAddress
+- (void)testThatItTransitionsFrom_WaitingForEmail_To_WaitingForPrekeys_WhenSelfUserChangesWithEmailAddress
 {
     // given
     
@@ -279,7 +279,7 @@
     [self.sut didFetchSelfUser];
     
     // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseUnregistered);
+    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
 }
 
 
@@ -311,7 +311,7 @@
     [[[self.mockCookieStorage stub] andReturn:[NSData data]] authenticationCookieData];
     self.sut.emailCredentials = nil;
     
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseUnregistered);
+    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
 
     NSError *error = [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsPasswordToRegisterClient userInfo:nil];
 
@@ -326,7 +326,7 @@
     self.sut.emailCredentials = [ZMEmailCredentials credentialsWithEmail:@"john.doe@domain.com" password:@"12345789"];
     
     // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseUnregistered);
+    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
 }
 
 - (void)testThatItDoesNotRequireEmailRegistrationForTeamUser
@@ -339,7 +339,7 @@
     selfUser.usesCompanyLogin = YES;
     
     // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseUnregistered);
+    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
 }
 
 @end

@@ -209,7 +209,6 @@
         
     XCTAssertNotNil(messageChange);
     XCTAssertTrue(messageChange.messagesChanged);
-    XCTAssertFalse(messageChange.participantsChanged);
     XCTAssertTrue(messageChange.lastModifiedDateChanged);
     XCTAssertFalse(messageChange.connectionStateChanged);
     

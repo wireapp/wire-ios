@@ -1,20 +1,20 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import UIKit
@@ -47,7 +47,7 @@ extension Sequence where Element: UserClientType {
 extension UserClientType {
 
     public func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString {
-        let identifierPrefixString = NSLocalizedString("registration.devices.id", comment: "") + " "
+        let identifierPrefixString = L10n.Localizable.Registration.Devices.id + " "
         let identifierString = NSMutableAttributedString(string: identifierPrefixString, attributes: attributes)
         let identifier = uppercase ? displayIdentifier.localizedUppercase : displayIdentifier
         let attributedRemoteIdentifier = identifier.fingerprintStringWithSpaces.fingerprintString(attributes: attributes, boldAttributes: boldAttributes)
@@ -77,16 +77,18 @@ extension UserClientType {
 
 extension DeviceType {
 
+    typealias DeviceTypeLocale = L10n.Localizable.Device.`Type`
+
     var localizedDescription: String {
         switch self {
         case .permanent:
-            return "device.type.permanent".localized
+            return DeviceTypeLocale.permanent
         case .temporary:
-            return "device.type.temporary".localized
+            return DeviceTypeLocale.temporary
         case .legalHold:
-            return "device.type.legalhold".localized
+            return DeviceTypeLocale.legalhold
         default:
-            return "device.type.unknown".localized
+            return DeviceTypeLocale.unknown
         }
     }
 
@@ -94,18 +96,20 @@ extension DeviceType {
 
 extension DeviceClass {
 
+    typealias DeviceClassLocale = L10n.Localizable.Device.Class
+
     var localizedDescription: String {
         switch self {
         case .phone:
-            return "device.class.phone".localized
+            return DeviceClassLocale.phone
         case .desktop:
-            return "device.class.desktop".localized
+            return DeviceClassLocale.desktop
         case .tablet:
-            return "device.class.tablet".localized
+            return DeviceClassLocale.tablet
         case .legalHold:
-            return "device.class.legalhold".localized
+            return DeviceClassLocale.legalhold
         default:
-            return "device.class.unknown".localized
+            return DeviceClassLocale.unknown
         }
     }
 

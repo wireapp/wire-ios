@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -218,7 +218,11 @@
 				DBF380681B15C0B800369FB7 /* ZiphyTests */,
 				DBF3805A1B15C0B800369FB7 /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		DBF3805A1B15C0B800369FB7 /* Products */ = {
 			isa = PBXGroup;
@@ -386,6 +390,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		E91CAE9F27623A64005B13F0 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

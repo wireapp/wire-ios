@@ -76,9 +76,9 @@ final class ProfileViewController: UIViewController {
                      conversation: ZMConversation? = nil,
                      context: ProfileViewControllerContext? = nil,
                      classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
-                     viewControllerDismisser: ViewControllerDismisser? = nil) {
+                     viewControllerDismisser: ViewControllerDismisser? = nil,
+                     userSession: UserSession) {
         let profileViewControllerContext: ProfileViewControllerContext
-
         if let context = context {
             profileViewControllerContext = context
         } else {
@@ -89,7 +89,8 @@ final class ProfileViewController: UIViewController {
                                                        conversation: conversation,
                                                        viewer: viewer,
                                                        context: profileViewControllerContext,
-                                                       classificationProvider: classificationProvider)
+                                                       classificationProvider: classificationProvider,
+                                                       userSession: userSession)
 
         self.init(viewModel: viewModel)
 
@@ -133,7 +134,10 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
     private func bringUpConversationCreationFlow() {
 
-        let controller = ConversationCreationController(preSelectedParticipants: viewModel.userSet, selfUser: ZMUser.selfUser())
+        let controller = ConversationCreationController(
+            preSelectedParticipants: viewModel.userSet,
+            userSession: viewModel.userSession
+        )
         controller.delegate = self
 
         let wrappedController = controller.wrapInNavigationController(setBackgroundColor: true)
@@ -206,8 +210,9 @@ final class ProfileViewController: UIViewController {
         let profileDetailsViewController = ProfileDetailsViewController(user: viewModel.user,
                                                                         viewer: viewModel.viewer,
                                                                         conversation: viewModel.conversation,
-                                                                        context: viewModel.context)
-        profileDetailsViewController.title = "profile.details.title".localized
+                                                                        context: viewModel.context,
+                                                                        userSession: viewModel.userSession)
+        profileDetailsViewController.title = L10n.Localizable.Profile.Details.title
 
         return profileDetailsViewController
     }
@@ -219,7 +224,10 @@ final class ProfileViewController: UIViewController {
         viewControllers.append(profileDetailsViewController)
 
         if viewModel.hasUserClientListTab {
-            let userClientListViewController = UserClientListViewController(user: viewModel.user)
+            let userClientListViewController = UserClientListViewController(
+                user: viewModel.user,
+                userSession: viewModel.userSession
+            )
             viewControllers.append(userClientListViewController)
         }
 
@@ -386,7 +394,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     @objc
     private func presentLegalHoldDetails() {
         let user = viewModel.user
-        LegalHoldDetailsViewController.present(in: self, user: user)
+        LegalHoldDetailsViewController.present(in: self, user: user, userSession: viewModel.userSession)
     }
 
     // MARK: Block
@@ -434,12 +442,12 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         let otherUser = viewModel.user
 
         let controller = UIAlertController(
-            title: "profile.remove_dialog_message".localized(args: otherUser.name ?? ""),
+            title: L10n.Localizable.Profile.removeDialogMessage(otherUser.name ?? ""),
             message: nil,
             preferredStyle: .actionSheet
         )
 
-        let removeAction = UIAlertAction(title: "profile.remove_dialog_button_remove_confirm".localized, style: .destructive) { _ in
+        let removeAction = UIAlertAction(title: L10n.Localizable.Profile.removeDialogButtonRemoveConfirm, style: .destructive) { _ in
             self.viewModel.conversation?.removeOrShowError(participant: otherUser) { result in
                 switch result {
                 case .success:

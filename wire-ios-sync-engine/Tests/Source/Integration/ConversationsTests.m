@@ -421,7 +421,7 @@
         ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
         NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
         XCTAssertEqualObjects(request.path, expectedPath);
-        XCTAssertEqual(request.method, ZMMethodPUT);
+        XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_archived_ref"], conversation.archivedChangedTimestamp.transportString);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_archived"], @(conversation.isArchived));
     }
@@ -464,7 +464,7 @@
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
     XCTAssertEqualObjects(request.path, expectedPath);
-    XCTAssertEqual(request.method, ZMMethodPUT);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
     XCTAssertEqualObjects(conversation.lastServerTimeStamp, conversation.archivedChangedTimestamp);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_archived_ref"], conversation.archivedChangedTimestamp.transportString);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_archived"], @(conversation.isArchived));
@@ -489,7 +489,7 @@
         ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
         NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
         XCTAssertEqualObjects(request.path, expectedPath);
-        XCTAssertEqual(request.method, ZMMethodPUT);
+        XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
         XCTAssertEqualObjects(conversation.lastServerTimeStamp, conversation.silencedChangedTimestamp);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_ref"], conversation.silencedChangedTimestamp.transportString);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_status"], @(conversation.isFullyMuted ? 3 : 0));
@@ -527,7 +527,7 @@
         ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
         NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
         XCTAssertEqualObjects(request.path, expectedPath);
-        XCTAssertEqual(request.method, ZMMethodPUT);
+        XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
         XCTAssertEqualObjects(conversation.lastServerTimeStamp, conversation.silencedChangedTimestamp);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_ref"], conversation.silencedChangedTimestamp.transportString);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_status"], @(conversation.isFullyMuted ? 3 : 0));
@@ -571,7 +571,7 @@
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
     XCTAssertEqualObjects(request.path, expectedPath);
-    XCTAssertEqual(request.method, ZMMethodPUT);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_ref"], conversation.lastServerTimeStamp.transportString);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_status"], @0);
 }
@@ -599,7 +599,7 @@
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
     XCTAssertEqualObjects(request.path, expectedPath);
-    XCTAssertEqual(request.method, ZMMethodPUT);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_ref"], conversation.lastServerTimeStamp.transportString);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_status"], @0);
 }

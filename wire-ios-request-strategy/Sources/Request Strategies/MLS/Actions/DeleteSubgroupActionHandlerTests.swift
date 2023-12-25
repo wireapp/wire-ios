@@ -33,6 +33,7 @@ final class DeleteSubgroupActionHandlerTests: ActionHandlerTestBase<DeleteSubgro
             domain: domain,
             subgroupType: subgroupType
         )
+        handler = DeleteSubgroupActionHandler(context: syncMOC)
     }
 
     override func tearDown() {
@@ -46,7 +47,7 @@ final class DeleteSubgroupActionHandlerTests: ActionHandlerTestBase<DeleteSubgro
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v4/conversations/\(domain)/\(conversationID.transportString())/subconversations/\(subgroupType)",
-            expectedMethod: .methodDELETE,
+            expectedMethod: .delete,
             apiVersion: .v4
         )
     }

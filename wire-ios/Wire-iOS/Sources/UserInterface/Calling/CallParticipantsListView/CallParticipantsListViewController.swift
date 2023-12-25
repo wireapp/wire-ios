@@ -49,8 +49,10 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
         super.init(nibName: nil, bundle: nil)
     }
 
-    convenience init(scrollableWithConfiguration configuration: CallInfoViewControllerInput,
-                     selfUser: UserType = ZMUser.selfUser()) {
+    convenience init(
+        scrollableWithConfiguration configuration: CallInfoViewControllerInput,
+        selfUser: UserType
+    ) {
         self.init(participants: configuration.accessoryType.participants,
                   showParticipants: true,
                   selfUser: selfUser)
@@ -78,7 +80,7 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
     }
 
     private func setupViews() {
-        title = "call.participants.list.title".localized(uppercased: true)
+        title = L10n.Localizable.Call.Participants.List.title.localizedUppercase
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionViewLayout.minimumInteritemSpacing = 12

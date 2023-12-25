@@ -18,10 +18,6 @@
 
 import XCTest
 
-struct SelfProvider: SelfUserProvider {
-    let selfUser: UserType & ZMEditableUser
-}
-
 /// This class provides a `NSManagedObjectContext` in order to test views with real data instead
 /// of mock objects.
 class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
@@ -47,7 +43,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         setupTestObjects()
 
         MockUser.setMockSelf(selfUser)
-        selfUserProvider = SelfProvider(selfUser: selfUser)
+        selfUserProvider = SelfProvider(providedSelfUser: selfUser)
     }
 
     override open func tearDown() {

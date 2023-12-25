@@ -113,12 +113,9 @@ extension ZMConversation {
     }
 
     /// Should be called if we need to verify the legal hold status after fetching the clients in a conversation.
-    public func updateSecurityLevelIfNeededAfterFetchingClients(changes: ZMConversationRemoteClientChangeSet) {
+    public func updateSecurityLevelIfNeededAfterFetchingClients() {
         needsToVerifyLegalHold = false
-
-        if changes.isEmpty {
-            applySecurityChanges(cause: .verifyLegalHold)
-        }
+        applySecurityChanges(cause: .verifyLegalHold)
     }
 
     /// Should be called when client is trusted.
@@ -259,10 +256,11 @@ extension ZMConversation {
 
     /// Creates a system message that inform that there are pontential lost messages, and that some users were added to the conversation
     @objc public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
+        guard let context = managedObjectContext else { return }
 
         let previousLastMessage = lastMessage
         let systemMessage = self.appendSystemMessage(type: .potentialGap,
-                                                     sender: ZMUser.selfUser(in: self.managedObjectContext!),
+                                                     sender: ZMUser.selfUser(in: context),
                                                      users: users,
                                                      clients: nil,
                                                      timestamp: timestamp)
@@ -275,7 +273,7 @@ extension ZMConversation {
             // users property of the new one to use old users and calculate the added / removed users
             // from the time the previous one was added
             systemMessage.users = previousLastMessage.users
-            self.managedObjectContext?.delete(previousLastMessage)
+            context.delete(previousLastMessage)
         }
     }
 
@@ -435,7 +433,7 @@ extension ZMConversation {
                 // Delivery receipt: just expire it
                 message.expire()
             } else {
-                WireLogger.messaging.warn("expiring message due to security degradation \(message.nonce?.transportString().readableHash)")
+                WireLogger.messaging.warn("expiring message due to security degradation \(message.nonce?.transportString().readableHash ?? "<nil>")")
                 // All other messages: expire and mark that it caused security degradation
                 message.expire()
                 message.causedSecurityLevelDegradation = true

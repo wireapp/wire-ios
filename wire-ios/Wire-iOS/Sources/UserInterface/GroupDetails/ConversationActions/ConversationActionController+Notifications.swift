@@ -24,7 +24,7 @@ enum NotificationResult: CaseIterable {
     case everything, mentionsAndReplies, nothing, cancel
 
     static var title: String {
-        return "meta.menu.configure_notification.dialog_message".localized
+        return L10n.Localizable.Meta.Menu.ConfigureNotification.dialogMessage
     }
 
     var mutedMessageTypes: MutedMessageTypes? {
@@ -86,7 +86,7 @@ extension ConversationActionController {
 
     func handleNotificationResult(_ result: NotificationResult, for conversation: ZMConversation) {
         if let mutedMessageTypes = result.mutedMessageTypes {
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 conversation.mutedMessageTypes = mutedMessageTypes
             }
         }

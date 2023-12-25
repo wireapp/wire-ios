@@ -28,13 +28,13 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         super.setUp()
         self.syncMOC.performGroupedBlockAndWait {
             self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer",
-                                                           userIdentifier: self.userIdentifier)
+                                                           userIdentifier: self.userIdentifier,
+                                                           useCache: true)
 
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
 
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(managedObjectContext: self.syncMOC,
-                                                                           cookieStorage: self.cookieStorage,
-                                                                           registrationStatusDelegate: nil)
+                                                                           cookieStorage: self.cookieStorage)
 
             self.sut = UserClientEventConsumer(managedObjectContext: self.syncMOC,
                                                clientRegistrationStatus: self.clientRegistrationStatus,
@@ -57,7 +57,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
     static func payloadForAddingClient(_ clientId: String,
                                        label: String = "device label",
                                        time: Date = Date(timeIntervalSince1970: 12345)
-        ) -> ZMTransportData {
+    ) -> ZMTransportData {
 
         return [
             "client": [
@@ -67,7 +67,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
                 "type": "permanent"
             ],
             "type": "user.client-add"
-            ] as ZMTransportData
+        ] as ZMTransportData
     }
 
     static func payloadForDeletingClient(_ clientId: String) -> ZMTransportData {
@@ -77,10 +77,10 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
                 "id": clientId
             ],
             "type": "user.client-remove"
-            ] as ZMTransportData
+        ] as ZMTransportData
     }
 
-    func testThatItAddsAnIgnoredSelfUserClientWhenReceivingAPush() {
+    func testThatItAddsAnIgnoredSelfUserClientWhenReceivingAPush() async {
 
         // given
         let clientId = "94766bd92f56923d"
@@ -113,9 +113,9 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
 
         // when
-        syncMOC.performGroupedBlockAndWait {
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
+        syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(selfUser.clients.count, 2)
             guard let newClient = selfUser.clients.filter({ $0 != selfClient}).first else {
@@ -129,7 +129,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
     }
 
-    func testThatItAddsASelfUserClientWhenDownloadingAClientEvent() {
+    func testThatItAddsASelfUserClientWhenDownloadingAClientEvent() async {
 
         // given
         let clientId = "94766bd92f56923d"
@@ -143,9 +143,9 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 
         // when
-        self.syncMOC.performGroupedBlock {
-            self.sut.processEvents([event], liveEvents: false, prefetchResult: .none)
-        }
+
+        await self.sut.processEvents([event], liveEvents: false, prefetchResult: .none)
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -160,11 +160,12 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
 
     }
 
-    func testThatItDoesNotAddASelfUserClientWhenReceivingAPushIfTheClientExistsAlready() {
+    func testThatItDoesNotAddASelfUserClientWhenReceivingAPushIfTheClientExistsAlready() async {
 
         // given
-        var selfUser: ZMUser! = nil
-        var existingClient: UserClient! = nil
+        var selfUser: ZMUser!
+        var existingClient: UserClient!
+        var event: ZMUpdateEvent?
         syncMOC.performGroupedBlockAndWait {
             selfUser = ZMUser.selfUser(in: self.syncMOC)
             existingClient = self.createSelfClient()
@@ -182,13 +183,15 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
             ]
 
             let events = ZMUpdateEvent.eventsArray(fromPushChannelData: payload as ZMTransportData)
-            guard let event = events!.first else {
-                XCTFail()
-                return
-            }
-
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+            event = events?.first
         }
+
+        guard let event else {
+            XCTFail("missing event")
+            return
+        }
+
+        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
         // then
         syncMOC.performGroupedBlockAndWait {
@@ -201,12 +204,15 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
     }
 
-    func testThatItDeletesASelfClientWhenReceivingAPush() {
+    func testThatItDeletesASelfClientWhenReceivingAPush() async {
+        var selfUser: ZMUser!
+        var existingClient1: UserClient!
+        var event: ZMUpdateEvent?
 
         syncMOC.performGroupedBlockAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let existingClient1 = self.createSelfClient()
+            selfUser = ZMUser.selfUser(in: self.syncMOC)
+            existingClient1 = self.createSelfClient()
             let existingClient2 = UserClient.insertNewObject(in: self.syncMOC)
             existingClient2.user = selfUser
             existingClient2.remoteIdentifier = "aabbcc112233"
@@ -222,14 +228,17 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
             ]
 
             let events = ZMUpdateEvent.eventsArray(fromPushChannelData: payload as ZMTransportData)
-            guard let event = events!.first else {
-                XCTFail()
-                return
-            }
+            event = events?.first
+        }
+        guard let event else {
+            XCTFail("missing event")
+            return
+        }
 
-            // when
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        // when
+        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
+        syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(selfUser.clients.count, 1)
             guard let newClient = selfUser.clients.first else {
@@ -240,20 +249,22 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
     }
 
-    func testThatItInvalidatesTheCurrentSelfClientAndWipeCryptoBoxWhenReceivingAPush() {
+    func testThatItInvalidatesTheCurrentSelfClientAndWipeCryptoBoxWhenReceivingAPush() async {
+        var event: ZMUpdateEvent?
+        var fingerprint: Data?
+        var selfUser: ZMUser!
+        var previousLastPrekey: String?
 
         syncMOC.performGroupedBlockAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser = ZMUser.selfUser(in: self.syncMOC)
             let existingClient = self.createSelfClient()
 
             // TODO: [John] use flag here
-
-            var fingerprint: Data?
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
                 fingerprint = sessionsDirectory.localFingerprint
             }
-            let previousLastPrekey = try? self.syncMOC.zm_cryptKeyStore.lastPreKey()
+            previousLastPrekey = try? self.syncMOC.zm_cryptKeyStore.lastPreKey()
 
             XCTAssertEqual(selfUser.clients.count, 1)
             let payload: [String: Any] = [
@@ -262,14 +273,17 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
                     type(of: self).payloadForDeletingClient(existingClient.remoteIdentifier!)
                 ],
                 "transient": false
-                ] as [String: Any]
+            ] as [String: Any]
 
             let events = ZMUpdateEvent.eventsArray(fromPushChannelData: payload as ZMTransportData)
-            guard let event = events!.first else { return XCTFail() }
+            event = events?.first
+        }
 
-            // when
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        guard let event else { return XCTFail("missing event") }
+        // when
+        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
+        syncMOC.performGroupedBlockAndWait {
             // then
             var newFingerprint: Data?
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in

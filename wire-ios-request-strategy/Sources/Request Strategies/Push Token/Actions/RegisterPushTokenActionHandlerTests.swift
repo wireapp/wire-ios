@@ -51,7 +51,7 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/push/tokens")
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
 
         let actualPayload = request.payload?.asDictionary() as? [String: String]
         let expectedPayload: [String: String] = [

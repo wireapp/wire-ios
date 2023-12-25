@@ -46,12 +46,13 @@ final class ConversationRootViewController: UIViewController {
 
     init(conversation: ZMConversation,
          message: ZMConversationMessage?,
-         clientViewController: ZClientViewController) {
+         clientViewController: ZClientViewController,
+         userSession: UserSession) {
 
-        let conversationController = ConversationViewController(session: ZMUserSession.shared()!,
-                                                                conversation: conversation,
+        let conversationController = ConversationViewController(conversation: conversation,
                                                                 visibleMessage: message as? ZMMessage,
-                                                                zClientViewController: clientViewController)
+                                                                zClientViewController: clientViewController,
+                                                                userSession: userSession)
 
         conversationViewController = conversationController
 
@@ -74,7 +75,7 @@ final class ConversationRootViewController: UIViewController {
         contentView.addSubview(conversationController.view)
         conversationController.didMove(toParent: self)
 
-        conversation.refreshDataIfNeeded()
+        conversation.refreshDataIfNeeded(userSession: userSession)
         configure()
     }
 
@@ -127,6 +128,22 @@ final class ConversationRootViewController: UIViewController {
 
         self.addToSelf(navBarContainer)
         self.view.addSubview(self.contentView)
+
+        // This container view will have the same background color as the inputBar
+        // and extend to the bottom of the screen.
+        let inputBarContainer = UIView()
+        inputBarContainer.backgroundColor = conversationViewController.inputBarController.inputBar.backgroundColor
+        inputBarContainer.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(inputBarContainer)
+        contentView.sendSubviewToBack(inputBarContainer)
+
+        NSLayoutConstraint.activate([
+            inputBarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            inputBarContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            inputBarContainer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            inputBarContainer.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
+        ])
+
         self.addToSelf(networkStatusViewController)
 
         [contentView,
@@ -197,11 +214,11 @@ extension ConversationRootViewController: NetworkStatusBarDelegate {
 
 extension ZMConversation {
 
-    /// Check if the conversation data is out of date, and in case update it. 
+    /// Check if the conversation data is out of date, and in case update it.
     /// This in an opportunistic update of the data, with an on-demand strategy.
     /// Whenever the conversation is opened by the user, we check if anything is missing.
-    fileprivate func refreshDataIfNeeded() {
-        ZMUserSession.shared()?.enqueue {
+    fileprivate func refreshDataIfNeeded(userSession: UserSession) {
+        userSession.enqueue {
             self.markToDownloadRolesIfNeeded()
         }
     }

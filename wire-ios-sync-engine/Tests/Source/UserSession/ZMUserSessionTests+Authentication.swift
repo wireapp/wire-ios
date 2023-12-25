@@ -65,7 +65,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         // then
         let request = try XCTUnwrap(transportSession.lastEnqueuedRequest)
         let payload = request.payload as? [String: Any]
-        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodDELETE)
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.delete)
         XCTAssertEqual(request.path, "/clients/\(selfClient.remoteIdentifier!)")
         XCTAssertEqual(payload?["password"] as? String, credentials.password)
     }
@@ -82,7 +82,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         // then
         let request = try XCTUnwrap(transportSession.lastEnqueuedRequest)
         let payload = request.payload as? [String: Any]
-        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodDELETE)
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.delete)
         XCTAssertEqual(request.path, "/clients/\(selfClient.remoteIdentifier!)")
         XCTAssertEqual(payload?.keys.count, 0)
     }

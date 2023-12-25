@@ -25,6 +25,7 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
     override func setUp() {
         super.setUp()
         action = FetchBackendMLSPublicKeysAction()
+        handler = FetchBackendMLSPublicKeysActionHandler(context: syncMOC)
     }
 
     override func tearDown() {
@@ -37,7 +38,7 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
         try test_itGeneratesARequest(
             for: action,
                expectedPath: "/v5/mls/public-keys",
-               expectedMethod: .methodGET,
+               expectedMethod: .get,
                apiVersion: .v5
         )
     }

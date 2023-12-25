@@ -30,7 +30,7 @@ public enum DigitalSignatureVerificationError: Error {
 
 class DigitalSignatureVerificationViewController: UIViewController {
 
-    typealias DigitalSignatureCompletion = ((_ result: VoidResult) -> Void)
+    typealias DigitalSignatureCompletion = ((_ result: Swift.Result<Void, Error>) -> Void)
 
     // MARK: - Private Property
     private var completion: DigitalSignatureCompletion?
@@ -67,12 +67,12 @@ class DigitalSignatureVerificationViewController: UIViewController {
     }
 
     private func updateButtonMode() {
-        let buttonItem = UIBarButtonItem(title: "general.done".localized,
+        let buttonItem = UIBarButtonItem(title: L10n.Localizable.General.done,
                                          style: .done,
                                          target: self,
                                          action: #selector(onClose))
         buttonItem.accessibilityIdentifier = "DoneButton"
-        buttonItem.accessibilityLabel = "general.done".localized
+        buttonItem.accessibilityLabel = L10n.Localizable.General.done
         buttonItem.tintColor = UIColor.black
         navigationItem.leftBarButtonItem = buttonItem
     }
@@ -103,7 +103,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
 
         switch response {
         case .success:
-            completion?(.success)
+            completion?(.success(()))
             decisionHandler(.cancel)
         case .failure(let error):
             completion?(.failure(error))
@@ -111,7 +111,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         }
     }
 
-    func parseVerificationURL(_ url: URL) -> VoidResult? {
+    func parseVerificationURL(_ url: URL) -> Swift.Result<Void, Error>? {
         let urlComponents = URLComponents(string: url.absoluteString)
         let postCode = urlComponents?.queryItems?
             .first(where: { $0.name == "postCode" })
@@ -120,7 +120,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         }
         switch postCodeValue {
         case "sas-success":
-            return .success
+            return .success(())
         case "sas-error-authentication-failed":
              return .failure(DigitalSignatureVerificationError.authenticationFailed)
         default:

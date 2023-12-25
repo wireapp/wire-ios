@@ -388,11 +388,11 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
         ZM_STRONG(self);
         
-        if([request.path isEqualToString:@"/clients"] && request.method == ZMMethodPOST) {
+        if([request.path isEqualToString:@"/clients"] && request.method == ZMTransportRequestMethodPost) {
             XCTAssertTrue(didFetchSelfUser);
             didCreateSelfClient = YES;
         }
-        if (!didFetchSelfUser && [request.path isEqualToString:@"/self"] && request.method == ZMMethodGET) {
+        if (!didFetchSelfUser && [request.path isEqualToString:@"/self"] && request.method == ZMTransportRequestMethodGet) {
             XCTAssertFalse(didCreateSelfClient);
             didFetchSelfUser = YES;
         }
@@ -440,7 +440,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     __block BOOL didRun = NO;
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
         // when trying to register without email credentials, the BE tells us we need credentials
-        if(!didRun && [request.path isEqualToString:@"/clients"] && request.method == ZMMethodPOST) {
+        if(!didRun && [request.path isEqualToString:@"/clients"] && request.method == ZMTransportRequestMethodPost) {
             didRun = YES;
         }
         // the user updates the email address (currently does not work in MockTransportsession for some reason)
@@ -482,7 +482,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
         ZM_STRONG(self);
         
         // when trying to register without email credentials, the BE tells us we need credentials
-        if(runCount <= 1 && [request.path isEqualToString:@"/clients"] && request.method == ZMMethodPOST) {
+        if(runCount <= 1 && [request.path isEqualToString:@"/clients"] && request.method == ZMTransportRequestMethodPost) {
             NSDictionary *payload;
             if (runCount == 0) {
                 payload = @{@"label" : @"missing-auth"};
@@ -559,6 +559,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
         // "delete" the self client
         [self.userSession.managedObjectContext setPersistentStoreMetadata:nil forKey:ZMPersistedClientIdKey];
         [self.userSession.managedObjectContext saveOrRollback];
+        WaitForAllGroupsToBeEmpty(0.5);
 
         [self destroySessionManager];
         [self deleteAuthenticationCookie];
@@ -614,13 +615,13 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
         NSString *clientsPath = @"/clients";
         // BE tells us to select one of the clients to delete
-        if(!didTryToRegister && [request.path isEqualToString:clientsPath] && request.method == ZMMethodPOST) {
+        if(!didTryToRegister && [request.path isEqualToString:clientsPath] && request.method == ZMTransportRequestMethodPost) {
             didTryToRegister = YES;
             NSDictionary *tooManyClients = @{@"label" : @"too-many-clients"};
             return [ZMTransportResponse responseWithPayload:tooManyClients HTTPStatus:400 transportSessionError:nil apiVersion:0];
         }
         // we successfully delete the selected client (currently not working with MocktransportSession)
-        if(!didDeleteClient && [request.path isEqualToString:[NSString stringWithFormat:@"%@/%@",clientsPath, idToDelete]] && request.method == ZMMethodDELETE) {
+        if(!didDeleteClient && [request.path isEqualToString:[NSString stringWithFormat:@"%@/%@",clientsPath, idToDelete]] && request.method == ZMTransportRequestMethodDelete) {
             didDeleteClient = YES;
             return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:0];
         }

@@ -18,6 +18,7 @@
 import UIKit
 import WireDataModel
 import WireRequestStrategy
+import WireSyncEngine
 import WireCommonComponents
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
@@ -37,6 +38,35 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         }
     }
 
+    let scrollToBottomButtonTrailingMargin: CGFloat = 10
+    let scrollToBottomButtonBottomMargin: CGFloat = 10
+    let scrollToBottomButtonWidth: CGFloat = 44
+    let scrollToBottomButtonHeight: CGFloat = 44
+
+    /// A button that, when tapped, scrolls the conversation view to the latest messages.
+    /// It appears when the user has scrolled up past a certain point in the conversation.
+    lazy var scrollToBottomButton: Button = {
+        let button = Button(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
+        let image = Asset.Images.downArrow.image.withTintColor(SemanticColors.Icon.foregroundDefaultWhite)
+
+        button.setImage(image, for: .normal)
+        button.setImage(image, for: .highlighted)
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        button.accessibilityLabel = L10n.Accessibility.Conversation.ScrollToBottomButton.description
+        button.accessibilityHint = L10n.Accessibility.Conversation.ScrollToBottomButton.hint
+
+        let action = UIAction { [weak self] _ in
+            self?.handleScrollToBottomTapped()
+        }
+
+        button.addAction(action, for: .touchUpInside)
+
+        button.imageView?.contentMode = .center
+
+        return button
+    }()
+
     let tableView: UpsideDownTableView = UpsideDownTableView(frame: .zero, style: .plain)
     let bottomContainer: UIView = UIView(frame: .zero)
     var searchQueries: [String]? {
@@ -51,12 +81,18 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     let mentionsSearchResultsViewController: UserSearchResultsViewController = UserSearchResultsViewController()
 
     lazy var dataSource: ConversationTableViewDataSource = {
-        return ConversationTableViewDataSource(conversation: conversation, tableView: tableView, actionResponder: self, cellDelegate: self)
+        return ConversationTableViewDataSource(
+            conversation: conversation,
+            tableView: tableView,
+            actionResponder: self,
+            cellDelegate: self,
+            userSession: userSession
+        )
     }()
 
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
-    let session: ZMUserSessionInterface
+    let userSession: UserSession
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
@@ -72,9 +108,9 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     init(conversation: ZMConversation,
          message: ZMConversationMessage? = nil,
          mediaPlaybackManager: MediaPlaybackManager?,
-         session: ZMUserSessionInterface) {
+         userSession: UserSession) {
         messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
-        self.session = session
+        self.userSession = userSession
         self.conversation = conversation
         messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
 
@@ -118,18 +154,32 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
         view.addSubview(tableView)
 
+        view.addSubview(scrollToBottomButton)
+
         bottomContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bottomContainer)
 
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomContainer.topAnchor.constraint(equalTo: tableView.bottomAnchor),
-            bottomContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                tableView.topAnchor.constraint(equalTo: view.topAnchor),
+                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                bottomContainer.topAnchor.constraint(equalTo: tableView.bottomAnchor),
+                bottomContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                bottomContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                bottomContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                scrollToBottomButton.trailingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                    constant: -scrollToBottomButtonTrailingMargin
+                ),
+                scrollToBottomButton.bottomAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                    constant: -scrollToBottomButtonBottomMargin
+                ),
+                scrollToBottomButton.widthAnchor.constraint(equalToConstant: scrollToBottomButtonWidth),
+                scrollToBottomButton.heightAnchor.constraint(equalToConstant: scrollToBottomButtonHeight)
+            ]
+        )
         let heightCollapsingConstraint = bottomContainer.heightAnchor.constraint(equalToConstant: 0)
         heightCollapsingConstraint.priority = .defaultHigh
         heightCollapsingConstraint.isActive = true
@@ -162,6 +212,10 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     private func applicationDidBecomeActive(_ notification: Notification) {
         dataSource.resetSectionControllers()
         tableView.reloadData()
+    }
+
+    private func handleScrollToBottomTapped() {
+        scrollToBottomIfNeeded()
     }
 
     @objc
