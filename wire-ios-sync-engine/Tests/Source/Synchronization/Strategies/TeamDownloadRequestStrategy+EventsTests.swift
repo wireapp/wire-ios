@@ -19,7 +19,7 @@
 import WireTesting
 @testable import WireSyncEngine
 
-class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
+final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -251,8 +251,6 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let result = await assertThatItUpdatesTeamsProperties(with: dataPayload, preExistingTeam: false)
         XCTAssertNil(result)
     }
-
-    // swiftlint:enable todo
 
     // TODO: consider re-adding these tests for conversation.member-leave with reason "user-deleted"
 

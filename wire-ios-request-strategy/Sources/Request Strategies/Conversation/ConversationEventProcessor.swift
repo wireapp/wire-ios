@@ -78,7 +78,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
             case .conversationMemberLeave:
                 if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self) {
-                    await context.perform { self.processor.processPayload(payload, originalEvent: event, in: self.context) }
+                    await processor.processPayload(payload, originalEvent: event, in: context)
                 }
 
             case .conversationMemberJoin:

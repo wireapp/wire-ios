@@ -1061,7 +1061,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     // MARK: - Handle User Removed
 
-    func testProcessingConverationMemberLeave_SelfUserTriggersAccountDeletedNotification() {
+    func testProcessingConverationMemberLeave_SelfUserTriggersAccountDeletedNotification() async {
         // Given
         let (_, _, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
             selfUserLeaves: true
@@ -1072,35 +1072,31 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
 
         // When
-        syncMOC.performAndWait {
-            sut.processPayload(
-                conversationEvent,
-                originalEvent: originalEvent,
-                in: syncMOC
-            )
-        }
+        await sut.processPayload(
+            conversationEvent,
+            originalEvent: originalEvent,
+            in: syncMOC
+        )
 
         // Then
-        wait(for: [expectation], timeout: 1)
+        await fulfillment(of: [expectation], timeout: 1)
     }
 
-    func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() {
+    func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() async {
         // Given
         let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
             selfUserLeaves: false
         )
 
         // When
-        syncMOC.performAndWait {
-            sut.processPayload(
-                conversationEvent,
-                originalEvent: originalEvent,
-                in: syncMOC
-            )
-        }
+        await sut.processPayload(
+            conversationEvent,
+            originalEvent: originalEvent,
+            in: syncMOC
+        )
 
         // Then
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             XCTAssertTrue(users[1].isAccountDeleted)
             XCTAssertFalse(conversation.localParticipants.contains(users[1]))
         }
