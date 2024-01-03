@@ -24,11 +24,6 @@ CARTHAGE_URL="https://github.com/Carthage/Carthage/releases/download/0.39.1/Cart
 CARTHAGE_DIR="$REPO_ROOT/Carthage"
 CARTHAGE="$CARTHAGE_DIR/carthage"
 
-if [ ! -z "${CI-}" ]; then
-    echo "Skipping SwiftLint in CI environment"
-    exit 0
-fi
-
 if [[ ! -f "$CARTHAGE" ]]; then
     (
         mkdir -pv "$CARTHAGE_DIR"
