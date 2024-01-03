@@ -886,7 +886,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
 
-        confirmImageViewController.previewTitle = conversation.displayNameWithFallback.localized
+        confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         present(confirmImageViewController, animated: false)
     }
