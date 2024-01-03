@@ -34,11 +34,15 @@ class ClientUpdateStatusTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
-        self.sut.determineInitialClientStatus()
 
-        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] (type, clientObjectIDs, error) in
-            self?.receivedNotifications.append(ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error))
+        syncMOC.performAndWait { [self] in
+            self.sut = ClientUpdateStatus(syncManagedObjectContext: syncMOC)
+            self.sut.determineInitialClientStatus()
+        }
+
+        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] type, clientObjectIDs, error in
+            let change = ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error)
+            self?.receivedNotifications.append(change)
         }
     }
 
@@ -63,15 +67,17 @@ class ClientUpdateStatusTests: MessagingTest {
 
     func insertNewClient(_ isSelfClient: Bool) -> UserClient! {
         var client: UserClient!
-        self.syncMOC.performGroupedBlockAndWait { () -> Void in
-            client = UserClient.insertNewObject(in: self.syncMOC)
-            client.remoteIdentifier = isSelfClient ? "selfIdentifier" : "identifier"
-            client.user = ZMUser.selfUser(in: self.syncMOC)
-            self.syncMOC.saveOrRollback()
+        let remoteIdentifier = syncMOC.performGroupedAndWait { syncMOC in
+            let remoteIdentifier = isSelfClient ? "selfIdentifier" : "identifier"
+            client = UserClient.insertNewObject(in: syncMOC)
+            client.remoteIdentifier = remoteIdentifier
+            client.user = ZMUser.selfUser(in: syncMOC)
+            syncMOC.saveOrRollback()
+            return remoteIdentifier
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         if isSelfClient {
-            self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: "PersistedClientId")
+            syncMOC.setPersistentStoreMetadata(remoteIdentifier, key: "PersistedClientId")
         }
         return client
     }

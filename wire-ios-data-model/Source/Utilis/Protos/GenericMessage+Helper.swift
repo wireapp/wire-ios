@@ -314,6 +314,13 @@ public extension Proteus_ClientEntry {
             $0.text = data
         }
     }
+
+    init(withClientId clientId: Proteus_ClientId, data: Data) {
+        self = Proteus_ClientEntry.with {
+            $0.client = clientId
+            $0.text = data
+        }
+    }
 }
 
 // MARK: - QualifiedUserEntry
