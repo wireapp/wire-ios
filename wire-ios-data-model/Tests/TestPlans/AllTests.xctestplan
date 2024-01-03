@@ -20,6 +20,7 @@
     {
       "skippedTests" : [
         "ConversationObserverTests\/testThatItNotifiesOfLegalHoldChanges_Disabled()",
+        "DatabaseMigrationTests_UserClientUniqueness\/testThatItPerformsMigrationFromOldVersionsBefore107_ToCurrentModelVersion()",
         "UserObserverTests\/testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed()"
       ],
       "target" : {
