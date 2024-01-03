@@ -59,8 +59,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
-
         for event in events {
+            await processConversationEvent(event)
+        }
+    }
+
+    private func processConversationEvent(_ event: ZMUpdateEvent) async {
+
             switch event.type {
             case .conversationCreate:
                 if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.Conversation>.self) {
@@ -168,7 +173,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             default:
                 break
             }
-        }
     }
 
     // MARK: - Member Join
