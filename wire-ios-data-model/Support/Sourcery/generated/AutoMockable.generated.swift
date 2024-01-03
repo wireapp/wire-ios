@@ -1512,9 +1512,9 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var createGroupFor_Invocations: [MLSGroupID] = []
     public var createGroupFor_MockError: Error?
-    public var createGroupFor_MockMethod: ((MLSGroupID) throws -> Void)?
+    public var createGroupFor_MockMethod: ((MLSGroupID) async throws -> Void)?
 
-    public func createGroup(for groupID: MLSGroupID) throws {
+    public func createGroup(for groupID: MLSGroupID) async throws {
         createGroupFor_Invocations.append(groupID)
 
         if let error = createGroupFor_MockError {
@@ -1525,7 +1525,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             fatalError("no mock for `createGroupFor`")
         }
 
-        try mock(groupID)
+        try await mock(groupID)
     }
 
     // MARK: - conversationExists
@@ -1627,16 +1627,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - performPendingJoins
 
     public var performPendingJoins_Invocations: [Void] = []
-    public var performPendingJoins_MockMethod: (() -> Void)?
+    public var performPendingJoins_MockError: Error?
+    public var performPendingJoins_MockMethod: (() async throws -> Void)?
 
-    public func performPendingJoins() {
+    public func performPendingJoins() async throws {
         performPendingJoins_Invocations.append(())
+
+        if let error = performPendingJoins_MockError {
+            throw error
+        }
 
         guard let mock = performPendingJoins_MockMethod else {
             fatalError("no mock for `performPendingJoins`")
         }
 
-        mock()
+        try await mock()
     }
 
     // MARK: - wipeGroup
