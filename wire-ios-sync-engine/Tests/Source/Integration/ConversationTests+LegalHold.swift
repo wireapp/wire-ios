@@ -91,6 +91,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
+
         try await conversationParticipantsService.addParticipants([legalHoldUser], to: groupConversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

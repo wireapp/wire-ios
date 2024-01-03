@@ -50,6 +50,12 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
         syncMOC.mlsService = mockMLSService
 
+        // Set default mocks
+        mockActionsProvider.syncUsersQualifiedIDsContext_MockMethod = { _, _ in }
+        mockMLSService.conversationExistsGroupID_MockValue = true
+        mockMLSService.joinGroupWith_MockMethod = { _ in }
+        mockFeatureRepository.fetchMLSMigration_MockValue = .init()
+
         BackendInfo.storage = .random()!
         DeveloperFlag.storage = .random()!
     }
@@ -67,45 +73,10 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         super.tearDown()
     }
 
-    // MARK: - Tests
+    // MARK: - Migration Start
 
-    func testMigrateOrJoinGroupConversations_CallsJoinGroupForNewConversations() async throws {
+    func test_ItStartsMigration_IfNotStartedAndReady() async throws {
         // GIVEN
-        let groupID = MLSGroupID.random()
-        await createUserAndGroupConversation(groupID: groupID)
-        mockMLSService.joinGroupWith_MockMethod = { _ in }
-        mockMLSService.conversationExistsGroupID_MockMethod = { _ in
-            return false
-        }
-
-        // WHEN
-        await sut.migrateOrJoinGroupConversations()
-
-        // THEN
-        XCTAssertTrue(mockMLSService.joinGroupWith_Invocations.contains(groupID), "joinGroup should be called for new conversations")
-    }
-
-    func testMigrateOrJoinGroupConversations_DoesNotCallJoinGroupForExistingConversations() async throws {
-        // GIVEN
-        let groupID = MLSGroupID.random()
-        await createUserAndGroupConversation(groupID: groupID)
-
-        mockMLSService.joinGroupWith_MockMethod = { _ in }
-        mockMLSService.conversationExistsGroupID_MockMethod = { _ in
-            return true
-        }
-
-        // WHEN
-        await sut.migrateOrJoinGroupConversations()
-
-        // THEN
-        XCTAssertFalse(mockMLSService.joinGroupWith_Invocations.contains(groupID), "joinGroup should not be called for existing conversations")
-    }
-
-    // MARK: - UpdateMigrationStatus
-
-    func test_UpdateMigrationStatus_StartsMigration_IfNotStartedAndReady() async throws {
-        // Given
         await createUserAndGroupConversation()
 
         setMigrationReadiness(to: true)
@@ -116,16 +87,16 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             startedMigration = true
         }
 
-        // When
+        // WHEN
         try await sut.updateMigrationStatus()
 
-        // Then
+        // THEN
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
         XCTAssertTrue(startedMigration)
     }
 
-    func test_UpdateMigrationStatus_DoesntStartMigration_IfAlreadyStarted() async throws {
-        // Given
+    func test_ItDoesntStartMigration_IfAlreadyStarted() async throws {
+        // GIVEN
         await createUserAndGroupConversation()
 
         setMigrationReadiness(to: true)
@@ -137,16 +108,16 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             startedMigration = true
         }
 
-        // When
+        // WHEN
         try await sut.updateMigrationStatus()
 
-        // Then
+        // THEN
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
         XCTAssertFalse(startedMigration)
     }
 
-    func test_UpdateMigrationStatus_DoesntStartMigration_IfNotReady() async throws {
-        // Given
+    func test_ItDoesntStartMigration_IfNotReady() async throws {
+        // GIVEN
         await createUserAndGroupConversation()
 
         setMigrationReadiness(to: false)
@@ -157,43 +128,172 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             startedMigration = true
         }
 
-        // When
+        // WHEN
         try await sut.updateMigrationStatus()
 
-        // Then
+        // THEN
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)
         XCTAssertFalse(startedMigration)
     }
 
-    // MARK: - ResolveMigrationStartStatus
+    // MARK: - Migration finalisation
 
-    func test_ResolveMigrationStartStatus() async {
-        await test_ResolveMigrationStartStatus_ResolvesTo(status: .canStart)
-        await test_ResolveMigrationStartStatus_ResolvesTo(status: .cannotStart(reason: .unsupportedAPIVersion))
-        await test_ResolveMigrationStartStatus_ResolvesTo(status: .cannotStart(reason: .clientDoesntSupportMLS))
-        await test_ResolveMigrationStartStatus_ResolvesTo(status: .cannotStart(reason: .backendDoesntSupportMLS))
-        await test_ResolveMigrationStartStatus_ResolvesTo(status: .cannotStart(reason: .mlsProtocolIsNotSupported))
-        await test_ResolveMigrationStartStatus_ResolvesTo(status: .cannotStart(reason: .mlsMigrationIsNotEnabled))
-        await test_ResolveMigrationStartStatus_ResolvesTo(status: .cannotStart(reason: .startTimeHasNotBeenReached))
+    func test_ItSyncsUsers_IfFinalisationTimeHasNotBeenReached() async throws {
+        // GIVEN
+        mockStorage.underlyingMigrationStatus = .started
+        await createUserAndGroupConversation()
+
+        // Mock that the finalisation time has not been reached
+        mockFeatureRepository.fetchMLSMigration_MockValue = Feature.MLSMigration(
+            status: .enabled,
+            config: .init(finaliseRegardlessAfter: .distantFuture)
+        )
+
+        // Insert users in the context
+        let qualifiedIDs = await syncMOC.perform { [syncMOC] in
+            let user1 = ZMUser.insertNewObject(in: syncMOC)
+            user1.remoteIdentifier = .create()
+            user1.domain = "domain.com"
+
+            let user2 = ZMUser.insertNewObject(in: syncMOC)
+            user2.remoteIdentifier = .create()
+            user2.domain = "domain.com"
+
+            return [user1.qualifiedID, user2.qualifiedID]
+        }
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockActionsProvider.syncUsersQualifiedIDsContext_Invocations.count, 1)
+
+        let invocation = try XCTUnwrap(
+            mockActionsProvider.syncUsersQualifiedIDsContext_Invocations.first
+        )
+
+        // Assert the users has been synced
+        XCTAssertEqual(Set(invocation.qualifiedIDs), Set(qualifiedIDs))
     }
 
-    private func test_ResolveMigrationStartStatus_ResolvesTo(status: MigrationStartStatus) async {
-        // Given
-        setMigrationReadiness(for: status)
+    func test_ItJoinsMLSGroup_IfGroupDoesntExist() async throws {
+        // GIVEN
+        let groupID = MLSGroupID.random()
+        await createUserAndGroupConversation(groupID: groupID)
 
-        // When / Then
-        let resolvedStatus = await sut.resolveMigrationStartStatus()
+        mockStorage.underlyingMigrationStatus = .started
+        mockMLSService.conversationExistsGroupID_MockValue = false
 
-        // Then
-        XCTAssertEqual(resolvedStatus, status)
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockMLSService.joinGroupWith_Invocations.count, 1)
+        XCTAssertEqual(mockMLSService.joinGroupWith_Invocations.first, groupID)
+    }
+
+    func test_ItDoesntJoinMLSGroup_IfGroupExists() async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+        mockStorage.underlyingMigrationStatus = .started
+        mockMLSService.conversationExistsGroupID_MockValue = true
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockMLSService.joinGroupWith_Invocations.count, 0)
+    }
+
+    func test_ItUpdatesConversationProtocolToMLS_IfAllParticipantsSupportMLS() async throws {
+        // GIVEN
+        mockStorage.underlyingMigrationStatus = .started
+
+        await setMocksForFinalisation(
+            supportedProtocolForAllParticipants: .mls,
+            finaliseRegardlessAfter: nil
+        )
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        // TODO: Assert we update the conversation protocol
+        // https://wearezeta.atlassian.net/browse/WPB-542
+    }
+
+    func test_ItUpdatesConversationProtocolToMLS_IfFinalisationTimeHasBeenReached() async throws {
+        // GIVEN
+        mockStorage.underlyingMigrationStatus = .started
+
+        await setMocksForFinalisation(
+            supportedProtocolForAllParticipants: .proteus,
+            finaliseRegardlessAfter: .distantPast
+        )
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        // TODO: Assert we update the conversation protocol
+        // https://wearezeta.atlassian.net/browse/WPB-542
+    }
+
+    func test_ItDoesntUpdateProtocolToMLS_IfParticipantsDontSupportMLS_AndFinalisationTimeHasNotBeenReached() async throws {
+        // GIVEN
+        mockStorage.underlyingMigrationStatus = .started
+
+        await setMocksForFinalisation(
+            supportedProtocolForAllParticipants: .proteus,
+            finaliseRegardlessAfter: .distantFuture
+        )
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        // TODO: Assert we don't update the conversation protocol
+        // https://wearezeta.atlassian.net/browse/WPB-542
     }
 
     // MARK: - Helpers
 
     private typealias MigrationStartStatus = ProteusToMLSMigrationCoordinator.MigrationStartStatus
 
-    private func createUserAndGroupConversation(groupID: MLSGroupID = .random()) async {
-        await syncMOC.perform {
+    private func setMocksForFinalisation(
+        supportedProtocolForAllParticipants protocol: MessageProtocol,
+        finaliseRegardlessAfter: Date?
+    ) async {
+        // Create self user and conversation
+        let (selfUser, conversation) = await createUserAndGroupConversation()
+
+        // Create an additional user, add users to the conversation, and set supported protocols on both users
+        await syncMOC.perform { [syncMOC] in
+            let user = ZMUser.insertNewObject(in: syncMOC)
+
+            // TODO: Set supported protocols on the users
+            // https://wearezeta.atlassian.net/browse/WPB-542
+            //
+            // user.supportedProtocols = [protocol]
+            // selfUser.supportedProtocols = [protocol]
+
+            conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        }
+
+        // Set finalisation time
+        mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+            status: .enabled,
+            config: .init(finaliseRegardlessAfter: finaliseRegardlessAfter)
+        )
+    }
+
+    @discardableResult
+    private func createUserAndGroupConversation(
+        groupID: MLSGroupID = .random()
+    ) async -> (ZMUser, ZMConversation) {
+
+        return await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.teamIdentifier = UUID()
 
@@ -202,6 +302,8 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             conversation.conversationType = .group
             conversation.messageProtocol = .mixed
             conversation.mlsGroupID = groupID
+
+            return (selfUser, conversation)
         }
     }
 
