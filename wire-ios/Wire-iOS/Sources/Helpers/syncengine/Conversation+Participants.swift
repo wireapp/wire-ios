@@ -71,7 +71,7 @@ extension ZMConversation {
         }
     }
 
-    func removeOrShowError(participant user: UserType, completion: ((VoidResult) -> Void)? = nil) {
+    func removeOrShowError(participant user: UserType, completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
 
         @Sendable func fail(with error: Error) {
             showAlertForRemoval(for: error)
@@ -109,7 +109,7 @@ extension ZMConversation {
                 }
 
                 await MainActor.run {
-                    completion?(.success)
+                    completion?(.success(()))
                 }
 
             } catch {

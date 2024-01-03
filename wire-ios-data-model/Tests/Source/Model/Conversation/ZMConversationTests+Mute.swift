@@ -32,18 +32,20 @@ extension ZMConversation {
 class ZMConversationTests_Mute: ZMConversationTestsBase {
 
     func testThatItDoesNotCountsSilencedConversationsUnreadContentAsUnread() {
-        syncMOC.performGroupedAndWait { _ in
-            // given
-            XCTAssertEqual(ZMConversation.unreadConversationCount(in: self.syncMOC), 0)
+        let context = syncMOC
 
-            let conversation = self.insertConversation(withUnread: true)
+        context.performGroupedAndWait { _ in
+            // given
+            XCTAssertEqual(ZMConversation.unreadConversationCount(in: context), 0)
+
+            let conversation = self.insertConversation(withUnread: true, context: context)
             conversation.mutedMessageTypes = .all
 
             // when
-            XCTAssertTrue(self.syncMOC.saveOrRollback())
+            XCTAssertTrue(context.saveOrRollback())
 
             // then
-            XCTAssertEqual(ZMConversation.unreadConversationCountExcludingSilenced(in: self.syncMOC, excluding: nil), 0)
+            XCTAssertEqual(ZMConversation.unreadConversationCountExcludingSilenced(in: context, excluding: nil), 0)
 
         }
     }

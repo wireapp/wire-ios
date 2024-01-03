@@ -54,15 +54,15 @@ class BackupRestoreStepDescription: AuthenticationStepDescription {
 
     init(context: NoHistoryContext) {
         backButton = BackButtonDescription()
-        mainView = SolidButtonDescription(title: "registration.no_history.got_it".localized, accessibilityIdentifier: "ignore_backup")
+        mainView = SolidButtonDescription(title: L10n.Localizable.Registration.NoHistory.gotIt, accessibilityIdentifier: "ignore_backup")
         secondaryView = nil
         switch context {
         case .newDevice:
-            headline = "registration.no_history.hero".localized
-            subtext = "registration.no_history.subtitle".localized
+            headline = L10n.Localizable.Registration.NoHistory.hero
+            subtext = L10n.Localizable.Registration.NoHistory.subtitle
         case .loggedOut:
-            headline = "registration.no_history.logged_out.hero".localized
-            subtext = "registration.no_history.logged_out.subtitle".localized
+            headline = L10n.Localizable.Registration.NoHistory.LoggedOut.hero
+            subtext = L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle
         }
 
         guard SecurityFlags.backup.isEnabled else {

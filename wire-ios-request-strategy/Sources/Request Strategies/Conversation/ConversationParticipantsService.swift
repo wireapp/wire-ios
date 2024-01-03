@@ -39,9 +39,10 @@ enum FederationError: Error, Equatable {
     case nonFederatingDomains(Set<String>)
 }
 
-enum ConversationParticipantsError: Error {
+enum ConversationParticipantsError: Error, Equatable {
     case invalidOperation
     case missingMLSParticipantsService
+    case failedToAddSomeUsers(users: Set<ZMUser>)
 }
 
 public class ConversationParticipantsService: ConversationParticipantsServiceInterface {
@@ -89,6 +90,11 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 users: users,
                 conversation: conversation
             )
+        } catch ConversationParticipantsError.failedToAddSomeUsers(users: let failedUsers) {
+            await appendFailedToAddUsersMessage(
+                in: conversation,
+                users: failedUsers
+            )
         }
     }
 
@@ -106,16 +112,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
         case .mls:
 
-            guard let mlsParticipantsService else {
-                throw ConversationParticipantsError.missingMLSParticipantsService
-            }
-
-            do {
-                try await mlsParticipantsService.addParticipants(users, to: conversation)
-            } catch MLSConversationParticipantsError.ignoredUsers(users: _) {
-                // TODO: Insert system message
-                // To be done in https://wearezeta.atlassian.net/browse/WPB-2228
-            }
+            try await addMLSParticipants(users, to: conversation)
 
         case .mixed:
 
@@ -126,7 +123,41 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             try await proteusParticipantsService.addParticipants(users, to: conversation)
 
             // For mixed protocol we only try once and don't handle errors
-            try? await mlsParticipantsService.addParticipants(users, to: conversation)
+            try? await addMLSParticipants(users, to: conversation)
+        }
+    }
+
+    private func addMLSParticipants(
+        _ users: [ZMUser],
+        to conversation: ZMConversation
+    ) async throws {
+
+        guard let mlsParticipantsService else {
+            throw ConversationParticipantsError.missingMLSParticipantsService
+        }
+
+        do {
+            try await mlsParticipantsService.addParticipants(users, to: conversation)
+        } catch MLSConversationParticipantsError.failedToClaimKeyPackages(users: let failedUsers) {
+
+            guard failedUsers.isNonEmpty else {
+                return
+            }
+
+            let users = Set(users)
+
+            if failedUsers != users {
+
+                // Operation was aborted because some users didn't have key packages
+                // We filter them out and retry once
+
+                try await internalAddParticipants(
+                    Array(users.subtracting(failedUsers)),
+                    to: conversation
+                )
+            }
+
+            throw ConversationParticipantsError.failedToAddSomeUsers(users: failedUsers)
         }
     }
 

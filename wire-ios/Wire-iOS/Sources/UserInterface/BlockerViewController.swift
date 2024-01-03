@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireSyncEngine
+import MessageUI
 
 enum BlockerViewControllerContext {
     case blacklist
@@ -29,11 +30,13 @@ enum BlockerViewControllerContext {
 
 final class BlockerViewController: LaunchImageViewController {
     private var context: BlockerViewControllerContext = .blacklist
+    private var error: Error?
     private var sessionManager: SessionManager?
 
     private var observerTokens = [Any]()
 
-    init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil) {
+    init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil, error: Error? = nil) {
+        self.error = error
         self.context = context
         self.sessionManager = sessionManager
         super.init(nibName: nil, bundle: nil)
@@ -90,22 +93,23 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     func showDatabaseFailureMessage() {
+        let message = L10n.Localizable.Databaseloadingfailure.Alert.message(error?.localizedDescription ?? "-")
 
         let databaseFailureAlert = UIAlertController(
             title: L10n.Localizable.Databaseloadingfailure.Alert.title,
-            message: L10n.Localizable.Databaseloadingfailure.Alert.message,
+            message: message,
             preferredStyle: .alert
         )
 
-        let settingsAction = UIAlertAction(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.settings,
+        let reportError = UIAlertAction(
+            title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
             style: .default,
-            handler: { _ in
-                UIApplication.shared.openSettings()
+            handler: { [weak self] _ in
+                self?.presentMailComposer(withLogs: true)
             }
         )
 
-        databaseFailureAlert.addAction(settingsAction)
+        databaseFailureAlert.addAction(reportError)
 
         let retryAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
@@ -158,6 +162,14 @@ final class BlockerViewController: LaunchImageViewController {
         deleteDatabaseConfirmationAlert.addAction(cancelAction)
         present(deleteDatabaseConfirmationAlert, animated: true)
     }
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        // shown after sending report logs, we should show other choices again
+        // in order not to be stuck on black screen
+        controller.presentingViewController?.dismiss(animated: true) {
+            self.showDatabaseFailureMessage()
+        }
+    }
 }
 
 // MARK: - Application state observing
@@ -170,3 +182,5 @@ extension BlockerViewController: ApplicationStateObserving {
         showAlert()
     }
 }
+
+extension BlockerViewController: SendTechnicalReportPresenter {}

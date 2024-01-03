@@ -41,200 +41,237 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
     // MARK: - Client Updates
 
-    func testThatClientsAreDeleted_WhenDeletedClientsArePresent() {
+    func testThatClientsAreDeleted_WhenDeletedClientsArePresent() async {
+        // given
+        var message: MockOTREntity!
+        var payload: Payload.MessageSendingStatus!
+
         self.syncMOC.performGroupedAndWait { _ in
-            // given
-            let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
+            message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let deleted: Payload.ClientListByQualifiedUserID =
-                [self.domain:
-                    [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
-                ]
-            let payload = Payload.MessageSendingStatus(time: Date(),
+            [self.domain:
+                [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
+            ]
+            payload = Payload.MessageSendingStatus(time: Date(),
                                                        missing: [:],
                                                        redundant: [:],
                                                        deleted: deleted,
                                                        failedToSend: [:],
                                                        failedToConfirm: [:])
+        }
 
-            // when
-            self.sut.updateClientsChanges(
-                from: payload,
-                for: message
-            )
+        // when
+        await sut.updateClientsChanges(
+            from: payload,
+            for: message
+        )
 
-            // then
+        // then
+        self.syncMOC.performGroupedAndWait { _ in
             XCTAssertTrue(self.otherClient.isDeleted)
         }
     }
 
-    func testThatClientsAreMarkedAsMissing_WhenMissingClientsArePresent() throws {
+    func testThatClientsAreMarkedAsMissing_WhenMissingClientsArePresent() async throws {
+        // given
+        var message: MockOTREntity!
+        var payload: Payload.MessageSendingStatus!
+        var clientID: String!
+
         syncMOC.performGroupedBlockAndWait {
-            // given
-            let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
-            let clientID = UUID().transportString()
+            message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
+            clientID = UUID().transportString()
             let missing: Payload.ClientListByQualifiedUserID =
-                [self.domain:
-                    [self.otherUser.remoteIdentifier.transportString(): [clientID]]
-                ]
-            let payload = Payload.MessageSendingStatus(time: Date(),
+            [self.domain:
+                [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+            ]
+            payload = Payload.MessageSendingStatus(time: Date(),
                                                        missing: missing,
                                                        redundant: [:],
                                                        deleted: [:],
                                                        failedToSend: [:],
                                                        failedToConfirm: [:])
+        }
 
-            // when
-            self.sut.updateClientsChanges(
-                from: payload,
-                for: message
-            )
+        // when
+        await sut.updateClientsChanges(
+            from: payload,
+            for: message
+        )
 
-            // then
+        // then
+        self.syncMOC.performGroupedAndWait { _ in
             XCTAssertEqual(self.selfClient.missingClients!.count, 1)
             XCTAssertEqual(self.selfClient.missingClients!.first!.remoteIdentifier, clientID)
         }
     }
 
-    func testThatClientsAreNotMarkedAsMissing_WhenMissingClientsAlreadyHaveASession() {
+    func testThatClientsAreNotMarkedAsMissing_WhenMissingClientsAlreadyHaveASession() async {
         // given
+        var message: MockOTREntity!
+        var payload: Payload.MessageSendingStatus!
+
         syncMOC.performGroupedBlockAndWait {
-            let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
+            message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
             let userClient = UserClient.fetchUserClient(withRemoteId: clientID,
                                                         forUser: self.otherUser,
                                                         createIfNeeded: true)!
             self.establishSessionFromSelf(to: userClient)
             let missing: Payload.ClientListByQualifiedUserID =
-                [self.domain:
-                    [self.otherUser.remoteIdentifier.transportString(): [clientID]]
-                ]
-            let payload = Payload.MessageSendingStatus(time: Date(),
+            [self.domain:
+                [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+            ]
+            payload = Payload.MessageSendingStatus(time: Date(),
                                                        missing: missing,
                                                        redundant: [:],
                                                        deleted: [:],
                                                        failedToSend: [:],
                                                        failedToConfirm: [:])
+        }
 
-            // when
-            self.sut.updateClientsChanges(
-                from: payload,
-                for: message
-            )
+        // when
+        await sut.updateClientsChanges(
+            from: payload,
+            for: message
+        )
 
-            // then
+        // then
+        syncMOC.performGroupedBlockAndWait {
             XCTAssertEqual(self.selfClient.missingClients!.count, 0)
         }
     }
 
-    func testThatUserIsMarkedToBeRefetched_WhenReduntantUsersArePresent() {
+    func testThatUserIsMarkedToBeRefetched_WhenReduntantUsersArePresent() async {
+        // given
+        var message: MockOTREntity!
+        var payload: Payload.MessageSendingStatus!
+
         syncMOC.performGroupedBlockAndWait {
-            // given
-            let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
+            message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let redundant: Payload.ClientListByQualifiedUserID =
-                [self.domain:
-                    [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
-                ]
-            let payload = Payload.MessageSendingStatus(time: Date(),
-                                                       missing: [:],
-                                                       redundant: redundant,
-                                                       deleted: [:],
-                                                       failedToSend: [:],
-                                                       failedToConfirm: [:])
+            [self.domain:
+                [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
+            ]
+            payload = Payload.MessageSendingStatus(time: Date(),
+                                                   missing: [:],
+                                                   redundant: redundant,
+                                                   deleted: [:],
+                                                   failedToSend: [:],
+                                                   failedToConfirm: [:])
+        }
 
-            // when
-            self.sut.updateClientsChanges(
-                from: payload,
-                for: message
-            )
+        // when
+        await sut.updateClientsChanges(
+            from: payload,
+            for: message
+        )
 
-            // then
+        // then
+        syncMOC.performGroupedBlockAndWait {
             XCTAssertTrue(self.otherUser.needsToBeUpdatedFromBackend)
         }
     }
 
-    func testThatTheConversationIsMarkedToBeRefetched_WhenReduntantUsersArePresent() {
+    func testThatTheConversationIsMarkedToBeRefetched_WhenReduntantUsersArePresent() async {
+        // given
+        var message: MockOTREntity!
+        var payload: Payload.MessageSendingStatus!
+
         syncMOC.performGroupedBlockAndWait {
-            // given
-            let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
+            message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let redundant: Payload.ClientListByQualifiedUserID =
-                [self.domain:
-                    [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
-                ]
-            let payload = Payload.MessageSendingStatus(time: Date(),
-                                                       missing: [:],
-                                                       redundant: redundant,
-                                                       deleted: [:],
-                                                       failedToSend: [:],
-                                                       failedToConfirm: [:])
+            [self.domain:
+                [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
+            ]
+            payload = Payload.MessageSendingStatus(time: Date(),
+                                                   missing: [:],
+                                                   redundant: redundant,
+                                                   deleted: [:],
+                                                   failedToSend: [:],
+                                                   failedToConfirm: [:])
+        }
 
-            // when
-            self.sut.updateClientsChanges(
-                from: payload,
-                for: message
-            )
+        // when
+        await sut.updateClientsChanges(
+            from: payload,
+            for: message
+        )
 
-            // then
+        // then
+        syncMOC.performGroupedBlockAndWait {
             XCTAssertTrue(message.conversation!.needsToBeUpdatedFromBackend)
         }
     }
 
-    func testThatItCallsTheAddFailedToSendRecipientsMethod() throws {
+    func testThatItCallsTheAddFailedToSendRecipientsMethod() async throws {
+        // given
+        var message: MockOTREntity!
+        var payload: Payload.MessageSendingStatus!
+
         syncMOC.performGroupedBlockAndWait {
-            // given
-            let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
+            message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
             let failedToConfirm: Payload.ClientListByQualifiedUserID =
-                [self.domain:
-                    [self.otherUser.remoteIdentifier.transportString(): [clientID]]
-                ]
-            let payload = Payload.MessageSendingStatus(time: Date(),
-                                                       missing: [:],
-                                                       redundant: [:],
-                                                       deleted: [:],
-                                                       failedToSend: [:],
-                                                       failedToConfirm: failedToConfirm)
+            [self.domain:
+                [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+            ]
+            payload = Payload.MessageSendingStatus(time: Date(),
+                                                   missing: [:],
+                                                   redundant: [:],
+                                                   deleted: [:],
+                                                   failedToSend: [:],
+                                                   failedToConfirm: failedToConfirm)
+        }
 
-            // when
-            self.sut.updateClientsChanges(
-                from: payload,
-                for: message
-            )
+        // when
+        await sut.updateClientsChanges(
+            from: payload,
+            for: message
+        )
 
-            // then
+        // then
+        syncMOC.performGroupedBlockAndWait {
             XCTAssertEqual(message.isFailedToSendUsers, true)
         }
     }
 
-    func testThatItAddsFailedToSendRecipients() throws {
+    func testThatItAddsFailedToSendRecipients() async throws {
+        // given
+        var message: ZMClientMessage!
+        var payload: Payload.MessageSendingStatus!
+
         try self.syncMOC.performGroupedAndWait { _ in
-            // given
-            guard let message = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage else {
+            guard let textMessage = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage else {
                 XCTFail("Failed to add message")
                 return
             }
+            message = textMessage
 
             let domain = "example.com"
             let clientID = UUID().transportString()
             let failedToConfirm: Payload.ClientListByQualifiedUserID =
-                [domain:
-                    [self.otherUser.remoteIdentifier.transportString(): [clientID]]
-                ]
+            [domain:
+                [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+            ]
             XCTAssertEqual(message.failedToSendRecipients?.count, 0)
 
-            // When
-            let payload = Payload.MessageSendingStatus(time: Date(),
-                                                       missing: [:],
-                                                       redundant: [:],
-                                                       deleted: [:],
-                                                       failedToSend: [:],
-                                                       failedToConfirm: failedToConfirm)
+            payload = Payload.MessageSendingStatus(time: Date(),
+                                                   missing: [:],
+                                                   redundant: [:],
+                                                   deleted: [:],
+                                                   failedToSend: [:],
+                                                   failedToConfirm: failedToConfirm)
+        }
 
-            self.sut.updateClientsChanges(
-                from: payload,
-                for: message
-            )
+        // when
+        await sut.updateClientsChanges(
+            from: payload,
+            for: message
+        )
 
-            // Then
+        // then
+        syncMOC.performAndWait {
             XCTAssertEqual(message.failedToSendRecipients?.count, 1)
             XCTAssertEqual(message.failedToSendRecipients?.first, self.otherUser)
         }

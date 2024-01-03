@@ -47,21 +47,6 @@ class OTREntityTests_Dependency: MessagingTestBase {
         }
     }
 
-    func testThatItReturnsSelfClientAsDependentObjectForMessageIfItHasMissingClients() {
-        self.syncMOC.performGroupedBlockAndWait {
-
-            // GIVEN
-            let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
-
-            // WHEN
-            self.selfClient.missesClient(self.otherClient)
-
-            // THEN
-            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
-            XCTAssertEqual(dependency as? UserClient, self.selfClient)
-        }
-    }
-
     func testThatItReturnsConversationIfNeedsToBeUpdatedFromBackendBeforeMissingClients() {
         self.syncMOC.performGroupedBlockAndWait {
 
@@ -159,21 +144,6 @@ class OTREntityTests_Dependency: MessagingTestBase {
             // THEN
             let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertNil(dependency)
-        }
-    }
-
-    func testThatItReturnConversationAsDependencyIfSecurityLevelIsSecureWithIgnored() {
-        self.syncMOC.performGroupedBlockAndWait {
-
-            // GIVEN
-            let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
-
-            // WHEN
-            self.set(conversation: self.groupConversation, securityLevel: .secureWithIgnored)
-
-            // THEN
-            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
-            XCTAssertEqual(dependency as? ZMConversation, self.groupConversation)
         }
     }
 

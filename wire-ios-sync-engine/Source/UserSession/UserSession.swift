@@ -190,7 +190,7 @@ public protocol UserSession: AnyObject {
 
     func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (VoidResult) -> Void
+        completion: @escaping (Swift.Result<Void, Error>) -> Void
     )
 
     func classification(
@@ -307,10 +307,7 @@ extension ZMUserSession: UserSession {
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
 
-        syncManagedObjectContext.performGroupedBlock {
-            self.processEvents()
-        }
-
+        processEvents()
     }
 
     public func deleteAppLockPasscode() throws {
@@ -467,7 +464,7 @@ extension ZMUserSession: UserSession {
 
     public func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (VoidResult) -> Void
+        completion: @escaping (Swift.Result<Void, Error>) -> Void
     ) {
         ZMUser.selfUser(inUserSession: self).setMarketingConsent(
             to: granted,

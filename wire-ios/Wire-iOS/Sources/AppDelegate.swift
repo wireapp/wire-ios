@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,14 +58,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TrackingOperation(),
         AppCenterOperation(),
         PerformanceDebuggerOperation(),
-        ZMSLogOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
         MediaManagerOperation(),
         FileBackupExcluderOperation(),
         BackendInfoOperation(),
         FontSchemeOperation(),
-        VoIPPushHelperOperation(),
         CleanUpDebugStateOperation()
     ]
     private var appStateCalculator = AppStateCalculator()
@@ -110,11 +108,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // enable logs
+        _ = Settings.shared
+        // switch logs
+        ZMSLog.switchCurrentLogToPrevious()
         zmLog.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
         DatadogWrapper.shared?.startMonitoring()
         DatadogWrapper.shared?.log(level: .info, message: "start app")
         // Initial log line to indicate the client version and build
-        zmLog.info("Wire-ios version \(String(describing: Bundle.main.shortVersionString)) (\(String(describing: Bundle.main.infoDictionary?[kCFBundleVersionKey as String])))")
+        zmLog.safePublic(SanitizedString(stringLiteral: Bundle.main.appInfo.safeForLoggingDescription))
 
         return true
     }
@@ -126,7 +128,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         voIPPushManager.registerForVoIPPushes()
-        ZMSLog.switchCurrentLogToPrevious()
+
+        temporaryFilesService.removeTemporaryData()
 
         zmLog.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
 
@@ -164,7 +167,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillResignActive(_ application: UIApplication) {
         zmLog.info("applicationWillResignActive:  (applicationState = \(application.applicationState.rawValue))")
-        temporaryFilesService.removeTemporaryData()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -183,7 +185,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         zmLog.info("applicationWillTerminate:  (applicationState = \(application.applicationState.rawValue))")
-        temporaryFilesService.removeTemporaryData()
     }
 
     func application(_ application: UIApplication,

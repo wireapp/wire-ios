@@ -26,6 +26,7 @@ import Foundation
         case clients([ZMUser: Set<UserClient>])
     }
 
+    public var context: NSManagedObjectContext
     public var message: GenericMessage
     public var conversation: ZMConversation?
     public var completionHandler: ((_ response: ZMTransportResponse) -> Void)?
@@ -35,15 +36,12 @@ import Foundation
 
     public let targetRecipients: Recipients
 
-    public init(conversation: ZMConversation, message: GenericMessage, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+    public init(message: GenericMessage, context: NSManagedObjectContext, conversation: ZMConversation? = nil, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+        self.context = context
         self.conversation = conversation
         self.message = message
         self.targetRecipients = targetRecipients
         self.completionHandler = completionHandler
-    }
-
-    public var context: NSManagedObjectContext {
-        return conversation!.managedObjectContext!
     }
 
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
@@ -83,39 +81,28 @@ public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
 
 extension GenericMessageEntity: EncryptedPayloadGenerator {
 
-    public func encryptForTransport() -> EncryptedPayloadGenerator.Payload? {
-        guard
-            let conversation = conversation,
-            let managedObjectContext = conversation.managedObjectContext
-        else {
-            return nil
-        }
+    public func encryptForTransport() async -> EncryptedPayloadGenerator.Payload? {
 
         switch targetRecipients {
         case .conversationParticipants:
-            return message.encryptForTransport(for: conversation)
+            guard let conversation else { return nil }
+            return await message.encryptForTransport(for: conversation, in: context)
         case .users(let users):
-            return message.encryptForTransport(forBroadcastRecipients: users, in: managedObjectContext)
+            return await message.encryptForTransport(forBroadcastRecipients: users, in: context)
         case .clients(let clientsByUser):
-            return message.encryptForTransport(for: clientsByUser, in: managedObjectContext)
+            return await message.encryptForTransport(for: clientsByUser, in: context)
         }
     }
 
-    public func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
-        guard
-            let conversation = conversation,
-            let managedObjectContext = conversation.managedObjectContext
-        else {
-            return nil
-        }
-
+    public func encryptForTransportQualified() async -> EncryptedPayloadGenerator.Payload? {
         switch targetRecipients {
         case .conversationParticipants:
-            return message.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+            guard let conversation else { return nil }
+            return await message.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
         case .users(let users):
-            return message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: managedObjectContext)
+            return await message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: context)
         case .clients(let clientsByUser):
-            return message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: managedObjectContext)
+            return await message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: context)
         }
     }
 
@@ -127,8 +114,6 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
         } else if case .clientAction? = message.content {
             switch message.clientAction {
             case .resetSession: return "Reset Session Message"
-            @unknown default:
-                return "unknown Message"
             }
         }
 

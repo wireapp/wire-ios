@@ -91,15 +91,15 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         case .notStarted:
             try await startMigrationIfNeeded()
         case .started:
-            await migrateOrJoinGroupConversations()
+            try await finaliseMigrationIfNeeded()
         default:
             break
         }
     }
 
-    // MARK: - Internal Methods
+    // MARK: - Migration Start
 
-    func startMigrationIfNeeded() async throws {
+    private func startMigrationIfNeeded() async throws {
         logger.info("checking if proteus-to-mls migration can start")
         let migrationStartStatus = await resolveMigrationStartStatus()
 
@@ -117,7 +117,40 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
     }
 
-    func resolveMigrationStartStatus() async -> MigrationStartStatus {
+    // MARK: - Migration Finalisation
+
+    private func finaliseMigrationIfNeeded() async throws {
+        guard let mlsService = await context.perform({ self.context.mlsService }) else {
+            return logger.warn("can't migrate conversations to mls: missing `mlsService`")
+        }
+
+        let migrationFinalisationTimeHasArrived = await migrationFinalisationTimeHasArrived()
+
+        // We periodically sync users to refresh their list of supported protocols
+        // But if the finalisation time has arrived, we will finish the migration regardless of supported protocols
+        if !migrationFinalisationTimeHasArrived {
+            try await syncUsersWithTheBackend()
+        }
+
+        for (groupID, conversation) in try await fetchMixedConversations() {
+            do {
+                try await joinMLSGroupIfNeeded(groupID, mlsService: mlsService)
+
+                guard migrationFinalisationTimeHasArrived || allParticipantsSupportMLS(in: conversation) else {
+                    continue
+                }
+
+                await updateConversationProtocolToMLS(for: conversation)
+            } catch {
+                logger.warn("failed to migrate conversation (groupID:\(groupID.safeForLoggingDescription), error: \(String(describing: error))")
+                continue
+            }
+        }
+    }
+
+    // MARK: - Helpers (migration start)
+
+    private func resolveMigrationStartStatus() async -> MigrationStartStatus {
         let features = await fetchFeatures()
 
         if (BackendInfo.apiVersion ?? .v0) < .v5 {
@@ -147,47 +180,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         return .canStart
     }
 
-    /// This method is responsible for migrating all `mixed` group conversations to `mls`.
-    /// It evaluates each conversation to determine if the migration needs to be finalized (i.e: updating the protocol from `mixed` to `mls`)
-    /// or if it should first join the corresponding MLS group.
-    func migrateOrJoinGroupConversations() async {
-
-        let mlsGroupIds = await context.perform { [self] in
-            do {
-                let conversations = try ZMConversation.fetchAllTeamGroupConversations(
-                    messageProtocol: .mixed,
-                    in: context
-                )
-                return conversations.compactMap { $0.mlsGroupID }
-            } catch {
-                logger.warn("Can't fetch conversations with `mixed` protocol")
-                return [MLSGroupID]()
-            }
-        }
-
-        let mlsService = await context.perform { self.context.mlsService }
-
-        guard let mlsService else {
-            return logger.warn("can't migrate conversations to mls: missing `mlsService`")
-        }
-
-        for groupID in mlsGroupIds {
-            do {
-                if mlsService.conversationExists(groupID: groupID) {
-                    // TODO: if conversation exists we finalize migration
-                } else {
-                    try await mlsService.joinGroup(with: groupID)
-                }
-
-            } catch {
-                logger.warn("Can't migrate conversation with group id \(groupID.safeForLoggingDescription) to mls: \(String(describing: error))")
-            }
-        }
-
-    }
-
-    // MARK: - Helpers
-
     private func fetchFeatures() async -> (mls: Feature.MLS, mlsMigration: Feature.MLSMigration) {
         return await context.perform { [featureRepository] in
             let mlsFeature = featureRepository.fetchMLS()
@@ -208,4 +200,78 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
     }
 
+    // MARK: - Helpers (migration finalisation)
+
+    private typealias GroupIDConversationTuple = (groupID: MLSGroupID, conversation: ZMConversation)
+
+    private func fetchMixedConversations() async throws -> [GroupIDConversationTuple] {
+        return try await context.perform { [self] in
+
+            let conversations = try ZMConversation.fetchAllTeamGroupConversations(
+                messageProtocol: .mixed,
+                in: context
+            )
+
+            let tuples: [(MLSGroupID, ZMConversation)] = conversations.compactMap {
+                guard let groupID = $0.mlsGroupID else {
+                    return nil
+                }
+                return (groupID: groupID, conversation: $0)
+            }
+
+            return tuples
+        }
+    }
+
+    private func joinMLSGroupIfNeeded(_ groupID: MLSGroupID, mlsService: MLSServiceInterface) async throws {
+        if mlsService.conversationExists(groupID: groupID) {
+            return
+        }
+
+        try await mlsService.joinGroup(with: groupID)
+    }
+
+    private func allParticipantsSupportMLS(in conversation: ZMConversation) -> Bool {
+        return conversation.localParticipants.allSatisfy { $0.supportedProtocols.contains(.mls) }
+    }
+
+    private func syncUsersWithTheBackend() async throws {
+        let fetchRequest = ZMUser.fetchRequest()
+
+        let qualifiedIDs = try await context.perform { [context] in
+            let users = try context.fetch(fetchRequest) as? [ZMUser]
+            return users?.compactMap { $0.qualifiedID }
+        }
+
+        guard let qualifiedIDs else { return }
+
+        try await actionsProvider.syncUsers(qualifiedIDs: qualifiedIDs, context: context.notificationContext)
+    }
+
+    private func migrationFinalisationTimeHasArrived() async -> Bool {
+        let mlsMigrationFeature = await context.perform { [featureRepository] in
+            featureRepository.fetchMLSMigration()
+        }
+
+        guard let finaliseDate = mlsMigrationFeature.config.finaliseRegardlessAfter else {
+            return false
+        }
+
+        return finaliseDate.isPast
+    }
+
+    private func updateConversationProtocolToMLS(for conversation: ZMConversation) async {
+        // TODO: Update conversation protocol to `mls`
+        // https://wearezeta.atlassian.net/browse/WPB-542
+    }
+
+}
+
+// This is temporary until John's work on 1on1 conversations 
+// is merged to develop and then we can pull the changes into the migration branch.
+// TODO: [AGIS] Get rid of this extension 
+extension ZMUser {
+    var supportedProtocols: [MessageProtocol] {
+        return [.mls, .proteus]
+    }
 }
