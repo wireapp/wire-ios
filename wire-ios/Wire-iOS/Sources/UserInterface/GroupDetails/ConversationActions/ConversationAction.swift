@@ -148,29 +148,34 @@ extension ZMConversation.Action {
 
     var title: String {
         switch self {
+        case .deleteGroup:
+            return L10n.Localizable.Meta.Menu.delete
+        case .moveToFolder:
+            return L10n.Localizable.Meta.Menu.moveToFolder
         case .removeFromFolder(let folder):
-            return localizationKey.localized(args: folder)
-        default:
-            return localizationKey.localized
-        }
-    }
-
-    private var localizationKey: String {
-        switch self {
-        case .deleteGroup: return "meta.menu.delete"
-        case .moveToFolder: return "meta.menu.move_to_folder"
-        case .removeFromFolder: return "meta.menu.remove_from_folder"
-        case .remove: return "profile.remove_dialog_button_remove"
-        case .clearContent: return "meta.menu.clear_content"
-        case .leave: return "meta.menu.leave"
-        case .markRead: return "meta.menu.mark_read"
-        case .markUnread: return "meta.menu.mark_unread"
-        case .configureNotifications: return "meta.menu.configure_notifications"
-        case .silence(isSilenced: let muted): return "meta.menu.silence.\(muted ? "unmute" : "mute")"
-        case .archive(isArchived: let archived): return "meta.menu.\(archived ? "unarchive" : "archive")"
-        case .cancelRequest: return "meta.menu.cancel_connection_request"
-        case .block(isBlocked: let blocked): return blocked ? "profile.unblock_button_title" : "profile.block_button_title"
-        case .favorite(isFavorite: let favorited): return favorited ? "profile.unfavorite_button_title" : "profile.favorite_button_title"
+            return L10n.Localizable.Meta.Menu.removeFromFolder(folder)
+        case .remove:
+            return L10n.Localizable.Profile.removeDialogButtonRemove
+        case .clearContent:
+            return L10n.Localizable.Meta.Menu.clearContent
+        case .leave:
+            return L10n.Localizable.Meta.Menu.leave
+        case .markRead:
+            return L10n.Localizable.Meta.Menu.markRead
+        case .markUnread:
+            return L10n.Localizable.Meta.Menu.markUnread
+        case .configureNotifications:
+            return L10n.Localizable.Meta.Menu.configureNotifications
+        case .silence(isSilenced: let muted):
+            return muted ? L10n.Localizable.Meta.Menu.Silence.unmute : L10n.Localizable.Meta.Menu.Silence.mute
+        case .archive(isArchived: let archived):
+            return archived ? L10n.Localizable.Meta.Menu.unarchive : L10n.Localizable.Meta.Menu.archive
+        case .cancelRequest:
+            return L10n.Localizable.Meta.Menu.cancelConnectionRequest
+        case .block(isBlocked: let blocked):
+            return blocked ? L10n.Localizable.Profile.unblockButtonTitle : L10n.Localizable.Profile.blockButtonTitle
+        case .favorite(isFavorite: let favorited):
+            return favorited ? L10n.Localizable.Profile.unfavoriteButtonTitle: L10n.Localizable.Profile.favoriteButtonTitle
         }
     }
 

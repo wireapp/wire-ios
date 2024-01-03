@@ -24,6 +24,8 @@ extension UIAlertController {
 
     static func degradedCall(degradedUser: UserType?, callEnded: Bool = false, confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil) -> UIAlertController {
 
+        let title = callEnded ? L10n.Localizable.Call.Degraded.Ended.Alert.title : L10n.Localizable.Call.Degraded.Alert.title
+
         // Choose localization prefix
         let prefix = callEnded
             ? "call.degraded.ended.alert"
@@ -42,7 +44,7 @@ extension UIAlertController {
         }
 
         // Create controller
-        let controller = UIAlertController(title: "\(prefix).title".localized, message: message, preferredStyle: .alert)
+        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         // Add actions
         if let confirmationBlock = confirmationBlock {
