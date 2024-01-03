@@ -17,9 +17,9 @@
 // 
 
 
-#import <UIKit/UIKit.h>
-#import <WireImages/WireImages.h>
-#import <WireProtos/WireProtos.h>
+@import UIKit;
+@import WireImages;
+@import WireProtos;
 
 @class ZMIImageProperties;
 @class ZMConversation;

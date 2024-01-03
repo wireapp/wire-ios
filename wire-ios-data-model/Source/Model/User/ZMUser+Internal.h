@@ -17,7 +17,7 @@
 // 
 
 
-#import <WireImages/WireImages.h>
+@import WireImages;
 
 #import "ZMUser.h"
 #import "ZMEditableUser.h"

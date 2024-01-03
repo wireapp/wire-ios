@@ -17,7 +17,7 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 typedef NSString * ZMUserClientType NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(DeviceType);
 

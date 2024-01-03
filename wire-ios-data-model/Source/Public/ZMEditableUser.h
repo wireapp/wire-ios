@@ -17,7 +17,8 @@
 // 
 
 
-#import <WireSystem/WireSystem.h>
+@import WireSystem;
+
 #import <WireUtilities/ZMAccentColor.h>
 #import "ZMUser.h"
 

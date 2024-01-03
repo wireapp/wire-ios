@@ -17,7 +17,7 @@
 // 
 
 
-#import <CoreData/CoreData.h>
+@import CoreData;
 
 
 @interface NSManagedObjectContext (zmessagingTests)

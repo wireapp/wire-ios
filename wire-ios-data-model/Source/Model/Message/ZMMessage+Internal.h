@@ -17,9 +17,9 @@
 // 
 
 
-#import <WireImages/WireImages.h>
-#import <WireProtos/WireProtos.h>
-#import <WireTransport/WireTransport.h>
+@import WireImages;
+@import WireProtos;
+@import WireTransport;
 
 #import "ZMMessage.h"
 #import "ZMManagedObject+Internal.h"

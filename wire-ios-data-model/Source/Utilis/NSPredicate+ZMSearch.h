@@ -17,7 +17,7 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 @interface NSPredicate (ZMSearch)
 

@@ -17,7 +17,7 @@
 // 
 
 
-#import <WireProtos/WireProtos.h>
+@import WireProtos;
 @class ZMUpdateEvent;
 
 @interface ZMEncryptionKeyWithChecksum: NSObject
