@@ -23,7 +23,7 @@ let ZMParticipantRoleRoleValueKey           = #keyPath(ParticipantRole.role)
 @objcMembers
 final public class ParticipantRole: ZMManagedObject {
 
-    @NSManaged public var conversation: ZMConversation
+    @NSManaged public var conversation: ZMConversation?
     @NSManaged public var user: ZMUser?
     @NSManaged public var role: Role?
 
