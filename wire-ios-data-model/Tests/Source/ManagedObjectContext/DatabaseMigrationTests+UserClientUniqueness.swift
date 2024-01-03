@@ -77,9 +77,13 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
     }
 
     func testMigratingToMessagingStore_2_107_DoNotPreventDuplicateNilUserClients() throws {
+        let mappingModelURL = bundle.url(forResource: "MappingModel_2.106-2.107", withExtension: "cdm")
+        let mappingModel = try XCTUnwrap(NSMappingModel(contentsOf: mappingModelURL))
+
         try migrateStore(
             sourceVersion: "2.106.0",
             destinationVersion: "2.107.0",
+            mappingModel: mappingModel,
             preMigrationAction: { context in
                 // given
                 let duplicate1 = UserClient.insertNewObject(in: context)
