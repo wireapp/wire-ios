@@ -64,47 +64,44 @@ enum MessageAction: CaseIterable, Equatable {
     visitLink(String)
 
     var title: String? {
-        let key: String?
         typealias MessageActionLocale = L10n.Localizable.Content.Message
         switch self {
         case .copy:
-            key = MessageActionLocale.copy
+            return MessageActionLocale.copy
         case .digitallySign:
-            key = MessageActionLocale.sign
+            return MessageActionLocale.sign
         case .reply:
-            key = MessageActionLocale.reply
+            return MessageActionLocale.reply
         case .openDetails:
-            key = MessageActionLocale.details
+            return MessageActionLocale.details
         case .edit:
-            key = L10n.Localizable.Message.Menu.Edit.title
+            return L10n.Localizable.Message.Menu.Edit.title
         case .delete:
-            key = MessageActionLocale.delete
+            return MessageActionLocale.delete
         case .save:
-            key = MessageActionLocale.save
+            return MessageActionLocale.save
         case .cancel:
-            key = L10n.Localizable.General.cancel
+            return L10n.Localizable.General.cancel
         case .download:
-            key = MessageActionLocale.download
+            return MessageActionLocale.download
         case .forward:
-            key = MessageActionLocale.forward
+            return MessageActionLocale.forward
         case .resend:
-            key = MessageActionLocale.resend
+            return MessageActionLocale.resend
         case .showInConversation:
-            key = MessageActionLocale.goToConversation
+            return MessageActionLocale.goToConversation
         case .sketchDraw:
-            key = L10n.Localizable.Image.addSketch
+            return L10n.Localizable.Image.addSketch
         case .sketchEmoji:
-            key = L10n.Localizable.Image.addEmoji
+            return L10n.Localizable.Image.addEmoji
         case .visitLink:
-            key = MessageActionLocale.OpenLinkAlert.title
+            return MessageActionLocale.OpenLinkAlert.title
         case .present,
-             .openQuote,
-             .resetSession,
-             .react:
-            key = nil
+                .openQuote,
+                .resetSession,
+                .react:
+            return nil
         }
-
-        return key
     }
 
     var icon: StyleKitIcon? {
@@ -138,10 +135,10 @@ enum MessageAction: CaseIterable, Equatable {
         case .visitLink:
             return .externalLink
         case .present,
-             .openQuote,
-             .digitallySign,
-             .resetSession,
-             .react:
+                .openQuote,
+                .digitallySign,
+                .resetSession,
+                .react:
             return nil
         }
     }
@@ -180,11 +177,11 @@ enum MessageAction: CaseIterable, Equatable {
         case .sketchEmoji:
             imageName = "smiley.fill"
         case .present,
-             .openQuote,
-             .digitallySign,
-             .resetSession,
-             .react,
-             .visitLink:
+                .openQuote,
+                .digitallySign,
+                .resetSession,
+                .react,
+                .visitLink:
             imageName = nil
         }
 
@@ -222,10 +219,10 @@ enum MessageAction: CaseIterable, Equatable {
         case .visitLink:
             return #selector(ConversationMessageActionController.visitLink(path:))
         case .present,
-             .sketchDraw,
-             .sketchEmoji,
-             .openQuote,
-             .resetSession:
+                .sketchDraw,
+                .sketchEmoji,
+                .openQuote,
+                .resetSession:
             // no message related actions are not handled in ConversationMessageActionController
             return nil
         }
