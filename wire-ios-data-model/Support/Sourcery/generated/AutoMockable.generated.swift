@@ -1344,7 +1344,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
             fatalError("no mock for `syncUsersQualifiedIDsContext`")
         }
 
-        try await mock(qualifiedIDs, context)            
+        try await mock(qualifiedIDs, context)
     }
 
 }
