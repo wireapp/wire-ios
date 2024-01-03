@@ -1228,8 +1228,8 @@ public final class MLSService: MLSServiceInterface {
     public func encrypt(
         message: [Byte],
         for groupID: MLSGroupID
-    ) throws -> [Byte] {
-        return try encryptionService.encrypt(
+    ) async throws -> [Byte] {
+        return try await encryptionService.encrypt(
             message: message,
             for: groupID
         )
@@ -1241,11 +1241,11 @@ public final class MLSService: MLSServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult? {
+    ) async throws -> MLSDecryptResult? {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
         do {
-            return try decryptionService.decrypt(
+            return try await decryptionService.decrypt(
                 message: message,
                 for: groupID,
                 subconversationType: subconversationType

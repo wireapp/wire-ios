@@ -885,6 +885,7 @@ class WireCallCenterV3Tests: MessagingTest {
         }
 
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let didSetConferenceInfo2 = expectation(description: "didSetConferenceInfo2")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
