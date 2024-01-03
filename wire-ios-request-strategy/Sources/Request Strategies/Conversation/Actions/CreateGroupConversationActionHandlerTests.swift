@@ -44,7 +44,8 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         mlsService = MockMLSServiceInterface()
         sut = CreateGroupConversationActionHandler(
             context: syncMOC,
-            removeLocalConversationUseCase: RemoveLocalConversationUseCase(), mlsService: mlsService
+            mlsService: mlsService,
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
         )
         conversationID = .randomID()
         mlsGroupID = MLSGroupID([1, 2, 3])

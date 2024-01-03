@@ -41,9 +41,11 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     private let eventProcessor: ConversationEventProcessorProtocol
 
-    required init(context: NSManagedObjectContext) {
-        self.eventProcessor = ConversationEventProcessor(context: context)
-        super.init(context: context)
+    convenience override init(context: NSManagedObjectContext) {
+        self.init(
+            context: context,
+            eventProcessor: ConversationEventProcessor(context: context)
+        )
     }
 
     init(

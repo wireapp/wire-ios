@@ -546,7 +546,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             }
             guard let conversation, conversationType == .group else { continue }
 
-            await removeLocalConversation.invoke(
+            await removeLocalConversationUseCase.invoke(
                 with: conversation,
                 syncContext: context
             )
@@ -669,7 +669,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            await removeLocalConversation.invoke(
+            await removeLocalConversationUseCase.invoke(
                 with: conversation,
                 syncContext: context
             )
