@@ -25,7 +25,10 @@ class DuplicateClientsMigrationPolicy: NSEntityMigrationPolicy {
         case needsToBeUpdatedFromBackend
     }
 
+    private let zmLog = ZMSLog(tag: "core-data")
+
     override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
+        zmLog.safePublic("beginning duplicate clients migration", level: .info)
         WireLogger.localStorage.info("beginning duplicate clients migration")
 
         let context = manager.sourceContext
@@ -35,6 +38,7 @@ class DuplicateClientsMigrationPolicy: NSEntityMigrationPolicy {
             by: #keyPath(UserClient.remoteIdentifier)
         )
 
+        zmLog.safePublic(SanitizedString(stringLiteral: "found (\(duplicates.count)) occurences of duplicate clients"), level: .info)
         WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate clients")
 
         duplicates.forEach { (_, clients: [NSManagedObject]) in
@@ -44,6 +48,7 @@ class DuplicateClientsMigrationPolicy: NSEntityMigrationPolicy {
 
             clients.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             clients.dropFirst().forEach(context.delete)
+            zmLog.safePublic("removed 1 occurence of duplicate clients", level: .warn)
             WireLogger.localStorage.info("removed 1 occurence of duplicate clients")
         }
     }
