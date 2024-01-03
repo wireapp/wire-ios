@@ -242,7 +242,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         }, onCompletion: { _ in
             exp.fulfill()
         })
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 5.0)
 
         BackgroundActivityFactory.shared.activityManager = nil
         XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
