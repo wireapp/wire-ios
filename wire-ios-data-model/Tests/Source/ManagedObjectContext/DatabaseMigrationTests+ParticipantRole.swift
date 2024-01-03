@@ -21,28 +21,17 @@ import XCTest
 
 final class DatabaseMigrationTests_Conversations: XCTestCase {
 
-    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
     private let helper = DatabaseMigrationHelper()
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        try FileManager.default.createDirectory(at: tmpStoreURL, withIntermediateDirectories: true)
-    }
-
-    override func tearDownWithError() throws {
-        try? FileManager.default.removeItem(at: tmpStoreURL)
-        try super.tearDownWithError()
-    }
-
-    func testThatItPerformsInferredMigration_deleteConversationCascadesToParticipantRole() throws {
-        throw XCTSkip("test need to be improved to be not flaky")
-
+    func testThatItPerformsMigrationFrom106_deleteConversationCascadesToParticipantRole() throws {
         try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
                 let conversation = ZMConversation(context: context)
-                _ = ParticipantRole.create(managedObjectContext: context, user: user, conversation: conversation)
+                let participantRole = ParticipantRole(context: context)
+                participantRole.conversation = conversation
+                participantRole.user = user
                 try context.save()
 
                 context.delete(conversation)
@@ -55,15 +44,15 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         )
     }
 
-    func testThatItPerformsInferredMigration_markConversationAsDeletedKeepsParticipantRole() throws {
-        throw XCTSkip("test need to be improved to be not flaky")
-
+    func testThatItPerformsMigrationFrom106_deleteRemotelyConversationKeepsParticipantRole() throws {
         try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
                 let conversation = ZMConversation(context: context)
-                _ = ParticipantRole.create(managedObjectContext: context, user: user, conversation: conversation)
+                let participantRole = ParticipantRole(context: context)
+                participantRole.conversation = conversation
+                participantRole.user = user
                 try context.save()
 
                 conversation.isDeletedRemotely = true
@@ -75,6 +64,78 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
             }
         )
     }
+
+    func testThatItPerformsMigrationFrom106_validConversationRelationKeepsParticipantRole() throws {
+        try migrateStoreToCurrentVersion(
+            sourceVersion: "2.106.0",
+            preMigrationAction: { context in
+                let user = ZMUser(context: context)
+                let conversation = ZMConversation(context: context)
+                let participantRole = ParticipantRole(context: context)
+                participantRole.conversation = conversation
+                participantRole.user = user
+                try context.save()
+            },
+            postMigrationAction: { context in
+                let roles = try context.fetch(ParticipantRole.fetchRequest())
+                XCTAssertEqual(roles.count, 1)
+            }
+        )
+    }
+
+    /*
+     * [WPB-5993] Jira-Ticket "fix core data migrating corrupted ParticipantRole objects"
+     * 
+     * This test was creating an error thrown by core data migration. Now we can not reproduce this behavior anymore,
+     * because `ParticipantRole.conversation` can not set to`nil` anymore by the compiler.
+     *
+     * In order to recreate this the failure migration one needs to
+     * 1. make `ParticipantRole.conversation` optional again
+     * 2. remove the `RemoveZombieParticipantRolesMigrationPolicy`
+     * from `MappingModel_2.106-2.107` where the mapping `ParticipantRoleToParticipantRole` happens.
+     * 3. Uncomment the test below
+     *
+     * Example from the error:
+     *
+     * Error Domain=NSCocoaErrorDomain Code=1570 "conversation is a required value."
+     * UserInfo={NSValidationErrorObject=<NSManagedObject: 0x283002bc0> (
+     * entity: ParticipantRole;
+     * id: 0x91c16ef3ddc135ae <x-coredata://AC33D7EC-1515-4FDB-9FBC-FE0BE37B1D4F/ParticipantRole/p7>;
+     * data: {
+     *     conversation = nil;
+     *     modifiedKeys = nil;
+     *     role = nil;
+     *     user = "0x91c16ef3dd4134be <x-coredata://AC33D7EC-1515-4FDB-9FBC-FE0BE37B1D4F/User/p3>";
+     * })
+     *
+        func testThatItPerformsMigrationFrom106_invalidConversationRelationDropsParticipantRole() throws {
+            try migrateStoreToCurrentVersion(
+                sourceVersion: "2.106.0",
+                preMigrationAction: { context in
+                    let user = ZMUser(context: context)
+                    let conversation = ZMConversation(context: context)
+                    let participantRole = ParticipantRole(context: context)
+                    participantRole.conversation = conversation
+                    participantRole.user = user
+                    try context.save()
+
+                    XCTAssertEqual(user.participantRoles.count, 1)
+
+                    // Failure: model requires 'conversation' to be non-optional!
+                    participantRole.conversation = nil
+                    try context.save()
+                },
+                postMigrationAction: { context in
+                    let roles = try context.fetch(ParticipantRole.fetchRequest())
+                    XCTAssert(roles.isEmpty)
+
+                    // Make sure the user object relation has been updated!
+                    let user = try context.fetch(NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())).first
+                    XCTAssertEqual(user?.participantRoles.count, 0)
+                }
+            )
+        }
+     */
 
     // MARK: -
 
@@ -93,10 +154,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
             applicationContainer: applicationContainer
         ).appendingPersistentStoreLocation()
 
-        try helper.createFixtureDatabase(
-            storeFile: storeFile,
-            versionName: sourceVersion
-        )
+        try helper.createFixtureDatabase(storeFile: storeFile, versionName: sourceVersion)
 
         let sourceModel = try helper.createObjectModel(version: sourceVersion)
         var sourceContainer: NSPersistentContainer? = try helper.createStore(model: sourceModel, at: storeFile)
@@ -115,7 +173,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         sourceContainer = nil
 
         // WHEN
-        let stack = createStorageStackAndWaitForCompletion(
+        let stack = try createStorageStackAndWaitForCompletion(
             userID: accountIdentifier,
             applicationContainer: applicationContainer
         )
@@ -132,7 +190,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         applicationContainer: URL,
         file: StaticString = #file,
         line: UInt = #line
-    ) -> CoreDataStack {
+    ) throws -> CoreDataStack {
 
         // we use backgroundActivity suring the setup so we need to mock for tests
         let manager = MockBackgroundActivityManager()
@@ -149,25 +207,24 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         )
 
         let exp = self.expectation(description: "should wait for loadStores to finish")
+        var setupError: Error?
         stack.setup(onStartMigration: {
             // do nothing
         }, onFailure: { error in
-            XCTAssertNil(error, file: file, line: line)
+            setupError = error
             exp.fulfill()
         }, onCompletion: { _ in
             exp.fulfill()
         })
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 5.0)
+
+        if let setupError {
+            throw setupError
+        }
 
         BackgroundActivityFactory.shared.activityManager = nil
         XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
 
         return stack
-    }
-
-    // MARK: - URL Helpers
-
-    private func storeURL(version: String) -> URL {
-        return tmpStoreURL.appendingPathComponent("\(version).sqlite")
     }
 }
