@@ -69,15 +69,16 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
     }
 
     private func processEvent(_ event: ZMUpdateEvent) {
+        let decoder = EventPayloadDecoder()
 
         switch event.type {
         case .federationDelete:
-            if let payload = event.eventPayload(type: Payload.FederationDelete.self) {
+            if let payload: Payload.FederationDelete = try? decoder.decode(event.payload) {
                 federationTerminationManager.handleFederationTerminationWith(payload.domain)
             }
 
         case .federationConnectionRemoved:
-            if let payload = event.eventPayload(type: Payload.ConnectionRemoved.self),
+            if let payload: Payload.ConnectionRemoved = try? decoder.decode(event.payload),
                payload.domains.count == 2,
                let firstDomain = payload.domains.first,
                let secondDomain = payload.domains.last {

@@ -25,6 +25,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     let context: NSManagedObjectContext
     let conversationService: ConversationServiceInterface
     private let processor = ConversationEventPayloadProcessor()
+    private let eventPayloadDecoder = EventPayloadDecoder()
 
     // MARK: - Life cycle
 
@@ -105,28 +106,28 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationCreate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.Conversation> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.Conversation> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await processor.processPayload(payload, in: context)
     }
 
     private func processConversationDelete(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationDeleted> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationDeleted> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await processor.processPayload(payload, in: context)
     }
 
     private func processConversationMemberLeave(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await context.perform { self.processor.processPayload(payload, originalEvent: event, in: self.context) }
     }
 
     private func processConversationMemberJoin(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await context.perform {
@@ -140,7 +141,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationRename(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationName> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationName> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await context.perform {
@@ -153,7 +154,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationMemberUpdate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.ConversationMember> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.ConversationMember> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await context.perform {
@@ -165,7 +166,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationAccessModeUpdate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationAccess> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationAccess> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await context.perform {
@@ -177,7 +178,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationMessageTimerUpdate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationMessageTimer> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationMessageTimer> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await context.perform {
@@ -189,7 +190,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationReceiptModeUpdate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationReceiptMode> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationReceiptMode> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await context.perform {
@@ -201,7 +202,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationConnectRequest(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest> = decodePayload(from: event) else {
+        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest> = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await context.perform {
@@ -214,25 +215,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationMLSWelcome(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.UpdateConversationMLSWelcome = decodePayload(from: event) else {
+        guard let payload: Payload.UpdateConversationMLSWelcome = try? eventPayloadDecoder.decode(event.payload) else {
             return
         }
         await MLSEventProcessor.shared.process(
             welcomeMessage: payload.data,
             in: context
         )
-    }
-
-    private func decodePayload<T: Decodable>(from event: ZMUpdateEvent) -> T? {
-        let decoder: JSONDecoder = .defaultDecoder
-
-        do {
-            let payloadData = try JSONSerialization.data(withJSONObject: event.payload, options: [])
-            return try decoder.decode(T.self, from: payloadData)
-        } catch let error {
-            Logging.network.warn("Failed to decode \(T.self) from payload: \(error)")
-            return nil
-        }
     }
 
     // MARK: - Member Join

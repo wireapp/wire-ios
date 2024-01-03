@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,19 +18,21 @@
 
 import Foundation
 
-extension ZMUpdateEvent {
-    var payloadData: Data? {
-        guard let payloadAsDictionary = payload as? [String: Any] else {
-            return nil
-        }
-        return try? JSONSerialization.data(withJSONObject: payloadAsDictionary, options: [])
+struct EventPayloadDecoder {
+
+    private let decoder: JSONDecoder
+
+    init(decoder: JSONDecoder = .defaultDecoder) {
+        self.decoder = decoder
     }
 
-    func eventPayload<T: Codable>(type: T.Type) -> T? {
-        guard let payloadData = payloadData else {
+    func decode<T: Decodable>(_ eventPayload: [AnyHashable: Any]) throws -> T? {
+        do {
+            let payloadData = try JSONSerialization.data(withJSONObject: eventPayload, options: [])
+            return try decoder.decode(T.self, from: payloadData)
+        } catch let error {
+            Logging.network.warn("Failed to decode \(T.self) from payload: \(error)")
             return nil
         }
-
-        return T(payloadData)
     }
 }
