@@ -26,21 +26,13 @@ extension UIAlertController {
 
         let title = callEnded ? L10n.Localizable.Call.Degraded.Ended.Alert.title : L10n.Localizable.Call.Degraded.Alert.title
 
-        // Choose localization prefix
-        let prefix = callEnded
-            ? "call.degraded.ended.alert"
-            : "call.degraded.alert"
-
-        // Set message
-        var message = "\(prefix).message"
-
-        switch degradedUser {
-        case .some(let user) where user.isSelfUser:
-            message = "\(message).self".localized
-        case .some(let user):
-            message = "\(message).user".localized(args: user.name ?? "")
-        default:
-            message = "\(message).unknown".localized
+        let message: String
+        if let user = degradedUser {
+            message = callEnded ?
+            user.isSelfUser ? L10n.Localizable.Call.Degraded.Ended.Alert.Message.`self` : L10n.Localizable.Call.Degraded.Ended.Alert.Message.user(user.name ?? "") :
+            user.isSelfUser ? L10n.Localizable.Call.Degraded.Alert.Message.`self` : L10n.Localizable.Call.Degraded.Alert.Message.user(user.name ?? "")
+        } else {
+            message = callEnded ? L10n.Localizable.Call.Degraded.Ended.Alert.Message.unknown : L10n.Localizable.Call.Degraded.Alert.Message.unknown
         }
 
         // Create controller
