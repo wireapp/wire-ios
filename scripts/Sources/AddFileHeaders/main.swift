@@ -65,7 +65,8 @@ outerLoop: while let file = dirctoryEnumerator?.nextObject() as? String {
         continue outerLoop
     }
 
-    guard file.hasSuffix(".swift") else { continue }
+    let suffixes = [".swift", ".xcconfig", ".h", ".m"]
+    guard suffixes.contains(where: { file.hasSuffix($0) }) else { continue }
 
     let file = repositoryRootPath.appending("/").appending(file)
     print(file)
