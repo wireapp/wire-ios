@@ -1717,7 +1717,7 @@ public final class MLSService: MLSServiceInterface {
                 }
 
                 // create MLS group and update keying material
-                try createGroup(for: mlsGroupID)
+                try await createGroup(for: mlsGroupID)
 
                 do {
 
