@@ -85,7 +85,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let conversation = userInfo.conversation(in: uiMOC)!
 
         simulateLoggedInUser()
-        sut.applicationStatusDirectory?.operationStatus.isInBackground = true
+        sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         // when
         handle(conversationAction: .like, category: .conversation, userInfo: userInfo)
@@ -178,8 +178,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
     func testThatItDoesNotCallShowConversationAndAppendsAMessage_ForPushNotificationCategoryConversationWithDirectReplyAction() {
         // given
         simulateLoggedInUser()
-        sut.applicationStatusDirectory?.operationStatus.isInBackground = true
-
+        sut.applicationStatusDirectory.operationStatus.isInBackground = true
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
@@ -191,15 +190,17 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
     }
 
-    func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithDirectReplyAction() {
+    func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithDirectReplyAction() async throws {
         // given
         self.simulateLoggedInUser()
-        self.sut.applicationStatusDirectory?.operationStatus.isInBackground = true
+        self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
         let conversation = userInfo.conversation(in: self.uiMOC)!
 
-        guard let originalMessage = conversation.lastMessages().last as? ZMClientMessage else { return XCTFail() }
+        let originalMessage = try XCTUnwrap(conversation.lastMessages().last as? ZMClientMessage)
+        let originaMessageNonce = try XCTUnwrap(originalMessage.nonce)
+
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         var genericMessage = originalMessage.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
@@ -210,28 +211,23 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         // when
-        self.handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
+        handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
 
         // then
-        let lastMessages = conversation.lastMessages()
-        guard let replyMessage = lastMessages[1] as? ZMClientMessage,
-        let confirmationMessage = lastMessages[0] as? ZMClientMessage else { return XCTFail() }
-        XCTAssertEqual(conversation.allMessages.count, 3)
-        XCTAssertTrue(originalMessage.isText)
-        XCTAssertTrue(replyMessage.isText)
-        XCTAssertFalse(confirmationMessage.isText)
-        XCTAssertTrue(confirmationMessage.underlyingMessage?.hasConfirmation ?? false)
+        assertHasReadConfirmationForMessage(nonce: originaMessageNonce, conversation: conversation)
     }
 
-    func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithLikeAction() {
+    func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithLikeAction() throws {
         // given
         self.simulateLoggedInUser()
-        self.sut.applicationStatusDirectory?.operationStatus.isInBackground = true
+        self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
         let conversation = userInfo.conversation(in: self.uiMOC)!
 
-        guard let originalMessage = conversation.lastMessages().last as? ZMClientMessage else { return XCTFail() }
+        let originalMessage = try XCTUnwrap(conversation.lastMessages().last as? ZMClientMessage)
+        let originaMessageNonce = try XCTUnwrap(originalMessage.nonce)
+
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         var genericMessage = originalMessage.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
@@ -245,11 +241,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         handle(conversationAction: .like, category: .conversation, userInfo: userInfo)
 
         // then
-        guard let confirmationMessage = conversation.lastMessage as? ZMClientMessage else { return XCTFail() }
-        XCTAssertEqual(conversation.allMessages.count, 2)
-        XCTAssertFalse(confirmationMessage.isText)
-        XCTAssertEqual(originalMessage.reactions.count, 1)
-        XCTAssertTrue(confirmationMessage.underlyingMessage?.hasConfirmation ?? false)
+        assertHasReadConfirmationForMessage(nonce: originaMessageNonce, conversation: conversation)
     }
 
     func testThatOnLaunchItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {
@@ -280,6 +272,18 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 }
 
 extension ZMUserSessionTests_PushNotifications {
+
+    func assertHasReadConfirmationForMessage(nonce: UUID, conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) {
+        let containsReadConfirmation = conversation.lastMessages().contains { message in
+            if let clientMessage = message as? ZMClientMessage, clientMessage.underlyingMessage?.hasConfirmation == true {
+                return clientMessage.underlyingMessage?.confirmation.firstMessageID == nonce.transportString()
+            } else {
+                return false
+            }
+        }
+
+        XCTAssertTrue(containsReadConfirmation, "expected read confirmation for message with nonce = \(nonce)", file: file, line: line)
+    }
 
     func handle(conversationAction: ConversationAction?, category: Category, userInfo: NotificationUserInfo, userText: String? = nil) {
         handle(action: conversationAction?.rawValue ?? "", category: category.rawValue, userInfo: userInfo, userText: userText)

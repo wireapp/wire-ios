@@ -1,12 +1,35 @@
-# Adds support for Apple Silicon brew directory
-export PATH="$PATH:/opt/homebrew/bin"
- 
-if [ -z "$CI" ]; then
-  if which swiftlint >/dev/null; then
-    swiftlint --config ../.swiftlint.yml
-  else
-    echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
-  fi
-else
-  echo "Skipping SwiftLint in CI environment"
+#!/bin/bash
+set -Eeuo pipefail
+
+#
+# Wire
+# Copyright (C) 2023 Wire Swiss GmbH
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see http://www.gnu.org/licenses/.
+#
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+SCRIPTS_DIR="$REPO_ROOT/scripts"
+SWIFTLINT="$SCRIPTS_DIR/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.53.0-macos/bin/swiftlint"
+
+if [ ! -z "${CI-}" ]; then
+    echo "Skipping SwiftLint in CI environment"
+    exit 0
 fi
+
+if [[ ! -f "$SWIFTLINT" ]]; then
+    xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
+fi
+
+"$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"

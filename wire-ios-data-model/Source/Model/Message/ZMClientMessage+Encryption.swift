@@ -144,14 +144,21 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
 
     public func encryptForTransportQualified() -> Payload? {
         guard
-            let conversation = conversation,
             let context = managedObjectContext
         else {
             return nil
         }
 
-        updateUnderlayingMessageBeforeSending(in: context)
-        return underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        return context.performAndWait {
+            guard
+                let conversation = conversation
+            else {
+                return nil
+            }
+
+            updateUnderlayingMessageBeforeSending(in: context)
+            return underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        }
     }
 
     public var debugInfo: String {
@@ -176,14 +183,22 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
 
     public func encryptForTransportQualified() -> Payload? {
         guard
-            let conversation = conversation,
             let context = managedObjectContext
         else {
             return nil
         }
 
-        updateUnderlayingMessageBeforeSending(in: context)
-        return underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        return context.performAndWait {
+            guard
+                let conversation = conversation
+            else {
+                return nil
+            }
+
+            updateUnderlayingMessageBeforeSending(in: context)
+            return underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        }
+
     }
 
     public var debugInfo: String {
@@ -608,7 +623,7 @@ extension GenericMessage {
         guard !client.failedToEstablishSession else {
             // If the session is corrupted, we will send a special payload.
             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(client.remoteIdentifier)", attributes: nil)
+            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(client.remoteIdentifier ?? "<nil>")", attributes: nil)
             return Proteus_ClientEntry(withClient: client, data: data)
         }
 

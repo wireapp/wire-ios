@@ -42,7 +42,7 @@ final class FetchSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Fet
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/users/\(userID.domain)/\(userID.uuid.transportString())/supported-protocols",
-            expectedMethod: .methodGET,
+            expectedMethod: .get,
             apiVersion: .v5
         )
     }

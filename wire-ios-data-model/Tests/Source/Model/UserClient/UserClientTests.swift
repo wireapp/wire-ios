@@ -19,7 +19,9 @@
 import XCTest
 import WireUtilities
 import WireCryptobox
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class UserClientTests: ZMBaseManagedObjectTest {
 
@@ -161,33 +163,30 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(ignoredClient.needsToNotifyUser)
     }
 
-    func testThatItDeletesASession() {
+    func testThatItDeletesASession() async throws {
+        // Given
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = true
+        var otherClient: UserClient!
+        let mockProteusService = MockProteusServiceInterface()
+        mockProteusService.deleteSessionId_MockMethod = { _ in
+            // No op
+        }
 
         self.syncMOC.performGroupedBlockAndWait {
-            // Given
-            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
             otherClient.user = ZMUser.insertNewObject(in: self.syncMOC)
             otherClient.user?.remoteIdentifier = UUID.create()
 
-            // Mock
-            let mockProteusService = MockProteusServiceInterface()
             self.syncMOC.proteusService = mockProteusService
+        }
 
-            mockProteusService.deleteSessionId_MockMethod = { _ in
-                // No op
-            }
+        // When
+        try await otherClient.deleteSession()
 
-            do {
-                // When
-                try otherClient.deleteSession()
-            } catch {
-                XCTFail("Unexpected error: \(error)")
-            }
-
-            // Then
+        // Then
+        self.syncMOC.performGroupedBlockAndWait {
             XCTAssertEqual(mockProteusService.deleteSessionId_Invocations, [otherClient.proteusSessionID])
         }
 
@@ -195,70 +194,72 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         flag.isOn = false
     }
 
-    func testThatItDeletesASession_Legacy() {
+    func testThatItDeletesASession_Legacy() async throws {
+        // Given
+        var selfClient: UserClient!
+        var otherClient: UserClient!
+        var preKeys: [(id: UInt16, prekey: String)] = []
+
         self.syncMOC.performGroupedBlockAndWait {
-            // Given
-            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
-
-            var preKeys: [(id: UInt16, prekey: String)] = []
-
+            selfClient = self.createSelfClient(onMOC: self.syncMOC)
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ (sessionsDirectory) in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
 
-            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
             otherClient.user = ZMUser.insertNewObject(in: self.syncMOC)
             otherClient.user?.remoteIdentifier = UUID.create()
-
-            guard let preKey = preKeys.first else {
-                XCTFail("could not generate prekeys")
-                return
-            }
-
-            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey))
-            XCTAssertTrue(otherClient.hasSessionWithSelfClient)
-
-            // when
-            do {
-                // When
-                try otherClient.deleteSession()
-            } catch {
-                XCTFail("Unexpected error: \(error)")
-            }
-
-            // Then
-            XCTAssertFalse(otherClient.hasSessionWithSelfClient)
         }
+
+        guard let preKey = preKeys.first else {
+            XCTFail("could not generate prekeys")
+            return
+        }
+
+        let didEstablishedSession = await selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey)
+        let hasSession = await otherClient.hasSessionWithSelfClient
+
+        XCTAssertTrue(didEstablishedSession)
+        XCTAssertTrue(hasSession)
+
+        // When
+        try await otherClient.deleteSession()
+
+        // Then
+        let hasSessionAfterDeletion = await otherClient.hasSessionWithSelfClient
+        XCTAssertFalse(hasSessionAfterDeletion)
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatItDeletesASessionWhenDeletingAClient() {
+    func testThatItDeletesASessionWhenDeletingAClient() async {
+        // Given
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = true
+        var otherClient: UserClient!
+        var otherClientSessionID: ProteusSessionID!
+        let mockProteusService = MockProteusServiceInterface()
+        mockProteusService.deleteSessionId_MockMethod = { _ in
+            // No op
+        }
 
         self.syncMOC.performGroupedBlockAndWait {
-            // Given
-            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             otherClient.user = otherUser
-            let otherClientSessionID = otherClient.proteusSessionID
-
-            // Mock
-            let mockProteusService = MockProteusServiceInterface()
+            otherClientSessionID = otherClient.proteusSessionID
             self.syncMOC.proteusService = mockProteusService
+        }
 
-            mockProteusService.deleteSessionId_MockMethod = { _ in
-                // No op
-            }
+        // When
+        await otherClient.deleteClientAndEndSession()
 
-            // When
-            otherClient.deleteClientAndEndSession()
+        // Then
+        XCTAssertEqual(mockProteusService.deleteSessionId_Invocations, [otherClientSessionID])
 
-            // Then
-            XCTAssertEqual(mockProteusService.deleteSessionId_Invocations, [otherClientSessionID])
+        self.syncMOC.performGroupedBlockAndWait {
             XCTAssertTrue(otherClient.isZombieObject)
         }
 
@@ -266,60 +267,66 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         flag.isOn = false
     }
 
-    func testThatItDeletesASessionWhenDeletingAClient_Legacy() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // given
-            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            var preKeys: [(id: UInt16, prekey: String)] = []
+    func testThatItDeletesASessionWhenDeletingAClient_Legacy() async {
+        // given
+        var preKeys: [(id: UInt16, prekey: String)] = []
+        var selfClient: UserClient!
+        var otherClient: UserClient!
 
+        self.syncMOC.performGroupedBlockAndWait {
+            selfClient = self.createSelfClient(onMOC: self.syncMOC)
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ (sessionsDirectory) in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
 
-            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             otherClient.user = otherUser
+        }
 
-            guard let preKey = preKeys.first else {
-                XCTFail("could not generate prekeys")
-                return
-            }
+        guard let preKey = preKeys.first else {
+            XCTFail("could not generate prekeys")
+            return
+        }
 
-            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey))
-            XCTAssertTrue(otherClient.hasSessionWithSelfClient)
-            let clientId = otherClient.sessionIdentifier!
+        let didEstablishSession = await selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey)
+        let hasSession = await otherClient.hasSessionWithSelfClient
+        XCTAssertTrue(didEstablishSession)
+        XCTAssertTrue(hasSession)
 
-            // when
-            otherClient.deleteClientAndEndSession()
+        // when
+        await otherClient.deleteClientAndEndSession()
 
-            // then
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform {
-                XCTAssertFalse($0.hasSession(for: clientId))
-            }
-            XCTAssertFalse(otherClient.hasSessionWithSelfClient)
+        // then
+        let hasSessionAfterDeletion = await otherClient.hasSessionWithSelfClient
+        XCTAssertFalse(hasSessionAfterDeletion)
+        syncMOC.performAndWait {
             XCTAssertTrue(otherClient.isZombieObject)
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatItUpdatesConversationSecurityLevelWhenDeletingClient() {
+    func testThatItUpdatesConversationSecurityLevelWhenDeletingClient() async {
+        // given
+        var otherUser: ZMUser!
+        var otherClient2: UserClient!
+        var conversation: ZMConversation!
 
         self.syncMOC.performGroupedBlockAndWait {
-            // given
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
             let otherClient1 = UserClient.insertNewObject(in: self.syncMOC)
             otherClient1.remoteIdentifier = UUID.create().transportString()
 
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             otherClient1.user = otherUser
             let connection = ZMConnection.insertNewSentConnection(to: otherUser)
             connection.status = .accepted
 
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group
 
             conversation.addParticipantsAndUpdateConversationState(
@@ -331,17 +338,19 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             conversation.securityLevel = ZMConversationSecurityLevel.notSecure
             XCTAssertEqual(conversation.allMessages.count, 1)
 
-            let otherClient2 = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient2 = UserClient.insertNewObject(in: self.syncMOC)
             otherClient2.remoteIdentifier = UUID.create().transportString()
             otherClient2.user = otherUser
 
             selfClient.ignoreClient(otherClient2)
+        }
 
-            // when
-            otherClient2.deleteClientAndEndSession()
-            self.syncMOC.saveOrRollback()
+        // when
+        await otherClient2.deleteClientAndEndSession()
+        _ = await syncMOC.perform { self.syncMOC.saveOrRollback() }
 
-            // then
+        // then
+        self.syncMOC.performGroupedBlockAndWait {
             XCTAssertTrue(otherClient2.isZombieObject)
             XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevel.secure)
             XCTAssertEqual(conversation.allMessages.count, 2)
@@ -355,13 +364,16 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatWhenDeletingClientItTriggersUserFetchForPossibleMemberLeave() {
+    func testThatWhenDeletingClientItTriggersUserFetchForPossibleMemberLeave() async {
+        // given
+        var otherUser: ZMUser!
+        var otherClient: UserClient!
+
         self.syncMOC.performGroupedBlockAndWait {
-            // given
-            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
 
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             otherClient.user = otherUser
 
@@ -372,111 +384,18 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
             XCTAssertTrue(otherUser.isTeamMember)
             XCTAssertFalse(otherUser.needsToBeUpdatedFromBackend)
+        }
 
-            // when
-            otherClient.deleteClientAndEndSession()
+        // when
+        await otherClient.deleteClientAndEndSession()
 
-            // then
+        // then
+        self.syncMOC.performGroupedBlockAndWait {
             XCTAssertTrue(otherClient.isZombieObject)
             XCTAssertTrue(otherUser.clients.isEmpty)
             XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
         }
-
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
-    func testThatItRefetchesMissingFingerprintForUserWithSession() {
-        // Given
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
-
-        let otherClientId = UUID.create()
-
-        self.syncMOC.performGroupedBlockAndWait {
-            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
-            otherClient.remoteIdentifier = otherClientId.transportString()
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            otherClient.user = otherUser
-
-            // Mock
-            let mockProteusService = MockProteusServiceInterface()
-            self.syncMOC.proteusService = mockProteusService
-
-            mockProteusService.remoteFingerprintForSession_MockMethod = { sessionID in
-                return sessionID.rawValue + "remote_fingerprint"
-            }
-
-            XCTAssertNil(otherClient.fingerprint)
-            otherClient.managedObjectContext?.saveOrRollback()
-        }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        self.syncMOC.performGroupedBlockAndWait {
-            let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
-            fetchRequest.predicate = NSPredicate(format: "%K == %@", "remoteIdentifier", otherClientId.transportString())
-            fetchRequest.fetchLimit = 1
-            // When
-            do {
-                let fetchedClient = try self.syncMOC.fetch(fetchRequest).first
-
-                // Then
-                XCTAssertNotNil(fetchedClient)
-                XCTAssertNotNil(fetchedClient!.fingerprint)
-            } catch let error {
-                XCTFail(error.localizedDescription)
-            }
-        }
-
-        flag.isOn = false
-    }
-
-    func testThatItRefetchesMissingFingerprintForUserWithSession_Legacy() {
-        // Given
-        let otherClientId = UUID.create()
-
-        self.syncMOC.performGroupedBlockAndWait {
-            var preKeys: [(id: UInt16, prekey: String)] = []
-
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            })
-
-            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
-            otherClient.remoteIdentifier = otherClientId.transportString()
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            otherClient.user = otherUser
-
-            guard let preKey = preKeys.first else {
-                XCTFail("could not generate prekeys")
-                return
-            }
-
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ (sessionsDirectory) in
-                try! sessionsDirectory.createClientSession(otherClient.sessionIdentifier!, base64PreKeyString: preKey.prekey)
-            })
-
-            XCTAssertNil(otherClient.fingerprint)
-            otherClient.managedObjectContext?.saveOrRollback()
-        }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        self.syncMOC.performGroupedBlockAndWait {
-            let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
-            fetchRequest.predicate = NSPredicate(format: "%K == %@", "remoteIdentifier", otherClientId.transportString())
-            fetchRequest.fetchLimit = 1
-            // When
-            do {
-                let fetchedClient = try self.syncMOC.fetch(fetchRequest).first
-
-                // Then
-                XCTAssertNotNil(fetchedClient)
-                XCTAssertNotNil(fetchedClient!.fingerprint)
-            } catch let error {
-                XCTFail(error.localizedDescription)
-            }
-        }
     }
 
     func testThatItSetsNeedsToNotifyOtherUserAboutSessionReset_WhenResettingSession() {
@@ -760,166 +679,6 @@ extension UserClientTests {
         XCTAssertFalse(newClient.needsSessionMigration)
     }
 
-    func testThatItDoNothingWhenHasAFingerprint() {
-        // GIVEN
-        let fingerprint = Data(base64Encoded: "cmVhZGluZyB0ZXN0cyBpcyBjb29s")
-
-        let client = UserClient.insertNewObject(in: self.uiMOC)
-        client.fingerprint = fingerprint
-
-        self.uiMOC.saveOrRollback()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
-
-        // WHEN
-        client.fetchFingerprintOrPrekeys()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
-
-        // THEN
-        XCTAssertTrue(client.keysThatHaveLocalModifications.isEmpty)
-        XCTAssertEqual(client.fingerprint, fingerprint)
-    }
-
-    func testThatItLoadsFingerprintForSelfClient() {
-
-        // GIVEN
-        var selfClient: UserClient!
-        var newFingerprint: Data?
-
-        self.syncMOC.performGroupedBlockAndWait {
-
-            selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            selfClient.fingerprint = .none
-
-            // TODO: [John] use flag here
-
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
-                newFingerprint = sessionsDirectory.localFingerprint
-            }
-
-            self.syncMOC.saveOrRollback()
-        }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
-
-        // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
-            selfClient.fetchFingerprintOrPrekeys()
-        }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
-
-        // THEN
-        self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(selfClient.keysThatHaveLocalModifications.isEmpty)
-            XCTAssertEqual(selfClient.fingerprint!, newFingerprint)
-        }
-    }
-
-    func testThatItLoadsFingerprintForExistingSession() {
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
-
-        var client: UserClient!
-
-        self.syncMOC.performGroupedBlockAndWait {
-            // Given
-            self.createSelfClient(onMOC: self.syncMOC)
-            client = UserClient.insertNewObject(in: self.syncMOC)
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            client.user = otherUser
-            client.remoteIdentifier = "badf00d"
-
-            // Mock
-            let mockProteusService = MockProteusServiceInterface()
-            self.syncMOC.proteusService = mockProteusService
-
-            mockProteusService.sessionExistsId_MockMethod = { sessionID in
-                return sessionID == client.proteusSessionID
-            }
-
-            mockProteusService.remoteFingerprintForSession_MockMethod = { sessionID in
-                return sessionID.rawValue + "remote_fingerprint"
-            }
-
-            // When
-            client.fetchFingerprintOrPrekeys()
-        }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
-
-        // Then
-        self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(client.keysThatHaveLocalModifications.isEmpty)
-            XCTAssertNotEqual(client.fingerprint!.count, 0)
-        }
-
-        flag.isOn = false
-    }
-
-    func testThatItLoadsFingerprintForExistingSession_Legacy() {
-        var client: UserClient!
-
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            var preKeys: [(id: UInt16, prekey: String)] = []
-
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            })
-
-            guard let preKey = preKeys.first else {
-                XCTFail("could not generate prekeys")
-                return
-            }
-
-            self.createSelfClient()
-            client = UserClient.insertNewObject(in: self.syncMOC)
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            client.user = otherUser
-            client.remoteIdentifier = "badf00d"
-
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
-                try! sessionsDirectory.createClientSession(client.sessionIdentifier!, base64PreKeyString: preKey.prekey)
-            }
-
-            // WHEN
-            client.fetchFingerprintOrPrekeys()
-        }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
-
-        // THEN
-        self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(client.keysThatHaveLocalModifications.isEmpty)
-            XCTAssertNotEqual(client.fingerprint!.count, 0)
-        }
-    }
-
-    func testThatItMarksMissingWhenNoSession() {
-        var client: UserClient!
-        var selfClient: UserClient!
-
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            client = UserClient.insertNewObject(in: self.syncMOC)
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            client.user = otherUser
-            client.remoteIdentifier = "badf00d"
-
-            self.syncMOC.saveOrRollback()
-
-            // WHEN
-            client.fetchFingerprintOrPrekeys()
-        }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
-
-        // THEN
-        self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(selfClient.hasLocalModifications(forKey: ZMUserClientMissingKey))
-            XCTAssertEqual(client.fingerprint, .none)
-        }
-    }
-
     func testThatItCreatesUserClientIfNeeded() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -1124,43 +883,53 @@ extension UserClientTests {
         XCTAssertEqual(sessionIdentifier, expectedSessionIdentifier)
     }
 
-    func testThatItMigratesSessionIdentifierFromV2ToV3_WhenUserDomainIsAvailable() {
-        syncMOC.performGroupedBlockAndWait { [self] in
-            // given
-            let selfClient = createSelfClient(onMOC: syncMOC)
+    func testThatItMigratesSessionIdentifierFromV2ToV3_WhenUserDomainIsAvailable() async {
+        // given
+        var preKeys: [(id: UInt16, prekey: String)] = []
+        var selfClient: UserClient!
+        var otherUser: ZMUser!
+        var otherClient: UserClient!
+        var otherUserDomain: String!
+        var v2SessionIdentifier: EncryptionSessionIdentifier!
+        var v3SessionIdentifier: EncryptionSessionIdentifier!
 
-            let otherClient = UserClient.insertNewObject(in: syncMOC)
+        syncMOC.performGroupedBlockAndWait { [self] in
+            selfClient = createSelfClient(onMOC: syncMOC)
+            otherClient = UserClient.insertNewObject(in: syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
-            let otherUser = ZMUser.insertNewObject(in: syncMOC)
+            otherUser = ZMUser.insertNewObject(in: syncMOC)
             let otherUserID = UUID().create()
             otherUser.remoteIdentifier = otherUserID
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
-            var preKeys: [(id: UInt16, prekey: String)] = []
             // TODO: [John] use flag here
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }
 
-            guard let preKey = preKeys.first else {
-                XCTFail("could not generate prekeys")
-                return
-            }
-
             let userID = otherUserID.uuidString
             let clientID = otherClient.remoteIdentifier!
-            let otherUserDomain = UUID().uuidString
+            otherUserDomain = UUID().uuidString
 
-            let v2SessionIdentifier = EncryptionSessionIdentifier(userId: userID,
-                                                                  clientId: clientID)
-            let v3SessionIdentifier = EncryptionSessionIdentifier(domain: otherUserDomain,
-                                                                  userId: userID,
-                                                                  clientId: clientID)
+            v2SessionIdentifier = EncryptionSessionIdentifier(userId: userID,
+                                                              clientId: clientID)
+            v3SessionIdentifier = EncryptionSessionIdentifier(domain: otherUserDomain,
+                                                              userId: userID,
+                                                              clientId: clientID)
+        }
 
-            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey))
-            XCTAssertTrue(otherClient.hasSessionWithSelfClient)
+        guard let preKey = preKeys.first else {
+            XCTFail("could not generate prekeys")
+            return
+        }
 
+        let didEstablishSession = await selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey)
+        let hasSession = await otherClient.hasSessionWithSelfClient
+        XCTAssertTrue(didEstablishSession)
+        XCTAssertTrue(hasSession)
+
+        syncMOC.performGroupedBlockAndWait {
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v2SessionIdentifier))
                 XCTAssertFalse(sessionsDirectory.hasSession(for: v3SessionIdentifier))
@@ -1177,31 +946,30 @@ extension UserClientTests {
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v3SessionIdentifier))
             }
         }
-
     }
 
-    func testThatItMigratesSessionIdentifierFromV2ToV3_FallsBackToLocalDomainIfUserHasNoDomain() {
-        syncMOC.performGroupedBlockAndWait { [self] in
-            // given
-            let selfClient = createSelfClient(onMOC: syncMOC)
+    func testThatItMigratesSessionIdentifierFromV2ToV3_FallsBackToLocalDomainIfUserHasNoDomain() async {
+        // given
+        var preKeys: [(id: UInt16, prekey: String)] = []
+        var selfClient: UserClient!
+        var otherUser: ZMUser!
+        var otherClient: UserClient!
+        var v2SessionIdentifier: EncryptionSessionIdentifier!
+        var v3SessionIdentifier: EncryptionSessionIdentifier!
 
-            let otherClient = UserClient.insertNewObject(in: syncMOC)
+        syncMOC.performGroupedBlockAndWait { [self] in
+            selfClient = createSelfClient(onMOC: syncMOC)
+            otherClient = UserClient.insertNewObject(in: syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
-            let otherUser = ZMUser.insertNewObject(in: syncMOC)
+            otherUser = ZMUser.insertNewObject(in: syncMOC)
             let otherUserID = UUID().create()
             otherUser.remoteIdentifier = otherUserID
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
-            var preKeys: [(id: UInt16, prekey: String)] = []
             // TODO: [John] use flag here
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            }
-
-            guard let preKey = preKeys.first else {
-                XCTFail("could not generate prekeys")
-                return
             }
 
             let userID = otherUserID.uuidString
@@ -1209,15 +977,24 @@ extension UserClientTests {
             let localDomain = "localdomain.com"
             BackendInfo.domain = localDomain
 
-            let v2SessionIdentifier = EncryptionSessionIdentifier(userId: userID,
+            v2SessionIdentifier = EncryptionSessionIdentifier(userId: userID,
                                                                   clientId: clientID)
-            let v3SessionIdentifier = EncryptionSessionIdentifier(domain: localDomain,
+            v3SessionIdentifier = EncryptionSessionIdentifier(domain: localDomain,
                                                                   userId: userID,
                                                                   clientId: clientID)
+        }
 
-            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey))
-            XCTAssertTrue(otherClient.hasSessionWithSelfClient)
+        guard let preKey = preKeys.first else {
+            XCTFail("could not generate prekeys")
+            return
+        }
 
+        let didEstablishSession = await selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey)
+        let hasSession = await otherClient.hasSessionWithSelfClient
+        XCTAssertTrue(didEstablishSession)
+        XCTAssertTrue(hasSession)
+
+        syncMOC.performGroupedBlockAndWait { [self] in
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v2SessionIdentifier))
                 XCTAssertFalse(sessionsDirectory.hasSession(for: v3SessionIdentifier))
@@ -1234,7 +1011,6 @@ extension UserClientTests {
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v3SessionIdentifier))
             }
         }
-
     }
 
 }
@@ -1279,7 +1055,7 @@ extension UserClientTests {
 
 extension UserClientTests {
 
-    func test_GivenDeveloperFlagProteusViaCoreCryptoEnabled_ItUsesCoreKrypto() {
+    func test_GivenDeveloperFlagProteusViaCoreCryptoEnabled_ItUsesCoreKrypto() async {
         // GIVEN
         let context = self.syncMOC
         var mockMethodCalled = false
@@ -1294,206 +1070,26 @@ extension UserClientTests {
             return "test"
         }
 
-        let mock = MockProteusProvider(mockProteusService: mockProteusService, mockKeyStore: self.spyForTests())
+        let mock = MockProteusProvider(mockProteusService: mockProteusService)
         mock.useProteusService = true
 
         var sut: UserClient!
         var clientB: UserClient!
+        var sessionId: EncryptionSessionIdentifier!
 
-        context.performGroupedBlock {
+        context.performGroupedBlockAndWait {
             sut = self.createSelfClient(onMOC: context)
             let userB = self.createUser(in: context)
             clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
-
-            // WHEN
-            resultOfMethod = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
-
-            // THEN
-            XCTAssertTrue(mockMethodCalled)
-            XCTAssertTrue(resultOfMethod)
+            sessionId = clientB.sessionIdentifier
         }
-    }
-
-    func test_GivenDeveloperFlagProteusViaCoreCryptoDisabled_ItUsesCryptoBox() {
-        // GIVEN
-        let context = self.syncMOC
-        var resultOfMethod = false
-        let prekey = "test".utf8Data!.base64String()
-        let spy = self.spyForTests()
-        var mockProteusServiceCalled = false
-
-        let mockProteusService = MockProteusServiceInterface()
-        mockProteusService.establishSessionIdFromPrekey_MockMethod = {_, _ in
-            mockProteusServiceCalled = true
-        }
-        mockProteusService.remoteFingerprintForSession_MockMethod = {_ in
-            return "test"
-        }
-
-        let mock = MockProteusProvider(mockProteusService: MockProteusServiceInterface(), mockKeyStore: spy)
-        mock.useProteusService = false
-
-        var sut: UserClient!
-        var clientB: UserClient!
-
-        context.performGroupedBlock {
-            sut = self.createSelfClient(onMOC: context)
-            let userB = self.createUser(in: context)
-            clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
-            // we need real prekeys here
-            var preKeys: [(id: UInt16, prekey: String)] = []
-            context.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
-                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            }
-
-            // WHEN
-            resultOfMethod = sut.establishSessionWithClient(clientB, usingPreKey: preKeys.first!.prekey, proteusProviding: mock)
-
-            // THEN
-            XCTAssertEqual(spy.accessEncryptionContextCount, 2)
-            XCTAssertTrue(resultOfMethod)
-            XCTAssertFalse(mockProteusServiceCalled)
-        }
-    }
-
-    func test_itLoadsLocalFingerprintForSelfClient_ProteusViaCoreCryptoFlagEnabled() {
-
-        // GIVEN
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
-        proteusViaCoreCrypto.isOn = true
-        var selfClient: UserClient!
-        let localFingerprint: String = "test"
-
-        self.syncMOC.performGroupedBlockAndWait {
-            let mockProteusService = MockProteusServiceInterface()
-            mockProteusService.localFingerprint_MockMethod = {
-                return localFingerprint
-            }
-            self.syncMOC.proteusService = mockProteusService
-
-            selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            selfClient.fingerprint = .none
-
-            self.syncMOC.saveOrRollback()
-        }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
-            selfClient.fetchFingerprintOrPrekeys()
-        }
+        resultOfMethod = await sut.establishSessionWithClient(sessionId: sessionId, usingPreKey: prekey, proteusProviding: mock)
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(selfClient.fingerprint!, localFingerprint.utf8Data)
-        }
-
-        // Cleanup
-        proteusViaCoreCrypto.isOn = false
+        XCTAssertTrue(mockMethodCalled)
+        XCTAssertTrue(resultOfMethod)
     }
 
-    func test_itDoesntLoadRemoteFingerprint_IfProteusProviderCantPerform_ProteusViaCoreCryptoFlagEnabled() {
-        // GIVEN
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
-        proteusViaCoreCrypto.isOn = true
-
-        let mockProteusService = MockProteusServiceInterface()
-        mockProteusService.remoteFingerprintForSession_MockMethod = { _ in return "" }
-
-        let mockProvider = MockProteusProvider(
-            mockProteusService: mockProteusService,
-            mockKeyStore: spyForTests(),
-            useProteusService: true
-        )
-        mockProvider.mockCanPerform = false
-
-        syncMOC.performAndWait {
-            let user = createUser(in: syncMOC)
-            let sut = createClient(for: user, createSessionWithSelfUser: false, onMOC: syncMOC)
-            sut.fingerprint = .none
-
-            // WHEN
-            _ = sut.remoteFingerprint(mockProvider)
-
-            // THEN
-            XCTAssertTrue(mockProteusService.remoteFingerprintForSession_Invocations.isEmpty)
-        }
-
-        // Cleanup
-        proteusViaCoreCrypto.isOn = false
-    }
-
-    func test_itDoesntLoadLocalFingerprint_IfProteusProviderCantPerform_ProteusViaCoreCryptoEnabled() {
-        // GIVEN
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
-        proteusViaCoreCrypto.isOn = true
-
-        let mockProteusService = MockProteusServiceInterface()
-        mockProteusService.localFingerprint_MockMethod = { return  "" }
-
-        let mockProvider = MockProteusProvider(
-            mockProteusService: mockProteusService,
-            mockKeyStore: spyForTests(),
-            useProteusService: true
-        )
-        mockProvider.mockCanPerform = false
-
-        syncMOC.performAndWait {
-            let user = createUser(in: syncMOC)
-            let sut = createClient(for: user, createSessionWithSelfUser: false, onMOC: syncMOC)
-            sut.fingerprint = .none
-
-            // WHEN
-            _ = sut.localFingerprint(mockProvider)
-
-            // THEN
-            XCTAssertTrue(mockProteusService.localFingerprint_Invocations.isEmpty)
-        }
-
-        // Cleanup
-        proteusViaCoreCrypto.isOn = false
-    }
-
-    func test_itLoadsRemoteFingerprintForOtherClient_ProteusViaCoreCryptoFlagEnabled() {
-        // GIVEN
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
-        proteusViaCoreCrypto.isOn = true
-        let context = self.syncMOC
-        let prekey = "test".utf8Data!.base64String()
-        let remoteFingerprint: String = "fingerprint"
-
-        let mockProteusService = MockProteusServiceInterface()
-        mockProteusService.establishSessionIdFromPrekey_MockMethod = {_, _ in }
-
-        mockProteusService.remoteFingerprintForSession_MockMethod = {_ in
-            return remoteFingerprint
-        }
-
-        let mock = MockProteusProvider(mockProteusService: mockProteusService, mockKeyStore: self.spyForTests())
-        mock.useProteusService = true
-
-        var sut: UserClient!
-        var clientB: UserClient!
-
-        context.performGroupedBlock {
-            sut = self.createSelfClient(onMOC: context)
-            let userB = self.createUser(in: context)
-            clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
-            clientB.fingerprint = .none
-
-            // WHEN
-            _ = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
-
-            // THEN
-            XCTAssertEqual(clientB.fingerprint!, remoteFingerprint.utf8Data)
-        }
-
-        // Cleanup
-        proteusViaCoreCrypto.isOn = false
-    }
-
-    private func spyForTests() -> SpyUserClientKeyStore {
-        let url = self.createTempFolder()
-        return SpyUserClientKeyStore(accountDirectory: url, applicationContainer: url)
-    }
 }

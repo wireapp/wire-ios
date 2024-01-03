@@ -39,7 +39,7 @@ final class ServicesSectionController: GroupDetailsSectionController {
     }
 
     override var sectionTitle: String {
-        return "participants.section.services".localized(uppercased: true, args: serviceUsers.count)
+        return L10n.Localizable.Participants.Section.services(serviceUsers.count).localizedUppercase
     }
 
     override var sectionAccessibilityIdentifier: String {
@@ -53,8 +53,11 @@ final class ServicesSectionController: GroupDetailsSectionController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let user = serviceUsers[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
-
-        cell.configure(with: user, selfUser: ZMUser.selfUser(), conversation: conversation)
+        if let selfUser = ZMUser.selfUser() {
+            cell.configure(with: user, selfUser: selfUser, conversation: conversation)
+        } else {
+            assertionFailure("ZMUser.selfUser() is nil")
+        }
         cell.showSeparator = (serviceUsers.count - 1) != indexPath.row
         cell.accessoryIconView.isHidden = false
         cell.accessibilityIdentifier = "participants.section.services.cell"

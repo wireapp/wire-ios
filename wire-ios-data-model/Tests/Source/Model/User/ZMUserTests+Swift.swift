@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 // MARK: - Modified keys for profile picture upload
 final class ZMUserTests_Swift: ModelObjectsTests {
@@ -1077,9 +1078,7 @@ extension ZMUserTests_Swift {
         )
 
         let oneOneOneResolver = MockOneOnOneResolverInterface()
-        oneOneOneResolver.resolveOneOnOneConversationWithInCompletion_MockMethod = { _, _, completion in
-            completion(.success(()))
-        }
+        oneOneOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in }
 
         // Expect
         let didSucceed = XCTestExpectation(description: "didSucceed")
@@ -1095,8 +1094,8 @@ extension ZMUserTests_Swift {
 
         // Then
         wait(for: [didSucceed], timeout: 0.5)
-        XCTAssertEqual(oneOneOneResolver.resolveOneOnOneConversationWithInCompletion_Invocations.count, 1)
-        let invocation = try XCTUnwrap(oneOneOneResolver.resolveOneOnOneConversationWithInCompletion_Invocations.first)
+        XCTAssertEqual(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
+        let invocation = try XCTUnwrap(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.first)
         XCTAssertEqual(invocation.userID, userID)
     }
 

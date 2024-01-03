@@ -17,6 +17,7 @@
 //
 
 @testable import WireSyncEngine
+import XCTest
 
 class MockTyping: WireSyncEngine.Typing {
     var didTearDown: Bool = false
@@ -138,7 +139,7 @@ class TypingStrategyTests: MessagingTest {
         let expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/typing"
         let expectedPayload = ["status": isTyping ? "started" : "stopped"]
 
-        if let request = request, (request.path == expectedPath) && (request.method == .methodPOST) {
+        if let request = request, (request.path == expectedPath) && (request.method == .post) {
             if let payload = request.payload as? [String: String] {
                 XCTAssertEqual(payload, expectedPayload)
             } else {
@@ -207,31 +208,31 @@ extension TypingStrategyTests {
         XCTAssertEqual(request!.path.lowercased(), expectedPath.lowercased())
     }
 
-    func testThatItForwardsAStartedTypingEvent() {
+    func testThatItForwardsAStartedTypingEvent() async {
         // given
         let event = typingEvent(isTyping: true)
 
         // when
-        sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        await sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
         // then
         XCTAssertTrue(typing.isUserTyping(user: userA, in: conversationA))
     }
 
-    func testThatItForwardsAStoppedTypingEvent() {
+    func testThatItForwardsAStoppedTypingEvent() async {
         // given
         let event = typingEvent(isTyping: false)
         simulateTyping()
 
         // when
-        sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        await sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
         // then
         XCTAssertTrue(typing.didSetTypingUsers)
         XCTAssertFalse(typing.isUserTyping(user: userA, in: conversationA))
     }
 
-    func testThatItDoesNotForwardsAnUnknownTypingEvent() {
+    func testThatItDoesNotForwardsAnUnknownTypingEvent() async {
         // given
         let payload = ["conversation": conversationA.remoteIdentifier!.transportString(),
                        "data": ["status": "foo"],
@@ -242,13 +243,13 @@ extension TypingStrategyTests {
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
 
         // when
-        sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        await sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
         // then
         XCTAssertFalse(typing.didSetTypingUsers)
     }
 
-    func testThatItForwardsOTRMessageAddEventsAndSetsIsTypingToNo() {
+    func testThatItForwardsOTRMessageAddEventsAndSetsIsTypingToNo() async {
         // given
 
         // edit message is an allowed type that can fire a otr-message-add notification
@@ -259,36 +260,36 @@ extension TypingStrategyTests {
         simulateTyping()
 
         // when
-        sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        await sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
         // then
         XCTAssertTrue(typing.didSetTypingUsers)
         XCTAssertFalse(typing.isUserTyping(user: userA, in: conversationA))
     }
 
-    func testThatDoesntForwardOTRMessageAddEventsForNonTextTypes() {
+    func testThatDoesntForwardOTRMessageAddEventsForNonTextTypes() async {
         // given
         // delete-message should not fire an Add Events notification
         let message = GenericMessage(content: MessageDelete(messageId: UUID.create()))
-        tryToForwardOTRMessageWithoutReply(with: message)
+        await tryToForwardOTRMessageWithoutReply(with: message)
     }
 
-    func testThatDoesntForwardOTRMessageAddEventsForConfirmations() {
+    func testThatDoesntForwardOTRMessageAddEventsForConfirmations() async {
 
         // given
         // confirmations should not fire an Add Events notification
         let message = GenericMessage(content: Confirmation(messageId: UUID.create()))
-        tryToForwardOTRMessageWithoutReply(with: message)
+        await tryToForwardOTRMessageWithoutReply(with: message)
     }
 
-    func tryToForwardOTRMessageWithoutReply(with message: GenericMessage) {
+    func tryToForwardOTRMessageWithoutReply(with message: GenericMessage) async {
         let payload = payloadForOTRMessageAdd(with: message) as ZMTransportData
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 
         simulateTyping()
 
         // when
-        sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        await sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
         // then
         XCTAssertFalse(typing.didSetTypingUsers)
@@ -305,7 +306,7 @@ extension TypingStrategyTests {
                        ] as [String: Any]
     }
 
-    func testThatItDoesNotForwardOtherEventTypes() {
+    func testThatItDoesNotForwardOtherEventTypes() async {
         // given
         let payload = ["conversation": conversationA.remoteIdentifier!.transportString(),
                        "data": [],
@@ -316,7 +317,7 @@ extension TypingStrategyTests {
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
 
         // when
-        sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        await sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
         // then
         XCTAssertFalse(typing.didSetTypingUsers)
@@ -560,14 +561,14 @@ extension TypingStrategyTests {
         }
     }
 
-    func testThatRemovingMemberClearsTypingState() {
+    func testThatRemovingMemberClearsTypingState() async {
         // given
         simulateTyping()
         let event = memberLeaveEvent()
         XCTAssertTrue(typing.isUserTyping(user: userA, in: conversationA)) // user is still typing
 
         // when
-        sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        await sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
         // then
         XCTAssertFalse(typing.isUserTyping(user: userA, in: conversationA)) // user is not typing

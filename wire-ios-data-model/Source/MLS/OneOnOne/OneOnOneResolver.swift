@@ -23,9 +23,8 @@ public protocol OneOnOneResolverInterface {
 
     func resolveOneOnOneConversation(
         with userID: QualifiedID,
-        in context: NSManagedObjectContext,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
-    )
+        in context: NSManagedObjectContext
+    ) async throws
 
 }
 
@@ -65,40 +64,34 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     public func resolveOneOnOneConversation(
         with userID: QualifiedID,
-        in context: NSManagedObjectContext,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
-    ) {
+        in context: NSManagedObjectContext
+    ) async throws {
+
         switch protocolSelector.getProtocolForUser(
             with: userID,
             in: context
         ) {
-        case nil:
-            guard
-                let otherUser = ZMUser.fetch(with: userID, in: context),
-                let conversation = otherUser.connection?.conversation
-            else {
-                completion(.success(()))
-                return
-            }
 
-            conversation.isForcedReadOnly = true
-            completion(.success(()))
-
-        case .proteus?:
-            completion(.success(()))
-
-        case .mls?:
-            Task {
-                do {
-                    try await migrator.migrateToMLS(
-                        userID: userID,
-                        in: context
-                    )
-                    completion(.success(()))
-                } catch {
-                    completion(.failure(error))
+        case .none:
+            await context.perform {
+                guard
+                    let otherUser = ZMUser.fetch(with: userID, in: context),
+                    let conversation = otherUser.connection?.conversation
+                else {
+                    return
                 }
+
+                conversation.isForcedReadOnly = true
             }
+
+        case .some(.mls):
+            try await migrator.migrateToMLS(
+                userID: userID,
+                in: context
+            )
+
+        case .some(.proteus):
+            break
         }
     }
 

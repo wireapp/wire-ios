@@ -95,7 +95,6 @@
 - (nonnull UserClient *)createSelfClientOnMOC:(nonnull NSManagedObjectContext *)moc;
 
 - (nonnull UserClient *)createClientForUser:(nonnull ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser;
-- (nonnull UserClient *)createClientForUser:(nonnull ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(nonnull NSManagedObjectContext *)moc;
 
 @end
 

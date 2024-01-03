@@ -36,6 +36,8 @@ public enum InviteError: Int, Error {
     case noEmail
     /// The e-mail address is already associated with a Wire account
     case alreadyRegistered
+    /// The invite has been cancelled.
+    case cancelled
     /// Couldn't parse server response
     case unknown
 }

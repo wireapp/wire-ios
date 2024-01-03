@@ -40,10 +40,6 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     private let eventProcessor: ConversationEventProcessorProtocol
 
-    convenience required init(context: NSManagedObjectContext) {
-        self.init(context: context, eventProcessor: ConversationEventProcessor(context: context))
-    }
-
     init(
         context: NSManagedObjectContext,
         eventProcessor: ConversationEventProcessorProtocol
@@ -80,7 +76,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID)/members"
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: 0)
+        return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData, apiVersion: 0)
     }
 
     private func v1Request(for action: AddParticipantAction) -> ZMTransportRequest? {
@@ -97,7 +93,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID.uuid)/members/v2"
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload, apiVersion: 1)
+        return ZMTransportRequest(path: path, method: .post, payload: payload, apiVersion: 1)
     }
 
     private func v2Request(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -114,7 +110,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members"
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, payload: payload, apiVersion: apiVersion.rawValue)
     }
 
     private func payload(for action: AddParticipantAction) -> ZMTransportData? {
@@ -144,9 +140,13 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                 action.fail(with: .unknown)
                 return
             }
-
-            eventProcessor.processConversationEvents([updateEvent])
-            action.succeed()
+            let success = {
+                action.succeed()
+            }
+            Task {
+                await eventProcessor.processConversationEvents([updateEvent])
+                success()
+            }
 
         case 204:
             action.succeed()

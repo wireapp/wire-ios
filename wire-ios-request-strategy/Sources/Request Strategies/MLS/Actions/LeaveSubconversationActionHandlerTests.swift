@@ -33,6 +33,7 @@ final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<LeaveS
             domain: domain,
             subconversationType: subconversationType
         )
+        handler = LeaveSubconversationActionHandler(context: syncMOC)
     }
 
     override func tearDown() {
@@ -46,7 +47,7 @@ final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<LeaveS
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v4/conversations/\(domain)/\(conversationID.transportString())/subconversations/\(subconversationType)/self",
-            expectedMethod: .methodDELETE,
+            expectedMethod: .delete,
             apiVersion: .v4
         )
     }

@@ -30,31 +30,35 @@ class APSSignalingKeyStoreTests: MessagingTest {
     }
 
     func testThatItCreatesKeyStoreFromUserClientWithKeys() {
-        // given
-        let keySize = Int(APSSignalingKeysStore.defaultKeyLengthBytes)
-        let client = self.createSelfClient()
-        let keys = APSSignalingKeysStore.createKeys()
-        client.apsVerificationKey = keys.verificationKey
-        client.apsDecryptionKey = keys.decryptionKey
+        syncMOC.performAndWait {
+            // given
+            let keySize = Int(APSSignalingKeysStore.defaultKeyLengthBytes)
+            let client = self.createSelfClient()
+            let keys = APSSignalingKeysStore.createKeys()
+            client.apsVerificationKey = keys.verificationKey
+            client.apsDecryptionKey = keys.decryptionKey
 
-        // when
-        let keyStore = APSSignalingKeysStore(userClient: client)
+            // when
+            let keyStore = APSSignalingKeysStore(userClient: client)
 
-        // then
-        XCTAssertNotNil(keyStore)
-        XCTAssertEqual(keyStore?.verificationKey.count, keySize)
-        XCTAssertEqual(keyStore?.decryptionKey.count, keySize)
+            // then
+            XCTAssertNotNil(keyStore)
+            XCTAssertEqual(keyStore?.verificationKey.count, keySize)
+            XCTAssertEqual(keyStore?.decryptionKey.count, keySize)
+        }
     }
 
     func testThatItReturnsNilKeyStoreFromUserClientWithoutKeys() {
-        // given
-        let client = self.createSelfClient()
+        syncMOC.performAndWait {
+            // given
+            let client = self.createSelfClient()
 
-        // when
-        let keyStore = APSSignalingKeysStore(userClient: client)
+            // when
+            let keyStore = APSSignalingKeysStore(userClient: client)
 
-        // then
-        XCTAssertNil(keyStore)
+            // then
+            XCTAssertNil(keyStore)
+        }
     }
 
     func testThatItRandomizesTheKeys() {

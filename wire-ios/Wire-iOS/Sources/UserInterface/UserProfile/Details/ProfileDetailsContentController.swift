@@ -234,14 +234,14 @@ final class ProfileDetailsContentController: NSObject,
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
         case .richProfile:
-            header.titleLabel.text = "profile.extended_metadata.header".localized(uppercased: true)
+            header.titleLabel.text = L10n.Localizable.Profile.ExtendedMetadata.header.uppercased()
             header.accessibilityIdentifier = "InformationHeader"
         case .readReceiptsStatus(let enabled):
             header.accessibilityIdentifier = "ReadReceiptsStatusHeader"
             if enabled {
-                header.titleLabel.text = "profile.read_receipts_enabled_memo.header".localized(uppercased: true)
+                header.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsEnabledMemo.header.uppercased()
             } else {
-                header.titleLabel.text = "profile.read_receipts_disabled_memo.header".localized(uppercased: true)
+                header.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsDisabledMemo.header.uppercased()
             }
         case .blockingReason:
             header.titleLabel.text = nil
@@ -302,12 +302,12 @@ final class ProfileDetailsContentController: NSObject,
             return nil
         case .readReceiptsStatus:
             let footer = SectionTableFooter()
-            footer.titleLabel.text = "profile.read_receipts_memo.body".localized
+            footer.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsMemo.body
             footer.accessibilityIdentifier = "ReadReceiptsStatusFooter"
             return footer
         case .groupAdminStatus:
             let footer = SectionTableFooter()
-            footer.titleLabel.text = "profile.group_admin_status_memo.body".localized
+            footer.titleLabel.text = L10n.Localizable.Profile.GroupAdminStatusMemo.body
             footer.accessibilityIdentifier = "GroupAdminStatusFooter"
             return footer
         case .blockingReason:

@@ -46,7 +46,7 @@ final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/conversations/one2one/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
-            expectedMethod: .methodGET,
+            expectedMethod: .get,
             apiVersion: .v5
         )
     }

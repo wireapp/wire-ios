@@ -16,11 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
-@import WireSyncEngine;
-
+#import "Mocks.h"
 #import "ZMSnapshotTestCase+Internal.h"
-#import "MockUser.h"
-#import <avs/AVSAudioEffect.h>
-
-#import "MockConversation.h"

@@ -188,6 +188,10 @@ public class DatadogWrapper {
     public static let shared: DatadogWrapper? = nil
 #endif
 
+    public init() {
+        WireLogger.provider = self
+    }
+
     public func log(
         level: LogLevel,
         message: String,

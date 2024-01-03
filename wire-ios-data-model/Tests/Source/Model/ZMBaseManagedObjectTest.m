@@ -247,30 +247,9 @@
     return selfClient;
 }
 
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser
+- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSelfUser
 {
-    return [self createClientForUser:user createSessionWithSelfUser:createSessionWithSeflUser onMOC:self.uiMOC];
-}
-
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(NSManagedObjectContext *)moc
-{
-    if(user.remoteIdentifier == nil) {
-        user.remoteIdentifier = [NSUUID createUUID];
-    }
-    UserClient *userClient = [UserClient insertNewObjectInManagedObjectContext:moc];
-    userClient.remoteIdentifier = [NSString createAlphanumericalString];
-    userClient.user = user;
-    
-    if (createSessionWithSeflUser) {
-        UserClient *selfClient = [ZMUser selfUserInContext:moc].selfClient;
-        [self performPretendingUiMocIsSyncMoc:^{
-            NSError *error;
-            // TODO: [John] use flag here
-            NSString *key = [moc.zm_cryptKeyStore lastPreKeyAndReturnError:&error];
-            NOT_USED([selfClient establishSessionWithClient:userClient usingPreKey:key]);
-        }];
-    }
-    return userClient;
+    return [self createClientForUser:user createSessionWithSelfUser:createSessionWithSelfUser onMOC:self.uiMOC];
 }
 
 @end

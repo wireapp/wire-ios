@@ -73,16 +73,17 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(audioRecorder: AudioRecorderType? = nil) {
-        let maxAudioLength = ZMUserSession.shared()?.maxAudioLength
-        let maxUploadSize = ZMUserSession.shared()?.maxUploadFileSize
+    init(audioRecorder: AudioRecorderType? = nil,
+         userSession: UserSession) {
+        let maxAudioLength = userSession.maxAudioMessageLength
+        let maxUploadSize = userSession.maxUploadFileSize
         self.recorder = audioRecorder ?? AudioRecorder(format: .wav,
                                                        maxRecordingDuration: maxAudioLength,
                                                        maxFileSize: maxUploadSize)
 
         super.init(nibName: nil, bundle: nil)
 
-        configureViews()
+        configureViews(userSession: userSession)
         configureAudioRecorder()
         createConstraints()
 
@@ -141,8 +142,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         setOverlayState(.expanded(offset.clamp(0, upper: 1)), animated: false)
     }
 
-    private func configureViews() {
-        accentColorChangeHandler = AccentColorChangeHandler.addObserver(self) { [unowned self] color, _ in
+    private func configureViews(userSession: UserSession) {
+        accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
             if let color = color {
                 self.audioPreviewView.color = color
             }
@@ -270,28 +271,29 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     private func configureAudioRecorder() {
         recorder.recordTimerCallback = { [weak self] time in
-            guard let `self` = self else { return }
-            self.updateTimeLabel(time)
+            guard let self else { return }
+            updateTimeLabel(time)
         }
 
         recorder.recordEndedCallback = { [weak self] result in
-            guard let `self` = self else { return }
-            self.recordingState = .finishedRecording
+            guard let self else { return }
 
-            guard let error = result.error as? RecordingError,
-                let alert = self.recorder.alertForRecording(error: error) else { return }
+            recordingState = .finishedRecording
 
-            self.present(alert, animated: true, completion: .none)
+            if case .failure(let error) = result, let error = error as? RecordingError,
+               let alert = recorder.alertForRecording(error: error) {
+                present(alert, animated: true, completion: .none)
+            }
         }
 
         recorder.playingStateCallback = { [weak self] state in
-            guard let `self` = self else { return }
-            self.buttonOverlay.playingState = state
+            guard let self else { return }
+            buttonOverlay.playingState = state
         }
 
         recorder.recordLevelCallBack = { [weak self] level in
-            guard let `self` = self else { return }
-            self.audioPreviewView.updateWithLevel(level)
+            guard let self else { return }
+            audioPreviewView.updateWithLevel(level)
         }
     }
 
@@ -390,6 +392,10 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     func sendAudio() {
         recorder.stopPlaying()
         guard let url = recorder.fileURL else { return zmLog.warn("Nil url passed to send as audio file") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
 
         let effectPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("effect.wav")
         effectPath.deleteFileAtPath()
@@ -397,7 +403,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         AVSAudioEffectType.none.apply(url.path, outPath: effectPath) {
             url.path.deleteFileAtPath()
 
-            let filename = String.filenameForSelfUser().appendingPathExtension("m4a")!
+            let filename = String.filename(for: selfUser).appendingPathExtension("m4a")!
             let convertedPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(filename)
             convertedPath.deleteFileAtPath()
 

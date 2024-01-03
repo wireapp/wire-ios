@@ -33,7 +33,7 @@ class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/v1/conversations/list/v2")
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
 
         let payloadString = try XCTUnwrap(request.payload as? String)
         let payloadData = try XCTUnwrap(payloadString.data(using: .utf8))
@@ -51,7 +51,7 @@ class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/v2/conversations/list")
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
 
         let payloadString = try XCTUnwrap(request.payload as? String)
         let payloadData = try XCTUnwrap(payloadString.data(using: .utf8))

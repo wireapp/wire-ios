@@ -84,7 +84,7 @@ class SessionManagerTests_APIVersionResolver: IntegrationTest {
 private class MockSessionManagerDelegate: SessionManagerDelegate {
     var didCallDidPerformFederationMigration: Bool = false
     var expectation: XCTestExpectation?
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         didCallDidPerformFederationMigration = true
         expectation?.fulfill()
     }
@@ -102,7 +102,7 @@ private class MockSessionManagerDelegate: SessionManagerDelegate {
         session = userSession
     }
 
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    func sessionManagerDidReportLockChange(forSession session: UserSession) {
         // no op
     }
 
@@ -118,7 +118,7 @@ private class MockSessionManagerDelegate: SessionManagerDelegate {
         // no op
     }
 
-    func sessionManagerDidFailToLoadDatabase() {
+    func sessionManagerDidFailToLoadDatabase(error: Error) {
         // no op
     }
 
@@ -130,7 +130,7 @@ private class MockSessionManagerDelegate: SessionManagerDelegate {
         // no op
     }
 
-    func sessionManagerDidPerformAPIMigrations() {
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         // no op
     }
 

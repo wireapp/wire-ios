@@ -20,22 +20,6 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-/// TODO: retire this extension
-extension ZMConversation {
-
-    func add(participants: Set<ZMUser>) {
-        addParticipantsAndUpdateConversationState(users: participants, role: nil)
-    }
-
-    func add(participants: [ZMUser]) {
-        add(participants: Set(participants))
-    }
-
-    func add(participants: ZMUser...) {
-        add(participants: Set(participants))
-    }
-}
-
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
 
     var userDefinedName: String?
@@ -49,19 +33,22 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
     var messageProtocol: MessageProtocol = .proteus
 
     var mlsGroupID: WireDataModel.MLSGroupID?
-    
 }
 
 final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
+
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
 
         SelfUser.setupMockSelfUser()
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
         SelfUser.provider = nil
+        userSession = nil
 
         super.tearDown()
     }
@@ -81,7 +68,11 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
 
         // when & then
 		let createSut: () -> UIViewController = {
-			let sut = GroupParticipantsDetailViewController(selectedParticipants: selected, conversation: conversation)
+            let sut = GroupParticipantsDetailViewController(
+                selectedParticipants: selected,
+                conversation: conversation,
+                userSession: self.userSession
+            )
 			return sut.wrapInNavigationController()
 		}
 
@@ -106,7 +97,11 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
 
         // when & then
         let createSut: () -> UIViewController = {
-            let sut = GroupParticipantsDetailViewController(selectedParticipants: selected, conversation: conversation)
+            let sut = GroupParticipantsDetailViewController(
+                selectedParticipants: selected,
+                conversation: conversation,
+                userSession: self.userSession
+            )
             return sut.wrapInNavigationController()
         }
 
@@ -118,7 +113,11 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
         let conversation = MockConversation()
 
         // when
-        let sut = GroupParticipantsDetailViewController(selectedParticipants: [], conversation: conversation)
+        let sut = GroupParticipantsDetailViewController(
+            selectedParticipants: [],
+            conversation: conversation,
+            userSession: self.userSession
+        )
         sut.viewModel.admins = []
         sut.viewModel.members = []
         sut.setupViews()

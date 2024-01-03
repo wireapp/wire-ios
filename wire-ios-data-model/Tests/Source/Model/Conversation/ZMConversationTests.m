@@ -2293,8 +2293,8 @@
     
     [self.syncMOC performGroupedBlockAndWait:^{
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-        ZMConversation *conversation = [self insertConversationWithUnread:YES];
-        
+        ZMConversation *conversation = [self insertConversationWithUnread:YES context:self.syncMOC];
+
         // when
         XCTAssert([self.syncMOC saveOrRollback]);
         
@@ -2309,7 +2309,7 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
 
-        [self insertConversationWithUnread:YES];
+        [self insertConversationWithUnread:YES context:self.syncMOC];
 
         // when
         XCTAssert([self.syncMOC saveOrRollback]);
@@ -2325,8 +2325,8 @@
     
     [self.syncMOC performGroupedBlockAndWait:^{
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-        [self insertConversationWithUnread:YES];
-        
+        [self insertConversationWithUnread:YES context:self.syncMOC];
+
         // when
         XCTAssert([self.syncMOC saveOrRollback]);
         
@@ -2341,8 +2341,8 @@
     
     [self.syncMOC performGroupedBlockAndWait:^{
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-        [self insertConversationWithUnread:NO];
-        
+        [self insertConversationWithUnread:NO context:self.syncMOC];
+
         // when
         XCTAssert([self.syncMOC saveOrRollback]);
         
@@ -2396,7 +2396,7 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
     
-        ZMConversation *conversation = [self insertConversationWithUnread:YES];
+        ZMConversation *conversation = [self insertConversationWithUnread:YES context:self.syncMOC];
         conversation.conversationType = ZMConversationTypeOneOnOne;
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
         connection.conversation = conversation;
@@ -2436,7 +2436,7 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
 
-        ZMConversation *conversation = [self insertConversationWithUnread:YES];
+        ZMConversation *conversation = [self insertConversationWithUnread:YES context:self.syncMOC];
         conversation.isArchived = YES;
         
         // when
@@ -2453,7 +2453,7 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
 
-        ZMConversation *conversation = [self insertConversationWithUnread:YES];
+        ZMConversation *conversation = [self insertConversationWithUnread:YES context:self.syncMOC];
         conversation.isArchived = YES;
         [conversation clearMessageHistory];
         

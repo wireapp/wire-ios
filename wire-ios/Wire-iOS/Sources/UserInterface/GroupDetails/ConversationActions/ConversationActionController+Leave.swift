@@ -44,7 +44,7 @@ enum LeaveResult: AlertResultConfiguration {
     }
 
     static var title: String {
-        return "meta.leave_conversation_dialog_message".localized
+        return L10n.Localizable.Meta.leaveConversationDialogMessage
     }
 
     static var all: [LeaveResult] {
@@ -55,13 +55,18 @@ enum LeaveResult: AlertResultConfiguration {
 extension ConversationActionController {
 
     func handleLeaveResult(_ result: LeaveResult, for conversation: ZMConversation) {
-        guard case .leave(delete: let delete) = result else { return }
+        guard  case .leave(delete: let delete) = result else { return }
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
         transitionToListAndEnqueue {
             if delete {
                 conversation.clearMessageHistory()
             }
 
-            conversation.removeOrShowError(participant: SelfUser.current)
+            conversation.removeOrShowError(participant: user)
         }
     }
 

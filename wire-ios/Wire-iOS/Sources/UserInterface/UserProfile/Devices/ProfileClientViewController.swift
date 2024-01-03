@@ -27,7 +27,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     typealias ProfileDevicesDetail = L10n.Localizable.Profile.Devices.Detail
 
-    private let userClient: UserClient
+    private var viewModel: ProfileClientViewModel
     private let contentView = UIView()
     private let backButton = IconButton(style: .circular)
     private let showMyDeviceButton = ButtonWithLargerHitArea()
@@ -65,24 +65,25 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     // MARK: Initilization
 
-    convenience init(client: UserClient,
-                     fromConversation: Bool) {
-        self.init(client: client)
+    convenience init(
+        client: UserClient,
+        fromConversation: Bool,
+        userSession: UserSession
+    ) {
+        self.init(client: client, userSession: userSession)
         self.fromConversation = fromConversation
     }
 
-    required init(client: UserClient) {
-        userClient = client
+   required init(client: UserClient, userSession: UserSession) {
+       self.viewModel = ProfileClientViewModel(userClient: client, getUserClientFingerprint: userSession.getUserClientFingerprint)
 
         super.init(nibName: nil, bundle: nil)
 
         userClientToken = UserClientChangeInfo.add(observer: self, for: client)
-        if userClient.fingerprint == .none {
-            ZMUserSession.shared()?.enqueue({ () -> Void in
-                self.userClient.fetchFingerprintOrPrekeys()
-            })
+        self.viewModel.fingerprintDataClosure = { [weak self] fingerprintData in
+            self?.updateFingerprintLabel(with: fingerprintData)
         }
-        updateFingerprintLabel()
+
         modalPresentationStyle = .overCurrentContext
         title = L10n.Localizable.Registration.Devices.title
 
@@ -103,6 +104,11 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return [.portrait]
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.loadData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -129,7 +135,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
         setupResetButton()
         setupDebugMenuButton()
         createConstraints()
-        updateFingerprintLabel()
+        updateFingerprintLabel(with: nil)
         setupAccessibility()
     }
 
@@ -164,9 +170,8 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
         let descriptionTextFont = FontSpec(.normal, .light).font!
 
-        if let user = userClient.user {
-
-            descriptionTextView.attributedText = (String(format: "profile.devices.detail.verify_message".localized, user.name ?? "") &&
+        if let user = viewModel.userClient.user {
+            descriptionTextView.attributedText = (L10n.Localizable.Profile.Devices.Detail.verifyMessage(user.name ?? "") &&
                                                   descriptionTextFont &&
                                                   defaultTextColor) +
             "\n" +
@@ -182,7 +187,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     }
 
     private func setupTypeLabel() {
-        typeLabel.text = userClient.deviceClass?.localizedDescription.localizedUppercase
+        typeLabel.text = viewModel.userClient.deviceClass?.localizedDescription.localizedUppercase
         typeLabel.numberOfLines = 1
         typeLabel.font = FontSpec(.small, .semibold).font!
         typeLabel.textColor = defaultTextColor
@@ -236,7 +241,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     }
 
     private func setupVerifiedToggle() {
-        verifiedToggle.isOn = userClient.verified
+        verifiedToggle.isOn = viewModel.userClient.verified
         verifiedToggle.addTarget(self, action: #selector(ProfileClientViewController.onTrustChanged(_:)), for: .valueChanged)
         contentView.addSubview(verifiedToggle)
     }
@@ -245,18 +250,18 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
         let fingerprintSmallMonospaceFont = fingerprintSmallFont.monospaced()
         let fingerprintSmallBoldMonospaceFont = fingerprintSmallBoldFont.monospaced()
 
-        IDLabel.attributedText = userClient.attributedRemoteIdentifier(
+        IDLabel.attributedText = viewModel.userClient.attributedRemoteIdentifier(
             [.font: fingerprintSmallMonospaceFont],
             boldAttributes: [.font: fingerprintSmallBoldMonospaceFont],
             uppercase: true
         )
     }
 
-    private func updateFingerprintLabel() {
+    private func updateFingerprintLabel(with data: Data?) {
         let fingerprintMonospaceFont = fingerprintFont.monospaced()
         let fingerprintBoldMonospaceFont = fingerprintBoldFont.monospaced()
 
-        if let attributedFingerprint = userClient.fingerprint?.attributedFingerprint(
+        if let attributedFingerprint = data?.attributedFingerprint(
             attributes: [.font: fingerprintMonospaceFont],
             boldAttributes: [.font: fingerprintBoldMonospaceFont],
             uppercase: false) {
@@ -365,7 +370,11 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     }
 
     @objc private func onShowMyDeviceTapped(_ sender: AnyObject) {
-        let selfClientController = SettingsClientViewController(userClient: ZMUserSession.shared()!.selfUserClient!,
+        guard let session = ZMUserSession.shared(),
+              let selfUserClient = session.selfUserClient else { return }
+
+        let selfClientController = SettingsClientViewController(userClient: selfUserClient,
+                                                                userSession: session,
                                                                 fromConversation: fromConversation)
 
         let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
@@ -376,25 +385,24 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     @objc
     private func onTrustChanged(_ sender: AnyObject) {
-        ZMUserSession.shared()?.enqueue({ [weak self] in
+        guard let userSession = ZMUserSession.shared() else { return }
+        userSession.enqueue({ [weak self] in
             guard let weakSelf = self else { return }
-            let selfClient = ZMUserSession.shared()!.selfUserClient
+            let selfClient = userSession.selfUserClient
             if weakSelf.verifiedToggle.isOn {
-                selfClient?.trustClient(weakSelf.userClient)
+                selfClient?.trustClient(weakSelf.viewModel.userClient)
             } else {
-                selfClient?.ignoreClient(weakSelf.userClient)
+                selfClient?.ignoreClient(weakSelf.viewModel.userClient)
             }
         }, completionHandler: { [weak self] in
             guard let weakSelf = self else { return }
 
-            weakSelf.verifiedToggle.isOn = weakSelf.userClient.verified
+            weakSelf.verifiedToggle.isOn = weakSelf.viewModel.userClient.verified
         })
     }
 
     @objc private func onResetTapped(_ sender: AnyObject) {
-        ZMUserSession.shared()?.perform { [weak self] in
-            self?.userClient.resetSession()
-        }
+        viewModel.userClient.resetSession()
         isLoadingViewVisible = true
     }
 
@@ -442,40 +450,41 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     @objc
     private func onDeleteDeviceTapped() {
-        let sync = userClient.managedObjectContext!.zm_sync!
-        sync.performGroupedBlockAndWait { [weak self] in
-            guard let weakSelf = self else { return }
-
-            let client = try! sync.existingObject(with: weakSelf.userClient.objectID) as! UserClient
-            client.deleteClientAndEndSession()
-            sync.saveOrRollback()
+        let clientObjectID = self.viewModel.userClient.objectID
+        let sync = viewModel.userClient.managedObjectContext!.zm_sync!
+        Task { [self] in
+            let client = await sync.perform { try! sync.existingObject(with: clientObjectID) as! UserClient }
+            await client.deleteClientAndEndSession()
+            _ = await sync.perform { sync.saveOrRollback() }
+            await MainActor.run {
+                presentingViewController?.dismiss(animated: true, completion: .none)
+            }
         }
-        presentingViewController?.dismiss(animated: true, completion: .none)
     }
 
     @objc
     private func onCorruptSessionTapped() {
-        let sync = userClient.managedObjectContext!.zm_sync!
-        let selfClientID = ZMUser.selfUser()?.selfClient()?.objectID
-        sync.performGroupedBlockAndWait { [weak self] in
-            guard let weakSelf = self else { return }
-
-            let client = try! sync.existingObject(with: weakSelf.userClient.objectID) as! UserClient
-            let selfClient = try! sync.existingObject(with: selfClientID!) as! UserClient
-
-            _ = selfClient.establishSessionWithClient(client, usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY=")
-            sync.saveOrRollback()
+        let sync = viewModel.userClient.managedObjectContext!.zm_sync!
+        let selfClientObjectID = ZMUser.selfUser()?.selfClient()?.objectID
+        let userClientObjectID = viewModel.userClient.objectID
+        Task {
+            let client = await sync.perform { try! sync.existingObject(with: userClientObjectID) as! UserClient }
+            let selfClient = await sync.perform { try! sync.existingObject(with: selfClientObjectID!) as! UserClient }
+            _ = await selfClient.establishSessionWithClient(client, usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY=")
+            await sync.perform { sync.saveOrRollback() }
+            await MainActor.run {
+                presentingViewController?.dismiss(animated: true, completion: .none)
+            }
         }
-        presentingViewController?.dismiss(animated: true, completion: .none)
     }
 
     private func onDuplicateClientTapped() {
-        let context = userClient.managedObjectContext!.zm_sync!
+        let context = viewModel.userClient.managedObjectContext!.zm_sync!
 
         context.performAndWait {
             guard
-                let userID = userClient.user?.remoteIdentifier,
-                let domain = userClient.user?.domain ?? BackendInfo.domain
+                let userID = viewModel.userClient.user?.remoteIdentifier,
+                let domain = viewModel.userClient.user?.domain ?? BackendInfo.domain
             else {
                 return
             }
@@ -487,7 +496,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
             )
 
             let duplicate = UserClient.insertNewObject(in: context)
-            duplicate.remoteIdentifier = userClient.remoteIdentifier
+            duplicate.remoteIdentifier = viewModel.userClient.remoteIdentifier
             duplicate.user = user
 
             context.saveOrRollback()
@@ -502,13 +511,9 @@ extension ProfileClientViewController: UserClientObserver {
 
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
 
-        if changeInfo.fingerprintChanged {
-            updateFingerprintLabel()
-        }
-
         if changeInfo.sessionHasBeenReset {
-            let alert = UIAlertController(title: "", message: NSLocalizedString("self.settings.device_details.reset_session.success", comment: ""), preferredStyle: .alert)
-            let okAction = UIAlertAction(title: NSLocalizedString("general.ok", comment: ""), style: .destructive, handler: nil)
+            let alert = UIAlertController(title: "", message: L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive, handler: nil)
             alert.addAction(okAction)
             present(alert, animated: true, completion: .none)
             isLoadingViewVisible = false

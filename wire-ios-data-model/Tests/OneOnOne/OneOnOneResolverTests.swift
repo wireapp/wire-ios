@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
 
@@ -41,7 +42,7 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
 
     // MARK: - Tests
 
-    func test_ResolveOneOnOneConversation_MLSSupported() throws {
+    func test_ResolveOneOnOneConversation_MLSSupported() async throws {
         // Given
         let userID = QualifiedID.random()
 
@@ -52,19 +53,7 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         let isDone = XCTestExpectation(description: "isDone")
 
         // When
-        sut.resolveOneOnOneConversation(with: userID, in: uiMOC) {
-            switch $0 {
-            case .success:
-                break
-
-            case .failure(let error):
-                XCTFail("unexpected error: \(error)")
-            }
-
-            isDone.fulfill()
-        }
-
-        wait(for: [isDone])
+        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
 
         // Then
         XCTAssertEqual(migrator.migrateToMLSUserIDIn_Invocations.count, 1)
@@ -72,7 +61,7 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(invocation.userID, userID)
     }
 
-    func test_ResolveOneOnOneConversation_ProteusSupported() throws {
+    func test_ResolveOneOnOneConversation_ProteusSupported() async throws {
         // Given
         let userID = QualifiedID.random()
 
@@ -82,25 +71,13 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         let isDone = XCTestExpectation(description: "isDone")
 
         // When
-        sut.resolveOneOnOneConversation(with: userID, in: uiMOC) {
-            switch $0 {
-            case .success:
-                break
-
-            case .failure(let error):
-                XCTFail("unexpected error: \(error)")
-            }
-
-            isDone.fulfill()
-        }
-
-        wait(for: [isDone])
+        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
 
         // Then
         XCTAssertEqual(migrator.migrateToMLSUserIDIn_Invocations.count, 0)
     }
 
-    func test_ResolveOneOnOneConversation_NoCommonProtocols() throws {
+    func test_ResolveOneOnOneConversation_NoCommonProtocols() async throws {
         // Given
         let userID = QualifiedID.random()
 
@@ -123,19 +100,7 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         let isDone = XCTestExpectation(description: "isDone")
 
         // When
-        sut.resolveOneOnOneConversation(with: userID, in: uiMOC) {
-            switch $0 {
-            case .success:
-                break
-
-            case .failure(let error):
-                XCTFail("unexpected error: \(error)")
-            }
-
-            isDone.fulfill()
-        }
-
-        wait(for: [isDone])
+        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
 
         // Then
         XCTAssertEqual(conversation.messageProtocol, .proteus)

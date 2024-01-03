@@ -59,7 +59,7 @@ extension ZMUser: UserType {
     }
 
     public var activeConversations: Set<ZMConversation> {
-        return Set(self.participantRoles.compactMap {$0.conversation})
+        return Set(self.participantRoles.map(\.conversation))
     }
 
     public var isVerified: Bool {
@@ -352,9 +352,10 @@ extension ZMUser {
     /// Remove user from all group conversations he is a participant of
     fileprivate func removeFromAllConversations(at timestamp: Date) {
         let allGroupConversations: [ZMConversation] = participantRoles.compactMap {
-            guard let convo = $0.conversation,
-                convo.conversationType == .group else { return nil}
-            return convo
+            guard $0.conversation.conversationType == .group else {
+                return nil
+            }
+            return $0.conversation
         }
 
         allGroupConversations.forEach { conversation in
@@ -373,7 +374,7 @@ extension ZMUser {
 
     @objc
     public var conversations: Set<ZMConversation> {
-        return Set(participantRoles.compactMap { return $0.conversation })
+        Set(participantRoles.map(\.conversation))
     }
 }
 
@@ -444,19 +445,21 @@ extension ZMUser: UserConnections {
                     return
                 }
 
-                resolver.resolveOneOnOneConversation(
-                    with: QualifiedID(uuid: userID, domain: domain),
-                    in: context
-                ) { result in
-                    context.perform {
-                        switch result {
-                        case .success:
+                Task {
+                    do {
+                        try await resolver.resolveOneOnOneConversation(
+                            with: QualifiedID(uuid: userID, domain: domain),
+                            in: context
+                        )
+                        await MainActor.run {
                             completion(nil)
-
-                        case .failure(let error):
+                        }
+                    } catch {
+                        await MainActor.run {
                             completion(error)
                         }
                     }
+
                 }
 
             case .failure(let error):

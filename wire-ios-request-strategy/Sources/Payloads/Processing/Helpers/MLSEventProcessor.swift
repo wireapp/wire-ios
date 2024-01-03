@@ -24,13 +24,13 @@ public protocol MLSEventProcessing {
         conversation: ZMConversation,
         groupID: String?,
         context: NSManagedObjectContext
-    )
+    ) async
 
     func process(
         welcomeMessage: String,
         conversationID: QualifiedID,
         in context: NSManagedObjectContext
-    )
+    ) async
 
     func joinMLSGroupWhenReady(
         forConversation conversation: ZMConversation,
@@ -40,7 +40,7 @@ public protocol MLSEventProcessing {
     func wipeMLSGroup(
         forConversation conversation: ZMConversation,
         context: NSManagedObjectContext
-    )
+    ) async
 
 }
 
@@ -66,39 +66,45 @@ public class MLSEventProcessor: MLSEventProcessing {
         conversation: ZMConversation,
         groupID: String?,
         context: NSManagedObjectContext
-    ) {
+    ) async {
         WireLogger.mls.debug("MLS event processor updating conversation if needed")
 
-        guard conversation.messageProtocol == .mls else {
+        guard await context.perform({ conversation.messageProtocol }) == .mls else {
             return logWarn(aborting: .conversationUpdate, withReason: .notMLSConversation)
         }
 
-        guard let mlsGroupID = conversation.mlsGroupID ?? MLSGroupID(from: groupID) else {
+        guard let mlsGroupID = await context.perform({ conversation.mlsGroupID }) ?? MLSGroupID(from: groupID) else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
 
-        if conversation.mlsGroupID == nil {
-            conversation.mlsGroupID = mlsGroupID
-            WireLogger.mls.debug("set group ID \(mlsGroupID.safeForLoggingDescription) for conversation \(conversation.qualifiedID)")
+        await context.perform {
+            if conversation.mlsGroupID == nil {
+                conversation.mlsGroupID = mlsGroupID
+                WireLogger.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID.safeForLoggingDescription)) for conversation: (\(String(describing: conversation.qualifiedID))")
+            }
         }
 
-        guard let mlsService = context.mlsService else {
+        guard let mlsService = await context.perform({ context.mlsService }) else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
         let conversationExists = mlsService.conversationExists(groupID: mlsGroupID)
-        let previousStatus = conversation.mlsStatus
+        let previousStatus = await context.perform { conversation.mlsStatus }
         let newStatus = conversationExists ? MLSGroupStatus.ready : .pendingJoin
-        conversation.mlsStatus = newStatus
-        context.saveOrRollback()
 
-        if newStatus != previousStatus {
-            WireLogger.mls.debug("conversation \(conversation.qualifiedID) status changed: \(previousStatus) -> \(newStatus))")
+        await context.perform {
+            conversation.mlsStatus = newStatus
+            context.saveOrRollback()
+
+            if newStatus != previousStatus {
+                WireLogger.mls.debug("conversation \(String(describing: conversation.qualifiedID)) status changed: \(String(describing: previousStatus)) -> \(newStatus))")
+            }
         }
     }
 
     // MARK: - Joining new conversations
 
+    /// - Note: must be executed on syncContext
     public func joinMLSGroupWhenReady(
         forConversation conversation: ZMConversation,
         context: NSManagedObjectContext
@@ -131,10 +137,10 @@ public class MLSEventProcessor: MLSEventProcessing {
         welcomeMessage: String,
         conversationID: QualifiedID,
         in context: NSManagedObjectContext
-    ) {
+    ) async {
         WireLogger.mls.info("MLS event processor is processing welcome message")
 
-        guard let mlsService = context.mlsService else {
+        guard let mlsService = await context.perform({ context.mlsService }) else {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
 
@@ -143,13 +149,12 @@ public class MLSEventProcessor: MLSEventProcessing {
             migrator: OneOnOneMigrator(mlsService: mlsService)
         )
 
-        process(
+        await process(
             welcomeMessage: welcomeMessage,
             conversationID: conversationID,
             in: context,
             mlsService: mlsService,
-            oneOnOneResolver: oneOnOneResolver,
-            completion: {}
+            oneOnOneResolver: oneOnOneResolver
         )
     }
 
@@ -158,47 +163,39 @@ public class MLSEventProcessor: MLSEventProcessing {
         conversationID: QualifiedID,
         in context: NSManagedObjectContext,
         mlsService: MLSServiceInterface,
-        oneOnOneResolver: OneOnOneResolverInterface,
-        completion: @escaping () -> Void
-    ) {
+        oneOnOneResolver: OneOnOneResolverInterface
+    ) async {
         do {
-            let groupID = try mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
-            mlsService.uploadKeyPackagesIfNeeded()
+            let groupID = try await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
+            await mlsService.uploadKeyPackagesIfNeeded()
+            await conversationService.syncConversation(qualifiedID: conversationID)
 
-            fetchConversation(conversationID: conversationID, in: context) {
-                guard let conversation = $0 else {
-                    completion()
-                    return
+            let conversation: ZMConversation? = await context.perform {
+                guard let conversation = ZMConversation.fetch(
+                    with: conversationID,
+                    in: context
+                ) else {
+                    return nil
                 }
 
                 conversation.mlsGroupID = groupID
                 conversation.mlsStatus = .ready
 
-                self.resolveOneOnOneConversationIfNeeded(
-                    conversation: conversation,
-                    mlsService: mlsService,
-                    oneOneOneResolver: oneOnOneResolver,
-                    in: context,
-                    completion: completion
-                )
+                return conversation
             }
+
+            guard let conversation else { return }
+
+            await resolveOneOnOneConversationIfNeeded(
+                conversation: conversation,
+                mlsService: mlsService,
+                oneOneOneResolver: oneOnOneResolver,
+                in: context
+            )
+
         } catch {
             WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
-            completion()
             return
-        }
-    }
-
-    private func fetchConversation(
-        conversationID: QualifiedID,
-        in context: NSManagedObjectContext,
-        completion: @escaping (ZMConversation?) -> Void
-    ) {
-        conversationService.syncConversation(qualifiedID: conversationID) {
-            context.perform {
-                let conversation = ZMConversation.fetch(with: conversationID, in: context)
-                completion(conversation)
-            }
         }
     }
 
@@ -206,65 +203,70 @@ public class MLSEventProcessor: MLSEventProcessing {
         conversation: ZMConversation,
         mlsService: MLSServiceInterface,
         oneOneOneResolver: OneOnOneResolverInterface,
-        in context: NSManagedObjectContext,
-        completion: @escaping () -> Void
-    ) {
+        in context: NSManagedObjectContext
+    ) async {
         WireLogger.mls.debug("resolving one on one conversation")
 
-        guard conversation.conversationType == .oneOnOne else {
-            completion()
-            return
-        }
-
-        guard
-            let otherUser = conversation.localParticipantsExcludingSelf.first,
-            let otherUserID = otherUser.remoteIdentifier,
-            let otherUserDomain = otherUser.domain ?? BackendInfo.domain
-        else {
-            WireLogger.mls.error("failed to resolve one on one conversation: can not get other user id")
-            completion()
-            return
-        }
-
-        let userID = QualifiedID(
-            uuid: otherUserID,
-            domain: otherUserDomain
-        )
-
-        oneOneOneResolver.resolveOneOnOneConversation(with: userID, in: context) {
-            switch $0 {
-            case .success:
-                WireLogger.mls.debug("succeffully resolved one on one conversation")
-                completion()
-
-            case .failure(let error):
-                WireLogger.mls.error("failed to resolve one on one conversation: \(error)")
-                completion()
+        let userID: QualifiedID? = await context.perform {
+            guard conversation.conversationType == .oneOnOne else {
+                return nil
             }
+
+            guard
+                let otherUser = conversation.localParticipantsExcludingSelf.first,
+                let otherUserID = otherUser.remoteIdentifier,
+                let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+            else {
+                WireLogger.mls.warn("failed to resolve one on one conversation: can not get other user id")
+                return nil
+            }
+
+            return QualifiedID(
+                uuid: otherUserID,
+                domain: otherUserDomain
+            )
+        }
+
+        guard let userID else { return }
+
+        do {
+            try await oneOneOneResolver.resolveOneOnOneConversation(with: userID, in: context)
+            WireLogger.mls.debug("successfully resolved one on one conversation")
+        } catch {
+            WireLogger.mls.warn("failed to resolve one on one conversation: \(error)")
         }
     }
+
 
     // MARK: - Wipe conversation
 
     public func wipeMLSGroup(
         forConversation conversation: ZMConversation,
         context: NSManagedObjectContext
-    ) {
+    ) async {
         WireLogger.mls.info("MLS event processor is wiping conversation")
 
-        guard conversation.messageProtocol == .mls else {
+        let (messageProtocol, groupID, mlsService) = await context.perform {
+            return (
+                conversation.messageProtocol,
+                conversation.mlsGroupID,
+                context.mlsService
+            )
+        }
+
+        guard messageProtocol == .mls else {
             return logWarn(aborting: .conversationWipe, withReason: .notMLSConversation)
         }
 
-        guard let mlsGroupID = conversation.mlsGroupID else {
+        guard let groupID else {
             return logWarn(aborting: .conversationWipe, withReason: .missingGroupID)
         }
 
-        guard let mlsService = context.mlsService else {
+        guard let mlsService else {
             return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 
-        mlsService.wipeGroup(mlsGroupID)
+        await mlsService.wipeGroup(groupID)
     }
 
     // MARK: Log Helpers

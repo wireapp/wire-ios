@@ -49,7 +49,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/feature-configs")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
     }
 
     // MARK: - Response handling

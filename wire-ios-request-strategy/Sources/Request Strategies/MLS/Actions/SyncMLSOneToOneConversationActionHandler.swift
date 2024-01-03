@@ -79,15 +79,22 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                 return
             }
 
-            guard let mlsGroupID = processor.updateOrCreateConversation(
-                from: payload,
-                in: context
-            )?.mlsGroupID else {
-                action.fail(with: .failedToProcessResponse)
-                return
-            }
+            Task { [action] in
+                var action = action
 
-            action.succeed(with: mlsGroupID)
+                guard
+                    let conversation = await processor.updateOrCreateConversation(
+                        from: payload,
+                        in: context
+                    ),
+                    let groupID = await context.perform({ conversation.mlsGroupID })
+                else {
+                    action.fail(with: .failedToProcessResponse)
+                    return
+                }
+
+                action.succeed(with: groupID)
+            }
 
         case (400, "mls-not-enabled"):
             action.fail(with: .mlsNotEnabled)

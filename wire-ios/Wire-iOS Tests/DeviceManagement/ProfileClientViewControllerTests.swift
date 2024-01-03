@@ -24,9 +24,11 @@ final class ProfileClientViewControllerTests: ZMSnapshotTestCase {
     var sut: ProfileClientViewController!
     var user: ZMUser!
     var client: UserClient!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+        userSession = UserSessionMock()
         user = ZMUser.insertNewObject(in: uiMOC)
         accentColor = .vividRed
 
@@ -37,6 +39,7 @@ final class ProfileClientViewControllerTests: ZMSnapshotTestCase {
     }
 
     override func tearDown() {
+        userSession = nil
         sut = nil
         user = nil
         client = nil
@@ -44,8 +47,18 @@ final class ProfileClientViewControllerTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
+    func verify() {
+        sut = ProfileClientViewController(client: client, userSession: userSession)
+        sut.overrideUserInterfaceStyle = .light
+        sut.spinner.stopAnimating()
+        sut.spinner.isHidden = true
+        sut.showBackButton = false
+
+        verify(view: sut.view, tolerance: 0.1)
+    }
+
     func setupProfileClientViewController(userInterfaceStyle: UIUserInterfaceStyle) {
-        sut = ProfileClientViewController(client: client)
+        sut = ProfileClientViewController(client: client, userSession: userSession)
         sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.spinner.stopAnimating()
         sut.spinner.isHidden = true

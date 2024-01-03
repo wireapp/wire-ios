@@ -34,20 +34,21 @@ final class AppLockChangeWarningViewController: UIViewController {
     weak var delegate: AppLockChangeWarningViewControllerDelegate?
 
     private var isAppLockActive: Bool
+    private let userSession: UserSession
 
     private let contentView: UIView = UIView()
 
     private lazy var confirmButton: Button = {
         let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.accessibilityIdentifier = "warning_screen.button.confirm"
-        button.setTitle("general.confirm".localized, for: .normal)
+        button.setTitle(L10n.Localizable.General.confirm, for: .normal)
         button.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
         return button
     }()
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel.createMultiLineCenterdLabel()
-        label.text = "warning_screen.title_label".localized
+        label.text = L10n.Localizable.WarningScreen.titleLabel
         label.accessibilityIdentifier = "warning_screen.label.title"
         return label
     }()
@@ -63,16 +64,17 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     private var messageLabelText: String {
         if isAppLockActive {
-            return "warning_screen.main_info.forced_applock".localized + "\n\n" + "warning_screen.info_label.forced_applock".localized
+            return L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel.forcedApplock
         } else {
-            return "warning_screen.info_label.non_forced_applock".localized
+            return L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock
         }
     }
 
     // MARK: - Life cycle
 
-    init(isAppLockActive: Bool) {
+    init(isAppLockActive: Bool, userSession: UserSession) {
         self.isAppLockActive = isAppLockActive
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -136,11 +138,9 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     @objc
     func confirmButtonTapped(sender: AnyObject?) {
-        if let session = ZMUserSession.shared() {
-            session.perform {
-                session.appLockController.needsToNotifyUser = false
+            userSession.perform {
+                self.userSession.needsToNotifyUserOfAppLockConfiguration = false
             }
-        }
 
         dismiss(animated: true, completion: delegate?.appLockChangeWarningViewControllerDidDismiss)
     }

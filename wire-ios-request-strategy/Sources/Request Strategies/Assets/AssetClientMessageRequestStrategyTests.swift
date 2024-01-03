@@ -21,45 +21,28 @@ import WireRequestStrategy
 import XCTest
 import WireDataModel
 
-fileprivate extension ZMTransportRequest {
-
-    func complete(withHttpStatus status: Int, apiVersion: APIVersion) {
-        let payload = ["time": Date().transportString()] as ZMTransportData
-        let response = ZMTransportResponse(payload: payload, httpStatus: status, transportSessionError: nil, apiVersion: apiVersion.rawValue)
-        complete(with: response)
-    }
-
-}
-
 final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
-    fileprivate var mockApplicationStatus: MockApplicationStatus!
+    fileprivate var mockMessageSender: MockMessageSenderInterface!
     fileprivate var sut: AssetClientMessageRequestStrategy!
     fileprivate var imageData = mediumJPEGData()
-
-    var apiVersion: APIVersion! {
-        didSet {
-            setCurrentAPIVersion(apiVersion)
-        }
-    }
 
     override func setUp() {
         super.setUp()
 
-        mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .online
+        mockMessageSender = MockMessageSenderInterface()
 
-        self.syncMOC.performGroupedBlockAndWait {
-            self.sut = AssetClientMessageRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: self.mockApplicationStatus)
-        }
-
-        apiVersion = .v0
+        self.sut = syncMOC.performAndWait({
+            AssetClientMessageRequestStrategy(
+                managedObjectContext: self.syncMOC,
+                messageSender: mockMessageSender
+            )
+        })
     }
 
     override func tearDown() {
-        mockApplicationStatus = nil
+        mockMessageSender = nil
         sut = nil
-        apiVersion = nil
         super.tearDown()
     }
 
@@ -70,6 +53,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         uploaded: Bool = false,
         preview: Bool = false,
         assetId: Bool = false,
+        expired: Bool = false,
         previewAssetId: Bool = false,
         transferState: AssetTransferState = .uploading,
         conversation: ZMConversation? = nil,
@@ -143,6 +127,10 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             message.sender = sender
         }
 
+        if expired {
+            message.expire()
+        }
+
         syncMOC.saveOrRollback()
         prepareUpload(of: message)
 
@@ -160,286 +148,89 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         ZMChangeTrackerBootstrap.bootStrapChangeTrackers(sut.contextChangeTrackers, on: syncMOC)
     }
 
-    @discardableResult
-    private func assertCreatesValidRequestForAsset(in conversation: ZMConversation, line: UInt = #line) -> ZMTransportRequest! {
-        switch apiVersion! {
-        case .v0:
-            guard let request = sut.nextRequest(for: self.apiVersion) else {
-                XCTFail("No request generated", line: line)
-                return nil
-            }
-
-            let converationID = conversation.remoteIdentifier!.transportString()
-
-            XCTAssertEqual(request.path, "/conversations/\(converationID)/otr/messages", line: line)
-            XCTAssertEqual(request.method, .methodPOST, line: line)
-            return request
-
-        case .v1, .v2, .v3, .v4, .v5:
-            guard let request = sut.nextRequest(for: self.apiVersion) else {
-                XCTFail("No request generated", line: line)
-                return nil
-            }
-
-            let domain = conversation.domain!
-            let conversationID = conversation.remoteIdentifier!.transportString()
-
-            XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/conversations/\(domain)/\(conversationID)/proteus/messages", line: line)
-            XCTAssertEqual(request.method, .methodPOST, line: line)
-            return request
-        }
-    }
-
-    // MARK: Request Generation
-
-    func testThatItDoesNotCreateARequestIfThereIsNoMatchingMessage() {
-        XCTAssertNil(sut.nextRequest(for: apiVersion))
-    }
-
-    func testThatItDoesNotCreateARequestForAnImageMessageUploadedByOtherUser() {
+    func testThatItDoesNotScheduleAMessageForAnImageMessageUploadedByOtherUser() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.createMessage(uploaded: true, sender: self.otherUser)
-
-            // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.createMessage(uploaded: true, sender: self.otherUser)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
+
     }
 
     func testThatItDoesNotCreateARequestForAnImageMessageWhichIsExpired() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            let message = self.createMessage(uploaded: true)
-            message.expire()
-
-            // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.createMessage(uploaded: true, expired: true)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesNotCreateARequestForAnImageMessageWithoutUploaded() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             self.createMessage(uploaded: false)
-
-            // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesNotCreateARequestForAnImageMessageWithUploadedAndAssetIdInTheWrongTransferState() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.createMessage()
             message.updateTransferState(.uploaded, synchronize: true)
-
-            // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItCreatesARequestForAnUploadedImageMessage() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             self.createMessage(uploaded: true, assetId: true)
-
-            // THEN
-            self.assertCreatesValidRequestForAsset(in: self.groupConversation)
         }
-    }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-    func testThatItCreatesARequestForAnUploadedImageMessage_WithFederationEndpointEnabled() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            self.apiVersion = .v1
-            self.createMessage(uploaded: true, assetId: true)
-
-            // THEN
-            self.assertCreatesValidRequestForAsset(in: self.groupConversation)
-        }
+        // THEN
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItCreatesARequestForAnUploadedImageMessage_Ephemeral() {
+
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             self.groupConversation.setMessageDestructionTimeoutValue(.custom(15), for: .selfUser)
             self.createMessage(uploaded: true, assetId: true)
-
-            // WHEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
-
-            // THEN
-            let expected = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages"
-            XCTAssertEqual(request.path, expected)
-            XCTAssertEqual(request.method, .methodPOST)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+
     }
-
-    func testThatItUpdatesExpectsReadConfirmationFlagWhenSendingMessageInOneToOne() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
-            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.oneToOneConversation)
-
-            // WHEN
-            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
-
-            // THEN
-            switch message.underlyingMessage?.content {
-            case .asset(let data)?:
-                XCTAssertTrue(data.expectsReadConfirmation)
-            default:
-                XCTFail("Unexpected message content")
-            }
-        }
-    }
-
-    func testThatItDoesntUpdateExpectsReadConfirmationFlagWhenSendingMessageInGroup() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
-            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.groupConversation)
-
-            // WHEN
-            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
-
-            // THEN
-            switch message.underlyingMessage?.content {
-            case .asset(let data)?:
-                XCTAssertFalse(data.expectsReadConfirmation)
-            default:
-                XCTFail("Unexpected message content")
-            }
-        }
-    }
-
-    func testThatItUpdateExpectsReadConfirmationFlagWhenReadReceiptsAreDisabled() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = false
-            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.oneToOneConversation)
-            var genericMessage = message.underlyingMessage!
-            genericMessage.setExpectsReadConfirmation(true)
-
-            do {
-                try message.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail("Could not set generic message")
-            }
-
-            // WHEN
-            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
-
-            // THEN
-            XCTAssertFalse(message.underlyingMessage!.asset.expectsReadConfirmation)
-        }
-    }
-
-    func testThatItUpdateExpectsReadConfirmationFlagWhenReadReceiptsAreEnabled() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
-            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.oneToOneConversation)
-            var genericMessage = message.underlyingMessage!
-            genericMessage.setExpectsReadConfirmation(true)
-
-            do {
-                try message.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail("Could not set generic message")
-            }
-
-            // WHEN
-            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
-
-            // THEN
-            XCTAssertTrue(message.underlyingMessage!.asset.expectsReadConfirmation)
-        }
-    }
-
-    func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsEnabled() {
-        self.syncMOC.performGroupedBlockAndWait {
-
-            // GIVEN
-            let legalHoldClient = UserClient.insertNewObject(in: self.syncMOC)
-            legalHoldClient.deviceClass = .legalHold
-            legalHoldClient.type = .legalHold
-            legalHoldClient.user = self.otherUser
-
-            let conversation = self.groupConversation!
-            conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [legalHoldClient], causedBy: [self.otherUser])
-            XCTAssertTrue(conversation.isUnderLegalHold)
-
-            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.groupConversation)
-            var genericMessage = message.underlyingMessage!
-            genericMessage.setLegalHoldStatus(.enabled)
-
-            do {
-                try message.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail("Could not set generic message")
-            }
-
-            self.syncMOC.saveOrRollback()
-
-            // WHEN
-            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest(for: self.apiVersion) == nil {
-                XCTFail("Request is nil")
-                return
-            }
-
-            // THEN
-            XCTAssertEqual(message.underlyingMessage!.asset.legalHoldStatus, .enabled)
-        }
-    }
-
-    func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsDisabled() {
-        self.syncMOC.performGroupedBlockAndWait {
-
-            // GIVEN
-            let conversation = self.groupConversation!
-            XCTAssertFalse(conversation.isUnderLegalHold)
-
-            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.groupConversation)
-            var genericMessage = message.underlyingMessage!
-            genericMessage.setLegalHoldStatus(.enabled)
-
-            do {
-                try message.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail("Could not set generic message")
-            }
-
-            self.syncMOC.saveOrRollback()
-
-            // WHEN
-            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest(for: self.apiVersion) == nil {
-                XCTFail("Request is nil")
-                return
-            }
-
-            // THEN
-            XCTAssertEqual(message.underlyingMessage!.asset.legalHoldStatus, .disabled)
-        }
-    }
-
-    // MARK: Response handling
 
     func testThatItExpiresAMessageWhenItReceivesAFailureResponse() {
         // GIVEN
+        mockMessageSender.sendMessageMessage_MockError = MessageSendError.messageExpired
         var message: ZMAssetClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(uploaded: true, assetId: true)
-        }
-
-        // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.assertCreatesValidRequestForAsset(in: self.groupConversation) else {
-                return XCTFail("Failed to create request")
-            }
-            request.complete(withHttpStatus: 400, apiVersion: self.apiVersion)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -447,16 +238,22 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssert(message.isExpired)
             XCTAssertEqual(message.deliveryState, .failedToSend)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
     func testThatItNotifiesWhenAnImageCannotBeSent_MissingLegalholdConsent() {
         // GIVEN
-        var message: ZMAssetClientMessage!
+        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
+        let missingLegalholdConsentFailure = Payload.ResponseFailure(
+            code: 403,
+            label: .missingLegalholdConsent,
+            message: "",
+            data: nil)
+        let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
+        mockMessageSender.sendMessageMessage_MockError = failure
         var token: Any?
         self.syncMOC.performGroupedBlockAndWait {
-            message = self.createMessage(uploaded: true, assetId: true)
+            self.createMessage(uploaded: true, assetId: true)
             let expectation = self.expectation(description: "Notification fired")
             token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
                                                       context: self.uiMOC.notificationContext,
@@ -465,16 +262,6 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             }
         }
 
-        // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.assertCreatesValidRequestForAsset(in: self.groupConversation) else {
-                return XCTFail("Failed to create request")
-            }
-            let payload = ["label": "missing-legalhold-consent", "code": 403, "message": ""] as NSDictionary
-            request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil, apiVersion: self.apiVersion.rawValue))
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
         // THEN
         withExtendedLifetime(token) { () -> Void in
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
@@ -482,18 +269,11 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItMarksAnImageMessageAsSentWhenItReceivesASuccesfulResponse() {
-
         // GIVEN
         var message: ZMAssetClientMessage!
+        self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(uploaded: true, assetId: true)
-        }
-
-        // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.assertCreatesValidRequestForAsset(in: self.groupConversation)
-                else { return XCTFail("No request generated") }
-            request.complete(withHttpStatus: 200, apiVersion: self.apiVersion)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -501,33 +281,6 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssert(message.delivered)
             XCTAssertEqual(message.deliveryState, .sent)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
-
-    func testThatItMarksAnImageMessageAsSentWhenItReceivesASuccesfulResponse_Ephemeral() {
-        // GIVEN
-        var message: ZMAssetClientMessage!
-        self.syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.setMessageDestructionTimeoutValue(.custom(15), for: .selfUser)
-            message = self.createMessage(uploaded: true, assetId: true)
-        }
-
-        // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.sut.nextRequest(for: self.apiVersion)
-                else { return XCTFail("No request generated") }
-            request.complete(withHttpStatus: 200, apiVersion: self.apiVersion)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        self.syncMOC.performGroupedBlockAndWait {
-
-            XCTAssert(message.delivered)
-            XCTAssertEqual(message.deliveryState, .sent)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
-        }
-    }
-
 }

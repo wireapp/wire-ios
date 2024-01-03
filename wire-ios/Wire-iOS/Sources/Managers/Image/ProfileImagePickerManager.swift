@@ -27,7 +27,7 @@ class ProfileImagePickerManager: ImagePickerManager {
                 return
             }
             ZMUserSession.shared()?.enqueue({
-                ZMUserSession.shared()?.userProfileImage?.updateImage(imageData: jpegData)
+                ZMUserSession.shared()?.userProfileImage.updateImage(imageData: jpegData)
             })
         }
         return actionSheet

@@ -113,7 +113,7 @@ extension ConversationLegalHoldSystemMessageCell {
             let conversation = conversation,
             let clientViewController = ZClientViewController.shared {
 
-            LegalHoldDetailsViewController.present(in: clientViewController, conversation: conversation)
+            LegalHoldDetailsViewController.present(in: clientViewController, conversation: conversation, userSession: clientViewController.userSession)
 
             return true
         }

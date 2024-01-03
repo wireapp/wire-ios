@@ -64,7 +64,7 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
 
             // Then
             XCTAssertEqual(request.path, "/v4/self/supported-protocols")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
 
             guard
                 let payload = request.payload?.asDictionary(),

@@ -47,7 +47,7 @@ final class FetchSupportedProtocolsActionHandler: ActionHandler<FetchSupportedPr
 
         return ZMTransportRequest(
             path: "/users/\(domain)/\(id)/supported-protocols",
-            method: .methodGET,
+            method: .get,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )

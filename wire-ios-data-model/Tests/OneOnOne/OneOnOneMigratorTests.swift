@@ -18,15 +18,19 @@
 
 import XCTest
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
 
     var sut: OneOnOneMigrator!
-    var mlsService: MockMLSService!
+    var mlsService: MockMLSServiceInterface!
 
     override func setUp() {
         super.setUp()
-        mlsService = MockMLSService()
+        mlsService = MockMLSServiceInterface()
+        mlsService.createGroupFor_MockMethod = { _ in }
+        mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in}
+
         sut = OneOnOneMigrator(mlsService: mlsService)
     }
 
@@ -66,7 +70,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
             context: uiMOC.notificationContext
         )
 
-        mlsService.conversationExistsMock = { _ in false }
+        mlsService.conversationExistsGroupID_MockValue = false
 
         // When
         try await sut.migrateToMLS(
@@ -75,9 +79,9 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         )
 
         // Then
-        XCTAssertEqual(mlsService.calls.createGroup, [mlsGroupID])
-        XCTAssertEqual(mlsService.calls.addMembersToConversation.map(\.0), [[MLSUser(userID)]])
-        XCTAssertEqual(mlsService.calls.addMembersToConversation.map(\.1), [mlsGroupID])
+        XCTAssertEqual(mlsService.createGroupFor_Invocations, [mlsGroupID])
+        XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.map(\.users), [[MLSUser(userID)]])
+        XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.map(\.groupID), [mlsGroupID])
 
         XCTAssertEqual(connection.conversation, mlsConversation)
         XCTAssertNil(proteusConversation.connection)
@@ -111,7 +115,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
             context: uiMOC.notificationContext
         )
 
-        mlsService.conversationExistsMock = { _ in true }
+        mlsService.conversationExistsGroupID_MockValue = true
 
         // When
         try await sut.migrateToMLS(
@@ -120,12 +124,11 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         )
 
         // Then
-        XCTAssertTrue(mlsService.calls.createGroup.isEmpty)
-        XCTAssertTrue(mlsService.calls.addMembersToConversation.isEmpty)
+        XCTAssertTrue(mlsService.createGroupFor_Invocations.isEmpty)
+        XCTAssertTrue(mlsService.addMembersToConversationWithFor_Invocations.isEmpty)
 
         XCTAssertEqual(connection.conversation, mlsConversation)
         XCTAssertNil(proteusConversation.connection)
     }
-
 
 }

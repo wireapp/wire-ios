@@ -36,7 +36,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(result.path, "/conversations/list/v2")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 0)
 
         let payload = try XCTUnwrap(RequestPayload(result))
@@ -54,7 +54,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(result.path, "/v1/conversations/list/v2")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 1)
 
         let payload = try XCTUnwrap(RequestPayload(result))
@@ -72,7 +72,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(result.path, "/v2/conversations/list")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 2)
 
         let payload = try XCTUnwrap(RequestPayload(result))
@@ -142,45 +142,47 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_Success() throws {
         // Given
-        try syncMOC.performGroupedAndWait { context in
-            BackendInfo.apiVersion = .v2
-            let sut = SyncConversationActionHandler(context: context)
-            let id = QualifiedID(uuid: .create(), domain: "example.com")
+        BackendInfo.apiVersion = .v2
+        let sut = SyncConversationActionHandler(context: syncMOC)
+        let id = QualifiedID(uuid: .create(), domain: "example.com")
 
-            let didSucceed = self.expectation(description: "did succeed")
-            let action = SyncConversationAction(qualifiedID: id) { result in
-                // Then
-                guard case .success = result else {
-                    XCTFail("unexpected result: \(String(describing: result))")
-                    return
-                }
-
-                didSucceed.fulfill()
+        let didSucceed = self.expectation(description: "did succeed")
+        let action = SyncConversationAction(qualifiedID: id) { result in
+            // Then
+            guard case .success = result else {
+                XCTFail("unexpected result: \(String(describing: result))")
+                return
             }
 
-            let conversation = Payload.Conversation(
-                qualifiedID: id,
-                id: id.uuid,
-                type: BackendConversationType.group.rawValue
-            )
+            didSucceed.fulfill()
+        }
 
-            let payload = ResponsePayload(found: [conversation], failed: [], not_found: [])
-            let payloadString = try XCTUnwrap(payload.payloadString())
+        let conversation = Payload.Conversation(
+            qualifiedID: id,
+            id: id.uuid,
+            type: BackendConversationType.group.rawValue
+        )
 
-            let response = ZMTransportResponse(
-                payload: payloadString as ZMTransportData,
-                httpStatus: 200,
-                transportSessionError: nil,
-                apiVersion: 2
-            )
+        let payload = ResponsePayload(found: [conversation], failed: [], not_found: [])
+        let payloadString = try XCTUnwrap(payload.payloadString())
 
+        let response = ZMTransportResponse(
+            payload: payloadString as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: 2
+        )
+
+        syncMOC.performGroupedAndWait { context in
             XCTAssertNil(ZMConversation.fetch(with: id.uuid, domain: id.domain, in: context))
+        }
 
-            // When
-            sut.handleResponse(response, action: action)
-            XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        // When
+        sut.handleResponse(response, action: action)
+        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
-            // Then
+        // Then
+        syncMOC.performGroupedAndWait { context in
             XCTAssertNotNil(ZMConversation.fetch(with: id.uuid, domain: id.domain, in: context))
         }
     }

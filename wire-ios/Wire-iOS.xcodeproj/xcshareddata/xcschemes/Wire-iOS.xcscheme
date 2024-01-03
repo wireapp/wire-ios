@@ -40,14 +40,17 @@
       </MacroExpansion>
       <TestPlans>
          <TestPlanReference
-            reference = "container:Wire-iOS Tests/TestPlans/AllTests.xctestplan"
+            reference = "container:Tests/TestPlans/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Wire-iOS Tests/TestPlans/SecurityTests.xctestplan">
+            reference = "container:Tests/TestPlans/SecurityTests.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Wire-iOS Tests/TestPlans/GermanLocaleTests.xctestplan">
+            reference = "container:Tests/TestPlans/GermanLocaleTests.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Tests/TestPlans/UnitTests.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
@@ -156,6 +159,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      enableUBSanitizer = "YES"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -256,6 +260,11 @@
          <EnvironmentVariable
             key = "DYLD_PRINT_LIBRARIES"
             value = ""
+            isEnabled = "NO">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "LIBDISPATCH_COOPERATIVE_POOL_STRICT"
+            value = "1"
             isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
