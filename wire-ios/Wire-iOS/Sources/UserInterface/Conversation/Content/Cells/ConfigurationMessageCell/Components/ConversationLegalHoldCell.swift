@@ -80,10 +80,6 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
         let systemMessageTitle = title(for: systemMessageType)
         var attributedText = NSAttributedString(string: systemMessageTitle, attributes: ConversationSystemMessageCell.baseAttributes)
 
-        if systemMessageType == .legalHoldEnabled {
-            attributedText = appendLegalHoldEnabledText(to: attributedText)
-        }
-
         let icon = StyleKitIcon.legalholdactive.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultRed)
 
         return View.Configuration(attributedText: attributedText, icon: icon, conversation: conversation)
@@ -92,28 +88,12 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.enabled
+            return L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL)
         case .legalHoldDisabled:
             return L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:
             return ""
         }
-    }
-
-    private static func appendLegalHoldEnabledText(to attributedText: NSAttributedString) -> NSAttributedString {
-        let learnMoreText = L10n.Localizable.Content.System.MessageLegalHold.learnMore.localizedUppercase
-        let learnMoreAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.mediumSemiboldFont,
-            .link: ConversationLegalHoldSystemMessageCell.legalHoldURL as AnyObject,
-            .foregroundColor: SemanticColors.Label.textDefault
-        ]
-        let learnMore = NSAttributedString(string: learnMoreText, attributes: learnMoreAttributes)
-
-        let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
-        mutableAttributedText.append(NSAttributedString(string: " " + String.MessageToolbox.middleDot + " "))
-        mutableAttributedText.append(learnMore)
-
-        return mutableAttributedText
     }
 
 }
