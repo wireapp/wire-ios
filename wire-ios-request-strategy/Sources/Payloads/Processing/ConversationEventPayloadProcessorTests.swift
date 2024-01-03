@@ -1063,7 +1063,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testProcessingConverationMemberLeave_SelfUserTriggersAccountDeletedNotification() async {
         // Given
-        let (_, _, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
+        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
             selfUserLeaves: true
         )
         let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
@@ -1080,6 +1080,14 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // Then
         await fulfillment(of: [expectation], timeout: 1)
+        await syncMOC.perform { [self] in
+            ensureLastMessage(
+                in: conversation,
+                is: .participantsRemoved,
+                for: users[0],
+                at: originalEvent.timestamp
+            )
+        }
     }
 
     func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() async {
@@ -1096,9 +1104,16 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         )
 
         // Then
-        await syncMOC.perform {
+        await syncMOC.perform { [self] in
             XCTAssertTrue(users[1].isAccountDeleted)
             XCTAssertFalse(conversation.localParticipants.contains(users[1]))
+
+            ensureLastMessage(
+                in: conversation,
+                is: .participantsRemoved,
+                for: users[1],
+                at: originalEvent.timestamp
+            )
         }
     }
 
@@ -1145,7 +1160,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 uuid: .init(),
                 payload: [
                     "id": "cf51e6b1-39a6-11ed-8005-520924331b82",
-                    "time": "2022-09-21T12:13:32.173Z",
+                    "time": Date().addingTimeInterval(5).transportString(),
                     "type": "conversation.member-leave",
                     "from": "f76c1c7a-7278-4b70-9df7-eca7980f3a5d",
                     "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
@@ -1163,6 +1178,44 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
             return (conversation, users, conversationEvent, originalEvent)
         }
+    }
+
+    private func ensureLastMessage(
+        in conversation: ZMConversation,
+        is systemMessageType: ZMSystemMessageType,
+        for user: ZMUser,
+        at timestamp: Date?,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else {
+            return XCTFail(
+                "Last message is not system message",
+                file: file,
+                line: line
+            )
+        }
+        guard lastMessage.systemMessageType == systemMessageType else {
+            return XCTFail(
+                "System message is not \(systemMessageType), but '\(lastMessage.systemMessageType)'",
+                file: file,
+                line: line
+            )
+        }
+        guard let serverTimestamp = lastMessage.serverTimestamp else {
+            return XCTFail(
+                "System message should have timestamp",
+                file: file,
+                line: line
+            )
+        }
+        XCTAssertEqual(
+            serverTimestamp.timeIntervalSince1970,
+            (timestamp ?? .distantPast).timeIntervalSince1970,
+            accuracy: 0.1,
+            file: file,
+            line: line
+        )
     }
 
 }
