@@ -78,18 +78,18 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     // MARK: - Configure elements
 
     func configure(deniedAuthorization: DeniedAuthorizationType) {
-        var title = ""
+        var title: String
 
         switch deniedAuthorization {
-        case .camera:           title = "keyboard_photos_access.denied.keyboard.camera"
-        case .photos:           title = "keyboard_photos_access.denied.keyboard.photos"
-        case .cameraAndPhotos:  title = "keyboard_photos_access.denied.keyboard.camera_and_photos"
-        case .ongoingCall:      title = "keyboard_photos_access.denied.keyboard.ongoing_call"
+        case .camera:           title = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.camera
+        case .photos:           title = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.photos
+        case .cameraAndPhotos:  title = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.cameraAndPhotos
+        case .ongoingCall:      title = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.ongoingCall
         }
 
         descriptionLabel.font = UIFont.systemFont(ofSize: (deniedAuthorization == .ongoingCall ? 14.0 : 16.0),
                                                   weight: UIFont.Weight.light)
-        descriptionLabel.text = title.localized
+        descriptionLabel.text = title
 
         if SecurityFlags.cameraRoll.isEnabled {
             createConstraints(deniedAuthorization: deniedAuthorization)
