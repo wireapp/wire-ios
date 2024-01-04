@@ -328,8 +328,8 @@ extension ZMClientMessageTests_Ephemeral {
         }
     }
 
-    func testThatItCreatesPayloadForEphemeralMessage() {
-        syncMOC.performGroupedBlockAndWait {
+    func testThatItCreatesPayloadForEphemeralMessage() async throws {
+        let textMessage = try await syncMOC.perform {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .oneOnOne
@@ -344,12 +344,13 @@ extension ZMClientMessageTests_Ephemeral {
 
             self.syncMOC.saveOrRollback()
 
-            let textMessage = try! conversation.appendText(content: "foo", fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
-
-            // when
-            guard textMessage.encryptForTransport() != nil
-                else { return XCTFail()}
+            return try conversation.appendText(content: "foo", fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
         }
+        let message = try XCTUnwrap(textMessage)
+
+        // when
+        let encryptedMessage = await message.encryptForTransport()
+        XCTAssertNotNil(encryptedMessage)
     }
 }
 

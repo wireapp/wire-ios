@@ -60,7 +60,7 @@ extension EventDecoder {
 
         do {
             guard
-                let result = try decryptionService.decrypt(
+                let result = try await decryptionService.decrypt(
                     message: payload.data,
                     for: groupID,
                     subconversationType: payload.subconversationType
