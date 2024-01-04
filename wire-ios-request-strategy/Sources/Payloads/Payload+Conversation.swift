@@ -189,16 +189,6 @@ extension Payload {
         }
     }
 
-    struct ConversationList: Codable {
-        enum CodingKeys: String, CodingKey {
-            case conversations
-            case hasMore = "has_more"
-        }
-
-        let conversations: [Conversation]
-        let hasMore: Bool?
-    }
-
     struct QualifiedConversationList: Codable {
         enum CodingKeys: String, CodingKey {
             case found = "found"
