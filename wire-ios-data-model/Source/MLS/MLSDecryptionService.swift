@@ -94,7 +94,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult? {
+    ) async throws -> MLSDecryptResult? {
         WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
 
         guard let messageBytes = message.base64DecodedBytes else {

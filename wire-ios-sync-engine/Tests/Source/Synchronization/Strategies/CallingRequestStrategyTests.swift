@@ -532,8 +532,8 @@ class CallingRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() {
-        let (user1, user2, client1, client2, client3, client4, conversation) = syncMOC.performAndWait {
+    func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async {
+        let (user1, user2, client1, client2, client3, client4, conversation) = await syncMOC.perform { [self] in
             // Given
             let selfClient = createSelfClient()
 
@@ -573,11 +573,16 @@ class CallingRequestStrategyTests: MessagingTest {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertNotNil(sentMessage)
 
-        syncMOC.performAndWait {
-            guard
-                let data = syncMOC.performAndWait({ sentMessage?.encryptForTransport()?.data }),
+        guard let sentMessage else {
+            XCTFail("missing sentMessage")
+            return
+        }
+
+        let data = await sentMessage.encryptForTransport()?.data
+
+        await syncMOC.perform {
+            guard let data,
                 let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
             else {
                 return XCTFail("Expected OTR message")
