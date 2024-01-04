@@ -367,8 +367,6 @@ extension GenericMessage {
 
         var messageData: Data?
 
-        // TODO: get core crypto file lock
-
         if useQualifiedIdentifiers,
             let selfDomain = await context.perform({ ZMUser.selfUser(in: context).domain }) {
 
