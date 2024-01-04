@@ -105,7 +105,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
         switch migrationStartStatus {
         case .canStart:
-            guard let mlsService = context.mlsService else {
+            guard let mlsService = await context.perform({ self.context.mlsService }) else {
                 return logger.warn("can't start migration: missing `mlsService`")
             }
 
@@ -136,7 +136,9 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             do {
                 try await joinMLSGroupIfNeeded(groupID, mlsService: mlsService)
 
-                guard migrationFinalisationTimeHasArrived || allParticipantsSupportMLS(in: conversation) else {
+                let allParticipantsSupportMLS = await context.perform { self.allParticipantsSupportMLS(in: conversation) }
+
+                guard migrationFinalisationTimeHasArrived || allParticipantsSupportMLS else {
                     continue
                 }
 
@@ -232,7 +234,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     private func allParticipantsSupportMLS(in conversation: ZMConversation) -> Bool {
-        return conversation.localParticipants.allSatisfy { $0.supportedProtocols.contains(.mls) }
+        conversation.localParticipants
+            .allSatisfy { $0.supportedProtocols.contains(.mls) }
     }
 
     private func syncUsersWithTheBackend() async throws {
