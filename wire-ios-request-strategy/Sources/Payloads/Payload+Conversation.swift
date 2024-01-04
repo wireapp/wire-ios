@@ -25,7 +25,7 @@ typealias CodableEventData = EventData & Codable
 
 extension Payload {
 
-    struct NewConversation: EncodableAPIVersionAware, Equatable {
+    struct NewConversation: CodableAPIVersionAware, Equatable {
         enum CodingKeys: String, CodingKey {
             case users
             case qualifiedUsers = "qualified_users"
@@ -56,6 +56,34 @@ extension Payload {
         let creatorClient: String?
         let messageProtocol: String?
 
+        init(
+            users: [UUID]? = nil,
+            qualifiedUsers: [QualifiedID]? = nil,
+            access: [String]? = nil,
+            legacyAccessRole: String? = nil,
+            accessRoles: [String]? = nil,
+            name: String? = nil,
+            team: Payload.ConversationTeamInfo? = nil,
+            messageTimer: TimeInterval? = nil,
+            readReceiptMode: Int? = nil,
+            conversationRole: String? = nil,
+            creatorClient: String? = nil,
+            messageProtocol: String? = nil
+        ) {
+            self.users = users
+            self.qualifiedUsers = qualifiedUsers
+            self.access = access
+            self.legacyAccessRole = legacyAccessRole
+            self.accessRoles = accessRoles
+            self.name = name
+            self.team = team
+            self.messageTimer = messageTimer
+            self.readReceiptMode = readReceiptMode
+            self.conversationRole = conversationRole
+            self.creatorClient = creatorClient
+            self.messageProtocol = messageProtocol
+        }
+
         init(_ action: CreateGroupConversationAction) {
             switch action.messageProtocol {
             case .mls, .mixed:
@@ -79,6 +107,30 @@ extension Payload {
             team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
             readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0
             messageTimer = nil
+        }
+
+        init(from decoder: Decoder, apiVersion: WireTransport.APIVersion) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            users = try container.decodeIfPresent([UUID].self, forKey: .users)
+            qualifiedUsers = try container.decodeIfPresent([QualifiedID].self, forKey: .qualifiedUsers)
+            access = try container.decodeIfPresent([String].self, forKey: .access)
+            name = try container.decodeIfPresent(String.self, forKey: .name)
+            team = try container.decodeIfPresent(Payload.ConversationTeamInfo.self, forKey: .team)
+            messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
+            readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+            conversationRole = try container.decodeIfPresent(String.self, forKey: .conversationRole)
+            creatorClient = try container.decodeIfPresent(String.self, forKey: .creatorClient)
+            messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
+
+            switch apiVersion {
+            case .v0, .v1, .v2:
+                legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
+                accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+            case .v3, .v4, .v5:
+                accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
+                legacyAccessRole = nil
+            }
         }
 
         func encode(to encoder: Encoder, apiVersion: APIVersion) throws {
@@ -105,7 +157,7 @@ extension Payload {
         }
     }
 
-    struct Conversation: DecodableAPIVersionAware, EventData {
+    struct Conversation: CodableAPIVersionAware, EventData {
         enum CodingKeys: String, CodingKey {
             case qualifiedID = "qualified_id"
             case id
@@ -239,6 +291,39 @@ extension Payload {
             case .v5:
                 cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
                 epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
+            }
+        }
+
+        func encode(to encoder: Encoder, apiVersion: APIVersion) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+
+            try container.encodeIfPresent(qualifiedID, forKey: .qualifiedID)
+            try container.encodeIfPresent(id, forKey: .id)
+            try container.encodeIfPresent(type, forKey: .type)
+            try container.encodeIfPresent(creator, forKey: .creator)
+            try container.encodeIfPresent(access, forKey: .access)
+            try container.encodeIfPresent(name, forKey: .name)
+            try container.encodeIfPresent(members, forKey: .members)
+            try container.encodeIfPresent(lastEvent, forKey: .lastEvent)
+            try container.encodeIfPresent(lastEventTime, forKey: .lastEventTime)
+            try container.encodeIfPresent(teamID, forKey: .teamID)
+            try container.encodeIfPresent(messageTimer, forKey: .messageTimer)
+            try container.encodeIfPresent(readReceiptMode, forKey: .readReceiptMode)
+            try container.encodeIfPresent(messageProtocol, forKey: .messageProtocol)
+            try container.encodeIfPresent(epoch, forKey: .epoch)
+            try container.encodeIfPresent(mlsGroupID, forKey: .mlsGroupID)
+
+            switch apiVersion {
+            case .v0, .v1, .v2:
+                try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
+                try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
+            case .v3, .v4, .v5:
+                if legacyAccessRole == nil {
+                    try container.encodeIfPresent(accessRoles, forKey: .accessRole)
+                } else {
+                    try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
+                    try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
+                }
             }
         }
     }
@@ -636,101 +721,10 @@ extension Payload {
         let type: String
         let data: String
     }
-}
 
-// MARK: - Tests
-
-extension Payload.NewConversation: DecodableAPIVersionAware {
-
-    // Allows tests to decode `Payload.NewConversation` from a transport request
-    init(from decoder: Decoder, apiVersion: APIVersion) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        users = try container.decodeIfPresent([UUID].self, forKey: .users)
-        qualifiedUsers = try container.decodeIfPresent([QualifiedID].self, forKey: .qualifiedUsers)
-        access = try container.decodeIfPresent([String].self, forKey: .access)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        team = try container.decodeIfPresent(Payload.ConversationTeamInfo.self, forKey: .team)
-        messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
-        readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
-        conversationRole = try container.decodeIfPresent(String.self, forKey: .conversationRole)
-        creatorClient = try container.decodeIfPresent(String.self, forKey: .creatorClient)
-        messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
-
-        switch apiVersion {
-        case .v0, .v1, .v2:
-            legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-            accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-        case .v3, .v4, .v5:
-            accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
-            legacyAccessRole = nil
+    struct UpdateConversationProtocolChange: CodableEventData {
+        static var eventType: ZMUpdateEventType {
+            return .conversationConnectRequest
         }
     }
-
-    init(users: [UUID]? = nil,
-         qualifiedUsers: [QualifiedID]? = nil,
-         access: [String]? = nil,
-         legacyAccessRole: String? = nil,
-         accessRoles: [String]? = nil,
-         name: String? = nil,
-         team: Payload.ConversationTeamInfo? = nil,
-         messageTimer: TimeInterval? = nil,
-         readReceiptMode: Int? = nil,
-         conversationRole: String? = nil,
-         creatorClient: String? = nil,
-         messageProtocol: String? = nil
-    ) {
-        self.users = users
-        self.qualifiedUsers = qualifiedUsers
-        self.access = access
-        self.legacyAccessRole = legacyAccessRole
-        self.accessRoles = accessRoles
-        self.name = name
-        self.team = team
-        self.messageTimer = messageTimer
-        self.readReceiptMode = readReceiptMode
-        self.conversationRole = conversationRole
-        self.creatorClient = creatorClient
-        self.messageProtocol = messageProtocol
-    }
-
 }
-
-extension Payload.Conversation: EncodableAPIVersionAware {
-
-    func encode(to encoder: Encoder, apiVersion: APIVersion) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        try container.encodeIfPresent(qualifiedID, forKey: .qualifiedID)
-        try container.encodeIfPresent(id, forKey: .id)
-        try container.encodeIfPresent(type, forKey: .type)
-        try container.encodeIfPresent(creator, forKey: .creator)
-        try container.encodeIfPresent(access, forKey: .access)
-        try container.encodeIfPresent(name, forKey: .name)
-        try container.encodeIfPresent(members, forKey: .members)
-        try container.encodeIfPresent(lastEvent, forKey: .lastEvent)
-        try container.encodeIfPresent(lastEventTime, forKey: .lastEventTime)
-        try container.encodeIfPresent(teamID, forKey: .teamID)
-        try container.encodeIfPresent(messageTimer, forKey: .messageTimer)
-        try container.encodeIfPresent(readReceiptMode, forKey: .readReceiptMode)
-        try container.encodeIfPresent(messageProtocol, forKey: .messageProtocol)
-        try container.encodeIfPresent(epoch, forKey: .epoch)
-        try container.encodeIfPresent(mlsGroupID, forKey: .mlsGroupID)
-
-        switch apiVersion {
-        case .v0, .v1, .v2:
-            try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
-            try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-        case .v3, .v4, .v5:
-            if legacyAccessRole == nil {
-                try container.encodeIfPresent(accessRoles, forKey: .accessRole)
-            } else {
-                try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
-                try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            }
-        }
-    }
-
-}
-
-extension Payload.ConversationEvent: Equatable where T: Equatable {}
