@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "osx.xcconfig"
-#include "tests.xcconfig"
-
-//Linking
-//
-FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_FRAMEWORKS_DIR) $(inherited)
+extension ZMUpdateEvent {
+    @objc
+    static let allTypes = ZMUpdateEventType
+        .allCases
+        .map { $0.rawValue as NSNumber }
+}

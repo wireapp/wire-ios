@@ -1,6 +1,6 @@
 // 
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 @interface ZMMessage : ZMManagedObject
 
-+(instancetype _Nonnull )insertNewObjectInManagedObjectContext:(NSManagedObjectContext *_Nonnull)moc NS_UNAVAILABLE;
++ (instancetype _Nonnull)insertNewObjectInManagedObjectContext:(NSManagedObjectContext *_Nonnull)moc NS_UNAVAILABLE;
 - (instancetype _Nonnull)initWithNonce:(NSUUID * _Nonnull)nonce managedObjectContext:(NSManagedObjectContext * _Nonnull)managedObjectContext;
 + (nonnull NSSet <ZMMessage *> *)messagesWithRemoteIDs:(nonnull NSSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 
@@ -193,7 +193,6 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 - (NSString * _Nonnull)shortDebugDescription;
 
 - (void)updateWithPostPayload:(NSDictionary * _Nonnull)payload updatedKeys:(NSSet * _Nonnull)updatedKeys;
-+ (BOOL)doesEventTypeGenerateMessage:(ZMUpdateEventType)type;
 
 /// Returns a predicate that matches messages that might expire if they are not sent in time
 + (NSPredicate * _Nonnull)predicateForMessagesThatWillExpire;
@@ -259,15 +258,17 @@ extern NSString *  _Nonnull const ZMMessageServerTimestampKey;
 @end
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZMSystemMessage (Internal)
 
-+ (BOOL)doesEventTypeGenerateSystemMessage:(ZMUpdateEventType)type;
-+ (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
-+ (NSPredicate * _Nonnull)predicateForSystemMessagesInsertedLocally;
++ (ZMSystemMessageType)systemMessageTypeFromUpdateEvent:(ZMUpdateEvent *)updateEvent;
++ (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (NSPredicate *)predicateForSystemMessagesInsertedLocally;
 
 @end
 
-
+NS_ASSUME_NONNULL_END
 
 
 @interface ZMMessage (Ephemeral)
