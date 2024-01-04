@@ -140,7 +140,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
                     continue
                 }
 
-                await updateConversationProtocolToMLS(for: conversation)
+                try await updateConversationProtocolToMLS(for: conversation)
             } catch {
                 logger.warn("failed to migrate conversation (groupID:\(groupID.safeForLoggingDescription), error: \(String(describing: error))")
                 continue
@@ -260,9 +260,9 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         return finaliseDate.isPast
     }
 
-    private func updateConversationProtocolToMLS(for conversation: ZMConversation) async {
-        // TODO: Update conversation protocol to `mls`
-        // https://wearezeta.atlassian.net/browse/WPB-542
+    private func updateConversationProtocolToMLS(for conversation: ZMConversation) async throws {
+        guard let qualifiedID = conversation.qualifiedID else { return }
+        try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mls, context: context.notificationContext)
     }
 
 }
