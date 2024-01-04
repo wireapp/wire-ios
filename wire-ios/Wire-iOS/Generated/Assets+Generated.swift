@@ -165,7 +165,6 @@ internal enum Asset {
     internal static let certificateExpired = ImageAsset(name: "CertificateExpired")
     internal static let certificateRevoked = ImageAsset(name: "CertificateRevoked")
     internal static let certificateValid = ImageAsset(name: "CertificateValid")
-    internal static let certificateVerified = ImageAsset(name: "CertificateVerified")
     internal static let contactsFilled = ImageAsset(name: "Contacts Filled")
     internal static let contactsOutline = ImageAsset(name: "Contacts Outline")
     internal static let conversationsFilled = ImageAsset(name: "Conversations Filled")
@@ -192,6 +191,7 @@ internal enum Asset {
     internal static let download = ImageAsset(name: "Download")
     internal static let more = ImageAsset(name: "More")
     internal static let unavailableUser = ImageAsset(name: "Unavailable user")
+    internal static let verifiedShield = ImageAsset(name: "VerifiedShield")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

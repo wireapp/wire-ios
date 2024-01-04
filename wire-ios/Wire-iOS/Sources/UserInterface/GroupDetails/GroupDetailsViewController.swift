@@ -97,7 +97,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     private func setupNavigatiomItem() {
         navigationItem.titleView = TwoLineTitleView(
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
-            second: verificationStatus())
+            second: verificationStatus)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ConversationDetails.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
@@ -335,47 +335,43 @@ extension GroupDetailsViewController {
 
 }
 
+// MARK: - Conversation verification status
+
 private extension GroupDetailsViewController {
 
-    func verificationStatus() -> NSAttributedString? {
-        guard
-            let title = verificationStatusTitle,
-            let icon = verificationStatusIcon else {
+    var verificationStatus: NSAttributedString? {
+        guard conversation.isVerified else {
             return nil
         }
-        return attributedString(title: title, icon: icon)
+        return attributedString(title: verificationStatusTitle, icon: verificationStatusIcon)
     }
 
-    var verificationStatusTitle: String? {
+    var verificationStatusTitle: String {
         typealias ConversationVerificationStatus = L10n.Localizable.GroupDetails.ConversationVerificationStatus
 
-        switch (conversation.messageProtocol, conversation.securityLevel, conversation.mlsVerificationStatus) {
-        case (.proteus, .secure, _):
+        switch conversation.messageProtocol {
+        case .proteus:
             return ConversationVerificationStatus.proteus
-        case(.mls, _, .verified):
+        case .mls:
             return ConversationVerificationStatus.e2ei
-        default:
-            return nil
         }
     }
 
-    var verificationStatusIcon: UIImage? {
-        switch (conversation.messageProtocol, conversation.securityLevel, conversation.mlsVerificationStatus) {
-        case (.proteus, .secure, _):
-            return Asset.Images.certificateVerified.image
-        case(.mls, _, .verified):
+    var verificationStatusIcon: UIImage {
+        switch conversation.messageProtocol {
+        case .proteus:
+            return Asset.Images.verifiedShield.image
+        case .mls:
             return Asset.Images.certificateValid.image
-        default:
-            return nil
         }
     }
 
     var verificationStatusColor: UIColor {
         switch conversation.messageProtocol {
-        case .mls:
-            return SemanticColors.Label.textCertificateValid
         case .proteus:
             return SemanticColors.Label.textCertificateVerified
+        case .mls:
+            return SemanticColors.Label.textCertificateValid
         }
     }
 

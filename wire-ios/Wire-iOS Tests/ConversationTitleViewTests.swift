@@ -23,11 +23,11 @@ import SnapshotTesting
 final class ConversationTitleViewTests: XCTestCase {
 
     var sut: ConversationTitleView!
-    var conversation: SwiftMockConversation!
+    var conversation: MockGroupDetailsConversation!
 
     override func setUp() {
         super.setUp()
-        conversation = SwiftMockConversation()
+        conversation = MockGroupDetailsConversation()
         conversation.relatedConnectionState = .accepted
         conversation.displayName = "Alan Turing"
     }
@@ -39,7 +39,7 @@ final class ConversationTitleViewTests: XCTestCase {
         super.tearDown()
     }
 
-    private func createSut(conversation: SwiftMockConversation) -> ConversationTitleView {
+    private func createSut(conversation: MockGroupDetailsConversation) -> ConversationTitleView {
         let view = ConversationTitleView(conversation: conversation, interactive: true)
         view.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
         view.backgroundColor = .white
