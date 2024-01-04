@@ -81,38 +81,6 @@ extension Payload {
             messageTimer = nil
         }
 
-        @available(*, deprecated, message: "Use a CreateConversationAction instead")
-        init(_ conversation: ZMConversation, selfClientID: String) {
-            switch conversation.messageProtocol {
-            case .mls, .mixed:
-                messageProtocol = "mls"
-                creatorClient = selfClientID
-                qualifiedUsers = nil
-                users = nil
-
-            case .proteus:
-                messageProtocol = "proteus"
-                creatorClient = nil
-
-                if let qualifiedUsers = conversation.localParticipantsExcludingSelf.qualifiedUserIDs {
-                    self.qualifiedUsers = qualifiedUsers
-                    self.users = nil
-                } else {
-                    qualifiedUsers = nil
-                    users = conversation.localParticipantsExcludingSelf.map(\.remoteIdentifier)
-                }
-            }
-
-            name = conversation.userDefinedName
-            access = conversation.accessMode?.stringValue
-            legacyAccessRole = conversation.accessRole?.rawValue
-            accessRoles = conversation.accessRoles.map(\.rawValue)
-            conversationRole = ZMConversation.defaultMemberRoleName
-            team = conversation.team?.remoteIdentifier.map({ ConversationTeamInfo(teamID: $0) })
-            readReceiptMode = conversation.hasReadReceiptsEnabled ? 1 : 0
-            messageTimer = nil
-        }
-
         func encode(to encoder: Encoder, apiVersion: APIVersion) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
 
