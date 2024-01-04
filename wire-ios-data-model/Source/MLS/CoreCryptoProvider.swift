@@ -41,7 +41,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let allowCreation: Bool
     private var coreCrypto: SafeCoreCrypto?
     private var loadingCoreCrypto = false
-    private var initialisatingMls = false
+    private var initialisatingMLS = false
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
     private var initialiseMlsContinuations: [CheckedContinuation<Void, Error>] = []
 
@@ -75,24 +75,25 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     // Based on the structured caching in an actor:
     // https://forums.swift.org/t/structured-caching-in-an-actor/65501/13
     private func initialiseMLS(coreCrypto: SafeCoreCrypto) async throws {
-        guard !initialisatingMls else {
+        guard !initialisatingMLS else {
             return try await withCheckedThrowingContinuation { continuation in
                 initialiseMlsContinuations.append(continuation)
             }
         }
 
         do {
+            initialisatingMLS = true
             let provider = CoreCryptoConfigProvider()
             let clientID = try await syncContext.perform { try provider.clientID(of: .selfUser(in: self.syncContext)) }
             try await coreCrypto.mlsInit(clientID: clientID)
             try await generateClientPublicKeysIfNeeded(with: coreCrypto)
         } catch {
-            initialisatingMls = false
+            initialisatingMLS = false
             resumeInitialiseMlsContinuations(with: .failure(error))
             throw error
         }
 
-        initialisatingMls = false
+        initialisatingMLS = false
         resumeInitialiseMlsContinuations(with: .success())
     }
 

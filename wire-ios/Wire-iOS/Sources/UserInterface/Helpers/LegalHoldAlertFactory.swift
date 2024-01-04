@@ -49,7 +49,7 @@ enum LegalHoldAlertFactory {
         return alert
     }
 
-    static func makeLegalHoldActivationAlert(for legalHoldRequest: LegalHoldRequest, user: SelfUserType, suggestedStateChangeHandler: SuggestedStateChangeHandler?) -> UIAlertController {
+    static func makeLegalHoldActivationAlert(for legalHoldRequest: LegalHoldRequest, fingerprint: String, user: SelfUserType, suggestedStateChangeHandler: SuggestedStateChangeHandler?) -> UIAlertController {
 
         func handleLegalHoldActivationResult(_ error: LegalHoldActivationError?) {
             (UIApplication.shared.topmostViewController() as? SpinnerCapableViewController)?.isLoadingViewVisible = false
@@ -61,7 +61,7 @@ enum LegalHoldAlertFactory {
                 let alert = UIAlertController.alertWithOKButton(
                     title: L10n.Localizable.LegalholdRequest.Alert.errorWrongPassword,
                     message: L10n.Localizable.General.Failure.tryAgain,
-                    okActionHandler: { _ in suggestedStateChangeHandler?(.warningAboutPendingRequest(legalHoldRequest)) }
+                    okActionHandler: { _ in suggestedStateChangeHandler?(.warningAboutPendingRequest(legalHoldRequest, fingerprint)) }
                 )
 
                 suggestedStateChangeHandler?(.warningAboutAcceptationResult(alert))
@@ -72,7 +72,7 @@ enum LegalHoldAlertFactory {
                 let alert = UIAlertController.alertWithOKButton(
                     title: L10n.Localizable.General.failure,
                     message: L10n.Localizable.General.Failure.tryAgain,
-                    okActionHandler: { _ in suggestedStateChangeHandler?(.warningAboutPendingRequest(legalHoldRequest)) }
+                    okActionHandler: { _ in suggestedStateChangeHandler?(.warningAboutPendingRequest(legalHoldRequest, fingerprint)) }
                 )
 
                 suggestedStateChangeHandler?(.warningAboutAcceptationResult(alert))
@@ -88,7 +88,7 @@ enum LegalHoldAlertFactory {
             suggestedStateChangeHandler?(.none)
         }
 
-        let request = user.makeLegalHoldInputRequest(for: legalHoldRequest, cancellationHandler: cancellationHandler) { password in
+        let request = user.makeLegalHoldInputRequest(with: fingerprint, cancellationHandler: cancellationHandler) { password in
 
             (UIApplication.shared.topmostViewController() as? SpinnerCapableViewController)?.isLoadingViewVisible = true
             suggestedStateChangeHandler?(.acceptingRequest)
