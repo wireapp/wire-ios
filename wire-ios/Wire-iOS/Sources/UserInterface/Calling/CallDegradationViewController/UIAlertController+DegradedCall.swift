@@ -23,16 +23,25 @@ import WireSyncEngine
 extension UIAlertController {
 
     static func degradedCall(degradedUser: UserType?, callEnded: Bool = false, confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil) -> UIAlertController {
+        let title = callEnded ?
+        L10n.Localizable.Call.Degraded.Ended.Alert.title :
+        L10n.Localizable.Call.Degraded.Alert.title
 
-        let title = callEnded ? L10n.Localizable.Call.Degraded.Ended.Alert.title : L10n.Localizable.Call.Degraded.Alert.title
-
-        let message: String
+        var message: String
         if let user = degradedUser {
-            message = callEnded ?
-            user.isSelfUser ? L10n.Localizable.Call.Degraded.Ended.Alert.Message.`self` : L10n.Localizable.Call.Degraded.Ended.Alert.Message.user(user.name ?? "") :
-            user.isSelfUser ? L10n.Localizable.Call.Degraded.Alert.Message.`self` : L10n.Localizable.Call.Degraded.Alert.Message.user(user.name ?? "")
+            if callEnded {
+                message = user.isSelfUser ?
+                L10n.Localizable.Call.Degraded.Ended.Alert.Message.`self` :
+                L10n.Localizable.Call.Degraded.Ended.Alert.Message.user(user.name ?? "")
+            } else {
+                message = user.isSelfUser ?
+                L10n.Localizable.Call.Degraded.Alert.Message.`self` :
+                L10n.Localizable.Call.Degraded.Alert.Message.user(user.name ?? "")
+            }
         } else {
-            message = callEnded ? L10n.Localizable.Call.Degraded.Ended.Alert.Message.unknown : L10n.Localizable.Call.Degraded.Alert.Message.unknown
+            message = callEnded ?
+            L10n.Localizable.Call.Degraded.Ended.Alert.Message.unknown :
+            L10n.Localizable.Call.Degraded.Alert.Message.unknown
         }
 
         // Create controller
@@ -53,5 +62,4 @@ extension UIAlertController {
 
         return controller
     }
-
 }
