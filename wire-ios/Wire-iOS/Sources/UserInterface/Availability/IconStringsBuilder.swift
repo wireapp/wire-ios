@@ -35,11 +35,11 @@ public class IconStringsBuilder {
 
         var components: [NSAttributedString] = []
 
-        // Adds shield/legalhold/availability/etc. icons
-        icons.forEach { components.append(NSAttributedString(attachment: $0)) }
-
         // Adds the title
         components.append(title.attributedString)
+
+        // Adds shield/legalhold/availability/etc. icons
+        icons.forEach { components.append(NSAttributedString(attachment: $0)) }
 
         // Adds the down arrow if the view is interactive
         if interactive {

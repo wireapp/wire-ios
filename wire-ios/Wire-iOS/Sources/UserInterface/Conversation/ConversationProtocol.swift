@@ -105,6 +105,8 @@ protocol GroupDetailsConversation {
     var mlsGroupID: MLSGroupID? { get }
 
     var mlsVerificationStatus: MLSVerificationStatus? { get }
+
+    var isVerified: Bool { get }
 }
 
 typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation
@@ -119,6 +121,15 @@ extension ZMConversation: GroupDetailsConversation {
 
     var syncedMessageDestructionTimeout: TimeInterval {
         return messageDestructionTimeoutValue(for: .groupConversation).rawValue
+    }
+
+    var isVerified: Bool {
+        switch messageProtocol {
+        case .proteus:
+            return securityLevel == .secure
+        case .mls:
+            return mlsVerificationStatus == .verified
+        }
     }
 
 }
