@@ -39,6 +39,8 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
         mockClientIDsProvider = MockMLSClientIDsProviding()
         mockMLSService = MockMLSServiceInterface()
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in }
+        mockMLSService.removeMembersFromConversationWithFor_MockMethod = { _, _ in }
 
         syncMOC.performAndWait { [self] in
             conversation = ZMConversation.insertNewObject(in: syncMOC)

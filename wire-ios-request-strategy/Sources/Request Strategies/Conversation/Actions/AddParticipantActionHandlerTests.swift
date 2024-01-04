@@ -47,6 +47,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
 
         mockConversationService = MockConversationServiceInterface()
 
+        mockConversationService.syncConversationQualifiedID_MockMethod = { _ in }
         mockConversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
             completion()
         }
