@@ -106,28 +106,28 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationCreate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.Conversation> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.Conversation>.self, from: event.payload) else {
             return
         }
         await processor.processPayload(payload, in: context)
     }
 
     private func processConversationDelete(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationDeleted> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.UpdateConversationDeleted>.self, from: event.payload) else {
             return
         }
         await processor.processPayload(payload, in: context)
     }
 
     private func processConversationMemberLeave(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self, from: event.payload) else {
             return
         }
         await context.perform { self.processor.processPayload(payload, originalEvent: event, in: self.context) }
     }
 
     private func processConversationMemberJoin(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self, from: event.payload) else {
             return
         }
         await context.perform {
@@ -141,7 +141,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationRename(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationName> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.UpdateConversationName>.self, from: event.payload) else {
             return
         }
         await context.perform {
@@ -154,7 +154,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationMemberUpdate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.ConversationMember> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.ConversationMember>.self, from: event.payload) else {
             return
         }
         await context.perform {
@@ -166,7 +166,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationAccessModeUpdate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationAccess> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.UpdateConversationAccess>.self, from: event.payload) else {
             return
         }
         await context.perform {
@@ -178,7 +178,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationMessageTimerUpdate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationMessageTimer> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.UpdateConversationMessageTimer>.self, from: event.payload) else {
             return
         }
         await context.perform {
@@ -190,7 +190,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationReceiptModeUpdate(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationReceiptMode> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>.self, from: event.payload) else {
             return
         }
         await context.perform {
@@ -202,7 +202,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationConnectRequest(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest> = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>.self, from: event.payload) else {
             return
         }
         await context.perform {
@@ -215,7 +215,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationMLSWelcome(_ event: ZMUpdateEvent) async {
-        guard let payload: Payload.UpdateConversationMLSWelcome = try? eventPayloadDecoder.decode(event.payload) else {
+        guard let payload = try? eventPayloadDecoder.decode(Payload.UpdateConversationMLSWelcome.self, from: event.payload) else {
             return
         }
         await MLSEventProcessor.shared.process(

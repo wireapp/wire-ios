@@ -26,13 +26,31 @@ struct EventPayloadDecoder {
         self.decoder = decoder
     }
 
-    func decode<T: Decodable>(_ eventPayload: [AnyHashable: Any]) throws -> T? {
+    func decode<T>(
+        _ type: T.Type,
+        from eventPayload: [AnyHashable: Any]
+    ) throws -> T where T: Decodable {
+        let data: Data
+
         do {
-            let payloadData = try JSONSerialization.data(withJSONObject: eventPayload, options: [])
-            return try decoder.decode(T.self, from: payloadData)
+            data = try JSONSerialization.data(withJSONObject: eventPayload, options: [])
         } catch let error {
-            Logging.network.warn("Failed to decode \(T.self) from payload: \(error)")
-            return nil
+            Logging.network.warn("Failed to JSONSerialization data from event payload: \(error)!")
+            throw error
+        }
+
+        return try decode(type, from: data)
+    }
+
+    func decode<T>(
+        _ type: T.Type,
+        from eventPayload: Data
+    ) throws -> T where T: Decodable {
+        do {
+            return try decoder.decode(type, from: eventPayload)
+        } catch let error {
+            Logging.network.warn("Failed to json decode \(type) from event payload: \(error)")
+            throw error
         }
     }
 }

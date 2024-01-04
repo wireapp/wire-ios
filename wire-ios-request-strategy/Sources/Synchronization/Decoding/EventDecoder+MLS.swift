@@ -32,7 +32,7 @@ extension EventDecoder {
         }
 
         let decoder = EventPayloadDecoder()
-        guard let payload: Payload.UpdateConversationMLSMessageAdd = try? decoder.decode(updateEvent.payload) else {
+        guard let payload = try? decoder.decode(Payload.UpdateConversationMLSMessageAdd.self, from: updateEvent.payload) else {
             WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
             return nil
         }
