@@ -191,12 +191,6 @@ extension Payload {
 
     // MARK: - Events
 
-    struct UpdateConversationConnectionRequest: CodableEventData {
-        static var eventType: ZMUpdateEventType {
-            return .conversationConnectRequest
-        }
-    }
-
     struct UpdateConversationDeleted: CodableEventData {
         static var eventType: ZMUpdateEventType {
             return .conversationDelete
