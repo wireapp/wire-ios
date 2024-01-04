@@ -885,9 +885,10 @@
 		06474D6124B31CA8002C695D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				E629E3972B46A19600D526AD /* Synchronization */,
 				06ADF692264B4666002E0C7A /* Mocks */,
 				0693113B24F798EF00D14DF5 /* Notifications */,
+				E629E39B2B47002400D526AD /* Payloads */,
+				E629E3972B46A19600D526AD /* Synchronization */,
 				06474D6224B31CB2002C695D /* Utility */,
 			);
 			path = Sources;
@@ -1238,9 +1239,7 @@
 			children = (
 				16DABDA125D69335005F4C3A /* Payload.swift */,
 				169BA1CA25E9507600374343 /* Payload+Coding.swift */,
-				63F5AAC6298A96C000712528 /* Payload+CodingTests.swift */,
 				16E5F6DC26EF1E3200F35FBA /* Payload+Conversation.swift */,
-				63F5AAC8298A974F00712528 /* Payload+ConversationTests.swift */,
 				16367F1D26FDB0740028AF8B /* Payload+Connection.swift */,
 				16E70F5E270EE96200718E5D /* Processing */,
 			);
@@ -1251,15 +1250,10 @@
 			isa = PBXGroup;
 			children = (
 				EE88078C2AC31FAE00278E3C /* ConversationEventPayloadProcessor.swift */,
-				EE88078E2AC376B300278E3C /* ConversationEventPayloadProcessorTests.swift */,
 				EE8807902AC4080900278E3C /* ConnectionPayloadProcessor.swift */,
-				EE8807922AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift */,
 				EE8807942AC40CA600278E3C /* UserProfilePayloadProcessor.swift */,
-				EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */,
 				EE8807982AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift */,
-				EE88079A2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift */,
 				EE88079C2AC427D600278E3C /* MLSMessageSendingStatusPayloadProcessor.swift */,
-				EE88079E2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift */,
 				EE8807A02AC4669D00278E3C /* UserClientPayloadProcessor.swift */,
 				EEFB2DFD2ACD530F0094F877 /* PrekeyPayloadProcessor.swift */,
 				63DA339D286DF6DA00818C3C /* Helpers */,
@@ -1287,7 +1281,6 @@
 			isa = PBXGroup;
 			children = (
 				63DA339E286DF6ED00818C3C /* MLSEventProcessor.swift */,
-				63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1339,6 +1332,37 @@
 				E629E3992B46A1AC00D526AD /* EventPayloadDecoderTests.swift */,
 			);
 			path = Decoding;
+			sourceTree = "<group>";
+		};
+		E629E39B2B47002400D526AD /* Payloads */ = {
+			isa = PBXGroup;
+			children = (
+				63F5AAC6298A96C000712528 /* Payload+CodingTests.swift */,
+				63F5AAC8298A974F00712528 /* Payload+ConversationTests.swift */,
+				E629E39C2B47003400D526AD /* Processing */,
+			);
+			path = Payloads;
+			sourceTree = "<group>";
+		};
+		E629E39C2B47003400D526AD /* Processing */ = {
+			isa = PBXGroup;
+			children = (
+				EE8807922AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift */,
+				EE88078E2AC376B300278E3C /* ConversationEventPayloadProcessorTests.swift */,
+				EE88079A2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift */,
+				EE88079E2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift */,
+				EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */,
+				E629E39D2B47005400D526AD /* Helpers */,
+			);
+			path = Processing;
+			sourceTree = "<group>";
+		};
+		E629E39D2B47005400D526AD /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		EE90C29C282E782900474379 /* Push Token */ = {
