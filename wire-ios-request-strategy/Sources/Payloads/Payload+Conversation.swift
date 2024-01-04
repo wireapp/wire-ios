@@ -189,21 +189,6 @@ extension Payload {
         }
     }
 
-    struct PaginatedConversationIDList: Codable, Paginatable {
-
-        enum CodingKeys: String, CodingKey {
-            case conversations
-            case hasMore = "has_more"
-        }
-
-        var nextStartReference: String? {
-            return conversations.last?.transportString()
-        }
-
-        let conversations: [UUID]
-        let hasMore: Bool
-    }
-
     struct PaginatedQualifiedConversationIDList: Codable, Paginatable {
 
         enum CodingKeys: String, CodingKey {
