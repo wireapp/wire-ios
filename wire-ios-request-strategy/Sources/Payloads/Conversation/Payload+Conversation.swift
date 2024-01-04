@@ -191,29 +191,6 @@ extension Payload {
 
     // MARK: - Events
 
-    struct UpdateConversationName: CodableEventData {
-        var name: String
-
-        static var eventType: ZMUpdateEventType {
-            return .conversationRename
-        }
-
-        init?(_ conversation: ZMConversation) {
-            guard
-                conversation.hasLocalModifications(forKey: ZMConversationUserDefinedNameKey),
-                let userDefinedName = conversation.userDefinedName
-            else {
-                return nil
-            }
-
-            name = userDefinedName
-        }
-
-        init(name: String) {
-            self.name = name
-        }
-    }
-
     struct UpdateConversationMLSWelcome: Codable {
 
         enum CodingKeys: String, CodingKey {

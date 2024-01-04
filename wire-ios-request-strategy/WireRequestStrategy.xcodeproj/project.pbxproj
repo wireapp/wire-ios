@@ -252,6 +252,7 @@
 		E629E3C62B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3C52B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift */; };
 		E629E3C82B470AB600D526AD /* Payload+UpdateConversationMessageTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3C72B470AB600D526AD /* Payload+UpdateConversationMessageTimer.swift */; };
 		E629E3CA2B470AE600D526AD /* Payload+UpdateConversationAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3C92B470AE600D526AD /* Payload+UpdateConversationAccess.swift */; };
+		E629E3CC2B470B3500D526AD /* Payload+UpdateConversationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3CB2B470B3500D526AD /* Payload+UpdateConversationName.swift */; };
 		E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */; };
 		E9E2AA5E2B163A56008CC2DF /* SyncUsersActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */; };
 		EE04084828C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */; };
@@ -720,6 +721,7 @@
 		E629E3C52B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationReceiptMode.swift"; sourceTree = "<group>"; };
 		E629E3C72B470AB600D526AD /* Payload+UpdateConversationMessageTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationMessageTimer.swift"; sourceTree = "<group>"; };
 		E629E3C92B470AE600D526AD /* Payload+UpdateConversationAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationAccess.swift"; sourceTree = "<group>"; };
+		E629E3CB2B470B3500D526AD /* Payload+UpdateConversationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationName.swift"; sourceTree = "<group>"; };
 		E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandlerTests.swift; sourceTree = "<group>"; };
 		E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandler.swift; sourceTree = "<group>"; };
 		EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysActionHandler.swift; sourceTree = "<group>"; };
@@ -1444,6 +1446,7 @@
 				E629E3C52B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift */,
 				E629E3C72B470AB600D526AD /* Payload+UpdateConversationMessageTimer.swift */,
 				E629E3C92B470AE600D526AD /* Payload+UpdateConversationAccess.swift */,
+				E629E3CB2B470B3500D526AD /* Payload+UpdateConversationName.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -2118,6 +2121,7 @@
 				06474D4D24AF68AD002C695D /* StoreUpdateEvent.swift in Sources */,
 				068084962563B6940047899C /* FeatureConfigRequestStrategy.swift in Sources */,
 				166901F01D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.m in Sources */,
+				E629E3CC2B470B3500D526AD /* Payload+UpdateConversationName.swift in Sources */,
 				1658EA6226DE22C0003D0090 /* ConversationRequestStrategy.swift in Sources */,
 				E629E3AD2B4702C000D526AD /* Payload+ConversationMember.swift in Sources */,
 				EE04084828C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift in Sources */,
