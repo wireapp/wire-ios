@@ -22,7 +22,7 @@ import WireCommonComponents
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
-    static let legalHoldURL: URL = URL(string: "action://learn-more-legal-hold")!
+    static let legalHoldURL: URL = .wr_legalHoldLearnMore
     var conversation: ZMConversation?
 
     struct Configuration {
@@ -78,7 +78,7 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
 
     private static func configuration(for systemMessageType: ZMSystemMessageType, in conversation: ZMConversation) -> View.Configuration {
         let systemMessageTitle = title(for: systemMessageType)
-        var attributedText = NSAttributedString(string: systemMessageTitle, attributes: ConversationSystemMessageCell.baseAttributes)
+        let attributedText = NSAttributedString.markdown(from: systemMessageTitle, style: .systemMessage)
 
         let icon = StyleKitIcon.legalholdactive.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultRed)
 
@@ -88,7 +88,7 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL)
+            return L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
         case .legalHoldDisabled:
             return L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:
