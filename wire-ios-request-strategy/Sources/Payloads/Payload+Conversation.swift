@@ -189,18 +189,6 @@ extension Payload {
         }
     }
 
-    struct QualifiedConversationList: Codable {
-        enum CodingKeys: String, CodingKey {
-            case found = "found"
-            case notFound = "not_found"
-            case failed = "failed"
-        }
-
-        let found: [Conversation]
-        let notFound: [QualifiedID]
-        let failed: [QualifiedID]
-    }
-
     struct PaginatedConversationIDList: Codable, Paginatable {
 
         enum CodingKeys: String, CodingKey {
