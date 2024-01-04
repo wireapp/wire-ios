@@ -249,6 +249,7 @@
 		E629E3C02B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3BF2B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift */; };
 		E629E3C22B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3C12B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift */; };
 		E629E3C42B47056B00D526AD /* Payload+UpdateConversationDeleted.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3C32B47056B00D526AD /* Payload+UpdateConversationDeleted.swift */; };
+		E629E3C62B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3C52B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift */; };
 		E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */; };
 		E9E2AA5E2B163A56008CC2DF /* SyncUsersActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */; };
 		EE04084828C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */; };
@@ -714,6 +715,7 @@
 		E629E3BF2B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConverationMemberJoin.swift"; sourceTree = "<group>"; };
 		E629E3C12B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationConnectionRequest.swift"; sourceTree = "<group>"; };
 		E629E3C32B47056B00D526AD /* Payload+UpdateConversationDeleted.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationDeleted.swift"; sourceTree = "<group>"; };
+		E629E3C52B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationReceiptMode.swift"; sourceTree = "<group>"; };
 		E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandlerTests.swift; sourceTree = "<group>"; };
 		E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandler.swift; sourceTree = "<group>"; };
 		EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysActionHandler.swift; sourceTree = "<group>"; };
@@ -1435,6 +1437,7 @@
 				E629E3BF2B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift */,
 				E629E3C12B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift */,
 				E629E3C32B47056B00D526AD /* Payload+UpdateConversationDeleted.swift */,
+				E629E3C52B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -2097,6 +2100,7 @@
 			files = (
 				F18401C12073BE0800E9F4CC /* ImageV2DownloadRequestStrategy.swift in Sources */,
 				F18401CD2073BE0800E9F4CC /* LinkPreviewPreprocessor.swift in Sources */,
+				E629E3C62B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift in Sources */,
 				169BA1CB25E9507600374343 /* Payload+Coding.swift in Sources */,
 				6308F8AC2A273E7A0072A177 /* FetchMLSConversationGroupInfoActionHandler.swift in Sources */,
 				166901DB1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m in Sources */,
