@@ -191,18 +191,6 @@ extension Payload {
 
     // MARK: - Events
 
-    struct UpdateConversationMessageTimer: CodableEventData {
-        enum CodingKeys: String, CodingKey {
-            case messageTimer = "message_timer"
-        }
-
-        static var eventType: ZMUpdateEventType {
-            return .conversationMessageTimerUpdate
-        }
-
-        let messageTimer: TimeInterval?
-    }
-
     struct UpdateConversationAccess: CodableEventData {
         enum CodingKeys: String, CodingKey {
             case access
