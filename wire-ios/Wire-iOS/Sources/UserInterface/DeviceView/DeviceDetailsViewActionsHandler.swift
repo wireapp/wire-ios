@@ -104,15 +104,17 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         }
     }
 
-    func updateVerified(_ isVerified: Bool) {
+    func updateVerified(_ isVerified: Bool, completion: @escaping () -> Void) {
         let selfUserClient = userSession.selfUserClient
-        userSession.enqueue({
+        userSession.enqueue {
             if isVerified {
                 selfUserClient?.trustClient(self.userClient)
             } else {
                 selfUserClient?.ignoreClient(self.userClient)
             }
-        })
+        } completionHandler: {
+            completion()
+        }
     }
 
     func copyToClipboard(_ value: String) {
