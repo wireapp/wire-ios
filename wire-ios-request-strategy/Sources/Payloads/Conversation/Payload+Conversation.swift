@@ -191,28 +191,6 @@ extension Payload {
 
     // MARK: - Events
 
-    struct ConversationEvent<T: CodableEventData>: Codable {
-
-        let id: UUID?
-        let data: T
-        let from: UUID?
-        let qualifiedID: QualifiedID?
-        let qualifiedFrom: QualifiedID?
-        let timestamp: Date?
-        let type: String?
-
-        enum CodingKeys: String, CodingKey {
-            case id = "conversation"
-            case data
-            case from
-            case qualifiedID = "qualified_conversation"
-            case qualifiedFrom = "qualified_from"
-            case timestamp = "time"
-            case type
-        }
-
-    }
-
     struct UpdateConverationMemberLeave: CodableEventData {
         enum CodingKeys: String, CodingKey {
             case userIDs = "user_ids"
