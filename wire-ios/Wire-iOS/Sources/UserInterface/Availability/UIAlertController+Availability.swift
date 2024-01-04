@@ -23,36 +23,40 @@ import WireDataModel
 extension UIAlertController {
 
     static func availabilityExplanation(_ availability: AvailabilityKind) -> UIAlertController {
+        typealias AvailabilityReminderLocale = L10n.Localizable.Availability.Reminder
         var title: String = ""
         var message: String = ""
 
         switch availability {
         case .none:
-            title = L10n.Localizable.Availability.Reminder.None.title
-            message = L10n.Localizable.Availability.Reminder.None.message
+            title = AvailabilityReminderLocale.None.title
+            message = AvailabilityReminderLocale.None.message
         case .available:
-            title = L10n.Localizable.Availability.Reminder.Available.title
-            message = L10n.Localizable.Availability.Reminder.Available.message
+            title = AvailabilityReminderLocale.Available.title
+            message = AvailabilityReminderLocale.Available.message
         case .busy:
-            title = L10n.Localizable.Availability.Reminder.Busy.title
-            message = L10n.Localizable.Availability.Reminder.Busy.message
+            title = AvailabilityReminderLocale.Busy.title
+            message = AvailabilityReminderLocale.Busy.message
         case .away:
-            title = L10n.Localizable.Availability.Reminder.Away.title
-            message = L10n.Localizable.Availability.Reminder.Away.message
+            title = AvailabilityReminderLocale.Away.title
+            message = AvailabilityReminderLocale.Away.message
         }
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: L10n.Localizable.Availability.Reminder.Action.dontRemindMe, style: .default, handler: { (_) in
+        alert.addAction(UIAlertAction(title: AvailabilityReminderLocale.Action.dontRemindMe, style: .default, handler: { (_) in
             Settings.shared.dontRemindUserWhenChanging(availability)
         }))
-        alert.addAction(UIAlertAction(title: L10n.Localizable.Availability.Reminder.Action.ok, style: .default, handler: { (_) in }))
+
+        alert.addAction(UIAlertAction(title: AvailabilityReminderLocale.Action.ok, style: .default, handler: { (_) in }))
 
         return alert
     }
 
     static func availabilityPicker(_ handler: @escaping (_ availability: AvailabilityKind) -> Void) -> UIAlertController {
-        let alert = UIAlertController(title: L10n.Localizable.Availability.Message.setStatus, message: nil, preferredStyle: .actionSheet)
+        typealias AvailabilityMessageLocale = L10n.Localizable.Availability.Message
+
+        let alert = UIAlertController(title: AvailabilityMessageLocale.setStatus, message: nil, preferredStyle: .actionSheet)
 
         for availability in AvailabilityKind.allCases {
             alert.addAction(UIAlertAction(title: availability.localizedName, style: .default, handler: { _ in
@@ -61,7 +65,7 @@ extension UIAlertController {
         }
 
         alert.popoverPresentationController?.permittedArrowDirections = [ .up, .down ]
-        alert.addAction(UIAlertAction(title: L10n.Localizable.Availability.Message.cancel, style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: AvailabilityMessageLocale.cancel, style: .cancel, handler: nil))
 
         return alert
     }

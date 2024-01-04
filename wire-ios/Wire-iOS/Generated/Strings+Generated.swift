@@ -2041,8 +2041,10 @@ internal enum L10n {
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")
-          /// This conversation is under legal hold
-          internal static let enabled = L10n.tr("Localizable", "content.system.message_legal_hold.enabled", fallback: "This conversation is under legal hold")
+          /// This conversation is under legal hold [LEARN MORE](%@)
+          internal static func enabled(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.message_legal_hold.enabled", String(describing: p1), fallback: "This conversation is under legal hold [LEARN MORE](%@)")
+          }
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "content.system.message_legal_hold.learn_more", fallback: "Learn more")
         }
