@@ -189,21 +189,6 @@ extension Payload {
         }
     }
 
-    struct ConversationTeamInfo: Codable, Equatable {
-        enum CodingKeys: String, CodingKey {
-            case teamID = "teamid"
-            case managed
-        }
-
-        init (teamID: UUID, managed: Bool = false) {
-            self.teamID = teamID
-            self.managed = managed
-        }
-
-        let teamID: UUID
-        let managed: Bool?
-    }
-
     struct UpdateConversationStatus: Codable {
         enum CodingKeys: String, CodingKey {
             case mutedStatus = "otr_muted_status"
