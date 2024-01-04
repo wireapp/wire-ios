@@ -189,20 +189,6 @@ extension Payload {
         }
     }
 
-    // MARK: - Actions
-
-    struct ConversationUpdateRole: Codable {
-        enum CodingKeys: String, CodingKey {
-            case role = "conversation_role"
-        }
-
-        let role: String
-
-        init?(role: String) {
-            self.role = role
-        }
-    }
-
     // MARK: - Events
 
     struct ConversationEvent<T: CodableEventData>: Codable {

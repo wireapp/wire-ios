@@ -243,6 +243,7 @@
 		E629E3B12B47036D00D526AD /* Payload+ConversationTeamInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3B02B47036D00D526AD /* Payload+ConversationTeamInfo.swift */; };
 		E629E3B32B4703A000D526AD /* Payload+UpdateConversationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3B22B4703A000D526AD /* Payload+UpdateConversationStatus.swift */; };
 		E629E3B52B4703E100D526AD /* Payload+ConversationAddMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */; };
+		E629E3B72B47041700D526AD /* Payload+ConversationUpdateRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3B62B47041700D526AD /* Payload+ConversationUpdateRole.swift */; };
 		E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */; };
 		E9E2AA5E2B163A56008CC2DF /* SyncUsersActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */; };
 		EE04084828C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */; };
@@ -702,6 +703,7 @@
 		E629E3B02B47036D00D526AD /* Payload+ConversationTeamInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationTeamInfo.swift"; sourceTree = "<group>"; };
 		E629E3B22B4703A000D526AD /* Payload+UpdateConversationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationStatus.swift"; sourceTree = "<group>"; };
 		E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationAddMember.swift"; sourceTree = "<group>"; };
+		E629E3B62B47041700D526AD /* Payload+ConversationUpdateRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationUpdateRole.swift"; sourceTree = "<group>"; };
 		E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandlerTests.swift; sourceTree = "<group>"; };
 		E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandler.swift; sourceTree = "<group>"; };
 		EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysActionHandler.swift; sourceTree = "<group>"; };
@@ -1274,6 +1276,7 @@
 				E629E3B02B47036D00D526AD /* Payload+ConversationTeamInfo.swift */,
 				E629E3B22B4703A000D526AD /* Payload+UpdateConversationStatus.swift */,
 				E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */,
+				E629E3B62B47041700D526AD /* Payload+ConversationUpdateRole.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -2193,6 +2196,7 @@
 				F18401B02073BE0800E9F4CC /* AbstractRequestStrategy.swift in Sources */,
 				16BBA1F82AFC36DF00CDF38A /* QuickSyncCompletedNotification.swift in Sources */,
 				0649D14F24F63DCC001DDC78 /* ZMSound.swift in Sources */,
+				E629E3B72B47041700D526AD /* Payload+ConversationUpdateRole.swift in Sources */,
 				F18401C22073BE0800E9F4CC /* AssetV2DownloadRequestStrategy.swift in Sources */,
 				EEAC16D4281AE5F700B7A34D /* CallEventContent.swift in Sources */,
 				F18401D22073BE0800E9F4CC /* OTREntity.swift in Sources */,
