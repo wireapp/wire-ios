@@ -25,7 +25,7 @@ import WireCoreCrypto
 
 class E2eIKeyPackageRotatorTests: MessagingTestBase {
 
-    private var mockCoreCrypto: MockCoreCrypto!
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockCommitSender: MockCommitSending!
     private var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
@@ -34,7 +34,7 @@ class E2eIKeyPackageRotatorTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockCommitSender = MockCommitSending()
         mockConversationEventProcessor = MockConversationEventProcessorProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
