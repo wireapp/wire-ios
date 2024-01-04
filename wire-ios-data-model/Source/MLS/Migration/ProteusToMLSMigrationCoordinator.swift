@@ -264,11 +264,11 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     private func updateConversationProtocolToMLS(for conversation: ZMConversation) async throws {
-        guard let qualifiedID = conversation.qualifiedID else { return }
+        let qualifiedID = await context.perform { conversation.qualifiedID }
+        guard let qualifiedID else { return }
         try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mls, context: context.notificationContext)
+        }
     }
-
-}
 
 // This is temporary until John's work on 1on1 conversations 
 // is merged to develop and then we can pull the changes into the migration branch.
