@@ -1261,22 +1261,12 @@
 		16DABDA025D69306005F4C3A /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				E629E3B92B47045800D526AD /* Conversation */,
 				16DABDA125D69335005F4C3A /* Payload.swift */,
 				169BA1CA25E9507600374343 /* Payload+Coding.swift */,
-				E629E39E2B4700B600D526AD /* Payload+NewConversation.swift */,
-				16E5F6DC26EF1E3200F35FBA /* Payload+Conversation.swift */,
-				E629E3A42B4701E200D526AD /* Payload+ConversationList.swift */,
 				16367F1D26FDB0740028AF8B /* Payload+Connection.swift */,
 				E629E3A62B47020C00D526AD /* Payload+QualifiedConversationList.swift */,
 				16E70F5E270EE96200718E5D /* Processing */,
-				E629E3A82B47026200D526AD /* Payload+PaginatedConversationIDList.swift */,
-				E629E3AA2B47028600D526AD /* Payload+PaginatedQualifiedConversationIDList.swift */,
-				E629E3AC2B4702C000D526AD /* Payload+ConversationMember.swift */,
-				E629E3AE2B47031800D526AD /* Payload+ConversationMembers.swift */,
-				E629E3B02B47036D00D526AD /* Payload+ConversationTeamInfo.swift */,
-				E629E3B22B4703A000D526AD /* Payload+UpdateConversationStatus.swift */,
-				E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */,
-				E629E3B62B47041700D526AD /* Payload+ConversationUpdateRole.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -1398,6 +1388,40 @@
 				63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		E629E3B82B47044400D526AD /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */,
+				E629E3B62B47041700D526AD /* Payload+ConversationUpdateRole.swift */,
+			);
+			path = Actions;
+			sourceTree = "<group>";
+		};
+		E629E3B92B47045800D526AD /* Conversation */ = {
+			isa = PBXGroup;
+			children = (
+				E629E3BA2B47049B00D526AD /* Events */,
+				E629E3B82B47044400D526AD /* Actions */,
+				16E5F6DC26EF1E3200F35FBA /* Payload+Conversation.swift */,
+				E629E3A42B4701E200D526AD /* Payload+ConversationList.swift */,
+				E629E3AC2B4702C000D526AD /* Payload+ConversationMember.swift */,
+				E629E3AE2B47031800D526AD /* Payload+ConversationMembers.swift */,
+				E629E3B02B47036D00D526AD /* Payload+ConversationTeamInfo.swift */,
+				E629E39E2B4700B600D526AD /* Payload+NewConversation.swift */,
+				E629E3A82B47026200D526AD /* Payload+PaginatedConversationIDList.swift */,
+				E629E3AA2B47028600D526AD /* Payload+PaginatedQualifiedConversationIDList.swift */,
+				E629E3B22B4703A000D526AD /* Payload+UpdateConversationStatus.swift */,
+			);
+			path = Conversation;
+			sourceTree = "<group>";
+		};
+		E629E3BA2B47049B00D526AD /* Events */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Events;
 			sourceTree = "<group>";
 		};
 		EE90C29C282E782900474379 /* Push Token */ = {
