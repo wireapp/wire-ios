@@ -363,8 +363,8 @@ extension ZMConversation {
         message.sender = ZMUser.selfUser(in: moc)
 
         if expires {
-            message.setExpirationDate()
-            WireLogger.messaging.debug("set expiration date \(message.expirationDate)")
+            let expirationDate = message.setExpirationDate()
+            WireLogger.messaging.debug("set expiration date \(expirationDate)")
         }
 
         if hidden {

@@ -1338,10 +1338,10 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
     public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?)?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> MLSDecryptResult?)?
     public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> MLSDecryptResult? {
         decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
         if let error = decryptMessageForSubconversationType_MockError {
@@ -1349,7 +1349,7 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
         }
 
         if let mock = decryptMessageForSubconversationType_MockMethod {
-            return try mock(message, groupID, subconversationType)
+            return try await mock(message, groupID, subconversationType)
         } else if let mock = decryptMessageForSubconversationType_MockValue {
             return mock
         } else {
@@ -1370,10 +1370,10 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
 
     public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
     public var encryptMessageFor_MockError: Error?
-    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) throws -> [Byte])?
+    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) async throws -> [Byte])?
     public var encryptMessageFor_MockValue: [Byte]?
 
-    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) async throws -> [Byte] {
         encryptMessageFor_Invocations.append((message: message, groupID: groupID))
 
         if let error = encryptMessageFor_MockError {
@@ -1381,7 +1381,7 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
         }
 
         if let mock = encryptMessageFor_MockMethod {
-            return try mock(message, groupID)
+            return try await mock(message, groupID)
         } else if let mock = encryptMessageFor_MockValue {
             return mock
         } else {
@@ -1472,9 +1472,9 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var createGroupFor_Invocations: [MLSGroupID] = []
     public var createGroupFor_MockError: Error?
-    public var createGroupFor_MockMethod: ((MLSGroupID) throws -> Void)?
+    public var createGroupFor_MockMethod: ((MLSGroupID) async throws -> Void)?
 
-    public func createGroup(for groupID: MLSGroupID) throws {
+    public func createGroup(for groupID: MLSGroupID) async throws {
         createGroupFor_Invocations.append(groupID)
 
         if let error = createGroupFor_MockError {
@@ -1485,7 +1485,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             fatalError("no mock for `createGroupFor`")
         }
 
-        try mock(groupID)
+        try await mock(groupID)
     }
 
     // MARK: - conversationExists
@@ -1587,16 +1587,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - performPendingJoins
 
     public var performPendingJoins_Invocations: [Void] = []
-    public var performPendingJoins_MockMethod: (() -> Void)?
+    public var performPendingJoins_MockError: Error?
+    public var performPendingJoins_MockMethod: (() async throws -> Void)?
 
-    public func performPendingJoins() {
+    public func performPendingJoins() async throws {
         performPendingJoins_Invocations.append(())
+
+        if let error = performPendingJoins_MockError {
+            throw error
+        }
 
         guard let mock = performPendingJoins_MockMethod else {
             fatalError("no mock for `performPendingJoins`")
         }
 
-        mock()
+        try await mock()
     }
 
     // MARK: - wipeGroup
@@ -1868,10 +1873,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
     public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?)?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> MLSDecryptResult?)?
     public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> MLSDecryptResult? {
         decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
         if let error = decryptMessageForSubconversationType_MockError {
@@ -1879,7 +1884,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = decryptMessageForSubconversationType_MockMethod {
-            return try mock(message, groupID, subconversationType)
+            return try await mock(message, groupID, subconversationType)
         } else if let mock = decryptMessageForSubconversationType_MockValue {
             return mock
         } else {
@@ -1891,10 +1896,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
     public var encryptMessageFor_MockError: Error?
-    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) throws -> [Byte])?
+    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) async throws -> [Byte])?
     public var encryptMessageFor_MockValue: [Byte]?
 
-    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) async throws -> [Byte] {
         encryptMessageFor_Invocations.append((message: message, groupID: groupID))
 
         if let error = encryptMessageFor_MockError {
@@ -1902,7 +1907,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = encryptMessageFor_MockMethod {
-            return try mock(message, groupID)
+            return try await mock(message, groupID)
         } else if let mock = encryptMessageFor_MockValue {
             return mock
         } else {

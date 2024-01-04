@@ -369,7 +369,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 )
             }
 
-            Task {
+            WaitingGroupTask(context: self.managedObjectContext) {
                 do {
                     try await self.messageSender.sendMessage(message: message)
                     completionHandler(200)
