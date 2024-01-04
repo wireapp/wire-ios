@@ -191,21 +191,6 @@ extension Payload {
 
     // MARK: - Events
 
-    struct UpdateConverationMemberJoin: CodableEventData {
-        enum CodingKeys: String, CodingKey {
-            case userIDs = "user_ids"
-            case users
-        }
-
-        static var eventType: ZMUpdateEventType {
-            return .conversationMemberJoin
-        }
-
-        let userIDs: [UUID]?
-        let users: [ConversationMember]?
-
-    }
-
     struct UpdateConversationConnectionRequest: CodableEventData {
         static var eventType: ZMUpdateEventType {
             return .conversationConnectRequest
