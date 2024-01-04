@@ -376,7 +376,7 @@ extension ZMSLog {
 
         do {
             let data = Data(string.utf8)
-            try updatingHandle?.wr_write(data)
+            try updatingHandle?.write(contentsOf: data)
         } catch {
             updatingHandle = nil
         }
