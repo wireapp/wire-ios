@@ -72,6 +72,7 @@ final class EventPayloadDecoderTests: XCTestCase {
 
 private struct Book: Decodable {
     let title: String
+    // We want to test `Date` decoding, because JSONDecoder can have a custom `dateDecodingStrategy`.
     let published: Date
 }
 
