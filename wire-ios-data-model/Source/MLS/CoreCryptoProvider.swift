@@ -42,6 +42,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var coreCrypto: SafeCoreCrypto?
     private var loadingCoreCrypto = false
     private var initialisatingMLS = false
+    private var hasInitialisedMLS = false
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
     private var initialiseMlsContinuations: [CheckedContinuation<Void, Error>] = []
 
@@ -81,6 +82,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             }
         }
 
+        guard !hasInitialisedMLS else {
+            return
+        }
+
         do {
             initialisatingMLS = true
             let provider = CoreCryptoConfigProvider()
@@ -94,6 +99,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         initialisatingMLS = false
+        hasInitialisedMLS = true
         resumeInitialiseMlsContinuations(with: .success())
     }
 
