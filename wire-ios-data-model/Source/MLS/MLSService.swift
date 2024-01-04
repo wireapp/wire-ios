@@ -1729,7 +1729,7 @@ public final class MLSService: MLSServiceInterface {
 
                 } catch SendMLSMessageAction.Failure.mlsStaleMessage {
 
-                    logger.error("failed to migrate conversation \(conversation): stale message")
+                    logger.error("failed to migrate conversation \(qualifiedID): stale message")
 
                     // rollback: destroy/wipe group
                     try await wipeGroup(mlsGroupID)
@@ -1737,7 +1737,7 @@ public final class MLSService: MLSServiceInterface {
                 }
 
             } catch {
-                logger.error("failed to migrate conversation \(conversation): \(String(describing: error))")
+                logger.error("failed to migrate conversation \(qualifiedID): \(String(describing: error))")
                 continue
             }
         }
