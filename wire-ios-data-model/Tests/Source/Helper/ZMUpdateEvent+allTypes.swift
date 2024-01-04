@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,15 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface NSFileHandle (SafeOperations)
-
-/// Attempts to write the data to disk, and safely throws an error in case of failure.
--(BOOL)wr_writeData:(NSData *)data error:(__autoreleasing NSError **)error;
-
-@end
-
-NS_ASSUME_NONNULL_END
+extension ZMUpdateEvent {
+    @objc
+    static let allTypes = ZMUpdateEventType
+        .allCases
+        .map { $0.rawValue as NSNumber }
+}
