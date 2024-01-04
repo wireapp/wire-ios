@@ -34,6 +34,7 @@ struct EventPayloadDecoder {
         _ type: T.Type,
         from eventPayload: [AnyHashable: Any]
     ) throws -> T where T: Decodable {
+        // .isValidJSONObject(:) is required before calling .data(withJSONObject:options:)
         guard JSONSerialization.isValidJSONObject(eventPayload) else {
             throw EventPayloadDecoderError.invalidSerializationJSONObject
         }
@@ -56,7 +57,7 @@ struct EventPayloadDecoder {
     ) throws -> T where T: Decodable {
         do {
             return try decoder.decode(type, from: eventPayload)
-        } catch let error {
+        } catch {
             Logging.network.warn("Failed to json decode \(type) from event payload: \(error)")
             throw error
         }
