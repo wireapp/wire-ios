@@ -189,43 +189,6 @@ extension Payload {
         }
     }
 
-    struct UpdateConversationStatus: Codable {
-        enum CodingKeys: String, CodingKey {
-            case mutedStatus = "otr_muted_status"
-            case mutedReference = "otr_muted_ref"
-            case archived = "otr_archived"
-            case archivedReference = "otr_archived_ref"
-            case hidden = "otr_hidden"
-            case hiddenReference = "otr_hidden_ref"
-        }
-
-        var mutedStatus: Int?
-        var mutedReference: Date?
-        var archived: Bool?
-        var archivedReference: Date?
-        var hidden: Bool?
-        var hiddenReference: String?
-
-        init(_ conversation: ZMConversation) {
-
-            if conversation.hasLocalModifications(forKey: ZMConversationSilencedChangedTimeStampKey) {
-                let reference = conversation.silencedChangedTimestamp ?? Date()
-                conversation.silencedChangedTimestamp = reference
-
-                mutedStatus = Int(conversation.mutedMessageTypes.rawValue)
-                mutedReference = reference
-            }
-
-            if conversation.hasLocalModifications(forKey: ZMConversationArchivedChangedTimeStampKey) {
-                let reference = conversation.archivedChangedTimestamp ?? Date()
-                conversation.archivedChangedTimestamp = reference
-
-                archived = conversation.isArchived
-                archivedReference = reference
-            }
-        }
-    }
-
     // MARK: - Actions
 
     struct ConversationAddMember: Codable {
