@@ -18,6 +18,10 @@
 
 import Foundation
 
+enum EventPayloadDecoderError: Error {
+    case invalidSerializationJSONObject
+}
+
 struct EventPayloadDecoder {
 
     private let decoder: JSONDecoder
@@ -30,6 +34,10 @@ struct EventPayloadDecoder {
         _ type: T.Type,
         from eventPayload: [AnyHashable: Any]
     ) throws -> T where T: Decodable {
+        guard JSONSerialization.isValidJSONObject(eventPayload) else {
+            throw EventPayloadDecoderError.invalidSerializationJSONObject
+        }
+
         let data: Data
 
         do {

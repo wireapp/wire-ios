@@ -20,22 +20,33 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class EventPayloadDecoderTests: XCTestCase {
+
     func testDecodeData() throws {
         // given
         let decoder = EventPayloadDecoder()
 
         // when
-        let book = try decoder.decode(Book.self, from: jsonData)
+        let book = try decoder.decode(Book.self, from: jsonDataExample)
 
         // then
         XCTAssertEqual(book.title, "Hello World!")
         XCTAssertEqual(book.published.description, "2024-01-04 10:34:56 +0000")
     }
 
+    func testDecodeDataFails() throws {
+        // given
+        let decoder = EventPayloadDecoder()
+        let jsonDataEmpty = try XCTUnwrap("".data(using: .utf8))
+
+        // when
+        // then
+        XCTAssertThrowsError(try decoder.decode(Book.self, from: jsonDataEmpty))
+    }
+
     func testDecodeDictionary() throws {
         // given
         let decoder = EventPayloadDecoder()
-        let jsonObject = try JSONSerialization.jsonObject(with: jsonData)
+        let jsonObject = try JSONSerialization.jsonObject(with: jsonDataExample)
         let jsonDictionary = try XCTUnwrap(jsonObject as? [AnyHashable: Any])
 
         // when
@@ -44,6 +55,16 @@ final class EventPayloadDecoderTests: XCTestCase {
         // then
         XCTAssertEqual(book.title, "Hello World!")
         XCTAssertEqual(book.published.description, "2024-01-04 10:34:56 +0000")
+    }
+
+    func testDecodeDictionaryFails() throws {
+        // given
+        let decoder = EventPayloadDecoder()
+        let jsonDictionary = [123: 456]
+
+        // when
+        // then
+        XCTAssertThrowsError(try decoder.decode(Book.self, from: jsonDictionary))
     }
 }
 
@@ -56,7 +77,7 @@ private struct Book: Decodable {
 
 // MARK: JSON
 
-private let jsonData = """
+private let jsonDataExample = """
 {
     "title": "Hello World!",
     "published": "2024-01-04T12:34:56.78+02:00"
