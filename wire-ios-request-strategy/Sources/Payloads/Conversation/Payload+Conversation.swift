@@ -191,12 +191,6 @@ extension Payload {
 
     // MARK: - Events
 
-    struct UpdateConversationDeleted: CodableEventData {
-        static var eventType: ZMUpdateEventType {
-            return .conversationDelete
-        }
-    }
-
     struct UpdateConversationReceiptMode: CodableEventData {
         enum CodingKeys: String, CodingKey {
             case readReceiptMode = "receipt_mode"
