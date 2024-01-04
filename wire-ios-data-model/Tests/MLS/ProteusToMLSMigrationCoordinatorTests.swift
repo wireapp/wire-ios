@@ -21,7 +21,7 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
+final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     // MARK: - Properties
 
@@ -48,7 +48,9 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             actionsProvider: mockActionsProvider
         )
 
-        syncMOC.mlsService = mockMLSService
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mockMLSService
+        }
 
         // Set default mocks
         mockActionsProvider.syncUsersQualifiedIDsContext_MockMethod = { _, _ in }
