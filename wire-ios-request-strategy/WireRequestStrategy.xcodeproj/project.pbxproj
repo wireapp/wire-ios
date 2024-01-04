@@ -1424,8 +1424,8 @@
 		E629E3B92B47045800D526AD /* Conversation */ = {
 			isa = PBXGroup;
 			children = (
-				E629E3BA2B47049B00D526AD /* Events */,
 				E629E3B82B47044400D526AD /* Actions */,
+				E629E3BA2B47049B00D526AD /* Events */,
 				16E5F6DC26EF1E3200F35FBA /* Payload+Conversation.swift */,
 				E629E3A42B4701E200D526AD /* Payload+ConversationList.swift */,
 				E629E3AC2B4702C000D526AD /* Payload+ConversationMember.swift */,
