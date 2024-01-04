@@ -17,12 +17,6 @@
 
 import Foundation
 
-protocol EventData {
-    static var eventType: ZMUpdateEventType { get }
-}
-
-typealias CodableEventData = EventData & Codable
-
 extension Payload {
     struct Conversation: CodableAPIVersionAware, EventData {
         enum CodingKeys: String, CodingKey {
