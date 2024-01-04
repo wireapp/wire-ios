@@ -112,8 +112,6 @@ public class ZMUserSession: NSObject {
 
     public var appLockController: AppLockType
 
-    var mlsConversationVerificationManager: MLSConversationVerificationManagerInterface?
-
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchFileSharing()
@@ -282,11 +280,17 @@ public class ZMUserSession: NSObject {
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 
-    public lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface? = {
+    lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface = {
         let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         return MLSConversationVerificationStatusProvider(
             e2eIVerificationStatusService: e2eIVerificationStatusService,
             syncContext: syncContext)
+    }()
+
+    lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {
+        return MLSConversationVerificationManager(
+            mlsService: mlsService,
+            mlsConversationVerificationStatusProvider: mlsConversationVerificationStatusProvider)
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -411,11 +415,7 @@ public class ZMUserSession: NSObject {
             createMLSClientIfNeeded()
 
             if e2eiFeature.isEnabled {
-                self.mlsConversationVerificationManager = MLSConversationVerificationManager(
-                    mlsService: self.mlsService,
-                    mlsConversationVerificationStatusProvider: mlsConversationVerificationStatusProvider)
-
-                self.mlsConversationVerificationManager?.startObservingMLSConversationVerificationStatus()
+                mlsConversationVerificationManager.startObservingMLSConversationVerificationStatus()
             }
         }
 

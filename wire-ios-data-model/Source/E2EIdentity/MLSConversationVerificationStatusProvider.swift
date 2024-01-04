@@ -36,10 +36,11 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
 
     public init(
         e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface,
-        syncContext: NSManagedObjectContext) {
-            self.e2eIVerificationStatusService = e2eIVerificationStatusService
-            self.syncContext = syncContext
-        }
+        syncContext: NSManagedObjectContext
+    ) {
+        self.e2eIVerificationStatusService = e2eIVerificationStatusService
+        self.syncContext = syncContext
+    }
 
     // MARK: - Public interface
 
@@ -67,7 +68,7 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
             return conversation.mlsVerificationStatus = newStatusFromCC
         }
 
-        let newStatus = getActualNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
+        let newStatus = resolveNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
         guard newStatus != currentStatus else {
             return
         }
@@ -78,8 +79,8 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
         }
     }
 
-    private func getActualNewStatus(newStatusFromCC: MLSVerificationStatus,
-                                    currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
+    private func resolveNewStatus(newStatusFromCC: MLSVerificationStatus,
+                                  currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
         switch (newStatusFromCC, currentStatus) {
         case (.notVerified, .verified):
             return .degraded

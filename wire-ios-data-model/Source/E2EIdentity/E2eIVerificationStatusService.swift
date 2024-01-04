@@ -50,6 +50,8 @@ public final class E2eIVerificationStatusService: E2eIVerificationStatusServiceI
     // MARK: - Public interface
 
     /// Returns the state of a conversation regarding end-to-end identity.
+    /// Note: coreCrypto indicates a conversation with one of the states: `verified`, `notVerified`, `notEnabled`.
+    /// For further use, we need to convert it to MLSVerificationStatus, which has `verified`, `notVerified`, and `degraded` states.
     ///
     /// - Parameters:
     ///  - groupID: the id of the MLS group for which to get the verification status
