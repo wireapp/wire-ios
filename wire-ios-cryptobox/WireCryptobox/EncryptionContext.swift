@@ -144,6 +144,7 @@ extension EncryptionContext {
         self.releaseDirectoryLock()
     }
 
+    // TODO: can this be removed?
     public func performAsync(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) async -> Void ) async {
         self.acquireDirectoryLock()
         if self.currentSessionsDirectory == nil {
