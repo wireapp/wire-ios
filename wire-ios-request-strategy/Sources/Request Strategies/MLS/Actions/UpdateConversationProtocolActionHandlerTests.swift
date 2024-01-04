@@ -29,6 +29,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
         uuidString = "b906579d-60dd-4510-a3ca-14b2ec225f4a"
         let qualifiedID = QualifiedID(uuid: .init(uuidString: uuidString)!, domain: "example.com")
         action = UpdateConversationProtocolAction(qualifiedID: qualifiedID, messageProtocol: .mls)
+        handler = UpdateConversationProtocolActionHandler(context: syncMOC)
     }
 
     override func tearDown() {
