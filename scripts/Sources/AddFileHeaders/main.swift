@@ -73,6 +73,9 @@ outerLoop: while let file = dirctoryEnumerator?.nextObject() as? String {
     let content = try! String(contentsOfFile: file)
     var contentLines = content.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline)
     let headerLines = header.split(whereSeparator: \.isNewline)
+    if contentLines.count >= headerLines.count {
+        contentLines.remove(at: headerLines.count - 1)
+    }
     while contentLines.count < headerLines.count {
         contentLines += [""]
     }

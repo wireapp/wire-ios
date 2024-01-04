@@ -17,7 +17,6 @@
 //
 
 
-
 // Warnings - All languages
 //
 CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR
