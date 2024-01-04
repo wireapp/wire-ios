@@ -104,19 +104,15 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         }
     }
 
-    func updateVerified(_ isVerified: Bool) async -> Bool {
-        return await withCheckedContinuation { continuation in
-            userSession.enqueue({
-                    if isVerified {
-                        self.userClient.trustClient(self.userClient)
-                    } else {
-                        self.userClient.ignoreClient(self.userClient)
-                    }
-                }, completionHandler: {
-                    continuation.resume(returning: isVerified)
-                }
-            )
-        }
+    func updateVerified(_ isVerified: Bool) {
+        let selfUserClient = userSession.selfUserClient
+        userSession.enqueue({
+            if isVerified {
+                selfUserClient?.trustClient(self.userClient)
+            } else {
+                selfUserClient?.ignoreClient(self.userClient)
+            }
+        })
     }
 
     func copyToClipboard(_ value: String) {
