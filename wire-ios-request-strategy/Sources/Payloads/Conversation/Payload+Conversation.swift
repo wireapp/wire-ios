@@ -191,28 +191,6 @@ extension Payload {
 
     // MARK: - Events
 
-    struct UpdateConversationAccess: CodableEventData {
-        enum CodingKeys: String, CodingKey {
-            case access
-            case accessRole = "access_role"
-            case accessRoleV2 = "access_role_v2"
-        }
-
-        static var eventType: ZMUpdateEventType {
-            return .conversationAccessModeUpdate
-        }
-
-        let access: [String]
-        let accessRole: String?
-        let accessRoleV2: [String]?
-
-        init(accessMode: ConversationAccessMode, accessRoles: Set<ConversationAccessRoleV2>) {
-            access = accessMode.stringValue
-            accessRole = ConversationAccessRole.fromAccessRoleV2(accessRoles).rawValue
-            accessRoleV2 = accessRoles.map(\.rawValue)
-        }
-    }
-
     struct UpdateConversationName: CodableEventData {
         var name: String
 
