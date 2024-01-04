@@ -68,7 +68,8 @@ class E2eIKeyPackageRotatorTests: MessagingTestBase {
         // Then we can resolve this.
         // Until then we're unable to test anything that has a dependency on `WireE2eIdentity`
         //
-        // TODO: Create a ticket to track this
+        // TODO: Investigate solutions to mock core crypto types
+        // https://wearezeta.atlassian.net/browse/WPB-6035
     }
 
 }
