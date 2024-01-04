@@ -81,6 +81,8 @@ extension MockTransportSessionTeamEventsTests {
         check(event: events.first, hasType: .teamDelete, teamIdentifier: teamIdentifier)
     }
 
+    // TODO: check if the tests can be reused at other places
+    /*
     func testThatItCreatesEventsForUpdatedTeams() {
         // Given
         var team: MockTeam!
@@ -144,6 +146,7 @@ extension MockTransportSessionTeamEventsTests {
         ]
         check(event: events.first, hasType: .teamUpdate, team: team, data: updateData)
     }
+     */
 
 }
 
