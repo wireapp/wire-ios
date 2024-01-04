@@ -60,11 +60,8 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 )
             }
             Spacer()
-        }.onAppear {
-            Task {
-                await viewModel.fetchFingerPrintForProteus()
-            }
         }
+
         if viewModel.isValidCerificate, let certificate = viewModel.e2eIdentityCertificate {
             Text(L10n.Localizable.Device.Details.Section.E2ei.serialNumber)
                 .font(FontSpec.smallSemiboldFont.swiftUIFont)

@@ -112,6 +112,11 @@ struct DeviceDetailsView: View {
 
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            Task {
+                await viewModel.fetchFingerPrintForProteus()
+            }
+        }
         .onDisappear {
             dismissedView?()
         }
