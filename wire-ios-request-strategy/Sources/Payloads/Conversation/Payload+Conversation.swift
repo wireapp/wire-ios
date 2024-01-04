@@ -191,20 +191,6 @@ extension Payload {
 
     // MARK: - Events
 
-    struct UpdateConverationMemberLeave: CodableEventData {
-        enum CodingKeys: String, CodingKey {
-            case userIDs = "user_ids"
-            case qualifiedUserIDs = "qualified_user_ids"
-        }
-
-        static var eventType: ZMUpdateEventType {
-            return .conversationMemberLeave
-        }
-
-        let userIDs: [UUID]?
-        let qualifiedUserIDs: [QualifiedID]?
-    }
-
     struct UpdateConverationMemberJoin: CodableEventData {
         enum CodingKeys: String, CodingKey {
             case userIDs = "user_ids"
