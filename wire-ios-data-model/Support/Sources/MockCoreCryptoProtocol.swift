@@ -36,24 +36,24 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - addClientsToConversation
 
-    public var addClientsToConversationConversationIdClients_Invocations: [(conversationId: Data, clients: [WireCoreCrypto.Invitee])] = []
-    public var addClientsToConversationConversationIdClients_MockError: Error?
-    public var addClientsToConversationConversationIdClients_MockMethod: ((Data, [WireCoreCrypto.Invitee]) async throws -> WireCoreCrypto.MemberAddedMessages)?
-    public var addClientsToConversationConversationIdClients_MockValue: WireCoreCrypto.MemberAddedMessages?
+    public var addClientsToConversationConversationIdKeyPackages_Invocations: [(conversationId: Data, keyPackages: [Data])] = []
+    public var addClientsToConversationConversationIdKeyPackages_MockError: Error?
+    public var addClientsToConversationConversationIdKeyPackages_MockMethod: ((Data, [Data]) async throws -> WireCoreCrypto.MemberAddedMessages)?
+    public var addClientsToConversationConversationIdKeyPackages_MockValue: WireCoreCrypto.MemberAddedMessages?
 
-    public func addClientsToConversation(conversationId: Data, clients: [WireCoreCrypto.Invitee]) async throws -> WireCoreCrypto.MemberAddedMessages {
-        addClientsToConversationConversationIdClients_Invocations.append((conversationId: conversationId, clients: clients))
+    public func addClientsToConversation(conversationId: Data, keyPackages: [Data]) async throws -> WireCoreCrypto.MemberAddedMessages {
+        addClientsToConversationConversationIdKeyPackages_Invocations.append((conversationId: conversationId, keyPackages: keyPackages))
 
-        if let error = addClientsToConversationConversationIdClients_MockError {
+        if let error = addClientsToConversationConversationIdKeyPackages_MockError {
             throw error
         }
 
-        if let mock = addClientsToConversationConversationIdClients_MockMethod {
-            return try await mock(conversationId, clients)
-        } else if let mock = addClientsToConversationConversationIdClients_MockValue {
+        if let mock = addClientsToConversationConversationIdKeyPackages_MockMethod {
+            return try await mock(conversationId, keyPackages)
+        } else if let mock = addClientsToConversationConversationIdKeyPackages_MockValue {
             return mock
         } else {
-            fatalError("no mock for `addClientsToConversationConversationIdClients`")
+            fatalError("no mock for `addClientsToConversationConversationIdKeyPackages`")
         }
     }
 
@@ -430,90 +430,90 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - e2eiMlsInitOnly
 
-    public var e2eiMlsInitOnlyEnrollmentCertificateChain_Invocations: [(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String)] = []
-    public var e2eiMlsInitOnlyEnrollmentCertificateChain_MockError: Error?
-    public var e2eiMlsInitOnlyEnrollmentCertificateChain_MockMethod: ((WireCoreCrypto.E2eiEnrollment, String) async throws -> Void)?
+    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_Invocations: [(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?)] = []
+    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockError: Error?
+    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod: ((WireCoreCrypto.E2eiEnrollment, String, UInt32?) async throws -> Void)?
 
-    public func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String) async throws {
-        e2eiMlsInitOnlyEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
+    public func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws {
+        e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_Invocations.append((enrollment: enrollment, certificateChain: certificateChain, nbKeyPackage: nbKeyPackage))
 
-        if let error = e2eiMlsInitOnlyEnrollmentCertificateChain_MockError {
+        if let error = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockError {
             throw error
         }
 
-        guard let mock = e2eiMlsInitOnlyEnrollmentCertificateChain_MockMethod else {
-            fatalError("no mock for `e2eiMlsInitOnlyEnrollmentCertificateChain`")
+        guard let mock = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod else {
+            fatalError("no mock for `e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage`")
         }
 
-        try await mock(enrollment, certificateChain)
+        try await mock(enrollment, certificateChain, nbKeyPackage)
     }
 
     // MARK: - e2eiNewActivationEnrollment
 
-    public var e2eiNewActivationEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_Invocations: [(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
-    public var e2eiNewActivationEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockError: Error?
-    public var e2eiNewActivationEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockMethod: ((String, String, String, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
-    public var e2eiNewActivationEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
+    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations: [(displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
+    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockError: Error?
+    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod: ((String, String, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
+    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
 
-    public func e2eiNewActivationEnrollment(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
-        e2eiNewActivationEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_Invocations.append((clientId: clientId, displayName: displayName, handle: handle, expiryDays: expiryDays, ciphersuite: ciphersuite))
+    public func e2eiNewActivationEnrollment(displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
+        e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations.append((displayName: displayName, handle: handle, team: team, expiryDays: expiryDays, ciphersuite: ciphersuite))
 
-        if let error = e2eiNewActivationEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockError {
+        if let error = e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockError {
             throw error
         }
 
-        if let mock = e2eiNewActivationEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockMethod {
-            return try await mock(clientId, displayName, handle, expiryDays, ciphersuite)
-        } else if let mock = e2eiNewActivationEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockValue {
+        if let mock = e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod {
+            return try await mock(displayName, handle, team, expiryDays, ciphersuite)
+        } else if let mock = e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue {
             return mock
         } else {
-            fatalError("no mock for `e2eiNewActivationEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite`")
+            fatalError("no mock for `e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite`")
         }
     }
 
     // MARK: - e2eiNewEnrollment
 
-    public var e2eiNewEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_Invocations: [(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
-    public var e2eiNewEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockError: Error?
-    public var e2eiNewEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockMethod: ((String, String, String, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
-    public var e2eiNewEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
+    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations: [(clientId: String, displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
+    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockError: Error?
+    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod: ((String, String, String, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
+    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
 
-    public func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
-        e2eiNewEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_Invocations.append((clientId: clientId, displayName: displayName, handle: handle, expiryDays: expiryDays, ciphersuite: ciphersuite))
+    public func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
+        e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations.append((clientId: clientId, displayName: displayName, handle: handle, team: team, expiryDays: expiryDays, ciphersuite: ciphersuite))
 
-        if let error = e2eiNewEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockError {
+        if let error = e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockError {
             throw error
         }
 
-        if let mock = e2eiNewEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockMethod {
-            return try await mock(clientId, displayName, handle, expiryDays, ciphersuite)
-        } else if let mock = e2eiNewEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockValue {
+        if let mock = e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod {
+            return try await mock(clientId, displayName, handle, team, expiryDays, ciphersuite)
+        } else if let mock = e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue {
             return mock
         } else {
-            fatalError("no mock for `e2eiNewEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite`")
+            fatalError("no mock for `e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite`")
         }
     }
 
     // MARK: - e2eiNewRotateEnrollment
 
-    public var e2eiNewRotateEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_Invocations: [(clientId: String, displayName: String?, handle: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
-    public var e2eiNewRotateEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockError: Error?
-    public var e2eiNewRotateEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockMethod: ((String, String?, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
-    public var e2eiNewRotateEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
+    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations: [(displayName: String?, handle: String?, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
+    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockError: Error?
+    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod: ((String?, String?, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
+    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
 
-    public func e2eiNewRotateEnrollment(clientId: String, displayName: String?, handle: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
-        e2eiNewRotateEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_Invocations.append((clientId: clientId, displayName: displayName, handle: handle, expiryDays: expiryDays, ciphersuite: ciphersuite))
+    public func e2eiNewRotateEnrollment(displayName: String?, handle: String?, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
+        e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations.append((displayName: displayName, handle: handle, team: team, expiryDays: expiryDays, ciphersuite: ciphersuite))
 
-        if let error = e2eiNewRotateEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockError {
+        if let error = e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockError {
             throw error
         }
 
-        if let mock = e2eiNewRotateEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockMethod {
-            return try await mock(clientId, displayName, handle, expiryDays, ciphersuite)
-        } else if let mock = e2eiNewRotateEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite_MockValue {
+        if let mock = e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod {
+            return try await mock(displayName, handle, team, expiryDays, ciphersuite)
+        } else if let mock = e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue {
             return mock
         } else {
-            fatalError("no mock for `e2eiNewRotateEnrollmentClientIdDisplayNameHandleExpiryDaysCiphersuite`")
+            fatalError("no mock for `e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite`")
         }
     }
 
@@ -609,26 +609,72 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
-    // MARK: - getUserIdentities
+    // MARK: - getCredentialInUse
 
-    public var getUserIdentitiesConversationIdClientIds_Invocations: [(conversationId: Data, clientIds: [WireCoreCrypto.ClientId])] = []
-    public var getUserIdentitiesConversationIdClientIds_MockError: Error?
-    public var getUserIdentitiesConversationIdClientIds_MockMethod: ((Data, [WireCoreCrypto.ClientId]) async throws -> [WireCoreCrypto.WireIdentity])?
-    public var getUserIdentitiesConversationIdClientIds_MockValue: [WireCoreCrypto.WireIdentity]?
+    public var getCredentialInUseGroupInfoCredentialType_Invocations: [(groupInfo: Data, credentialType: WireCoreCrypto.MlsCredentialType)] = []
+    public var getCredentialInUseGroupInfoCredentialType_MockError: Error?
+    public var getCredentialInUseGroupInfoCredentialType_MockMethod: ((Data, WireCoreCrypto.MlsCredentialType) async throws -> WireCoreCrypto.E2eiConversationState)?
+    public var getCredentialInUseGroupInfoCredentialType_MockValue: WireCoreCrypto.E2eiConversationState?
 
-    public func getUserIdentities(conversationId: Data, clientIds: [WireCoreCrypto.ClientId]) async throws -> [WireCoreCrypto.WireIdentity] {
-        getUserIdentitiesConversationIdClientIds_Invocations.append((conversationId: conversationId, clientIds: clientIds))
+    public func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> WireCoreCrypto.E2eiConversationState {
+        getCredentialInUseGroupInfoCredentialType_Invocations.append((groupInfo: groupInfo, credentialType: credentialType))
 
-        if let error = getUserIdentitiesConversationIdClientIds_MockError {
+        if let error = getCredentialInUseGroupInfoCredentialType_MockError {
             throw error
         }
 
-        if let mock = getUserIdentitiesConversationIdClientIds_MockMethod {
-            return try await mock(conversationId, clientIds)
-        } else if let mock = getUserIdentitiesConversationIdClientIds_MockValue {
+        if let mock = getCredentialInUseGroupInfoCredentialType_MockMethod {
+            return try await mock(groupInfo, credentialType)
+        } else if let mock = getCredentialInUseGroupInfoCredentialType_MockValue {
             return mock
         } else {
-            fatalError("no mock for `getUserIdentitiesConversationIdClientIds`")
+            fatalError("no mock for `getCredentialInUseGroupInfoCredentialType`")
+        }
+    }
+
+    // MARK: - getDeviceIdentities
+
+    public var getDeviceIdentitiesConversationIdDeviceIds_Invocations: [(conversationId: Data, deviceIds: [WireCoreCrypto.ClientId])] = []
+    public var getDeviceIdentitiesConversationIdDeviceIds_MockError: Error?
+    public var getDeviceIdentitiesConversationIdDeviceIds_MockMethod: ((Data, [WireCoreCrypto.ClientId]) async throws -> [WireCoreCrypto.WireIdentity])?
+    public var getDeviceIdentitiesConversationIdDeviceIds_MockValue: [WireCoreCrypto.WireIdentity]?
+
+    public func getDeviceIdentities(conversationId: Data, deviceIds: [WireCoreCrypto.ClientId]) async throws -> [WireCoreCrypto.WireIdentity] {
+        getDeviceIdentitiesConversationIdDeviceIds_Invocations.append((conversationId: conversationId, deviceIds: deviceIds))
+
+        if let error = getDeviceIdentitiesConversationIdDeviceIds_MockError {
+            throw error
+        }
+
+        if let mock = getDeviceIdentitiesConversationIdDeviceIds_MockMethod {
+            return try await mock(conversationId, deviceIds)
+        } else if let mock = getDeviceIdentitiesConversationIdDeviceIds_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getDeviceIdentitiesConversationIdDeviceIds`")
+        }
+    }
+
+    // MARK: - getUserIdentities
+
+    public var getUserIdentitiesConversationIdUserIds_Invocations: [(conversationId: Data, userIds: [String])] = []
+    public var getUserIdentitiesConversationIdUserIds_MockError: Error?
+    public var getUserIdentitiesConversationIdUserIds_MockMethod: ((Data, [String]) async throws -> [String : [WireCoreCrypto.WireIdentity]])?
+    public var getUserIdentitiesConversationIdUserIds_MockValue: [String : [WireCoreCrypto.WireIdentity]]?
+
+    public func getUserIdentities(conversationId: Data, userIds: [String]) async throws -> [String : [WireCoreCrypto.WireIdentity]] {
+        getUserIdentitiesConversationIdUserIds_Invocations.append((conversationId: conversationId, userIds: userIds))
+
+        if let error = getUserIdentitiesConversationIdUserIds_MockError {
+            throw error
+        }
+
+        if let mock = getUserIdentitiesConversationIdUserIds_MockMethod {
+            return try await mock(conversationId, userIds)
+        } else if let mock = getUserIdentitiesConversationIdUserIds_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getUserIdentitiesConversationIdUserIds`")
         }
     }
 
@@ -723,22 +769,22 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - mlsInit
 
-    public var mlsInitClientIdCiphersuites_Invocations: [(clientId: WireCoreCrypto.ClientId, ciphersuites: WireCoreCrypto.Ciphersuites)] = []
-    public var mlsInitClientIdCiphersuites_MockError: Error?
-    public var mlsInitClientIdCiphersuites_MockMethod: ((WireCoreCrypto.ClientId, WireCoreCrypto.Ciphersuites) async throws -> Void)?
+    public var mlsInitClientIdCiphersuitesNbKeyPackage_Invocations: [(clientId: WireCoreCrypto.ClientId, ciphersuites: WireCoreCrypto.Ciphersuites, nbKeyPackage: UInt32?)] = []
+    public var mlsInitClientIdCiphersuitesNbKeyPackage_MockError: Error?
+    public var mlsInitClientIdCiphersuitesNbKeyPackage_MockMethod: ((WireCoreCrypto.ClientId, WireCoreCrypto.Ciphersuites, UInt32?) async throws -> Void)?
 
-    public func mlsInit(clientId: WireCoreCrypto.ClientId, ciphersuites: WireCoreCrypto.Ciphersuites) async throws {
-        mlsInitClientIdCiphersuites_Invocations.append((clientId: clientId, ciphersuites: ciphersuites))
+    public func mlsInit(clientId: WireCoreCrypto.ClientId, ciphersuites: WireCoreCrypto.Ciphersuites, nbKeyPackage: UInt32?) async throws {
+        mlsInitClientIdCiphersuitesNbKeyPackage_Invocations.append((clientId: clientId, ciphersuites: ciphersuites, nbKeyPackage: nbKeyPackage))
 
-        if let error = mlsInitClientIdCiphersuites_MockError {
+        if let error = mlsInitClientIdCiphersuitesNbKeyPackage_MockError {
             throw error
         }
 
-        guard let mock = mlsInitClientIdCiphersuites_MockMethod else {
-            fatalError("no mock for `mlsInitClientIdCiphersuites`")
+        guard let mock = mlsInitClientIdCiphersuitesNbKeyPackage_MockMethod else {
+            fatalError("no mock for `mlsInitClientIdCiphersuitesNbKeyPackage`")
         }
 
-        try await mock(clientId, ciphersuites)
+        try await mock(clientId, ciphersuites, nbKeyPackage)
     }
 
     // MARK: - mlsInitWithClientId

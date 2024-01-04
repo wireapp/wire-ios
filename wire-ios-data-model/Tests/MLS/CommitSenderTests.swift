@@ -61,9 +61,8 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         )
 
         mockClearPendingCommitInvocations = []
-        mockCoreCrypto.commitPendingProposalsConversationId_MockMethod = { [self] groupID in
+        mockCoreCrypto.clearPendingCommitConversationId_MockMethod = { [self] groupID in
             mockClearPendingCommitInvocations.append(groupID)
-            return nil
         }
 
         mockClearPendingGroupInvocations = []

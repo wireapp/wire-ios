@@ -496,13 +496,12 @@ public final class MLSService: MLSServiceInterface {
             logger.info("adding members to group (\(groupID.safeForLoggingDescription)) with users: \(users)")
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
             let keyPackages = try await claimKeyPackages(for: users)
-            let invitees = keyPackages.map(Invitee.init(from:))
 
-            guard invitees.count > 0 else {
+            guard keyPackages.count > 0 else {
                 throw MLSAddMembersError.noInviteesToAdd
             }
 
-            let events = try await mlsActionExecutor.addMembers(invitees, to: groupID)
+            let events = try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
             await conversationEventProcessor.processConversationEvents(events)
         } catch {
             logger.warn("failed to add members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
@@ -1734,30 +1733,6 @@ private extension Date {
 
     var isInThePast: Bool {
         return compare(Date()) != .orderedDescending
-    }
-
-}
-
-extension Invitee {
-
-    init(from keyPackage: KeyPackage) {
-        let id = MLSClientID(
-            userID: keyPackage.userID.uuidString,
-            clientID: keyPackage.client,
-            domain: keyPackage.domain
-        )
-
-        guard
-            let idData = id.rawValue.utf8Data,
-            let keyPackageData = Data(base64Encoded: keyPackage.keyPackage)
-        else {
-            fatalError("Couldn't create Invitee from key package: \(keyPackage)")
-        }
-
-        self.init(
-            id: idData,
-            kp: keyPackageData
-        )
     }
 
 }

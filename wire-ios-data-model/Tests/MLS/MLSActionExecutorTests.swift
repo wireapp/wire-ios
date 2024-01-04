@@ -78,7 +78,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func test_AddMembers() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let invitees = [Invitee(id: .random(), kp: .random())]
+        let keyPackages = [KeyPackage(client: "client1", domain: "exampel.com", keyPackage: Data.random().base64String(), keyPackageRef: "", userID: .create())]
 
         let mockCommit = Data.random()
         let mockWelcome = Data.random()
@@ -95,8 +95,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         // Mock add clients.
-        var mockAddClientsArguments = [(Data, [Invitee])]()
-        mockCoreCrypto.addClientsToConversationConversationIdClients_MockMethod = {
+        var mockAddClientsArguments = [(Data, [Data])]()
+        mockCoreCrypto.addClientsToConversationConversationIdKeyPackages_MockMethod = {
             mockAddClientsArguments.append(($0, $1))
             return mockMemberAddedMessages
         }
@@ -107,12 +107,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let updateEvents = try await sut.addMembers(invitees, to: groupID)
+        let updateEvents = try await sut.addMembers(keyPackages, to: groupID)
 
         // Then core crypto added the members.
         XCTAssertEqual(mockAddClientsArguments.count, 1)
         XCTAssertEqual(mockAddClientsArguments.first?.0, groupID.data)
-        XCTAssertEqual(mockAddClientsArguments.first?.1, invitees)
+        XCTAssertEqual(mockAddClientsArguments.first?.1, keyPackages.compactMap(\.keyPackage.base64DecodedData))
 
         // Then the commit bundle was sent.
         let expectedCommitBundle = CommitBundle(

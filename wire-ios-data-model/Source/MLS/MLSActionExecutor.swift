@@ -22,7 +22,7 @@ import Combine
 
 protocol MLSActionExecutorProtocol {
 
-    func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
+    func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
@@ -37,7 +37,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     enum Action {
 
-        case addMembers([Invitee])
+        case addMembers([KeyPackage])
         case removeClients([ClientId])
         case updateKeyMaterial
         case proposal
@@ -68,7 +68,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Actions
 
-    func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
             WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
             let bundle = try await commitBundle(for: .addMembers(invitees), in: groupID)
@@ -145,7 +145,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 let memberAddMessages = try await coreCrypto.perform {
                     try await $0.addClientsToConversation(
                         conversationId: groupID.data,
-                        clients: clients
+                        keyPackages: clients.compactMap(\.keyPackage.base64DecodedData)
                     )
                 }
 

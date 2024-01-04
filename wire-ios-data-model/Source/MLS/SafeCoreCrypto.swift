@@ -72,14 +72,14 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
 
-        let coreCrypto = try await coreCryptoNew(path: config.path, key: config.key, clientId: clientID, ciphersuites: [CiphersuiteName.default.rawValue])
+        let coreCrypto = try await coreCryptoNew(path: config.path, key: config.key, clientId: clientID, ciphersuites: [CiphersuiteName.default.rawValue], nbKeyPackage: nil)
 
         self.init(coreCrypto: coreCrypto, databasePath: config.path)
         didInitializeMLS = true
     }
 
     public convenience init(path: String, key: String) async throws {
-        let coreCrypto = try await coreCryptoDeferredInit(path: path, key: key, ciphersuites: [CiphersuiteName.default.rawValue])
+        let coreCrypto = try await coreCryptoDeferredInit(path: path, key: key, ciphersuites: [CiphersuiteName.default.rawValue], nbKeyPackage: nil)
 
         try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
 
@@ -94,7 +94,8 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         }
         // TODO: wait for fix see cyphersuite cyphersuiteName
         try await coreCrypto.mlsInit(clientId: clientIdBytes,
-                                     ciphersuites: [CiphersuiteName.default.rawValue])
+                                     ciphersuites: [CiphersuiteName.default.rawValue],
+                                     nbKeyPackage: nil)
         didInitializeMLS = true
     }
 
