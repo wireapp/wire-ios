@@ -303,6 +303,55 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         }
     }
 
+    func testThatItRemovesAMemberThatIsNotSelfUser() async {
+
+        let teamId = UUID.create()
+        let userId = UUID.create()
+
+        var event: ZMUpdateEvent?
+        var team: Team!
+
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            team = Team.insertNewObject(in: self.syncMOC)
+            self.mockApplicationStatus.mockSynchronizationState = .online
+            team.remoteIdentifier = teamId
+
+            let user = ZMUser.insertNewObject(in: self.syncMOC)
+            user.remoteIdentifier = userId
+            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            self.syncMOC.saveOrRollback()
+
+            let payload: [String: Any] = [
+                "data": ["user": userId.transportString()],
+                "time": Date().transportString(),
+                "team": teamId.transportString(),
+                "type": "team.member-leave"
+            ]
+
+            event = ZMUpdateEvent(fromEventStreamPayload: payload as NSDictionary, uuid: nil)!
+        }
+
+        guard let event else {
+            XCTFail("missing event")
+            return
+        }
+
+        // when
+        await self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+
+        syncMOC.performGroupedAndWait { context in
+             context.saveOrRollback()
+
+            // then
+            let result = team.members.contains(where: { (member) -> Bool in
+                return member.user?.remoteIdentifier == userId
+            })
+
+            XCTAssertFalse(result)
+        }
+    }
+
     // MARK: Slow sync
 
     func test_ItGeneratesRequest_DuringSlowSync_V0() throws {

@@ -514,7 +514,7 @@ extension Payload {
         var reason: Reason?
 
         enum Reason: String, Codable {
-            /// The user has been removed from the team.
+            /// The user has been removed from the team and therefore removed from all conversations.
             case userDeleted = "user-deleted"
             case left
             case removed
