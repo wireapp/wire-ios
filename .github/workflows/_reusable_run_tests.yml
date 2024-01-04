@@ -105,7 +105,7 @@ jobs:
 
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
-        run: carthage bootstrap --platform ios --use-xcframeworks
+        run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
       - name: Restore Bundler Cache
         uses: actions/cache@v3
