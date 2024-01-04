@@ -191,24 +191,6 @@ extension Payload {
 
     // MARK: - Actions
 
-    struct ConversationAddMember: Codable {
-        enum CodingKeys: String, CodingKey {
-            case userIDs = "users"
-            case qualifiedUserIDs = "qualified_users"
-            case role = "conversation_role"
-        }
-
-        let userIDs: [UUID]?
-        let qualifiedUserIDs: [QualifiedID]?
-        let role: String
-
-        init?(userIDs: [UUID]? = nil, qualifiedUserIDs: [QualifiedID]? = nil) {
-            self.userIDs = userIDs
-            self.qualifiedUserIDs = qualifiedUserIDs
-            self.role = ZMConversation.defaultMemberRoleName
-        }
-    }
-
     struct ConversationUpdateRole: Codable {
         enum CodingKeys: String, CodingKey {
             case role = "conversation_role"

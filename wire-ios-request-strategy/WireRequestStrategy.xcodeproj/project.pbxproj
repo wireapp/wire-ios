@@ -242,6 +242,7 @@
 		E629E3AF2B47031800D526AD /* Payload+ConversationMembers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3AE2B47031800D526AD /* Payload+ConversationMembers.swift */; };
 		E629E3B12B47036D00D526AD /* Payload+ConversationTeamInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3B02B47036D00D526AD /* Payload+ConversationTeamInfo.swift */; };
 		E629E3B32B4703A000D526AD /* Payload+UpdateConversationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3B22B4703A000D526AD /* Payload+UpdateConversationStatus.swift */; };
+		E629E3B52B4703E100D526AD /* Payload+ConversationAddMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */; };
 		E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */; };
 		E9E2AA5E2B163A56008CC2DF /* SyncUsersActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */; };
 		EE04084828C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */; };
@@ -700,6 +701,7 @@
 		E629E3AE2B47031800D526AD /* Payload+ConversationMembers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationMembers.swift"; sourceTree = "<group>"; };
 		E629E3B02B47036D00D526AD /* Payload+ConversationTeamInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationTeamInfo.swift"; sourceTree = "<group>"; };
 		E629E3B22B4703A000D526AD /* Payload+UpdateConversationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationStatus.swift"; sourceTree = "<group>"; };
+		E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationAddMember.swift"; sourceTree = "<group>"; };
 		E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandlerTests.swift; sourceTree = "<group>"; };
 		E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandler.swift; sourceTree = "<group>"; };
 		EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysActionHandler.swift; sourceTree = "<group>"; };
@@ -1271,6 +1273,7 @@
 				E629E3AE2B47031800D526AD /* Payload+ConversationMembers.swift */,
 				E629E3B02B47036D00D526AD /* Payload+ConversationTeamInfo.swift */,
 				E629E3B22B4703A000D526AD /* Payload+UpdateConversationStatus.swift */,
+				E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -2108,6 +2111,7 @@
 				EEFB2DFE2ACD530F0094F877 /* PrekeyPayloadProcessor.swift in Sources */,
 				1623F8D32AE66F28004F0319 /* MessageSender.swift in Sources */,
 				F18401D82073BE0800E9F4CC /* ZMConversation+Notifications.swift in Sources */,
+				E629E3B52B4703E100D526AD /* Payload+ConversationAddMember.swift in Sources */,
 				1623F8DE2AE945E2004F0319 /* MessageAPI.swift in Sources */,
 				F18401D92073BE0800E9F4CC /* EncryptionSessionDirectory+UpdateEvents.swift in Sources */,
 				F18401C72073BE0800E9F4CC /* AssetV3PreviewDownloadStrategy.swift in Sources */,
