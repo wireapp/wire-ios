@@ -237,6 +237,7 @@
 		E629E3A52B4701E200D526AD /* Payload+ConversationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3A42B4701E200D526AD /* Payload+ConversationList.swift */; };
 		E629E3A72B47020C00D526AD /* Payload+QualifiedConversationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3A62B47020C00D526AD /* Payload+QualifiedConversationList.swift */; };
 		E629E3A92B47026200D526AD /* Payload+PaginatedConversationIDList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3A82B47026200D526AD /* Payload+PaginatedConversationIDList.swift */; };
+		E629E3AB2B47028600D526AD /* Payload+PaginatedQualifiedConversationIDList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3AA2B47028600D526AD /* Payload+PaginatedQualifiedConversationIDList.swift */; };
 		E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */; };
 		E9E2AA5E2B163A56008CC2DF /* SyncUsersActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */; };
 		EE04084828C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */; };
@@ -690,6 +691,7 @@
 		E629E3A42B4701E200D526AD /* Payload+ConversationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationList.swift"; sourceTree = "<group>"; };
 		E629E3A62B47020C00D526AD /* Payload+QualifiedConversationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+QualifiedConversationList.swift"; sourceTree = "<group>"; };
 		E629E3A82B47026200D526AD /* Payload+PaginatedConversationIDList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+PaginatedConversationIDList.swift"; sourceTree = "<group>"; };
+		E629E3AA2B47028600D526AD /* Payload+PaginatedQualifiedConversationIDList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+PaginatedQualifiedConversationIDList.swift"; sourceTree = "<group>"; };
 		E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandlerTests.swift; sourceTree = "<group>"; };
 		E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandler.swift; sourceTree = "<group>"; };
 		EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysActionHandler.swift; sourceTree = "<group>"; };
@@ -1256,6 +1258,7 @@
 				E629E3A62B47020C00D526AD /* Payload+QualifiedConversationList.swift */,
 				16E70F5E270EE96200718E5D /* Processing */,
 				E629E3A82B47026200D526AD /* Payload+PaginatedConversationIDList.swift */,
+				E629E3AA2B47028600D526AD /* Payload+PaginatedQualifiedConversationIDList.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -2114,6 +2117,7 @@
 				1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */,
 				166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */,
 				5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */,
+				E629E3AB2B47028600D526AD /* Payload+PaginatedQualifiedConversationIDList.swift in Sources */,
 				06025662248E467B00E060E1 /* NotificationStreamSync.swift in Sources */,
 				EE8807A12AC4669D00278E3C /* UserClientPayloadProcessor.swift in Sources */,
 				EE202DAB27F1F4CC00083AB3 /* VoIPPushPayload.swift in Sources */,
