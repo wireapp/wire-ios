@@ -544,7 +544,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
             let otherMember = Payload.ConversationMember(qualifiedID: otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            
+
             let payload = Payload.Conversation(
                 qualifiedID: qualifiedID,
                 type: BackendConversationType.oneOnOne.rawValue,

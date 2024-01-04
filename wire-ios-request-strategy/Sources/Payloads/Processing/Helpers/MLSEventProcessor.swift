@@ -237,7 +237,6 @@ public class MLSEventProcessor: MLSEventProcessing {
         }
     }
 
-
     // MARK: - Wipe conversation
 
     public func wipeMLSGroup(

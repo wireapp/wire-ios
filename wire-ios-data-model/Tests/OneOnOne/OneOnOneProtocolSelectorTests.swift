@@ -92,6 +92,4 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
         XCTAssertNil(result)
     }
 
-
-
 }
