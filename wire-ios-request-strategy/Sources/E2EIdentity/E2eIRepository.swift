@@ -28,18 +28,18 @@ public final class E2eIRepository: E2eIRepositoryInterface {
 
     private let acmeApi: AcmeAPIInterface
     private let apiProvider: APIProviderInterface
-    private let e2eiClient: E2eIClientInterface
+    private var e2eiSetupService: E2eISetupServiceInterface
     private let keyRotator: E2eIKeyPackageRotating
 
     public init(
         acmeApi: AcmeAPIInterface,
         apiProvider: APIProviderInterface,
-        e2eiClient: E2eIClientInterface,
+        e2eiSetupService: E2eISetupServiceInterface,
         keyRotator: E2eIKeyPackageRotating
     ) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
-        self.e2eiClient = e2eiClient
+        self.e2eiSetupService = e2eiSetupService
         self.keyRotator = keyRotator
     }
 
@@ -49,7 +49,7 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         handle: String
     ) async throws -> E2eIEnrollmentInterface {
 
-        let e2eIdentity = try await e2eiClient.setupEnrollment(
+        let e2eIdentity = try await e2eiSetupService.setupEnrollment(
             e2eiClientId: e2eiClientId,
             userName: userName,
             handle: handle

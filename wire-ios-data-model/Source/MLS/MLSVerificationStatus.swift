@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,15 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface NSFileHandle (SafeOperations)
-
-/// Attempts to write the data to disk, and safely throws an error in case of failure.
--(BOOL)wr_writeData:(NSData *)data error:(__autoreleasing NSError **)error;
-
-@end
-
-NS_ASSUME_NONNULL_END
+public enum MLSVerificationStatus: Int16 {
+    case verified
+    case notVerified
+    case degraded
+}

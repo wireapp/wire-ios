@@ -56,7 +56,7 @@ struct DeviceDetailsProteusView: View {
                     .padding(.all, ViewConstants.Padding.standard)
                 .onChange(of: isVerfied) { value in
                     Task {
-                        await self.viewModel.updateVerifiedStatus(value)
+                        await viewModel.updateVerifiedStatus(value)
                     }
                 }
             }
