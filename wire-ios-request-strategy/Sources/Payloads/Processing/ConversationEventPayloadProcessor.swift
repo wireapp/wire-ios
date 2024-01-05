@@ -351,8 +351,22 @@ final class ConversationEventPayloadProcessor {
         _ payload: Payload.ConversationEvent<Payload.UpdateConversationProtocolChange>,
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
-    ) {
-        // TODO: [MF] what to do?
+    ) async {
+        guard let qualifiedID = payload.qualifiedID else {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
+            return
+        }
+
+        var action = SyncConversationAction(qualifiedID: qualifiedID)
+
+        do {
+            try await action.perform(in: context.notificationContext)
+            debugPrint("it happened!")
+        } catch {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): perform action failed with error: \(error)")
+        }
+
+        // let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
     }
 
     // MARK: - Helpers

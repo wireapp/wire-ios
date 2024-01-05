@@ -257,7 +257,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             from: event.payload
         ) else { return }
 
-        processor.processPayload(
+        await processor.processPayload(
             payload,
             originalEvent: event,
             in: context
