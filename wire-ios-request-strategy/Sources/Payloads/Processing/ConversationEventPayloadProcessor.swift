@@ -345,6 +345,16 @@ final class ConversationEventPayloadProcessor {
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
     }
 
+    // MARK: - Connection request
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationProtocolChange>,
+        originalEvent: ZMUpdateEvent,
+        in context: NSManagedObjectContext
+    ) {
+        // TODO: [MF] what to do?
+    }
+
     // MARK: - Helpers
 
     @discardableResult
