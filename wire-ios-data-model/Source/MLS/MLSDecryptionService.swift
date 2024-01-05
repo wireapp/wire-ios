@@ -67,6 +67,12 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         self.subconverationGroupIDRepository = subconversationGroupIDRepository
     }
 
+    var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            return try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
+    }
+
     // MARK: - Message decryption
 
     public enum MLSMessageDecryptionError: Error {
@@ -97,7 +103,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     ) async throws -> MLSDecryptResult? {
         WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
 
-        guard let messageBytes = message.base64DecodedBytes else {
+        guard let messageData = message.base64DecodedData else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
         }
 
@@ -115,10 +121,12 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try await coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.decryptMessage(
-                conversationId: groupID.bytes,
-                payload: messageBytes
-            ) }
+            let decryptedMessage = try await coreCrypto.perform {
+                try await $0.decryptMessage(
+                    conversationId: groupID.data,
+                    payload: messageData
+                )
+            }
 
             if decryptedMessage.hasEpochChanged {
                 onEpochChangedSubject.send(groupID)
@@ -130,7 +138,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             if let message = decryptedMessage.message {
                 return MLSDecryptResult.message(
-                    message.data,
+                    message,
                     senderClientId(from: decryptedMessage)
                 )
             }
@@ -149,7 +157,6 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     private func senderClientId(from message: DecryptedMessage) -> String? {
         guard let senderClientID = message.senderClientId else { return nil }
-        return MLSClientID(data: senderClientID.data)?.clientID
+        return MLSClientID(data: senderClientID)?.clientID
     }
-
 }

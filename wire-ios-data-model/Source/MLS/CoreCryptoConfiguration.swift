@@ -113,11 +113,11 @@ public class CoreCryptoConfigProvider {
 public extension ClientId {
 
     init?(from string: String) {
-        guard let bytes = string.data(using: .utf8)?.bytes else {
+        guard let data = string.data(using: .utf8) else {
             return nil
         }
 
-        self = bytes
+        self = data
     }
 
 }
