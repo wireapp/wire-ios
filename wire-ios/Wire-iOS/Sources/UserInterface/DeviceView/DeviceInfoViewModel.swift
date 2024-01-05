@@ -32,8 +32,7 @@ protocol DeviceDetailsViewActions {
     func fetchMLSThumbprint() async -> String?
     func removeDevice() async -> Bool
     func resetSession() async -> Bool
-    func updateVerified(_ value: Bool, completion: @escaping
-    () -> Void)
+    func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
     func downloadE2EIdentityCertificate()
 }
@@ -172,11 +171,10 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
-    func updateVerifiedStatus(_ value: Bool) {
-        actionsHandler.updateVerified(value) {
-            DispatchQueue.main.async {
-                self.isProteusVerificationEnabled = self.userClient.verified
-            }
+    func updateVerifiedStatus(_ value: Bool) async {
+        let result = await actionsHandler.updateVerified(value)
+        await MainActor.run {
+            isProteusVerificationEnabled = result
         }
     }
 
