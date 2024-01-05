@@ -119,7 +119,12 @@ final class ParticipantsStringFormatter {
         return [.link: ParticipantsCellViewModel.showMoreLinkURL]
     }
 
-    init(message: ZMConversationMessage, font: UIFont = .mediumFont, largeFont: UIFont = .largeSemiboldFont, textColor: UIColor = .from(scheme: .textForeground)) {
+    init(
+        message: ZMConversationMessage,
+        font: UIFont = .mediumFont,
+        largeFont: UIFont = .largeSemiboldFont,
+        textColor: UIColor = SemanticColors.Label.textDefault
+    ) {
         self.message = message
         self.font = font
         self.largeFont = largeFont

@@ -95,7 +95,7 @@ final class RoundedTextBadge: RoundedBadge {
         textLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
         textLabel.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
         textLabel.textAlignment = .center
-        textLabel.textColor = .from(scheme: .background)
+        textLabel.textColor = SemanticColors.Label.textDefaultWhite
         textLabel.font = font
     }
 

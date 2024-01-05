@@ -23,7 +23,7 @@ final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
     let label: UILabel = {
         let label = UILabel()
         label.font = .smallSemiboldFont
-        label.textColor = .from(scheme: .textForeground, variant: .dark)
+        label.textColor = SemanticColors.Label.textDefault
 
         return label
     }()
