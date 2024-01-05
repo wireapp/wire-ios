@@ -18,7 +18,7 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class ConversationEventProcessorTests: MessagingTestBase {
+final class ConversationEventProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventProcessor!
     var conversationService: MockConversationServiceInterface!
