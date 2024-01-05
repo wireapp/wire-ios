@@ -139,7 +139,7 @@ final class ConversationEventPayloadProcessor {
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
 
         if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
-            Task {
+            WaitingGroupTask(context: context) {
                 await MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
             }
         }
