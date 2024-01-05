@@ -55,7 +55,9 @@ struct DeviceDetailsProteusView: View {
                     .font(FontSpec.headerSemiboldFont.swiftUIFont)
                     .padding(.all, ViewConstants.Padding.standard)
                 .onChange(of: isVerfied) { value in
-                    self.viewModel.updateVerifiedStatus(value)
+                    Task {
+                        await viewModel.updateVerifiedStatus(value)
+                    }
                 }
             }
         }
