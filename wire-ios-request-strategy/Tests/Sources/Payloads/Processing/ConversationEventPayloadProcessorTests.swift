@@ -1037,7 +1037,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         let payload = await syncMOC.perform {
             let conversationDeleted = Payload.UpdateConversationDeleted()
             return Payload.ConversationEvent(
-                id: nil,    
+                id: nil,
                 data: conversationDeleted,
                 from: nil,
                 qualifiedID: self.groupConversation.qualifiedID,

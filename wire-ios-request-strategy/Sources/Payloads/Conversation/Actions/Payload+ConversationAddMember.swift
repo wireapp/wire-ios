@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,19 +18,22 @@
 
 import Foundation
 
-extension ZMUpdateEvent {
-    var payloadData: Data? {
-        guard let payloadAsDictionary = payload as? [String: Any] else {
-            return nil
-        }
-        return try? JSONSerialization.data(withJSONObject: payloadAsDictionary, options: [])
-    }
-
-    func eventPayload<T: Codable>(type: T.Type) -> T? {
-        guard let payloadData = payloadData else {
-            return nil
+extension Payload {
+    struct ConversationAddMember: Codable {
+        enum CodingKeys: String, CodingKey {
+            case userIDs = "users"
+            case qualifiedUserIDs = "qualified_users"
+            case role = "conversation_role"
         }
 
-        return T(payloadData)
+        let userIDs: [UUID]?
+        let qualifiedUserIDs: [QualifiedID]?
+        let role: String
+
+        init?(userIDs: [UUID]? = nil, qualifiedUserIDs: [QualifiedID]? = nil) {
+            self.userIDs = userIDs
+            self.qualifiedUserIDs = qualifiedUserIDs
+            self.role = ZMConversation.defaultMemberRoleName
+        }
     }
 }
