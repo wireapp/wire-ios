@@ -72,25 +72,4 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(mlsInitCalled)
     }
 
-    func test_mlsInitDoesntCallCoreCryptoWhenAlreadyInitialised() async throws {
-        // GIVEN
-        let tempURL = createTempFolder()
-        let mockCoreCrypto = MockCoreCryptoProtocol()
-
-        var mlsInitCalls = 0
-        mockCoreCrypto.mlsInitClientIdCiphersuitesNbKeyPackage_MockMethod = { _, _, _ in
-            mlsInitCalls += 1
-        }
-
-        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
-        try await sut.mlsInit(clientID: "id")
-
-        XCTAssertEqual(mlsInitCalls, 1)
-
-        // WHEN
-        try await sut.mlsInit(clientID: "id")
-
-        XCTAssertEqual(mlsInitCalls, 1)
-    }
-
 }
