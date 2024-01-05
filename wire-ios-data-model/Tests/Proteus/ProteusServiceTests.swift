@@ -169,7 +169,7 @@ class ProteusServiceTests: XCTestCase {
 
     // MARK: - Encrypting messages
 
-    func test_EncryptDataForSession_Success() throws {
+    func test_EncryptDataForSession_Success() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let plaintext = Data.secureRandomData(length: 8)
@@ -184,7 +184,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // When
-        let encryptedData = try sut.encrypt(
+        let encryptedData = try await sut.encrypt(
             data: plaintext,
             forSession: sessionID
         )
@@ -194,7 +194,7 @@ class ProteusServiceTests: XCTestCase {
         XCTAssertEqual(encryptedData, Data([1, 2, 3, 4, 5]))
     }
 
-    func test_EncryptDataForSession_Fail() throws {
+    func test_EncryptDataForSession_Fail() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let plaintext = Data.secureRandomData(length: 8)
@@ -209,9 +209,9 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // Then
-        assertItThrows(error: ProteusService.EncryptionError.failedToEncryptData) {
+        await assertItThrows(error: ProteusService.EncryptionError.failedToEncryptData) {
             // When
-            _ = try sut.encrypt(
+            _ = try await sut.encrypt(
                 data: plaintext,
                 forSession: sessionID
             )
@@ -222,7 +222,7 @@ class ProteusServiceTests: XCTestCase {
 
     // MARK: - Session deletion
 
-    func test_DeleteSession_Success() throws {
+    func test_DeleteSession_Success() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
 
@@ -233,13 +233,13 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // When
-        try sut.deleteSession(id: sessionID)
+        try await sut.deleteSession(id: sessionID)
 
         // Then
         XCTAssertEqual(sessionDeleteCalls, [sessionID.rawValue])
     }
 
-    func test_DeleteSession_Failure() throws {
+    func test_DeleteSession_Failure() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
 
@@ -249,9 +249,9 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // Then
-        assertItThrows(error: ProteusService.DeleteSessionError.failedToDeleteSession) {
+        await assertItThrows(error: ProteusService.DeleteSessionError.failedToDeleteSession) {
             // When
-            try sut.deleteSession(id: sessionID)
+            try await sut.deleteSession(id: sessionID)
         }
     }
 

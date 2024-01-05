@@ -104,4 +104,5 @@ extension XCTestCase {
                 XCTAssertEqual(expectedFailure, failure, file: file, line: line)
             }
         }
+
 }

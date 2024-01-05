@@ -51,8 +51,8 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     private let commitSender: CommitSending
 
     private var coreCrypto: SafeCoreCryptoProtocol {
-        get throws {
-            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
         }
     }
 
@@ -71,7 +71,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
             WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
-            let bundle = try commitBundle(for: .addMembers(invitees), in: groupID)
+            let bundle = try await commitBundle(for: .addMembers(invitees), in: groupID)
             let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
             WireLogger.mls.info("success: adding members to group (\(groupID.safeForLoggingDescription))")
             return result
@@ -84,7 +84,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
             WireLogger.mls.info("removing clients from group (\(groupID.safeForLoggingDescription))...")
-            let bundle = try commitBundle(for: .removeClients(clients), in: groupID)
+            let bundle = try await commitBundle(for: .removeClients(clients), in: groupID)
             let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
             WireLogger.mls.info("success: removing clients from group (\(groupID.safeForLoggingDescription))")
             return result
@@ -97,7 +97,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
             WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))...")
-            let bundle = try commitBundle(for: .updateKeyMaterial, in: groupID)
+            let bundle = try await commitBundle(for: .updateKeyMaterial, in: groupID)
             let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
             WireLogger.mls.info("success: updating key material for group (\(groupID.safeForLoggingDescription))")
             return result
@@ -110,7 +110,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
             WireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
-            let bundle = try commitBundle(for: .proposal, in: groupID)
+            let bundle = try await commitBundle(for: .proposal, in: groupID)
             let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
             WireLogger.mls.info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
             return result
@@ -125,7 +125,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
         do {
             WireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
-            let bundle = try commitBundle(for: .joinGroup(groupInfo), in: groupID)
+            let bundle = try await commitBundle(for: .joinGroup(groupInfo), in: groupID)
             let result = try await commitSender.sendExternalCommitBundle(bundle, for: groupID)
             WireLogger.mls.info("success: joining group (\(groupID.safeForLoggingDescription)) via external commit")
             return result
@@ -137,12 +137,12 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Commit generation
 
-    private func commitBundle(for action: Action, in groupID: MLSGroupID) throws -> CommitBundle {
+    private func commitBundle(for action: Action, in groupID: MLSGroupID) async throws -> CommitBundle {
         do {
             WireLogger.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))...")
             switch action {
             case .addMembers(let clients):
-                let memberAddMessages = try coreCrypto.perform {
+                let memberAddMessages = try await coreCrypto.perform {
                     try $0.addClientsToConversation(
                         conversationId: groupID.bytes,
                         clients: clients
@@ -156,7 +156,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 )
 
             case .removeClients(let clients):
-                return try coreCrypto.perform {
+                return try await coreCrypto.perform {
                     try $0.removeClientsFromConversation(
                         conversationId: groupID.bytes,
                         clients: clients
@@ -164,12 +164,12 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 }
 
             case .updateKeyMaterial:
-                return try coreCrypto.perform {
+                return try await coreCrypto.perform {
                     try $0.updateKeyingMaterial(conversationId: groupID.bytes)
                 }
 
             case .proposal:
-                guard let bundle = try coreCrypto.perform({
+                guard let bundle = try await coreCrypto.perform({
                     try $0.commitPendingProposals(conversationId: groupID.bytes)
                 }) else {
                     throw CommitError.noPendingProposals
@@ -178,7 +178,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return bundle
 
             case .joinGroup(let groupInfo):
-                let conversationInitBundle = try coreCrypto.perform {
+                let conversationInitBundle = try await coreCrypto.perform {
                     try $0.joinByExternalCommit(
                         groupInfo: groupInfo.bytes,
                         customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),

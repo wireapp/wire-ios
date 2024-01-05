@@ -380,7 +380,7 @@ extension GenericMessage {
                 externalData: externalData,
                 context: context
             ) { sessionID, plainText in
-                try proteusService.encrypt(
+                try await proteusService.encrypt(
                     data: plainText,
                     forSession: sessionID
                 )
@@ -396,7 +396,7 @@ extension GenericMessage {
                 externalData: externalData,
                 context: context
             ) { sessionID, plainText in
-                try proteusService.encrypt(
+                try await proteusService.encrypt(
                     data: plainText,
                     forSession: sessionID
                 )
