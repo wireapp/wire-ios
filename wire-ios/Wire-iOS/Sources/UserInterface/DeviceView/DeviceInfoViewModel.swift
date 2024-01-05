@@ -172,9 +172,9 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     func updateVerifiedStatus(_ value: Bool) async {
-        let result = await actionsHandler.updateVerified(value)
+        let isVerified = await actionsHandler.updateVerified(value)
         await MainActor.run {
-            isProteusVerificationEnabled = result
+            isProteusVerificationEnabled = isVerified
         }
     }
 
