@@ -89,17 +89,19 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userClient.resetSession()
     }
 
+    @MainActor
     func updateVerified(_ isVerified: Bool) async -> Bool {
+        let selfUserClient = userSession.selfUserClient
         return await withCheckedContinuation { continuation in
             userSession.enqueue({
-                    if isVerified {
-                        self.userClient.trustClient(self.userClient)
-                    } else {
-                        self.userClient.ignoreClient(self.userClient)
-                    }
-                }, completionHandler: {
-                    continuation.resume(returning: isVerified)
+                if isVerified {
+                    selfUserClient?.trustClient(self.userClient)
+                } else {
+                    selfUserClient?.ignoreClient(self.userClient)
                 }
+            }, completionHandler: {
+                continuation.resume(returning: self.userClient.verified)
+            }
             )
         }
     }
