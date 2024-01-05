@@ -276,7 +276,7 @@ public class ZMUserSession: NSObject {
         let apiProvider = APIProvider(httpClient: httpClient)
 
         let e2eiSetupService = E2eISetupService(coreCryptoProvider: coreCryptoProvider)
-       
+
         let keyRotator = E2eIKeyPackageRotator(
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
