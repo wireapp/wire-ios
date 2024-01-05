@@ -20,7 +20,7 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-final class ConversationTitleViewTests: XCTestCase {
+final class ConversationTitleViewTests: BaseSnapshotTestCase {
 
     var sut: ConversationTitleView!
     var conversation: MockGroupDetailsConversation!
@@ -71,6 +71,16 @@ final class ConversationTitleViewTests: XCTestCase {
     func testThatItUpdatesTheTitleViewAndRendersTheVerifiedShieldCorrectly() {
         // when
         conversation.securityLevel = .secure
+        sut = createSut(conversation: conversation)
+
+        // then
+        verify(matching: sut)
+    }
+
+    func testThatItUpdatesTheTitleViewAndRendersValidCertificate() {
+        // when
+        conversation.messageProtocol = .mls
+        conversation.mlsVerificationStatus = .verified
         sut = createSut(conversation: conversation)
 
         // then

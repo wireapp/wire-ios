@@ -122,7 +122,7 @@ extension NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = Asset.Images.certificateValid.image
         attachment.image = shield
-        attachment.bounds = CGRect(x: 0, y: -2, width: shield.size.width, height: shield.size.height)
+        attachment.bounds = CGRect(x: 0, y: -4, width: shield.size.width, height: shield.size.height)
         return attachment
     }
 
