@@ -23,7 +23,6 @@ import WireCoreCrypto
 
 public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
-    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) async rethrows -> T
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
     func mlsInit(clientID: String) async throws
     func tearDown() throws
@@ -114,29 +113,6 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
         do {
             result = try await block(coreCrypto)
-        } catch {
-            WireLogger.coreCrypto.error("failed to perform block on core crypto")
-            throw error
-        }
-
-        return result
-    }
-
-    public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) throws -> T) async rethrows -> T {
-        var result: T
-        WireLogger.coreCrypto.info("acquiring directory lock")
-        safeContext.acquireDirectoryLock()
-        WireLogger.coreCrypto.info("acquired lock. performing restoreFromDisk()")
-        await restoreFromDisk()
-
-        defer {
-            WireLogger.coreCrypto.info("releasing directory lock")
-            safeContext.releaseDirectoryLock()
-            WireLogger.coreCrypto.info("released lock")
-        }
-
-        do {
-            result = try block(coreCrypto)
         } catch {
             WireLogger.coreCrypto.error("failed to perform block on core crypto")
             throw error
