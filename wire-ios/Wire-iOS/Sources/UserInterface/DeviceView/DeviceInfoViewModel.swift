@@ -126,16 +126,16 @@ final class DeviceInfoViewModel: ObservableObject {
                 let fingerPrint = String(data: data, encoding: .utf8) else {
             return
         }
-        self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
-        self.isActionInProgress = false
+        proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
+        isActionInProgress = false
     }
 
     @MainActor
     func fetchE2eCertificate() async {
         isActionInProgress = true
         let certificate = await actionsHandler.fetchCertificate()
-        self.e2eIdentityCertificate = certificate
-        self.isActionInProgress = false
+        e2eIdentityCertificate = certificate
+        isActionInProgress = false
     }
 
     @MainActor
