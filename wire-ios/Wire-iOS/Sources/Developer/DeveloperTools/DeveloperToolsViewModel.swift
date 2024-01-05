@@ -116,6 +116,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
                 .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
                 .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
+                .button(ButtonItem(title: "Conversation Update Protocol Change", action: conversationUpdateProtocolChange)),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
@@ -225,6 +226,28 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func breakNextQuickSync() {
         ZMUserSession.shared()?.setBogusLastEventID()
+    }
+
+    private func conversationUpdateProtocolChange() {
+        guard
+            let selfClient = selfClient,
+            let notificationContext = selfClient.managedObjectContext?.notificationContext
+        else {
+            return
+        }
+
+        Task {
+            var action = UpdateConversationProtocolAction(
+                qualifiedID: .random(),
+                messageProtocol: .mls
+            )
+            do {
+                try await action.perform(in: notificationContext)
+                debugPrint("123")
+            } catch {
+                assertionFailure("action failed: \(error)!")
+            }
+        }
     }
 
     private func sendDebugLogs() {
