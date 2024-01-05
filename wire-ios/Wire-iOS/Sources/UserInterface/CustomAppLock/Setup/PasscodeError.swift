@@ -27,22 +27,19 @@ enum PasscodeError: CaseIterable {
     case noSpecialChar
 
     var message: String {
-        let key: String
         switch self {
-
         case .tooShort:
-            key = "create_passcode.validation.too_short"
+            return L10n.Localizable.CreatePasscode.Validation.tooShort
         case .noLowercaseChar:
-            key = "create_passcode.validation.no_lowercase_char"
+            return L10n.Localizable.CreatePasscode.Validation.noLowercaseChar
         case .noUppercaseChar:
-            key = "create_passcode.validation.no_uppercase_char"
+            return L10n.Localizable.CreatePasscode.Validation.noUppercaseChar
         case .noSpecialChar:
-            key = "create_passcode.validation.no_special_char"
+            return L10n.Localizable.CreatePasscode.Validation.noSpecialChar
         case .noNumber:
-            key = "create_passcode.validation.no_number"
+            return L10n.Localizable.CreatePasscode.Validation.noNumber
         }
 
-        return key.localized
     }
 
     private func description(icon: StyleKitIcon, color: UIColor, font: UIFont) -> NSAttributedString {
