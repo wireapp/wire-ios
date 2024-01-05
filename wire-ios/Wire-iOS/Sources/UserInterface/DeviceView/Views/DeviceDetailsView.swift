@@ -106,7 +106,6 @@ struct DeviceDetailsView: View {
                 ToolbarItem(placement: .principal) {
                     DeviceView(viewModel: viewModel).titleView
                 }
-
             }
         }
 
@@ -119,6 +118,11 @@ struct DeviceDetailsView: View {
         }
         .onDisappear {
             dismissedView?()
+        }
+        .onReceive(viewModel.$shouldDissmissView) { shouldDismiss in
+            if shouldDismiss {
+                dismiss()
+            }
         }
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {

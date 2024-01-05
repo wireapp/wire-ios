@@ -70,19 +70,24 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         return nil
     }
 
-    func removeDevice() {
-        clientRemovalObserver = ClientRemovalObserver(
-            userClientToDelete: userClient,
-            delegate: self,
-            credentials: credentials,
-            completion: {
-                error in
-                if let error = error {
+    @MainActor
+    func removeDevice() async -> Bool {
+        return await withCheckedContinuation { continuation in
+            clientRemovalObserver = ClientRemovalObserver(
+                userClientToDelete: userClient,
+                delegate: self,
+                credentials: credentials,
+                completion: {
+                    error in
+                    guard let error = error else {
+                        return continuation.resume(returning: true)
+                    }
                     WireLogger.e2ei.error(error.localizedDescription)
+                    continuation.resume(returning: false)
                 }
-            }
-        )
-        self.clientRemovalObserver?.startRemoval()
+            )
+            self.clientRemovalObserver?.startRemoval()
+        }
     }
 
     func resetSession() {

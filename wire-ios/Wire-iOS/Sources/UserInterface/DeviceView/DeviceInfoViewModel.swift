@@ -29,7 +29,7 @@ protocol DeviceDetailsViewActions {
     var isProcessing: ((Bool) -> Void)? { get set }
 
     func fetchCertificate() async -> E2eIdentityCertificate?
-    func removeDevice()
+    func removeDevice() async -> Bool
     func resetSession()
     func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
@@ -88,6 +88,7 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
+    @Published var shouldDissmissView: Bool = false
 
     private var actionsHandler: any DeviceDetailsViewActions
 
@@ -143,8 +144,11 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
-    func removeDevice() {
-        actionsHandler.removeDevice()
+    func removeDevice() async {
+        let isRemoved = await actionsHandler.removeDevice()
+        await MainActor.run {
+            shouldDissmissView = isRemoved
+        }
     }
 
     func resetSession() {

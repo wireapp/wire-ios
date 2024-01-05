@@ -55,7 +55,9 @@ struct DeviceDetailsBottomView: View {
     var removeDeviceView: some View {
         HStack {
             SwiftUI.Button {
-                viewModel.removeDevice()
+                Task {
+                    await viewModel.removeDevice()
+                }
             } label: {
                 Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
                 .padding(.all, ViewConstants.Padding.standard)
