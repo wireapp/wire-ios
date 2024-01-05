@@ -19,23 +19,30 @@
 import Foundation
 import WireCoreCrypto
 
-public protocol E2eIClientInterface {
+public protocol E2eISetupServiceInterface {
 
     func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol
 
 }
 
 /// This class setups e2eIdentity object from CoreCrypto.
-public final class E2eIClient: E2eIClientInterface {
+public final class E2eISetupService: E2eISetupServiceInterface {
 
-    private let coreCrypto: SafeCoreCryptoProtocol
-    public init(coreCrypto: SafeCoreCryptoProtocol) {
-        self.coreCrypto = coreCrypto
+    // MARK: - Properties
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+
+    // MARK: - Life cycle
+
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
+        self.coreCryptoProvider = coreCryptoProvider
     }
+
+    // MARK: - Public interface
 
     public func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol {
         do {
-            return try coreCrypto.perform {
+            return try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
                 /// TODO: Use e2eiNewRotateEnrollment or e2eiNewActivationEnrollment from the new CC version
                 try $0.e2eiNewEnrollment(clientId: e2eiClientId.rawValue,
                                          displayName: userName,

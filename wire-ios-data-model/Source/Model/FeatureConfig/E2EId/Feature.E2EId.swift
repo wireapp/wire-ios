@@ -61,3 +61,11 @@ public extension Feature {
     }
 
 }
+
+public extension Feature.E2EI {
+
+    var isEnabled: Bool {
+        return status == .enabled
+    }
+
+}
