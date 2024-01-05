@@ -1011,7 +1011,7 @@ public final class MLSService: MLSServiceInterface {
 
         let conversations = (try? await coreCrypto.perform { coreCrypto in
             return await context.perform { [weak self] in
-                return ZMConversation.fetchMLSConversations(in: context).filter {
+                ZMConversation.fetchMLSConversations(in: context).filter {
                     self?.isConversationOutOfSync(
                         $0,
                         coreCrypto: coreCrypto,

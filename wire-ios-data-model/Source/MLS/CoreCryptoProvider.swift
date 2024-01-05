@@ -128,7 +128,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             let cc: SafeCoreCrypto
             do {
                 cc = try await createCoreCrypto()
-            } catch let error {
+            } catch {
                 resumeCoreCryptoContinuations(with: .failure(error))
                 loadingCoreCrypto = false
                 throw error

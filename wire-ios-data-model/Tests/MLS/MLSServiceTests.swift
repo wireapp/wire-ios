@@ -1223,7 +1223,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_FetchAndRepairConversation_RejoinsOutOfSyncConversation() async throws {
         // GIVEN
         let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
-        guard let groupID =  await uiMOC.perform({ conversation.mlsGroupID }) else {
+        guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
             XCTFail("missing groupID")
             return
         }
@@ -1253,7 +1253,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_FetchAndRepairConversation_DoesNothingIfConversationIsNotOutOfSync() async throws {
         // GIVEN
         let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
-        guard let groupID =  await uiMOC.perform({ conversation.mlsGroupID }) else {
+        guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
             XCTFail("missing groupID")
             return
         }
@@ -1281,12 +1281,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_FetchAndRepairConversation_RejoinsOutOfSyncSubgroup() async throws {
         // GIVEN
         let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
-        guard let groupID =  await uiMOC.perform({ conversation.mlsGroupID }) else {
+        guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
             XCTFail("missing groupID")
             return
         }
         let subgroupID = MLSGroupID.random()
-        let qualifiedID = await self.uiMOC.perform({ conversation.qualifiedID })
+        let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
         let subgroup = MLSSubgroup(
             cipherSuite: 0,
@@ -1326,7 +1326,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return
         }
         let subgroupID = MLSGroupID.random()
-        let qualifiedID = await self.uiMOC.perform({ conversation.qualifiedID })
+        let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
         let subgroup = MLSSubgroup(
             cipherSuite: 0,
