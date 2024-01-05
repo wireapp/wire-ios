@@ -397,7 +397,11 @@ extension WireCallCenterV3 {
                 }
 
                 Task {
-                    try await mlsService.generateNewEpoch(groupID: groupIDs.subconversation)
+                    do {
+                        try await mlsService.generateNewEpoch(groupID: groupIDs.subconversation)
+                    } catch {
+                        WireLogger.calling.error("failed to generate new epoch: \(String(reflecting: error))")
+                    }
                 }
             }
         }

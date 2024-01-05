@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 
 @import WireUtilities;
@@ -219,9 +219,11 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     [self prepareToSend];
 }
 
-- (void)setExpirationDate
+- (NSDate *)setExpirationDate;
 {
-    self.expirationDate = [NSDate dateWithTimeIntervalSinceNow:[self.class defaultExpirationTime]];
+    NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:[self.class defaultExpirationTime]];
+    self.expirationDate = expirationDate;
+    return expirationDate;
 }
 
 - (void)removeExpirationDate;
@@ -308,7 +310,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 }
 
 - (void)updateWithUpdateEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation
-{    
+{
     self.visibleInConversation = conversation;
     ZMUser *sender = [ZMUser fetchOrCreateWith:event.senderUUID domain:event.senderDomain in:self.managedObjectContext];
     if (sender != nil && !sender.isZombieObject && self.managedObjectContext == sender.managedObjectContext) {
@@ -502,20 +504,6 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
             ZMMessageIsExpiredKey,
             ZMMessageExpirationDateKey,
             [NSDate dateWithTimeIntervalSince1970:0]];
-}
-
-
-+ (BOOL)doesEventTypeGenerateMessage:(ZMUpdateEventType)type;
-{
-    return
-        (type == ZMUpdateEventTypeConversationAssetAdd) ||
-        (type == ZMUpdateEventTypeConversationMessageAdd) ||
-        (type == ZMUpdateEventTypeConversationClientMessageAdd) ||
-        (type == ZMUpdateEventTypeConversationOtrMessageAdd) ||
-        (type == ZMUpdateEventTypeConversationOtrAssetAdd) ||
-        (type == ZMUpdateEventTypeConversationMLSMessageAdd) ||
-        (type == ZMUpdateEventTypeConversationKnock) ||
-        [ZMSystemMessage doesEventTypeGenerateSystemMessage:type];
 }
 
 
@@ -803,7 +791,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
                               inManagedObjectContext:(NSManagedObjectContext *)moc
                                       prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
 {
-    ZMSystemMessageType type = [self.class systemMessageTypeFromEventType:updateEvent.type];
+    ZMSystemMessageType type = [self.class systemMessageTypeFromUpdateEvent:updateEvent];
     if (type == ZMSystemMessageTypeInvalid) {
         return nil;
     }
@@ -937,29 +925,26 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     return NO;
 }
 
-+ (ZMSystemMessageType)systemMessageTypeFromEventType:(ZMUpdateEventType)type
++ (ZMSystemMessageType)systemMessageTypeFromUpdateEvent:(ZMUpdateEvent *)updateEvent;
 {
-    NSNumber *number = self.eventTypeToSystemMessageTypeMap[@(type)];
-    if(number == nil) {
-        return ZMSystemMessageTypeInvalid;
-    }
-    else {
-        return (ZMSystemMessageType) number.integerValue;
-    }
-}
+    switch (updateEvent.type) {
 
-+ (BOOL)doesEventTypeGenerateSystemMessage:(ZMUpdateEventType)type;
-{
-    return [self.eventTypeToSystemMessageTypeMap.allKeys containsObject:@(type)];
-}
+        case ZMUpdateEventTypeConversationMemberJoin:
+            return ZMSystemMessageTypeParticipantsAdded;
 
-+ (NSDictionary *)eventTypeToSystemMessageTypeMap   
-{
-    return @{
-             @(ZMUpdateEventTypeConversationMemberJoin) : @(ZMSystemMessageTypeParticipantsAdded),
-             @(ZMUpdateEventTypeConversationMemberLeave) : @(ZMSystemMessageTypeParticipantsRemoved),
-             @(ZMUpdateEventTypeConversationRename) : @(ZMSystemMessageTypeConversationNameChanged)
-             };
+        case ZMUpdateEventTypeConversationRename:
+            return ZMSystemMessageTypeConversationNameChanged;
+
+        case ZMUpdateEventTypeConversationMemberLeave:
+            if ([updateEvent.payload[@"data"][@"reason"] isEqualToString:@"user-deleted"]) {
+                return ZMSystemMessageTypeTeamMemberLeave;
+            } else {
+                return ZMSystemMessageTypeParticipantsRemoved;
+            }
+
+        default:
+            return ZMSystemMessageTypeInvalid;
+    }
 }
 
 - (id<ZMSystemMessageData>)systemMessageData

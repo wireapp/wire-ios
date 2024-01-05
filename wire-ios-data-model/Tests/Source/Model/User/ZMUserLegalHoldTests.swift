@@ -76,7 +76,7 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         var selfUser: ZMUser!
         var conversation: ZMConversation!
 
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             selfUser = ZMUser.selfUser(in: syncMOC)
             createSelfClient(onMOC: syncMOC)
 
@@ -92,10 +92,10 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         await syncMOC.perform { selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest) }
 
         // THEN
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
             XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
-            XCTAssertTrue(conversation.allMessages.contains(where: { ($0 as? ZMSystemMessage)?.systemMessageType == .legalHoldEnabled }))
+            XCTAssertTrue(conversation.allMessages.contains { ($0 as? ZMSystemMessage)?.systemMessageType == .legalHoldEnabled })
             XCTAssertTrue(conversation.isUnderLegalHold)
         }
     }
