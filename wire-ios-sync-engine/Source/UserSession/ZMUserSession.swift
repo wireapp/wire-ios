@@ -263,7 +263,6 @@ public class ZMUserSession: NSObject {
     }()
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
-        var e2eiRepository: E2eIRepository?
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl
         guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
             return nil
@@ -273,19 +272,25 @@ public class ZMUserSession: NSObject {
             transportSession: transportSession,
             queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
-        syncContext.performAndWait {
-            guard let coreCrypto = syncContext.coreCrypto else {
-                return
-            }
-            let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
-            e2eiRepository = E2eIRepository(acmeApi: acmeApi,
+        let e2eiSetupService = E2eISetupService(coreCryptoProvider: coreCryptoProvider)
+        let e2eiRepository = E2eIRepository(acmeApi: acmeApi,
                                             apiProvider: apiProvider,
-                                            e2eiClient: e2eiClient)
-        }
-        guard let e2eiRepository = e2eiRepository else {
-            return nil
-        }
+                                            e2eiSetupService: e2eiSetupService)
+
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
+    }()
+
+    lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface = {
+        let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+        return MLSConversationVerificationStatusProvider(
+            e2eIVerificationStatusService: e2eIVerificationStatusService,
+            syncContext: syncContext)
+    }()
+
+    lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {
+        return MLSConversationVerificationManager(
+            mlsService: mlsService,
+            mlsConversationVerificationStatusProvider: mlsConversationVerificationStatusProvider)
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -408,6 +413,10 @@ public class ZMUserSession: NSObject {
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
             createMLSClientIfNeeded()
+
+            if e2eiFeature.isEnabled {
+                mlsConversationVerificationManager.startObservingMLSConversationVerificationStatus()
+            }
         }
 
         registerForCalculateBadgeCountNotification()
