@@ -562,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "La conservation à des fins juridiques est active";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "Conservation à des fins juridiques désactivée";
 
 "content.system.message_legal_hold.learn_more" = "En savoir plus";
@@ -992,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Participants soumis à la conservation à des fins juridiques";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "Conservation à des fins juridiques";
 "legalhold.header.other_description" = "La conservation à des fins juridiques été activée pour au moins un contact dans cette conversation.\nTous vos messages seront enregistrés pour un accès futur, y compris les messages supprimés, modifiés et éphémères.";
 "legalhold.header.self_description" = "La conservation à des fins juridiques a été activée pour votre compte.\nTous vos messages seront enregistrés pour un accès futur, y compris les messages supprimés, modifiés et éphémères.\nVos contacts seront informés de l’enregistrement.";
