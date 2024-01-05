@@ -47,6 +47,7 @@ extension ZMConversation: ObjectInSnapshot {
                     #keyPath(ZMConversation.labels),
                     #keyPath(ZMConversation.localParticipants),
                     ZMConversation.mlsStatusKey,
+                    ZMConversation.mlsVerificationStatusKey,
                     #keyPath(ZMConversation.isDeletedRemotely)
             ])
     }

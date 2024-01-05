@@ -294,6 +294,38 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
 }
 
+public class MockE2eIVerificationStatusServiceInterface: E2eIVerificationStatusServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getConversationStatus
+
+    public var getConversationStatusGroupID_Invocations: [MLSGroupID] = []
+    public var getConversationStatusGroupID_MockError: Error?
+    public var getConversationStatusGroupID_MockMethod: ((MLSGroupID) async throws -> MLSVerificationStatus)?
+    public var getConversationStatusGroupID_MockValue: MLSVerificationStatus?
+
+    public func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus {
+        getConversationStatusGroupID_Invocations.append(groupID)
+
+        if let error = getConversationStatusGroupID_MockError {
+            throw error
+        }
+
+        if let mock = getConversationStatusGroupID_MockMethod {
+            return try await mock(groupID)
+        } else if let mock = getConversationStatusGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getConversationStatusGroupID`")
+        }
+    }
+
+}
+
 class MockEARKeyEncryptorInterface: EARKeyEncryptorInterface {
 
     // MARK: - Life cycle
@@ -1309,6 +1341,35 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
 }
 
+public class MockMLSConversationVerificationStatusProviderInterface: MLSConversationVerificationStatusProviderInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - updateStatus
+
+    public var updateStatus_Invocations: [MLSGroupID] = []
+    public var updateStatus_MockError: Error?
+    public var updateStatus_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func updateStatus(_ groupID: MLSGroupID) async throws {
+        updateStatus_Invocations.append(groupID)
+
+        if let error = updateStatus_MockError {
+            throw error
+        }
+
+        guard let mock = updateStatus_MockMethod else {
+            fatalError("no mock for `updateStatus`")
+        }
+
+        try await mock(groupID)
+    }
+
+}
+
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - Life cycle
@@ -1720,6 +1781,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `onConferenceInfoChangeParentGroupIDSubConversationGroupID`")
+        }
+    }
+
+    // MARK: - epochChanges
+
+    public var epochChanges_Invocations: [Void] = []
+    public var epochChanges_MockMethod: (() -> AsyncStream<MLSGroupID>)?
+    public var epochChanges_MockValue: AsyncStream<MLSGroupID>?
+
+    public func epochChanges() -> AsyncStream<MLSGroupID> {
+        epochChanges_Invocations.append(())
+
+        if let mock = epochChanges_MockMethod {
+            return mock()
+        } else if let mock = epochChanges_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `epochChanges`")
         }
     }
 
