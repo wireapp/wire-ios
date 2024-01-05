@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - addClientsToConversation
 
@@ -659,10 +658,10 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     public var getUserIdentitiesConversationIdUserIds_Invocations: [(conversationId: Data, userIds: [String])] = []
     public var getUserIdentitiesConversationIdUserIds_MockError: Error?
-    public var getUserIdentitiesConversationIdUserIds_MockMethod: ((Data, [String]) async throws -> [String : [WireCoreCrypto.WireIdentity]])?
-    public var getUserIdentitiesConversationIdUserIds_MockValue: [String : [WireCoreCrypto.WireIdentity]]?
+    public var getUserIdentitiesConversationIdUserIds_MockMethod: ((Data, [String]) async throws -> [String: [WireCoreCrypto.WireIdentity]])?
+    public var getUserIdentitiesConversationIdUserIds_MockValue: [String: [WireCoreCrypto.WireIdentity]]?
 
-    public func getUserIdentities(conversationId: Data, userIds: [String]) async throws -> [String : [WireCoreCrypto.WireIdentity]] {
+    public func getUserIdentities(conversationId: Data, userIds: [String]) async throws -> [String: [WireCoreCrypto.WireIdentity]] {
         getUserIdentitiesConversationIdUserIds_Invocations.append((conversationId: conversationId, userIds: userIds))
 
         if let error = getUserIdentitiesConversationIdUserIds_MockError {
@@ -992,10 +991,10 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     public var proteusEncryptBatchedSessionsPlaintext_Invocations: [(sessions: [String], plaintext: Data)] = []
     public var proteusEncryptBatchedSessionsPlaintext_MockError: Error?
-    public var proteusEncryptBatchedSessionsPlaintext_MockMethod: (([String], Data) async throws -> [String : Data])?
-    public var proteusEncryptBatchedSessionsPlaintext_MockValue: [String : Data]?
+    public var proteusEncryptBatchedSessionsPlaintext_MockMethod: (([String], Data) async throws -> [String: Data])?
+    public var proteusEncryptBatchedSessionsPlaintext_MockValue: [String: Data]?
 
-    public func proteusEncryptBatched(sessions: [String], plaintext: Data) async throws -> [String : Data] {
+    public func proteusEncryptBatched(sessions: [String], plaintext: Data) async throws -> [String: Data] {
         proteusEncryptBatchedSessionsPlaintext_Invocations.append((sessions: sessions, plaintext: plaintext))
 
         if let error = proteusEncryptBatchedSessionsPlaintext_MockError {
