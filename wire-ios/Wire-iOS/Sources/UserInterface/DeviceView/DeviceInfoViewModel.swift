@@ -119,47 +119,39 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func fetchFingerPrintForProteus() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
+        isActionInProgress = true
         guard let data = await getUserClientFingerprint.invoke(userClient: userClient),
                 let fingerPrint = String(data: data, encoding: .utf8) else {
             return
         }
-        DispatchQueue.main.async {
-            self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
-            self.isActionInProgress = false
-        }
+        self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
+        self.isActionInProgress = false
     }
 
+    @MainActor
     func fetchE2eCertificate() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
+        isActionInProgress = true
         let certificate = await actionsHandler.fetchCertificate()
-        DispatchQueue.main.async {
-            self.e2eIdentityCertificate = certificate
-            self.isActionInProgress = false
-        }
+        self.e2eIdentityCertificate = certificate
+        self.isActionInProgress = false
     }
 
+    @MainActor
     func removeDevice() async {
         let isRemoved = await actionsHandler.removeDevice()
-        await MainActor.run {
-            shouldDissmissView = isRemoved
-        }
+        shouldDissmissView = isRemoved
     }
 
     func resetSession() {
         actionsHandler.resetSession()
     }
 
+    @MainActor
     func updateVerifiedStatus(_ value: Bool) async {
         let isVerified = await actionsHandler.updateVerified(value)
-        await MainActor.run {
-            isProteusVerificationEnabled = isVerified
-        }
+        isProteusVerificationEnabled = isVerified
     }
 
     func copyToClipboard(_ value: String) {
