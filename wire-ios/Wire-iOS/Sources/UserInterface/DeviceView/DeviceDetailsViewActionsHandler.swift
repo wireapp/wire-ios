@@ -114,7 +114,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
                     self.userClient.ignoreClient(self.userClient)
                 }
             }, completionHandler: {
-                continuation.resume(returning: isVerified)
+                continuation.resume(returning: self.userClient.verified)
             }
             )
         }
