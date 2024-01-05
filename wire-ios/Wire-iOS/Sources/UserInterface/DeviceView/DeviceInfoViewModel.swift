@@ -200,29 +200,31 @@ extension DeviceInfoViewModel {
 }
 
 extension E2EIdentityCertificateStatus {
+    typealias Status = L10n.Localizable.Device.Details.Section.E2ei.Status
+
     func titleForStatus() -> String {
         switch self {
         case .notActivated:
-            return L10n.Localizable.Device.Details.Section.E2ei.Status.notActivated
+            return Status.notActivated
         case .revoked:
-            return L10n.Localizable.Device.Details.Section.E2ei.Status.revoked
+            return Status.revoked
         case .expired:
-            return L10n.Localizable.Device.Details.Section.E2ei.Status.expired
+            return Status.expired
         case .valid:
-            return L10n.Localizable.Device.Details.Section.E2ei.Status.valid
+            return Status.valid
         }
     }
 
     func imageForStatus() -> Image? {
         switch self {
         case .notActivated:
-            return Image(.certificateExpired)
+            return Asset.Images.certificateExpired.swiftUIImage
         case .revoked:
-            return Image(.certificateRevoked)
+            return Asset.Images.certificateRevoked.swiftUIImage
         case .expired:
-            return Image(.certificateExpired)
+            return  Asset.Images.certificateExpired.swiftUIImage
         case .valid:
-            return Image(.certificateValid)
+            return Asset.Images.certificateValid.swiftUIImage
         }
     }
 
