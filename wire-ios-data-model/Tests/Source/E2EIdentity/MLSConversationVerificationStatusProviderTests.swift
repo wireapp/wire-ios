@@ -25,7 +25,6 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
 
     var sut: MLSConversationVerificationStatusProvider!
     var e2eIVerificationStatusService: MockE2eIVerificationStatusServiceInterface!
-    var mockConversation: ZMConversation!
 
     override func setUp() {
         super.setUp()
@@ -33,13 +32,10 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         e2eIVerificationStatusService = MockE2eIVerificationStatusServiceInterface()
         sut = MLSConversationVerificationStatusProvider(e2eIVerificationStatusService: e2eIVerificationStatusService,
                                                         syncContext: syncMOC)
-        mockConversation = ZMConversation.insertNewObject(in: syncMOC)
-        mockConversation.mlsGroupID = MLSGroupID.random()
     }
 
     override func tearDown() {
         e2eIVerificationStatusService = nil
-        mockConversation = nil
         sut = nil
 
         super.tearDown()
@@ -52,14 +48,21 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         }
 
         // Given
-        mockConversation.mlsVerificationStatus = .notVerified
-        let groupID = try XCTUnwrap(mockConversation.mlsGroupID)
+        let groupID = MLSGroupID.random()
+        let mockConversation = await syncMOC.perform { [syncMOC] in
+            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
+            conversation.mlsGroupID = groupID
+            conversation.mlsVerificationStatus = .notVerified
+            return conversation
+        }
 
         // When
         try await sut.updateStatus(groupID)
 
         // Then
-        XCTAssertEqual(mockConversation.mlsVerificationStatus, .verified)
+        await syncMOC.perform {
+            XCTAssertEqual(mockConversation.mlsVerificationStatus, .verified)
+        }
     }
 
     func test_itUpdatesConversation_fromVerifiedToDegraded() async throws {
@@ -69,14 +72,21 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         }
 
         // Given
-        mockConversation.mlsVerificationStatus = .verified
-        let groupID = try XCTUnwrap(mockConversation.mlsGroupID)
+        let groupID = MLSGroupID.random()
+        let mockConversation = await syncMOC.perform { [syncMOC] in
+            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
+            conversation.mlsGroupID = groupID
+            conversation.mlsVerificationStatus = .verified
+            return conversation
+        }
 
         // When
         try await sut.updateStatus(groupID)
 
         // Then
-        XCTAssertEqual(mockConversation.mlsVerificationStatus, .degraded)
+        await syncMOC.perform {
+            XCTAssertEqual(mockConversation.mlsVerificationStatus, .degraded)
+        }
     }
 
     func test_itDoesNotUpdateConversation_newStatusIsSame() async throws {
@@ -86,14 +96,21 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         }
 
         // Given
-        mockConversation.mlsVerificationStatus = .notVerified
-        let groupID = try XCTUnwrap(mockConversation.mlsGroupID)
+        let groupID = MLSGroupID.random()
+        let mockConversation = await syncMOC.perform { [syncMOC] in
+            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
+            conversation.mlsGroupID = groupID
+            conversation.mlsVerificationStatus = .notVerified
+            return conversation
+        }
 
         // When
         try await sut.updateStatus(groupID)
 
         // Then
-        XCTAssertEqual(mockConversation.mlsVerificationStatus, .notVerified)
+        await syncMOC.perform {
+            XCTAssertEqual(mockConversation.mlsVerificationStatus, .notVerified)
+        }
     }
 
     func test_itDoesNotUpdateConversation_wrongMLSGroupId() async throws {
@@ -104,8 +121,13 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
 
         // Given
         let expectedError = E2eIVerificationStatusService.E2eIVerificationStatusError.missingConversation
-        mockConversation.mlsVerificationStatus = nil
         let groupID = MLSGroupID(Data([1, 2, 3]))
+        let mockConversation = await syncMOC.perform { [syncMOC] in
+            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
+            conversation.mlsGroupID = MLSGroupID.random()
+            conversation.mlsVerificationStatus = nil
+            return conversation
+        }
 
         // Then
         await assertItThrows(error: expectedError) {
@@ -120,8 +142,13 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         e2eIVerificationStatusService.getConversationStatusGroupID_MockError = error
 
         // Given
-        mockConversation.mlsVerificationStatus = nil
-        let groupID = try XCTUnwrap(mockConversation.mlsGroupID)
+        let groupID = MLSGroupID.random()
+        let mockConversation = await syncMOC.perform { [syncMOC] in
+            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
+            conversation.mlsGroupID = groupID
+            conversation.mlsVerificationStatus = nil
+            return conversation
+        }
 
         // Then
         await assertItThrows(error: error) {
