@@ -28,7 +28,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
     var sut: CryptoboxMigrationManager!
     var mockFileManager: MockFileManagerInterface!
     var proteusViaCoreCryptoFlag: DeveloperFlag!
-    var mockProteusService: MockProteusServiceInterface!
+    var mockSafeCoreCrypto: MockSafeCoreCrypto!
 
     override func setUp() {
         super.setUp()
@@ -36,21 +36,16 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         proteusViaCoreCryptoFlag = .proteusViaCoreCrypto
 
         mockFileManager = MockFileManagerInterface()
-        sut = CryptoboxMigrationManager(fileManager: mockFileManager)
-        mockProteusService = MockProteusServiceInterface()
-
-        syncMOC.performAndWait({
-            syncMOC.proteusService = mockProteusService
-        })
-
         mockFileManager.cryptoboxDirectoryIn_MockValue = cryptoboxDirectory
         mockFileManager.removeItemAt_MockMethod = { _ in }
+        mockSafeCoreCrypto = MockSafeCoreCrypto()
+        sut = CryptoboxMigrationManager(fileManager: mockFileManager)
     }
 
     override func tearDown() {
         sut = nil
         mockFileManager = nil
-        mockProteusService = nil
+        mockSafeCoreCrypto = nil
 
         syncMOC.performAndWait({
             syncMOC.proteusService = nil
@@ -110,85 +105,42 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     // MARK: - Perform migration
 
-    func test_itPerformsMigrations() throws {
+    func test_itPerformsMigrations() async throws {
         // Given
+        let migrated = expectation(description: "Cryptobox was migrated")
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
-
-        mockProteusService.migrateCryptoboxSessionsAt_MockMethod = { _ in }
+        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
+            migrated.fulfill()
+        }
 
         // When
-        syncMOC.performAndWait {
-            do {
-                try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)
-            } catch {
-                XCTFail("failed to perform migration: \(error.localizedDescription)")
-            }
+        do {
+            try await sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)
+        } catch {
+            XCTFail("failed to perform migration: \(error.localizedDescription)")
         }
 
         // Then
         XCTAssertEqual(mockFileManager.removeItemAt_Invocations, [cryptoboxDirectory])
-        XCTAssertEqual(mockProteusService.migrateCryptoboxSessionsAt_Invocations.count, 1)
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func test_itDoesNotPerformMigration_CoreCryptoError() {
+    func test_itDoesNotPerformMigration_CoreCryptoError() async {
         // Given
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
 
-        mockProteusService.migrateCryptoboxSessionsAt_MockError = CryptoboxMigrationManager.Failure.failedToMigrateData
+        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
+            throw CryptoboxMigrationManager.Failure.failedToMigrateData
+        }
 
         // When
-        syncMOC.performAndWait {
-            do {
-                XCTAssertThrowsError(try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)) { error in
-                    XCTAssertEqual(error as? CryptoboxMigrationManager.Failure, CryptoboxMigrationManager.Failure.failedToMigrateData)
-                }
-            } catch {
-                XCTFail("unexpected error: \(error.localizedDescription)")
-            }
+        await assertItThrows(error: CryptoboxMigrationManager.Failure.failedToMigrateData) {
+            try await self.sut.performMigration(accountDirectory: self.accountDirectory, coreCrypto: self.mockSafeCoreCrypto)
         }
 
         // Then
         XCTAssertTrue(mockFileManager.removeItemAt_Invocations.isEmpty)
     }
-
-    // MARK: - Complete migration
-
-    func test_itCompletesMigration_FlagIsOn() throws {
-        // Given
-        proteusViaCoreCryptoFlag.isOn = true
-        mockProteusService.completeInitialization_MockMethod = {}
-
-        // When
-        syncMOC.performAndWait {
-            do {
-                try sut.completeMigration(syncContext: syncMOC)
-            } catch {
-                XCTFail("failed to complete migration: \(error.localizedDescription)")
-            }
-        }
-
-        // Then
-        XCTAssertEqual(mockProteusService.completeInitialization_Invocations.count, 1)
-    }
-
-    func test_itCompletesMigration_FlagIsOff() throws {
-        // Given
-        proteusViaCoreCryptoFlag.isOn = false
-        mockProteusService.completeInitialization_MockMethod = {}
-
-        // When
-        syncMOC.performAndWait {
-            do {
-                try sut.completeMigration(syncContext: syncMOC)
-            } catch {
-                XCTFail("failed to complete migration: \(error.localizedDescription)")
-            }
-        }
-
-        // Then
-        XCTAssertEqual(mockProteusService.completeInitialization_Invocations.count, 0)
-    }
-
 }

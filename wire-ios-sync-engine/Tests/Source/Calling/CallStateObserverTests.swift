@@ -244,8 +244,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     func testThatWeSendNotificationWhenCallIsEstablished() {
         // given
         mockCallCenter = WireCallCenterV3Mock(userId: AVSIdentifier.stub, clientId: "1234567", uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock())
-        let avsId = syncMOC.performAndWait({ conversation.avsIdentifier! })
-        mockCallCenter?.setMockCallState(.established, conversationId: avsId, callerId: mockCallCenter!.selfUserId, isVideo: false)
+        let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
+        mockCallCenter?.setMockCallState(.established, conversationId: avsIdentifier, callerId: mockCallCenter!.selfUserId, isVideo: false)
         uiMOC.zm_callCenter = mockCallCenter
 
         // expect
@@ -261,9 +261,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     func testThatWeSendNotificationWhenCallHasEstablishedDataChannel() {
         // given
         mockCallCenter = WireCallCenterV3Mock(userId: AVSIdentifier.stub, clientId: "1234567", uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock())
-        let avsId = syncMOC.performAndWait({ conversation.avsIdentifier!
-        })
-        mockCallCenter?.setMockCallState(.establishedDataChannel, conversationId: avsId, callerId: mockCallCenter!.selfUserId, isVideo: false)
+        let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
+        mockCallCenter?.setMockCallState(.establishedDataChannel, conversationId: avsIdentifier, callerId: mockCallCenter!.selfUserId, isVideo: false)
         uiMOC.zm_callCenter  = mockCallCenter
 
         // expect
@@ -279,8 +278,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     func testThatWeSendNotificationWhenCallTerminates() {
         // given
         mockCallCenter = WireCallCenterV3Mock(userId: AVSIdentifier.stub, clientId: "1234567", uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock())
-        let avsId = syncMOC.performAndWait({ conversation.avsIdentifier! })
-        mockCallCenter?.setMockCallState(.established, conversationId: avsId, callerId: mockCallCenter!.selfUserId, isVideo: false)
+        let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
+        mockCallCenter?.setMockCallState(.established, conversationId: avsIdentifier, callerId: mockCallCenter!.selfUserId, isVideo: false)
         uiMOC.zm_callCenter = mockCallCenter
         sut.callCenterDidChange(callState: .established, conversation: conversationUI, caller: senderUI, timestamp: Date(), previousCallState: nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -452,23 +451,19 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         // Current situation:
         // > "Other"
         // > "Main"             (Muted)
-        var list: ZMConversationList?
-        syncMOC.performAndWait {
-            list = ZMConversation.conversationsExcludingArchived(in: syncMOC)
 
-            guard let list else {
-                XCTFail("missing ZMConversationList")
-                return
-            }
-
-            if let first = list.firstObject as? ZMConversation,
-               let last = list.lastObject as? ZMConversation {
-                XCTAssertEqual(first, otherConvo!)
-                XCTAssertEqual(last, self.conversation)
-            } else {
-                XCTFail()
-            }
+        let list = syncMOC.performAndWait {
+            ZMConversation.conversationsExcludingArchived(in: syncMOC)
         }
+
+        if let first = list.firstObject as? ZMConversation,
+            let last = list.lastObject as? ZMConversation {
+            XCTAssertEqual(first, otherConvo!)
+            XCTAssertEqual(last, self.conversation)
+        } else {
+            XCTFail()
+        }
+
         // when
         self.sut.callCenterDidChange(
             callState: .incoming(video: false, shouldRing: true, degraded: false),
@@ -478,23 +473,23 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             previousCallState: nil
         )
 
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         syncMOC.performAndWait {
-            list?.resort()
+            list.resort()
+        }
 
-            // Then
+        // Then
 
-            // Current situation:
-            // > "Main"     (JOIN)  (Muted)
-            // > "Other"
+        // Current situation:
+        // > "Main"     (JOIN)  (Muted)
+        // > "Other"
 
-            if let first = list?.firstObject as? ZMConversation,
-               let last = list?.lastObject as? ZMConversation {
-                XCTAssertEqual(first, self.conversation)
-                XCTAssertEqual(last, otherConvo!)
-            } else {
-                XCTFail()
-            }
+        if let first = list.firstObject as? ZMConversation,
+            let last = list.lastObject as? ZMConversation {
+            XCTAssertEqual(first, self.conversation)
+            XCTAssertEqual(last, otherConvo!)
+        } else {
+            XCTFail()
         }
     }
 

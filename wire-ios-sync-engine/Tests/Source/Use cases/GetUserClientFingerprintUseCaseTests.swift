@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+import WireDataModelSupport
 import WireSyncEngineSupport
 import WireTesting
 @testable import WireSyncEngine
@@ -70,8 +71,9 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
 
         mockProteusService.sessionExistsId_MockValue = sessionEstablished
         var userClient: UserClient!
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             userClient = self.createSelfClient()
+            userClient.user?.domain = "example.com"
         }
 
         let expectation = XCTestExpectation(description: "should call establishSession")
@@ -94,7 +96,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         sut = createSut(proteusEnabled: false)
 
         var userClient: UserClient!
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             userClient = self.createSelfClient()
         }
 
@@ -110,7 +112,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         sut = createSut(proteusEnabled: true)
 
         var userClient: UserClient!
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             userClient = self.createSelfClient()
         }
 
@@ -129,7 +131,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         // GIVEN
         sut = createSut(proteusEnabled: true)
 
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             _ = self.createSelfClient()
         }
 
@@ -158,7 +160,6 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
 
     private func createSut(proteusEnabled: Bool) -> GetUserClientFingerprintUseCase {
         mockProteusProvider = MockProteusProvider(mockProteusService: mockProteusService,
-                                                  mockKeyStore: self.spyForTests(),
                                                   useProteusService: proteusEnabled)
         mockProteusProvider.mockProteusService.localFingerprint_MockMethod = {
             return self.fingerprint

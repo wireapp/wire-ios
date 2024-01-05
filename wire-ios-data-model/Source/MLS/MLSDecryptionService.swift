@@ -30,7 +30,7 @@ public protocol MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult?
+    ) async throws -> MLSDecryptResult?
 
 }
 
@@ -45,7 +45,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     // MARK: - Properties
 
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
     private weak var context: NSManagedObjectContext?
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
@@ -59,12 +59,18 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     public init(
         context: NSManagedObjectContext,
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
-        self.coreCrypto = coreCrypto
+        self.coreCryptoProvider = coreCryptoProvider
         self.context = context
         self.subconverationGroupIDRepository = subconversationGroupIDRepository
+    }
+
+    var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            return try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
     }
 
     // MARK: - Message decryption
@@ -94,10 +100,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult? {
+    ) async throws -> MLSDecryptResult? {
         WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
 
-        guard let messageBytes = message.base64DecodedBytes else {
+        guard let messageData = message.base64DecodedData else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
         }
 
@@ -105,6 +111,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         if
             let type = subconversationType,
+            // TODO: [F] does subconverationGroupIDRepository needs to be an actor?
             let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
                 forType: type,
                 parentGroupID: groupID
@@ -114,10 +121,12 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try coreCrypto.perform { try $0.decryptMessage(
-                conversationId: groupID.bytes,
-                payload: messageBytes
-            ) }
+            let decryptedMessage = try await coreCrypto.perform {
+                try await $0.decryptMessage(
+                    conversationId: groupID.data,
+                    payload: messageData
+                )
+            }
 
             if decryptedMessage.hasEpochChanged {
                 onEpochChangedSubject.send(groupID)
@@ -129,7 +138,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             if let message = decryptedMessage.message {
                 return MLSDecryptResult.message(
-                    message.data,
+                    message,
                     senderClientId(from: decryptedMessage)
                 )
             }
@@ -148,7 +157,6 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     private func senderClientId(from message: DecryptedMessage) -> String? {
         guard let senderClientID = message.senderClientId else { return nil }
-        return MLSClientID(data: senderClientID.data)?.clientID
+        return MLSClientID(data: senderClientID)?.clientID
     }
-
 }

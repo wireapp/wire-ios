@@ -53,7 +53,7 @@ public protocol SessionManagerDelegate: SessionActivationObserver {
                                        from selectedAccount: Account?,
                                        userSessionCanBeTornDown: @escaping () -> Void)
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
-    func sessionManagerDidFailToLoadDatabase()
+    func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
@@ -728,6 +728,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteTemporaryData() {
+        // TODO: [F] replace with TemporaryFileServiceInterface
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
         try? manager
@@ -871,8 +872,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             onStartMigration: { [weak self] in
                 self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
 
-            }, onFailure: { [weak self] _ in
-                self?.delegate?.sessionManagerDidFailToLoadDatabase()
+            }, onFailure: { [weak self] error in
+                self?.delegate?.sessionManagerDidFailToLoadDatabase(error: error)
                 onCompletion(nil)
 
             }, onCompletion: { [weak self] coreDataStack in
@@ -1044,7 +1045,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func updateProfileImage(imageData: Data) {
         activeUserSession?.enqueue {
-            self.activeUserSession?.userProfileImage?.updateImage(imageData: imageData)
+            self.activeUserSession?.userProfileImage.updateImage(imageData: imageData)
         }
     }
 

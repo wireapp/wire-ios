@@ -23,20 +23,20 @@ import Combine
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
 
-    func uploadKeyPackagesIfNeeded()
+    func uploadKeyPackagesIfNeeded() async
 
-    func createSelfGroup(for groupID: MLSGroupID)
+    func createSelfGroup(for groupID: MLSGroupID) async
 
     func joinGroup(with groupID: MLSGroupID) async throws
 
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func createGroup(for groupID: MLSGroupID) throws
+    func createGroup(for groupID: MLSGroupID) async throws
 
-    func conversationExists(groupID: MLSGroupID) -> Bool
+    func conversationExists(groupID: MLSGroupID) async -> Bool
 
-    func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
+    func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
@@ -44,9 +44,9 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func registerPendingJoin(_ group: MLSGroupID)
 
-    func performPendingJoins()
+    func performPendingJoins() async throws
 
-    func wipeGroup(_ groupID: MLSGroupID)
+    func wipeGroup(_ groupID: MLSGroupID) async
 
     func commitPendingProposals() async throws
 
@@ -82,14 +82,17 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
-    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID]
+    func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID]
 
-    func repairOutOfSyncConversations()
+    func repairOutOfSyncConversations() async
 
     func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
+    func updateKeyMaterialForAllStaleGroupsIfNeeded() async
+
 }
 
+// This is only used in tests, so it should be removed.
 public protocol MLSServiceDelegate: AnyObject {
 
     func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
@@ -102,7 +105,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Properties
 
     private weak var context: NSManagedObjectContext?
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     private let encryptionService: MLSEncryptionServiceInterface
     private let decryptionService: MLSDecryptionServiceInterface
@@ -110,12 +113,21 @@ public final class MLSService: MLSServiceInterface {
     private let mlsActionExecutor: MLSActionExecutorProtocol
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
-    private let userDefaults: UserDefaults
+    private let userDefaults: PrivateUserDefaults<Keys>
     private let logger = WireLogger.mls
     private var groupsPendingJoin = Set<MLSGroupID>()
     private let groupsBeingRepaired = GroupsBeingRepaired()
-
     private let syncStatus: SyncStatusProtocol
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
+    }
+
+    enum Keys: String, DefaultsKey {
+        case keyPackageQueriedTime
+    }
 
     var backendPublicKeys = BackendMLSPublicKeys()
     var pendingProposalCommitTimers = [MLSGroupID: Timer]()
@@ -152,14 +164,15 @@ public final class MLSService: MLSServiceInterface {
 
     public convenience init(
         context: NSManagedObjectContext,
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         userDefaults: UserDefaults,
-        syncStatus: SyncStatusProtocol
+        syncStatus: SyncStatusProtocol,
+        userID: UUID
     ) {
         self.init(
             context: context,
-            coreCrypto: coreCrypto,
+            coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
             staleKeyMaterialDetector: StaleMLSKeyDetector(
                 refreshIntervalInDays: Self.keyMaterialRefreshIntervalInDays,
@@ -167,13 +180,14 @@ public final class MLSService: MLSServiceInterface {
             ),
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
-            syncStatus: syncStatus
+            syncStatus: syncStatus,
+            userID: userID
         )
     }
 
     init(
         context: NSManagedObjectContext,
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         encryptionService: MLSEncryptionServiceInterface? = nil,
         decryptionService: MLSDecryptionServiceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
@@ -183,40 +197,33 @@ public final class MLSService: MLSServiceInterface {
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
+        userID: UUID,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
         self.context = context
-        self.coreCrypto = coreCrypto
+        self.coreCryptoProvider = coreCryptoProvider
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
-            coreCrypto: coreCrypto,
-            context: context,
-            actionsProvider: actionsProvider
+            coreCryptoProvider: coreCryptoProvider,
+            commitSender: CommitSender(
+                coreCryptoProvider: coreCryptoProvider,
+                notificationContext: context.notificationContext
+            )
         )
         self.conversationEventProcessor = conversationEventProcessor
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
         self.actionsProvider = actionsProvider
-        self.userDefaults = userDefaults
+        self.userDefaults = PrivateUserDefaults(userID: userID, storage: userDefaults)
         self.delegate = delegate
         self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
 
-        self.encryptionService = encryptionService ?? MLSEncryptionService(coreCrypto: coreCrypto)
+        self.encryptionService = encryptionService ?? MLSEncryptionService(coreCryptoProvider: coreCryptoProvider)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
             context: context,
-            coreCrypto: coreCrypto,
+            coreCryptoProvider: coreCryptoProvider,
             subconversationGroupIDRepository: subconversationGroupIDRepository
         )
 
-        do {
-            try coreCrypto.perform { try $0.setCallbacks(callbacks: CoreCryptoCallbacksImpl()) }
-        } catch {
-            logger.error("failed to set callbacks: \(String(describing: error))")
-        }
-
-        generateClientPublicKeysIfNeeded()
-        uploadKeyPackagesIfNeeded()
-        fetchBackendPublicKeys()
-        updateKeyMaterialForAllStaleGroupsIfNeeded()
         schedulePeriodicKeyMaterialUpdateCheck()
     }
 
@@ -226,32 +233,7 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Public keys
 
-    private func generateClientPublicKeysIfNeeded() {
-        guard
-            let context = context,
-            let selfClient = ZMUser.selfUser(in: context).selfClient()
-        else {
-            return
-        }
-
-        var keys = selfClient.mlsPublicKeys
-
-        do {
-            if keys.ed25519 == nil {
-                logger.info("generating ed25519 public key")
-                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite.rawValue) }
-                let keyData = Data(keyBytes)
-                keys.ed25519 = keyData.base64EncodedString()
-            }
-        } catch {
-            logger.error("failed to generate public keys: \(String(describing: error))")
-        }
-
-        selfClient.mlsPublicKeys = keys
-        context.saveOrRollback()
-    }
-
-    private func fetchBackendPublicKeys() {
+    private func fetchBackendPublicKeys() async {
         logger.info("fetching backend public keys")
 
         guard let notificationContext = context?.notificationContext else {
@@ -259,12 +241,10 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        Task {
-            do {
-                backendPublicKeys = try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
-            } catch {
-                logger.warn("failed to fetch backend public keys: \(String(describing: error))")
-            }
+        do {
+            backendPublicKeys = try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
+        } catch {
+            logger.warn("failed to fetch backend public keys: \(String(describing: error))")
         }
     }
 
@@ -288,19 +268,19 @@ public final class MLSService: MLSServiceInterface {
 
             let keyLength: UInt32 = 32
 
-            return try coreCrypto.perform {
-                let epoch = try $0.conversationEpoch(conversationId: subconversationGroupID.bytes)
+            return try await coreCrypto.perform {
+                let epoch = try await $0.conversationEpoch(conversationId: subconversationGroupID.data)
 
-                let keyData = try $0.exportSecretKey(
-                    conversationId: subconversationGroupID.bytes,
+                let keyData = try await $0.exportSecretKey(
+                    conversationId: subconversationGroupID.data,
                     keyLength: keyLength
-                ).data
+                )
 
-                let conversationMembers = try $0.getClientIds(conversationId: parentGroupID.bytes)
-                    .compactMap { MLSClientID(data: $0.data) }
+                let conversationMembers = try await $0.getClientIds(conversationId: parentGroupID.data)
+                    .compactMap { MLSClientID(data: $0) }
 
-                let subconversationMembers = try $0.getClientIds(conversationId: subconversationGroupID.bytes)
-                    .compactMap { MLSClientID(data: $0.data) }
+                let subconversationMembers = try await $0.getClientIds(conversationId: subconversationGroupID.data)
+                    .compactMap { MLSClientID(data: $0) }
 
                 let members = conversationMembers.map {
                     MLSConferenceInfo.Member(
@@ -321,11 +301,11 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         do {
-            return try coreCrypto.perform {
-                return try $0.getClientIds(conversationId: subconversationGroupID.bytes).compactMap {
-                    MLSClientID(data: $0.data)
+            return try await coreCrypto.perform {
+                try await $0.getClientIds(conversationId: subconversationGroupID.data).compactMap {
+                    MLSClientID(data: $0)
                 }
             }
         } catch {
@@ -370,18 +350,26 @@ public final class MLSService: MLSServiceInterface {
             withTimeInterval: .oneDay,
             repeats: true
         ) { [weak self] _ in
-            self?.updateKeyMaterialForAllStaleGroupsIfNeeded()
+            guard
+                let self,
+                let context = context,
+                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true else {
+                self?.logger.info("Skip periodic key material check since MLS is not enabled")
+                return
+            }
+
+            Task {
+                await self.updateKeyMaterialForAllStaleGroupsIfNeeded()
+            }
         }
     }
 
-    private func updateKeyMaterialForAllStaleGroupsIfNeeded() {
+    public func updateKeyMaterialForAllStaleGroupsIfNeeded() async {
         guard lastKeyMaterialUpdateCheck.ageInDays >= 1 else { return }
 
-        Task {
-            await updateKeyMaterialForAllStaleGroups()
-            lastKeyMaterialUpdateCheck = Date()
-            delegate?.mlsServiceDidUpdateKeyMaterialForAllGroups()
-        }
+        await updateKeyMaterialForAllStaleGroups()
+        lastKeyMaterialUpdateCheck = Date()
+        delegate?.mlsServiceDidUpdateKeyMaterialForAllGroups()
     }
 
     private func updateKeyMaterialForAllStaleGroups() async {
@@ -429,24 +417,26 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func createGroup(for groupID: MLSGroupID) throws {
+    public func createGroup(for groupID: MLSGroupID) async throws {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
+        await fetchBackendPublicKeys()
 
         do {
             let config = ConversationConfiguration(
-                ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
+                ciphersuite: CiphersuiteName.default.rawValue,
                 externalSenders: backendPublicKeys.ed25519Keys,
-                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil),
+                perDomainTrustAnchors: []
             )
 
-            try coreCrypto.perform {
-                try $0.createConversation(
-                    conversationId: groupID.bytes,
+            try await coreCrypto.perform {
+                try await $0.createConversation(
+                    conversationId: groupID.data,
                     creatorCredentialType: .basic,
                     config: config
                 )
             }
-        } catch let error {
+        } catch {
             logger.warn("failed to create group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw MLSGroupCreationError.failedToCreateGroup
         }
@@ -454,23 +444,21 @@ public final class MLSService: MLSServiceInterface {
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
     }
 
-    public func createSelfGroup(for groupID: MLSGroupID) {
-        guard let context = context else {
-            return
-        }
+    public func createSelfGroup(for groupID: MLSGroupID) async {
+        guard let context else { return }
 
         do {
-            try createGroup(for: groupID)
-            let selfUser = ZMUser.selfUser(in: context)
-            let mlsSelfUser = MLSUser(from: selfUser)
+            try await self.createGroup(for: groupID)
+            let mlsSelfUser = await context.perform {
+                let selfUser = ZMUser.selfUser(in: context)
+                return MLSUser(from: selfUser)
+            }
 
-            Task {
-                do {
-                    try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
-                } catch MLSAddMembersError.noInviteesToAdd {
-                    logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
-                    try await updateKeyMaterial(for: groupID)
-                }
+            do {
+                try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
+            } catch MLSAddMembersError.noInviteesToAdd {
+                logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
+                try await updateKeyMaterial(for: groupID)
             }
         } catch {
             logger.error("create group for self conversation failed: \(error.localizedDescription)")
@@ -508,13 +496,12 @@ public final class MLSService: MLSServiceInterface {
             logger.info("adding members to group (\(groupID.safeForLoggingDescription)) with users: \(users)")
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
             let keyPackages = try await claimKeyPackages(for: users)
-            let invitees = keyPackages.map(Invitee.init(from:))
 
-            guard invitees.count > 0 else {
+            guard keyPackages.count > 0 else {
                 throw MLSAddMembersError.noInviteesToAdd
             }
 
-            let events = try await mlsActionExecutor.addMembers(invitees, to: groupID)
+            let events = try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
             await conversationEventProcessor.processConversationEvents(events)
         } catch {
             logger.warn("failed to add members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
@@ -583,7 +570,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("removing members from group (\(groupID.safeForLoggingDescription)), members: \(clientIds)")
             guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
-            let clientIds = clientIds.compactMap { $0.rawValue.utf8Data?.bytes }
+            let clientIds = clientIds.compactMap { $0.rawValue.utf8Data }
             let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
             await conversationEventProcessor.processConversationEvents(events)
         } catch {
@@ -594,10 +581,10 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Remove group
 
-    public func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) async {
         logger.info("wiping group (\(groupID.safeForLoggingDescription))")
         do {
-            try coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
+            try await coreCrypto.perform { try await $0.wipeConversation(conversationId: groupID.data) }
         } catch {
             logger.warn("failed to wipe group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
         }
@@ -618,63 +605,70 @@ public final class MLSService: MLSServiceInterface {
     /// Checks how many key packages are available on the backend and
     /// generates new ones if there are less than 50% of the target unclaimed key package count..
 
-    public func uploadKeyPackagesIfNeeded() {
+    public func uploadKeyPackagesIfNeeded() async {
         logger.info("uploading key packages if needed")
 
         func logWarn(abortedWithReason reason: String) {
             logger.warn("aborting key packages upload: \(reason)")
         }
 
-        guard shouldQueryUnclaimedKeyPackagesCount() else { return }
+        guard await shouldQueryUnclaimedKeyPackagesCount() else { return }
 
-        guard let context = context else {
+        guard let context else {
             return logWarn(abortedWithReason: "missing context")
         }
 
-        guard let clientID = ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier else {
+        guard let clientID = await context.perform({ ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier }) else {
             return logWarn(abortedWithReason: "failed to get client ID")
         }
 
-        Task {
-            do {
-                let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
-                logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
+        do {
+            let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
+            logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
-                userDefaults.lastKeyPackageCountDate = Date()
+            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
 
-                guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
-                    logger.info("no need to upload new key packages yet")
-                    return
-                }
-
-                let amount = UInt32(targetUnclaimedKeyPackageCount)
-                let keyPackages = try generateKeyPackages(amountRequested: amount)
-                try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
-                logger.info("success: uploaded key packages for client \(clientID)")
-            } catch let error {
-                logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
+            guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
+                logger.info("no need to upload new key packages yet")
+                return
             }
+
+            let amount = UInt32(targetUnclaimedKeyPackageCount)
+            let keyPackages = try await generateKeyPackages(amountRequested: amount)
+            try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
+            logger.info("success: uploaded key packages for client \(clientID)")
+        } catch let error {
+            logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
         }
     }
 
-    private func shouldQueryUnclaimedKeyPackagesCount() -> Bool {
+    private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
-            let estimatedLocalKeyPackageCount = try coreCrypto.perform {
-                try $0.clientValidKeypackagesCount(ciphersuite: defaultCipherSuite.rawValue)
+            let estimatedLocalKeyPackageCount = try await coreCrypto.perform {
+                try await $0.clientValidKeypackagesCount(ciphersuite: CiphersuiteName.default.rawValue, credentialType: .basic)
             }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
-            let lastCheckWasMoreThan24Hours = userDefaults.hasMoreThan24HoursPassedSinceLastCheck
 
-            guard lastCheckWasMoreThan24Hours || shouldCountRemainingKeyPackages else {
+            guard hasMoreThan24HoursPassedSinceLastCheck || shouldCountRemainingKeyPackages else {
                 logger.info("last check was recent and there are enough unclaimed key packages. not uploading.")
                 return false
             }
 
             return true
 
-        } catch let error {
+        } catch {
             logger.warn("failed to get valid key packages count with error: \(String(describing: error))")
             return true
+        }
+    }
+
+    private var hasMoreThan24HoursPassedSinceLastCheck: Bool {
+        guard let storedDate = userDefaults.date(forKey: .keyPackageQueriedTime) else { return true }
+
+        if Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour > 24 {
+            return true
+        } else {
+            return false
         }
     }
 
@@ -698,13 +692,13 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func generateKeyPackages(amountRequested: UInt32) throws -> [String] {
+    private func generateKeyPackages(amountRequested: UInt32) async throws -> [String] {
         logger.info("generating \(amountRequested) key packages")
 
-        var keyPackages = [[Byte]]()
+        var keyPackages = [Data]()
 
         do {
-            keyPackages = try coreCrypto.perform { try $0.clientKeypackages(ciphersuite: defaultCipherSuite.rawValue, amountRequested: amountRequested) }
+            keyPackages = try await coreCrypto.perform { try await $0.clientKeypackages(ciphersuite: CiphersuiteName.default.rawValue, credentialType: .basic, amountRequested: amountRequested) }
 
         } catch let error {
             logger.warn("failed to generate new key packages: \(String(describing: error))")
@@ -716,7 +710,7 @@ public final class MLSService: MLSServiceInterface {
             throw MLSKeyPackagesError.failedToGenerateKeyPackages
         }
 
-        return keyPackages.map { $0.data.base64EncodedString() }
+        return keyPackages.map { $0.base64EncodedString() }
     }
 
     private func uploadKeyPackages(
@@ -747,34 +741,35 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    public func conversationExists(groupID: MLSGroupID) -> Bool {
-        let result = coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }
+    public func conversationExists(groupID: MLSGroupID) async -> Bool {
+        // TODO: [jacob] let it throw
+        let result = (try? await coreCrypto.perform { await $0.conversationExists(conversationId: groupID.data) }) ?? false
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
     }
 
-    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
         logger.info("processing welcome message")
 
-        guard let messageBytes = welcomeMessage.base64DecodedBytes else {
-            logger.error("failed to convert welcome message to bytes")
+        guard let messageData = welcomeMessage.base64DecodedData else {
+            logger.error("failed to convert welcome message to data")
             throw MLSWelcomeMessageProcessingError.failedToConvertMessageToBytes
         }
 
         do {
-            let groupIDBytes = try coreCrypto.perform {
-                try $0.processWelcomeMessage(
-                    welcomeMessage: messageBytes,
+            let groupIDData = try await coreCrypto.perform {
+                try await $0.processWelcomeMessage(
+                    welcomeMessage: messageData,
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
                 )
             }
-            let groupID = MLSGroupID(groupIDBytes)
-            uploadKeyPackagesIfNeeded()
+            let groupID = MLSGroupID(groupIDData)
+            await uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             return groupID
 
         } catch {
-            logger.error("failed to process welcome message: \(String(describing: error))")
+            logger.error("failed to process welcome message: \(String(reflecting: error))")
             throw MLSWelcomeMessageProcessingError.failedToProcessMessage
         }
     }
@@ -787,8 +782,8 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        if !conversationExists(groupID: groupID) {
-            try createGroup(for: groupID)
+        if await !conversationExists(groupID: groupID) {
+            try await createGroup(for: groupID)
         }
 
         let mlsUser = await context.perform {
@@ -816,15 +811,13 @@ public final class MLSService: MLSServiceInterface {
     ///
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
     /// and sends external commits to join these groups
-    public func performPendingJoins() {
+    public func performPendingJoins() async throws {
         guard let context = context else {
             return
         }
-
-        generatePendingJoins(in: context).forEach { pendingJoin in
-            Task {
-                try await joinByExternalCommit(groupID: pendingJoin.groupID)
-            }
+        let pendingJoins = await context.perform { self.generatePendingJoins(in: context) }
+        for pendingJoin in pendingJoins {
+            try await joinByExternalCommit(groupID: pendingJoin.groupID)
         }
 
         groupsPendingJoin.removeAll()
@@ -854,34 +847,31 @@ public final class MLSService: MLSServiceInterface {
 
     /// Fetches and re-joins MLS conversations that are out of sync
     /// (where the conversation object's epoch differs from the corresponding MLS group epoch)
-    public func repairOutOfSyncConversations() {
+    public func repairOutOfSyncConversations() async {
         guard let context = self.context else { return }
 
-        let outOfSync = outOfSyncConversations(in: context)
+        let outOfSyncConversationInfos = await outOfSyncConversations(in: context)
 
-        logger.info("found \(outOfSync.count) conversations out of sync")
+        logger.info("found \(outOfSyncConversationInfos.count) conversations out of sync")
 
-        outOfSync.forEach { conversation in
-            guard let groupID = conversation.mlsGroupID else {
-                return
-            }
+        for conversationInfo in outOfSyncConversationInfos {
 
-            launchGroupRepairTaskIfNotInProgress(for: groupID) {
+            await launchGroupRepairTaskIfNotInProgress(for: conversationInfo.mlsGroupId) {
                 do {
                     try await self.joinGroupAndAppendGapSystemMessage(
-                        groupID: groupID,
-                        conversation: conversation,
+                        groupID: conversationInfo.mlsGroupId,
+                        conversation: conversationInfo.conversation,
                         context: context
                     )
                 } catch {
-                    self.logger.warn("failed to repair out of sync conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
+                    self.logger.warn("failed to repair out of sync conversation (\(conversationInfo.mlsGroupId.safeForLoggingDescription)). error: \(String(reflecting: error))")
                 }
             }
         }
     }
 
-    func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) {
-        launchGroupRepairTaskIfNotInProgress(for: groupID) {
+    func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) async {
+        await launchGroupRepairTaskIfNotInProgress(for: groupID) {
             await self.fetchAndRepairGroup(with: groupID)
         }
     }
@@ -915,7 +905,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard isConversationOutOfSync(
+            guard await isConversationOutOfSync(
                 conversationInfo.conversation,
                 context: context
             ) else {
@@ -982,7 +972,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard isConversationOutOfSync(
+            guard await isConversationOutOfSync(
                 conversationInfo.conversation,
                 subgroup: subgroup,
                 context: context
@@ -1005,28 +995,38 @@ public final class MLSService: MLSServiceInterface {
     private func launchGroupRepairTaskIfNotInProgress(
         for groupID: MLSGroupID,
         repairOperation: @escaping () async -> Void
-    ) {
-        Task {
-            guard await !groupsBeingRepaired.contains(group: groupID) else {
-                return
-            }
-
-            await groupsBeingRepaired.insert(group: groupID)
-            await repairOperation()
-            await groupsBeingRepaired.remove(group: groupID)
+    ) async {
+        guard await !groupsBeingRepaired.contains(group: groupID) else {
+            return
         }
+
+        await groupsBeingRepaired.insert(group: groupID)
+        await repairOperation()
+        await groupsBeingRepaired.remove(group: groupID)
     }
 
-    private func outOfSyncConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
-        return coreCrypto.perform { coreCrypto in
-            return ZMConversation.fetchMLSConversations(in: context).filter {
-                isConversationOutOfSync(
+    typealias OutOfSyncConversationInfo = (mlsGroupId: MLSGroupID, conversation: ZMConversation)
+
+    private func outOfSyncConversations(in context: NSManagedObjectContext) async -> [OutOfSyncConversationInfo] {
+
+        let conversations: [ZMConversation] = (try? await coreCrypto.perform { coreCrypto in
+            let mlsConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
+            return await mlsConversations.asyncFilter {
+                await isConversationOutOfSync(
                     $0,
                     coreCrypto: coreCrypto,
                     context: context
-                )
+                ) == true
             }
-        }
+        }) ?? [] // TODO: [jacob] let it throw
+
+        return await context.perform { conversations.compactMap {
+            if let groupId = $0.mlsGroupID {
+                return (groupId, $0)
+            } else {
+                return nil
+            }
+        } }
     }
 
     private func isConversationOutOfSync(
@@ -1034,13 +1034,11 @@ public final class MLSService: MLSServiceInterface {
         subgroup: MLSSubgroup? = nil,
         coreCrypto: CoreCryptoProtocol,
         context: NSManagedObjectContext
-    ) -> Bool {
-        var isOutOfSync: Bool = false
+    ) async -> Bool {
+        var groupID: MLSGroupID?
+        var epoch: UInt64?
 
-        context.performAndWait {
-            var groupID: MLSGroupID?
-            var epoch: UInt64
-
+        await context.perform {
             if let subgroup = subgroup {
                 groupID = subgroup.groupID
                 epoch = UInt64(subgroup.epoch)
@@ -1048,35 +1046,33 @@ public final class MLSService: MLSServiceInterface {
                 groupID = conversation.mlsGroupID
                 epoch = conversation.epoch
             }
-
-            guard let groupID = groupID else { return }
-
-            do {
-                let localEpoch = try coreCrypto.conversationEpoch(conversationId: groupID.bytes)
-                isOutOfSync = localEpoch != epoch
-                logger.info("epochs(remote: \(epoch), local: \(localEpoch)) for (\(groupID.safeForLoggingDescription))")
-            } catch {
-                logger.info("cannot resolve conversation epoch \(String(describing: error)) for (\(groupID.safeForLoggingDescription))")
-                return
-            }
         }
+        guard let groupID, let epoch else { return false }
 
-        return isOutOfSync
+        do {
+            let localEpoch = try await coreCrypto.conversationEpoch(conversationId: groupID.data)
+
+            logger.info("epochs(remote: \(epoch), local: \(localEpoch)) for (\(groupID.safeForLoggingDescription))")
+            return localEpoch != epoch
+        } catch {
+            logger.info("cannot resolve conversation epoch \(String(describing: error)) for (\(groupID.safeForLoggingDescription))")
+            return false
+        }
     }
 
     private func isConversationOutOfSync(
         _ conversation: ZMConversation,
         subgroup: MLSSubgroup? = nil,
         context: NSManagedObjectContext
-    ) -> Bool {
-        return coreCrypto.perform {
-            return isConversationOutOfSync(
+    ) async -> Bool {
+        return (try? await coreCrypto.perform {
+            return await isConversationOutOfSync(
                 conversation,
                 subgroup: subgroup,
                 coreCrypto: $0,
                 context: context
             )
-        }
+        }) ?? false // TODO: [jacob] let it throw
     }
 
     // MARK: - External Proposals
@@ -1085,10 +1081,10 @@ public final class MLSService: MLSServiceInterface {
         logger.info("requesting to join group (\(groupID.safeForLoggingDescription)")
 
         do {
-            let proposal = try coreCrypto.perform {
-                try $0.newExternalAddProposal(conversationId: groupID.bytes,
+            let proposal = try await coreCrypto.perform {
+                try await $0.newExternalAddProposal(conversationId: groupID.data,
                                               epoch: epoch,
-                                              ciphersuite: defaultCipherSuite.rawValue,
+                                            ciphersuite: CiphersuiteName.default.rawValue,
                                               credentialType: .basic)
             }
 
@@ -1105,14 +1101,14 @@ public final class MLSService: MLSServiceInterface {
         case failedToSendProposal
     }
 
-    private func sendProposal(_ bytes: [Byte], groupID: MLSGroupID) async throws {
+    private func sendProposal(_ data: Data, groupID: MLSGroupID) async throws {
         do {
             logger.info("sending proposal in group (\(groupID.safeForLoggingDescription))")
 
             guard let context = context else { return }
 
             let updateEvents = try await actionsProvider.sendMessage(
-                bytes.data,
+                data,
                 in: context.notificationContext
             )
 
@@ -1198,7 +1194,7 @@ public final class MLSService: MLSServiceInterface {
                     groupInfo: groupInfo
                 )
 
-                context.performAndWait {
+                await context.perform {
                     parentConversationInfo.conversation.mlsStatus = .ready
                 }
             }
@@ -1238,10 +1234,10 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Encrypt message
 
     public func encrypt(
-        message: [Byte],
+        message: Data,
         for groupID: MLSGroupID
-    ) throws -> [Byte] {
-        return try encryptionService.encrypt(
+    ) async throws -> Data {
+        return try await encryptionService.encrypt(
             message: message,
             for: groupID
         )
@@ -1253,17 +1249,17 @@ public final class MLSService: MLSServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult? {
+    ) async throws -> MLSDecryptResult? {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
         do {
-            return try decryptionService.decrypt(
+            return try await decryptionService.decrypt(
                 message: message,
                 for: groupID,
                 subconversationType: subconversationType
             )
         } catch DecryptionError.wrongEpoch {
-            fetchAndRepairGroupIfPossible(with: groupID)
+            await fetchAndRepairGroupIfPossible(with: groupID)
             throw DecryptionError.wrongEpoch
         } catch {
             throw error
@@ -1379,7 +1375,7 @@ public final class MLSService: MLSServiceInterface {
             await conversationEventProcessor.processConversationEvents(events)
             clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
-        } catch MLSActionExecutor.Error.noPendingProposals {
+        } catch CommitError.noPendingProposals {
             logger.info("no proposals to commit in group (\(groupID.safeForLoggingDescription))...")
             clearPendingProposalCommitDate(for: groupID)
         } catch {
@@ -1405,41 +1401,40 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         operation: @escaping () async throws -> Void
     ) async throws {
-        typealias Error = MLSActionExecutor.Error
 
         do {
             try await operation()
 
-        } catch Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
+        } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
-        } catch Error.failedToSendCommit(recovery: .retryAfterQuickSync) {
+        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync) {
             logger.warn("failed to send commit, syncing then retrying operation...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, retying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch Error.failedToSendCommit(recovery: .retryAfterRepairingGroup) {
+        } catch CommitError.failedToSendCommit(recovery: .retryAfterRepairingGroup) {
             logger.warn("failed to send commit, repairing group then retrying operation...")
             await fetchAndRepairGroup(with: groupID)
             logger.info("repair finished, retrying operation...")
             try await operation()
 
-        } catch Error.failedToSendCommit(recovery: .giveUp) {
+        } catch CommitError.failedToSendCommit(recovery: .giveUp) {
             logger.warn("failed to send commit, giving up...")
             // TODO: [John] inform user
-            throw Error.failedToSendCommit(recovery: .giveUp)
+            throw CommitError.failedToSendCommit(recovery: .giveUp)
 
-        } catch Error.failedToSendExternalCommit(recovery: .retry) {
+        } catch ExternalCommitError.failedToSendCommit(recovery: .retry) {
             logger.warn("failed to send external commit, retrying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch Error.failedToSendExternalCommit(recovery: .giveUp) {
+        } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp) {
             logger.warn("failed to send external commit, giving up...")
-            throw MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .giveUp)
+            throw ExternalCommitError.failedToSendCommit(recovery: .giveUp)
 
         }
     }
@@ -1523,7 +1518,7 @@ public final class MLSService: MLSServiceInterface {
     private func createSubgroup(with id: MLSGroupID) async throws {
         do {
             logger.info("creating subgroup with id (\(id.safeForLoggingDescription))")
-            try createGroup(for: id)
+            try await createGroup(for: id)
             try await updateKeyMaterial(for: id)
         } catch {
             logger.error("failed to create subgroup with id (\(id.safeForLoggingDescription)): \(String(describing: error))")
@@ -1566,18 +1561,6 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func getMembers(for groupID: MLSGroupID) throws -> [MLSClientID] {
-        do {
-            logger.info("getting members for group (\(groupID.safeForLoggingDescription))")
-            return try coreCrypto
-                .perform { try $0.getClientIds(conversationId: groupID.bytes) }
-                .compactMap { MLSClientID(data: Data($0)) }
-        } catch {
-            logger.error("failed to get members for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
-            throw error
-        }
-    }
-
     public func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID,
@@ -1598,7 +1581,7 @@ public final class MLSService: MLSServiceInterface {
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
-            conversationExists(groupID: subConversationGroupID)
+            await conversationExists(groupID: subConversationGroupID)
         {
             try await leaveSubconversation(id: subConversationGroupID)
         } else if let context = context?.notificationContext {
@@ -1660,8 +1643,8 @@ public final class MLSService: MLSServiceInterface {
                 parentGroupID: parentGroupID
             )
 
-            try coreCrypto.perform {
-                try $0.wipeConversation(conversationId: subconversationGroupID.bytes)
+            try await coreCrypto.perform {
+                try await $0.wipeConversation(conversationId: subconversationGroupID.data)
             }
         } catch {
             logger.error("failed to leave subconversation (\(subconversationType)) with parent (\(parentQualifiedID)): \(String(describing: error))")
@@ -1752,99 +1735,11 @@ private extension Date {
 
 }
 
-extension Invitee {
-
-    init(from keyPackage: KeyPackage) {
-        let id = MLSClientID(
-            userID: keyPackage.userID.uuidString,
-            clientID: keyPackage.client,
-            domain: keyPackage.domain
-        )
-
-        guard
-            let idData = id.rawValue.utf8Data,
-            let keyPackageData = Data(base64Encoded: keyPackage.keyPackage)
-        else {
-            fatalError("Couldn't create Invitee from key package: \(keyPackage)")
-        }
-
-        self.init(
-            id: idData.bytes,
-            kp: keyPackageData.bytes
-        )
-    }
-
-}
-
 // sourcery: AutoMockable
 public protocol ConversationEventProcessorProtocol {
 
     func processConversationEvents(_ events: [ZMUpdateEvent]) async
     func processPayload(_ payload: ZMTransportData)
-}
-
-private extension UserDefaults {
-
-    enum Keys {
-        static let keyPackageQueriedTime = "keyPackageQueriedTime"
-    }
-
-    var lastKeyPackageCountDate: Date? {
-
-        get { object(forKey: Keys.keyPackageQueriedTime) as? Date }
-        set { set(newValue, forKey: Keys.keyPackageQueriedTime) }
-
-    }
-
-    var hasMoreThan24HoursPassedSinceLastCheck: Bool {
-
-        guard let storedDate = lastKeyPackageCountDate else { return true }
-
-        if Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour > 24 {
-            return true
-        } else {
-            return false
-        }
-
-    }
-}
-
-extension UserDefaults {
-    func test_setLastKeyPackageCountDate(_ date: Date) {
-        lastKeyPackageCountDate = date
-    }
-}
-
-extension CiphersuiteName {
-
-    var rawValue: UInt16 {
-        switch self {
-        case .mls128Dhkemx25519Aes128gcmSha256Ed25519:
-            return 1
-
-        case .mls128Dhkemp256Aes128gcmSha256P256:
-            return 2
-
-        case .mls128Dhkemx25519Chacha20poly1305Sha256Ed25519:
-            return 3
-
-        case .mls256Dhkemx448Aes256gcmSha512Ed448:
-            return 4
-
-        case .mls256Dhkemp521Aes256gcmSha512P521:
-            return 5
-
-        case .mls256Dhkemx448Chacha20poly1305Sha512Ed448:
-            return 6
-
-        case .mls256Dhkemp384Aes256gcmSha384P384:
-            return 7
-
-        @unknown default:
-            fatalError("unsupported value of 'CiphersuiteName'!")
-        }
-    }
-
 }
 
 actor GroupsBeingRepaired {

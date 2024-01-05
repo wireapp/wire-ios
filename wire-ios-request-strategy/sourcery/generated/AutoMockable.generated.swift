@@ -3,7 +3,7 @@
 
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -158,6 +158,29 @@ public class MockMessageAPI: MessageAPI {
     public init() {}
 
 
+    // MARK: - broadcastProteusMessage
+
+    public var broadcastProteusMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastProteusMessageMessage_MockError: Error?
+    public var broadcastProteusMessageMessage_MockMethod: ((any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
+    public var broadcastProteusMessageMessage_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
+
+    public func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        broadcastProteusMessageMessage_Invocations.append(message)
+
+        if let error = broadcastProteusMessageMessage_MockError {
+            throw error
+        }
+
+        if let mock = broadcastProteusMessageMessage_MockMethod {
+            return try await mock(message)
+        } else if let mock = broadcastProteusMessageMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `broadcastProteusMessageMessage`")
+        }
+    }
+
     // MARK: - sendProteusMessage
 
     public var sendProteusMessageMessageConversationID_Invocations: [(message: any ProteusMessage, conversationID: QualifiedID)] = []
@@ -260,6 +283,26 @@ public class MockMessageSenderInterface: MessageSenderInterface {
         try await mock(message)
     }
 
+    // MARK: - broadcastMessage
+
+    public var broadcastMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastMessageMessage_MockError: Error?
+    public var broadcastMessageMessage_MockMethod: ((any ProteusMessage) async throws -> Void)?
+
+    public func broadcastMessage(message: any ProteusMessage) async throws {
+        broadcastMessageMessage_Invocations.append(message)
+
+        if let error = broadcastMessageMessage_MockError {
+            throw error
+        }
+
+        guard let mock = broadcastMessageMessage_MockMethod else {
+            fatalError("no mock for `broadcastMessageMessage`")
+        }
+
+        try await mock(message)
+    }
+
 }
 public class MockPrekeyAPI: PrekeyAPI {
 
@@ -302,19 +345,16 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
     // MARK: - establishSessions
 
     public var establishSessionsFromWithContext_Invocations: [(payload: Payload.PrekeyByQualifiedUserID, selfClient: UserClient, context: NSManagedObjectContext)] = []
-    public var establishSessionsFromWithContext_MockMethod: ((Payload.PrekeyByQualifiedUserID, UserClient, NSManagedObjectContext) -> Bool)?
-    public var establishSessionsFromWithContext_MockValue: Bool?
+    public var establishSessionsFromWithContext_MockMethod: ((Payload.PrekeyByQualifiedUserID, UserClient, NSManagedObjectContext) async -> Void)?
 
-    public func establishSessions(from payload: Payload.PrekeyByQualifiedUserID, with selfClient: UserClient, context: NSManagedObjectContext) -> Bool {
+    public func establishSessions(from payload: Payload.PrekeyByQualifiedUserID, with selfClient: UserClient, context: NSManagedObjectContext) async {
         establishSessionsFromWithContext_Invocations.append((payload: payload, selfClient: selfClient, context: context))
 
-        if let mock = establishSessionsFromWithContext_MockMethod {
-            return mock(payload, selfClient, context)
-        } else if let mock = establishSessionsFromWithContext_MockValue {
-            return mock
-        } else {
+        guard let mock = establishSessionsFromWithContext_MockMethod else {
             fatalError("no mock for `establishSessionsFromWithContext`")
         }
+
+        await mock(payload, selfClient, context)
     }
 
 }

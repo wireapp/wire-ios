@@ -21,26 +21,35 @@ import OSLog
 
 struct SystemLogger: LoggerProtocol {
     func debug(_ message: LogConvertible, attributes: LogAttributes?) {
-        os_log(.debug, log: .default, "\(message.logDescription)")
+        log(message, attributes: attributes, osLogType: .debug)
     }
 
     func info(_ message: LogConvertible, attributes: LogAttributes?) {
-        os_log(.info, log: .default, "\(message.logDescription)")
+        log(message, attributes: attributes, osLogType: .info)
     }
 
     func notice(_ message: LogConvertible, attributes: LogAttributes?) {
-        os_log(.default, log: .default, "\(message.logDescription)")
+        log(message, attributes: attributes, osLogType: .default)
     }
 
     func warn(_ message: LogConvertible, attributes: LogAttributes?) {
-        os_log(.fault, log: .default, "\(message.logDescription)")
+        log(message, attributes: attributes, osLogType: .fault)
     }
 
     func error(_ message: LogConvertible, attributes: LogAttributes?) {
-        os_log(.error, log: .default, "\(message.logDescription)")
+        log(message, attributes: attributes, osLogType: .error)
     }
 
     func critical(_ message: LogConvertible, attributes: LogAttributes?) {
-        os_log(.fault, log: .default, "\(message.logDescription)")
+        log(message, attributes: attributes, osLogType: .fault)
+    }
+
+    private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {
+
+        #if DEBUG
+            os_log(osLogType, log: .default, "%{public}@", "\(message.logDescription)")
+        #else
+            os_log(osLogType, log: .default, "\(message.logDescription)")
+        #endif
     }
 }

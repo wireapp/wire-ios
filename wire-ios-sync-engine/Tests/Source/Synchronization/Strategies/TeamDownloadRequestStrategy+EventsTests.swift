@@ -24,15 +24,12 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
 
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
-        mockSyncStateDelegate = MockSyncStateDelegate()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            syncStateDelegate: mockSyncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
         sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
@@ -46,7 +43,6 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
     override func tearDown() {
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         mockSyncStatus = nil
         sut = nil
         super.tearDown()
@@ -478,7 +474,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         processEvent(fromPayload: payload)
 
         // then
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             guard let user = ZMUser.fetch(with: userId, in: uiMOC) else { return XCTFail("No user") }
             guard let team = Team.fetch(with: teamId, in: uiMOC) else { return XCTFail("No team") }
             guard let member = user.membership else { return XCTFail("No member") }

@@ -23,8 +23,9 @@ final class MessageDependencyResolverTests: MessagingTestBase {
     func testThatGivenMessageWithoutDependencies_thenDontWait() throws {
         // given
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
@@ -42,8 +43,9 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             groupConversation.needsToBeUpdatedFromBackend = true
         }
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
@@ -52,8 +54,8 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             // Sleeping in order to hit the code path where we start observing RequestAvailable
             try await Task.sleep(nanoseconds: 250_000_000)
 
-            syncMOC.performAndWait {
-                groupConversation.needsToBeUpdatedFromBackend = false
+            await syncMOC.perform {
+                self.groupConversation.needsToBeUpdatedFromBackend = false
             }
 
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)

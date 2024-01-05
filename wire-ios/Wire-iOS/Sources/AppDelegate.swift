@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,7 +64,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FileBackupExcluderOperation(),
         BackendInfoOperation(),
         FontSchemeOperation(),
-        VoIPPushHelperOperation(),
         CleanUpDebugStateOperation()
     ]
     private var appStateCalculator = AppStateCalculator()
@@ -130,6 +129,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         voIPPushManager.registerForVoIPPushes()
 
+        temporaryFilesService.removeTemporaryData()
+
         zmLog.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
 
         NotificationCenter.default.addObserver(self,
@@ -166,7 +167,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillResignActive(_ application: UIApplication) {
         zmLog.info("applicationWillResignActive:  (applicationState = \(application.applicationState.rawValue))")
-        temporaryFilesService.removeTemporaryData()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -185,7 +185,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         zmLog.info("applicationWillTerminate:  (applicationState = \(application.applicationState.rawValue))")
-        temporaryFilesService.removeTemporaryData()
     }
 
     func application(_ application: UIApplication,

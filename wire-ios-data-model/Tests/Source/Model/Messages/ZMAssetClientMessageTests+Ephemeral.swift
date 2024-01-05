@@ -221,14 +221,13 @@ extension ZMAssetClientMessageTests_Ephemeral {
     }
 
     func testThatItStartsAObuscationTimerForImageAssetMessagesIfTheMessageIsAMessageOfTheCurrentUser() throws {
-
         try syncMOC.performAndWait {
             // given
             syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             syncConversation.lastReadServerTimeStamp = Date()
             let sender = ZMUser.selfUser(in: syncMOC)
 
-            let fileMetadata = self.createFileMetadata()
+            _ = self.createFileMetadata()
             let message = appendImageMessage(to: syncConversation)
             message.sender = sender
             try message.setUnderlyingMessage(GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()), nonce: message.nonce!))

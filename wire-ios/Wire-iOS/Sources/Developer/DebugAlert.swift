@@ -93,10 +93,10 @@ final class DebugAlert {
                                                   email: String,
                                                   from controller: UIViewController,
                                                   sourceView: UIView? = nil) {
-        let alert = UIAlertController(title: "self.settings.technical_report_section.title".localized,
-                                      message: "self.settings.technical_report.no_mail_alert".localized + email,
+        let alert = UIAlertController(title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
+                                      message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
                                       alertAction: .cancel())
-        alert.addAction(UIAlertAction(title: "general.ok".localized, style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
             activity.configPopover(pointToView: sourceView ?? controller.view)
 
@@ -144,20 +144,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         mailVC.setToRecipients([mail])
         mailVC.setSubject("iOS logs from \(userDescription)")
         mailVC.setMessageBody(message, isHTML: false)
-
-        if let currentLog = ZMSLog.currentZipLog {
-            mailVC.addAttachmentData(currentLog, mimeType: "application/zip", fileName: "current.log.zip")
-        }
-
-        ZMSLog.previousZipLogURLs.forEach { url in
-            do {
-                let data = try Data(contentsOf: url)
-                mailVC.addAttachmentData(data, mimeType: "application/zip", fileName: url.lastPathComponent)
-            } catch {
-                // ignore error: previous log files can be empty or can not exist.
-            }
-        }
-
+        mailVC.attachLogs()
         mailVC.mailComposeDelegate = alert
         alert.mailViewController = mailVC
 

@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Dotknij, aby wysłać";
 "conversation.input_bar.audio_message.too_long.title" = "Nagrywanie zatrzymane";
 "conversation.input_bar.audio_message.too_long.message" = "Wiadomości audio są ograniczone do %@.";
+"conversation.ping.many_participants_confirmation.title" = "Are you sure you want to ping %d people?";
+"conversation.ping.action.title" = "Ping";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "Rozmiar pliku wiadomości audio jest ograniczony do %@.";
 
@@ -560,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "Ta rozmowa jest pod legalnym przechowywaniem";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "Legalne przechowywanie zostało wyłączone dla tej rozmowy";
 
 "content.system.message_legal_hold.learn_more" = "Dowiedz się więcej";
@@ -990,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Tematy legalnego przechowywania";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "Legalne Przechowywanie";
 "legalhold.header.other_description" = "Legalne Przechowywanie zostało aktywowane dla co najmniej jednej osoby w tej rozmowie.\nWszystkie wiadomości zostaną zachowane dla przyszłego dostępu, w tym usunięte, edytowane i czasowe wiadomości.";
 "legalhold.header.self_description" = "Legalne Przechowywanie zostało aktywowane dla Twojego konta.\nWszystkie wiadomości zostaną zachowane dla przyszłego dostępu, w tym usunięte, edytowane i czasowe wiadomości.\nTwoi rozmówcy zostaną poinformowani o nagraniu.";
@@ -1742,10 +1744,10 @@
 "jailbrokendevice.alert.message" = "Ze względów bezpieczeństwa nie można użyć Wire na tym urządzeniu. Wszelkie istniejące dane zostały usunięte.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Zbyt mało miejsca";
-"databaseloadingfailure.alert.message" = "Nie można załadować bazy danych z powodu niewystarczającej ilości pamięci. Przejrzyj użycie pamięci urządzenia i spróbuj ponownie.";
-"databaseloadingfailure.alert.settings" = "Przejdź do Ustawień";
-"databaseloadingfailure.alert.delete_database" = "Usuń bazę danych";
+"databaseloadingfailure.alert.title" = "Update Data storage";
+"databaseloadingfailure.alert.message" = "The database could not be loaded.\n Error: %@";
+"databaseloadingfailure.alert.save-backup" = "Save my data";
+"databaseloadingfailure.alert.delete_database" = "Clear my data and continue";
 "databaseloadingfailure.alert.delete_database.message" = "Usuwając bazę danych, wszystkie lokalne dane i wiadomości dla tego konta zostaną trwale usunięte.";
 "databaseloadingfailure.alert.delete_database.continue" = "Kontynuuj";
 "databaseloadingfailure.alert.retry" = "Retry";

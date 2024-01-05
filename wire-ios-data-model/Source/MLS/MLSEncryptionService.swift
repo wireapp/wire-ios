@@ -23,9 +23,9 @@ import WireCoreCrypto
 public protocol MLSEncryptionServiceInterface {
 
     func encrypt(
-        message: [Byte],
+        message: Data,
         for groupID: MLSGroupID
-    ) throws -> [Byte]
+    ) async throws -> Data
 
 }
 
@@ -33,14 +33,19 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
 
     // MARK: - Properties
 
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     // MARK: - Life cycle
 
-    public init(coreCrypto: SafeCoreCryptoProtocol) {
-        self.coreCrypto = coreCrypto
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
+        self.coreCryptoProvider = coreCryptoProvider
     }
 
+    var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
+    }
     // MARK: - Message encryption
 
     public enum MLSMessageEncryptionError: Error {
@@ -52,7 +57,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     /// Encrypts a message for the given group.
     ///
     /// - Parameters:
-    ///   - message: an array of bytes representing the plaintext message
+    ///   - message: data representing the plaintext message
     ///   - groupID: the id of the MLS group in which to encrypt
     ///
     /// - Throws:
@@ -62,12 +67,12 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     ///   A byte array representing the ciphertext.
 
     public func encrypt(
-        message: [Byte],
+        message: Data,
         for groupID: MLSGroupID
-    ) throws -> [Byte] {
+    ) async throws -> Data {
         do {
             WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try coreCrypto.perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
+            return try await coreCrypto.perform { try await $0.encryptMessage(conversationId: groupID.data, message: message) }
         } catch let error {
             WireLogger.mls.error("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageEncryptionError.failedToEncryptMessage

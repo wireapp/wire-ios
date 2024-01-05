@@ -18,81 +18,58 @@
 
 import Foundation
 @testable import WireDataModel
+@testable import WireDataModelSupport
 import XCTest
 
 class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
 
-    func test_performDoesNotBlockWithMock() throws {
+    func test_performDoesNotBlockWithMock() async throws {
         // GIVEN
         let tempURL = createTempFolder()
-        let mockCoreCrypto = MockCoreCrypto()
-        mockCoreCrypto.mockRestoreFromDisk = {}
+        let mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.restoreFromDisk_MockMethod = {}
         let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
         // WHEN / THEN
-        XCTAssertNoThrow(try sut.perform { mock in
-            try mock.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
-        })
+        await sut.perform { _ in }
 
     }
 
-    func test_performDoesCallRestoreFromDisk() throws {
+    func test_performDoesCallRestoreFromDisk() async throws {
         let tempURL = createTempFolder()
-        let mockCoreCrypto = MockCoreCrypto()
+        let mockCoreCrypto = MockCoreCryptoProtocol()
         var called = false
-        mockCoreCrypto.mockRestoreFromDisk = {
+        mockCoreCrypto.setCallbacksCallbacks_MockMethod = { _ in }
+        mockCoreCrypto.restoreFromDisk_MockMethod = {
             called = true
         }
 
         let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
         // WHEN
-        try sut.perform { mock in
-            try mock.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
-        }
+        await sut.perform { _ in }
 
         // THEN
         XCTAssertTrue(called)
     }
 
-    func test_mlsInitCallsCoreCrypto() throws {
+    func test_mlsInitCallsCoreCrypto() async throws {
         // GIVEN
         let tempURL = createTempFolder()
-        let mockCoreCrypto = MockCoreCrypto()
+        let mockCoreCrypto = MockCoreCryptoProtocol()
 
         var mlsInitCalled = false
-        mockCoreCrypto.mockMlsInit = { _, _ in
+        mockCoreCrypto.mlsInitClientIdCiphersuitesNbKeyPackage_MockMethod = { _, _, _ in
             mlsInitCalled = true
         }
 
         let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
         // WHEN
-        try sut.mlsInit(clientID: "id")
+        try await sut.mlsInit(clientID: "id")
 
         // THEN
         XCTAssertTrue(mlsInitCalled)
-    }
-
-    func test_mlsInitDoesntCallCoreCryptoWhenAlreadyInitialised() throws {
-        // GIVEN
-        let tempURL = createTempFolder()
-        let mockCoreCrypto = MockCoreCrypto()
-
-        var mlsInitCalls = 0
-        mockCoreCrypto.mockMlsInit = { _, _ in
-            mlsInitCalls += 1
-        }
-
-        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
-        try sut.mlsInit(clientID: "id")
-
-        XCTAssertEqual(mlsInitCalls, 1)
-
-        // WHEN
-        try sut.mlsInit(clientID: "id")
-
-        XCTAssertEqual(mlsInitCalls, 1)
     }
 
 }

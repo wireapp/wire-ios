@@ -20,20 +20,24 @@ import Foundation
 import XCTest
 import WireCoreCrypto
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class MLSEncryptionServiceTests: XCTestCase {
 
     var sut: MLSEncryptionService!
-    var mockCoreCrypto: MockCoreCrypto!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        sut = MLSEncryptionService(coreCrypto: mockSafeCoreCrypto)
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        sut = MLSEncryptionService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
@@ -47,24 +51,24 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
     typealias EncryptionError = MLSEncryptionService.MLSMessageEncryptionError
 
-    func test_Encrypt_IsSuccessful() {
+    func test_Encrypt_IsSuccessful() async {
         do {
             // Given
             let groupID = MLSGroupID.random()
-            let unencryptedMessage = Data.random().bytes
-            let encryptedMessage = Data.random().bytes
+            let unencryptedMessage = Data.random()
+            let encryptedMessage = Data.random()
 
             // Mock
             var mockEncryptMessageCount = 0
-            mockCoreCrypto.mockEncryptMessage = {
+            mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = {
                 mockEncryptMessageCount += 1
-                XCTAssertEqual($0, groupID.bytes)
+                XCTAssertEqual($0, groupID.data)
                 XCTAssertEqual($1, unencryptedMessage)
                 return encryptedMessage
             }
 
             // When
-            let result = try sut.encrypt(
+            let result = try await sut.encrypt(
                 message: unencryptedMessage,
                 for: groupID
             )
@@ -78,20 +82,20 @@ final class MLSEncryptionServiceTests: XCTestCase {
         }
     }
 
-    func test_Encrypt_Fails() {
+    func test_Encrypt_Fails() async {
         // Given
         let groupID = MLSGroupID.random()
-        let unencryptedMessage = Data.random().bytes
+        let unencryptedMessage = Data.random()
 
         // Mock
-        mockCoreCrypto.mockEncryptMessage = { (_, _) in
+        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { (_, _) in
             throw CryptoError.InvalidByteArrayError(message: "bad bytes!")
         }
 
         // Then
-        assertItThrows(error: EncryptionError.failedToEncryptMessage) {
+        await assertItThrows(error: EncryptionError.failedToEncryptMessage) {
             // Wnen
-            _ = try sut.encrypt(
+            _ = try await sut.encrypt(
                 message: unencryptedMessage,
                 for: groupID
             )

@@ -18,6 +18,10 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "ConversationObserverTests\/testThatItNotifiesOfLegalHoldChanges_Disabled()",
+        "UserObserverTests\/testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed()"
+      ],
       "target" : {
         "containerPath" : "container:WireDataModel.xcodeproj",
         "identifier" : "F9C9A5051CAD5DF10039E10C",

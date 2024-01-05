@@ -59,6 +59,14 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
             self.createReceivedPushEventIDsStoreIfNecessary()
         }
     }
+
+    /// Guarantee to get proteusProvider from correct context
+    /// - Note: to be replaced when proteusProvider is not attached to context 🤞
+    private var proteusProvider: ProteusProviding {
+        syncMOC.performAndWait {
+            syncMOC.proteusProvider
+        }
+    }
 }
 
 // MARK: - Process events
@@ -85,32 +93,29 @@ extension EventDecoder {
             return (filteredEvents, lastIndex)
         }
 
-        let decryptedEvents = await syncMOC.perform {
-            guard self.syncMOC.proteusProvider.canPerform else {
+        guard proteusProvider.canPerform else {
                 WireLogger.proteus.warn("ignore decrypting events because it is not safe")
-                return [] as [ZMUpdateEvent]
-            }
-
-            return self.syncMOC.proteusProvider.perform(
-                withProteusService: { proteusService in
-                    // TODO: [jacob] decryptAndStoreEvents will become async
-                    return self.decryptAndStoreEvents(
-                        filteredEvents,
-                        startingAtIndex: lastIndex,
-                        publicKeys: publicKeys,
-                        proteusService: proteusService
-                    )
-                },
-                withKeyStore: { keyStore in
-                    return self.legacyDecryptAndStoreEvents(
-                        filteredEvents,
-                        startingAtIndex: lastIndex,
-                        publicKeys: publicKeys,
-                        keyStore: keyStore
-                    )
-                }
-            )
+             return []
         }
+
+        let decryptedEvents: [ZMUpdateEvent] = await proteusProvider.performAsync(
+            withProteusService: { proteusService in
+                return await self.decryptAndStoreEvents(
+                    filteredEvents,
+                    startingAtIndex: lastIndex,
+                    publicKeys: publicKeys,
+                    proteusService: proteusService
+                )
+            },
+            withKeyStore: { keyStore in
+                return await self.legacyDecryptAndStoreEvents(
+                    filteredEvents,
+                    startingAtIndex: lastIndex,
+                    publicKeys: publicKeys,
+                    keyStore: keyStore
+                )
+            }
+        )
 
         if !events.isEmpty {
             Logging.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
@@ -155,21 +160,20 @@ extension EventDecoder {
         startingAtIndex startIndex: Int64,
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
-    ) -> [ZMUpdateEvent] {
+    ) async -> [ZMUpdateEvent] {
         var decryptedEvents = [ZMUpdateEvent]()
 
-        decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+        decryptedEvents = await events.asyncCompactMap { event -> ZMUpdateEvent? in
             switch event.type {
             case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                    try proteusService.decrypt(
+                return await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    try await proteusService.decrypt(
                         data: encryptedData,
                         forSession: sessionID
                     )
                 }
-
             case .conversationMLSMessageAdd:
-                return self.decryptMlsMessage(from: event, context: self.syncMOC)
+                return await self.decryptMlsMessage(from: event, context: self.syncMOC)
 
             default:
                 return event
@@ -178,7 +182,7 @@ extension EventDecoder {
 
         // This call has to be synchronous to ensure that we close the
         // encryption context only if we stored all events in the database.
-        eventMOC.performAndWait {
+        await eventMOC.perform {
             self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
         }
 
@@ -190,16 +194,16 @@ extension EventDecoder {
         startingAtIndex startIndex: Int64,
         publicKeys: EARPublicKeys?,
         keyStore: UserClientKeysStore
-    ) -> [ZMUpdateEvent] {
+    ) async -> [ZMUpdateEvent] {
         var decryptedEvents: [ZMUpdateEvent] = []
 
-        keyStore.encryptionContext.perform { [weak self] sessionsDirectory in
+        await keyStore.encryptionContext.performAsync { [weak self] sessionsDirectory in
             guard let self else { return }
 
-            decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+            decryptedEvents = await events.asyncCompactMap { event -> ZMUpdateEvent? in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    return await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                         try sessionsDirectory.decryptData(
                             encryptedData,
                             for: sessionID.mapToEncryptionSessionID()
@@ -207,7 +211,7 @@ extension EventDecoder {
                     }
 
                 case .conversationMLSMessageAdd:
-                    return self.decryptMlsMessage(from: event, context: self.syncMOC)
+                    return await self.decryptMlsMessage(from: event, context: self.syncMOC)
 
                 default:
                     return event
@@ -216,7 +220,7 @@ extension EventDecoder {
 
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
-            eventMOC.performAndWait {
+            await eventMOC.perform {
                 self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
             }
 
@@ -234,13 +238,6 @@ extension EventDecoder {
         startingAtIndex startIndex: Int64,
         publicKeys: EARPublicKeys?
     ) {
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-
-        let account = Account(
-            userName: "",
-            userIdentifier: selfUser.remoteIdentifier
-        )
-
         for (idx, event) in decryptedEvents.enumerated() {
             _ = StoredUpdateEvent.encryptAndCreate(
                 event,
