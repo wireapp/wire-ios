@@ -42,13 +42,13 @@ enum LabelIndicatorContext {
     var title: String {
         switch self {
         case .guest:
-            return "profile.details.guest"
+            return L10n.Localizable.Profile.Details.guest
         case .groupRole:
-            return "profile.details.group_admin"
+            return L10n.Localizable.Profile.Details.groupAdmin
         case .external:
-            return "profile.details.partner"
+            return L10n.Localizable.Profile.Details.partner
         case .federated:
-            return "profile.details.federated"
+            return L10n.Localizable.Profile.Details.federated
         }
 
     }
@@ -91,7 +91,7 @@ final class LabelIndicator: UIView {
         titleLabel.accessibilityIdentifier = "label." + accessibilityString
         titleLabel.numberOfLines = 0
         titleLabel.textAlignment = .left
-        titleLabel.text = context.title.localized.capitalized
+        titleLabel.text = context.title.capitalized
 
         indicatorIcon.accessibilityIdentifier =  "img." + accessibilityString
 
