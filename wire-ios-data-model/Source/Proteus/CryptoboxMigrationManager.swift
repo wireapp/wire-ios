@@ -71,7 +71,7 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
             do {
                 WireLogger.proteus.info("migrating cryptobox data...")
                 let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
-                try await coreCrypto.perform { try $0.proteusCryptoboxMigrate(path: cryptoboxDirectory.path) }
+                try await coreCrypto.perform { try await $0.proteusCryptoboxMigrate(path: cryptoboxDirectory.path) }
                 WireLogger.proteus.info("migrating cryptobox data... success")
             } catch {
                 throw Failure.failedToMigrateData

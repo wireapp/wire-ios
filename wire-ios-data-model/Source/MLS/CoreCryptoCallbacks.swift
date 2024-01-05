@@ -19,6 +19,8 @@
 import Foundation
 import WireCoreCrypto
 
+typealias ConversationId = Data
+
 class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
 
     init() {}

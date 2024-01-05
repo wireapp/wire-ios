@@ -22,7 +22,7 @@ import Combine
 
 protocol MLSActionExecutorProtocol {
 
-    func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
+    func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
@@ -37,7 +37,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     enum Action {
 
-        case addMembers([Invitee])
+        case addMembers([KeyPackage])
         case removeClients([ClientId])
         case updateKeyMaterial
         case proposal
@@ -68,7 +68,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Actions
 
-    func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
             WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
             let bundle = try await commitBundle(for: .addMembers(invitees), in: groupID)
@@ -143,9 +143,9 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             switch action {
             case .addMembers(let clients):
                 let memberAddMessages = try await coreCrypto.perform {
-                    try $0.addClientsToConversation(
-                        conversationId: groupID.bytes,
-                        clients: clients
+                    try await $0.addClientsToConversation(
+                        conversationId: groupID.data,
+                        keyPackages: clients.compactMap(\.keyPackage.base64DecodedData)
                     )
                 }
 
@@ -157,20 +157,20 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
             case .removeClients(let clients):
                 return try await coreCrypto.perform {
-                    try $0.removeClientsFromConversation(
-                        conversationId: groupID.bytes,
+                    try await $0.removeClientsFromConversation(
+                        conversationId: groupID.data,
                         clients: clients
                     )
                 }
 
             case .updateKeyMaterial:
                 return try await coreCrypto.perform {
-                    try $0.updateKeyingMaterial(conversationId: groupID.bytes)
+                    try await $0.updateKeyingMaterial(conversationId: groupID.data)
                 }
 
             case .proposal:
                 guard let bundle = try await coreCrypto.perform({
-                    try $0.commitPendingProposals(conversationId: groupID.bytes)
+                    try await $0.commitPendingProposals(conversationId: groupID.data)
                 }) else {
                     throw CommitError.noPendingProposals
                 }
@@ -179,8 +179,8 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
             case .joinGroup(let groupInfo):
                 let conversationInitBundle = try await coreCrypto.perform {
-                    try $0.joinByExternalCommit(
-                        groupInfo: groupInfo.bytes,
+                    try await $0.joinByExternalCommit(
+                        groupInfo: groupInfo,
                         customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),
                         credentialType: .basic
                     )

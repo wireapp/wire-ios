@@ -55,14 +55,14 @@ final class MLSEncryptionServiceTests: XCTestCase {
         do {
             // Given
             let groupID = MLSGroupID.random()
-            let unencryptedMessage = Data.random().bytes
-            let encryptedMessage = Data.random().bytes
+            let unencryptedMessage = Data.random()
+            let encryptedMessage = Data.random()
 
             // Mock
             var mockEncryptMessageCount = 0
-            mockCoreCrypto.mockEncryptMessage = {
+            mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = {
                 mockEncryptMessageCount += 1
-                XCTAssertEqual($0, groupID.bytes)
+                XCTAssertEqual($0, groupID.data)
                 XCTAssertEqual($1, unencryptedMessage)
                 return encryptedMessage
             }
@@ -85,10 +85,10 @@ final class MLSEncryptionServiceTests: XCTestCase {
     func test_Encrypt_Fails() async {
         // Given
         let groupID = MLSGroupID.random()
-        let unencryptedMessage = Data.random().bytes
+        let unencryptedMessage = Data.random()
 
         // Mock
-        mockCoreCrypto.mockEncryptMessage = { (_, _) in
+        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { (_, _) in
             throw CryptoError.InvalidByteArrayError(message: "bad bytes!")
         }
 

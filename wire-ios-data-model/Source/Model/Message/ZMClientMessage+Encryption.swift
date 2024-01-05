@@ -290,13 +290,15 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = await legacyEncrypt(
-                    using: keyStore,
-                    for: messageRecipients,
-                    with: missingClientsStrategy,
-                    useQualifiedIdentifiers: useQualifiedIdentifiers,
-                    in: context
-                )
+                await context.perform {
+                    encryptedData = legacyEncrypt(
+                        using: keyStore,
+                        for: messageRecipients,
+                        with: missingClientsStrategy,
+                        useQualifiedIdentifiers: useQualifiedIdentifiers,
+                        in: context
+                    )
+                }
             }
         )
 
@@ -330,13 +332,15 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = await legacyEncrypt(
-                    using: keyStore,
-                    for: recipients,
-                    with: missingClientsStrategy,
-                    useQualifiedIdentifiers: useQualifiedIdentifiers,
-                    in: context
-                )
+                await context.perform {
+                    encryptedData = legacyEncrypt(
+                        using: keyStore,
+                        for: recipients,
+                        with: missingClientsStrategy,
+                        useQualifiedIdentifiers: useQualifiedIdentifiers,
+                        in: context
+                    )
+                }
             }
         )
 
@@ -366,8 +370,6 @@ extension GenericMessage {
         guard let selfClient else { return nil }
 
         var messageData: Data?
-
-        // TODO: get core crypto file lock
 
         if useQualifiedIdentifiers,
             let selfDomain = await context.perform({ ZMUser.selfUser(in: context).domain }) {
