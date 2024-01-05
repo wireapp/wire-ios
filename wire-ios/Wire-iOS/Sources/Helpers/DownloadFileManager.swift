@@ -20,7 +20,6 @@ import Foundation
 import UIKit
 import WireSystem
 
-
 protocol DownloadFileActions {
     func download(file: URL)
     func download(value: String, fileName: String, type: String)
@@ -35,16 +34,16 @@ final class DownloadFileManager: NSObject, DownloadFileActions {
         self.documentInteractionController = documentInteractionController
         self.logger = logger
     }
-    
-    func download(file fileURL: URL)  {
+
+    func download(file fileURL: URL) {
         documentInteractionController.delegate = self
         pendingDownloadURLs.append(fileURL)
         documentInteractionController.url = fileURL
         documentInteractionController.name = fileURL.lastPathComponent
         documentInteractionController.presentPreview(animated: true)
     }
-    
-    func download(value: String, fileName: String,  type: String) {
+
+    func download(value: String, fileName: String, type: String) {
         documentInteractionController.delegate = self
         let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         let fileURL = temporaryDirectoryURL.appendingPathComponent(fileName + "." + type)
@@ -58,7 +57,7 @@ final class DownloadFileManager: NSObject, DownloadFileActions {
             logger.error(error.localizedDescription, attributes: nil)
         }
     }
-    
+
     private func deleteFilesInTemporyDirectory() throws {
         for fileURL in pendingDownloadURLs {
             try FileManager.default.removeItem(at: fileURL)
@@ -69,7 +68,7 @@ final class DownloadFileManager: NSObject, DownloadFileActions {
 }
 
 extension DownloadFileManager: UIDocumentInteractionControllerDelegate {
-    
+
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
         return UIApplication.shared.topmostViewController(onlyFullScreen: false)!
     }

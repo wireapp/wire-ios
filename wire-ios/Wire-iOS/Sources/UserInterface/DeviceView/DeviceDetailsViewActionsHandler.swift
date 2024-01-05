@@ -152,7 +152,7 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
             UIViewController.presentTopmost(viewController: viewControllerToPresent)
         }
     }
-    
+
     @MainActor
     func setIsLoadingViewVisible(
         _ clientRemovalObserver: ClientRemovalObserver,
