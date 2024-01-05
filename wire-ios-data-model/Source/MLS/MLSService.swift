@@ -426,7 +426,7 @@ public final class MLSService: MLSServiceInterface {
                 ciphersuite: CiphersuiteName.default.rawValue,
                 externalSenders: backendPublicKeys.ed25519Keys,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil),
-                perDomainTrustAnchors: [PerDomainTrustAnchor.init(domainName: "", intermediateCertificateChain: "")] // TODO: review this
+                perDomainTrustAnchors: []
             )
 
             try await coreCrypto.perform {

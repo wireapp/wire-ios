@@ -356,12 +356,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
                 externalSenders: [removalKey],
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil),
-                perDomainTrustAnchors: [
-                    PerDomainTrustAnchor(
-                        domainName: "",
-                        intermediateCertificateChain: ""
-                    )
-                ]
+                perDomainTrustAnchors: []
             ))
         }
 
@@ -380,12 +375,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
             externalSenders: [],
             custom: .init(keyRotationSpan: nil, wirePolicy: nil),
-            perDomainTrustAnchors: [
-                PerDomainTrustAnchor(
-                    domainName: "",
-                    intermediateCertificateChain: ""
-                )
-            ]
+            perDomainTrustAnchors: []
         )
 
         var mockCreateConversationCount = 0
