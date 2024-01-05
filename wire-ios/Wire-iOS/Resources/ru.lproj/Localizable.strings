@@ -562,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
+"content.system.message_legal_hold.enabled" = "Эта беседа находится под юридическими ограничениями [ПОДРОБНЕЕ](%@)";
 "content.system.message_legal_hold.disabled" = "Для этой беседы деактивированы юридические ограничения";
 
 "content.system.message_legal_hold.learn_more" = "Подробнее";
@@ -992,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Legal hold subjects %@";
+"legalhold.participants.section.title" = "Субъекты юридических ограничений %@";
 "legalhold.header.title" = "Юридические ограничения";
 "legalhold.header.other_description" = "В этой беседе активированы юридические ограничения как минимум для одного участника. Все сообщения будут сохранены для последующего доступа, включая удаленные, отредактированные и самоудаляющиеся.";
 "legalhold.header.self_description" = "Для вашей учетной записи активированы юридические ограничения. Все сообщения будут сохранены для последующего доступа, включая удаленные, отредактированные и самоудаляющиеся. Ваши собеседники будут уведомлены об этом.";
