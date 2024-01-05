@@ -64,22 +64,15 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     private let coreCrypto: CoreCryptoProtocol
     private let safeContext: SafeFileContext
-    private var didInitializeMLS = false
     private let databasePath: String
 
-    public convenience init(coreCryptoConfiguration config: CoreCryptoConfiguration) async throws {
-        guard let clientID = config.clientIDBytes else {
-            throw CoreCryptoSetupFailure.failedToGetClientIDBytes
-        }
-
-        let coreCrypto = try await coreCryptoNew(path: config.path, key: config.key, clientId: clientID, ciphersuites: [CiphersuiteName.default.rawValue], nbKeyPackage: nil)
-
-        self.init(coreCrypto: coreCrypto, databasePath: config.path)
-        didInitializeMLS = true
-    }
-
     public convenience init(path: String, key: String) async throws {
-        let coreCrypto = try await coreCryptoDeferredInit(path: path, key: key, ciphersuites: [CiphersuiteName.default.rawValue], nbKeyPackage: nil)
+        // NOTE: the ciphersuites argument is not used here and will eventually be removed.
+        let coreCrypto = try await coreCryptoDeferredInit(
+            path: path,
+            key: key,
+            ciphersuites: [CiphersuiteName.default.rawValue], nbKeyPackage: nil
+        )
 
         try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
 
@@ -87,16 +80,12 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     }
 
     public func mlsInit(clientID: String) async throws {
-        guard !didInitializeMLS else { return }
-
         guard let clientIdBytes = ClientId(from: clientID) else {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
-        // TODO: wait for fix see cyphersuite cyphersuiteName
         try await coreCrypto.mlsInit(clientId: clientIdBytes,
                                      ciphersuites: [CiphersuiteName.default.rawValue],
                                      nbKeyPackage: nil)
-        didInitializeMLS = true
     }
 
     init(coreCrypto: CoreCryptoProtocol, databasePath: String) {
