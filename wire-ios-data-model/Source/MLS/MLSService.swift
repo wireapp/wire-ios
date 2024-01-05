@@ -32,7 +32,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func createGroup(for groupID: MLSGroupID) throws
+    func createGroup(for groupID: MLSGroupID) async throws
 
     func conversationExists(groupID: MLSGroupID) -> Bool
 
@@ -44,7 +44,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func registerPendingJoin(_ group: MLSGroupID)
 
-    func performPendingJoins()
+    func performPendingJoins() async throws
 
     func wipeGroup(_ groupID: MLSGroupID) async
 
@@ -99,7 +99,6 @@ public protocol MLSServiceDelegate: AnyObject {
 
     func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
     func mlsServiceDidUpdateKeyMaterialForAllGroups()
-    func MLSServiceDidFinishInitialization()
 
 }
 
@@ -228,12 +227,6 @@ public final class MLSService: MLSServiceInterface {
         )
 
         schedulePeriodicKeyMaterialUpdateCheck()
-
-        // FIXME: [jacob] fetch on demand when creating group
-        Task {
-            await fetchBackendPublicKeys()
-            delegate?.MLSServiceDidFinishInitialization()
-        }
     }
 
     deinit {
@@ -437,8 +430,9 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func createGroup(for groupID: MLSGroupID) throws {
+    public func createGroup(for groupID: MLSGroupID) async throws {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
+        await fetchBackendPublicKeys()
 
         do {
             let config = ConversationConfiguration(
@@ -454,7 +448,7 @@ public final class MLSService: MLSServiceInterface {
                     config: config
                 )
             }
-        } catch let error {
+        } catch {
             logger.warn("failed to create group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw MLSGroupCreationError.failedToCreateGroup
         }
@@ -466,8 +460,8 @@ public final class MLSService: MLSServiceInterface {
         guard let context else { return }
 
         do {
-            let mlsSelfUser = try await context.perform {
-                try self.createGroup(for: groupID)
+            try await self.createGroup(for: groupID)
+            let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser)
             }
@@ -802,7 +796,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         if !conversationExists(groupID: groupID) {
-            try createGroup(for: groupID)
+            try await createGroup(for: groupID)
         }
 
         let mlsUser = await context.perform {
@@ -830,15 +824,13 @@ public final class MLSService: MLSServiceInterface {
     ///
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
     /// and sends external commits to join these groups
-    public func performPendingJoins() {
+    public func performPendingJoins() async throws {
         guard let context = context else {
             return
         }
-
-        generatePendingJoins(in: context).forEach { pendingJoin in
-            Task {
-                try await joinByExternalCommit(groupID: pendingJoin.groupID)
-            }
+        let pendingJoins = await context.perform { self.generatePendingJoins(in: context) }
+        for pendingJoin in pendingJoins {
+            try await joinByExternalCommit(groupID: pendingJoin.groupID)
         }
 
         groupsPendingJoin.removeAll()
@@ -1254,8 +1246,8 @@ public final class MLSService: MLSServiceInterface {
     public func encrypt(
         message: [Byte],
         for groupID: MLSGroupID
-    ) throws -> [Byte] {
-        return try encryptionService.encrypt(
+    ) async throws -> [Byte] {
+        return try await encryptionService.encrypt(
             message: message,
             for: groupID
         )
@@ -1267,11 +1259,11 @@ public final class MLSService: MLSServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult? {
+    ) async throws -> MLSDecryptResult? {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
         do {
-            return try decryptionService.decrypt(
+            return try await decryptionService.decrypt(
                 message: message,
                 for: groupID,
                 subconversationType: subconversationType
@@ -1536,7 +1528,7 @@ public final class MLSService: MLSServiceInterface {
     private func createSubgroup(with id: MLSGroupID) async throws {
         do {
             logger.info("creating subgroup with id (\(id.safeForLoggingDescription))")
-            try createGroup(for: id)
+            try await createGroup(for: id)
             try await updateKeyMaterial(for: id)
         } catch {
             logger.error("failed to create subgroup with id (\(id.safeForLoggingDescription)): \(String(describing: error))")
