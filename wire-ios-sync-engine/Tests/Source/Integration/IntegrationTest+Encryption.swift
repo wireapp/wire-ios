@@ -126,7 +126,7 @@ extension IntegrationTest {
             return (localClient, lastPrekey)
         }
 
-        let selfClient = await context.perform { ZMUser.selfUser(in: context).selfClient()! }
+        _ = await context.perform { ZMUser.selfUser(in: context).selfClient()! }
 
         var hasSessionWithLocalClient: Bool = false
         userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in

@@ -67,17 +67,15 @@ class ClientUpdateStatusTests: MessagingTest {
 
     func insertNewClient(_ isSelfClient: Bool) -> UserClient! {
         var client: UserClient!
-        let remoteIdentifier = syncMOC.performGroupedAndWait { syncMOC in
-            let remoteIdentifier = isSelfClient ? "selfIdentifier" : "identifier"
+        syncMOC.performGroupedAndWait { syncMOC in
             client = UserClient.insertNewObject(in: syncMOC)
-            client.remoteIdentifier = remoteIdentifier
+            client.remoteIdentifier = isSelfClient ? "selfIdentifier" : "identifier"
             client.user = ZMUser.selfUser(in: syncMOC)
             syncMOC.saveOrRollback()
-            return remoteIdentifier
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         if isSelfClient {
-            self.syncMOC.performAndWait {
+            syncMOC.performAndWait {
                 self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: "PersistedClientId")
             }
         }
@@ -176,8 +174,8 @@ class ClientUpdateStatusTests: MessagingTest {
         let client = insertNewClient()
 
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([client, selfClient])
-        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys) ClientUpdatePhase.done)
+        syncMOC.performAndWait { self.sut.didFetchClients([client, selfClient]) }
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         self.receivedNotifications.removeAll()
 
         // when

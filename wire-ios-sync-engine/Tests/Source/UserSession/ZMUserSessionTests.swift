@@ -400,7 +400,7 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(sut.networkState, .offline)
 
         // when
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        _ = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didReceiveData()
 
         // then
@@ -414,7 +414,7 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         let stateRecorder = NetworkStateRecorder()
 
         // when
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        _ = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didReceiveData()
 
         // then
@@ -428,7 +428,7 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         let stateRecorder = NetworkStateRecorder()
 
         // when
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        _ = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didGoOffline()
 
         // then
@@ -445,7 +445,7 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForOfflineStatus())
 
         // when
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        _ = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didGoOffline()
 
         // then

@@ -474,7 +474,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         processEvent(fromPayload: payload)
 
         // then
-        await uiMOC.perform { [self] in
+        uiMOC.performAndWait { [self] in
             guard let user = ZMUser.fetch(with: userId, in: uiMOC) else { return XCTFail("No user") }
             guard let team = Team.fetch(with: teamId, in: uiMOC) else { return XCTFail("No team") }
             guard let member = user.membership else { return XCTFail("No member") }

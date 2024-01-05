@@ -222,7 +222,9 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         guard liveEvents else { return }
 
-        events.forEach {process(event: $0, conversationsByID: prefetchResult?.conversationsByRemoteIdentifier)}
+        events.forEach { event in
+            process(event: event, conversationsByID: prefetchResult?.conversationsByRemoteIdentifier)
+        }
     }
 
     func process(event: ZMUpdateEvent, conversationsByID: [UUID: ZMConversation]?) {

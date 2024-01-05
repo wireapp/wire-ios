@@ -53,7 +53,7 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, "Hello there!")
 
         // Then
-        verifyThatItCanSearch(for: "There", in: convo, andFinds: lastMessage as! ZMMessage)
+        verifyThatItCanSearch(for: "There", in: convo, andFinds: lastMessage as? ZMMessage)
     }
 
     func testThatItFindsAMessageEditedRemotely() {
@@ -127,7 +127,7 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, text)
 
         // Then
-        verifyThatItCanSearch(for: "ephemeral", in: convo, andFinds: lastMessage as! ZMMessage)
+        verifyThatItCanSearch(for: "ephemeral", in: convo, andFinds: lastMessage as? ZMMessage)
     }
 
     func testThatItDoesNotFindAMessageDeletedRemotely() {
@@ -156,7 +156,7 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, "Hello there!")
 
         // Then
-        verifyThatItCanSearch(for: "Hello", in: convo, andFinds: lastMessage as! ZMMessage)
+        verifyThatItCanSearch(for: "Hello", in: convo, andFinds: lastMessage as? ZMMessage)
 
         // And when
         mockTransportSession.performRemoteChanges { _ in

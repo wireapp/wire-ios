@@ -591,7 +591,7 @@ extension UserObserverTests {
         let modifier: (ZMUser) -> Void = { _ in
             self.performPretendingUiMocIsSyncMoc {
                 // Can't call async function inside the synchronous modifier block.
-                // We need an async version of `checkThatItNotifiesTheObserverOfAChange`
+                // We need an async version of `checkThatItNotifiesTheObserverOfAChange`  // TODO: can this be fixed now?
                 // legalHoldClient.deleteClientAndEndSession()
             }
         }

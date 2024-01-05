@@ -65,7 +65,7 @@ extension SessionManager: CallKitManagerDelegate {
             }
 
             do {
-                try userSession.processPendingCallEvents {
+                try userSession.processPendingCallEvents { // TODO: fix warning "No calls to throwing functions occur within 'try' expression"
                     WireLogger.calling.info("did process call events, returning conversation...")
                     completionHandler(.success(conversation))
                 }

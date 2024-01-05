@@ -511,11 +511,11 @@ extension FileTransferTests_Swift {
         uploaded.updateUploaded(assetId: assetID.transportString(), token: nil, domain: nil)
 
         // when
-        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { (data, conversation, from, to) in
+        let message = remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { (data, conversation, from, to) in
         conversation.insertOTRMessage(from: from, to: to, data: data)
            }, nonce: nonce)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let conversation = self.conversation(for: self.selfToUser1Conversation)
+        _ = conversation(for: selfToUser1Conversation)
 
         // then
         XCTAssertNotNil(message)
@@ -570,7 +570,7 @@ extension FileTransferTests_Swift {
                conversation.insertOTRMessage(from: from, to: to, data: data)
                   }, nonce: nonce)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let conversation = self.conversation(for: self.selfToUser1Conversation)
+        _ = conversation(for: selfToUser1Conversation)
 
         // then
         XCTAssertNotNil(message)

@@ -213,7 +213,7 @@ extension TypingStrategyTests {
         let event = typingEvent(isTyping: true)
 
         // when
-        await sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        await sut.processEvents([event], liveEvents: true, prefetchResult: nil) // TODO: fix warning "No 'async' operations occur within 'await' expression"
 
         // then
         XCTAssertTrue(typing.isUserTyping(user: userA, in: conversationA))

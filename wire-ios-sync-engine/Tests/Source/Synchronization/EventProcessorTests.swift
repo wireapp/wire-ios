@@ -32,8 +32,9 @@ class EventProcessorTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
+
         syncMOC.performAndWait {
-            createSelfClient()
+            _ = createSelfClient()
         }
 
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
