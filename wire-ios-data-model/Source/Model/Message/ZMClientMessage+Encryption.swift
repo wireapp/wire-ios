@@ -290,13 +290,15 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = await legacyEncrypt(
-                    using: keyStore,
-                    for: messageRecipients,
-                    with: missingClientsStrategy,
-                    useQualifiedIdentifiers: useQualifiedIdentifiers,
-                    in: context
-                )
+                await context.perform {
+                    encryptedData = legacyEncrypt(
+                        using: keyStore,
+                        for: messageRecipients,
+                        with: missingClientsStrategy,
+                        useQualifiedIdentifiers: useQualifiedIdentifiers,
+                        in: context
+                    )
+                }
             }
         )
 
@@ -330,13 +332,15 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = await legacyEncrypt(
-                    using: keyStore,
-                    for: recipients,
-                    with: missingClientsStrategy,
-                    useQualifiedIdentifiers: useQualifiedIdentifiers,
-                    in: context
-                )
+                await context.perform {
+                    encryptedData = legacyEncrypt(
+                        using: keyStore,
+                        for: recipients,
+                        with: missingClientsStrategy,
+                        useQualifiedIdentifiers: useQualifiedIdentifiers,
+                        in: context
+                    )
+                }
             }
         )
 
