@@ -267,12 +267,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         let qualifiedID = await context.perform { conversation.qualifiedID }
         guard let qualifiedID else { return }
         try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mls, context: context.notificationContext)
-        }
     }
+}
 
-// This is temporary until John's work on 1on1 conversations 
+// This is temporary until John's work on 1on1 conversations
 // is merged to develop and then we can pull the changes into the migration branch.
-// TODO: [AGIS] Get rid of this extension 
+// TODO: [AGIS] Get rid of this extension
 extension ZMUser {
     var supportedProtocols: [MessageProtocol] {
         return [.mls, .proteus]
