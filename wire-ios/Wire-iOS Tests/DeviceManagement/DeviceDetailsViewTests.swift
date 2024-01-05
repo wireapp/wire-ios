@@ -65,7 +65,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     func prepareViewModel(
         mode: UIUserInterfaceStyle,
         e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding,
         isProteusVerificationEnabled: Bool,
         isSelfClient: Bool
     ) -> DeviceInfoViewModel {
@@ -81,7 +80,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
                 userSession: mockSession,
                 credentials: emailCredentials,
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider
+                downloadFileManager: MockDownloadFileManager()
             ),
             userSession: mockSession,
             getUserClientFingerprint: mockGetUserClientFingerprintUseCaseProtocol,
@@ -89,7 +88,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             isSelfClient: isSelfClient
         )
         viewModel.proteusKeyFingerprint = kFingerPrint
-        viewModel.mlsThumbprint = kFingerPrint
         viewModel.isSelfClient = isSelfClient
         return viewModel
     }
@@ -97,7 +95,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     func setupWrappedInNavigationController(
         mode: UIUserInterfaceStyle = .light,
         e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding,
         isProteusVerificationEnabled: Bool = true,
         isE2EIdentityEnabled: Bool = true,
         isSelfClient: Bool = false,
@@ -106,7 +103,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         let viewModel = prepareViewModel(
             mode: mode,
             e2eIdentityProvider: e2eIdentityProvider,
-            mlsProvider: mlsProvider,
             isProteusVerificationEnabled: isProteusVerificationEnabled,
             isSelfClient: isSelfClient
         )
@@ -118,11 +114,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsDisabled() {
         let e2eIdentityProvider = MockE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 isE2EIdentityEnabled: false
             )
         )
@@ -130,11 +124,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testGivenSelfClientWhenE2eidentityViewIsDisabled() {
         let e2eIdentityProvider = MockE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 isProteusVerificationEnabled: false,
                 isE2EIdentityEnabled: false,
                 isSelfClient: true
@@ -144,11 +136,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValid() {
         let e2eIdentityProvider = MockValidE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
@@ -156,11 +146,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidWhenProteusIsNotVerifiedThenBlueShieldIsNotShown() {
         let e2eIdentityProvider = MockValidE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 isProteusVerificationEnabled: false,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
@@ -169,11 +157,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevoked() {
         let e2eIdentityProvider = MockRevokedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
@@ -181,11 +167,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpired() {
         let e2eIdentityProvider = MockExpiredE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                     e2eIdentityProvider: e2eIdentityProvider,
-                    mlsProvider: mlsProvider,
                     e2eIdentityCertificate: e2eIdentityProvider.certificate
                 )
             )
@@ -193,11 +177,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivated() {
         let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
@@ -207,12 +189,10 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testGivenSelfClientWhenE2eidentityViewIsDisabledInDarkMode() {
         let e2eIdentityProvider = MockE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 isE2EIdentityEnabled: false,
                 isSelfClient: true,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
@@ -221,13 +201,11 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsDisabledInDarkMode() {
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         let e2eIdentityProvider = MockE2eIdentityProvider()
         verify(matching:
                 setupWrappedInNavigationController(
                     mode: .dark,
                     e2eIdentityProvider: e2eIdentityProvider,
-                    mlsProvider: mlsProvider,
                     e2eIdentityCertificate: e2eIdentityProvider.certificate
                 )
         )
@@ -235,12 +213,10 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidInDarkMode() {
         let e2eIdentityProvider = MockValidE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(matching:
                 setupWrappedInNavigationController(
                     mode: .dark,
                     e2eIdentityProvider: e2eIdentityProvider,
-                    mlsProvider: mlsProvider,
                     e2eIdentityCertificate: e2eIdentityProvider.certificate
                 )
         )
@@ -248,12 +224,10 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevokedInDarkMode() {
         let e2eIdentityProvider = MockRevokedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
@@ -261,12 +235,10 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkMode() {
         let e2eIdentityProvider = MockExpiredE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
@@ -274,12 +246,10 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkMode() {
         let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
@@ -287,11 +257,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewAndMLSViewIsEnabledThenShowBothTheSections() {
         let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: true)
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
@@ -299,12 +267,10 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewAndMLSViewIsEnabledThenShowBothTheSectionsInDarkMode() {
         let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: true)
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )

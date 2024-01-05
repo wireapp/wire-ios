@@ -113,9 +113,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.userClient = userClient
         self.isSelfClient = isSelfClient
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
-            DispatchQueue.main.async {
-                self?.isActionInProgress = isProcessing
-            }
+            self?.isActionInProgress = isProcessing
         }
     }
 
@@ -181,7 +179,11 @@ extension DeviceInfoViewModel {
                 userClient: userClient,
                 userSession: userSession,
                 credentials: credentials,
-                e2eIdentityProvider: e2eIdentityProvider
+                e2eIdentityProvider: e2eIdentityProvider,
+                downloadFileManager: DownloadFileManager(
+                    documentInteractionController: UIDocumentInteractionController(),
+                    logger: WireLogger.e2ei
+                )
             ),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,

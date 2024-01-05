@@ -49,21 +49,27 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userClient.isSelfClient()
     }
 
+    private var continuation: CheckedContinuation<Bool, Never>?
+    private var downloadFileManager: DownloadFileActions
+
     init(
         userClient: UserClient,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        e2eIdentityProvider: E2eIdentityProviding
+        e2eIdentityProvider: E2eIdentityProviding,
+        downloadFileManager: DownloadFileActions
     ) {
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
         self.e2eIdentityProvider = e2eIdentityProvider
+        self.downloadFileManager = downloadFileManager
     }
 
     func fetchCertificate() async -> E2eIdentityCertificate? {
         do {
-            return try await userClient.fetchE2eIdentityCertificates(e2eIdentityProvider: e2eIdentityProvider).first
+            self.certificate = try await userClient.fetchE2eIdentityCertificates(e2eIdentityProvider: e2eIdentityProvider).first
+            return certificate
         } catch {
             logger.error(error.localizedDescription)
         }
@@ -72,18 +78,25 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func removeDevice() async -> Bool {
-        return await withCheckedContinuation { continuation in
+        return await withCheckedContinuation {[weak self] continuation in
+            guard let self = self else {
+                return
+            }
+            self.continuation = continuation
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
                 credentials: credentials,
                 completion: {
                     error in
+                    defer {
+                        self.continuation = nil
+                    }
                     guard let error = error else {
-                        return continuation.resume(returning: true)
+                        return self.continuation!.resume(returning: true)
                     }
                     WireLogger.e2ei.error(error.localizedDescription)
-                    continuation.resume(returning: false)
+                    self.continuation!.resume(returning: false)
                 }
             )
             self.clientRemovalObserver?.startRemoval()
@@ -119,44 +132,32 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         guard let certificate = certificate else {
             return
         }
-        let fileName = "e2eiCertifcate.txt"
-        let path = getDocumentsDirectory().appendingPathComponent(fileName)
-        do {
-            try certificate.certificateDetails.write(
-                to: path,
-                atomically: true,
-                encoding: String.Encoding.utf8
-            )
-        } catch {
-            logger.error(error.localizedDescription)
-        }
+        downloadFileManager.download(
+            value: certificate.certificateDetails,
+            fileName: userClient.label ?? "e2ecertificate",
+            type: "txt"
+        )
     }
 
-    private func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(
-            for: .documentDirectory,
-            in: .userDomainMask
-        )
-        return paths[0]
-    }
 }
 
 extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
+
+    @MainActor
     func present(
         _ clientRemovalObserver: ClientRemovalObserver,
         viewControllerToPresent: UIViewController
     ) {
-        DispatchQueue.main.async {
+        if !(UIApplication.shared.topmostViewController()?.presentedViewController is UIAlertController) {
             UIViewController.presentTopmost(viewController: viewControllerToPresent)
         }
     }
-
+    
+    @MainActor
     func setIsLoadingViewVisible(
         _ clientRemovalObserver: ClientRemovalObserver,
         isVisible: Bool
     ) {
-        DispatchQueue.main.async {
-            self.isProcessing?(isVisible)
-        }
+        self.isProcessing?(isVisible)
     }
 }
