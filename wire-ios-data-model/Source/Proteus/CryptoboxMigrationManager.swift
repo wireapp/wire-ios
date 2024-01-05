@@ -27,7 +27,7 @@ public protocol CryptoboxMigrationManagerInterface {
     func performMigration(
         accountDirectory: URL,
         coreCrypto: SafeCoreCryptoProtocol
-    ) throws
+    ) async throws
 }
 
 public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
@@ -67,11 +67,11 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     public func performMigration(
         accountDirectory: URL,
         coreCrypto: SafeCoreCryptoProtocol
-    ) throws {
+    ) async throws {
             do {
                 WireLogger.proteus.info("migrating cryptobox data...")
                 let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
-                try coreCrypto.perform { try $0.proteusCryptoboxMigrate(path: cryptoboxDirectory.path) }
+                try await coreCrypto.perform { try $0.proteusCryptoboxMigrate(path: cryptoboxDirectory.path) }
                 WireLogger.proteus.info("migrating cryptobox data... success")
             } catch {
                 throw Failure.failedToMigrateData

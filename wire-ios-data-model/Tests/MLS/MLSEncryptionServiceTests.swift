@@ -51,7 +51,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
     typealias EncryptionError = MLSEncryptionService.MLSMessageEncryptionError
 
-    func test_Encrypt_IsSuccessful() {
+    func test_Encrypt_IsSuccessful() async {
         do {
             // Given
             let groupID = MLSGroupID.random()
@@ -68,7 +68,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
             }
 
             // When
-            let result = try sut.encrypt(
+            let result = try await sut.encrypt(
                 message: unencryptedMessage,
                 for: groupID
             )
@@ -82,7 +82,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
         }
     }
 
-    func test_Encrypt_Fails() {
+    func test_Encrypt_Fails() async {
         // Given
         let groupID = MLSGroupID.random()
         let unencryptedMessage = Data.random().bytes
@@ -93,9 +93,9 @@ final class MLSEncryptionServiceTests: XCTestCase {
         }
 
         // Then
-        assertItThrows(error: EncryptionError.failedToEncryptMessage) {
+        await assertItThrows(error: EncryptionError.failedToEncryptMessage) {
             // Wnen
-            _ = try sut.encrypt(
+            _ = try await sut.encrypt(
                 message: unencryptedMessage,
                 for: groupID
             )
