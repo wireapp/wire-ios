@@ -367,7 +367,7 @@ final class ConversationSystemMessageCellDescription {
             let timerCell = ConversationMessageTimerCellDescription(message: message, data: systemMessageData, timer: timer, sender: sender)
             return [AnyConversationMessageCellDescription(timerCell)]
 
-        case .conversationIsSecure:
+        case .conversationIsSecure, .conversationIsVerified, .conversationIsDegraded:
             let shieldCell = ConversationVerifiedSystemMessageSectionDescription(systemMessageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(shieldCell)]
 
@@ -437,16 +437,6 @@ final class ConversationSystemMessageCellDescription {
         case .domainsStoppedFederating:
             let domainsStoppedFederatingCell = DomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
-
-        case .conversationIsDegraded:
-            let shieldCell = ConversationVerifiedSystemMessageSectionDescription(
-                systemMessageType: systemMessageData.systemMessageType)
-            return [AnyConversationMessageCellDescription(shieldCell)]
-
-        case .conversationIsVerified:
-            let shieldCell = ConversationVerifiedSystemMessageSectionDescription(
-                systemMessageType: systemMessageData.systemMessageType)
-            return [AnyConversationMessageCellDescription(shieldCell)]
 
         default:
             let unknownMessage = UnknownMessageCellDescription()
@@ -637,7 +627,7 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
 
     init(systemMessageType: ZMSystemMessageType) {
         let title = NSAttributedString(
-            string: ConversationVerifiedSystemMessageSectionDescription.text(for: systemMessageType),
+            string: ConversationVerifiedSystemMessageSectionDescription.messageText(for: systemMessageType),
             attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
         )
         configuration = View.Configuration(icon: ConversationVerifiedSystemMessageSectionDescription.icon(for: systemMessageType), attributedText: title, showLine: true)
@@ -658,12 +648,11 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
         }
     }
 
-    private static func text(for systemMessageType: ZMSystemMessageType) -> String {
+    private static func messageText(for systemMessageType: ZMSystemMessageType) -> String {
         switch systemMessageType {
         case .conversationIsSecure:
             return L10n.Localizable.Content.System.isVerified
         case .conversationIsVerified:
-
             return L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore.absoluteString)
         case .conversationIsDegraded:
             return L10n.Localizable.Content.System.Mls.conversationIsDegraded
