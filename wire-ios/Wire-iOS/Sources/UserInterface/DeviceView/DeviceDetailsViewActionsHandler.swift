@@ -44,18 +44,22 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userClient.isSelfClient()
     }
 
+    private var downloadFileManager: DownloadFileActions
+
     init(
         userClient: UserClient,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding
+        mlsProvider: MLSProviding,
+        downloadFileManager: DownloadFileActions
     ) {
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
         self.e2eIdentityProvider = e2eIdentityProvider
         self.mlsProvider = mlsProvider
+        self.downloadFileManager = downloadFileManager
     }
 
     func fetchCertificate() async -> E2eIdentityCertificate? {
@@ -129,25 +133,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         guard let certificate = certificate else {
             return
         }
-        let fileName = "e2eiCertifcate.txt"
-        let path = getDocumentsDirectory().appendingPathComponent(fileName)
-        do {
-            try certificate.certificateDetails.write(
-                to: path,
-                atomically: true,
-                encoding: String.Encoding.utf8
-            )
-        } catch {
-            logger.error(error.localizedDescription)
-        }
-    }
-
-    private func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(
-            for: .documentDirectory,
-            in: .userDomainMask
-        )
-        return paths[0]
+        downloadFileManager.download(
+                    value: certificate.certificateDetails,
+                    fileName: userClient.label ?? "e2ecertificate",
+                    type: "txt"
+                )
     }
 }
 
