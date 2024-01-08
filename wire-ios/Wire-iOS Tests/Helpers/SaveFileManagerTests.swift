@@ -23,7 +23,7 @@ final class SaveFileManagerTests: XCTestCase {
 
     func testWhenSaveFileIsCalledThenSystemSaveFilePresenterIsCalled() {
         let expectation = expectation(description: "System Save File presenter should be called")
-        let mockSystemSaveFilePresenter = MockSystemFileSavePresenter()
+        let mockSystemSaveFilePresenter = MockSystemSaveFilePresenter()
         mockSystemSaveFilePresenter.presentSystemPromptToSaveIsCalled = { _, _ in
             expectation.fulfill()
         }
