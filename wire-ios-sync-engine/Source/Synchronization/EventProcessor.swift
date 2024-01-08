@@ -24,14 +24,6 @@ extension NSNotification.Name {
     static let calculateBadgeCount = NSNotification.Name(rawValue: "calculateBadgeCountNotication")
 }
 
-public typealias UpdateEventProcessorFactory = (
-    _ storeProvider: CoreDataStack,
-    _ eventProcessingTracker: EventProcessingTrackerProtocol,
-    _ earService: EARServiceInterface,
-    _ eventConsumers: [ZMEventConsumer],
-    _ eventAsyncConsumers: [ZMEventAsyncConsumer]
-) -> UpdateEventProcessor
-
 actor EventProcessor: UpdateEventProcessor {
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")

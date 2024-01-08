@@ -266,7 +266,7 @@ public class ZMUserSession: NSObject {
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
         analytics: AnalyticsType?,
-        updateEventProcessorFactory: @escaping UpdateEventProcessorFactory,
+        eventProcessorFactory: EventProcessorFactory,
         strategyDirectory: StrategyDirectoryProtocol? = nil,
         syncStrategy: ZMSyncStrategy? = nil,
         operationLoop: ZMOperationLoop? = nil,
@@ -337,12 +337,12 @@ public class ZMUserSession: NSObject {
             userID: coreDataStack.account.userIdentifier)
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
-        updateEventProcessor = updateEventProcessorFactory(
-            /* storeProvider: */ coreDataStack,
-            /* eventProcessingTracker: */ eventProcessingTracker,
-            /* earService: */ self.earService,
-            /* eventConsumers: */ strategyDirectory?.eventConsumers ?? [],
-            /* eventAsyncConsumers: */ (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
+        updateEventProcessor = eventProcessorFactory.create(
+            storeProvider: coreDataStack,
+            eventProcessingTracker: eventProcessingTracker,
+            earService: self.earService,
+            eventConsumers: strategyDirectory?.eventConsumers ?? [],
+            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
         )
 
         super.init()

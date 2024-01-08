@@ -39,3 +39,22 @@ public class MockUpdateEventProcessor: NSObject, UpdateEventProcessor {
         bufferedEvents.removeAll()
     }
 }
+
+// MARK: EventProcessorFactory + mock
+
+extension EventProcessorFactory where Self == MockEventProcessorFactory {
+    static var mock: MockEventProcessorFactory { .init() }
+}
+
+private struct MockEventProcessorFactory: EventProcessorFactory {
+
+    func create(
+        storeProvider _: CoreDataStack,
+        eventProcessingTracker _: EventProcessingTrackerProtocol,
+        earService _: EARServiceInterface,
+        eventConsumers _: [ZMEventConsumer],
+        eventAsyncConsumers _: [ZMEventAsyncConsumer]
+    ) -> UpdateEventProcessor {
+        MockUpdateEventProcessor()
+    }
+}

@@ -102,7 +102,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             mediaManager: mediaManager,
             flowManager: flowManagerMock,
             analytics: nil,
-            updateEventProcessorFactory: { _, _, _, _, _ in mockUpdateEventProcessor },
+            eventProcessorFactory: .mock,
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
