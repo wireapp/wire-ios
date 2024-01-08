@@ -47,8 +47,8 @@ public actor CommitSender: CommitSending {
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
-        get throws {
-            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
         }
     }
 
@@ -150,8 +150,9 @@ public actor CommitSender: CommitSending {
     private func mergeCommit(in groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("merging commit for group (\(groupID.safeForLoggingDescription))")
-            try await coreCrypto.perform {
-                try $0.commitAccepted(conversationId: groupID.bytes)
+            // TODO: handle buffered messages - WPB-5829
+            let bufferedDecryptedMessages = try await coreCrypto.perform {
+                try await $0.commitAccepted(conversationId: groupID.data)
             }
             onEpochChangedSubject.send(groupID)
         } catch {
@@ -164,7 +165,7 @@ public actor CommitSender: CommitSending {
         do {
             WireLogger.mls.info("discarding pending commit for group (\(groupID.safeForLoggingDescription))")
             try await coreCrypto.perform {
-                try $0.clearPendingCommit(conversationId: groupID.bytes)
+                try await $0.clearPendingCommit(conversationId: groupID.data)
             }
         } catch {
             WireLogger.mls.error("failed to discard pending commit for group (\(groupID.safeForLoggingDescription))")
@@ -175,9 +176,10 @@ public actor CommitSender: CommitSending {
     private func mergePendingGroup(in groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("merging pending group (\(groupID.safeForLoggingDescription))")
-            try await coreCrypto.perform {
-                try $0.mergePendingGroupFromExternalCommit(
-                    conversationId: groupID.bytes
+            // TODO: handle buffered messages - WPB-5829
+            let bufferedDecryptedMessages = try await coreCrypto.perform {
+                try await $0.mergePendingGroupFromExternalCommit(
+                    conversationId: groupID.data
                 )
             }
         } catch {
@@ -190,7 +192,7 @@ public actor CommitSender: CommitSending {
         do {
             WireLogger.mls.info("clearing pending group (\(groupID.safeForLoggingDescription))")
             try await coreCrypto.perform {
-                try $0.clearPendingGroupFromExternalCommit(conversationId: groupID.bytes)
+                try await $0.clearPendingGroupFromExternalCommit(conversationId: groupID.data)
             }
         } catch {
             WireLogger.mls.error("failed to clear pending group (\(groupID.safeForLoggingDescription))")
@@ -233,9 +235,11 @@ extension CommitBundle {
 
     func transportData() -> Data {
         var data = Data()
-        data.append(Data(commit))
-        data.append(Data(welcome ?? []))
-        data.append(Data(groupInfo.payload))
+        data.append(commit)
+        if let welcome {
+            data.append(welcome)
+        }
+        data.append(groupInfo.payload)
         return data
     }
 

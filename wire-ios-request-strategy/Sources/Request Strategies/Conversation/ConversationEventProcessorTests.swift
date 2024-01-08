@@ -156,6 +156,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
 
         // When
         await self.sut.processConversationEvents([event])
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 1)
@@ -192,6 +193,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
         let event = try XCTUnwrap(updateEvent)
         // When
         await self.sut.processConversationEvents([event])
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
@@ -228,6 +230,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
 
         // When
         await self.sut.processConversationEvents([event])
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
