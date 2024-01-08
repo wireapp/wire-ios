@@ -1194,7 +1194,7 @@ public final class MLSService: MLSServiceInterface {
                     groupInfo: groupInfo
                 )
 
-                context.performAndWait {
+                await context.perform {
                     parentConversationInfo.conversation.mlsStatus = .ready
                 }
             }

@@ -37,7 +37,7 @@ final class SessionEstablisherTests: MessagingTestBase {
 
     func testThatErrorIsPropagated_whenSelfClientHasNotBeenCreated() async throws {
         // given
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             // reset user client associated with the self user
             syncMOC.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
         }

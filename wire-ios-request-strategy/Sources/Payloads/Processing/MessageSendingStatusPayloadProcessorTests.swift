@@ -271,7 +271,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             XCTAssertEqual(message.failedToSendRecipients?.count, 1)
             XCTAssertEqual(message.failedToSendRecipients?.first, self.otherUser)
         }

@@ -302,7 +302,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         // then
         let hasSessionAfterDeletion = await otherClient.hasSessionWithSelfClient
         XCTAssertFalse(hasSessionAfterDeletion)
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             XCTAssertTrue(otherClient.isZombieObject)
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
