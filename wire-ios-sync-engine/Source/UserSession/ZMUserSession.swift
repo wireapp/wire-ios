@@ -77,7 +77,7 @@ public class ZMUserSession: NSObject {
     var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
-    var updateEventProcessor: UpdateEventProcessor?
+    let updateEventProcessor: UpdateEventProcessor
     var strategyDirectory: StrategyDirectoryProtocol?
     var syncStrategy: ZMSyncStrategy?
     var operationLoop: ZMOperationLoop?
@@ -179,8 +179,8 @@ public class ZMUserSession: NSObject {
     // temporary function to simplify call to EventProcessor
     // might be replaced by something more elegant
     public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            try? await self.updateEventProcessor?.processEvents(events)
+        WaitingGroupTask(context: syncContext) {
+            try? await self.updateEventProcessor.processEvents(events)
         }
     }
 
@@ -337,6 +337,13 @@ public class ZMUserSession: NSObject {
             userID: coreDataStack.account.userIdentifier)
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
+        updateEventProcessor = updateEventProcessorFactory(
+            /* storeProvider: */ coreDataStack,
+            /* eventProcessingTracker: */ eventProcessingTracker,
+            /* earService: */ self.earService,
+            /* eventConsumers: */ strategyDirectory?.eventConsumers ?? [],
+            /* eventAsyncConsumers: */ (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
+        )
 
         super.init()
 
@@ -360,7 +367,6 @@ public class ZMUserSession: NSObject {
             )
 
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
-            updateEventProcessor = createUpdateEventProcessor(factory: updateEventProcessorFactory)
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
             self.operationLoop = operationLoop ?? self.createOperationLoop()
             self.urlActionProcessors = self.createURLActionProcessors()
@@ -439,24 +445,14 @@ public class ZMUserSession: NSObject {
         )
     }
 
-    private func createUpdateEventProcessor(factory create: UpdateEventProcessorFactory) -> UpdateEventProcessor {
-        create(
-            /* storeProvider: */ coreDataStack,
-            /* eventProcessingTracker: */ eventProcessingTracker,
-            /* earService: */ earService,
-            /* eventConsumers: */ strategyDirectory?.eventConsumers ?? [],
-            /* eventAsyncConsumers: */ (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
-        )
-    }
-
     private func createURLActionProcessors() -> [URLActionProcessor] {
         [
             DeepLinkURLActionProcessor(contextProvider: coreDataStack,
                                        transportSession: transportSession,
-                                       eventProcessor: updateEventProcessor!),
+                                       eventProcessor: updateEventProcessor),
             ConnectToBotURLActionProcessor(contextprovider: coreDataStack,
                                            transportSession: transportSession,
-                                           eventProcessor: updateEventProcessor!)
+                                           eventProcessor: updateEventProcessor)
         ]
     }
 
@@ -472,7 +468,7 @@ public class ZMUserSession: NSObject {
     private func createOperationLoop() -> ZMOperationLoop {
         return ZMOperationLoop(transportSession: transportSession,
                                requestStrategy: syncStrategy,
-                               updateEventProcessor: updateEventProcessor!,
+                               updateEventProcessor: updateEventProcessor,
                                applicationStatusDirectory: applicationStatusDirectory,
                                uiMOC: managedObjectContext,
                                syncMOC: syncManagedObjectContext)
@@ -654,15 +650,15 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
-        await updateEventProcessor?.bufferEvents(events)
+        await updateEventProcessor.bufferEvents(events)
     }
 
     public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async throws {
-        try await updateEventProcessor?.processEvents(events)
+        try await updateEventProcessor.processEvents(events)
     }
 
     public func processBufferedEvents() async throws {
-        try await updateEventProcessor?.processBufferedEvents()
+        try await updateEventProcessor.processBufferedEvents()
     }
 }
 
@@ -744,7 +740,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Task {
             var processingInterrupted = false
             do {
-                try await updateEventProcessor?.processBufferedEvents()
+                try await updateEventProcessor.processBufferedEvents()
             } catch {
                 processingInterrupted = true
             }
@@ -771,7 +767,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         WireLogger.updateEvent.info("process pending call events")
         Task {
             do {
-                try await updateEventProcessor!.processBufferedEvents()
+                try await updateEventProcessor.processBufferedEvents()
                 await managedObjectContext.perform {
                     completionHandler()
                 }
