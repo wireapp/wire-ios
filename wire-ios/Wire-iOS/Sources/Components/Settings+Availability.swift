@@ -22,7 +22,7 @@ import WireDataModel
 private extension AvailabilityKind {
 
     var dontRemindMeUserDefaultsKey: String {
-        return "dont_remind_me_\(canonicalName)"
+        return "dont_remind_me_\(localizedName)"
     }
 
 }

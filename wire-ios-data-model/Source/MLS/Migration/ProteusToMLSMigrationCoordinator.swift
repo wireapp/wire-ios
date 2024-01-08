@@ -142,7 +142,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
                     continue
                 }
 
-                await updateConversationProtocolToMLS(for: conversation)
+                try await updateConversationProtocolToMLS(for: conversation)
             } catch {
                 logger.warn("failed to migrate conversation (groupID:\(groupID.safeForLoggingDescription), error: \(String(describing: error))")
                 continue
@@ -226,7 +226,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     private func joinMLSGroupIfNeeded(_ groupID: MLSGroupID, mlsService: MLSServiceInterface) async throws {
-        if mlsService.conversationExists(groupID: groupID) {
+        if await mlsService.conversationExists(groupID: groupID) {
             return
         }
 
@@ -263,16 +263,16 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         return finaliseDate.isPast
     }
 
-    private func updateConversationProtocolToMLS(for conversation: ZMConversation) async {
-        // TODO: Update conversation protocol to `mls`
-        // https://wearezeta.atlassian.net/browse/WPB-542
+    private func updateConversationProtocolToMLS(for conversation: ZMConversation) async throws {
+        let qualifiedID = await context.perform { conversation.qualifiedID }
+        guard let qualifiedID else { return }
+        try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mls, context: context.notificationContext)
     }
-
 }
 
-// This is temporary until John's work on 1on1 conversations 
+// This is temporary until John's work on 1on1 conversations
 // is merged to develop and then we can pull the changes into the migration branch.
-// TODO: [AGIS] Get rid of this extension 
+// TODO: [AGIS] Get rid of this extension
 extension ZMUser {
     var supportedProtocols: [MessageProtocol] {
         return [.mls, .proteus]

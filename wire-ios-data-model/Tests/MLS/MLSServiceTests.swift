@@ -61,7 +61,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         privateUserDefaults = PrivateUserDefaults(userID: userIdentifier, storage: userDefaultsTestSuite)
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
 
-        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
+        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             return 100
         }
 
@@ -164,30 +164,30 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let member3 = MLSClientID.random()
 
         var mockExportSecretKeyCount = 0
-        mockCoreCrypto.mockExportSecretKey = { _, _ in
+        mockCoreCrypto.exportSecretKeyConversationIdKeyLength_MockMethod = { _, _ in
             mockExportSecretKeyCount += 1
-            return secretKey.bytes
+            return secretKey
         }
 
         var mockConversationEpochCount = 0
-        mockCoreCrypto.mockConversationEpoch = { _ in
+        mockCoreCrypto.conversationEpochConversationId_MockMethod = { _ in
             mockConversationEpochCount += 1
             return epoch
         }
 
         var mockGetClientIDsCount = 0
-        mockCoreCrypto.mockGetClientIds = { groupID in
+        mockCoreCrypto.getClientIdsConversationId_MockMethod = { groupID in
             mockGetClientIDsCount += 1
 
             switch groupID {
-            case parentGroupID.bytes:
+            case parentGroupID.data:
                 return [member1, member2, member3].compactMap {
-                    $0.rawValue.utf8Data?.bytes
+                    $0.rawValue.utf8Data
                 }
 
-            case subconversationGroupID.bytes:
+            case subconversationGroupID.data:
                 return [member1, member2].compactMap {
-                    $0.rawValue.utf8Data?.bytes
+                    $0.rawValue.utf8Data
                 }
 
             default:
@@ -227,12 +227,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subconversationGroupID = MLSGroupID.random()
 
         var mockConversationEpochCount = 0
-        mockCoreCrypto.mockConversationEpoch = { _ in
+        mockCoreCrypto.conversationEpochConversationId_MockMethod = { _ in
             mockConversationEpochCount += 1
             return 0
         }
 
-        mockCoreCrypto.mockExportSecretKey = { _, _ in
+        mockCoreCrypto.exportSecretKeyConversationIdKeyLength_MockMethod = { _, _ in
             throw CryptoError.ConversationNotFound(message: "foo")
         }
 
@@ -347,15 +347,16 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         var mockCreateConversationCount = 0
-        mockCoreCrypto.mockCreateConversation = { conversationID, creatorCredentialType, config in
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { conversationID, creatorCredentialType, config in
             mockCreateConversationCount += 1
 
-            XCTAssertEqual(conversationID, groupID.bytes)
+            XCTAssertEqual(conversationID, groupID.data)
             XCTAssertEqual(creatorCredentialType, .basic)
             XCTAssertEqual(config, .init(
                 ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
-                externalSenders: [removalKey.bytes],
-                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
+                externalSenders: [removalKey],
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil),
+                perDomainTrustAnchors: []
             ))
         }
 
@@ -373,14 +374,15 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let config = ConversationConfiguration(
             ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
             externalSenders: [],
-            custom: .init(keyRotationSpan: nil, wirePolicy: nil)
+            custom: .init(keyRotationSpan: nil, wirePolicy: nil),
+            perDomainTrustAnchors: []
         )
 
         var mockCreateConversationCount = 0
-        mockCoreCrypto.mockCreateConversation = {
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = {
             mockCreateConversationCount += 1
 
-            XCTAssertEqual($0, groupID.bytes)
+            XCTAssertEqual($0, groupID.data)
             XCTAssertEqual($1, .basic)
             XCTAssertEqual($2, config)
 
@@ -407,7 +409,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             fetchBackendPublicKeysExpectation.fulfill()
             return backendPublicKeys
         }
-        mockCoreCrypto.mockCreateConversation = { _, _, _ in }
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
 
         // When
         try await sut.createGroup(for: groupID)
@@ -440,7 +442,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock adding members to the conversation.
-        var mockAddMembersArguments = [([Invitee], MLSGroupID)]()
+        var mockAddMembersArguments = [([KeyPackage], MLSGroupID)]()
         let updateEvent = dummyMemberJoinEvent()
 
         mockMLSActionExecutor.mockAddMembers = {
@@ -453,7 +455,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we added the members.
         XCTAssertEqual(mockAddMembersArguments.count, 1)
-        XCTAssertEqual(mockAddMembersArguments.first?.0, [Invitee(from: keyPackage)])
+        XCTAssertEqual(mockAddMembersArguments.first?.0, [keyPackage])
         XCTAssertEqual(mockAddMembersArguments.first?.1, mlsGroupID)
 
         // And processd the update event.
@@ -496,7 +498,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock adding members to the conversation.
-        var mockAddMembersArguments = [([Invitee], MLSGroupID)]()
+        var mockAddMembersArguments = [([KeyPackage], MLSGroupID)]()
         let updateEvent2 = dummyMemberJoinEvent()
 
         mockMLSActionExecutor.mockAddMembers = {
@@ -516,7 +518,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we added the members.
         XCTAssertEqual(mockAddMembersArguments.count, 1)
-        XCTAssertEqual(mockAddMembersArguments.first?.0, [Invitee(from: keyPackage)])
+        XCTAssertEqual(mockAddMembersArguments.first?.0, [keyPackage])
         XCTAssertEqual(mockAddMembersArguments.first?.1, groupID)
 
         // We processed the conversation events.
@@ -627,9 +629,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         try await sut.removeMembersFromConversation(with: [mlsClientID], for: mlsGroupID)
 
         // Then we removed the clients.
-        let clientIDBytes = try XCTUnwrap(mlsClientID.rawValue.data(using: .utf8)?.bytes)
+        let clientIDData = try XCTUnwrap(mlsClientID.rawValue.data(using: .utf8))
         XCTAssertEqual(mockRemoveClientsArguments.count, 1)
-        XCTAssertEqual(mockRemoveClientsArguments.first?.0, [clientIDBytes])
+        XCTAssertEqual(mockRemoveClientsArguments.first?.0, [clientIDData])
         XCTAssertEqual(mockRemoveClientsArguments.first?.1, mlsGroupID)
 
         // Then we process the update event.
@@ -684,9 +686,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then we removed the clients.
-        let clientIDBytes = try XCTUnwrap(mlsClientID.rawValue.data(using: .utf8)?.bytes)
+        let clientIDData = try XCTUnwrap(mlsClientID.rawValue.data(using: .utf8))
         XCTAssertEqual(mockRemoveClientsArguments.count, 1)
-        XCTAssertEqual(mockRemoveClientsArguments.first?.0, [clientIDBytes])
+        XCTAssertEqual(mockRemoveClientsArguments.first?.0, [clientIDData])
         XCTAssertEqual(mockRemoveClientsArguments.first?.1, groupID)
 
         // Then we process the update events.
@@ -1186,97 +1188,119 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Handling out of sync conversations
 
-    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() {
+    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() async {
         // GIVEN
-        let conversationAndOutOfSyncTuples = [
-            createConversation(outOfSync: true),
-            createConversation(outOfSync: true),
-            createConversation(outOfSync: false)
-        ]
+        let conversationAndOutOfSyncTuples = await uiMOC.perform { [self] in
+            [
+                createConversation(outOfSync: true),
+                createConversation(outOfSync: true),
+                createConversation(outOfSync: false)
+            ]
+        }
 
-        // mock conversation epoch
-        mockCoreCrypto.mockConversationEpoch = { groupID in
-            guard let tuple = conversationAndOutOfSyncTuples.first(
-                where: { $0.conversation.mlsGroupID?.bytes == groupID }
-            ) else {
-                return 1
+        await uiMOC.perform {
+            // mock conversation epoch
+            self.mockCoreCrypto.conversationEpochConversationId_MockMethod = { groupID in
+                guard let tuple = conversationAndOutOfSyncTuples.first(
+                    where: { element in
+                        self.uiMOC.performGroupedAndWait({ _ in
+                            element.conversation.mlsGroupID?.data
+                        }) == groupID }
+                ) else {
+                    return 1
+                }
+
+                let epoch = await self.uiMOC.perform { tuple.conversation.epoch }
+                return tuple.isOutOfSync ? epoch + 1 : epoch
             }
-
-            let epoch = tuple.conversation.epoch
-            return tuple.isOutOfSync ? epoch + 1 : epoch
         }
 
         // mock fetching group info
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
 
         // mock joining group
-        let expectations = expectations(from: conversationAndOutOfSyncTuples)
-        mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
-            expectations[groupID]?.fulfill()
-            return []
+        let expectations = await uiMOC.perform { self.expectations(from: conversationAndOutOfSyncTuples) }
+        await uiMOC.perform { [self] in
+            mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
+                expectations[groupID]?.fulfill()
+                return []
+            }
         }
 
         // WHEN
-        sut.repairOutOfSyncConversations()
+        await sut.repairOutOfSyncConversations()
 
         // THEN
-        wait(for: Array(expectations.values), timeout: 1.5)
+        await fulfillment(of: Array(expectations.values), timeout: 1.5)
     }
 
-    func test_FetchAndRepairConversation_RejoinsOutOfSyncConversation() throws {
+    func test_FetchAndRepairConversation_RejoinsOutOfSyncConversation() async throws {
         // GIVEN
-        let conversation = createConversation(outOfSync: true).conversation
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
+            XCTFail("missing groupID")
+            return
+        }
+
         let expectation = XCTestExpectation(description: "rejoined conversation")
 
-        setMocksForConversationRepair(
-            parentGroupID: groupID,
-            epoch: conversation.epoch + 1,
-            onJoinGroup: { joinedGroupID in
-                XCTAssertEqual(groupID, joinedGroupID)
-                expectation.fulfill()
-            }
-        )
-
+        await uiMOC.perform { [self] in
+            setMocksForConversationRepair(
+                parentGroupID: groupID,
+                epoch: conversation.epoch + 1,
+                onJoinGroup: { joinedGroupID in
+                    XCTAssertEqual(groupID, joinedGroupID)
+                    expectation.fulfill()
+                }
+            )
+        }
         // WHEN
-        sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the conversation was rejoined
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
         // Wait for groups that need the current context before its deallocated
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func test_FetchAndRepairConversation_DoesNothingIfConversationIsNotOutOfSync() throws {
+    func test_FetchAndRepairConversation_DoesNothingIfConversationIsNotOutOfSync() async throws {
         // GIVEN
-        let conversation = createConversation(outOfSync: true).conversation
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
+            XCTFail("missing groupID")
+            return
+        }
 
         let expectation = XCTestExpectation(description: "didn't rejoin conversation")
         expectation.isInverted = true
 
-        setMocksForConversationRepair(
-            parentGroupID: groupID,
-            epoch: conversation.epoch,
-            onJoinGroup: { _ in
-                expectation.fulfill()
-            }
-        )
-
+        await uiMOC.perform { [self] in
+            setMocksForConversationRepair(
+                parentGroupID: groupID,
+                epoch: conversation.epoch,
+                onJoinGroup: { _ in
+                    expectation.fulfill()
+                }
+            )
+        }
         // WHEN
-        sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the conversation was NOT rejoined
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
     }
 
-    func test_FetchAndRepairConversation_RejoinsOutOfSyncSubgroup() throws {
+    func test_FetchAndRepairConversation_RejoinsOutOfSyncSubgroup() async throws {
         // GIVEN
-        let conversation = createConversation(outOfSync: true).conversation
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
+            XCTFail("missing groupID")
+            return
+        }
         let subgroupID = MLSGroupID.random()
+        let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
         let subgroup = MLSSubgroup(
             cipherSuite: 0,
@@ -1284,34 +1308,39 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             epochTimestamp: Date(),
             groupID: subgroupID,
             members: [],
-            parentQualifiedID: try XCTUnwrap(conversation.qualifiedID)
+            parentQualifiedID: try XCTUnwrap(qualifiedID)
         )
 
         let expectation = XCTestExpectation(description: "rejoined subgroup")
-
-        setMocksForConversationRepair(
-            parentGroupID: groupID,
-            epoch: UInt64(subgroup.epoch + 1),
-            subgroup: subgroup,
-            onJoinGroup: { joinedGroupID in
-                XCTAssertEqual(subgroupID, joinedGroupID)
-                expectation.fulfill()
-            }
-        )
+        await uiMOC.perform {
+            self.setMocksForConversationRepair(
+                parentGroupID: groupID,
+                epoch: UInt64(subgroup.epoch + 1),
+                subgroup: subgroup,
+                onJoinGroup: { joinedGroupID in
+                    XCTAssertEqual(subgroupID, joinedGroupID)
+                    expectation.fulfill()
+                }
+            )
+        }
 
         // WHEN
-        sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the subgroup was rejoined
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
     }
 
-    func test_FetchAndRepairConversation_DoesNothingIfSubgroupIsNotOutOfSync() throws {
+    func test_FetchAndRepairConversation_DoesNothingIfSubgroupIsNotOutOfSync() async throws {
         // GIVEN
-        let conversation = createConversation(outOfSync: true).conversation
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        guard let groupID =  await uiMOC.perform({ conversation.mlsGroupID }) else {
+            XCTFail("missing groupID")
+            return
+        }
         let subgroupID = MLSGroupID.random()
+        let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
         let subgroup = MLSSubgroup(
             cipherSuite: 0,
@@ -1319,27 +1348,29 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             epochTimestamp: Date(),
             groupID: subgroupID,
             members: [],
-            parentQualifiedID: try XCTUnwrap(conversation.qualifiedID)
+            parentQualifiedID: try XCTUnwrap(qualifiedID)
         )
 
         let expectation = XCTestExpectation(description: "didn't rejoin subgroup")
         expectation.isInverted = true
 
-        setMocksForConversationRepair(
-            parentGroupID: groupID,
-            epoch: UInt64(subgroup.epoch),
-            subgroup: subgroup,
-            onJoinGroup: { _ in
-                expectation.fulfill()
-            }
-        )
+        await uiMOC.perform {
+            self.setMocksForConversationRepair(
+                parentGroupID: groupID,
+                epoch: UInt64(subgroup.epoch),
+                subgroup: subgroup,
+                onJoinGroup: { _ in
+                    expectation.fulfill()
+                }
+            )
+        }
 
         // WHEN
-        sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the subgroup was NOT rejoined
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
     }
 
     private func setMocksForConversationRepair(
@@ -1349,7 +1380,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         onJoinGroup: @escaping (MLSGroupID) -> Void
     ) {
         // mock conversation epoch
-        mockCoreCrypto.mockConversationEpoch = { _ in
+        mockCoreCrypto.conversationEpochConversationId_MockMethod = { _ in
             return epoch
         }
 
@@ -1409,9 +1440,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
 
         var count = 0
-        mockCoreCrypto.mockWipeConversation = { (id: ConversationId) in
+        mockCoreCrypto.wipeConversationConversationId_MockMethod = { (id: ConversationId) in
             count += 1
-            XCTAssertEqual(id, groupID.bytes)
+            XCTAssertEqual(id, groupID.data)
         }
 
         // When
@@ -1430,9 +1461,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return
         }
 
-        let keyPackages: [[Byte]] = [
-            [1, 2, 3],
-            [4, 5, 6]
+        let keyPackages: [Data] = [
+            Data.secureRandomData(length: 1),
+            Data.secureRandomData(length: 1)
         ]
 
         // we need more than half the target number to have a sufficient amount
@@ -1446,13 +1477,13 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         userDefaultsTestSuite.set(Date(), forKey: MLSService.Keys.keyPackageQueriedTime.rawValue)
 
         // mock that we don't have enough unclaimed kp locally
-        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
+        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             UInt64(unsufficientKeyPackagesAmount)
         }
 
         // mock keyPackages returned by core cryto
         var mockClientKeypackagesCount = 0
-        mockCoreCrypto.mockClientKeypackages = { _, amountRequested in
+        mockCoreCrypto.clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod = { _, _, amountRequested in
             mockClientKeypackagesCount += 1
             XCTAssertEqual(amountRequested, UInt32(self.sut.targetUnclaimedKeyPackageCount))
             return keyPackages
@@ -1482,7 +1513,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let uploadKeypackagesInvocations = mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_Invocations
         XCTAssertEqual(uploadKeypackagesInvocations.count, 1)
         XCTAssertEqual(uploadKeypackagesInvocations.first?.clientID, clientID)
-        XCTAssertEqual(uploadKeypackagesInvocations.first?.keyPackages, keyPackages.map { $0.data.base64EncodedString() })
+        XCTAssertEqual(uploadKeypackagesInvocations.first?.keyPackages, keyPackages.map { $0.base64EncodedString() })
     }
 
     func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() async {
@@ -1497,7 +1528,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         privateUserDefaults.set(Date(), forKey: .keyPackageQueriedTime)
 
         // mock that there are enough kp locally
-        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
+        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
 
@@ -1529,7 +1560,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         privateUserDefaults.set(Date.distantPast, forKey: .keyPackageQueriedTime)
 
         // mock that we don't have enough unclaimed kp locally
-        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
+        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             return UInt64(unsufficientKeyPackagesAmount)
         }
 
@@ -1543,7 +1574,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             uploadKeyPackages.fulfill()
         }
 
-        mockCoreCrypto.mockClientKeypackages = { _, _ in
+        mockCoreCrypto.clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod = { _, _, _ in
             XCTFail("shouldn't be generating key packages")
             return []
         }
@@ -1563,12 +1594,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = Data.random().base64EncodedString()
 
         // Mock
-        mockCoreCrypto.mockProcessWelcomeMessage = { _, _ in
-            groupID.bytes
+        mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
+            groupID.data
         }
 
         var mockClientValidKeypackagesCountCount = 0
-        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
+        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             mockClientValidKeypackagesCountCount += 1
             return UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
@@ -1889,8 +1920,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
 
-        mockCoreCrypto.mockCreateConversation = { groupID, _, _ in
-            XCTAssertEqual(groupID, subgroupID.bytes)
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, _ in
+            XCTAssertEqual(groupID, subgroupID.data)
         }
 
         mockMLSActionExecutor.mockCommitPendingProposals = { groupID in
@@ -1922,7 +1953,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(fetchSubroupInvocation.domain, parentQualifiedID.domain)
         XCTAssertEqual(fetchSubroupInvocation.type, .conference)
 
-        XCTAssertEqual(mockCoreCrypto.mockCreateConversationCount, 1)
+        XCTAssertEqual(mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_Invocations.count, 1)
         XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 1)
         XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 1)
 
@@ -1959,8 +1990,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
 
-        mockCoreCrypto.mockCreateConversation = { groupID, _, _ in
-            XCTAssertEqual(groupID, subgroupID.bytes)
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, _ in
+            XCTAssertEqual(groupID, subgroupID.data)
         }
 
         mockMLSActionExecutor.mockCommitPendingProposals = { groupID in
@@ -1998,7 +2029,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(fetchSubroupInvocation.domain, parentQualifiedID.domain)
         XCTAssertEqual(fetchSubroupInvocation.type, .conference)
 
-        XCTAssertEqual(mockCoreCrypto.mockCreateConversationCount, 1)
+        XCTAssertEqual(mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_Invocations.count, 1)
         XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 1)
         XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 1)
 
@@ -2095,8 +2126,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // no op
         }
 
-        var mockWipeConversationArguments = [[Byte]]()
-        mockCoreCrypto.mockWipeConversation = {
+        var mockWipeConversationArguments = [Data]()
+        mockCoreCrypto.wipeConversationConversationId_MockMethod = {
             mockWipeConversationArguments.append($0)
         }
 
@@ -2121,7 +2152,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(leaveSubconversationInvocation.domain, parentID.domain)
         XCTAssertEqual(leaveSubconversationInvocation.subconversationType, subconversationType)
 
-        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.bytes])
+        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.data])
 
         let clearSubconversationGroupIDInvocations = mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_Invocations
         XCTAssertEqual(clearSubconversationGroupIDInvocations.count, 1)
@@ -2140,8 +2171,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let selfClientID = MLSClientID.random()
 
         mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
-        mockCoreCrypto.mockConversationExists = {
-            XCTAssertEqual($0, subconversationGroupID.bytes)
+        mockCoreCrypto.conversationExistsConversationId_MockMethod = {
+            XCTAssertEqual($0, subconversationGroupID.data)
             return true
         }
 
@@ -2149,8 +2180,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // no op
         }
 
-        var mockWipeConversationArguments = [[Byte]]()
-        mockCoreCrypto.mockWipeConversation = {
+        var mockWipeConversationArguments = [Data]()
+        mockCoreCrypto.wipeConversationConversationId_MockMethod = {
             mockWipeConversationArguments.append($0)
         }
 
@@ -2176,7 +2207,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(invocation.domain, parentID.domain)
         XCTAssertEqual(invocation.subconversationType, subconversationType)
 
-        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.bytes])
+        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.data])
 
         let clearSubconversationGroupIDInvocations = mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_Invocations
         XCTAssertEqual(clearSubconversationGroupIDInvocations.count, 1)
@@ -2213,8 +2244,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // no op
         }
 
-        var mockWipeConversationArguments = [[Byte]]()
-        mockCoreCrypto.mockWipeConversation = {
+        var mockWipeConversationArguments = [Data]()
+        mockCoreCrypto.wipeConversationConversationId_MockMethod = {
             mockWipeConversationArguments.append($0)
         }
 
@@ -2240,7 +2271,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(invocation.domain, parentID.domain)
         XCTAssertEqual(invocation.subconversationType, subconversationType)
 
-        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.bytes])
+        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.data])
 
         let clearSubconversationGroupIDInvocations = mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_Invocations
         XCTAssertEqual(clearSubconversationGroupIDInvocations.count, 1)
@@ -2326,21 +2357,21 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let epoch: UInt64 = 42
         let key = Data.random(byteCount: 32)
         let clientID = MLSClientID.random()
-        let clientIDBytes = try XCTUnwrap(clientID.rawValue.utf8Data?.bytes)
+        let clientIDData = try XCTUnwrap(clientID.rawValue.utf8Data)
 
-        mockCoreCrypto.mockConversationEpoch = { groupID in
-            XCTAssertEqual(groupID, subconversationGroupID.bytes)
+        mockCoreCrypto.conversationEpochConversationId_MockMethod = { groupID in
+            XCTAssertEqual(groupID, subconversationGroupID.data)
             return epoch
         }
 
-        mockCoreCrypto.mockExportSecretKey = { groupID, _ in
-            XCTAssertEqual(groupID, subconversationGroupID.bytes)
-            return key.bytes
+        mockCoreCrypto.exportSecretKeyConversationIdKeyLength_MockMethod = { groupID, _ in
+            XCTAssertEqual(groupID, subconversationGroupID.data)
+            return key
         }
 
-        mockCoreCrypto.mockGetClientIds = { groupID in
-            XCTAssertTrue(groupID.isOne(of: parentGroupID.bytes, subconversationGroupID.bytes))
-            return [clientIDBytes]
+        mockCoreCrypto.getClientIdsConversationId_MockMethod = { groupID in
+            XCTAssertTrue(groupID.isOne(of: parentGroupID.data, subconversationGroupID.data))
+            return [clientIDData]
         }
 
         // Collect the received conference infos
@@ -2375,7 +2406,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let expectation1 = self.expectation(description: "CreateConversation should be called")
         let expectation2 = self.expectation(description: "UpdateKeyMaterial should be called")
 
-        mockCoreCrypto.mockCreateConversation = { _, _, _ in
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in
             expectation1.fulfill()
         }
 
@@ -2406,7 +2437,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given a group.
         let expectation1 = self.expectation(description: "CreateConversation should be called")
         let expectation2 = self.expectation(description: "AddMembers should be called")
-        mockCoreCrypto.mockCreateConversation = { _, _, _ in
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in
             expectation1.fulfill()
         }
 
@@ -2477,10 +2508,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [ZMUpdateEvent()]
         }
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
-        mockCoreCrypto.mockConversationExists = {_ in
+        mockCoreCrypto.conversationExistsConversationId_MockMethod = {_ in
             return false
         }
-        mockCoreCrypto.mockCreateConversation = { _, _, _ in
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in
             expectation1.fulfill()
         }
 
@@ -2520,7 +2551,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [ZMUpdateEvent()]
         }
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
-        mockCoreCrypto.mockConversationExists = {_ in
+        mockCoreCrypto.conversationExistsConversationId_MockMethod = { _ in
             return true
         }
 
