@@ -61,10 +61,6 @@ final class FolderPickerViewController: UIViewController {
         configureConstraints()
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
     private func configureNavbar() {
         let navigationTitleLabel = DynamicFontLabel(
             text: L10n.Localizable.Folder.Picker.title.capitalized,
@@ -91,7 +87,7 @@ final class FolderPickerViewController: UIViewController {
     }
 
     private func configureSubviews() {
-        hintLabel.text = "folder.picker.empty.hint".localized
+        hintLabel.text = L10n.Localizable.Folder.Picker.Empty.hint
         hintLabel.numberOfLines = 0
         hintLabel.textAlignment = .center
 

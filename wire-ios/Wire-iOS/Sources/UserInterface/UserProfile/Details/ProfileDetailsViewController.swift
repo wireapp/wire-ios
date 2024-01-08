@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 /**
  * A view controller that displays the details for a user.
@@ -70,7 +71,8 @@ final class ProfileDetailsViewController: UIViewController {
     init(user: UserType,
          viewer: UserType,
          conversation: ZMConversation?,
-         context: ProfileViewControllerContext) {
+         context: ProfileViewControllerContext,
+         userSession: UserSession) {
 
         var profileHeaderOptions: ProfileHeaderViewController.Options = [.hideUsername, .hideHandle, .hideTeamName]
 
@@ -82,7 +84,7 @@ final class ProfileDetailsViewController: UIViewController {
         self.viewer = viewer
         self.conversation = conversation
         self.context = context
-        profileHeaderViewController = ProfileHeaderViewController(user: user, viewer: viewer, conversation: conversation, options: profileHeaderOptions)
+        profileHeaderViewController = ProfileHeaderViewController(user: user, viewer: viewer, conversation: conversation, options: profileHeaderOptions, userSession: userSession)
         contentController = ProfileDetailsContentController(user: user, viewer: viewer, conversation: conversation)
 
         super.init(nibName: nil, bundle: nil)

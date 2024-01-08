@@ -4,7 +4,7 @@ github "wireapp/Down" "v2.3.4_xcframework"
 github "wireapp/FLAnimatedImage" ~> 1.0.17
 github "wireapp/cryptobox-ios" "v1.1.0_xcframework_arm64simulator"
 github "wireapp/libsodium" "1.0.14"
-github "wireapp/PINCache" "2.3-xcode13.1"
+github "wireapp/PINCache" "2.3-xcode14.3.1"
 github "wireapp/HTMLString" "6.0.1_xcframework"
 github "wireapp/swift-protobuf" "1.22.0"
 github "wireapp/ZipArchive" "v2.4.2"
@@ -12,5 +12,5 @@ github "wireapp/libPhoneNumber-iOS" "1.1"
 github "wireapp/ocmock" "v3.4.3_Xcode14.3.1"
 github "wireapp/Starscream" "4.0.4_min_tls_version"
 github "wireapp/dd-sdk-ios" ~> 1.22.0
-github "wireapp/core-crypto" "v0.9.2-xcode-14.3.1"
-binary "wire-avs.json" ~> 9.3.12
+github "wireapp/core-crypto" "v1.0.0-rc.22"
+binary "wire-avs.json" ~> 9.6.7

@@ -88,7 +88,7 @@ jobs:
           path: ./CHANGELOG.md
 
   build_and_release:
-    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15
+    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.0.1
     needs: changelog
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -130,7 +130,7 @@ jobs:
           key: ${{ runner.os }}-carthage-${{ hashFiles('Cartfile.resolved') }}
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
-        run: carthage bootstrap --platform ios --use-xcframeworks
+        run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
       - name: Restore Bundler Cache
         uses: actions/cache@v3
         id: cache-bundler
@@ -172,7 +172,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n${{ steps.base64-decoded-RELEASE_NOTES.outputs.decoded }}\n**Tap on iOS device to install:** ${{ env.APPCENTER_INSTALL_LINK }}\n**AWS S3 Paths:**\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n${{ steps.base64-decoded-RELEASE_NOTES.outputs.decoded }}\n**Tap on iOS device to install:** ${{ env.APPCENTER_INSTALL_LINK }}\n**AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
       - name: Notify on Wire if failed
         if: failure()
         uses: 8398a7/action-slack@v3

@@ -1,5 +1,26 @@
-// Generated using Sourcery 2.0.3 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -10,62 +31,57 @@ import UIKit
 import AppKit
 #endif
 
-@testable import WireSyncEngine
+import WireSyncEngine
 
-class MockGenericMessageSyncInterface: GenericMessageSyncInterface {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerprintUseCaseProtocol {
 
     // MARK: - Life cycle
 
-    // MARK: - contextChangeTrackers
+    public init() {}
 
-    var contextChangeTrackers: [ZMContextChangeTracker] = []
 
-    // MARK: - sync
+    // MARK: - invoke
 
-    var syncCompletion_Invocations: [(message: GenericMessageEntity, completion: EntitySyncHandler)] = []
-    var syncCompletion_MockMethod: ((GenericMessageEntity, @escaping EntitySyncHandler) -> Void)?
+    public var invokeUserClient_Invocations: [UserClient] = []
+    public var invokeUserClient_MockMethod: ((UserClient) async -> Data?)?
+    public var invokeUserClient_MockValue: Data??
 
-    func sync(_ message: GenericMessageEntity, completion: @escaping EntitySyncHandler) {
-        syncCompletion_Invocations.append((message: message, completion: completion))
+    public func invoke(userClient: UserClient) async -> Data? {
+        invokeUserClient_Invocations.append(userClient)
 
-        guard let mock = syncCompletion_MockMethod else {
-            fatalError("no mock for `syncCompletion`")
-        }
-
-        mock(message, completion)
-    }
-
-    // MARK: - nextRequest
-
-    var nextRequestFor_Invocations: [APIVersion] = []
-    var nextRequestFor_MockMethod: ((APIVersion) -> ZMTransportRequest?)?
-    var nextRequestFor_MockValue: ZMTransportRequest??
-
-    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        nextRequestFor_Invocations.append(apiVersion)
-
-        if let mock = nextRequestFor_MockMethod {
-            return mock(apiVersion)
-        } else if let mock = nextRequestFor_MockValue {
+        if let mock = invokeUserClient_MockMethod {
+            return await mock(userClient)
+        } else if let mock = invokeUserClient_MockValue {
             return mock
         } else {
-            fatalError("no mock for `nextRequestFor`")
+            fatalError("no mock for `invokeUserClient`")
         }
-    }
-
-    // MARK: - expireMessages
-
-    var expireMessagesWithDependency_Invocations: [NSObject] = []
-    var expireMessagesWithDependency_MockMethod: ((NSObject) -> Void)?
-
-    func expireMessages(withDependency dependency: NSObject) {
-        expireMessagesWithDependency_Invocations.append(dependency)
-
-        guard let mock = expireMessagesWithDependency_MockMethod else {
-            fatalError("no mock for `expireMessagesWithDependency`")
-        }
-
-        mock(dependency)
     }
 
 }
+
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
+// swiftlint:enable superfluous_disable_command

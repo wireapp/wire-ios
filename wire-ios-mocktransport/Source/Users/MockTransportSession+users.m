@@ -49,41 +49,41 @@
 /// handles /users/
 - (ZMTransportResponse *)processUsersRequest:(ZMTransportRequest *)request;
 {
-    if ([request matchesWithPath:@"/users/*/rich-info" method:ZMMethodGET]) {
+    if ([request matchesWithPath:@"/users/*/rich-info" method:ZMTransportRequestMethodGet]) {
         return [self processRichProfileFetchForUser:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users/*" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/users/*" method:ZMTransportRequestMethodGet]) {
         return [self processUserIDRequest:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/users" method:ZMTransportRequestMethodGet]) {
         return [self processUsersRequestWithHandles:request.queryParameters[@"handles"] orIDs:request.queryParameters[@"ids"] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users/prekeys" method:ZMMethodPOST]) {
+    else if ([request matchesWithPath:@"/users/prekeys" method:ZMTransportRequestMethodPost]) {
         return [self processUsersPreKeysRequestWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users/handles/*" method:ZMMethodGET]
-             || [request matchesWithPath:@"/users/handles/*" method:ZMMethodHEAD]) {
+    else if ([request matchesWithPath:@"/users/handles/*" method:ZMTransportRequestMethodGet]
+             || [request matchesWithPath:@"/users/handles/*" method:ZMTransportRequestMethodHead]) {
         return [self processUserHandleRequest:[request RESTComponentAtIndex:2] path:request.path apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users/handles" method:ZMMethodPOST]) {
+    else if ([request matchesWithPath:@"/users/handles" method:ZMTransportRequestMethodPost]) {
         return [self processUserHandleAvailabilityRequest:request.payload apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users/by-handle/*/*" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/users/by-handle/*/*" method:ZMTransportRequestMethodGet]) {
         return [self processFederatedUserHandleRequest:[request RESTComponentAtIndex:2]
                                                 handle:[request RESTComponentAtIndex:3]
                                                   path:request.path
                                             apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users/*/prekeys" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/users/*/prekeys" method:ZMTransportRequestMethodGet]) {
         return [self processSingleUserPreKeysRequest:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users/*/prekeys/*" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/users/*/prekeys/*" method:ZMTransportRequestMethodGet]) {
         return [self processUserPreKeysRequest:[request RESTComponentAtIndex:1] client:[request RESTComponentAtIndex:3] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users/*/clients/*" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/users/*/clients/*" method:ZMTransportRequestMethodGet]) {
         return [self getUserClient:[request RESTComponentAtIndex:3] forUser:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/users/*/clients" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/users/*/clients" method:ZMTransportRequestMethodGet]) {
         return [self getUserClientsForUser:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
 
@@ -221,22 +221,22 @@
 /// handles /self
 - (ZMTransportResponse *)processSelfUserRequest:(ZMTransportRequest *)request;
 {
-    if ([request matchesWithPath:@"/self" method:ZMMethodGET]) {
+    if ([request matchesWithPath:@"/self" method:ZMTransportRequestMethodGet]) {
         return [self getSelfUserWithApiVersion:request.apiVersion];
     }
-    else if([request matchesWithPath:@"/self" method:ZMMethodPUT]) {
+    else if([request matchesWithPath:@"/self" method:ZMTransportRequestMethodPut]) {
         return [self putSelfResponseWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if([request matchesWithPath:@"/self/phone" method:ZMMethodPUT]) {
+    else if([request matchesWithPath:@"/self/phone" method:ZMTransportRequestMethodPut]) {
         return [self putSelfPhoneWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if([request matchesWithPath:@"/self/email" method:ZMMethodPUT]) {
+    else if([request matchesWithPath:@"/self/email" method:ZMTransportRequestMethodPut]) {
         return [self putSelfEmailWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if([request matchesWithPath:@"/self/password" method:ZMMethodPUT]) {
+    else if([request matchesWithPath:@"/self/password" method:ZMTransportRequestMethodPut]) {
         return [self putSelfPasswordWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if([request matchesWithPath:@"/self/handle" method:ZMMethodPUT]) {
+    else if([request matchesWithPath:@"/self/handle" method:ZMTransportRequestMethodPut]) {
         return [self putSelfHandleWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];

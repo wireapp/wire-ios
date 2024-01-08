@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Klepnutím odeslat";
 "conversation.input_bar.audio_message.too_long.title" = "Nahrávání zastaveno";
 "conversation.input_bar.audio_message.too_long.message" = "Zvukové zprávy jsou omezeny na %@.";
+"conversation.ping.many_participants_confirmation.title" = "Are you sure you want to ping %d people?";
+"conversation.ping.action.title" = "Odezva";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "Velikost zvukové zprávy je omezena na %@.";
 
@@ -560,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "This conversation is under legal hold";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "Legal hold deactivated for this conversation";
 
 "content.system.message_legal_hold.learn_more" = "Dozvědět se více";
@@ -990,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Legal hold subjects";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "Zákonné držení";
 "legalhold.header.other_description" = "Legal Hold has been activated for at least one person in this conversation.\nAll messages will be preserved for future access, including deleted, edited, and self-deleting messages.";
 "legalhold.header.self_description" = "Legal Hold has been activated for your account.\nAll messages will be preserved for future access, including deleted, edited, and self-deleting messages.\nYour conversation partners will be aware of the recording.";
@@ -1742,10 +1744,10 @@
 "jailbrokendevice.alert.message" = "Z bezpečnostních důvodů nelze aplikaci Wire použít na tomto zařízení. Všechna existující data byla smazána.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Not Enough Storage";
-"databaseloadingfailure.alert.message" = "The database could not be loaded due to insufficient storage. Review your device storage usage and try again.";
-"databaseloadingfailure.alert.settings" = "Přejít do nastavení";
-"databaseloadingfailure.alert.delete_database" = "Delete Database";
+"databaseloadingfailure.alert.title" = "Update Data storage";
+"databaseloadingfailure.alert.message" = "The database could not be loaded.\n Error: %@";
+"databaseloadingfailure.alert.save-backup" = "Save my data";
+"databaseloadingfailure.alert.delete_database" = "Clear my data and continue";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "Pokračovat";
 "databaseloadingfailure.alert.retry" = "Retry";

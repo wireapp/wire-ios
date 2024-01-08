@@ -28,16 +28,16 @@ extension UserType where Self: SelfLegalHoldSubject {
      * - parameter inputHandler: The block to execute with the password of the user.
      * - note: If the user dismisses the alert, we will make the legal hold request as acknowledged.
      */
+    func makeLegalHoldInputRequest(with fingerprint: String, cancellationHandler: @escaping () -> Void, inputHandler: @escaping (String?) -> Void) -> UserInputRequest {
+        let fingerprintString = fingerprint.fingerprintStringWithSpaces
 
-    func makeLegalHoldInputRequest(for request: LegalHoldRequest, cancellationHandler: @escaping () -> Void, inputHandler: @escaping (String?) -> Void) -> UserInputRequest {
-        let fingerprintString = self.fingerprint?.fingerprintStringWithSpaces ?? "<fingerprint unavailable>"
-        var legalHoldMessage = "legalhold_request.alert.detail".localized(args: fingerprintString)
+        var legalHoldMessage = L10n.Localizable.LegalholdRequest.Alert.detail(fingerprintString)
 
         var inputConfiguration: UserInputRequest.InputConfiguration?
 
         if !usesCompanyLogin {
             inputConfiguration = UserInputRequest.InputConfiguration(
-                placeholder: "password.placeholder".localized,
+                placeholder: L10n.Localizable.Password.placeholder,
                 prefilledText: nil,
                 isSecure: true,
                 textContentType: .password,
@@ -46,14 +46,14 @@ extension UserType where Self: SelfLegalHoldSubject {
             )
 
             legalHoldMessage += "\n"
-            legalHoldMessage += "legalhold_request.alert.detail.enter_password".localized
+            legalHoldMessage += L10n.Localizable.LegalholdRequest.Alert.Detail.enterPassword
         }
 
         return UserInputRequest(
-            title: "legalhold_request.alert.title".localized,
+            title: L10n.Localizable.LegalholdRequest.Alert.title,
             message: legalHoldMessage,
-            continueActionTitle: "general.accept".localized,
-            cancelActionTitle: "general.skip".localized,
+            continueActionTitle: L10n.Localizable.General.accept,
+            cancelActionTitle: L10n.Localizable.General.skip,
             inputConfiguration: inputConfiguration,
             completionHandler: inputHandler,
             cancellationHandler: cancellationHandler

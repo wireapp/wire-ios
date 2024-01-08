@@ -93,13 +93,13 @@ final class ConversationListViewModel: NSObject {
                 case .conversations:
                     return nil
                 case .contactRequests:
-                    return "list.section.requests".localized
+                    return L10n.Localizable.List.Section.requests
                 case .contacts:
-                    return "list.section.contacts".localized
+                    return L10n.Localizable.List.Section.contacts
                 case .groups:
-                    return "list.section.groups".localized
+                    return L10n.Localizable.List.Section.groups
                 case .favorites:
-                    return "list.section.favorites".localized
+                    return L10n.Localizable.List.Section.favorites
                 case .folder(label: let label):
                     return label.name
                 }
@@ -266,9 +266,9 @@ final class ConversationListViewModel: NSObject {
 
     private var conversationDirectoryToken: Any?
 
-    private let userSession: UserSessionInterface?
+    private let userSession: UserSession?
 
-    init(userSession: UserSessionInterface? = ZMUserSession.shared()) {
+    init(userSession: UserSession) {
         self.userSession = userSession
 
         super.init()

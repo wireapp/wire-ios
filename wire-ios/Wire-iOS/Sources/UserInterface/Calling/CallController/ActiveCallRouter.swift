@@ -67,9 +67,12 @@ class ActiveCallRouter: NSObject {
         return rootViewController.firstChild(ofType: ZClientViewController.self)
     }
 
-    init(rootviewController: RootViewController) {
+    private let userSession: UserSession
+
+    init(rootviewController: RootViewController, userSession: UserSession) {
         self.rootViewController = rootviewController
-        callController = CallController()
+        self.userSession = userSession
+        callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
         callQualityController = CallQualityController()
         transitioningDelegate = CallQualityAnimator()
@@ -100,9 +103,8 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         // NOTE: We resign first reponder for the input bar since it will attempt to restore
         // first responder when the call overlay is interactively dismissed but canceled.
         UIResponder.currentFirst?.resignFirstResponder()
-
         var activeCallViewController: UIViewController!
-        let bottomSheetActiveCallViewController = CallingBottomSheetViewController(voiceChannel: voiceChannel)
+        let bottomSheetActiveCallViewController = CallingBottomSheetViewController(voiceChannel: voiceChannel, userSession: userSession)
         bottomSheetActiveCallViewController.delegate = callController
         activeCallViewController = bottomSheetActiveCallViewController
 
@@ -224,7 +226,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     }
 
     private func buildCallQualitySurvey(with callDuration: TimeInterval) -> CallQualityViewController {
-        let questionLabelText = NSLocalizedString("calling.quality_survey.question", comment: "")
+        let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         let qualityController = CallQualityViewController(questionLabelText: questionLabelText,
                                                           callDuration: Int(callDuration))
         qualityController.delegate = callQualityController

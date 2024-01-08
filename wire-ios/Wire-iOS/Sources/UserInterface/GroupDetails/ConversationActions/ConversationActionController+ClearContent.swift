@@ -23,14 +23,10 @@ enum ClearContentResult {
     case delete(leave: Bool), cancel
 
     var title: String {
-        return localizationKey.localized
-    }
-
-    private var localizationKey: String {
         switch self {
-        case .cancel: return "general.cancel"
-        case .delete(leave: true): return "meta.menu.delete_content.button_delete_and_leave"
-        case .delete(leave: false): return "meta.menu.delete_content.button_delete"
+        case .cancel: return L10n.Localizable.General.cancel
+        case .delete(leave: true): return L10n.Localizable.Meta.Menu.DeleteContent.buttonDeleteAndLeave
+        case .delete(leave: false): return L10n.Localizable.Meta.Menu.DeleteContent.buttonDelete
         }
     }
 
@@ -44,7 +40,7 @@ enum ClearContentResult {
     }
 
     static var title: String {
-        return "meta.menu.delete_content.dialog_message".localized
+        return L10n.Localizable.Meta.Menu.DeleteContent.dialogMessage
     }
 
     static func options(for conversation: ZMConversation) -> [ClearContentResult] {
@@ -66,10 +62,15 @@ extension ConversationActionController {
 
     func handleClearContentResult(_ result: ClearContentResult, for conversation: ZMConversation) {
         guard case .delete(leave: let leave) = result else { return }
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
         transitionToListAndEnqueue {
             conversation.clearMessageHistory()
             if leave {
-                conversation.removeOrShowError(participant: SelfUser.current)
+                conversation.removeOrShowError(participant: user)
             }
         }
     }

@@ -18,34 +18,26 @@
 
 import Foundation
 
-public class ResetSessionRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
     fileprivate let keyPathSync: KeyPathObjectSync<ResetSessionRequestStrategy>
-    fileprivate let messageSync: MessageSync<GenericMessageEntity>
+    fileprivate let messageSender: MessageSenderInterface
+    fileprivate let managedObjectContext: NSManagedObjectContext
 
     public init(managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                clientRegistrationDelegate: ClientRegistrationDelegate) {
+                messageSender: MessageSenderInterface) {
 
+        self.managedObjectContext = managedObjectContext
         self.keyPathSync = KeyPathObjectSync(entityName: UserClient.entityName(), \.needsToNotifyOtherUserAboutSessionReset)
+        self.messageSender = messageSender
 
-        self.messageSync = MessageSync(
-            context: managedObjectContext,
-            appStatus: applicationStatus
-        )
-
-        super.init(withManagedObjectContext: managedObjectContext,
-                   applicationStatus: applicationStatus)
+        super.init()
 
         keyPathSync.transcoder = self
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return messageSync.nextRequest(for: apiVersion)
-    }
-
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [keyPathSync] + messageSync.contextChangeTrackers
+        return [keyPathSync]
     }
 
 }
@@ -60,19 +52,26 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
             return
         }
 
-        let message = GenericMessageEntity(conversation: conversation,
-                                           message: GenericMessage(clientAction: .resetSession),
+        let message = GenericMessageEntity(message: GenericMessage(clientAction: .resetSession),
+                                           context: managedObjectContext,
+                                           conversation: conversation,
                                            completionHandler: nil)
 
-        messageSync.sync(message) { (result, _) in
-            switch result {
-            case .success:
-                userClient.resolveDecryptionFailedSystemMessages()
-            case .failure:
-                break
+        WaitingGroupTask(context: managedObjectContext) { [self] in
+            do {
+                try await messageSender.sendMessage(message: message)
+                await managedObjectContext.perform {
+                    userClient.resolveDecryptionFailedSystemMessages()
+                }
+            } catch {
+                WireLogger.messaging.error("Failed to send reset session message: \(error)")
             }
 
-            completion()
+            await managedObjectContext.perform {
+                completion()
+                // saving since the `needsToNotifyOtherUserAboutSessionReset` are reset in the completion block
+                self.managedObjectContext.enqueueDelayedSave()
+            }
         }
     }
 

@@ -35,7 +35,7 @@
 
 @property (nonatomic) APSSignalingKeysStore *apsSignalKeyStore;
 @property (nonatomic) id<RequestStrategy> requestStrategy;
-@property (nonatomic) id<UpdateEventProcessor> updateEventProcessor;
+@property (nonatomic, weak) id<UpdateEventProcessor> updateEventProcessor;
 @property (nonatomic, weak) NSManagedObjectContext *syncMOC;
 @property (nonatomic, readonly) PushNotificationStatus *pushNotificationStatus;
 @property (nonatomic, readonly) CallEventStatus *callEventStatus;

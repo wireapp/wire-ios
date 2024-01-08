@@ -48,7 +48,7 @@ final class ProfileFooterView: ConversationDetailFooterView {
     override func setupButtons() {
         leftButton.accessibilityIdentifier = "left_button"
         rightButton.accessibilityIdentifier = "right_button"
-        rightButton.accessibilityLabel = "meta.menu.accessibility_more_options_button".localized
+        rightButton.accessibilityLabel = L10n.Localizable.Meta.Menu.accessibilityMoreOptionsButton
     }
 
     /**
@@ -75,7 +75,7 @@ final class ProfileFooterView: ConversationDetailFooterView {
 
         // Display the left action
         if let leftAction = leftAction {
-            leftButton.setTitle(leftAction.buttonText.localized, for: .normal)
+            leftButton.setTitle(leftAction.buttonText, for: .normal)
             leftIcon = leftAction.keyActionIcon
         }
 

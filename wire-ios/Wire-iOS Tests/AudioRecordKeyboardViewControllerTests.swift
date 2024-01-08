@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+import avs
 @testable import Wire
 
 final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
@@ -49,7 +50,7 @@ final class MockAudioRecorder: AudioRecorderType {
     var recordLevelCallBack: ((RecordingLevel) -> Void)?
     var playingStateCallback: ((PlayingState) -> Void)?
     var recordStartedCallback: (() -> Void)?
-    var recordEndedCallback: ((VoidResult) -> Void)?
+    var recordEndedCallback: ((Swift.Result<Void, Error>) -> Void)?
 
     var startRecordingHitCount = 0
     func startRecording(_ completion: @escaping (Bool) -> Void) {
@@ -94,16 +95,19 @@ final class MockAudioRecorder: AudioRecorderType {
 
 }
 
-final class AudioRecordKeyboardViewControllerTests: XCTestCase {
+final class AudioRecordKeyboardViewControllerTests: BaseSnapshotTestCase {
+
     var sut: AudioRecordKeyboardViewController!
     var audioRecorder: MockAudioRecorder!
     var mockDelegate: MockAudioRecordKeyboardDelegate!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+        self.userSession = UserSessionMock()
         self.audioRecorder = MockAudioRecorder()
         self.mockDelegate = MockAudioRecordKeyboardDelegate()
-        self.sut = AudioRecordKeyboardViewController(audioRecorder: self.audioRecorder)
+        self.sut = AudioRecordKeyboardViewController(audioRecorder: self.audioRecorder, userSession: userSession)
         self.sut.delegate = self.mockDelegate
     }
 
@@ -111,6 +115,7 @@ final class AudioRecordKeyboardViewControllerTests: XCTestCase {
         self.sut = nil
         self.audioRecorder = nil
         self.mockDelegate = nil
+        self.userSession = nil
         super.tearDown()
     }
 
@@ -155,30 +160,30 @@ final class AudioRecordKeyboardViewControllerTests: XCTestCase {
 
     func testThatItSwitchesToEffectsScreenAfterRecord() {
         // when
-        self.sut.recordButton.sendActions(for: .touchUpInside)
+        sut.recordButton.sendActions(for: .touchUpInside)
 
         // and when
-        self.audioRecorder.recordEndedCallback!(.success)
+        audioRecorder.recordEndedCallback!(.success(()))
 
         // then
-        XCTAssertEqual(self.sut.state, AudioRecordKeyboardViewController.State.effects)
+        XCTAssertEqual(sut.state, AudioRecordKeyboardViewController.State.effects)
     }
 
     func testThatItSwitchesToRecordingAfterRecordDiscarded() {
         // when
-        self.sut.recordButton.sendActions(for: .touchUpInside)
+        sut.recordButton.sendActions(for: .touchUpInside)
 
         // and when
-        self.audioRecorder.recordEndedCallback!(.success)
-        XCTAssertEqual(self.sut.state, AudioRecordKeyboardViewController.State.effects)
+        audioRecorder.recordEndedCallback!(.success(()))
+        XCTAssertEqual(sut.state, AudioRecordKeyboardViewController.State.effects)
 
         // and when
-        self.sut.redoButton.sendActions(for: .touchUpInside)
+        sut.redoButton.sendActions(for: .touchUpInside)
 
         // then
-        XCTAssertEqual(self.sut.state, AudioRecordKeyboardViewController.State.ready)
-        XCTAssertEqual(self.mockDelegate.didStartRecordingHitCount, 1)
-        XCTAssertEqual(self.audioRecorder.deleteRecordingHitCount, 1)
+        XCTAssertEqual(sut.state, AudioRecordKeyboardViewController.State.ready)
+        XCTAssertEqual(mockDelegate.didStartRecordingHitCount, 1)
+        XCTAssertEqual(audioRecorder.deleteRecordingHitCount, 1)
     }
 
     func testThatItCallsErrorDelegateCallback() {
@@ -186,7 +191,7 @@ final class AudioRecordKeyboardViewControllerTests: XCTestCase {
         self.sut.recordButton.sendActions(for: .touchUpInside)
 
         // and when
-        self.audioRecorder.recordEndedCallback!(.success)
+        self.audioRecorder.recordEndedCallback!(.success(()))
         XCTAssertEqual(self.sut.state, AudioRecordKeyboardViewController.State.effects)
 
         // and when

@@ -27,7 +27,7 @@ public protocol IdentifierObjectSyncTranscoder: AnyObject {
 
     func request(for identifiers: Set<T>, apiVersion: APIVersion) -> ZMTransportRequest?
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<T>)
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<T>, completionHandler: @escaping () -> Void)
 
 }
 
@@ -100,28 +100,33 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
         downloading.formUnion(scheduled)
         pending.subtract(scheduled)
 
-        request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] (response) in
-            guard let strongSelf = self else { return }
+        request.add(ZMCompletionHandler(on: managedObjectContext) { [weak self] response in
+            guard let self else { return }
 
             switch response.result {
             case .permanentError, .success:
-                strongSelf.downloading.subtract(scheduled)
-                strongSelf.transcoder?.didReceive(response: response, for: scheduled)
+                self.downloading.subtract(scheduled)
+                self.transcoder?.didReceive(response: response, for: scheduled) {
+                    if case .permanentError = response.result {
+                        self.delegate?.didFailToSyncAllObjects()
+                    }
 
-                if case .permanentError = response.result {
-                    self?.delegate?.didFailToSyncAllObjects()
+                    if !self.isSyncing {
+                        self.delegate?.didFinishSyncingAllObjects()
+                    }
+                    self.managedObjectContext.enqueueDelayedSave()
                 }
             default:
-                strongSelf.downloading.subtract(scheduled)
-                strongSelf.pending.formUnion(scheduled)
-            }
+                self.downloading.subtract(scheduled)
+                self.pending.formUnion(scheduled)
 
-            strongSelf.managedObjectContext.enqueueDelayedSave()
+                if !self.isSyncing {
+                    self.delegate?.didFinishSyncingAllObjects()
+                }
 
-            if !strongSelf.isSyncing {
-                self?.delegate?.didFinishSyncingAllObjects()
+                self.managedObjectContext.enqueueDelayedSave()
             }
-        }))
+        })
 
         return request
     }

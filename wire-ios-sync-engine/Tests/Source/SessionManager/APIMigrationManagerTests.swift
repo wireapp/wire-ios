@@ -39,10 +39,10 @@ class APIMigrationManagerTests: MessagingTest {
 
     // MARK: - Verifying if migration is needed
 
-    func test_itReturnsTrue_WhenMigrationIsNeeded() {
+    func test_itReturnsTrue_WhenMigrationIsNeeded() async {
         // Given
-        let session1 = setupSession(with: "clientID1")
-        let session2 = setupSession(with: "clientID2")
+        let session1 = await setupSession(with: "clientID1")
+        let session2 = await setupSession(with: "clientID2")
 
         let migrationV1 = APIMigrationMock(version: .v1)
         let migrationV2 = APIMigrationMock(version: .v2)
@@ -60,13 +60,13 @@ class APIMigrationManagerTests: MessagingTest {
         // When / Then
         XCTAssertTrue(sut.isMigration(to: .v3, neededForSessions: [session1, session2]))
 
-        tearDownSessions([session1, session2])
+        await tearDownSessions([session1, session2])
     }
 
-    func test_itReturnsFalse_WhenMigrationIsNotNeeded() {
+    func test_itReturnsFalse_WhenMigrationIsNotNeeded() async {
         // Given
-        let session1 = setupSession(with: "clientID1")
-        let session2 = setupSession(with: "clientID2")
+        let session1 = await setupSession(with: "clientID1")
+        let session2 = await setupSession(with: "clientID2")
 
         let migrationV1 = APIMigrationMock(version: .v1)
         let migrationV2 = APIMigrationMock(version: .v2)
@@ -82,7 +82,7 @@ class APIMigrationManagerTests: MessagingTest {
         // When / Then
         XCTAssertFalse(sut.isMigration(to: .v3, neededForSessions: [session1, session2]))
 
-        tearDownSessions([session1, session2])
+        await tearDownSessions([session1, session2])
     }
 
     // MARK: - Migrating sessions
@@ -90,7 +90,7 @@ class APIMigrationManagerTests: MessagingTest {
     func test_itPerformsMigrationsForVersionsHigherThanLastUsed() async {
         // Given
         let clientID = "123abcd"
-        let userSession = setupSession(with: clientID)
+        let userSession = await setupSession(with: clientID)
 
         let migrationV1 = APIMigrationMock(version: .v1)
         let migrationV2 = APIMigrationMock(version: .v2)
@@ -112,15 +112,15 @@ class APIMigrationManagerTests: MessagingTest {
         XCTAssertEqual(migrationV2.performCalls.count, 0)
         XCTAssertEqual(migrationV3.performCalls.count, 1)
 
-        tearDownSession(userSession)
+        await tearDownSession(userSession)
     }
 
     func test_itPerformsMigrationsForMultipleSessions() async {
         // Given
         let clientID1 = "client1"
         let clientID2 = "client2"
-        let userSession1 = setupSession(with: clientID1)
-        let userSession2 = setupSession(with: clientID2)
+        let userSession1 = await setupSession(with: clientID1)
+        let userSession2 = await setupSession(with: clientID2)
 
         let migration = APIMigrationMock(version: .v3)
         let sut = APIMigrationManager(migrations: [migration])
@@ -141,14 +141,14 @@ class APIMigrationManagerTests: MessagingTest {
         XCTAssertEqual(migration.performCalls[1].session, userSession2)
         XCTAssertEqual(migration.performCalls[1].clientID, clientID2)
 
-        tearDownSessions([userSession1, userSession2])
+        await tearDownSessions([userSession1, userSession2])
     }
 
     // MARK: - Persisting last used API version
 
     func test_itPersistsLastUsedAPIVersion_AfterMigrations() async {
         // Given
-        let userSession = stubUserSession()
+        let userSession = await stubUserSession()
         let clientID = "1234abcd"
 
         setupClient(clientID, in: userSession)
@@ -162,17 +162,17 @@ class APIMigrationManagerTests: MessagingTest {
         // Then
         XCTAssertEqual(sut.lastUsedAPIVersion(for: clientID), .v3)
 
-        tearDownSession(userSession)
+        await tearDownSession(userSession)
     }
 
-    func test_itPersistsLastUsedAPIVersion_ForMultipleSessions() {
+    func test_itPersistsLastUsedAPIVersion_ForMultipleSessions() async {
         // Given
         let sut = APIMigrationManager(migrations: [])
 
         let clientID1 = "client1"
         let clientID2 = "client2"
-        let userSession1 = setupSession(with: clientID1)
-        let userSession2 = setupSession(with: clientID2)
+        let userSession1 = await setupSession(with: clientID1)
+        let userSession2 = await setupSession(with: clientID2)
 
         sut.persistLastUsedAPIVersion(for: userSession1, apiVersion: .v1)
         sut.persistLastUsedAPIVersion(for: userSession2, apiVersion: .v1)
@@ -191,21 +191,24 @@ class APIMigrationManagerTests: MessagingTest {
         XCTAssertEqual(sut.lastUsedAPIVersion(for: clientID2), APIVersion.v3)
 
         // clean up
-        tearDownSessions([userSession1, userSession2])
+        await tearDownSessions([userSession1, userSession2])
     }
 
     // MARK: - Helpers
 
+    @MainActor
     private func setupSession(with clientID: String) -> ZMUserSession {
         let session = stubUserSession()
         setupClient(clientID, in: session)
         return session
     }
 
+    @MainActor
     private func tearDownSessions(_ sessions: [ZMUserSession]) {
         sessions.forEach(tearDownSession(_:))
     }
 
+    @MainActor
     private func tearDownSession(_ session: ZMUserSession) {
         if let clientID = session.selfUserClient?.remoteIdentifier {
             APIMigrationManager.removeDefaults(for: clientID)
@@ -228,13 +231,16 @@ class APIMigrationManagerTests: MessagingTest {
         }
     }
 
+    @MainActor
     private func stubUserSession() -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
         let mockUpdateEventProcessor = MockUpdateEventProcessor()
+        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         let cookieStorage = ZMPersistentCookieStorage(
             forServerName: "test.example.com",
-            userIdentifier: .create()
+            userIdentifier: .create(),
+            useCache: true
         )
 
         let mockTransportSession = RecordingMockTransportSession(
@@ -256,6 +262,7 @@ class APIMigrationManagerTests: MessagingTest {
             appVersion: "999",
             coreDataStack: createCoreDataStack(),
             configuration: .init(),
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
     }

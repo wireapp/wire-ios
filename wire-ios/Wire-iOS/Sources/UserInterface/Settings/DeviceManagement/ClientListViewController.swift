@@ -118,7 +118,7 @@ final class ClientListViewController: UIViewController,
         super.init(nibName: nil, bundle: nil)
         setupControllerTitle()
 
-        self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser().clients.filter { !$0.isSelfClient() }))
+        self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
         self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
         if let user = ZMUser.selfUser(), let session = ZMUserSession.shared() {
             self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
@@ -182,8 +182,11 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
+        guard let userSession = ZMUserSession.shared() else { return }
         if let navigationController = self.navigationController {
-            let clientViewController = SettingsClientViewController(userClient: client, credentials: self.credentials)
+            let clientViewController = SettingsClientViewController(userClient: client,
+                                                                    userSession: userSession,
+                                                                    credentials: self.credentials)
             clientViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
             navigationController.pushViewController(clientViewController, animated: true)
         }
@@ -267,7 +270,7 @@ final class ClientListViewController: UIViewController,
 
         zmLog.error("Clients request failed: \(error.localizedDescription)")
 
-        presentAlertWithOKButton(message: "error.user.unkown_error".localized)
+        presentAlertWithOKButton(message: L10n.Localizable.Error.User.unkownError)
     }
 
     func finishedDeleting(_ remainingClients: [UserClient]) {
@@ -309,12 +312,12 @@ final class ClientListViewController: UIViewController,
         switch self.convertSection(section) {
         case 0:
             if self.selfClient != nil {
-                return NSLocalizedString("registration.devices.current_list_header", comment: "")
+                return L10n.Localizable.Registration.Devices.currentListHeader
             } else {
                 return nil
             }
         case 1:
-            return NSLocalizedString("registration.devices.active_list_header", comment: "")
+            return L10n.Localizable.Registration.Devices.activeListHeader
         default:
             return nil
         }
@@ -325,7 +328,7 @@ final class ClientListViewController: UIViewController,
         case 0:
             return nil
         case 1:
-            return NSLocalizedString("registration.devices.active_list_subtitle", comment: "")
+            return L10n.Localizable.Registration.Devices.activeListSubtitle
         default:
             return nil
         }
@@ -473,8 +476,11 @@ extension ClientListViewController: ZMUserObserver {
 
     func userDidChange(_ note: UserChangeInfo) {
         if note.clientsChanged || note.trustLevelChanged {
-            guard let selfClient = ZMUser.selfUser().selfClient() else { return }
-            var clients = ZMUser.selfUser().clients
+            guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
+                return
+            }
+
+            var clients = selfUser.clients
             clients.remove(selfClient)
             self.clients = Array(clients)
         }

@@ -392,6 +392,12 @@ internal enum L10n {
         /// Double tap to open profile
         internal static let hint = L10n.tr("Accessibility", "conversation.profileImage.hint", fallback: "Double tap to open profile")
       }
+      internal enum ScrollToBottomButton {
+        /// Scroll to the bottom of the conversation
+        internal static let description = L10n.tr("Accessibility", "conversation.scrollToBottomButton.description", fallback: "Scroll to the bottom of the conversation")
+        /// Tap to scroll to the bottom of the conversation
+        internal static let hint = L10n.tr("Accessibility", "conversation.scrollToBottomButton.hint", fallback: "Tap to scroll to the bottom of the conversation")
+      }
       internal enum SearchButton {
         /// Open search
         internal static let description = L10n.tr("Accessibility", "conversation.searchButton.description", fallback: "Open search")
@@ -2035,8 +2041,10 @@ internal enum L10n {
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")
-          /// This conversation is under legal hold
-          internal static let enabled = L10n.tr("Localizable", "content.system.message_legal_hold.enabled", fallback: "This conversation is under legal hold")
+          /// This conversation is under legal hold [LEARN MORE](%@)
+          internal static func enabled(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.message_legal_hold.enabled", String(describing: p1), fallback: "This conversation is under legal hold [LEARN MORE](%@)")
+          }
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "content.system.message_legal_hold.learn_more", fallback: "Learn more")
         }
@@ -2405,6 +2413,18 @@ internal enum L10n {
         /// Spread the word!
         internal static let title = L10n.tr("Localizable", "conversation.invite_more_people.title", fallback: "Spread the word!")
       }
+      internal enum Ping {
+        internal enum Action {
+          /// Ping
+          internal static let title = L10n.tr("Localizable", "conversation.ping.action.title", fallback: "Ping")
+        }
+        internal enum ManyParticipantsConfirmation {
+          /// Are you sure you want to ping %d people?
+          internal static func title(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "conversation.ping.many_participants_confirmation.title", p1, fallback: "Are you sure you want to ping %d people?")
+          }
+        }
+      }
       internal enum Silenced {
         internal enum Status {
           internal enum Message {
@@ -2699,16 +2719,19 @@ internal enum L10n {
     }
     internal enum Databaseloadingfailure {
       internal enum Alert {
-        /// Delete Database
-        internal static let deleteDatabase = L10n.tr("Localizable", "databaseloadingfailure.alert.delete_database", fallback: "Delete Database")
-        /// The database could not be loaded due to insufficient storage. Review your device storage usage and try again.
-        internal static let message = L10n.tr("Localizable", "databaseloadingfailure.alert.message", fallback: "The database could not be loaded due to insufficient storage. Review your device storage usage and try again.")
+        /// Clear my data and continue
+        internal static let deleteDatabase = L10n.tr("Localizable", "databaseloadingfailure.alert.delete_database", fallback: "Clear my data and continue")
+        /// The database could not be loaded.
+        ///  Error: %@
+        internal static func message(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "databaseloadingfailure.alert.message", String(describing: p1), fallback: "The database could not be loaded.\n Error: %@")
+        }
         /// Retry
         internal static let retry = L10n.tr("Localizable", "databaseloadingfailure.alert.retry", fallback: "Retry")
-        /// Go to Settings
-        internal static let settings = L10n.tr("Localizable", "databaseloadingfailure.alert.settings", fallback: "Go to Settings")
-        /// Not Enough Storage
-        internal static let title = L10n.tr("Localizable", "databaseloadingfailure.alert.title", fallback: "Not Enough Storage")
+        /// Save my data
+        internal static let saveBackup = L10n.tr("Localizable", "databaseloadingfailure.alert.save-backup", fallback: "Save my data")
+        /// Update Data storage
+        internal static let title = L10n.tr("Localizable", "databaseloadingfailure.alert.title", fallback: "Update Data storage")
         internal enum DeleteDatabase {
           /// Continue
           internal static let `continue` = L10n.tr("Localizable", "databaseloadingfailure.alert.delete_database.continue", fallback: "Continue")
@@ -3481,8 +3504,10 @@ internal enum L10n {
       }
       internal enum Participants {
         internal enum Section {
-          /// Legal hold subjects
-          internal static let title = L10n.tr("Localizable", "legalhold.participants.section.title", fallback: "Legal hold subjects")
+          /// Legal hold subjects %@
+          internal static func title(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "legalhold.participants.section.title", String(describing: p1), fallback: "Legal hold subjects %@")
+          }
         }
       }
     }

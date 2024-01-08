@@ -56,7 +56,7 @@ final class MockConversationListViewModelDelegate: NSObject, ConversationListVie
 final class ConversationListViewModelTests: XCTestCase {
 
     var sut: ConversationListViewModel!
-    var mockUserSession: MockZMUserSession!
+    var mockUserSession: UserSessionMock!
     var mockConversationListViewModelDelegate: MockConversationListViewModelDelegate!
     var mockBar: MockBar!
     var mockConversation: ZMConversation!
@@ -70,7 +70,7 @@ final class ConversationListViewModelTests: XCTestCase {
         super.setUp()
         removeViewModelState()
         mockBar = MockBar()
-        mockUserSession = MockZMUserSession()
+        mockUserSession = UserSessionMock()
         sut = ConversationListViewModel(userSession: mockUserSession)
 
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()

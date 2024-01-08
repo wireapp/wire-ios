@@ -20,17 +20,17 @@ import UIKit
 
 final class ShareItemProvider: UIActivityItemProvider {
     override func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
-        return "send_invitation.subject".localized
+        return L10n.Localizable.SendInvitation.subject
     }
 
     override func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
         guard
-            let handle = SelfUser.provider?.selfUser.handle
+            let handle = SelfUser.provider?.providedSelfUser.handle
         else {
-            return "send_invitation_no_email.text".localized
+            return L10n.Localizable.SendInvitationNoEmail.text
         }
 
         let displayHandle = "@\(handle)"
-        return String(format: "send_invitation.text".localized, displayHandle)
+        return L10n.Localizable.SendInvitation.text(displayHandle)
     }
 }

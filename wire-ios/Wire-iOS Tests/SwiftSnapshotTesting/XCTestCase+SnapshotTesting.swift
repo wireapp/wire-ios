@@ -370,8 +370,39 @@ extension XCTestCase {
                 testName: String = #function,
                 line: UInt = #line) {
 
+        let failure = verifySnapshot(matching: value,
+                                     as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+                                     named: name,
+                                     snapshotDirectory: snapshotDirectory(file: file),
+                                     file: file,
+                                     testName: testName,
+                                     line: line)
+
+        XCTAssertNil(failure, file: file, line: line)
+
+    }
+
+    func verifyForDynamicType(matching value: UIView,
+                              named name: String? = nil,
+                              file: StaticString = #file,
+                              testName: String = #function,
+                              line: UInt = #line) {
+        [
+            "extra-small": UIContentSizeCategory.extraSmall,
+            "small": .small,
+            "medium": .medium,
+            "large": .large,
+            "extra-large": .extraLarge,
+            "extra-extra-large": .extraExtraLarge,
+            "extra-extra-extra-large": .extraExtraExtraLarge,
+            "accessibility-medium": .accessibilityMedium,
+            "accessibility-large": .accessibilityLarge,
+            "accessibility-extra-large": .accessibilityExtraLarge,
+            "accessibility-extra-extra-large": .accessibilityExtraExtraLarge,
+            "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
+        ].forEach { name, contentSize in
             let failure = verifySnapshot(matching: value,
-                                         as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+                                         as: .image(precision: precision, perceptualPrecision: perceptualPrecision, traits: .init(preferredContentSizeCategory: contentSize)),
                                          named: name,
                                          snapshotDirectory: snapshotDirectory(file: file),
                                          file: file,
@@ -379,6 +410,7 @@ extension XCTestCase {
                                          line: line)
 
             XCTAssertNil(failure, file: file, line: line)
+        }
 
     }
 

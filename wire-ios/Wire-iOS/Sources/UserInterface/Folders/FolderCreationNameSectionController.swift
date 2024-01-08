@@ -37,14 +37,13 @@ class FolderCreationNameSectionController: NSObject, CollectionViewSectionContro
     private var footer = SectionFooter(frame: .zero)
 
     private lazy var footerText: String = {
-        return "folder.creation.name.footer".localized
+        return L10n.Localizable.Folder.Creation.Name.footer
     }()
 
     private var header = SectionHeader(frame: .zero)
 
     private lazy var headerText: String = {
-        let key = "folder.creation.name.header"
-        return key.localized(args: self.conversationName)
+        return L10n.Localizable.Folder.Creation.Name.header(conversationName)
     }()
 
     init(delegate: SimpleTextFieldDelegate? = nil, conversationName: String) {

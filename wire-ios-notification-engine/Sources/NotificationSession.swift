@@ -79,6 +79,8 @@ public class NotificationSession {
 
         case noAccount
         case pendingCryptoboxMigration
+        case coreDataMissingSharedContainer
+        case coreDataMigrationRequired
 
     }
 
@@ -104,9 +106,7 @@ public class NotificationSession {
     private var callEvent: CallEventPayload?
     private var localNotifications = [ZMLocalNotification]()
 
-    private var context: NSManagedObjectContext {
-        return coreDataStack.syncContext
-    }
+    private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     public weak var delegate: NotificationSessionDelegate?
 
@@ -137,20 +137,34 @@ public class NotificationSession {
             applicationContainer: sharedContainerURL
         )
 
+        guard coreDataStack.storesExists else {
+            throw InitializationError.coreDataMissingSharedContainer
+        }
+
+        guard !coreDataStack.needsMigration  else {
+            throw InitializationError.coreDataMigrationRequired
+        }
+
         coreDataStack.loadStores { error in
+            // ⚠️ errors are not handled and `NotificationSession` will be created.
+            // Currently it is the given behavior, but should be refactored
+            // into a "setup" or "load" func that can be async and handle errors.
+
             if let error = error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
         }
 
-        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier)
+        // Don't cache the cookie because if the user logs out and back in again in the main app
+        // process, then the cached cookie will be invalid.
+        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
-        let transportSession =  ZMTransportSession(
+        let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: credentials?.username,
             proxyPassword: credentials?.password,
@@ -213,6 +227,16 @@ public class NotificationSession {
             transportSession: transportSession
         )
 
+        let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let coreCryptoProvider = CoreCryptoProvider(
+            selfUserID: accountIdentifier,
+            sharedContainerURL: coreDataStack.applicationContainer,
+            accountDirectory: coreDataStack.accountContainer,
+            syncContext: coreDataStack.syncContext,
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            allowCreation: false
+        )
+
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
 
         try self.init(
@@ -224,7 +248,10 @@ public class NotificationSession {
             operationLoop: operationLoop,
             accountIdentifier: accountIdentifier,
             pushNotificationStrategy: pushNotificationStrategy,
-            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults)
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults),
+            proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
+            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, coreCryptoProvider: coreCryptoProvider)
         )
     }
 
@@ -237,8 +264,11 @@ public class NotificationSession {
         operationLoop: RequestGeneratingOperationLoop,
         accountIdentifier: UUID,
         pushNotificationStrategy: PushNotificationStrategy,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager(),
-        earService: EARServiceInterface
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        earService: EARServiceInterface,
+        proteusService: ProteusServiceInterface,
+        mlsDecryptionService: MLSDecryptionServiceInterface
+
     ) throws {
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -259,14 +289,14 @@ public class NotificationSession {
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
             throw InitializationError.pendingCryptoboxMigration
         }
-
-        setUpCoreCryptoStack(
-            sharedContainerURL: coreDataStack.applicationContainer,
-            syncContext: coreDataStack.syncContext
-        )
-
         coreDataStack.syncContext.performAndWait {
-            try? cryptoboxMigrationManager.completeMigration(syncContext: coreDataStack.syncContext)
+            if DeveloperFlag.proteusViaCoreCrypto.isOn, coreDataStack.syncContext.proteusService == nil {
+                coreDataStack.syncContext.proteusService = proteusService
+            }
+
+            if DeveloperFlag.enableMLSSupport.isOn, coreDataStack.syncContext.mlsDecryptionService == nil {
+                coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
+            }
         }
 
     }
@@ -344,12 +374,12 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     func pushNotificationStrategy(
         _ strategy: PushNotificationStrategy,
         didFetchEvents events: [ZMUpdateEvent]
-    ) {
-        eventDecoder.decryptAndStoreEvents(
+    ) async {
+        let decodedEvents = await eventDecoder.decryptAndStoreEvents(
             events,
-            publicKeys: try? earService.fetchPublicKeys(),
-            block: processDecodedEvents(_:)
+            publicKeys: try? earService.fetchPublicKeys()
         )
+        processDecodedEvents(decodedEvents)
     }
 
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
@@ -371,12 +401,6 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     private func callEventPayloadForCallKit(from event: ZMUpdateEvent) -> CallEventPayload? {
-        // The API to report VoIP pushes from the notification service extension
-        // is only available from iOS 14.5.
-        guard #available(iOSApplicationExtension 14.5, *) else {
-            return nil
-        }
-
         // Ensure this actually is a call event.
         guard let callContent = CallEventContent(from: event) else {
             return nil
@@ -444,7 +468,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier,
             let callerID = callContent.callerID,
             callerID == selfUserID,
-            (callContent.isIncomingCall || callContent.isEndCall)
+            callContent.isIncomingCall || callContent.isEndCall
         {
             WireLogger.calling.info("should not handle call event: self call")
             return nil

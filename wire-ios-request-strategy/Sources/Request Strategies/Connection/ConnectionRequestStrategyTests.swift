@@ -70,7 +70,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/connections/\(self.otherUser.domain!)/\(self.otherUser.remoteIdentifier!.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -87,7 +87,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/connections/\(self.otherUser.remoteIdentifier!.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -105,7 +105,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/list-connections")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
         }
     }
 
@@ -119,7 +119,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/connections?size=200")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 

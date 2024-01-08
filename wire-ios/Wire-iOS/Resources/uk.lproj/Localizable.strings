@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Торкніться для надсилання";
 "conversation.input_bar.audio_message.too_long.title" = "Запис зупинено";
 "conversation.input_bar.audio_message.too_long.message" = "Довжина аудіоповідомлень обмежена до %@.";
+"conversation.ping.many_participants_confirmation.title" = "Are you sure you want to ping %d people?";
+"conversation.ping.action.title" = "Пінг";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "Розмір файлу для звукових повідомлень обмежений %@.";
 
@@ -560,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "Дана розмова знаходиться під правовим захистом";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "Для даної розмови правовий захист деактивовано";
 
 "content.system.message_legal_hold.learn_more" = "Дізнатися більше";
@@ -990,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Суб'єкти правового захисту";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "Правовий захист";
 "legalhold.header.other_description" = "В даній розмові правовий захист було активовано мінімум для одного учасника.\nВсі повідомлення будуть збережені для доступу в майбутньому, включно з видаленими та тимчасованими повідомленнями.";
 "legalhold.header.self_description" = "Правовий захист було активовано для вашого акаунту.\nВсі повідомлення будуть збережені для доступу в майбутньому, включно з видаленими, відредагованими та тимчасованими повідомленнями.\nВаші співрозмовники будуть повідомлені про це.";
@@ -1742,10 +1744,10 @@
 "jailbrokendevice.alert.message" = "З причин безпеки, Wire не може використовуватися на даному пристрої. Всі наявні дані Wire було видалено.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Недостатньо місця";
-"databaseloadingfailure.alert.message" = "Не вдалося завантажити базу даних через нестачу вільного місця. Перевірте розмір вільного місця на вашому пристрої та спробуйте ще раз.";
-"databaseloadingfailure.alert.settings" = "Перейти до налаштувань";
-"databaseloadingfailure.alert.delete_database" = "Видалити базу даних";
+"databaseloadingfailure.alert.title" = "Update Data storage";
+"databaseloadingfailure.alert.message" = "The database could not be loaded.\n Error: %@";
+"databaseloadingfailure.alert.save-backup" = "Save my data";
+"databaseloadingfailure.alert.delete_database" = "Clear my data and continue";
 "databaseloadingfailure.alert.delete_database.message" = "З видаленням бази даних, всі локальні дані та повідомлення для цього акаунту також будуть остаточно видалені.";
 "databaseloadingfailure.alert.delete_database.continue" = "Продовжити";
 "databaseloadingfailure.alert.retry" = "Retry";

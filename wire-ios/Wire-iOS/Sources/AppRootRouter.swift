@@ -202,31 +202,32 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
             showJailbroken(completion: completionBlock)
-        case .databaseFailure:
-            showDatabaseLoadingFailure(completion: completionBlock)
+        case .databaseFailure(let error):
+            showDatabaseLoadingFailure(error: error, completion: completionBlock)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completionBlock)
         case .unauthenticated(error: let error):
-            screenCurtain.delegate = nil
+            screenCurtain.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completionBlock)
-        case .authenticated(completedRegistration: let completedRegistration):
+        case let .authenticated(userSession, completedRegistration):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
-            // TODO: [John] Avoid singleton.
-            screenCurtain.delegate = ZMUserSession.shared()
-            showAuthenticated(isComingFromRegistration: completedRegistration,
-                              completion: completionBlock)
+            screenCurtain.userSession = userSession
+            showAuthenticated(
+                userSession: userSession,
+                isComingFromRegistration: completedRegistration,
+                completion: completionBlock
+            )
         case .headless:
             showLaunchScreen(completion: completionBlock)
         case .loading(account: let toAccount, from: let fromAccount):
             showSkeleton(fromAccount: fromAccount,
                          toAccount: toAccount,
                          completion: completionBlock)
-        case .locked:
-            // TODO: [John] Avoid singleton.
-            screenCurtain.delegate = ZMUserSession.shared()
-            showAppLock(completion: completionBlock)
+        case let .locked(userSession):
+            screenCurtain.userSession = userSession
+            showAppLock(userSession: userSession, completion: completionBlock)
         }
     }
 
@@ -281,10 +282,11 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showDatabaseLoadingFailure(completion: @escaping () -> Void) {
+    private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(
             context: .databaseFailure,
-            sessionManager: sessionManager
+            sessionManager: sessionManager,
+            error: error
         )
 
         rootViewController.set(childViewController: blockerViewController,
@@ -344,11 +346,18 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showAuthenticated(isComingFromRegistration: Bool, completion: @escaping () -> Void) {
+    private func showAuthenticated(
+        userSession: UserSession,
+        isComingFromRegistration: Bool,
+        completion: @escaping () -> Void
+    ) {
         guard
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
-            let authenticatedRouter = buildAuthenticatedRouter(account: selectedAccount,
-                                                               isComingFromRegistration: isComingFromRegistration)
+            let authenticatedRouter = buildAuthenticatedRouter(
+                account: selectedAccount,
+                userSession: userSession,
+                isComingFromRegistration: isComingFromRegistration
+            )
         else {
             completion()
             return
@@ -366,10 +375,13 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showAppLock(completion: @escaping () -> Void) {
-        guard let session = ZMUserSession.shared() else { fatalError() }
-        rootViewController.set(childViewController: AppLockModule.build(session: session),
-                               completion: completion)
+    private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
+        rootViewController.set(
+            childViewController: AppLockModule.build(
+                userSession: userSession
+            ),
+            completion: completion
+        )
     }
 
     private func retryStart(completion: @escaping () -> Void) {
@@ -394,7 +406,7 @@ extension AppRootRouter {
     private func setupAnalyticsSharing() {
         guard
             appStateCalculator.wasUnauthenticated,
-            let selfUser = SelfUser.provider?.selfUser,
+            let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember
         else {
             return
@@ -405,16 +417,31 @@ extension AppRootRouter {
         Analytics.shared.provider?.selfUser = selfUser
     }
 
-    private func buildAuthenticatedRouter(account: Account, isComingFromRegistration: Bool) -> AuthenticatedRouter? {
+    private func buildAuthenticatedRouter(
+        account: Account,
+        userSession: UserSession,
+        isComingFromRegistration: Bool
+    ) -> AuthenticatedRouter? {
+        guard let userSession = ZMUserSession.shared() else { return  nil }
 
-        let needToShowDataUsagePermissionDialog = appStateCalculator.wasUnauthenticated && !SelfUser.current.isTeamMember
+        let isTeamMember: Bool
+        if let user = SelfUser.provider?.providedSelfUser {
+            isTeamMember = user.isTeamMember
+        } else {
+            assertionFailure("expected available 'user'!")
+            isTeamMember = false
+        }
 
-        return AuthenticatedRouter(rootViewController: rootViewController,
-                                   account: account,
-                                   selfUser: ZMUser.selfUser(),
-                                   isComingFromRegistration: isComingFromRegistration,
-                                   needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog,
-                                   featureRepositoryProvider: ZMUserSession.shared()!)
+        let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
+
+        return AuthenticatedRouter(
+            rootViewController: rootViewController,
+            account: account,
+            userSession: userSession,
+            isComingFromRegistration: isComingFromRegistration,
+            needToShowDataUsagePermissionDialog: needToShowDialog,
+            featureRepositoryProvider: userSession
+        )
     }
 }
 

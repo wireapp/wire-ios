@@ -58,7 +58,7 @@ private struct ParticipantsSectionViewModel {
     let rows: [ParticipantsRowType]
     let participants: [UserType]
     let conversationRole: ConversationRole
-
+    let userSession: UserSession
     let showSectionCount: Bool
     var sectionAccesibilityIdentifier = "label.groupdetails.participants"
 
@@ -83,9 +83,9 @@ private struct ParticipantsSectionViewModel {
     var footerTitle: String {
         switch conversationRole {
         case .admin:
-            return "participants.section.admins.footer".localized
+            return L10n.Localizable.Participants.Section.Admins.footer
         case .member:
-            return "participants.section.members.footer".localized
+            return L10n.Localizable.Participants.Section.Members.footer
         }
     }
 
@@ -107,18 +107,22 @@ private struct ParticipantsSectionViewModel {
     ///   - maxParticipants: max number of participants we can display
     ///   - maxDisplayedParticipants: max number of participants we can display, if there are more than maxParticipants participants
     ///   - showSectionCount: current view model - a search result or not
-    init(users: [UserType],
-         conversationRole: ConversationRole,
-         totalParticipantsCount: Int,
-         clipSection: Bool = true,
-         maxParticipants: Int,
-         maxDisplayedParticipants: Int,
-         showSectionCount: Bool = true) {
+    init(
+        users: [UserType],
+        conversationRole: ConversationRole,
+        totalParticipantsCount: Int,
+        clipSection: Bool = true,
+        maxParticipants: Int,
+        maxDisplayedParticipants: Int,
+        showSectionCount: Bool = true,
+        userSession: UserSession
+    ) {
         participants = users.sorted(by: {
             $0.name < $1.name
         })
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
+        self.userSession = userSession
         rows = clipSection ? ParticipantsSectionViewModel.computeRows(participants,
                                                                       totalParticipantsCount: totalParticipantsCount,
                                                                       maxParticipants: maxParticipants,
@@ -134,8 +138,15 @@ private struct ParticipantsSectionViewModel {
 
 extension UserCell: ParticipantsCellConfigurable {
     func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool) {
-        guard case let .user(user) = rowType else { preconditionFailure() }
-        configure(with: user, selfUser: SelfUser.current, conversation: conversation as? ZMConversation)
+        guard case let .user(user) = rowType else {
+            preconditionFailure("expected different 'ParticipantsRowType'!")
+        }
+        guard let selfUser = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
+        configure(with: user, selfUser: selfUser, conversation: conversation as? ZMConversation)
         accessoryIconView.isHidden = user.isSelfUser
         accessibilityIdentifier = identifier
         accessibilityHint = L10n.Accessibility.ConversationDetails.ParticipantCell.hint
@@ -164,21 +175,20 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
          clipSection: Bool = true,
          maxParticipants: Int = Int.ConversationParticipants.maxNumberWithoutTruncation,
          maxDisplayedParticipants: Int = Int.ConversationParticipants.maxNumberOfDisplayed,
-         showSectionCount: Bool = true) {
+         showSectionCount: Bool = true,
+         userSession: UserSession) {
         viewModel = .init(users: participants,
                           conversationRole: conversationRole,
                           totalParticipantsCount: totalParticipantsCount,
                           clipSection: clipSection,
                           maxParticipants: maxParticipants,
                           maxDisplayedParticipants: maxDisplayedParticipants,
-                          showSectionCount: showSectionCount)
+                          showSectionCount: showSectionCount, userSession: userSession)
         self.conversation = conversation
         self.delegate = delegate
         super.init()
 
-        if let userSession = ZMUserSession.shared() {
-            token = UserChangeInfo.add(userObserver: self, in: userSession)
-        }
+        token = userSession.addUserObserver(self)
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {

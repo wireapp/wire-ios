@@ -19,6 +19,7 @@
 import Foundation
 import avs
 import Combine
+import WireDataModelSupport
 @testable import WireSyncEngine
 
 class WireCallCenterTransportMock: WireCallCenterTransport {
@@ -473,13 +474,13 @@ class WireCallCenterV3Tests: MessagingTest {
         groupConversation.messageProtocol = .mls
         groupConversation.mlsGroupID = .random()
 
-        let mlsService = MockMLSService()
+        let mlsService = MockMLSServiceInterface()
         syncMOC.performAndWait {
             syncMOC.mlsService = mlsService
         }
 
         let didLeaveSubconversation = expectation(description: "didLeaveSubconversation")
-        mlsService.mockLeaveSubconversation = { parentID, parentGroupID, subconversationType in
+        mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { parentID, parentGroupID, subconversationType in
             XCTAssertEqual(parentID, self.groupConversation.qualifiedID)
             XCTAssertEqual(parentGroupID, self.groupConversation.mlsGroupID)
             XCTAssertEqual(subconversationType, .conference)
@@ -503,13 +504,13 @@ class WireCallCenterV3Tests: MessagingTest {
         selfClient.user = selfUser
         let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
 
-        let mlsService = MockMLSService()
+        let mlsService = MockMLSServiceInterface()
         syncMOC.performAndWait {
             syncMOC.mlsService = mlsService
         }
 
         let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
-        mlsService.mockLeaveSubconversationIfNeeded = {
+        mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
             XCTAssertEqual($0, self.groupConversation.qualifiedID)
             XCTAssertEqual($1, self.groupConversation.mlsGroupID)
             XCTAssertEqual($2, .conference)
@@ -544,13 +545,13 @@ class WireCallCenterV3Tests: MessagingTest {
         selfClient.user = selfUser
         let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
 
-        let mlsService = MockMLSService()
+        let mlsService = MockMLSServiceInterface()
         syncMOC.performAndWait {
             syncMOC.mlsService = mlsService
         }
 
         let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
-        mlsService.mockLeaveSubconversationIfNeeded = {
+        mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
             XCTAssertEqual($0, self.groupConversation.qualifiedID)
             XCTAssertEqual($1, self.groupConversation.mlsGroupID)
             XCTAssertEqual($2, .conference)
@@ -580,13 +581,13 @@ class WireCallCenterV3Tests: MessagingTest {
         selfClient.user = selfUser
         let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
 
-        let mlsService = MockMLSService()
+        let mlsService = MockMLSServiceInterface()
         syncMOC.performAndWait {
             syncMOC.mlsService = mlsService
         }
 
         let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
-        mlsService.mockLeaveSubconversationIfNeeded = {
+        mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
             XCTAssertEqual($0, self.groupConversation.qualifiedID)
             XCTAssertEqual($1, self.groupConversation.mlsGroupID)
             XCTAssertEqual($2, .conference)
@@ -835,10 +836,10 @@ class WireCallCenterV3Tests: MessagingTest {
         groupConversation.messageProtocol = .mls
         groupConversation.mlsGroupID = parentGroupID
 
-        let mlsService = MockMLSService()
+        let mlsService = MockMLSServiceInterface()
 
         let didJoinSubgroup = expectation(description: "didJoinSubgroup")
-        mlsService.mockCreateOrJoinSubgroup = {
+        mlsService.createOrJoinSubgroupParentQualifiedIDParentID_MockMethod = {
             defer { didJoinSubgroup.fulfill() }
             XCTAssertEqual($0, self.groupConversation.qualifiedID)
             XCTAssertEqual($1, parentGroupID)
@@ -846,7 +847,7 @@ class WireCallCenterV3Tests: MessagingTest {
         }
 
         let didGenerateConferenceInfo1 = expectation(description: "didGenerateConferenceInfo1")
-        mlsService.mockGenerateConferenceInfo = {
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = {
             XCTAssertEqual($0, parentGroupID)
             XCTAssertEqual($1, subconversationGroupID)
             defer { didGenerateConferenceInfo1.fulfill() }
@@ -866,8 +867,11 @@ class WireCallCenterV3Tests: MessagingTest {
 
         // So we can inform of new conference infos
         let conferenceInfoChangeSubject = PassthroughSubject<MLSConferenceInfo, Never>()
-        mlsService.mockOnConferenceInfoChange = { _, _ in
-            return conferenceInfoChangeSubject.eraseToAnyPublisher()
+        mlsService.onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod = { _, _ in
+            var iterator = conferenceInfoChangeSubject.values.makeAsyncIterator()
+            return AsyncThrowingStream {
+                await iterator.next()
+            }
         }
 
         try checkThatItPostsNotification(
@@ -879,6 +883,9 @@ class WireCallCenterV3Tests: MessagingTest {
             try block()
         }
 
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         let didSetConferenceInfo2 = expectation(description: "didSetConferenceInfo2")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
             XCTAssertEqual($0, self.groupConversation.avsIdentifier)
@@ -888,6 +895,8 @@ class WireCallCenterV3Tests: MessagingTest {
 
         // and when the conference info changes
         conferenceInfoChangeSubject.send(conferenceInfo2)
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then we set conference info 2 to avs (see expectations)
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
@@ -1858,11 +1867,11 @@ extension WireCallCenterV3Tests {
             subconversationGroupID: subconversationGroupID
         )
 
-        let mlsService = MockMLSService()
+        let mlsService = MockMLSServiceInterface()
         uiMOC.zm_sync.mlsService = mlsService
 
         let didGenereateNewEpoch = expectation(description: "didGenerateNewEpoch")
-        mlsService.mockGenerateNewEpoch = {
+        mlsService.generateNewEpochGroupID_MockMethod = {
             XCTAssertEqual($0, subconversationGroupID)
             didGenereateNewEpoch.fulfill()
         }

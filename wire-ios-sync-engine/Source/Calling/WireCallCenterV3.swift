@@ -1,20 +1,20 @@
-/*
- * Wire
- * Copyright (C) 2021 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
 
 import Foundation
 import avs
@@ -652,22 +652,32 @@ extension WireCallCenterV3 {
                         parentID: parentGroupID
                     )
 
-                    let initialConferenceInfo = try mlsService.generateConferenceInfo(
-                        parentGroupID: parentGroupID,
-                        subconversationGroupID: subgroupID
-                    )
-
-                    let onConferenceInfoChanged = mlsService.onConferenceInfoChange(
-                        parentGroupID: parentGroupID,
-                        subConversationGroupID: subgroupID
-                    ).prepend(initialConferenceInfo)
-
-                    let token = onConferenceInfoChanged.sink { [weak self] newConferenceInfo in
-                        Self.logger.debug("passing MLS conference info to AVS")
-                        self?.avsWrapper.setMLSConferenceInfo(
-                            conversationId: conversationID,
-                            info: newConferenceInfo
+                    let updateConferenceInfoTask = Task {
+                        let initialConferenceInfo = try await mlsService.generateConferenceInfo(
+                            parentGroupID: parentGroupID,
+                            subconversationGroupID: subgroupID
                         )
+
+                        self.avsWrapper.setMLSConferenceInfo(
+                            conversationId: conversationID,
+                            info: initialConferenceInfo
+                        )
+
+                        let onConferenceInfoChange = mlsService.onConferenceInfoChange(
+                            parentGroupID: parentGroupID,
+                            subConversationGroupID: subgroupID
+                        )
+
+                        do {
+                            for try await conferenceInfo in onConferenceInfoChange {
+                                self.avsWrapper.setMLSConferenceInfo(
+                                    conversationId: conversationID,
+                                    info: conferenceInfo
+                                )
+                            }
+                        } catch {
+                            WireLogger.calling.error("Error updating conference info: \(error)")
+                        }
                     }
 
                     let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
@@ -682,7 +692,7 @@ extension WireCallCenterV3 {
                     if var snapshot = self.callSnapshots[conversationID] {
                         snapshot.qualifiedID = parentQualifiedID
                         snapshot.groupIDs = (parentGroupID, subgroupID)
-                        snapshot.onConferenceInfoChangedToken = token
+                        snapshot.updateConferenceInfoTask = updateConferenceInfoTask
                         snapshot.mlsConferenceStaleParticipantsRemover = staleParticipantsRemover
                         self.callSnapshots[conversationID] = snapshot
                     }
@@ -721,7 +731,9 @@ extension WireCallCenterV3 {
         }
 
         if let mlsParentIDs = mlsParentIDS(for: conversationId) {
-            cancelPendingStaleParticipantsRemovals(callSnapshot: callSnapshots[conversationId])
+            let snapshot = callSnapshots[conversationId]
+            snapshot?.updateConferenceInfoTask?.cancel()
+            cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1

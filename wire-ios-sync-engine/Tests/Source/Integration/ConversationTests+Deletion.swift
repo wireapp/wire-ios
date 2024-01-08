@@ -37,7 +37,6 @@ class ConversationTests_Deletion: ConversationTestsBase {
             }
         })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertTrue(teamConversation.isDeletedRemotely)

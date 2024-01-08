@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModelSupport
 @testable import WireDataModel
 
 class MLSClientIDsProviderMock: MLSClientIDsProvider {
@@ -639,7 +640,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         syncMOC.performAndWait {
             // GIVEN
             // set mock mlsService
-            let mockMLSService = MockMLSService()
+            let mockMLSService = MockMLSServiceInterface()
             syncMOC.mlsService = mockMLSService
 
             // create conversation
@@ -680,7 +681,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
             XCTAssertEqual(expectedClientIDs.count, 2)
 
-            mockMLSService.removeMembersMock = { clientIDs, groupID in
+            mockMLSService.removeMembersFromConversationWithFor_MockMethod = { clientIDs, groupID in
                 XCTAssertEqual(groupID, expectedGroupID)
                 XCTAssertEqual(clientIDs, expectedClientIDs)
                 removeMemberExpectation.fulfill()
@@ -698,7 +699,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         syncMOC.performAndWait {
             // GIVEN
             // set mock mlsService
-            let mockMLSService = MockMLSService()
+            let mockMLSService = MockMLSServiceInterface()
             syncMOC.mlsService = mockMLSService
 
             // mock action handler
@@ -730,7 +731,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             let removeMembersExpectation = XCTestExpectation(description: "Remove Members Not Called")
             removeMembersExpectation.isInverted = true
 
-            mockMLSService.removeMembersMock = { _, _ in
+            mockMLSService.removeMembersFromConversationWithFor_MockMethod = { _, _ in
                 removeMembersExpectation.fulfill()
             }
 

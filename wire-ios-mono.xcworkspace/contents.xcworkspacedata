@@ -2,49 +2,13 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Cartfile">
-   </FileRef>
-   <FileRef
-      location = "group:Cartfile.private">
-   </FileRef>
-   <FileRef
-      location = "group:Cartfile.resolved">
-   </FileRef>
-   <Group
-      location = "group:fastlane"
-      name = "fastlane">
-      <FileRef
-         location = "group:Pluginfile">
-      </FileRef>
-      <FileRef
-         location = "group:Fastfile"
-         assignedFileDataType = "public.ruby-script">
-      </FileRef>
-   </Group>
-   <FileRef
       location = "group:LICENSE">
    </FileRef>
    <FileRef
       location = "group:README.md">
    </FileRef>
-   <Group
-      location = "group:scripts"
-      name = "scripts">
-      <FileRef
-         location = "group:postprocess.sh">
-      </FileRef>
-      <FileRef
-         location = "group:githooks-install.sh">
-      </FileRef>
-      <FileRef
-         location = "group:run-swiftlint.sh">
-      </FileRef>
-      <FileRef
-         location = "group:override-configuration_if_needed.sh">
-      </FileRef>
-   </Group>
    <FileRef
-      location = "group:setup.sh">
+      location = "group:scripts">
    </FileRef>
    <Group
       location = "group:xcconfigs"

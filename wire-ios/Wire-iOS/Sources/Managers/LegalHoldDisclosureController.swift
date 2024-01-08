@@ -31,7 +31,7 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
         case none
 
         /// The user is being warned about a pending legal hold alert.
-        case warningAboutPendingRequest(LegalHoldRequest)
+        case warningAboutPendingRequest(LegalHoldRequest, String)
 
         /// The user is waiting for the response on the legal hold acceptation.
         case acceptingRequest
@@ -62,9 +62,6 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
     /// The self user, that can become under legal hold.
     let selfUser: SelfUserType
 
-    /// The user session related to the self user.
-    let userSession: ZMUserSession?
-
     /// The block that presents view controllers when requested.
     let presenter: ViewControllerPresenter
 
@@ -83,21 +80,17 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
 
     // MARK: - Initialization
 
-    init(selfUser: SelfUserType, userSession: ZMUserSession?, presenter: @escaping ViewControllerPresenter) {
+    init(selfUser: SelfUserType, userSession: UserSession, presenter: @escaping ViewControllerPresenter) {
         self.selfUser = selfUser
-        self.userSession = userSession
         self.presenter = presenter
         super.init()
 
-        configureObservers()
+        configureObservers(userSession: userSession)
     }
 
-    private func configureObservers() {
+    private func configureObservers(userSession: UserSession) {
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterForeground), name: UIApplication.didBecomeActiveNotification, object: nil)
-
-        if let session = self.userSession {
-            userObserverToken = UserChangeInfo.add(observer: self, for: selfUser, in: session)
-        }
+        userObserverToken = userSession.addUserObserver(self, for: selfUser)
     }
 
     // MARK: - Notifications
@@ -151,8 +144,13 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
         // Do not present alert if we already in process of accepting the request
         if case .acceptingRequest = currentState { return }
 
+        Task {
+            let fingerprint = await selfUser.fingerprint ?? "<fingerprint unavailable>"
+            await MainActor.run(body: { currentState = .warningAboutPendingRequest(request, fingerprint) })
+        }
+
         // If there is a current alert, replace it with the latest disclosure
-        currentState = .warningAboutPendingRequest(request)
+
     }
 
     private func discloseDisabledStateIfPossible() {
@@ -197,8 +195,13 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
             alertController = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(for: selfUser, suggestedStateChangeHandler: assignState)
         case .warningAboutEnabled:
             alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(for: selfUser, suggestedStateChangeHandler: assignState)
-        case .warningAboutPendingRequest(let request):
-            alertController = LegalHoldAlertFactory.makeLegalHoldActivationAlert(for: request, user: selfUser, suggestedStateChangeHandler: assignState)
+        case .warningAboutPendingRequest(let request, let fingerprint):
+            alertController = LegalHoldAlertFactory.makeLegalHoldActivationAlert(
+                for: request,
+                fingerprint: fingerprint,
+                user: selfUser,
+                suggestedStateChangeHandler: assignState
+            )
         case .warningAboutAcceptationResult(let alert):
             alertController = alert
         case .acceptingRequest, .none:

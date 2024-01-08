@@ -28,13 +28,15 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     private var renameCell: GroupDetailsRenameCell?
     private var token: AnyObject?
     private var sizingFooter = SectionFooter(frame: .zero)
+    let userSession: UserSession
 
     var isHidden: Bool {
         return false
     }
 
-    init(conversation: GroupDetailsConversationType) {
+    init(conversation: GroupDetailsConversationType, userSession: UserSession) {
         self.conversation = conversation
+        self.userSession = userSession
         super.init()
 
         if let conversation = conversation as? ZMConversation {
@@ -59,7 +61,12 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: GroupDetailsRenameCell.self, for: indexPath)
 
-        cell.configure(for: conversation, editable: SelfUser.current.canModifyTitle(in: conversation))
+        if let user = SelfUser.provider?.providedSelfUser {
+            cell.configure(for: conversation, editable: user.canModifyTitle(in: conversation))
+        } else {
+            assertionFailure("expected available 'user'!")
+        }
+
         cell.titleTextField.textFieldDelegate = self
         renameCell = cell
         return cell
@@ -67,7 +74,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter", for: indexPath)
-        (view as? SectionFooter)?.titleLabel.text = "participants.section.name.footer".localized(args: ZMConversation.maxParticipants)
+        (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
         return view
     }
 
@@ -76,8 +83,12 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard SelfUser.current.hasTeam else { return .zero }
-        sizingFooter.titleLabel.text = "participants.section.name.footer".localized(args: ZMConversation.maxParticipants)
+        guard
+            let user = SelfUser.provider?.providedSelfUser,
+            user.hasTeam
+        else { return .zero }
+
+        sizingFooter.titleLabel.text = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
         sizingFooter.size(fittingWidth: collectionView.bounds.width)
         return sizingFooter.bounds.size
     }
@@ -125,7 +136,7 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: SimpleTextField) {
         if let newName = validName {
-            ZMUserSession.shared()?.enqueue {
+            userSession.enqueue {
                 self.conversation.userDefinedName = newName
             }
         } else {

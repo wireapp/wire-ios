@@ -64,18 +64,20 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
      * - parameter options: The options to display the availability.
      */
 
-    init(user: UserType, options: Options) {
+    init(user: UserType, options: Options, userSession: UserSession) {
         self.options = options
         self.user = user
 
         super.init()
 
-        if let sharedSession = ZMUserSession.shared() {
-            self.observerToken = UserChangeInfo.add(observer: self, for: user, in: sharedSession)
-        }
+        self.observerToken = userSession.addUserObserver(self, for: user)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive),
-                                               name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
 
         updateConfiguration()
     }
@@ -119,7 +121,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
             title = L10n.Localizable.Availability.Message.setStatus
             accessibilityLabel = title
         } else if availability != .none {
-            title = availability.localizedName.localized
+            title = availability.localizedName
             accessibilityLabel = AvailabilityStatusStrings.description
         }
 
