@@ -34,7 +34,7 @@ public protocol SelfLegalHoldSubject {
     var needsToAcknowledgeLegalHoldStatus: Bool { get }
 
     /// The legal hold client's fingerprint.
-    var fingerprint: String? { get }
+    var fingerprint: String? { get async }
 
     /// Call this method a pending legal hold request was cancelled
     func legalHoldRequestWasCancelled()
@@ -287,40 +287,35 @@ extension ZMUser: SelfLegalHoldSubject {
     // MARK: - Fingerprint
 
     public var fingerprint: String? {
-        guard let syncContext = managedObjectContext?.zm_sync else { return nil }
+        get async {
+            guard
+                let syncContext = managedObjectContext?.zm_sync,
+                let prekey = await managedObjectContext?.perform({
+                    self.legalHoldRequest?.lastPrekey
+                })
+            else {
+                return nil
+            }
 
-        var fingerprint: String?
-        syncContext.performAndWait {
-            fingerprint = syncContext.proteusProvider.perform(
-                withProteusService: { proteusService in
-                    fetchFingerprint(through: proteusService)
-                },
-                withKeyStore: { keyStore in
-                    fetchFingerprint(through: keyStore)
-                }
-            )
+            return await syncContext.proteusProvider.performAsync { proteusService in
+                await fetchFingerprint(for: prekey, through: proteusService)
+            } withKeyStore: { keyStore in
+                fetchFingerprint(for: prekey, through: keyStore)
+            }
         }
-        return fingerprint
     }
 
-    private func fetchFingerprint(through proteusService: ProteusServiceInterface) -> String? {
-        guard let preKey = legalHoldRequest?.lastPrekey else {
-            return nil
-        }
-
+    private func fetchFingerprint(for prekey: LegalHoldRequest.Prekey, through proteusService: ProteusServiceInterface) async -> String? {
         do {
-            return try proteusService.fingerprint(fromPrekey: preKey.key.base64EncodedString())
+            return try await proteusService.fingerprint(fromPrekey: prekey.key.base64EncodedString())
         } catch {
             log.error("Could not fetch fingerprint for \(self)")
             return nil
         }
     }
 
-    private func fetchFingerprint(through keystore: UserClientKeysStore) -> String? {
-        guard
-            let preKey = legalHoldRequest?.lastPrekey,
-            let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: preKey.key)
-        else { return nil }
+    private func fetchFingerprint(for prekey: LegalHoldRequest.Prekey, through keystore: UserClientKeysStore) -> String? {
+        guard let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: prekey.key) else { return nil }
         return String(data: fingerprintData, encoding: .utf8)
     }
 

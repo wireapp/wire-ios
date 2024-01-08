@@ -88,7 +88,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
-        let conversationExists = mlsService.conversationExists(groupID: mlsGroupID)
+        let conversationExists = await mlsService.conversationExists(groupID: mlsGroupID)
         let previousStatus = await context.perform { conversation.mlsStatus }
         let newStatus = conversationExists ? MLSGroupStatus.ready : .pendingJoin
 

@@ -81,9 +81,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let message = Data.random().base64EncodedString()
-        self.mockCoreCrypto.mockDecryptMessage = { _, _ in
-            throw CryptoError.ConversationNotFound(message: "conversation not found")
-        }
+        self.mockCoreCrypto.decryptMessageConversationIdPayload_MockError = CryptoError.ConversationNotFound(message: "conversation not found")
 
         // Then
         await assertItThrows(error: DecryptionError.failedToDecryptMessage) {
@@ -101,7 +99,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let messageBytes = Data.random().bytes
-        self.mockCoreCrypto.mockDecryptMessage = { _, _ in
+        self.mockCoreCrypto.decryptMessageConversationIdPayload_MockValue =
             DecryptedMessage(
                 message: nil,
                 proposals: [],
@@ -109,9 +107,9 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 commitDelay: nil,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil
+                identity: nil,
+                bufferedMessages: nil
             )
-        }
 
         // When
         var result: MLSDecryptResult?
@@ -132,7 +130,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
     func test_Decrypt_IsSuccessful() async {
         // Given
         let groupID = MLSGroupID.random()
-        let messageBytes = Data.random().bytes
+        let messageData = Data.random()
         let sender = MLSClientID(
             userID: UUID.create().transportString(),
             clientID: "client",
@@ -140,20 +138,21 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         )
 
         var mockDecryptMessageCount = 0
-        self.mockCoreCrypto.mockDecryptMessage = {
+        self.mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = {
             mockDecryptMessageCount += 1
 
-            XCTAssertEqual($0, groupID.bytes)
-            XCTAssertEqual($1, messageBytes)
+            XCTAssertEqual($0, groupID.data)
+            XCTAssertEqual($1, messageData)
 
             return DecryptedMessage(
-                message: messageBytes,
+                message: messageData,
                 proposals: [],
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: sender.rawValue.data(using: .utf8)!.bytes,
+                senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: false,
-                identity: nil
+                identity: nil,
+                bufferedMessages: nil
             )
         }
 
@@ -161,7 +160,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         var result: MLSDecryptResult?
         do {
             result = try await sut.decrypt(
-                message: messageBytes.data.base64EncodedString(),
+                message: messageData.base64EncodedString(),
                 for: groupID,
                 subconversationType: nil
             )
@@ -171,33 +170,34 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
         // Then
         XCTAssertEqual(mockDecryptMessageCount, 1)
-        XCTAssertEqual(result, MLSDecryptResult.message(messageBytes.data, sender.clientID))
+        XCTAssertEqual(result, MLSDecryptResult.message(messageData, sender.clientID))
     }
 
     func test_Decrypt_ForSubconversation_IsSuccessful() async {
         // Given
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
-        let messageBytes = Data.random().bytes
+        let messageData = Data.random()
         let sender = MLSClientID.random()
 
         mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
 
         var mockDecryptMessageCount = 0
-        self.mockCoreCrypto.mockDecryptMessage = {
+        self.mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = {
             mockDecryptMessageCount += 1
 
-            XCTAssertEqual($0, subconversationGroupID.bytes)
-            XCTAssertEqual($1, messageBytes)
+            XCTAssertEqual($0, subconversationGroupID.data)
+            XCTAssertEqual($1, messageData)
 
             return DecryptedMessage(
-                message: messageBytes,
+                message: messageData,
                 proposals: [],
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: sender.rawValue.data(using: .utf8)!.bytes,
+                senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: false,
-                identity: nil
+                identity: nil,
+                bufferedMessages: nil
             )
         }
 
@@ -205,7 +205,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         var result: MLSDecryptResult?
         do {
             result = try await sut.decrypt(
-                message: messageBytes.data.base64EncodedString(),
+                message: messageData.base64EncodedString(),
                 for: parentGroupID,
                 subconversationType: .conference
             )
@@ -215,7 +215,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
         // Then
         XCTAssertEqual(mockDecryptMessageCount, 1)
-        XCTAssertEqual(result, MLSDecryptResult.message(messageBytes.data, sender.clientID))
+        XCTAssertEqual(result, MLSDecryptResult.message(messageData, sender.clientID))
 
         XCTAssertEqual(mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count, 1)
     }
@@ -223,7 +223,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
     func test_Decrypt_ReportsEpochChanged() async {
         // Given
         let groupID = MLSGroupID.random()
-        let messageBytes = Data.random().bytes
+        let messageData = Data.random()
         let hasEpochChanged = true
         let sender = MLSClientID(
             userID: UUID.create().transportString(),
@@ -238,22 +238,23 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             didReceiveGroupIDs.fulfill()
         }
 
-        mockCoreCrypto.mockDecryptMessage = { _, _ in
+        mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
             return DecryptedMessage(
-                message: messageBytes,
+                message: messageData,
                 proposals: [],
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: sender.rawValue.data(using: .utf8)!.bytes,
+                senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: hasEpochChanged,
-                identity: nil
+                identity: nil,
+                bufferedMessages: nil
             )
         }
 
         // When
         do {
             _ = try await sut.decrypt(
-                message: messageBytes.data.base64EncodedString(),
+                message: messageData.base64EncodedString(),
                 for: groupID,
                 subconversationType: nil
             )
