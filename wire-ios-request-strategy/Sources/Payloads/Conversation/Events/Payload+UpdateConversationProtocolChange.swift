@@ -22,10 +22,14 @@ import WireTransport
 extension Payload {
     struct UpdateConversationProtocolChange: CodableEventData {
 
-        // TODO: do I need to decode more details like the new protocol?
-
-        static var eventType: ZMUpdateEventType {
-            return .conversationProtocolUpdate
+        enum CodingKeys: String, CodingKey {
+            case destinationProtocol = "protocol"
         }
+
+        let destinationProtocol: String
+
+        // MARK: EventData Protocol
+
+        static var eventType: ZMUpdateEventType { .conversationProtocolUpdate }
     }
 }
