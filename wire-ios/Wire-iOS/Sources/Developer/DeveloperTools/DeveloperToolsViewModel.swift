@@ -237,13 +237,13 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
 
         Task {
-            guard let conversation = await context.perform({ selfClient.user?.conversations.first }) else {
+            guard  let qualifiedID = await context.perform({ selfClient.user?.conversations.first?.qualifiedID }) else {
                 assertionFailure("no conversation found to update protocol change")
                 return
             }
 
             var action = UpdateConversationProtocolAction(
-                qualifiedID: .random(), // TODO: find id
+                qualifiedID: qualifiedID,
                 messageProtocol: .mixed
             )
 

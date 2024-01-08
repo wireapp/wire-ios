@@ -140,7 +140,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             updateAccessRolesActionHandler,
             updateRoleActionHandler,
             SyncConversationActionHandler(context: managedObjectContext),
-            CreateGroupConversationActionHandler(context: managedObjectContext, mlsService: mlsService)
+            CreateGroupConversationActionHandler(context: managedObjectContext, mlsService: mlsService),
+            UpdateConversationProtocolActionHandler(context: managedObjectContext)
         ])
 
         super.init(
