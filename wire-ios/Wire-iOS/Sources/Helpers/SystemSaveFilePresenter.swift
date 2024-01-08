@@ -43,7 +43,10 @@ final class SystemSavePresenter: NSObject, SystemSaveFilePresenting {
 
 extension SystemSavePresenter: UIDocumentInteractionControllerDelegate {
 
-    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController, finished: @escaping () -> Void) -> UIViewController {
+    func documentInteractionControllerViewControllerForPreview(
+        _ controller: UIDocumentInteractionController,
+        finished: @escaping () -> Void
+    ) -> UIViewController {
         self.finishedPresenting = finished
         return UIApplication.shared.topmostViewController(onlyFullScreen: false)!
     }
