@@ -55,10 +55,13 @@ public extension EntityAction {
 
     /// Request the action to be performed
     func send(in context: NotificationContext) {
-        NotificationInContext(name: Self.notificationName,
-                              context: context,
-                              object: nil,
-                              userInfo: [Self.userInfoKey: self]).post()
+        let notification = NotificationInContext(
+            name: Self.notificationName,
+            context: context,
+            object: nil,
+            userInfo: [Self.userInfoKey: self]
+        )
+        notification.post()
     }
 
     /// Called by an `EntityActionHandler` when the action has been performed.

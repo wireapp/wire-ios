@@ -116,7 +116,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
                 .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
                 .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
-                .button(ButtonItem(title: "Conversation Update Protocol Change", action: conversationUpdateProtocolChange)),
+                .button(ButtonItem(title: "Update Conversation to mixed protocol", action: updateConversationToMixedProtocol)),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
@@ -228,25 +228,43 @@ final class DeveloperToolsViewModel: ObservableObject {
         ZMUserSession.shared()?.setBogusLastEventID()
     }
 
-    private func conversationUpdateProtocolChange() {
+    private func updateConversationToMixedProtocol() {
         guard
             let selfClient = selfClient,
-            let notificationContext = selfClient.managedObjectContext?.notificationContext
+            let context = selfClient.managedObjectContext
         else {
             return
         }
 
         Task {
-            var action = UpdateConversationProtocolAction(
-                qualifiedID: .random(),
-                messageProtocol: .mls
-            )
-            do {
-                try await action.perform(in: notificationContext)
-                debugPrint("123")
-            } catch {
-                assertionFailure("action failed: \(error)!")
+            guard let conversation = await context.perform({ selfClient.user?.conversations.first }) else {
+                assertionFailure("no conversation found to update protocol change")
+                return
             }
+
+            var action = UpdateConversationProtocolAction(
+                qualifiedID: .random(), // TODO: find id
+                messageProtocol: .mixed
+            )
+
+            action.perform(in: context.notificationContext) { result in
+                switch result {
+                case .success(let result):
+                    debugPrint("what")
+                case .failure(let failure):
+                    debugPrint("what")
+                }
+
+                // hack: retain action until the end...
+                _ = action.messageProtocol
+            }
+
+//            do {
+//                try await action.perform(in: context.notificationContext)
+//                debugPrint("123")
+//            } catch {
+//                assertionFailure("action failed: \(error)!")
+//            }
         }
     }
 

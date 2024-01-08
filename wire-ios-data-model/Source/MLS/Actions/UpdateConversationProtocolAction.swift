@@ -35,7 +35,6 @@ public struct UpdateConversationProtocolAction: EntityAction {
         self.qualifiedID = qualifiedID
         self.messageProtocol = messageProtocol
     }
-
 }
 
 extension UpdateConversationProtocolAction {
