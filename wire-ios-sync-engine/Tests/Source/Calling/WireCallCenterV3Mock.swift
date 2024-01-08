@@ -92,6 +92,10 @@ public class MockAVSWrapper: AVSWrapperType {
         requestVideoStreamsArguments = (conversationId, videoStreams)
     }
 
+    public func notify(isProcessingNotifications isProcessing: Bool) {
+        fatalError("not implemented")
+    }
+
     var mockSetMLSConferenceInfo: ((AVSIdentifier, MLSConferenceInfo) -> Void)?
 
     public func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo) {

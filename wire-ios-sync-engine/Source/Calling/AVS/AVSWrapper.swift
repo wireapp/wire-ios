@@ -39,12 +39,18 @@ public protocol AVSWrapperType {
     func handleSFTResponse(data: Data?, context: WireCallMessageToken)
     func update(callConfig: String?, httpStatusCode: Int)
     func requestVideoStreams(_ videoStreams: AVSVideoStreams, conversationId: AVSIdentifier)
+
+    /// Let AVS know that we are batch-processing a stream of notifications.
+    /// This method should be called before processing with `isProcessingNotifications` set to `true` as well as
+    /// after processing has been completed with `isProcessingNotifications` set to `false`.
+    func notify(isProcessingNotifications isProcessing: Bool)
+
     func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
     var isMuted: Bool { get set }
 }
 
 /// An object that provides an interface to the AVS APIs.
-public class AVSWrapper: AVSWrapperType {
+public final class AVSWrapper: AVSWrapperType {
 
     /// The wrapped `wcall` instance.
     private let handle: UInt32
@@ -216,9 +222,6 @@ public class AVSWrapper: AVSWrapperType {
         wcall_request_video_streams(handle, conversationId.serialized, 0, videoStreams.jsonString(encoder))
     }
 
-    /// Let AVS know that we are batch-processing a stream of notifications.
-    /// This method should be called before processing with `isProcessingNotifications` set to `true` as well as
-    /// after processing has been completed with `isProcessingNotifications` set to `false`.
     public func notify(isProcessingNotifications isProcessing: Bool) {
         wcall_process_notifications(handle, isProcessing ? 1 : 0)
     }

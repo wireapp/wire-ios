@@ -379,7 +379,9 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             events,
             publicKeys: try? earService.fetchPublicKeys()
         )
-        processDecodedEvents(decodedEvents)
+        await MainActor.run {
+            processDecodedEvents(decodedEvents)
+        }
     }
 
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
