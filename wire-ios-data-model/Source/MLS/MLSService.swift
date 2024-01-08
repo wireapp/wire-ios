@@ -32,7 +32,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func createGroup(for groupID: MLSGroupID) async throws
+    func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws
 
     func conversationExists(groupID: MLSGroupID) async -> Bool
 
@@ -417,7 +417,20 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func createGroup(for groupID: MLSGroupID) async throws {
+    public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+        guard let context else { return }
+
+        try await createGroup(for: groupID)
+        let mlsSelfUser = await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            return MLSUser(from: selfUser)
+        }
+
+        let usersWithSelfUser = users + [mlsSelfUser]
+        try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
+    }
+
+    func createGroup(for groupID: MLSGroupID) async throws {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
         await fetchBackendPublicKeys()
 
@@ -1295,6 +1308,7 @@ public final class MLSService: MLSServiceInterface {
                 try await commitPendingProposals(in: groupID)
             } else {
                 logger.info("commit scheduled in the future, waiting...")
+                // FIXME: change logic not to wait for all commits
                 try await Task.sleep(nanoseconds: timestamp.timeIntervalSinceNow.nanoseconds)
                 logger.info("scheduled commit is ready, committing...")
                 try await commitPendingProposals(in: groupID)
