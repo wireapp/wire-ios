@@ -43,7 +43,7 @@ class E2eIServiceTests: ZMConversationTestsBase {
         // Expectation
         let expectedacmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
                                                   newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                                  newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order", 
+                                                  newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
                                                   revokeCert: "")
 
         // Given
