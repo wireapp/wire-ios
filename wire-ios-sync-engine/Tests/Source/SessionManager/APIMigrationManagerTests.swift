@@ -254,6 +254,7 @@ class APIMigrationManagerTests: MessagingTest {
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
             analytics: nil,
+            updateEventProcessorFactory: { _, _, _, _, _ in mockUpdateEventProcessor },
             eventProcessor: mockUpdateEventProcessor,
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,

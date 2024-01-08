@@ -81,6 +81,7 @@ open class AuthenticatedSessionFactory {
             mediaManager: mediaManager,
             flowManager: flowManager,
             analytics: analytics,
+            updateEventProcessorFactory: EventProcessor.init,
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,

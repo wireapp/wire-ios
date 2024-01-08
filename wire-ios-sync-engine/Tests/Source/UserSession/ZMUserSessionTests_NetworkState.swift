@@ -38,6 +38,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             mediaManager: mediaManager,
             flowManager: flowManagerMock,
             analytics: nil,
+            updateEventProcessorFactory: EventProcessor.init,
             eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,

@@ -266,7 +266,7 @@ public class ZMUserSession: NSObject {
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
         analytics: AnalyticsType?,
-        eventProcessor: UpdateEventProcessor? = nil,
+        updateEventProcessorFactory: @escaping UpdateEventProcessorFactory,
         strategyDirectory: StrategyDirectoryProtocol? = nil,
         syncStrategy: ZMSyncStrategy? = nil,
         operationLoop: ZMOperationLoop? = nil,
@@ -354,11 +354,13 @@ public class ZMUserSession: NSObject {
             self.configureTransportSession()
 
             // need to be before we create strategies since it is passed
-            self.proteusProvider = ProteusProvider(proteusService: self.proteusService,
-                                                   keyStore: self.syncManagedObjectContext.zm_cryptKeyStore)
+            self.proteusProvider = ProteusProvider(
+                proteusService: self.proteusService,
+                keyStore: self.syncManagedObjectContext.zm_cryptKeyStore
+            )
 
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
-            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
+            updateEventProcessor = createUpdateEventProcessor(factory: updateEventProcessorFactory)
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
             self.operationLoop = operationLoop ?? self.createOperationLoop()
             self.urlActionProcessors = self.createURLActionProcessors()
@@ -437,18 +439,18 @@ public class ZMUserSession: NSObject {
         )
     }
 
-    private func createUpdateEventProcessor() -> EventProcessor {
-        return EventProcessor(
-            storeProvider: self.coreDataStack,
-            eventProcessingTracker: eventProcessingTracker,
-            earService: earService,
-            eventConsumers: strategyDirectory?.eventConsumers ?? [],
-            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
+    private func createUpdateEventProcessor(factory create: UpdateEventProcessorFactory) -> UpdateEventProcessor {
+        create(
+            /* storeProvider: */ coreDataStack,
+            /* eventProcessingTracker: */ eventProcessingTracker,
+            /* earService: */ earService,
+            /* eventConsumers: */ strategyDirectory?.eventConsumers ?? [],
+            /* eventAsyncConsumers: */ (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
         )
     }
 
     private func createURLActionProcessors() -> [URLActionProcessor] {
-        return [
+        [
             DeepLinkURLActionProcessor(contextProvider: coreDataStack,
                                        transportSession: transportSession,
                                        eventProcessor: updateEventProcessor!),
