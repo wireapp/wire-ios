@@ -134,10 +134,10 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             return
         }
         saveFileManager.save(
-                    value: certificate.certificateDetails,
-                    fileName: userClient.label ?? "e2ecertificate",
-                    type: "txt"
-                )
+            value: certificate.certificateDetails,
+            fileName: userClient.label ?? "e2ecertificate",
+            type: "txt"
+        )
     }
 }
 
