@@ -136,9 +136,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             do {
                 try await joinMLSGroupIfNeeded(groupID, mlsService: mlsService)
 
-                let allParticipantsSupportMLS = await context.perform { self.allParticipantsSupportMLS(in: conversation) }
-
-                guard migrationFinalisationTimeHasArrived || allParticipantsSupportMLS else {
+                guard migrationFinalisationTimeHasArrived else {
                     continue
                 }
 
@@ -231,11 +229,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
 
         try await mlsService.joinGroup(with: groupID)
-    }
-
-    private func allParticipantsSupportMLS(in conversation: ZMConversation) -> Bool {
-        conversation.localParticipants
-            .allSatisfy { $0.supportedProtocols.contains(.mls) }
     }
 
     private func syncUsersWithTheBackend() async throws {
