@@ -96,7 +96,7 @@ public final class E2eIService: E2eIServiceInterface {
 
     public func setChallengeResponse(challenge: Data) async throws {
         // TODO: Update method with a new parameters
-        //return try e2eIdentity.newOidcChallengeResponse(challenge: challenge)
+        // return try e2eIdentity.newOidcChallengeResponse(challenge: challenge)
     }
 
     public func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data {
