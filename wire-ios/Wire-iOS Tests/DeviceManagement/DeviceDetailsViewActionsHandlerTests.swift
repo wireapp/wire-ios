@@ -48,7 +48,6 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             mlsProvider: MockMLSProvider(isMLSEnbaled: false),
             saveFileManager: saveFileManager
         )
-        deviceActionHandler.certificate = .init(certificateDetails: .random(length: 100), expiryDate: .now, certificateStatus: "valid", serialNumber: .random(length: 16))
         deviceActionHandler.downloadE2EIdentityCertificate()
         wait(for: [expectation], timeout: 0.5)
     }
