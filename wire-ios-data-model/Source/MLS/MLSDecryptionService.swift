@@ -45,7 +45,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     // MARK: - Properties
 
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let mlsActionExecutor: MLSActionExecutorProtocol
     private weak var context: NSManagedObjectContext?
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
@@ -59,18 +59,12 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     public init(
         context: NSManagedObjectContext,
-        coreCryptoProvider: CoreCryptoProviderProtocol,
+        mlsActionExecutor: MLSActionExecutorProtocol,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
-        self.coreCryptoProvider = coreCryptoProvider
+        self.mlsActionExecutor = mlsActionExecutor
         self.context = context
         self.subconverationGroupIDRepository = subconversationGroupIDRepository
-    }
-
-    var coreCrypto: SafeCoreCryptoProtocol {
-        get async throws {
-            return try await coreCryptoProvider.coreCrypto(requireMLS: true)
-        }
     }
 
     // MARK: - Message decryption
@@ -121,12 +115,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try await coreCrypto.perform {
-                try await $0.decryptMessage(
-                    conversationId: groupID.data,
-                    payload: messageData
-                )
-            }
+            let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)
 
             if decryptedMessage.hasEpochChanged {
                 onEpochChangedSubject.send(groupID)
