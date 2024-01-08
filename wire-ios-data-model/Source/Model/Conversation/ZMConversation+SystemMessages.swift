@@ -137,14 +137,13 @@ extension ZMConversation {
     // MARK: - MLS Migration
 
     public func appendMLSMigrationFinalizedSystemMessage(
-        users: Set<ZMUser>,
         sender: ZMUser,
         at timestamp: Date
     ) {
         appendSystemMessage(
             type: .mlsMigrationFinalized,
             sender: sender,
-            users: users,
+            users: nil,
             clients: nil,
             timestamp: timestamp
         )
@@ -179,14 +178,13 @@ extension ZMConversation {
     }
 
     public func appendMLSMigrationStartedSystemMessage(
-        users: Set<ZMUser>,
         sender: ZMUser,
         at timestamp: Date
     ) {
         appendSystemMessage(
             type: .mlsMigrationStarted,
             sender: sender,
-            users: users,
+            users: nil,
             clients: nil,
             timestamp: timestamp
         )

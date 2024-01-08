@@ -345,7 +345,7 @@ final class ConversationEventPayloadProcessor {
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
     }
 
-    // MARK: - Connection request
+    // MARK: - Protocol Change
 
     func processPayload(
         _ payload: Payload.ConversationEvent<Payload.UpdateConversationProtocolChange>,
@@ -357,16 +357,50 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
+        await syncProtocolChangeConversation(qualifiedID, in: context.notificationContext)
+
+        addProtocolChangeSystemMessage(
+            qualifiedID,
+            messageProtocolRawValue: payload.data.messageProtocol,
+            in: context
+        )
+    }
+
+    private func syncProtocolChangeConversation(_ qualifiedID: QualifiedID, in notificationContext: NotificationContext) async {
         var action = SyncConversationAction(qualifiedID: qualifiedID)
 
         do {
-            try await action.perform(in: context.notificationContext)
+            try await action.perform(in: notificationContext)
             debugPrint("it happened!")
         } catch {
-            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): perform action failed with error: \(error)")
+            Logging.eventProcessing.error("syncConversation: perform 'SyncConversationAction' failed with error: \(error)")
         }
+    }
 
-        // let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+    private func addProtocolChangeSystemMessage(
+        _ qualifiedID: QualifiedID,
+        messageProtocolRawValue: String,
+        in context: NSManagedObjectContext
+    ) {
+        let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+        let messageProtocol = MessageProtocol(rawValue: messageProtocolRawValue)
+        let selfUser = ZMUser.selfUser(in: context)
+        let now = Date()
+
+        switch messageProtocol {
+        case .mixed:
+            conversation?.appendMLSMigrationStartedSystemMessage(
+                sender: selfUser,
+                at: now
+            )
+        case .mls:
+            conversation?.appendMLSMigrationFinalizedSystemMessage(
+                sender: selfUser,
+                at: now
+            )
+        case .none, .proteus:
+            assertionFailure("unexpected value for 'messageProtocol' '\(String(describing: messageProtocol))', that can not be processed!")
+        }
     }
 
     // MARK: - Helpers

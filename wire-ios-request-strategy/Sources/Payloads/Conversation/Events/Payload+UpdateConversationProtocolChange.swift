@@ -23,10 +23,10 @@ extension Payload {
     struct UpdateConversationProtocolChange: CodableEventData {
 
         enum CodingKeys: String, CodingKey {
-            case destinationProtocol = "protocol"
+            case messageProtocol = "protocol"
         }
 
-        let destinationProtocol: String
+        let messageProtocol: String
 
         // MARK: EventData Protocol
 
