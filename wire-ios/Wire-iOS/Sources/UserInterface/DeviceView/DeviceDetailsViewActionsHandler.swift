@@ -31,10 +31,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var certificate: E2eIdentityCertificate?
     var isProcessing: ((Bool) -> Void)?
 
-    var isMLSEnabled: Bool {
-        e2eIdentityProvider.isE2EIdentityEnabled()
-    }
-
     var isE2eIdentityEnabled: Bool {
         e2eIdentityProvider.isE2EIdentityEnabled()
     }

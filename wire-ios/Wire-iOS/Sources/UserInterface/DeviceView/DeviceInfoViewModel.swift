@@ -50,7 +50,22 @@ final class DeviceInfoViewModel: ObservableObject {
         actionsHandler.isE2eIdentityEnabled
     }
 
+    var shouldShowBlueShield: Bool {
+        if !isE2EIdentityEnabled {
+            return true
+        }
+        guard let certificate = e2eIdentityCertificate,
+                certificate.status != .notActivated,
+                certificate.status != .revoked,
+              certificate.status != .expired
+        else {
+            return false
+        }
+        return true
+    }
+
     var isValidCerificate: Bool {
+
         guard let certificate = e2eIdentityCertificate,
                 certificate.status != .notActivated,
                 certificate.status != .revoked else {

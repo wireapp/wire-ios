@@ -30,7 +30,7 @@ struct DeviceView: View {
             if let e2eIdentityCertificateStatusImage = viewModel.certificateStatus.imageForStatus() {
                 e2eIdentityCertificateStatusImage
             }
-            if viewModel.isProteusVerificationEnabled {
+            if viewModel.isProteusVerificationEnabled && viewModel.shouldShowBlueShield {
                 Image(.certificateVerified)
             }
         }

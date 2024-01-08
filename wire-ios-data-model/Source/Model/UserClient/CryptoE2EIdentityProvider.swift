@@ -26,10 +26,14 @@ public protocol CryptoE2EIdentityProviderProtocol {
 
 // MARK: Delete this once origial corecryto methods are available
 final public class MockCryptoE2EIProvider: CryptoE2EIdentityProviderProtocol {
-    public init() {}
+    private var enableE2eI: Bool
+
+    public init(enableE2eI: Bool = false) {
+        self.enableE2eI = enableE2eI
+    }
 
     public func isE2EIdentityEnabled() -> Bool {
-        return true
+        return enableE2eI
     }
 
     public func fetchWireIdentity(userIds: [String], conversationId: String) -> [WireCoreCrypto.WireIdentity] {
