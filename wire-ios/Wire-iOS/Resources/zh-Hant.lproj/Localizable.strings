@@ -562,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "此對話已啟用合法保留";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "此對話已停用合法保留";
 
 "content.system.message_legal_hold.learn_more" = "瞭解詳情";
@@ -992,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "合法保留對象";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "合法保留";
 "legalhold.header.other_description" = "Legal Hold has been activated for at least one person in this conversation.\nAll messages will be preserved for future access, including deleted, edited, and self-deleting messages.";
 "legalhold.header.self_description" = "您的帳戶的合法保留已被激活。 所有消息都將保留，以供將來訪問，包括刪除，編輯和自動刪除訊息。\n\n您的對話成員將被提醒記錄中。";

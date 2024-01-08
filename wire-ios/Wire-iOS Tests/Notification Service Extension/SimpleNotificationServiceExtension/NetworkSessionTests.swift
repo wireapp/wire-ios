@@ -91,7 +91,7 @@ class NetworkSessionTests: XCTestCase {
         )
 
         // When
-        await assertThrows(expectedError: NetworkSession.NetworkError.invalidRequestURL) {
+        await assertItThrows(error: NetworkSession.NetworkError.invalidRequestURL) {
             _ = try await sut.send(request: invalidRequest)
         }
     }
@@ -102,7 +102,7 @@ class NetworkSessionTests: XCTestCase {
         mockURLSession.mockedResponse = invalidResponse
 
         // When
-        await assertThrows(expectedError: NetworkSession.NetworkError.invalidResponse) {
+        await assertItThrows(error: NetworkSession.NetworkError.invalidResponse) {
             _ = try await sut.send(request: self.mockNetworkRequest)
         }
     }
@@ -121,7 +121,7 @@ class NetworkSessionTests: XCTestCase {
         mockURLSession.mockedResponse = (Data(), plainTextResponse)
 
         // When
-        await assertThrows(expectedError: NetworkSession.NetworkError.invalidResponse) {
+        await assertItThrows(error: NetworkSession.NetworkError.invalidResponse) {
             _ = try await sut.send(request: self.mockNetworkRequest)
         }
     }
