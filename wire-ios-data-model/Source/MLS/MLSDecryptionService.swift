@@ -147,9 +147,22 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         } catch {
             WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error))")
 
-            if case CryptoError.WrongEpoch(message: _) = error {
-                throw MLSMessageDecryptionError.wrongEpoch
-            } else {
+            switch error {
+            // Received messages targeting a future epoch, we might have lost messages.
+            case CryptoError.WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
+
+            // Message arrive in future epoch, it has been buffered and will be consumed later.
+            case CryptoError.BufferedFutureMessage: return nil
+
+            // Received already sent or received message, can safely be ignored.
+            case CryptoError.DuplicateMessage: return nil
+
+            // Received self commit, any unmerged group has know when merged by CoreCrypto.
+            case CryptoError.SelfCommitIgnored: return nil
+
+            // Message arrive in an unmerged group, it has been buffered and will be consumed later.
+            case CryptoError.UnmergedPendingGroup: return nil
+            default:
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
         }
