@@ -23,7 +23,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSecurityLevelIsDegraded_thenFailWithSecurityLevelDegraded() async throws {
         // given
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             groupConversation?.setPrimitiveValue(
                 NSNumber(value: ZMConversationSecurityLevel.secureWithIgnored.rawValue), forKey: "securityLevel"
             )
