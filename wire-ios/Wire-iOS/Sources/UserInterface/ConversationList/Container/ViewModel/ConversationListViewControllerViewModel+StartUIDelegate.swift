@@ -23,11 +23,11 @@ import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
-        oneToOneConversationWithUser(user, callback: { result in
+        oneToOneConversationWithUser(user) { result in
             guard case .success(let conversation) = result else { return }
 
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
-        })
+        }
     }
 
     func startUI(_ startUI: StartUIViewController, didSelect conversation: ZMConversation) {
