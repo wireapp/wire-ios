@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,73 +80,6 @@ extension MockTransportSessionTeamEventsTests {
 
         check(event: events.first, hasType: .teamDelete, teamIdentifier: teamIdentifier)
     }
-
-    // TODO: check if the tests can be reused at other places
-    /*
-    func testThatItCreatesEventsForUpdatedTeams() {
-        // Given
-        var team: MockTeam!
-
-        sut.performRemoteChanges { session in
-            let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "some", isBound: true, users: [selfUser])
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        createAndOpenPushChannelAndCreateSelfUser(false)
-
-        // When
-        let newName = "other"
-        let assetKey = "123-082"
-        let assetId = "541-992"
-        sut.performRemoteChanges { _ in
-            team.name = newName
-            team.pictureAssetId = assetId
-            team.pictureAssetKey = assetKey
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-        let updateData = [
-            "name": newName,
-            "icon": assetId,
-            "icon_key": assetKey
-        ]
-        check(event: events.first, hasType: .teamUpdate, team: team, data: updateData)
-    }
-
-    func testThatItCreatesEventsForUpdatedTeamsAndHasOnlyChangedData() {
-        // Given
-        var team: MockTeam!
-
-        sut.performRemoteChanges { session in
-            let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "some", isBound: true, users: [selfUser])
-            team.pictureAssetId = "123-082"
-            team.pictureAssetKey = "541-992"
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        createAndOpenPushChannelAndCreateSelfUser(false)
-
-        // When
-        let newName = "other"
-        sut.performRemoteChanges { _ in
-            team.name = newName
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-        let updateData = [
-            "name": newName
-        ]
-        check(event: events.first, hasType: .teamUpdate, team: team, data: updateData)
-    }
-     */
 
 }
 
