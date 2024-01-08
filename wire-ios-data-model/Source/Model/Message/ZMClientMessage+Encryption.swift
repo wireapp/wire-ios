@@ -290,13 +290,15 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = await legacyEncrypt(
-                    using: keyStore,
-                    for: messageRecipients,
-                    with: missingClientsStrategy,
-                    useQualifiedIdentifiers: useQualifiedIdentifiers,
-                    in: context
-                )
+                await context.perform {
+                    encryptedData = legacyEncrypt(
+                        using: keyStore,
+                        for: messageRecipients,
+                        with: missingClientsStrategy,
+                        useQualifiedIdentifiers: useQualifiedIdentifiers,
+                        in: context
+                    )
+                }
             }
         )
 
@@ -330,13 +332,15 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = await legacyEncrypt(
-                    using: keyStore,
-                    for: recipients,
-                    with: missingClientsStrategy,
-                    useQualifiedIdentifiers: useQualifiedIdentifiers,
-                    in: context
-                )
+                await context.perform {
+                    encryptedData = legacyEncrypt(
+                        using: keyStore,
+                        for: recipients,
+                        with: missingClientsStrategy,
+                        useQualifiedIdentifiers: useQualifiedIdentifiers,
+                        in: context
+                    )
+                }
             }
         )
 
@@ -367,8 +371,6 @@ extension GenericMessage {
 
         var messageData: Data?
 
-        // TODO: get core crypto file lock
-
         if useQualifiedIdentifiers,
             let selfDomain = await context.perform({ ZMUser.selfUser(in: context).domain }) {
 
@@ -380,7 +382,7 @@ extension GenericMessage {
                 externalData: externalData,
                 context: context
             ) { sessionID, plainText in
-                try proteusService.encrypt(
+                try await proteusService.encrypt(
                     data: plainText,
                     forSession: sessionID
                 )
@@ -396,7 +398,7 @@ extension GenericMessage {
                 externalData: externalData,
                 context: context
             ) { sessionID, plainText in
-                try proteusService.encrypt(
+                try await proteusService.encrypt(
                     data: plainText,
                     forSession: sessionID
                 )

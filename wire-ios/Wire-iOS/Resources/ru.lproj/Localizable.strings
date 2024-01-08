@@ -562,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "Эта беседа находится под правовой защитой";
+"content.system.message_legal_hold.enabled" = "Эта беседа находится под юридическими ограничениями [ПОДРОБНЕЕ](%@)";
 "content.system.message_legal_hold.disabled" = "Для этой беседы деактивированы юридические ограничения";
 
 "content.system.message_legal_hold.learn_more" = "Подробнее";
@@ -858,7 +858,7 @@
 "meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
 "meta.degraded.degradation_reason_message.plural" = "%@ начал(-а) использовать новые устройства.";
 "meta.degraded.degradation_reason_message.someone" = "Кто-то начал использовать новое устройство.";
-"meta.degraded.dialog_message" = "Вы все еще хотите отправить свое сообщение?";
+"meta.degraded.dialog_message" = "Вы все еще хотите отправить ваше сообщение?";
 "meta.degraded.verify_devices_button" = "Верифицируйте устройства…";
 "meta.degraded.send_anyway_button" = "Отправить в любом случае";
 "meta.degraded.cancel_sending_button" = "Отмена";
@@ -895,7 +895,7 @@
 
 // Delete group
 "conversation.delete_request_dialog.title" = "Удалить беседы группы?";
-"conversation.delete_request_dialog.message" = "Это действие удалит группу и весь контент для всех участников на всех устройствах. Контент будет удален без возможности восстановления. Будут уведомлены все участники.";
+"conversation.delete_request_dialog.message" = "Это приведет к удалению группы и всего содержимого для всех участников на всех устройствах. Восстановить контент будет невозможно. Все участники будут оповещены.";
 "conversation.delete_request_error_dialog.title" = "Произошла ошибка при попытке удалить группу %@. Пожалуйста, попробуйте еще раз.";
 "conversation.delete_request_error_dialog.button_delete_group" = "Удалить группу";
 
@@ -992,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Субъекты юридических ограничений";
+"legalhold.participants.section.title" = "Субъекты юридических ограничений %@";
 "legalhold.header.title" = "Юридические ограничения";
 "legalhold.header.other_description" = "В этой беседе активированы юридические ограничения как минимум для одного участника. Все сообщения будут сохранены для последующего доступа, включая удаленные, отредактированные и самоудаляющиеся.";
 "legalhold.header.self_description" = "Для вашей учетной записи активированы юридические ограничения. Все сообщения будут сохранены для последующего доступа, включая удаленные, отредактированные и самоудаляющиеся. Ваши собеседники будут уведомлены об этом.";
