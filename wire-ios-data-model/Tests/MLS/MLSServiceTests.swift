@@ -2613,8 +2613,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         let createConversationExpectation = XCTestExpectation(description: "createConversation must be called")
-        mockCoreCrypto.mockCreateConversation = { conversationID, _, _ in
-            XCTAssertEqual(conversationID, [UInt8](mlsGroupID.data))
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { conversationID, _, _ in
+            XCTAssertEqual(conversationID, mlsGroupID.data)
             createConversationExpectation.fulfill()
         }
 
@@ -2639,7 +2639,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock adding members to the conversation.
-        var addedMembers = [(invitee: [Invitee], mlsGroupID: MLSGroupID)]()
+        var addedMembers = [(keyPackages: [KeyPackage], mlsGroupID: MLSGroupID)]()
         let updateEvent = dummyMemberJoinEvent()
         mockMLSActionExecutor.mockAddMembers = {
             addedMembers.append(($0, $1))
@@ -2664,10 +2664,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // members are added
         XCTAssertEqual(addedMembers.count, 1)
-        XCTAssertEqual(addedMembers.first?.invitee, [Invitee(from: keyPackage)])
+        XCTAssertEqual(addedMembers.first?.keyPackages, [keyPackage])
         XCTAssertEqual(addedMembers.first?.mlsGroupID, mlsGroupID)
 
-        // And processd the update event.
+        // And processed the update event.
         let processConversationEventsCalls = mockConversationEventProcessor.processConversationEvents_Invocations
         XCTAssertEqual(processConversationEventsCalls.flatMap { $0 }.count, 1)
         XCTAssertEqual(processConversationEventsCalls.flatMap { $0 }.first, updateEvent)
@@ -2695,13 +2695,13 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { [uiMOC] _, _ in
             uiMOC.performAndWait { conversation.messageProtocol = .mixed }
         }
-        mockCoreCrypto.mockCreateConversation = { _, _, _ in }
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             throw SendMLSMessageAction.Failure.mlsStaleMessage
         }
         let wipeConversationExpectation = XCTestExpectation(description: "wipeConversation must be called")
-        mockCoreCrypto.mockWipeConversation = { conversationID in
-            XCTAssertEqual(conversationID, [UInt8](mlsGroupID.data))
+        mockCoreCrypto.wipeConversationConversationId_MockMethod = { conversationID in
+            XCTAssertEqual(conversationID, mlsGroupID.data)
             wipeConversationExpectation.fulfill()
         }
 
