@@ -63,7 +63,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
     /// Guarantee to get proteusProvider from correct context
     /// - Note: to be replaced when proteusProvider is not attached to context 🤞
     private var proteusProvider: ProteusProviding {
-        return syncMOC.performAndWait {
+        syncMOC.performAndWait {
             syncMOC.proteusProvider
         }
     }
@@ -182,7 +182,7 @@ extension EventDecoder {
 
         // This call has to be synchronous to ensure that we close the
         // encryption context only if we stored all events in the database.
-        eventMOC.performAndWait {
+        await eventMOC.perform {
             self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
         }
 
@@ -220,7 +220,7 @@ extension EventDecoder {
 
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
-            eventMOC.performAndWait {
+            await eventMOC.perform {
                 self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
             }
 

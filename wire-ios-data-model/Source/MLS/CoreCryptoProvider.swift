@@ -225,7 +225,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     private func generateClientPublicKeysIfNeeded(with coreCrypto: SafeCoreCrypto) async throws {
-        let mlsPublicKeys = syncContext.performAndWait {
+        let mlsPublicKeys = await syncContext.perform {
             ZMUser.selfUser(in: self.syncContext).selfClient()?.mlsPublicKeys
         }
 
@@ -239,7 +239,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         var keys = UserClient.MLSPublicKeys()
         keys.ed25519 = keyData.base64EncodedString()
 
-        syncContext.performAndWait {
+        await syncContext.perform {
             ZMUser.selfUser(in: self.syncContext).selfClient()?.mlsPublicKeys = keys
             self.syncContext.saveOrRollback()
         }

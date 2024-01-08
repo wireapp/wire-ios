@@ -130,7 +130,7 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         var selfUser: ZMUser!
         var legalHoldClient: UserClient!
 
-        syncMOC.performAndWait {
+        await syncMOC.perform { [syncMOC] in
             selfUser = ZMUser.selfUser(in: syncMOC)
             legalHoldClient = UserClient.createMockLegalHoldSelfUserClient(in: syncMOC)
             XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
@@ -143,7 +143,7 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         await legalHoldClient.deleteClientAndEndSession()
 
         // THEN
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
             XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
         }
@@ -154,7 +154,7 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         var selfUser: ZMUser!
         var normalClient: UserClient!
 
-        syncMOC.performAndWait {
+        await syncMOC.perform { [syncMOC] in
             selfUser = ZMUser.selfUser(in: syncMOC)
             normalClient = UserClient.createMockPhoneUserClient(in: syncMOC)
             UserClient.createMockLegalHoldSelfUserClient(in: syncMOC)
@@ -165,7 +165,7 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         await normalClient.deleteClientAndEndSession()
 
         // THEN
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
             XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
         }
