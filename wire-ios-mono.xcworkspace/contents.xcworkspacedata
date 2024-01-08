@@ -2,26 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Cartfile">
-   </FileRef>
-   <FileRef
-      location = "group:Cartfile.private">
-   </FileRef>
-   <FileRef
-      location = "group:Cartfile.resolved">
-   </FileRef>
-   <Group
-      location = "group:fastlane"
-      name = "fastlane">
-      <FileRef
-         location = "group:Pluginfile">
-      </FileRef>
-      <FileRef
-         location = "group:Fastfile"
-         assignedFileDataType = "public.ruby-script">
-      </FileRef>
-   </Group>
-   <FileRef
       location = "group:LICENSE">
    </FileRef>
    <FileRef
@@ -29,9 +9,6 @@
    </FileRef>
    <FileRef
       location = "group:scripts">
-   </FileRef>
-   <FileRef
-      location = "group:setup.sh">
    </FileRef>
    <Group
       location = "group:xcconfigs"
