@@ -50,8 +50,6 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         protocolSelector.getProtocolForUserWithIn_MockValue = .mls
         migrator.migrateToMLSUserIDIn_MockMethod = { _, _ in }
 
-        let isDone = XCTestExpectation(description: "isDone")
-
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
 
@@ -68,8 +66,6 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         // Mock
         protocolSelector.getProtocolForUserWithIn_MockValue = .proteus
 
-        let isDone = XCTestExpectation(description: "isDone")
-
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
 
@@ -81,30 +77,34 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         // Given
         let userID = QualifiedID.random()
 
-        let user = createUser(in: uiMOC)
-        user.remoteIdentifier = userID.uuid
-        user.domain = userID.domain
+        let conversation = await uiMOC.perform { [self] in
+            let user = createUser(in: uiMOC)
+            user.remoteIdentifier = userID.uuid
+            user.domain = userID.domain
 
-        let (_, conversation) = createConnection(
-            status: .pending,
-            to: user,
-            in: uiMOC
-        )
+            let (_, conversation) = createConnection(
+                status: .pending,
+                to: user,
+                in: uiMOC
+            )
 
-        XCTAssertEqual(conversation.messageProtocol, .proteus)
-        XCTAssertFalse(conversation.isForcedReadOnly)
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertFalse(conversation.isForcedReadOnly)
+
+            return conversation
+        }
 
         // Mock
         protocolSelector.getProtocolForUserWithIn_MockValue = .some(nil)
-
-        let isDone = XCTestExpectation(description: "isDone")
 
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
 
         // Then
-        XCTAssertEqual(conversation.messageProtocol, .proteus)
-        XCTAssertTrue(conversation.isForcedReadOnly)
+        await uiMOC.perform {
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertTrue(conversation.isForcedReadOnly)
+        }
     }
 
 }

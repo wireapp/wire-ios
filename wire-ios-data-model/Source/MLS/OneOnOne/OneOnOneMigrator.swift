@@ -102,7 +102,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         userID: QualifiedID,
         mlsGroupID: MLSGroupID
     ) async throws {
-        guard !mlsService.conversationExists(groupID: mlsGroupID) else {
+        guard await !mlsService.conversationExists(groupID: mlsGroupID) else {
             return
         }
 
