@@ -25,21 +25,18 @@ enum AvailabilityLabelStyle: Int {
 }
 
 extension AvailabilityKind {
-    var canonicalName: String {
-        switch self {
-        case .none:
-            return "none"
-        case .available:
-            return "available"
-        case .away:
-            return "away"
-        case .busy:
-            return "busy"
-        }
-    }
 
     var localizedName: String {
-        return "availability.\(canonicalName)".localized
+        switch self {
+        case .none:
+            return L10n.Localizable.Availability.none
+        case .available:
+            return L10n.Localizable.Availability.available
+        case .away:
+            return L10n.Localizable.Availability.away
+        case .busy:
+            return L10n.Localizable.Availability.busy
+        }
     }
 
     var iconType: StyleKitIcon? {

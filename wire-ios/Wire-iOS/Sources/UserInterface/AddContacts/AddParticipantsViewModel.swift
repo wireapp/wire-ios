@@ -82,8 +82,8 @@ struct AddParticipantsViewModel {
             item.accessibilityIdentifier = "close"
             return item
         case .create(let values):
-            let key = values.participants.isEmpty ? "peoplepicker.group.skip" : "peoplepicker.group.done"
-            let newItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: key.localized.capitalized,
+            let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable.Peoplepicker.Group.done
+            let newItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: key,
                                                                                systemImage: false,
                                                                                target: target,
                                                                                action: action)

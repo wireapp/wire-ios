@@ -21,7 +21,7 @@ import WireCoreCrypto
 
 public protocol E2eISetupServiceInterface {
 
-    func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol
+    func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> E2eiEnrollment
 
 }
 
@@ -40,15 +40,16 @@ public final class E2eISetupService: E2eISetupServiceInterface {
 
     // MARK: - Public interface
 
-    public func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol {
+    public func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> E2eiEnrollment {
         do {
-            return try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            return try await coreCryptoProvider.coreCrypto(requireMLS: true).perform {
                 /// TODO: Use e2eiNewRotateEnrollment or e2eiNewActivationEnrollment from the new CC version
-                try $0.e2eiNewEnrollment(clientId: e2eiClientId.rawValue,
-                                         displayName: userName,
-                                         handle: handle,
-                                         expiryDays: UInt32(90),
-                                         ciphersuite: defaultCipherSuite.rawValue)
+                try await $0.e2eiNewEnrollment(clientId: e2eiClientId.rawValue,
+                                               displayName: userName,
+                                               handle: handle,
+                                               team: nil,
+                                               expiryDays: UInt32(90),
+                                               ciphersuite: 1) // TODO: Update it
             }
 
         } catch {

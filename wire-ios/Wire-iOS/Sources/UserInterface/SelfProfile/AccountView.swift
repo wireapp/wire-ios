@@ -142,7 +142,8 @@ class BaseAccountView: UIView {
     var onTap: ((Account?) -> Void)? = .none
 
     var accessibilityState: String {
-        var result = "conversation_list.header.self_team.accessibility_value.\(selected ? "active" : "inactive")".localized
+       typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
+        var result = selected ? ConversationListHeaderAccessibilityLocale.active : ConversationListHeaderAccessibilityLocale.inactive
 
         if hasUnreadMessages {
             result += "\(L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue.hasNewMessages)"

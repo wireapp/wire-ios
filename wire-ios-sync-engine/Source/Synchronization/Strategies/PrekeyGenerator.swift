@@ -48,7 +48,7 @@ class PrekeyGenerator {
         let lastKey = try await proteusProvider.performAsync(
             withProteusService: { proteusService in
                 return (
-                    id: proteusService.lastPrekeyID,
+                    id: await proteusService.lastPrekeyID,
                     prekey: try await proteusService.lastPrekey()
 
                 )

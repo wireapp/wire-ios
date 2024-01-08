@@ -31,19 +31,19 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Add members
 
-    typealias AddMembersMock = (([Invitee], MLSGroupID) async throws -> [ZMUpdateEvent])
+    typealias AddMembersMock = (([KeyPackage], MLSGroupID) async throws -> [ZMUpdateEvent])
     private var _mockAddMembers: AddMembersMock?
     var mockAddMembers: AddMembersMock? {
         get { serialQueue.sync { _mockAddMembers } }
         set { serialQueue.sync { _mockAddMembers = newValue } }
     }
 
-    func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    func addMembers(_ keyPackages: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockAddMembers else {
             fatalError("no mock for `addMembers`")
         }
 
-        return try await mock(invitees, groupID)
+        return try await mock(keyPackages, groupID)
     }
 
     // MARK: - Remove clients

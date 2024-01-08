@@ -562,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "Дана розмова знаходиться під правовим захистом";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "Для даної розмови правовий захист деактивовано";
 
 "content.system.message_legal_hold.learn_more" = "Дізнатися більше";
@@ -992,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Суб'єкти правового захисту";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "Правовий захист";
 "legalhold.header.other_description" = "В даній розмові правовий захист було активовано мінімум для одного учасника.\nВсі повідомлення будуть збережені для доступу в майбутньому, включно з видаленими та тимчасованими повідомленнями.";
 "legalhold.header.self_description" = "Правовий захист було активовано для вашого акаунту.\nВсі повідомлення будуть збережені для доступу в майбутньому, включно з видаленими, відредагованими та тимчасованими повідомленнями.\nВаші співрозмовники будуть повідомлені про це.";

@@ -562,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "This conversation is under legal hold";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "Legal hold deactivated for this conversation";
 
 "content.system.message_legal_hold.learn_more" = "بیشتر بدانید";
@@ -992,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Legal hold subjects";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "Legal Hold";
 "legalhold.header.other_description" = "Legal Hold has been activated for at least one person in this conversation.\nAll messages will be preserved for future access, including deleted, edited, and self-deleting messages.";
 "legalhold.header.self_description" = "Legal Hold has been activated for your account.\nAll messages will be preserved for future access, including deleted, edited, and self-deleting messages.\nYour conversation partners will be aware of the recording.";
