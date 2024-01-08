@@ -143,7 +143,7 @@ final class ConversationEventPayloadProcessor {
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
 
         if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
-            Task {
+            WaitingGroupTask(context: context) {
                 await MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
             }
         }
@@ -503,7 +503,7 @@ final class ConversationEventPayloadProcessor {
 
         if await context.perform({ conversation.epoch <= 0 }) {
             await mlsService.createSelfGroup(for: groupID)
-        } else if !mlsService.conversationExists(groupID: groupID) {
+        } else if await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }
     }

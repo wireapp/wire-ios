@@ -121,7 +121,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
             title = L10n.Localizable.Availability.Message.setStatus
             accessibilityLabel = title
         } else if availability != .none {
-            title = availability.localizedName.localized
+            title = availability.localizedName
             accessibilityLabel = AvailabilityStatusStrings.description
         }
 
