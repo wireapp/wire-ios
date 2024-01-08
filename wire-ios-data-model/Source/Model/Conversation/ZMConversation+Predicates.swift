@@ -179,9 +179,23 @@ extension ZMConversation {
         let notBlocked = NSPredicate(format: "\(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blocked.rawValue) && \(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blockedMissingLegalholdConsent.rawValue)")
         let predicate2 = NSCompoundPredicate(orPredicateWithSubpredicates: [noConnection, notBlocked]) // group conversations and not blocked connections
 
-        let proteusOrMlsAndReady = NSPredicate(format: "(\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)) OR ((\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)) AND (\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)))")
+        // protocols
+        let hasProteusProtocol =  NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
+        let hasMixedProtocol =  NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mixed.int16Value)")
+        let hasMLSProtocol =  NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
+        let hasMLSReadyStatus = NSPredicate(format: "\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)")
+        let hasValidProtocols = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            hasProteusProtocol,
+            hasMixedProtocol,
+            NSCompoundPredicate(andPredicateWithSubpredicates: [hasMLSProtocol, hasMLSReadyStatus])
+        ])
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, predicate1, predicate2, proteusOrMlsAndReady])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            basePredicate,
+            predicate1,
+            predicate2,
+            hasValidProtocols
+        ])
     }
 
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {
