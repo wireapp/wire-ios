@@ -246,7 +246,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             self.zmLog.debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
 
             guard !callEventContent.isRemoteMute else {
-                callCenter?.muted = true
+                callCenter?.isMuted = true
                 zmLog.debug("muted remotely from calling message")
                 return
             }
