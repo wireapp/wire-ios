@@ -39,7 +39,7 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
         let domain = action.qualifiedID.domain
         let conversationID = action.qualifiedID.uuid.transportString()
         let messageProtocol = action.messageProtocol.rawValue
-        let path = "/conversations/\(domain)/\(conversationID)/\(messageProtocol)"
+        let path = "/conversations/\(domain)/\(conversationID)/protocol"
         let payload = ["protocol": messageProtocol] as ZMTransportData
 
         return .init(

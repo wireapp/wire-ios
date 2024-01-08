@@ -583,39 +583,46 @@ extension ZMConversation {
     }
 
     @discardableResult
-    func appendSystemMessage(type: ZMSystemMessageType,
-                             sender: ZMUser,
-                             users: Set<ZMUser>?,
-                             addedUsers: Set<ZMUser> = Set(),
-                             clients: Set<UserClient>?,
-                             timestamp: Date,
-                             duration: TimeInterval? = nil,
-                             messageTimer: Double? = nil,
-                             relevantForStatus: Bool = true,
-                             removedReason: ZMParticipantsRemovedReason = .none,
-                             domains: [String]? = nil) -> ZMSystemMessage {
-        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
-        systemMessage.systemMessageType = type
-        systemMessage.sender = sender
-        systemMessage.users = users ?? Set()
-        systemMessage.addedUsers = addedUsers
-        systemMessage.clients = clients ?? Set()
-        systemMessage.serverTimestamp = timestamp
-        if let duration = duration {
-            systemMessage.duration = duration
+    func appendSystemMessage(
+        type: ZMSystemMessageType,
+        sender: ZMUser,
+        users: Set<ZMUser>?,
+        addedUsers: Set<ZMUser> = Set(),
+        clients: Set<UserClient>?,
+        timestamp: Date,
+        duration: TimeInterval? = nil,
+        messageTimer: Double? = nil,
+        relevantForStatus: Bool = true,
+        removedReason: ZMParticipantsRemovedReason = .none,
+        domains: [String]? = nil
+    ) -> ZMSystemMessage {
+        guard let context = managedObjectContext else {
+            fatalError("can not append system message without managedObjectContext!")
         }
+        return context.performAndWait {
+            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
+            systemMessage.systemMessageType = type
+            systemMessage.sender = sender
+            systemMessage.users = users ?? Set()
+            systemMessage.addedUsers = addedUsers
+            systemMessage.clients = clients ?? Set()
+            systemMessage.serverTimestamp = timestamp
+            if let duration = duration {
+                systemMessage.duration = duration
+            }
 
-        if let messageTimer = messageTimer {
-            systemMessage.messageTimer = NSNumber(value: messageTimer)
+            if let messageTimer = messageTimer {
+                systemMessage.messageTimer = NSNumber(value: messageTimer)
+            }
+
+            systemMessage.relevantForConversationStatus = relevantForStatus
+            systemMessage.participantsRemovedReason = removedReason
+            systemMessage.domains = domains
+
+            self.append(systemMessage)
+
+            return systemMessage
         }
-
-        systemMessage.relevantForConversationStatus = relevantForStatus
-        systemMessage.participantsRemovedReason = removedReason
-        systemMessage.domains = domains
-
-        self.append(systemMessage)
-
-        return systemMessage
     }
 
     /// Returns a timestamp that is shortly (as short as possible) before the given message,

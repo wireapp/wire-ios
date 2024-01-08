@@ -232,12 +232,10 @@ final class DeveloperToolsViewModel: ObservableObject {
         guard
             let selfClient = selfClient,
             let context = selfClient.managedObjectContext
-        else {
-            return
-        }
+        else { return }
 
         Task {
-            guard  let qualifiedID = await context.perform({ selfClient.user?.conversations.first?.qualifiedID }) else {
+            guard let qualifiedID = await context.perform({ selfClient.user?.conversations.first?.qualifiedID }) else {
                 assertionFailure("no conversation found to update protocol change")
                 return
             }
@@ -247,24 +245,11 @@ final class DeveloperToolsViewModel: ObservableObject {
                 messageProtocol: .mixed
             )
 
-            action.perform(in: context.notificationContext) { result in
-                switch result {
-                case .success(let result):
-                    debugPrint("what")
-                case .failure(let failure):
-                    debugPrint("what")
-                }
-
-                // hack: retain action until the end...
-                _ = action.messageProtocol
+            do {
+                try await action.perform(in: context.notificationContext)
+            } catch {
+                assertionFailure("action failed: \(error)!")
             }
-
-//            do {
-//                try await action.perform(in: context.notificationContext)
-//                debugPrint("123")
-//            } catch {
-//                assertionFailure("action failed: \(error)!")
-//            }
         }
     }
 

@@ -679,7 +679,10 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
 
 + (ZMUser *)unboxSelfUserFromContextUserInfo:(NSManagedObjectContext *)moc
 {
-    ZMBoxedSelfUser *boxed = moc.userInfo[SelfUserKey];
+    __block ZMBoxedSelfUser *boxed;
+    [moc performBlockAndWait:^{
+        boxed = moc.userInfo[SelfUserKey];
+    }];
     return boxed.selfUser;
 }
 

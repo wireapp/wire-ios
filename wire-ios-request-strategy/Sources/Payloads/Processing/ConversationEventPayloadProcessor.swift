@@ -371,7 +371,6 @@ final class ConversationEventPayloadProcessor {
 
         do {
             try await action.perform(in: notificationContext)
-            debugPrint("it happened!")
         } catch {
             Logging.eventProcessing.error("syncConversation: perform 'SyncConversationAction' failed with error: \(error)")
         }

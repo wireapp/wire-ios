@@ -164,7 +164,7 @@ public extension EntityAction {
     ///   The action's error.
 
     mutating func perform(in context: NotificationContext) async throws -> Result {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             perform(in: context, resultHandler: continuation.resume(with:))
         }
     }
