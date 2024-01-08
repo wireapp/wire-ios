@@ -219,10 +219,10 @@ extension DeviceInfoViewModel {
                 credentials: credentials,
                 e2eIdentityProvider: e2eIdentityProvider,
                 mlsProvider: mlsProvider,
-                downloadFileManager: DownloadFileManager(
-                                    documentInteractionController: UIDocumentInteractionController(),
-                                    logger: WireLogger.e2ei
-                                )
+                saveFileManager: SaveFileManager(
+                    systemFileSavePresenter: SystemSavePresenter(),
+                    logger: WireLogger.e2ei
+                )
             ),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,

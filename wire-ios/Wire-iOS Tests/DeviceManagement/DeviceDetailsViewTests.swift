@@ -82,7 +82,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
                 credentials: emailCredentials,
                 e2eIdentityProvider: e2eIdentityProvider,
                 mlsProvider: mlsProvider,
-                downloadFileManager: MockDownloadFileManager()
+                saveFileManager: MockSaveFileManager()
             ),
             userSession: mockSession,
             getUserClientFingerprint: mockGetUserClientFingerprintUseCaseProtocol,

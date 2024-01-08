@@ -19,11 +19,10 @@
 import Foundation
 @testable import Wire
 
-final class MockDownloadFileManager: DownloadFileActions {
+final class MockSystemFileSavePresenter: SystemSaveFilePresenting {
+    var presentSystemPromptToSaveIsCalled: ((URL, () -> Void) -> Void)?
 
-    var downloadValueIsCalled: ((String, String, String) -> Void)?
-
-    func download(value: String, fileName: String, type: String) {
-        downloadValueIsCalled?(value, fileName, type)
+    func presentSystemPromptToSave(file fileURL: URL, completed: @escaping () -> Void) {
+        presentSystemPromptToSaveIsCalled?(fileURL, completed)
     }
 }

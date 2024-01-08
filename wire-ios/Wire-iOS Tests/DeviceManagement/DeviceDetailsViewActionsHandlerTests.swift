@@ -24,6 +24,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var client: UserClient!
     var mockSession: UserSessionMock!
     var emailCredentials: ZMEmailCredentials!
+    let saveFileManager = MockSaveFileManager()
 
     override func setUp() {
         super.setUp()
@@ -33,10 +34,10 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
     }
 
-    func testWhenDownladActionIsInvokedThenDownloadFileManagerDownloadFileIsCalled() {
+    func testGivenCertificateIsEmptyWhenDownladActionIsInvokedThenSaveFileManagerSaveFileIsNotCalled() {
         let expectation = expectation(description: "Download file should be called")
-        let downloadFileManager = MockDownloadFileManager()
-        downloadFileManager.downloadValueIsCalled = { _, _, _ in
+        expectation.isInverted = true
+        saveFileManager.saveValueIsCalled = { _, _, _ in
             expectation.fulfill()
         }
         let deviceActionHandler = DeviceDetailsViewActionsHandler(
@@ -45,10 +46,29 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             credentials: emailCredentials,
             e2eIdentityProvider: MockE2eIdentityProvider(),
             mlsProvider: MockMLSProvider(isMLSEnbaled: false),
-            downloadFileManager: downloadFileManager
+            saveFileManager: saveFileManager
         )
+        deviceActionHandler.certificate = .init(certificateDetails: .random(length: 100), expiryDate: .now, certificateStatus: "valid", serialNumber: .random(length: 16))
         deviceActionHandler.downloadE2EIdentityCertificate()
-        wait(for: [expectation])
+        wait(for: [expectation], timeout: 0.5)
+    }
+
+    func testGivenCertificateWhenDownladActionIsInvokedThenSaveFileManagerSaveFileIsCalled() {
+        let expectation = expectation(description: "Download file should be called")
+        saveFileManager.saveValueIsCalled = { _, _, _ in
+            expectation.fulfill()
+        }
+        let deviceActionHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: mockSession,
+            credentials: emailCredentials,
+            e2eIdentityProvider: MockE2eIdentityProvider(),
+            mlsProvider: MockMLSProvider(isMLSEnbaled: false),
+            saveFileManager: saveFileManager
+        )
+        deviceActionHandler.certificate = .init(certificateDetails: .random(length: 100), expiryDate: .now, certificateStatus: "valid", serialNumber: .random(length: 16))
+        deviceActionHandler.downloadE2EIdentityCertificate()
+        wait(for: [expectation], timeout: 0.5)
     }
 
     func testWhenFetchCertificateIsInvokedThenValidCertificateIsReturned() async {
@@ -59,7 +79,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             credentials: emailCredentials,
             e2eIdentityProvider: e2eIdentityProvider,
             mlsProvider: MockMLSProvider(isMLSEnbaled: false),
-            downloadFileManager: MockDownloadFileManager()
+            saveFileManager: MockSaveFileManager()
         )
         let fetchedCertificate = await deviceActionHandler.fetchCertificate()
         XCTAssertNotNil(fetchedCertificate)

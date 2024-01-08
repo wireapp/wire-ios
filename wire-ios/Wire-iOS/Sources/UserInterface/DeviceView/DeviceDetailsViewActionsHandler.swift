@@ -44,7 +44,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userClient.isSelfClient()
     }
 
-    private var downloadFileManager: DownloadFileActions
+    private var saveFileManager: SaveFileActions
 
     init(
         userClient: UserClient,
@@ -52,14 +52,14 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         credentials: ZMEmailCredentials?,
         e2eIdentityProvider: E2eIdentityProviding,
         mlsProvider: MLSProviding,
-        downloadFileManager: DownloadFileActions
+        saveFileManager: SaveFileActions
     ) {
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
         self.e2eIdentityProvider = e2eIdentityProvider
         self.mlsProvider = mlsProvider
-        self.downloadFileManager = downloadFileManager
+        self.saveFileManager = saveFileManager
     }
 
     func fetchCertificate() async -> E2eIdentityCertificate? {
@@ -133,7 +133,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         guard let certificate = certificate else {
             return
         }
-        downloadFileManager.download(
+        saveFileManager.save(
                     value: certificate.certificateDetails,
                     fileName: userClient.label ?? "e2ecertificate",
                     type: "txt"
