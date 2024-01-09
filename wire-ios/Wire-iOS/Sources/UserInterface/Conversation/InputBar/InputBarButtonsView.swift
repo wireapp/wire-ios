@@ -418,47 +418,53 @@ final class InputBarButtonsView: UIView {
     }
 
     private func setupInsets(forButtons buttons: [UIButton], rowIsFull: Bool) {
-        let firstButton = buttons.first!
-        let firstButtonLabelSize = firstButton.titleLabel!.intrinsicContentSize
-        let firstTitleMargin = (conversationHorizontalMargins.left / 2) - InputBarRowConstants.iconSize - (firstButtonLabelSize.width / 2)
-        firstButton.contentHorizontalAlignment = .center
-        firstButton.imageView?.contentMode = .center
+        setupInsetsForFirstButton(buttons.first!)
+        if rowIsFull {
+            setupInsetsForLastButton(buttons.last!)
+        }
+        setupInsetsForMiddleButtons(buttons.dropFirst().dropLast())
+    }
 
-        firstButton.titleEdgeInsets = UIEdgeInsets(
-            top: InputBarRowConstants.iconSize + firstButtonLabelSize.height + InputBarRowConstants.titleTopMargin,
-            left: firstTitleMargin,
+    private func setupInsetsForFirstButton(_ button: UIButton) {
+        let labelSize = button.titleLabel!.intrinsicContentSize
+        let titleMargin = (conversationHorizontalMargins.left / 2) - InputBarRowConstants.iconSize - (labelSize.width / 2)
+        button.contentHorizontalAlignment = .center
+        button.imageView?.contentMode = .center
+        button.titleEdgeInsets = UIEdgeInsets(
+            top: InputBarRowConstants.iconSize + labelSize.height + InputBarRowConstants.titleTopMargin,
+            left: titleMargin,
             bottom: 0,
             right: 0
         )
+    }
 
-        if rowIsFull {
-            let lastButton = buttons.last!
-            let lastButtonLabelSize = lastButton.titleLabel!.intrinsicContentSize
-            let lastTitleMargin = conversationHorizontalMargins.left / 2.0 - lastButtonLabelSize.width / 2.0
-            lastButton.contentHorizontalAlignment = .center
-            lastButton.imageView?.contentMode = .center
-            lastButton.titleEdgeInsets = UIEdgeInsets(
-                top: InputBarRowConstants.iconSize + lastButtonLabelSize.height + InputBarRowConstants.titleTopMargin,
-                left: 0,
-                bottom: 0,
-                right: lastTitleMargin - 1
-            )
-            lastButton.titleLabel?.lineBreakMode = .byClipping
-        }
+    private func setupInsetsForLastButton(_ button: UIButton) {
+        let labelSize = button.titleLabel!.intrinsicContentSize
+        let titleMargin = conversationHorizontalMargins.left / 2.0 - labelSize.width / 2.0
+        button.contentHorizontalAlignment = .center
+        button.imageView?.contentMode = .center
+        button.titleEdgeInsets = UIEdgeInsets(
+            top: InputBarRowConstants.iconSize + labelSize.height + InputBarRowConstants.titleTopMargin,
+            left: 0,
+            bottom: 0,
+            right: titleMargin - 1
+        )
+        button.titleLabel?.lineBreakMode = .byClipping
+    }
 
-        for button in buttons.dropFirst().dropLast() {
-            let buttonLabelSize = button.titleLabel!.intrinsicContentSize
+    private func setupInsetsForMiddleButtons(_ buttons: ArraySlice<UIButton>) {
+        for button in buttons {
+            let labelSize = button.titleLabel!.intrinsicContentSize
             button.contentHorizontalAlignment = .center
-            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -buttonLabelSize.width)
+            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -labelSize.width)
             button.titleEdgeInsets = UIEdgeInsets(
-                top: InputBarRowConstants.iconSize + buttonLabelSize.height + InputBarRowConstants.titleTopMargin,
+                top: InputBarRowConstants.iconSize + labelSize.height + InputBarRowConstants.titleTopMargin,
                 left: -InputBarRowConstants.iconSize,
                 bottom: 0,
                 right: 0
             )
         }
     }
-
 }
 
 extension InputBarButtonsView {
