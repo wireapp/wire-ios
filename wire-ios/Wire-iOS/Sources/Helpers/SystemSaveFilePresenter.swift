@@ -48,7 +48,10 @@ extension SystemSavePresenter: UIDocumentInteractionControllerDelegate {
         finished: @escaping () -> Void
     ) -> UIViewController {
         self.finishedPresenting = finished
-        return UIApplication.shared.topmostViewController(onlyFullScreen: false)!
+        guard let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return UIViewController()
+        }
+        return topViewController
     }
 
     func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {
