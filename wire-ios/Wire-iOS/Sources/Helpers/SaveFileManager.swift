@@ -28,7 +28,6 @@ final class SaveFileManager: NSObject, SaveFileActions {
     private var pendingSaveURLs = [URL]()
     private let logger: LoggerProtocol
     private let systemSaveFilePresenter: SystemSaveFilePresenting
-
     public init(systemFileSavePresenter: SystemSaveFilePresenting, logger: LoggerProtocol) {
         self.systemSaveFilePresenter = systemFileSavePresenter
         self.logger = logger
@@ -42,16 +41,7 @@ final class SaveFileManager: NSObject, SaveFileActions {
         }
         do {
             try data.write(to: fileURL)
-            systemSaveFilePresenter.presentSystemPromptToSave(file: fileURL) { [weak self] in
-                guard let self = self else {
-                    return
-                }
-                do {
-                    try self.deleteFilesInTemporyDirectory()
-                } catch {
-                    self.logger.error(error.localizedDescription, attributes: nil)
-                }
-            }
+            systemSaveFilePresenter.presentSystemPromptToSave(file: fileURL, completed: finishedSaving)
             pendingSaveURLs.append(fileURL)
         } catch {
             logger.error(error.localizedDescription, attributes: nil)
@@ -65,4 +55,11 @@ final class SaveFileManager: NSObject, SaveFileActions {
         pendingSaveURLs.removeAll()
     }
 
+    private func finishedSaving() {
+        do {
+            try deleteFilesInTemporyDirectory()
+        } catch {
+            logger.error(error.localizedDescription, attributes: nil)
+        }
+    }
 }

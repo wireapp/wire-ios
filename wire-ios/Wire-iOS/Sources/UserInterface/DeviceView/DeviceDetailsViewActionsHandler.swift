@@ -128,10 +128,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         UIPasteboard.general.string = value
     }
 
-    func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate?) {
-        guard let certificate = certificate else {
-            return
-        }
+    func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate) {
         saveFileManager.save(
             value: certificate.certificateDetails,
             fileName: userClient.label ?? "e2ecertificate",

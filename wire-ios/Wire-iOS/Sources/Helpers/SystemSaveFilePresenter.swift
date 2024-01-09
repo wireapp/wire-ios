@@ -32,9 +32,10 @@ final class SystemSavePresenter: NSObject, SystemSaveFilePresenting {
         super.init()
     }
 
+    @MainActor
     func presentSystemPromptToSave(file fileURL: URL, completed: @escaping () -> Void) {
         documentInteractionController.delegate = self
-        self.finishedPresenting = completed
+        finishedPresenting = completed
         documentInteractionController.url = fileURL
         documentInteractionController.name = fileURL.lastPathComponent
         documentInteractionController.presentPreview(animated: true)
@@ -43,17 +44,15 @@ final class SystemSavePresenter: NSObject, SystemSaveFilePresenting {
 
 extension SystemSavePresenter: UIDocumentInteractionControllerDelegate {
 
-    func documentInteractionControllerViewControllerForPreview(
-        _ controller: UIDocumentInteractionController,
-        finished: @escaping () -> Void
-    ) -> UIViewController {
-        self.finishedPresenting = finished
+    @MainActor
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
         guard let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return UIViewController()
         }
         return topViewController
     }
 
+    @MainActor
     func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {
         finishedPresenting?()
     }
