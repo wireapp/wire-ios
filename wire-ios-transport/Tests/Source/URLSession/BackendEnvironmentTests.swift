@@ -187,7 +187,7 @@ class BackendEnvironmentTests: XCTestCase {
 
     func testThatWeCanMigrateCustomBackendInfoToAnotherUserDefaults() {
         // given
-        let migrationUserDefaults = UserDefaults(suiteName: "migration")!
+        let migrationUserDefaults = UserDefaults.temporary()
         let backendEnvironment = createBackendEnvironment()
         backendEnvironment.save(in: defaultsProd)
 
