@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 
+// sourcery: AutoMockable
 protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) async
