@@ -25,7 +25,7 @@ protocol SaveFileActions {
 }
 
 final class SaveFileManager: NSObject, SaveFileActions {
-    private var pendingSaveURLs = [URL]()
+    private var pendingSaveURL: URL?
 
     private let logger: LoggerProtocol = WireLogger.e2ei
     private let systemSaveFilePresenter: SystemSaveFilePresenting
@@ -43,17 +43,18 @@ final class SaveFileManager: NSObject, SaveFileActions {
         do {
             try data.write(to: fileURL)
             systemSaveFilePresenter.presentSystemPromptToSave(file: fileURL, completed: finishedSaving)
-            pendingSaveURLs.append(fileURL)
+            pendingSaveURL = fileURL
         } catch {
             logger.error(error.localizedDescription, attributes: nil)
         }
     }
 
     private func deleteFilesInTemporyDirectory() throws {
-        for fileURL in pendingSaveURLs {
-            try FileManager.default.removeItem(at: fileURL)
+        guard let fileURL = pendingSaveURL else {
+            return
         }
-        pendingSaveURLs.removeAll()
+        try FileManager.default.removeItem(at: fileURL)
+        pendingSaveURL = nil
     }
 
     private func finishedSaving() {
