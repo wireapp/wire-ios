@@ -116,7 +116,8 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
                 .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
                 .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
-                .button(ButtonItem(title: "Update Conversation to mixed protocol", action: updateConversationToMixedProtocol)),
+                .button(ButtonItem(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed)),
+                .button(ButtonItem(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS)),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
@@ -228,7 +229,15 @@ final class DeveloperToolsViewModel: ObservableObject {
         ZMUserSession.shared()?.setBogusLastEventID()
     }
 
-    private func updateConversationToMixedProtocol() {
+    private func updateConversationProtocolToMixed() {
+        updateConversationProtocol(to: .mixed)
+    }
+
+    private func updateConversationProtocolToMLS() {
+        updateConversationProtocol(to: .mls)
+    }
+
+    private func updateConversationProtocol(to messageProtocol: MessageProtocol) {
         guard
             let selfClient = selfClient,
             let context = selfClient.managedObjectContext
@@ -242,7 +251,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
             var action = UpdateConversationProtocolAction(
                 qualifiedID: qualifiedID,
-                messageProtocol: .mixed
+                messageProtocol: messageProtocol
             )
 
             do {
