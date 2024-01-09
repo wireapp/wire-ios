@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 import XCTest
 @testable import Wire
 
@@ -43,6 +42,10 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
 
     func test_mlsMigrationUpdateVersion() {
         verify(message: makeMessage(messageType: .mlsMigrationUpdateVersion))
+    }
+
+    func test_mlsMigrationPotentialGap() {
+        verify(message: makeMessage(messageType: .mlsMigrationPotentialGap))
     }
 
     // MARK: - Helpers
