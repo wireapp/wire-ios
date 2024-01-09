@@ -17,16 +17,12 @@
 //
 
 import Foundation
+import WireUtilities
 
-public extension TimeInterval {
+extension DateProviding where Self == MockStaticDateProvider {
+    public static func mock(_ now: Date) -> Self { .init(now: now) }
+}
 
-    static let fourWeeks = 4 * oneWeek
-    static let oneWeek = 7 * oneDay
-    static let oneDay = 24 * oneHour
-    static let oneHour = 60 * oneMinute
-    static let fiveMinutes = 5 * oneMinute
-    static let oneMinute = 60 * oneSecond
-    static let tenSeconds = 10 * oneSecond
-    static let oneSecond = TimeInterval(1)
-
+public struct MockStaticDateProvider: DateProviding {
+    public var now = Date.now
 }

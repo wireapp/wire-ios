@@ -94,7 +94,10 @@ public class ZMUserSession: NSObject {
     // When we move to the monorepo, uncomment hotFixApplicator
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-    var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
+    var recurringActionService = RecurringActionService(
+        storage: .standard,
+        dateProvider: .system
+    ) as RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     var coreCryptoProvider: CoreCryptoProvider
