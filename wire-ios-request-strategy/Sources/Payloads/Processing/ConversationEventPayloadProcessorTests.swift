@@ -26,12 +26,19 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     var sut: ConversationEventPayloadProcessor!
     var mockMLSService: MockMLSServiceInterface!
     var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
+    var mockMLSEventProcessor: MockMLSEventProcessing!
 
     override func setUp() {
         super.setUp()
 
         mockMLSService = .init()
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
+        mockMLSEventProcessor = .init()
+
+        mockMLSEventProcessor.joinMLSGroupWhenReadyForConversationContext_MockMethod = { _, _ in }
+        mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
+
+        MLSEventProcessor.setMock(mockMLSEventProcessor)
 
         sut = ConversationEventPayloadProcessor(
             removeLocalConversation: mockRemoveLocalConversation
@@ -46,7 +53,9 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         sut = nil
         mockMLSService = nil
         mockRemoveLocalConversation = nil
+        mockMLSEventProcessor = nil
         BackendInfo.isFederationEnabled = false
+        MLSEventProcessor.reset()
         super.tearDown()
     }
 
@@ -886,8 +895,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreateConversation_Group_MLS_AsksToUpdateConversationIfNeeded() async {
         // given
-        let mockEventProcessor = MockMLSEventProcessor()
-        MLSEventProcessor.setMock(mockEventProcessor)
         let qualifiedID = await syncMOC.perform {
             self.groupConversation.qualifiedID!
         }
@@ -901,17 +908,15 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        await syncMOC.perform {
-            let updateConversationCalls = mockEventProcessor.calls.updateConversationIfNeeded
+        await syncMOC.perform { [self] in
+            let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_Invocations
             XCTAssertEqual(updateConversationCalls.count, 1)
-            XCTAssertEqual(updateConversationCalls.first?.conversation, self.groupConversation)
+            XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
         }
     }
 
     func testUpdateOrCreateConversation_Group_MLS_AsksToJoinGroupWhenReady_DuringSlowSync() async {
         // given
-        let mockEventProcessor = MockMLSEventProcessor()
-        MLSEventProcessor.setMock(mockEventProcessor)
         let qualifiedID = await syncMOC.perform {
             self.groupConversation.qualifiedID!
         }
@@ -927,17 +932,15 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        await syncMOC.perform {
-            let joinMLSGroupWhenReadyCalls = mockEventProcessor.calls.joinMLSGroupWhenReady
+        await syncMOC.perform { [self] in
+            let joinMLSGroupWhenReadyCalls = mockMLSEventProcessor.joinMLSGroupWhenReadyForConversationContext_Invocations
             XCTAssertEqual(joinMLSGroupWhenReadyCalls.count, 1)
-            XCTAssertEqual(joinMLSGroupWhenReadyCalls.first, self.groupConversation)
+            XCTAssertEqual(joinMLSGroupWhenReadyCalls.first?.conversation, groupConversation)
         }
     }
 
     func testUpdateOrCreateConversation_Group_MLS_DoesntAskToJoinGroupWhenReady_DuringQuickSync() async {
         // given
-        let mockEventProcessor = MockMLSEventProcessor()
-        MLSEventProcessor.setMock(mockEventProcessor)
         let qualifiedID = await syncMOC.perform {
             self.groupConversation.qualifiedID!
         }
@@ -953,14 +956,13 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        await syncMOC.perform {
-            XCTAssertEqual(mockEventProcessor.calls.joinMLSGroupWhenReady.count, 0)
+        await syncMOC.perform { [self] in
+            XCTAssertEqual(mockMLSEventProcessor.joinMLSGroupWhenReadyForConversationContext_Invocations.count, 0)
         }
     }
 
     func testUpdateOrCreateConversation_Group_UpdatesEpoch() async {
         // given
-        MLSEventProcessor.setMock(MockMLSEventProcessor())
         let payload = await syncMOC.perform {
             self.groupConversation.epoch = 0
             return Payload.Conversation(
@@ -1013,8 +1015,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) async {
         // given
-        let conversation = await syncMOC.perform {
-            MLSEventProcessor.setMock(MockMLSEventProcessor())
+        let conversation = await syncMOC.perform { [self] in
             let domain = "example.com"
             let id = QualifiedID(uuid: UUID(), domain: domain)
             return Payload.Conversation(
