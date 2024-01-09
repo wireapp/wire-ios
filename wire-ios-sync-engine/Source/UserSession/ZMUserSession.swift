@@ -713,14 +713,21 @@ extension ZMUserSession: ZMSyncStateDelegate {
         if selfClient?.hasRegisteredMLSClient == true {
 
             WaitingGroupTask(context: syncContext) { [self] in
+                // these operations are not dependent and should not be executed in same do/catch
                 do {
+                    // rework implementation of following method - WPB-6053
                     try await mlsService.performPendingJoins()
-                    await mlsService.uploadKeyPackagesIfNeeded()
-                    await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+                } catch {
+                    Logging.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
+                }
+
+                do {
                     try await mlsService.commitPendingProposals()
                 } catch {
                     Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
                 }
+                await mlsService.uploadKeyPackagesIfNeeded()
+                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
             }
         }
 
