@@ -19,7 +19,7 @@
 import Foundation
 
 extension DateProviding where Self == SystemDateProvider {
-    /// An instance of `SystemDateProvider`.
+    /// Returns a new instance of `SystemDateProvider`.
     public static var system: Self { .init() }
 }
 
