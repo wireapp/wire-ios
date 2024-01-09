@@ -30,7 +30,7 @@ public protocol MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) async throws -> MLSDecryptResult?
+    ) async throws -> [MLSDecryptResult]
 
 }
 
@@ -73,6 +73,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         case failedToConvertMessageToBytes
         case failedToDecryptMessage
+        case failedToDecodeSenderClientID
         case wrongEpoch
 
     }
@@ -94,7 +95,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) async throws -> MLSDecryptResult? {
+    ) async throws -> [MLSDecryptResult] {
         WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
 
         guard let messageData = message.base64DecodedData else {
@@ -121,18 +122,13 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 onEpochChangedSubject.send(groupID)
             }
 
-            if let commitDelay = decryptedMessage.commitDelay {
-                return MLSDecryptResult.proposal(commitDelay)
+            var results = try decryptedMessage.bufferedMessages?.compactMap({ try decryptResult(from: $0) }) ?? []
+
+            if let result = try decryptResult(from: decryptedMessage) {
+                results.append(result)
             }
 
-            if let message = decryptedMessage.message {
-                return MLSDecryptResult.message(
-                    message,
-                    senderClientId(from: decryptedMessage)
-                )
-            }
-
-            return nil
+            return results
         } catch {
             WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error))")
 
@@ -141,24 +137,66 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             case CryptoError.WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
 
             // Message arrive in future epoch, it has been buffered and will be consumed later.
-            case CryptoError.BufferedFutureMessage: return nil
+            case CryptoError.BufferedFutureMessage: return []
 
             // Received already sent or received message, can safely be ignored.
-            case CryptoError.DuplicateMessage: return nil
+            case CryptoError.DuplicateMessage: return []
 
             // Received self commit, any unmerged group has know when merged by CoreCrypto.
-            case CryptoError.SelfCommitIgnored: return nil
+            case CryptoError.SelfCommitIgnored: return []
 
             // Message arrive in an unmerged group, it has been buffered and will be consumed later.
-            case CryptoError.UnmergedPendingGroup: return nil
+            case CryptoError.UnmergedPendingGroup: return []
             default:
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
         }
     }
 
-    private func senderClientId(from message: DecryptedMessage) -> String? {
-        guard let senderClientID = message.senderClientId else { return nil }
-        return MLSClientID(data: senderClientID)?.clientID
+    private func decryptResult(from messageBundle: DecryptedMessage) throws -> MLSDecryptResult? {
+        if let commitDelay = messageBundle.commitDelay {
+            return MLSDecryptResult.proposal(commitDelay)
+        }
+
+        if let message = messageBundle.message {
+            guard let clientId = messageBundle.senderClientId else {
+                // We are guranteed to have a senderClientId with messages
+                throw MLSMessageDecryptionError.failedToDecodeSenderClientID
+            }
+
+            return MLSDecryptResult.message(
+                message,
+                try senderClientId(from: clientId).clientID
+            )
+        }
+
+        return nil
+    }
+
+    private func decryptResult(from messageBundle: BufferedDecryptedMessage) throws -> MLSDecryptResult? {
+        if let commitDelay = messageBundle.commitDelay {
+            return MLSDecryptResult.proposal(commitDelay)
+        }
+
+        if let message = messageBundle.message {
+            guard let clientId = messageBundle.senderClientId else {
+                // We are guranteed to have a senderClientId with messages
+                throw MLSMessageDecryptionError.failedToDecodeSenderClientID
+            }
+
+            return MLSDecryptResult.message(
+                message,
+                try senderClientId(from: clientId).clientID
+            )
+        }
+
+        return nil
+    }
+
+    private func senderClientId(from data: ClientId) throws -> MLSClientID {
+        guard let clientID = MLSClientID(data: data) else {
+            throw MLSMessageDecryptionError.failedToDecodeSenderClientID
+        }
+        return clientID
     }
 }

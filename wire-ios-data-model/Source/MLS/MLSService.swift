@@ -1248,7 +1248,7 @@ public final class MLSService: MLSServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) async throws -> MLSDecryptResult? {
+    ) async throws -> [MLSDecryptResult] {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
         do {
