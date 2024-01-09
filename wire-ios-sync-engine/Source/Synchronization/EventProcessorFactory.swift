@@ -41,13 +41,12 @@ struct DefaultEventProcessorFactory: EventProcessorFactory {
         eventConsumers: [ZMEventConsumer],
         eventAsyncConsumers: [ZMEventAsyncConsumer]
     ) -> UpdateEventProcessor {
-        fatalError()
-//        EventProcessor(
-//            storeProvider: storeProvider,
-//            eventProcessingTracker: eventProcessingTracker,
-//            earService: earService,
-//            eventConsumers: eventConsumers,
-//            eventAsyncConsumers: eventAsyncConsumers
-//        )
+        EventProcessor(
+            storeProvider: storeProvider,
+            eventProcessingTracker: eventProcessingTracker,
+            earService: earService,
+            eventConsumers: eventConsumers,
+            eventAsyncConsumers: eventAsyncConsumers
+        )
     }
 }

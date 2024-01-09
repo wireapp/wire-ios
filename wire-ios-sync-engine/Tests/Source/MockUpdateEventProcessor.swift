@@ -46,7 +46,7 @@ extension EventProcessorFactory where Self == MockEventProcessorFactory {
     static var mock: MockEventProcessorFactory { .init() }
 }
 
-private struct MockEventProcessorFactory: EventProcessorFactory {
+struct MockEventProcessorFactory: EventProcessorFactory {
 
     func create(
         storeProvider _: CoreDataStack,
