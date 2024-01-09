@@ -31,7 +31,7 @@ struct DeviceView: View {
                 e2eIdentityCertificateStatusImage
             }
             if viewModel.isProteusVerificationEnabled {
-                Image(.certificateVerified)
+                Image(.verifiedShield)
             }
         }
     }

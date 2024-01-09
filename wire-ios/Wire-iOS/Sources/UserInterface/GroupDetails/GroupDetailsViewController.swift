@@ -94,9 +94,18 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     }
 
+    private func setupNavigatiomItem() {
+        navigationItem.titleView = TwoLineTitleView(
+            first: L10n.Localizable.Participants.title.capitalized.attributedString,
+            second: verificationStatus)
+        navigationItem.rightBarButtonItem = navigationController?.closeItem()
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ConversationDetails.CloseButton.description
+        navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Participants.title.capitalized)
+
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
@@ -104,9 +113,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         super.viewWillAppear(animated)
 
         updateLegalHoldIndicator()
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ConversationDetails.CloseButton.description
-        navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
+        setupNavigatiomItem()
         collectionViewController.collectionView?.reloadData()
     }
 
@@ -114,6 +121,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         coordinator.animate(alongsideTransition: { _ in
             self.collectionViewController.collectionView?.collectionViewLayout.invalidateLayout()
         })
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        setupNavigatiomItem()
     }
 
     func updateLegalHoldIndicator() {
@@ -318,6 +331,66 @@ extension GroupDetailsViewController {
         guard let conversation = conversation as? ZMConversation else { return }
 
         LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
+    }
+
+}
+
+// MARK: - Conversation verification status
+
+private extension GroupDetailsViewController {
+
+    var verificationStatus: NSAttributedString? {
+        guard conversation.isVerified else {
+            return nil
+        }
+        return attributedString(title: verificationStatusTitle, icon: verificationStatusIcon)
+    }
+
+    var verificationStatusTitle: String {
+        typealias ConversationVerificationStatus = L10n.Localizable.GroupDetails.ConversationVerificationStatus
+
+        switch conversation.messageProtocol {
+        case .proteus:
+            return ConversationVerificationStatus.proteus
+        case .mls:
+            return ConversationVerificationStatus.e2ei
+        }
+    }
+
+    var verificationStatusIcon: UIImage {
+        switch conversation.messageProtocol {
+        case .proteus:
+            return Asset.Images.verifiedShield.image
+        case .mls:
+            return Asset.Images.certificateValid.image
+        }
+    }
+
+    var verificationStatusColor: UIColor {
+        switch conversation.messageProtocol {
+        case .proteus:
+            return SemanticColors.Label.textCertificateVerified
+        case .mls:
+            return SemanticColors.Label.textCertificateValid
+        }
+    }
+
+    func attributedString(title: String, icon: UIImage) -> NSAttributedString {
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: verificationStatusColor
+        ]
+        let attributedString = NSMutableAttributedString(string: title, attributes: attributes)
+        let imageTextAttachment = NSTextAttachment(image: icon)
+
+        let imageSize = CGSize(width: 12, height: 12)
+        let verticalOffset: CGFloat = -2
+        imageTextAttachment.bounds = CGRect(x: 0, y: verticalOffset, width: imageSize.width, height: imageSize.height)
+
+        let imageTextAttachmentString = NSAttributedString(attachment: imageTextAttachment)
+        attributedString.append(" ".attributedString)
+        attributedString.append(imageTextAttachmentString)
+
+        return attributedString
     }
 
 }
