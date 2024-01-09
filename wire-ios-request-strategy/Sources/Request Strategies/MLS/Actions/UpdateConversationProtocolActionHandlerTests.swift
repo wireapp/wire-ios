@@ -42,10 +42,10 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
     func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v5/conversations/example.com/\(uuidString!)/mls",
+            expectedPath: "/v5/conversations/example.com/\(uuidString!)/protocol",
             expectedMethod: .put,
-            expectedData: .none,
-            expectedContentType: .none,
+            expectedData: nil,
+            expectedContentType: nil,
             apiVersion: .v5
         )
     }
