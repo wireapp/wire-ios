@@ -522,7 +522,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         }
 
         // when
-        await self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+        self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         syncMOC.performGroupedBlock {
             XCTAssert(self.syncMOC.saveOrRollback(), file: file, line: line)
         }
