@@ -214,7 +214,7 @@ extension ZMConversation {
         let previousLastMessage = lastMessage
 
         self.appendSystemMessage(
-            type: .potentialGap,
+            type: .mlsMigrationPotentialGap,
             sender: sender,
             users: nil,
             clients: nil,
