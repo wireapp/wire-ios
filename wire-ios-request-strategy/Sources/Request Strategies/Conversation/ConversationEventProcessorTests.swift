@@ -21,15 +21,18 @@ import XCTest
 class ConversationEventProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventProcessor!
-    var mockMLSEventProcessor: MockMLSEventProcessor!
     var conversationService: MockConversationServiceInterface!
+    var mockMLSEventProcessor: MockMLSEventProcessing!
 
     override func setUp() {
         super.setUp()
         conversationService = MockConversationServiceInterface()
-        mockMLSEventProcessor = MockMLSEventProcessor()
-
         conversationService.syncConversationQualifiedID_MockMethod = { _ in }
+
+        mockMLSEventProcessor = .init()
+        mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
+        mockMLSEventProcessor.processWelcomeMessageConversationIDIn_MockMethod = { _, _, _ in }
+        mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in }
 
         sut = ConversationEventProcessor(
             context: syncMOC,
@@ -43,8 +46,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
 
     override func tearDown() {
         sut = nil
-        mockMLSEventProcessor = nil
         conversationService = nil
+        mockMLSEventProcessor = nil
         super.tearDown()
     }
 
@@ -94,7 +97,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
         await sut.processConversationEvents([event])
 
         // Then
-        let updateConversationCalls = mockMLSEventProcessor.calls.updateConversationIfNeeded
+        let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_Invocations
         XCTAssertEqual(updateConversationCalls.count, 1)
         XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
 
@@ -128,10 +131,10 @@ class ConversationEventProcessorTests: MessagingTestBase {
         await sut.processConversationEvents([unwrappedUpdateEvent])
 
         // then
-        XCTAssertEqual(mockMLSEventProcessor.calls.processWelcomeMessage.count, 1)
-        let invocation = try XCTUnwrap(mockMLSEventProcessor.calls.processWelcomeMessage.first)
-        XCTAssertEqual(invocation.0, message)
-        XCTAssertEqual(invocation.1, groupConversation.qualifiedID)
+        let invocations = mockMLSEventProcessor.processWelcomeMessageConversationIDIn_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        XCTAssertEqual(invocations.first?.welcomeMessage, message)
+        XCTAssertEqual(invocations.first?.conversationID, groupConversation.qualifiedID)
     }
 
     // MARK: - MLS conversation member leave
@@ -164,9 +167,9 @@ class ConversationEventProcessorTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.count, 1)
-        XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.first, groupConversation)
-
+        let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations
+        XCTAssertEqual(wipeGroupInvocations.count, 1)
+        XCTAssertEqual(wipeGroupInvocations.first?.conversation, groupConversation)
     }
 
     func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() async throws {
@@ -196,7 +199,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.count, 0)
+        XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
     }
 
     func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenProtocolIsNotMLS() async throws {
@@ -228,7 +231,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.count, 0)
+        XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
     }
 
     // MARK: Conversation Creation

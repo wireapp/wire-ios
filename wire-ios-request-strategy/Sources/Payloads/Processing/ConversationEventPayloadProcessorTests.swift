@@ -24,15 +24,19 @@ import XCTest
 final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventPayloadProcessor!
-    var mockMLSEventProcessor: MockMLSEventProcessor!
     var mockMLSService: MockMLSServiceInterface!
     var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
+    var mockMLSEventProcessor: MockMLSEventProcessing!
 
     override func setUp() {
         super.setUp()
-        mockMLSEventProcessor = MockMLSEventProcessor()
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
         mockMLSService = MockMLSServiceInterface()
+        mockMLSEventProcessor = .init()
+
+        mockMLSEventProcessor.joinMLSGroupWhenReadyForConversationContext_MockMethod = { _, _ in }
+        mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
+        mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in }
 
         sut = ConversationEventPayloadProcessor(
             mlsEventProcessor: mockMLSEventProcessor,
@@ -49,6 +53,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         mockMLSService = nil
         mockMLSEventProcessor = nil
         mockRemoveLocalConversation = nil
+        mockMLSEventProcessor = nil
         BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
@@ -906,9 +911,9 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         await syncMOC.perform { [self] in
-            let updateConversationCalls = mockMLSEventProcessor.calls.updateConversationIfNeeded
+            let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_Invocations
             XCTAssertEqual(updateConversationCalls.count, 1)
-            XCTAssertEqual(updateConversationCalls.first?.conversation, self.groupConversation)
+            XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
         }
     }
 
@@ -932,9 +937,9 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         await syncMOC.perform { [self] in
-            let joinMLSGroupWhenReadyCalls = mockMLSEventProcessor.calls.joinMLSGroupWhenReady
+            let joinMLSGroupWhenReadyCalls = mockMLSEventProcessor.joinMLSGroupWhenReadyForConversationContext_Invocations
             XCTAssertEqual(joinMLSGroupWhenReadyCalls.count, 1)
-            XCTAssertEqual(joinMLSGroupWhenReadyCalls.first, self.groupConversation)
+            XCTAssertEqual(joinMLSGroupWhenReadyCalls.first?.conversation, groupConversation)
         }
     }
 
@@ -957,8 +962,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        await syncMOC.perform {
-            XCTAssertEqual(self.mockMLSEventProcessor.calls.joinMLSGroupWhenReady.count, 0)
+        await syncMOC.perform { [self] in
+            XCTAssertEqual(mockMLSEventProcessor.joinMLSGroupWhenReadyForConversationContext_Invocations.count, 0)
         }
     }
 
@@ -1097,8 +1102,9 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.count, 1)
-            XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.first, groupConversation)
+            let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations
+            XCTAssertEqual(wipeGroupInvocations.count, 1)
+            XCTAssertEqual(wipeGroupInvocations.first?.conversation, groupConversation)
         }
     }
 
@@ -1136,7 +1142,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.count, 0)
+            XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
         }
     }
 
@@ -1174,7 +1180,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.count, 0)
+            XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
         }
     }
 

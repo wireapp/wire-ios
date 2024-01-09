@@ -18,6 +18,7 @@
 import Foundation
 import WireDataModel
 
+// sourcery: AutoMockable
 public protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(
