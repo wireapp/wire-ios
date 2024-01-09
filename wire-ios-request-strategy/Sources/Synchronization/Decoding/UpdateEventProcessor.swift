@@ -18,6 +18,10 @@
 
 import Foundation
 
+protocol NotifyUpdateEventProcessor: UpdateEventProcessor {
+    func processEvents(_ events: [ZMUpdateEvent], shouldBuffer: Bool)
+}
+
 @objc
 public protocol UpdateEventProcessor: AnyObject {
 

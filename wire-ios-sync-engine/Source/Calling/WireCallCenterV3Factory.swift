@@ -62,6 +62,7 @@ import WireDataModel
             newInstance.useConstantBitRateAudio = uiMOC.zm_useConstantBitRateAudio
             newInstance.usePackagingFeatureConfig = uiMOC.zm_usePackagingFeatureConfig
             uiMOC.zm_callCenter = newInstance
+            // eventProcessor.notifyProcessEventsDelegate = newInstance.avsWrapper
             return newInstance
         }
     }

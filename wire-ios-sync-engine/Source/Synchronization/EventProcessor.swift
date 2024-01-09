@@ -46,6 +46,7 @@ actor EventProcessor: UpdateEventProcessor {
         earService: EARServiceInterface,
         eventConsumers: [ZMEventConsumer],
         eventAsyncConsumers: [ZMEventAsyncConsumer]
+        // protocol for notifying that events are processed
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
