@@ -46,7 +46,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             appVersion: "00000",
             coreDataStack: coreDataStack,
             configuration: .init(),
-            earServiceFactory: .default,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )

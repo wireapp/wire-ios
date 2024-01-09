@@ -274,7 +274,6 @@ public class ZMUserSession: NSObject {
         appVersion: String,
         coreDataStack: CoreDataStack,
         configuration: Configuration,
-        earServiceFactory: EARServiceFactory,
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         sharedUserDefaults: UserDefaults
@@ -318,7 +317,7 @@ public class ZMUserSession: NSObject {
             lastEventIDRepository: lastEventIDRepository,
             analytics: analytics
         )
-        earService = earServiceFactory.create(
+        earService = EARService(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
@@ -348,8 +347,8 @@ public class ZMUserSession: NSObject {
         super.init()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
-        self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
-        self.earService.delegate = self
+        earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
+        earService.delegate = self
         appLockController.delegate = self
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self

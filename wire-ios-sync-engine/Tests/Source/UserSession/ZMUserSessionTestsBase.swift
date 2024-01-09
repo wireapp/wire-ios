@@ -110,7 +110,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             appVersion: "00000",
             coreDataStack: coreDataStack,
             configuration: .init(),
-            earServiceFactory: .default,
             mlsService: mockMLSService,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults

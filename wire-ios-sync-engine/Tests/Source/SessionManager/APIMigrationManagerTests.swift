@@ -262,7 +262,6 @@ class APIMigrationManagerTests: MessagingTest {
             appVersion: "999",
             coreDataStack: createCoreDataStack(),
             configuration: .init(),
-            earServiceFactory: .default,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
