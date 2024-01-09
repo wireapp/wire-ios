@@ -27,10 +27,7 @@ final class SaveFileManagerTests: XCTestCase {
         mockSystemSaveFilePresenter.presentSystemPromptToSaveIsCalled = { _, _ in
             expectation.fulfill()
         }
-        let saveFileManager = SaveFileManager(
-            systemFileSavePresenter: mockSystemSaveFilePresenter,
-            logger: MockLogger()
-        )
+        let saveFileManager = SaveFileManager(systemFileSavePresenter: mockSystemSaveFilePresenter)
         saveFileManager.save(
             value: .random(length: 10),
             fileName: .random(length: 10),

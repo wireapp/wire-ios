@@ -27,12 +27,11 @@ protocol SaveFileActions {
 final class SaveFileManager: NSObject, SaveFileActions {
     private var pendingSaveURLs = [URL]()
 
-    private let logger: LoggerProtocol
+    private let logger: LoggerProtocol = WireLogger.e2ei
     private let systemSaveFilePresenter: SystemSaveFilePresenting
 
-    public init(systemFileSavePresenter: SystemSaveFilePresenting, logger: LoggerProtocol) {
+    public init(systemFileSavePresenter: SystemSaveFilePresenting) {
         self.systemSaveFilePresenter = systemFileSavePresenter
-        self.logger = logger
     }
 
     func save(value: String, fileName: String, type: String) {

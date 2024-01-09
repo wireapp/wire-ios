@@ -222,10 +222,7 @@ extension DeviceInfoViewModel {
                 credentials: credentials,
                 e2eIdentityProvider: e2eIdentityProvider,
                 mlsProvider: mlsProvider,
-                saveFileManager: SaveFileManager(
-                    systemFileSavePresenter: SystemSavePresenter(),
-                    logger: WireLogger.e2ei
-                )
+                saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
             ),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,
