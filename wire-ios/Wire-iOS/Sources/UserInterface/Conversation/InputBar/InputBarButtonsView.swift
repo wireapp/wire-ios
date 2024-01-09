@@ -248,10 +248,25 @@ final class InputBarButtonsView: UIView {
         var constraints = setupInitialConstraints(for: buttons, rowIsFull: rowIsFull, buttonPadding: buttonPadding)
 
         for button in buttons {
-            constraints.append(contentsOf: constraintsForButton(button, in: buttons, inset: inset, buttonPadding: buttonPadding, buttonHeight: buttonHeight))
+            constraints.append(
+                contentsOf: constraintsForButton(
+                    button,
+                    in: buttons,
+                    inset: inset,
+                    buttonPadding: buttonPadding,
+                    buttonHeight: buttonHeight
+                )
+            )
         }
 
-        constraints.append(contentsOf: constraintsBetweenButtons(buttons, rowIsFull: rowIsFull, offset: offset, constraintMultiplier: constraintMultiplier))
+        constraints.append(
+            contentsOf: constraintsBetweenButtons(
+                buttons,
+                rowIsFull: rowIsFull,
+                offset: offset,
+                constraintMultiplier: constraintMultiplier
+            )
+        )
 
         if let reference = referenceButton, !rowIsFull {
             [reference, buttons.last!].prepareForLayout()
@@ -272,11 +287,21 @@ final class InputBarButtonsView: UIView {
 
         var constraints = [NSLayoutConstraint]()
         firstButton.translatesAutoresizingMaskIntoConstraints = false
-        constraints.append(firstButton.leadingAnchor.constraint(equalTo: firstButton.superview!.leadingAnchor, constant: buttonPadding))
+        constraints.append(
+            firstButton.leadingAnchor.constraint(
+                equalTo: firstButton.superview!.leadingAnchor,
+                constant: buttonPadding
+            )
+        )
 
         if rowIsFull {
             lastButton.translatesAutoresizingMaskIntoConstraints = false
-            constraints.append(lastButton.trailingAnchor.constraint(equalTo: lastButton.superview!.trailingAnchor, constant: -buttonPadding))
+            constraints.append(
+                lastButton.trailingAnchor.constraint(
+                    equalTo: lastButton.superview!.trailingAnchor,
+                    constant: -buttonPadding
+                )
+            )
         }
 
         return constraints
@@ -325,11 +350,27 @@ final class InputBarButtonsView: UIView {
             constraints.append(previous.trailingAnchor.constraint(equalTo: current.leadingAnchor))
 
             if isFirstButton {
-                constraints.append(previous.widthAnchor.constraint(equalTo: current.widthAnchor, multiplier: constraintMultiplier, constant: offset))
+                constraints.append(
+                    previous.widthAnchor.constraint(
+                        equalTo: current.widthAnchor,
+                        multiplier: constraintMultiplier,
+                        constant: offset
+                    )
+                )
             } else if isLastButton {
-                constraints.append(current.widthAnchor.constraint(equalTo: previous.widthAnchor, multiplier: constraintMultiplier, constant: offset))
+                constraints.append(
+                    current.widthAnchor.constraint(
+                        equalTo: previous.widthAnchor,
+                        multiplier: constraintMultiplier,
+                        constant: offset
+                    )
+                )
             } else {
-                constraints.append(current.widthAnchor.constraint(equalTo: previous.widthAnchor))
+                constraints.append(
+                    current.widthAnchor.constraint(
+                        equalTo: previous.widthAnchor
+                    )
+                )
             }
 
             previous = current
@@ -345,7 +386,12 @@ final class InputBarButtonsView: UIView {
         firstButton.contentHorizontalAlignment = .center
         firstButton.imageView?.contentMode = .center
 
-        firstButton.titleEdgeInsets = UIEdgeInsets(top: InputBarRowConstants.iconSize + firstButtonLabelSize.height + InputBarRowConstants.titleTopMargin, left: firstTitleMargin, bottom: 0, right: 0)
+        firstButton.titleEdgeInsets = UIEdgeInsets(
+            top: InputBarRowConstants.iconSize + firstButtonLabelSize.height + InputBarRowConstants.titleTopMargin,
+            left: firstTitleMargin,
+            bottom: 0,
+            right: 0
+        )
 
         if rowIsFull {
             let lastButton = buttons.last!
@@ -353,7 +399,12 @@ final class InputBarButtonsView: UIView {
             let lastTitleMargin = conversationHorizontalMargins.left / 2.0 - lastButtonLabelSize.width / 2.0
             lastButton.contentHorizontalAlignment = .center
             lastButton.imageView?.contentMode = .center
-            lastButton.titleEdgeInsets = UIEdgeInsets(top: InputBarRowConstants.iconSize + lastButtonLabelSize.height + InputBarRowConstants.titleTopMargin, left: 0, bottom: 0, right: lastTitleMargin - 1)
+            lastButton.titleEdgeInsets = UIEdgeInsets(
+                top: InputBarRowConstants.iconSize + lastButtonLabelSize.height + InputBarRowConstants.titleTopMargin,
+                left: 0,
+                bottom: 0,
+                right: lastTitleMargin - 1
+            )
             lastButton.titleLabel?.lineBreakMode = .byClipping
         }
 
@@ -361,7 +412,12 @@ final class InputBarButtonsView: UIView {
             let buttonLabelSize = button.titleLabel!.intrinsicContentSize
             button.contentHorizontalAlignment = .center
             button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -buttonLabelSize.width)
-            button.titleEdgeInsets = UIEdgeInsets(top: InputBarRowConstants.iconSize + buttonLabelSize.height + InputBarRowConstants.titleTopMargin, left: -InputBarRowConstants.iconSize, bottom: 0, right: 0)
+            button.titleEdgeInsets = UIEdgeInsets(
+                top: InputBarRowConstants.iconSize + buttonLabelSize.height + InputBarRowConstants.titleTopMargin,
+                left: -InputBarRowConstants.iconSize,
+                bottom: 0,
+                right: 0
+            )
         }
     }
 
