@@ -256,6 +256,7 @@
 		E629E3CC2B470B3500D526AD /* Payload+UpdateConversationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3CB2B470B3500D526AD /* Payload+UpdateConversationName.swift */; };
 		E629E3CE2B470B7900D526AD /* Payload+UpdateConversationMLSMessageAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3CD2B470B7900D526AD /* Payload+UpdateConversationMLSMessageAdd.swift */; };
 		E629E3D02B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3CF2B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift */; };
+		E662588F2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662588E2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift */; };
 		E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */; };
 		E9E2AA5E2B163A56008CC2DF /* SyncUsersActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */; };
 		EE04084828C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */; };
@@ -728,6 +729,7 @@
 		E629E3CB2B470B3500D526AD /* Payload+UpdateConversationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationName.swift"; sourceTree = "<group>"; };
 		E629E3CD2B470B7900D526AD /* Payload+UpdateConversationMLSMessageAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationMLSMessageAdd.swift"; sourceTree = "<group>"; };
 		E629E3CF2B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationMLSWelcome.swift"; sourceTree = "<group>"; };
+		E662588E2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayloadUpdateConversationProtocolChangeTests.swift; sourceTree = "<group>"; };
 		E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandlerTests.swift; sourceTree = "<group>"; };
 		E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandler.swift; sourceTree = "<group>"; };
 		EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysActionHandler.swift; sourceTree = "<group>"; };
@@ -1386,6 +1388,7 @@
 		E629E39B2B47002400D526AD /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				E662588C2B4D642700C23E79 /* Conversation */,
 				63F5AAC6298A96C000712528 /* Payload+CodingTests.swift */,
 				63F5AAC8298A974F00712528 /* Payload+ConversationTests.swift */,
 				E629E39C2B47003400D526AD /* Processing */,
@@ -1456,6 +1459,22 @@
 				E629E3CB2B470B3500D526AD /* Payload+UpdateConversationName.swift */,
 				E614D4D62B480BA7000A44B4 /* Payload+UpdateConversationProtocolChange.swift */,
 				E629E3C52B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
+		E662588C2B4D642700C23E79 /* Conversation */ = {
+			isa = PBXGroup;
+			children = (
+				E662588D2B4D643200C23E79 /* Events */,
+			);
+			path = Conversation;
+			sourceTree = "<group>";
+		};
+		E662588D2B4D643200C23E79 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				E662588E2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -2391,6 +2410,7 @@
 				EE7F022D2A8392EF00FE5695 /* MockActionHandler.swift in Sources */,
 				0693114E24F79A1300D14DF5 /* LocalNotificationContentTypeTest.swift in Sources */,
 				F18401E02073C25900E9F4CC /* ClientMessageRequestFactoryTests.swift in Sources */,
+				E662588F2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift in Sources */,
 				16BBA1F22AF2678200CDF38A /* SessionEstablisherTests.swift in Sources */,
 				63CC83B3285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift in Sources */,
 				F18401F42073C27200E9F4CC /* LinkPreviewPreprocessorTests.swift in Sources */,
