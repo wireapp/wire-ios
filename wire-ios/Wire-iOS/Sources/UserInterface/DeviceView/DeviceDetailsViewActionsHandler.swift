@@ -29,7 +29,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var userClient: UserClient
     var clientRemovalObserver: ClientRemovalObserver?
     var credentials: ZMEmailCredentials?
-    var certificate: E2eIdentityCertificate?
     var isProcessing: ((Bool) -> Void)?
 
     var isMLSEnabled: Bool {
@@ -129,7 +128,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         UIPasteboard.general.string = value
     }
 
-    func downloadE2EIdentityCertificate() {
+    func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate?) {
         guard let certificate = certificate else {
             return
         }

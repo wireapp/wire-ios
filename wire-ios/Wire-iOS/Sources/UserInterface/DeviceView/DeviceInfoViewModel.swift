@@ -34,7 +34,7 @@ protocol DeviceDetailsViewActions {
     func resetSession() async -> Bool
     func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
-    func downloadE2EIdentityCertificate()
+    func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate?)
 }
 
 final class DeviceInfoViewModel: ObservableObject {
@@ -194,7 +194,7 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     func downloadE2EIdentityCertificate() {
-        actionsHandler.downloadE2EIdentityCertificate()
+        actionsHandler.downloadE2EIdentityCertificate(certificate: e2eIdentityCertificate)
     }
 }
 

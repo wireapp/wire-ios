@@ -48,7 +48,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             mlsProvider: MockMLSProvider(isMLSEnbaled: false),
             saveFileManager: saveFileManager
         )
-        deviceActionHandler.downloadE2EIdentityCertificate()
+        deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
         wait(for: [expectation], timeout: 0.5)
     }
 
@@ -65,13 +65,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             mlsProvider: MockMLSProvider(isMLSEnbaled: false),
             saveFileManager: saveFileManager
         )
-        deviceActionHandler.certificate = .init(
-            certificateDetails: .random(length: 100),
-            expiryDate: .now,
-            certificateStatus: "valid",
-            serialNumber: .random(length: 16)
-        )
-        deviceActionHandler.downloadE2EIdentityCertificate()
+        deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
         wait(for: [expectation], timeout: 0.5)
     }
 
@@ -88,5 +82,16 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         let fetchedCertificate = await deviceActionHandler.fetchCertificate()
         XCTAssertNotNil(fetchedCertificate)
         XCTAssertEqual(fetchedCertificate!.certificateDetails, e2eIdentityProvider.certificate.certificateDetails)
+    }
+}
+
+private extension E2eIdentityCertificate {
+    static func mock() -> E2eIdentityCertificate {
+        return .init(
+            certificateDetails: .random(length: 100),
+            expiryDate: .now,
+            certificateStatus: "valid",
+            serialNumber: .random(length: 16)
+        )
     }
 }
