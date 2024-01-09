@@ -17,7 +17,60 @@
 //
 
 import Foundation
+import WireDataModel
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
 
+    @Published var buttons: [DeveloperDebugActionsDisplayModel.ButtonItem] = []
+
+    private let selfClient: UserClient?
+
+    init(selfClient: UserClient?) {
+        self.selfClient = selfClient
+
+        // self is initialized
+
+        buttons = [
+//            .init(title: "Send debug logs", action: sendDebugLogs)),
+//            .init(title: "Perform quick sync", action: performQuickSync)),
+//            .init(title: "Break next quick sync", action: breakNextQuickSync)),
+            .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
+            .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS)
+        ]
+    }
+
+    // MARK: - Protocol Change
+
+    private func updateConversationProtocolToMixed() {
+        updateConversationProtocol(to: .mixed)
+    }
+
+    private func updateConversationProtocolToMLS() {
+        updateConversationProtocol(to: .mls)
+    }
+
+    private func updateConversationProtocol(to messageProtocol: MessageProtocol) {
+        guard
+            let selfClient = selfClient,
+            let context = selfClient.managedObjectContext
+        else { return }
+
+        Task {
+            guard let qualifiedID = await context.perform({ selfClient.user?.conversations.first?.qualifiedID }) else {
+                assertionFailure("no conversation found to update protocol change")
+                return
+            }
+
+            var action = UpdateConversationProtocolAction(
+                qualifiedID: qualifiedID,
+                messageProtocol: messageProtocol
+            )
+
+            do {
+                try await action.perform(in: context.notificationContext)
+            } catch {
+                assertionFailure("action failed: \(error)!")
+            }
+        }
+    }
 }

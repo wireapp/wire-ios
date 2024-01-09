@@ -16,23 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-struct DeveloperDebugActionsView: View {
+enum DeveloperDebugActionsDisplayModel {
 
-    @ObservedObject var viewModel: DeveloperDebugActionsViewModel
+    struct ButtonItem: Identifiable {
+        var id: String { title }
 
-    var body: some View {
-        List(viewModel.buttons) { button in
-            SwiftUI.Button(action: button.action) {
-                Text(button.title)
-            }
-        }
+        let title: String
+        let action: () -> Void
     }
-}
-
-// MARK: - Previews
-
-#Preview {
-    DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: nil))
 }

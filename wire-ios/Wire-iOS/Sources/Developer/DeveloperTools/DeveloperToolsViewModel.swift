@@ -116,8 +116,9 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
                 .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
                 .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
-                .button(ButtonItem(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed)),
-                .button(ButtonItem(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS)),
+                .destination(DestinationItem(title: "Debug Actions", makeView: {
+                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self.selfClient)))
+                })),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
@@ -227,39 +228,6 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func breakNextQuickSync() {
         ZMUserSession.shared()?.setBogusLastEventID()
-    }
-
-    private func updateConversationProtocolToMixed() {
-        updateConversationProtocol(to: .mixed)
-    }
-
-    private func updateConversationProtocolToMLS() {
-        updateConversationProtocol(to: .mls)
-    }
-
-    private func updateConversationProtocol(to messageProtocol: MessageProtocol) {
-        guard
-            let selfClient = selfClient,
-            let context = selfClient.managedObjectContext
-        else { return }
-
-        Task {
-            guard let qualifiedID = await context.perform({ selfClient.user?.conversations.first?.qualifiedID }) else {
-                assertionFailure("no conversation found to update protocol change")
-                return
-            }
-
-            var action = UpdateConversationProtocolAction(
-                qualifiedID: qualifiedID,
-                messageProtocol: messageProtocol
-            )
-
-            do {
-                try await action.perform(in: context.notificationContext)
-            } catch {
-                assertionFailure("action failed: \(error)!")
-            }
-        }
     }
 
     private func sendDebugLogs() {
