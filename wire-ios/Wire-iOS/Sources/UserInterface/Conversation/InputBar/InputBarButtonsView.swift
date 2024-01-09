@@ -20,6 +20,8 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
+// MARK: - InputBarRowConstants
+
 private struct InputBarRowConstants {
     static let titleTopMargin: CGFloat = 10
     static let minimumButtonWidthIPhone5: CGFloat = 53
@@ -32,6 +34,32 @@ private struct InputBarRowConstants {
     }
 }
 
+// MARK: - InputBarButtonsView
+
+/// `InputBarButtonsView` is a UIView responsible for managing and displaying a row of buttons within an `InputBar`.
+/// It handles the dynamic layout of buttons, adjusting to various screen sizes and orientations, and responds
+/// to state changes from its parent view. This class encapsulates all button-related interactions and ensures
+/// accessibility compliance, making the button row navigable and usable by all users. It also contributes to the
+/// overall layout of the `InputBar` by defining constraints relative to the `InputBarConstants`.
+///
+/// The view listens to changes in button configurations and updates its layout and accessibility features
+/// accordingly. It also manages button interactions and communicates actions up to the `InputBar`, which can
+/// alter the state of the input bar, such as switching between editing and composing states.
+///
+/// Usage:
+/// Initialize `InputBarButtonsView` with an array of `UIButton` objects that represent the actions available
+/// in the `InputBar`. The view automatically configures constraints and layout based on the provided buttons.
+/// It is a subcomponent of `InputBar` and should be used in conjunction with it.
+///
+/// Example Initialization:
+/// ```
+/// let buttons: [UIButton] = [sendButton, attachButton, emojiButton]
+/// let buttonsView = InputBarButtonsView(buttons: buttons)
+/// // Add `buttonsView` to an `InputBar` instance
+/// ```
+///
+/// - Note: This class is intended for use as part of the `InputBar` and relies on the `InputBarConstants`
+///         for consistent styling and layout metrics.
 final class InputBarButtonsView: UIView {
 
     typealias RowIndex = UInt
@@ -424,12 +452,14 @@ final class InputBarButtonsView: UIView {
 }
 
 extension InputBarButtonsView {
-    @objc private func anyButtonPressed(_ button: UIButton!) {
+
+    @objc
+    private func anyButtonPressed(_ button: UIButton) {
         showRow(0, animated: true)
     }
 
     @objc
-    private func ellipsisButtonPressed(_ button: UIButton!) {
+    private func ellipsisButtonPressed(_ button: UIButton) {
         showRow(currentRow == 0 ? 1 : 0, animated: true)
     }
 }
