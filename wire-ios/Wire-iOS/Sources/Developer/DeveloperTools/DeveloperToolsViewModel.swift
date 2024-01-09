@@ -110,6 +110,10 @@ final class DeveloperToolsViewModel: ObservableObject {
         self.onDismiss = onDismiss
         sections = []
 
+        setupSections()
+    }
+
+    private func setupSections() {
         sections.append(Section(
             header: "Actions",
             items: [

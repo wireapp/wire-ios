@@ -33,8 +33,10 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     init(selfClient: UserClient?) {
         self.selfClient = selfClient
 
-        // self is now initialized
+        setupButtons()
+    }
 
+    private func setupButtons() {
         buttons = [
             .init(title: "Send debug logs", action: sendDebugLogs),
             .init(title: "Perform quick sync", action: performQuickSync),
