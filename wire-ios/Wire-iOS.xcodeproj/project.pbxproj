@@ -1243,6 +1243,8 @@
 		E6579E7D2AFFA97F004E7FD8 /* OrientationDeltaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */; };
 		E6579E7E2AFFA98C004E7FD8 /* HandleChangeStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542CDF3F24B32E2100DF0B39 /* HandleChangeStateTests.swift */; };
 		E6579E7F2AFFA99E004E7FD8 /* AnimatedListMenuViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A990059A23F195A70089CDEB /* AnimatedListMenuViewTests.swift */; };
+		E66258872B4D393400C23E79 /* DeveloperDebugActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66258862B4D393400C23E79 /* DeveloperDebugActionsView.swift */; };
+		E66258892B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66258882B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E6C25FC82AFFABBF00406A1C /* PhoneNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */; };
 		E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */; };
@@ -3269,6 +3271,8 @@
 		E6579E402AFF9BDB004E7FD8 /* UnitTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnitTests.xctestplan; sourceTree = "<group>"; };
 		E6579E712AFFA150004E7FD8 /* Wire-iOS-UnitTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Wire-iOS-UnitTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		E6579E722AFFA232004E7FD8 /* Mocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mocks.h; sourceTree = "<group>"; };
+		E66258862B4D393400C23E79 /* DeveloperDebugActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsView.swift; sourceTree = "<group>"; };
+		E66258882B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsViewModel.swift; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
 		E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Availability.swift"; sourceTree = "<group>"; };
@@ -7382,6 +7386,15 @@
 			path = CellDescription;
 			sourceTree = "<group>";
 		};
+		E66258852B4D391700C23E79 /* DebugActions */ = {
+			isa = PBXGroup;
+			children = (
+				E66258862B4D393400C23E79 /* DeveloperDebugActionsView.swift */,
+				E66258882B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift */,
+			);
+			path = DebugActions;
+			sourceTree = "<group>";
+		};
 		E6C25FCC2AFFAC1C00406A1C /* Fixture */ = {
 			isa = PBXGroup;
 			children = (
@@ -7546,6 +7559,7 @@
 			children = (
 				EE742AB5284DE57900A6B5F3 /* DeveloperToolsView.swift */,
 				EE742AB7284DE66400A6B5F3 /* DeveloperToolsViewModel.swift */,
+				E66258852B4D391700C23E79 /* DebugActions */,
 				EECA90A8287449D10024B301 /* DeveloperFlags */,
 				EE2DF75C2875E29F0028ECA2 /* PreferredAPIVersion */,
 				EE08ADEB29C8860600B6C14D /* SwitchBackend */,
@@ -9034,6 +9048,7 @@
 				7C4918A11F8BB1A20038AF4B /* UIScreen+SafeArea.swift in Sources */,
 				8775BF1C2007C6B900A8AD93 /* SearchGroupSelector.swift in Sources */,
 				872C8242214BFA8700236A76 /* UITextView+Range.swift in Sources */,
+				E66258892B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift in Sources */,
 				BF5DF5C720F4C1C5002BCB67 /* GroupParticipantsDetailViewModel.swift in Sources */,
 				EEE81E9823E0815600A1D035 /* ProfilePresenter.swift in Sources */,
 				EF3BD69D225CC53B00ABB9B6 /* PermissionDeniedViewController.swift in Sources */,
@@ -9274,6 +9289,7 @@
 				A90E4ABC2381B26600468F31 /* Settings+ColorScheme.swift in Sources */,
 				BF7ED2D61DF18724003A4397 /* UserNameDetailView.swift in Sources */,
 				87BEB0401D3E44E600DE9575 /* AssetCell.swift in Sources */,
+				E66258872B4D393400C23E79 /* DeveloperDebugActionsView.swift in Sources */,
 				A92CB35923CDF97800F12797 /* ConversationViewController+ConversationContentViewControllerDelegate.swift in Sources */,
 				0622D6A2265B38DE00D759DB /* UserBlockingReasonCell.swift in Sources */,
 				BFCCA4FE20A0A03D000A4F33 /* CallInfoRootViewController.swift in Sources */,
