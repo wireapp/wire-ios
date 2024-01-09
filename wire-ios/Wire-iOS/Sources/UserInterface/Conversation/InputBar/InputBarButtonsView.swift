@@ -234,7 +234,12 @@ final class InputBarButtonsView: UIView {
         }
     }
 
-    private func constrainRowOfButtons(_ buttons: [UIButton], inset: CGFloat, rowIsFull: Bool, referenceButton: UIButton?) -> [NSLayoutConstraint] {
+    private func constrainRowOfButtons(
+        _ buttons: [UIButton],
+        inset: CGFloat,
+        rowIsFull: Bool,
+        referenceButton: UIButton?
+    ) -> [NSLayoutConstraint] {
         let buttonPadding: CGFloat = 12
         let buttonHeight = InputBarRowConstants.buttonsBarHeight - buttonPadding * 2
         let offset = InputBarRowConstants.iconSize / 2 + buttonMargin
@@ -258,7 +263,11 @@ final class InputBarButtonsView: UIView {
         return constraints
     }
 
-    private func setupInitialConstraints(for buttons: [UIButton], rowIsFull: Bool, buttonPadding: CGFloat) -> [NSLayoutConstraint] {
+    private func setupInitialConstraints(
+        for buttons: [UIButton],
+        rowIsFull: Bool,
+        buttonPadding: CGFloat
+    ) -> [NSLayoutConstraint] {
         guard let firstButton = buttons.first, let lastButton = buttons.last else { return [] }
 
         var constraints = [NSLayoutConstraint]()
@@ -273,7 +282,13 @@ final class InputBarButtonsView: UIView {
         return constraints
     }
 
-    private func constraintsForButton(_ button: UIButton, in buttons: [UIButton], inset: CGFloat, buttonPadding: CGFloat, buttonHeight: CGFloat) -> [NSLayoutConstraint] {
+    private func constraintsForButton(
+        _ button: UIButton,
+        in buttons: [UIButton],
+        inset: CGFloat,
+        buttonPadding: CGFloat,
+        buttonHeight: CGFloat
+    ) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
         button.translatesAutoresizingMaskIntoConstraints = false
 
@@ -293,7 +308,12 @@ final class InputBarButtonsView: UIView {
         return constraints
     }
 
-    private func constraintsBetweenButtons(_ buttons: [UIButton], rowIsFull: Bool, offset: CGFloat, constraintMultiplier: CGFloat) -> [NSLayoutConstraint] {
+    private func constraintsBetweenButtons(
+        _ buttons: [UIButton],
+        rowIsFull: Bool,
+        offset: CGFloat,
+        constraintMultiplier: CGFloat
+    ) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
         var previous: UIButton = buttons.first!
 
