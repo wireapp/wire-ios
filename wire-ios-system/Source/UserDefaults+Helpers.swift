@@ -22,7 +22,7 @@ extension UserDefaults {
 
     @objc
     public static func random() -> UserDefaults? {
-        return UserDefaults(suiteName: UUID().uuidString)
+        .init(suiteName: UUID().uuidString)
     }
 
     @objc
@@ -34,4 +34,34 @@ extension UserDefaults {
         synchronize()
     }
 
+    /// Creates an instance with a random (UUID string based) `suiteName`.
+    /// When the instance is deallocated, the storage is cleaned up.
+    public static func temporary() -> Self {
+        let suiteName = UUID().uuidString
+        let userDefaults = Self(suiteName: suiteName)!
+        objc_setAssociatedObject(
+            userDefaults,
+            &SuiteCleanUpHandle,
+            SuiteCleanUp(suiteName),
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+        return userDefaults
+    }
 }
+
+// MARK: UserDefaults.temporary() helpers
+
+private final class SuiteCleanUp {
+
+    var suiteName: String
+
+    init(_ suiteName: String) {
+        self.suiteName = suiteName
+    }
+
+    deinit {
+        UserDefaults.standard.removePersistentDomain(forName: suiteName)
+    }
+}
+
+private var SuiteCleanUpHandle = 0
