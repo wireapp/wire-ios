@@ -53,7 +53,7 @@ extension UserDefaults {
 
 private final class SuiteCleanUp {
 
-    var suiteName: String
+    private let suiteName: String
 
     init(_ suiteName: String) {
         self.suiteName = suiteName
