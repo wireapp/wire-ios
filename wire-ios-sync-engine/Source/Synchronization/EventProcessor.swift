@@ -20,11 +20,9 @@ import Foundation
 import WireUtilities
 import WireRequestStrategy
 
-extension NSNotification.Name {
-    static let calculateBadgeCount = NSNotification.Name(rawValue: "calculateBadgeCountNotication")
-}
-
 actor EventProcessor: UpdateEventProcessor {
+
+    weak var delegate: EventProcessorDelegate?
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
 
@@ -46,7 +44,6 @@ actor EventProcessor: UpdateEventProcessor {
         earService: EARServiceInterface,
         eventConsumers: [ZMEventConsumer],
         eventAsyncConsumers: [ZMEventAsyncConsumer]
-        // protocol for notifying that events are processed
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
@@ -67,6 +64,9 @@ actor EventProcessor: UpdateEventProcessor {
 
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
         try await enqueueTask {
+
+            await self.delegate?.eventProcessorDidStartProcessingEvents(self)
+
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
             let publicKeys = try? self.earService.fetchPublicKeys()
             let decryptedEvents = await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
@@ -74,6 +74,9 @@ actor EventProcessor: UpdateEventProcessor {
             await self.requestToCalculateBadgeCount()
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
             try await self.processEvents(callEventsOnly: isLocked)
+
+            await self.delegate?.eventProcessorDidFinishProcessingEvents(self)
+
         }
     }
 
@@ -88,16 +91,9 @@ actor EventProcessor: UpdateEventProcessor {
             _ = await processingTask?.result
             return try await block()
         }
-        guard let taskResult = await processingTask?.result else {
-            return
-        }
 
-        switch taskResult {
-        case .success:
-            break
-        case .failure(let error):
-            throw error
-        }
+        // throw error if any
+        _ = try await processingTask?.value
     }
 
     private func processBackgroundEvents(_ events: [ZMUpdateEvent]) async {
@@ -147,7 +143,7 @@ actor EventProcessor: UpdateEventProcessor {
         ) { [weak self] (decryptedUpdateEvents) in
             WireLogger.updateEvent.info("retrieved \(decryptedUpdateEvents.count) events from the database")
 
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             let date = Date()
             let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)
@@ -204,4 +200,17 @@ actor EventProcessor: UpdateEventProcessor {
 
         return fetchRequest
     }
+
+    func setDelegate(_ delegate: EventProcessorDelegate?) async {
+        self.delegate = delegate
+    }
+}
+
+protocol EventProcessorDelegate: AnyObject {
+    func eventProcessorDidStartProcessingEvents(_ eventProcessor: EventProcessor)
+    func eventProcessorDidFinishProcessingEvents(_ eventProcessor: EventProcessor)
+}
+
+extension NSNotification.Name {
+    static let calculateBadgeCount = Self(rawValue: "calculateBadgeCountNotication")
 }
