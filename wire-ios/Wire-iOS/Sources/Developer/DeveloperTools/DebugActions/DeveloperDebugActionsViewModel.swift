@@ -18,28 +18,53 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngine
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
 
     @Published var buttons: [DeveloperDebugActionsDisplayModel.ButtonItem] = []
 
+    private var userSession: ZMUserSession? { ZMUserSession.shared() }
+
     private let selfClient: UserClient?
+
+    // MARK: - Initialize
 
     init(selfClient: UserClient?) {
         self.selfClient = selfClient
 
-        // self is initialized
+        // self is now initialized
 
         buttons = [
-//            .init(title: "Send debug logs", action: sendDebugLogs)),
-//            .init(title: "Perform quick sync", action: performQuickSync)),
-//            .init(title: "Break next quick sync", action: breakNextQuickSync)),
+            .init(title: "Send debug logs", action: sendDebugLogs),
+            .init(title: "Perform quick sync", action: performQuickSync),
+            .init(title: "Break next quick sync", action: breakNextQuickSync),
             .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS)
         ]
     }
 
-    // MARK: - Protocol Change
+    // MARK: Send Logs
+
+    private func sendDebugLogs() {
+        DebugLogSender.sendLogsByEmail(message: "Send logs")
+    }
+
+    // MARK: Quick Sync
+
+    private func breakNextQuickSync() {
+        userSession?.setBogusLastEventID()
+    }
+
+    private func performQuickSync() {
+        guard let userSession = userSession else { return }
+
+        Task {
+            await userSession.syncStatus.performQuickSync()
+        }
+    }
+
+    // MARK: Protocol Change
 
     private func updateConversationProtocolToMixed() {
         updateConversationProtocol(to: .mixed)
