@@ -70,9 +70,9 @@ actor EventProcessor: UpdateEventProcessor {
             let publicKeys = try? self.earService.fetchPublicKeys()
             let decryptedEvents = await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
             await self.processBackgroundEvents(decryptedEvents)
-            await self.requestToCalculateBadgeCount()
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
             try await self.processEvents(callEventsOnly: isLocked)
+            await self.requestToCalculateBadgeCount()
         }
     }
 
