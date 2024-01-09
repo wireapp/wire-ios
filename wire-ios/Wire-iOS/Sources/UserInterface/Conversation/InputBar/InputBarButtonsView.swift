@@ -96,7 +96,11 @@ final class InputBarButtonsView: UIView {
         addSubview(buttonInnerContainer)
 
         buttons.forEach {
-            $0.addTarget(self, action: #selector(anyButtonPressed), for: .touchUpInside)
+            let action = UIAction { [weak self] _ in
+                self?.anyButtonPressed()
+            }
+
+            $0.addAction(action, for: .touchUpInside)
             buttonInnerContainer.addSubview($0)
         }
 
@@ -105,7 +109,13 @@ final class InputBarButtonsView: UIView {
         expandRowButton.accessibilityLabel = L10n.Accessibility.Conversation.MoreButton.description
         expandRowButton.hitAreaPadding = .zero
         expandRowButton.setIcon(.ellipsis, size: .tiny, for: [])
-        expandRowButton.addTarget(self, action: #selector(ellipsisButtonPressed), for: .touchUpInside)
+
+        let action = UIAction { [weak self] _ in
+            self?.ellipsisButtonPressed()
+        }
+
+        expandRowButton.addAction(action, for: .touchUpInside)
+
         buttonOuterContainer.addSubview(buttonInnerContainer)
         buttonOuterContainer.clipsToBounds = true
         addSubview(buttonOuterContainer)
@@ -453,13 +463,11 @@ final class InputBarButtonsView: UIView {
 
 extension InputBarButtonsView {
 
-    @objc
-    private func anyButtonPressed(_ button: UIButton) {
+    private func anyButtonPressed() {
         showRow(0, animated: true)
     }
 
-    @objc
-    private func ellipsisButtonPressed(_ button: UIButton) {
+    private func ellipsisButtonPressed() {
         showRow(currentRow == 0 ? 1 : 0, animated: true)
     }
 }
