@@ -177,7 +177,6 @@
 		16E5F71826EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */; };
 		16E70F5B270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F5A270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift */; };
 		547E664D1F7512FE008CB1FA /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 547E664C1F7512FE008CB1FA /* Default-568h@2x.png */; };
-		5932E4352B4C63F400E27863 /* EventProcessorFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5932E4342B4C63F400E27863 /* EventProcessorFactory.swift */; };
 		59AF8F522B19CD70000A09BF /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF8F4B2B19CD34000A09BF /* AutoMockable.generated.swift */; };
 		59D1C3122B1DF3AD0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3112B1DF3AD0016F6B2 /* WireDataModelSupport.framework */; };
 		5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68F22622452CDC00298376 /* LinkPreprocessor.swift */; };
@@ -615,7 +614,6 @@
 		16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRequestStrategyTests.swift; sourceTree = "<group>"; };
 		16E70F5A270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateConnectionActionHandlerTests.swift; sourceTree = "<group>"; };
 		547E664C1F7512FE008CB1FA /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		5932E4342B4C63F400E27863 /* EventProcessorFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EventProcessorFactory.swift; path = "../../../../wire-ios-sync-engine/Source/Synchronization/EventProcessorFactory.swift"; sourceTree = "<group>"; };
 		59AF8F4B2B19CD34000A09BF /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		59D1C3112B1DF3AD0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E68F22622452CDC00298376 /* LinkPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreprocessor.swift; sourceTree = "<group>"; };
@@ -855,7 +853,6 @@
 				06474D4C24AF68AD002C695D /* StoreUpdateEvent.swift */,
 				06474DA724B4BB01002C695D /* StoreUpdateEventTests.swift */,
 				062285C7276BB5B000B87C91 /* UpdateEventProcessor.swift */,
-				5932E4342B4C63F400E27863 /* EventProcessorFactory.swift */,
 			);
 			path = Decoding;
 			sourceTree = "<group>";
@@ -2101,7 +2098,6 @@
 				0649D12224F5C5EF001DDC78 /* ZMLocalNotification.swift in Sources */,
 				EE90C2A8282E7ECF00474379 /* RegisterPushTokenAction.swift in Sources */,
 				06FDC62F28354DAE008300DB /* PushTokenStorage.swift in Sources */,
-				5932E4352B4C63F400E27863 /* EventProcessorFactory.swift in Sources */,
 				166901DD1D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m in Sources */,
 				F18401BB2073BE0800E9F4CC /* LinkPreviewAssetDownloadRequestStrategy.swift in Sources */,
 				63CC83B9285B4845008549AD /* String+Empty.swift in Sources */,
