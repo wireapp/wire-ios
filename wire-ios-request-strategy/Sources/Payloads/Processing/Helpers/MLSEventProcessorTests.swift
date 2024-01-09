@@ -33,12 +33,15 @@ class MLSEventProcessorTests: MessagingTestBase {
         super.setUp()
 
         qualifiedID = QualifiedID(uuid: .create(), domain: "example.com")
-       
+
         mlsServiceMock = .init()
         mlsServiceMock.registerPendingJoin_MockMethod = { _ in }
         mlsServiceMock.wipeGroup_MockMethod = { _ in }
-        mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = nil
+        mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = .random()
         mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = { }
+
+        conversationServiceMock = .init()
+        conversationServiceMock.syncConversationQualifiedID_MockMethod = { _ in }
 
         syncMOC.performGroupedBlockAndWait {
             self.syncMOC.mlsService = self.mlsServiceMock
@@ -49,7 +52,6 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.messageProtocol = .mls
         }
 
-        conversationServiceMock = MockConversationServiceInterface()
         sut = MLSEventProcessor(conversationService: conversationServiceMock)
     }
 

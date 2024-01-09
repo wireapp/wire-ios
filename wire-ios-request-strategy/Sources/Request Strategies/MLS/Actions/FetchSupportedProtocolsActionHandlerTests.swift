@@ -28,6 +28,7 @@ final class FetchSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Fet
         super.setUp()
         userID = .random()
         action = FetchSupportedProtocolsAction(userID: userID)
+        handler = FetchSupportedProtocolsActionHandler(context: syncMOC)
     }
 
     override func tearDown() {

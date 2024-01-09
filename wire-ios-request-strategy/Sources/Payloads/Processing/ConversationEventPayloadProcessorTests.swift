@@ -1071,6 +1071,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func test_UpdateConversationMemberLeave_WipesMLSGroup() {
         syncMOC.performAndWait {
             // Given
+            let wipeGroupExpectation = XCTestExpectation(description: "it wipes group")
+            mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in
+                wipeGroupExpectation.fulfill()
+            }
+
             // Create self user
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID.create()
@@ -1102,6 +1107,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
 
             // Then
+            wait(for: [wipeGroupExpectation], timeout: 0.5)
             let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations
             XCTAssertEqual(wipeGroupInvocations.count, 1)
             XCTAssertEqual(wipeGroupInvocations.first?.conversation, groupConversation)
