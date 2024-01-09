@@ -36,7 +36,7 @@ extension UserDefaults {
 
     /// Creates an instance with a random (UUID string based) `suiteName`.
     /// When the instance is deallocated, the storage is cleaned up.
-    public static func temporary() -> Self {
+    @objc public static func temporary() -> Self {
         let suiteName = UUID().uuidString
         let userDefaults = Self(suiteName: suiteName)!
         objc_setAssociatedObject(
