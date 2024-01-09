@@ -49,7 +49,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     // MARK: - Internal Properties
 
-    private(set) var callCenter: WireCallCenterV3?
+    var callCenter: WireCallCenterV3?
 
     // MARK: - Init
 

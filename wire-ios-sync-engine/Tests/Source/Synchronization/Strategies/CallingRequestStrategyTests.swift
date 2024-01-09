@@ -38,6 +38,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
+
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockRegistrationDelegate = MockClientRegistrationDelegate()
