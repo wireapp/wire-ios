@@ -83,7 +83,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         else { return }
 
         Task {
-            guard let qualifiedID = await context.perform({ selfClient.user?.conversations.first?.qualifiedID }) else {
+            guard let qualifiedID = await qualifiedIDOfFirstGroupConversation(of: selfClient, in: context) else {
                 assertionFailure("no conversation found to update protocol change")
                 return
             }
@@ -98,6 +98,22 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             } catch {
                 assertionFailure("action failed: \(error)!")
             }
+        }
+    }
+
+    private func qualifiedIDOfFirstGroupConversation(of userClient: UserClient, in context: NSManagedObjectContext) async -> QualifiedID? {
+        await context.perform {
+            userClient.user?.conversations
+                .filter { $0.conversationType == .group }
+                .sorted { // sort descending by lastModifiedDate
+                    guard
+                        let lhsDate = $0.lastModifiedDate,
+                        let rhsDate = $1.lastModifiedDate
+                    else { return false }
+                    return lhsDate > rhsDate
+                }
+                .first?
+                .qualifiedID
         }
     }
 }
