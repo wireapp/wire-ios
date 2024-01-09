@@ -22,18 +22,12 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
 
     public func pushChannelDidReceive(_ data: ZMTransportData) {
         if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: data), !events.isEmpty {
-            // avswrapper.processstart
             Logging.eventProcessing.info("Received \(events.count) events from push channel")
             events.forEach({ $0.appendDebugInformation("from push channel (web socket)")})
-
-            // WaitingGroupTask(context: syncMOC) {
-            // updateEventProcessor.processEvents(_ events:shouldBufferEvents:Bool)
-            // }
 
             if syncStatus.isSyncing {
                 WaitingGroupTask(context: syncMOC) {
                     await self.updateEventProcessor.bufferEvents(events)
-                    // avswrapper.processeend
                 }
             } else {
                 WaitingGroupTask(context: syncMOC) {
@@ -42,7 +36,6 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                     } catch {
                         WireLogger.updateEvent.error("Failed to process events: \(events.map { $0.debugInformation })")
                     }
-                    // avswrapper.processeend
                 }
             }
         }

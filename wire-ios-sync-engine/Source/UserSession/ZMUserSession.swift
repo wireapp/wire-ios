@@ -358,7 +358,6 @@ public class ZMUserSession: NSObject {
                                                    keyStore: self.syncManagedObjectContext.zm_cryptKeyStore)
 
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
-            // event Processor needs the eventConsumers from strategyDirectory to be created
             self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
             self.operationLoop = operationLoop ?? self.createOperationLoop()
@@ -440,7 +439,7 @@ public class ZMUserSession: NSObject {
 
     private func createUpdateEventProcessor() -> EventProcessor {
         return EventProcessor(
-            storeProvider: coreDataStack,
+            storeProvider: self.coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: strategyDirectory?.eventConsumers ?? [],
