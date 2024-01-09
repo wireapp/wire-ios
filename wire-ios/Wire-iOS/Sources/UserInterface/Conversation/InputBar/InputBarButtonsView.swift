@@ -116,10 +116,11 @@ final class InputBarButtonsView: UIView {
     }
 
     func showRow(_ rowIndex: RowIndex, animated: Bool) {
+        let animationDuration = 0.35
         guard rowIndex != currentRow else { return }
         currentRow = rowIndex
         buttonRowTopInset.constant = CGFloat(rowIndex) * InputBarRowConstants.buttonsBarHeight
-        UIView.animate(easing: .easeInOutExpo, duration: animated ? 0.35 : 0, animations: layoutIfNeeded)
+        UIView.animate(easing: .easeInOutExpo, duration: animated ? animationDuration : 0, animations: layoutIfNeeded)
         setupAccessibility()
     }
 
@@ -150,49 +151,21 @@ final class InputBarButtonsView: UIView {
     }
 
     private func layoutAndConstrainButtonRows() {
-        let minButtonWidth =  InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
+        let minButtonWidth = InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
+        let maxNumberOfButtonsPerRow = Int(floorf(Float(bounds.width / minButtonWidth)))
 
         guard bounds.size.width >= minButtonWidth * 2 else {
             return
         }
 
-        // Reset the container.
-        buttonInnerContainer.removeSubviews()
+        setupButtonContainer()
 
-        // Reset the buttons.
-        for button in buttons {
-            button.removeRoundedCorners()
-            button.removeFromSuperview()
-            buttonInnerContainer.addSubview(button)
-        }
+        let (firstRow, secondRow, isMultilineLayout) = determineButtonLayout()
+        buttonRowHeight.constant = isMultilineLayout ? InputBarRowConstants.buttonsBarHeight * 2 : InputBarRowConstants.buttonsBarHeight
+        expandRowButton.isHidden = !isMultilineLayout
 
-        // Distribute buttons over rows.
-        let maxNumberOfButtonsPerRow = Int(floorf(Float(bounds.width / minButtonWidth)))
-        let isMultilineLayout = buttons.count > maxNumberOfButtonsPerRow
+        roundButtons(firstRow: firstRow, secondRow: secondRow)
 
-        let firstRow, secondRow: [UIButton]
-
-        if isMultilineLayout {
-            firstRow = buttons.prefix(customButtonCount) + [expandRowButton]
-            secondRow = [UIButton](buttons.suffix(buttons.count - customButtonCount))
-            buttonRowHeight.constant = InputBarRowConstants.buttonsBarHeight * 2
-            expandRowButton.isHidden = false
-        } else {
-            firstRow = buttons
-            secondRow = []
-            buttonRowHeight.constant = InputBarRowConstants.buttonsBarHeight
-            expandRowButton.isHidden = true
-        }
-
-        // Round buttons
-        if firstRow.count == 1 {
-            firstRow.first?.layer.cornerRadius = 12
-            firstRow.first?.clipsToBounds = true
-        } else {
-            firstRow.first?.roundCorners(edge: .leading, radius: 12)
-            firstRow.last?.roundCorners(edge: .trailing, radius: 12)
-            secondRow.first?.roundCorners(edge: .leading, radius: 12)
-        }
         var constraints = constrainRowOfButtons(
             firstRow,
             inset: 0,
@@ -220,6 +193,45 @@ final class InputBarButtonsView: UIView {
         ))
 
         setupAccessibility()
+    }
+
+    private func setupButtonContainer() {
+        buttonInnerContainer.removeSubviews()
+
+        for button in buttons {
+            button.removeRoundedCorners()
+            button.removeFromSuperview()
+            buttonInnerContainer.addSubview(button)
+        }
+    }
+
+    private func determineButtonLayout() -> (firstRow: [UIButton], secondRow: [UIButton], isMultilineLayout: Bool) {
+        let minButtonWidth = InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
+        let maxNumberOfButtonsPerRow = Int(floor(Float(bounds.width / minButtonWidth)))
+        let isMultilineLayout = buttons.count > maxNumberOfButtonsPerRow
+
+        var firstRow: [UIButton], secondRow: [UIButton]
+
+        if isMultilineLayout {
+            firstRow = Array(buttons.prefix(customButtonCount)) + [expandRowButton]
+            secondRow = Array(buttons.suffix(buttons.count - customButtonCount))
+        } else {
+            firstRow = buttons
+            secondRow = []
+        }
+
+        return (firstRow, secondRow, isMultilineLayout)
+    }
+
+    private func roundButtons(firstRow: [UIButton], secondRow: [UIButton]) {
+        if firstRow.count == 1 {
+            firstRow.first?.layer.cornerRadius = 12
+            firstRow.first?.clipsToBounds = true
+        } else {
+            firstRow.first?.roundCorners(edge: .leading, radius: 12)
+            firstRow.last?.roundCorners(edge: .trailing, radius: 12)
+            secondRow.first?.roundCorners(edge: .leading, radius: 12)
+        }
     }
 
     private func constrainRowOfButtons(_ buttons: [UIButton],
@@ -269,6 +281,7 @@ final class InputBarButtonsView: UIView {
             let isFirstButton = previous == buttons.first
             let isLastButton = rowIsFull && current == buttons.last
             let offset = InputBarRowConstants.iconSize / 2 + buttonMargin
+            let constraintMultiplier = 0.5
 
             [previous, current].prepareForLayout()
 
@@ -278,11 +291,11 @@ final class InputBarButtonsView: UIView {
 
             if isFirstButton {
                 constraints.append(
-                    previous.widthAnchor.constraint(equalTo: current.widthAnchor, multiplier: 0.5, constant: offset)
+                    previous.widthAnchor.constraint(equalTo: current.widthAnchor, multiplier: constraintMultiplier, constant: offset)
                 )
             } else if isLastButton {
                 constraints.append(
-                    current.widthAnchor.constraint(equalTo: previous.widthAnchor, multiplier: 0.5, constant: offset)
+                    current.widthAnchor.constraint(equalTo: previous.widthAnchor, multiplier: constraintMultiplier, constant: offset)
                 )
             } else {
                 constraints.append(
