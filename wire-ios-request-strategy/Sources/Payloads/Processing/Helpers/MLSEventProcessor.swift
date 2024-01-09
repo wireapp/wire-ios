@@ -18,6 +18,7 @@
 import Foundation
 import WireDataModel
 
+// sourcery: AutoMockable
 protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) async
@@ -60,7 +61,7 @@ final class MLSEventProcessor: MLSEventProcessing {
         }
 
         let previousStatus = await context.perform { conversation.mlsStatus }
-        let conversationExists = mlsService.conversationExists(groupID: mlsGroupID)
+        let conversationExists = await mlsService.conversationExists(groupID: mlsGroupID)
 
         await context.perform {
             conversation.mlsStatus = conversationExists ? .ready : .pendingJoin

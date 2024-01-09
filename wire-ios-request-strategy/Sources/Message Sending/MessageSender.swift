@@ -261,18 +261,16 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func encryptMlsMessage(_ message: any MLSMessage, groupID: MLSGroupID) async throws -> Data {
-        return try await context.perform {
-            guard let mlsService = self.context.mlsService else {
-                throw MessageSendError.missingMlsService
-            }
+        guard let mlsService = await context.perform({ self.context.mlsService }) else {
+            throw MessageSendError.missingMlsService
+        }
 
-            return try message.encryptForTransport { messageData in
-                let encryptedBytes = try mlsService.encrypt(
-                    message: messageData.bytes,
-                    for: groupID
-                )
-                return encryptedBytes.data
-            }
+        return try await message.encryptForTransport { messageData in
+            let encryptedData = try await mlsService.encrypt(
+                message: messageData,
+                for: groupID
+            )
+            return encryptedData
         }
     }
 }

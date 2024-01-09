@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
-
-extension XCTestCase {
-
-    func assertThrows<E: Error & Equatable>(
-        expectedError: E,
-        when: @escaping () async throws -> Void
-    ) async {
-        do {
-            try await when()
-            XCTFail("expected an error")
-        } catch {
-            if let error = error as? E {
-                XCTAssertEqual(error, expectedError)
-            } else {
-                XCTFail("unexpected error: \(String(describing: error))")
-            }
-        }
-    }
-
+extension ZMUpdateEvent {
+    @objc
+    static let allTypes = ZMUpdateEventType
+        .allCases
+        .map { $0.rawValue as NSNumber }
 }

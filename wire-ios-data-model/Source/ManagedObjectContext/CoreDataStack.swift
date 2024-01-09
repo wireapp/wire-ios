@@ -233,8 +233,10 @@ public class CoreDataStack: NSObject, ContextProvider {
                     log.safePublic("[setup] finished migration of core data messaging store!")
                     WireLogger.localStorage.info("finished migration of core data messaging store!")
                 } catch {
-                    log.safePublic("[setup] failed migration of core data messaging store: \(SanitizedString(stringLiteral: error.localizedDescription))")
-                    WireLogger.localStorage.error("failed migration of core data messaging store! \(error.localizedDescription)")
+                    let logMessage = "failed migration of core data messaging store: \(error.localizedDescription)."
+                    log.safePublic("[setup] \(SanitizedString(stringLiteral: logMessage))", level: .error)
+                    WireLogger.localStorage.error(logMessage)
+
                     DispatchQueue.main.async {
                         onFailure(error)
                     }
