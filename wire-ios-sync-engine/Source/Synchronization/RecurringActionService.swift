@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,44 +17,47 @@
 //
 
 import Foundation
+import WireUtilities
 
 struct RecurringAction {
 
-    typealias Action = () -> Void
-
     let id: String
     let interval: TimeInterval
-    let perform: Action
+    let perform: () -> Void
 
+    func callAsFunction() {
+        perform()
+    }
 }
 
 protocol RecurringActionServiceInterface {
-
     func performActionsIfNeeded()
     func registerAction(_ action: RecurringAction)
-
 }
 
-class RecurringActionService: RecurringActionServiceInterface {
+final class RecurringActionService: RecurringActionServiceInterface {
 
-    var actions = [RecurringAction]()
+    private var actions = [RecurringAction]()
+    private let storage: UserDefaults
+    private let dateProvider: DateProviding
 
-    var storage: UserDefaults = .standard
+    public init(
+        storage: UserDefaults,
+        dateProvider: DateProviding
+    ) {
+        self.storage = storage
+        self.dateProvider = dateProvider
+    }
 
     public func performActionsIfNeeded() {
-
+        let now = dateProvider.now
         actions.forEach { action in
 
-            guard let lastActionDate = lastCheckDate(for: action.id) else {
-                persistLastCheckDate(for: action.id)
-                return
-            }
-
-            if (lastActionDate + action.interval) <= Date() {
+            let lastActionDate = lastCheckDate(for: action.id) ?? .distantPast
+            if (lastActionDate + action.interval) <= now {
                 action.perform()
                 persistLastCheckDate(for: action.id)
             }
-
         }
     }
 
@@ -65,15 +68,14 @@ class RecurringActionService: RecurringActionServiceInterface {
     // MARK: - Helpers
 
     private func key(for actionID: String) -> String {
-        return "lastCheckDate_\(actionID)"
+        "lastCheckDate_\(actionID)"
     }
 
     private func lastCheckDate(for actionID: String) -> Date? {
-        return storage.object(forKey: key(for: actionID)) as? Date
+        storage.object(forKey: key(for: actionID)) as? Date
     }
 
-    func persistLastCheckDate(for actionID: String) {
-        storage.set(Date(), forKey: key(for: actionID))
+    private func persistLastCheckDate(for actionID: String) {
+        storage.set(Date.now, forKey: key(for: actionID))
     }
-
 }
