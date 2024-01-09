@@ -21,10 +21,10 @@ import WireCommonComponents
 import WireDataModel
 
 final class ConversationTitleView: TitleView {
-    var conversation: ConversationLike
+    var conversation: GroupDetailsConversationType
     var interactive: Bool = true
 
-    init(conversation: ConversationLike, interactive: Bool = true) {
+    init(conversation: GroupDetailsConversationType, interactive: Bool = true) {
         self.conversation = conversation
         self.interactive = interactive
         super.init()
@@ -46,8 +46,8 @@ final class ConversationTitleView: TitleView {
             attachments.append(.legalHold())
         }
 
-        if conversation.securityLevel == .secure {
-            attachments.append(.verifiedShield())
+        if conversation.isVerified {
+            attachments.append(verifiedShield)
         }
 
         var subtitle: String?
@@ -65,13 +65,22 @@ final class ConversationTitleView: TitleView {
         setupAccessibility()
     }
 
+    private var verifiedShield: NSTextAttachment {
+        switch conversation.messageProtocol {
+        case .proteus:
+            return .proteusVerifiedShield()
+        case .mls:
+            return .e2eiVerifiedShield()
+        }
+    }
+
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
 
         var components: [String] = []
         components.append(conversation.displayNameWithFallback.localized)
 
-        if conversation.securityLevel == .secure {
+        if conversation.isVerified {
             components.append(Conversation.VerifiedIcon.description)
         }
 
@@ -99,13 +108,21 @@ final class ConversationTitleView: TitleView {
 }
 
 extension NSTextAttachment {
-    static func verifiedShield() -> NSTextAttachment {
+    static func proteusVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
-        let shield = WireStyleKit.imageOfShieldverified
+        let shield = Asset.Images.verifiedShield.image
         attachment.image = shield
         let ratio = shield.size.width / shield.size.height
         let height: CGFloat = 12
         attachment.bounds = CGRect(x: 0, y: -2, width: height * ratio, height: height)
+        return attachment
+    }
+
+    static func e2eiVerifiedShield() -> NSTextAttachment {
+        let attachment = NSTextAttachment()
+        let shield = Asset.Images.certificateValid.image
+        attachment.image = shield
+        attachment.bounds = CGRect(x: 0, y: -4, width: shield.size.width, height: shield.size.height)
         return attachment
     }
 

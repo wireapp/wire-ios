@@ -88,6 +88,8 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
 
     var mlsGroupID: WireDataModel.MLSGroupID?
 
+    var mlsVerificationStatus: WireDataModel.MLSVerificationStatus?
+
 }
 
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {

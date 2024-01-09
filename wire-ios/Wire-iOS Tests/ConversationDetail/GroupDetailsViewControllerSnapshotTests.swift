@@ -167,4 +167,50 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         verify(matching: sut)
     }
+
+    func testForMlsConversation_withVerifiedStatus() throws {
+        // GIVEN & WHEN
+        setSelfUserInTeam()
+        mockSelfUser.teamRole = .admin
+        mockConversation.sortedOtherParticipants = [mockSelfUser]
+
+        mockConversation.messageProtocol = .mls
+        mockConversation.mlsVerificationStatus = .verified
+
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
+
+        // THEN
+        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+    }
+
+    func testForMlsConversation_withNotVerifiedStatus() throws {
+        // GIVEN & WHEN
+        setSelfUserInTeam()
+        mockSelfUser.teamRole = .admin
+        mockConversation.sortedOtherParticipants = [mockSelfUser]
+
+        mockConversation.messageProtocol = .mls
+        mockConversation.mlsVerificationStatus = .notVerified
+
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
+
+        // THEN
+        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+    }
+
+    func testForProteusConversation_withVerifiedStatus() throws {
+        // GIVEN & WHEN
+        setSelfUserInTeam()
+        mockSelfUser.teamRole = .admin
+        mockConversation.sortedOtherParticipants = [mockSelfUser]
+
+        mockConversation.messageProtocol = .proteus
+        mockConversation.securityLevel = .secure
+
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
+
+        // THEN
+        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+    }
+
 }
