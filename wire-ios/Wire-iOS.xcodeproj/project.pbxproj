@@ -1246,6 +1246,7 @@
 		E66258872B4D393400C23E79 /* DeveloperDebugActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66258862B4D393400C23E79 /* DeveloperDebugActionsView.swift */; };
 		E66258892B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66258882B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift */; };
 		E662588B2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662588A2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift */; };
+		E66258942B4D661900C23E79 /* DeveloperDebugActionsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66258932B4D661900C23E79 /* DeveloperDebugActionsViewModelTests.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E6C25FC82AFFABBF00406A1C /* PhoneNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */; };
 		E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */; };
@@ -3275,6 +3276,7 @@
 		E66258862B4D393400C23E79 /* DeveloperDebugActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsView.swift; sourceTree = "<group>"; };
 		E66258882B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsViewModel.swift; sourceTree = "<group>"; };
 		E662588A2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsDisplayModel.swift; sourceTree = "<group>"; };
+		E66258932B4D661900C23E79 /* DeveloperDebugActionsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsViewModelTests.swift; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
 		E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Availability.swift"; sourceTree = "<group>"; };
@@ -7343,6 +7345,7 @@
 		E6579E372AFF9B30004E7FD8 /* Wire-iOS UnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				E66258902B4D65FD00C23E79 /* Developer */,
 				E6579E712AFFA150004E7FD8 /* Wire-iOS-UnitTests-Bridging-Header.h */,
 				A990059A23F195A70089CDEB /* AnimatedListMenuViewTests.swift */,
 				E6C25FF12B03550A00406A1C /* AppLockModuleInteractorTests.swift */,
@@ -7394,6 +7397,30 @@
 				E66258862B4D393400C23E79 /* DeveloperDebugActionsView.swift */,
 				E66258882B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift */,
 				E662588A2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift */,
+			);
+			path = DebugActions;
+			sourceTree = "<group>";
+		};
+		E66258902B4D65FD00C23E79 /* Developer */ = {
+			isa = PBXGroup;
+			children = (
+				E66258912B4D660300C23E79 /* DeveloperTools */,
+			);
+			path = Developer;
+			sourceTree = "<group>";
+		};
+		E66258912B4D660300C23E79 /* DeveloperTools */ = {
+			isa = PBXGroup;
+			children = (
+				E66258922B4D660A00C23E79 /* DebugActions */,
+			);
+			path = DeveloperTools;
+			sourceTree = "<group>";
+		};
+		E66258922B4D660A00C23E79 /* DebugActions */ = {
+			isa = PBXGroup;
+			children = (
+				E66258932B4D661900C23E79 /* DeveloperDebugActionsViewModelTests.swift */,
 			);
 			path = DebugActions;
 			sourceTree = "<group>";
@@ -10215,6 +10242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E6579E732AFFA36D004E7FD8 /* AppLockModule.MockInteractor.swift in Sources */,
+				E66258942B4D661900C23E79 /* DeveloperDebugActionsViewModelTests.swift in Sources */,
 				E6579E602AFFA024004E7FD8 /* MockPhotoLibrary.swift in Sources */,
 				E6579E7A2AFFA36D004E7FD8 /* AppLockModule.MockApplicationStateProvider.swift in Sources */,
 				E6579E652AFFA024004E7FD8 /* MockConversationFactory.swift in Sources */,
