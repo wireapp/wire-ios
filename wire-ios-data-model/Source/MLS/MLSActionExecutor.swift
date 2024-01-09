@@ -32,7 +32,7 @@ public protocol MLSActionExecutorProtocol {
 
 }
 
-actor MLSActionExecutor: MLSActionExecutorProtocol {
+public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Types
 
@@ -61,7 +61,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Life cycle
 
-    init(
+    public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
         commitSender: CommitSending
     ) {
@@ -104,7 +104,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Actions
 
-    func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    public func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
                 WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
@@ -119,7 +119,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
-    func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    public func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
                 WireLogger.mls.info("removing clients from group (\(groupID.safeForLoggingDescription))...")
@@ -134,7 +134,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
-    func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    public func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
                 WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))...")
@@ -149,7 +149,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
-    func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    public func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
                 WireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
@@ -166,7 +166,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
-    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
+    public func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
                 WireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
@@ -183,7 +183,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Decryption
 
-    func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
+    public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
         try await performNonReentrant(groupID: groupID) {
             try await coreCrypto.perform {
                 try await $0.decryptMessage(conversationId: groupID.data, payload: message)
@@ -259,7 +259,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     // MARK: - Epoch publisher
 
     nonisolated
-    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         commitSender.onEpochChanged()
     }
 }
