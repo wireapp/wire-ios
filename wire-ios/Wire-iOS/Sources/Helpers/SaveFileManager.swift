@@ -26,8 +26,10 @@ protocol SaveFileActions {
 
 final class SaveFileManager: NSObject, SaveFileActions {
     private var pendingSaveURLs = [URL]()
+
     private let logger: LoggerProtocol
     private let systemSaveFilePresenter: SystemSaveFilePresenting
+
     public init(systemFileSavePresenter: SystemSaveFilePresenting, logger: LoggerProtocol) {
         self.systemSaveFilePresenter = systemFileSavePresenter
         self.logger = logger

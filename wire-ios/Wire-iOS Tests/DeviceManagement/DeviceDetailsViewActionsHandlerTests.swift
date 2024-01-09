@@ -86,6 +86,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
 }
 
 private extension E2eIdentityCertificate {
+
     static func mock() -> E2eIdentityCertificate {
         return .init(
             certificateDetails: .random(length: 100),
@@ -94,4 +95,5 @@ private extension E2eIdentityCertificate {
             serialNumber: .random(length: 16)
         )
     }
+
 }

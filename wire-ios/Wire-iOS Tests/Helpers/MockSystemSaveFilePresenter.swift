@@ -20,6 +20,7 @@ import Foundation
 @testable import Wire
 
 final class MockSystemSaveFilePresenter: SystemSaveFilePresenting {
+
     var presentSystemPromptToSaveIsCalled: ((URL, () -> Void) -> Void)?
 
     func presentSystemPromptToSave(file fileURL: URL, completed: @escaping () -> Void) {

@@ -20,7 +20,9 @@ import Foundation
 @testable import WireSystem
 
 final class MockLogger: LoggerProtocol {
+
     typealias LoggingCompletion = ((WireSystem.LogConvertible, WireSystem.LogAttributes?) -> Void)
+
     var debugIsCalled: LoggingCompletion?
     var infoIsCalled: LoggingCompletion?
     var noticeIsCalled: LoggingCompletion?
