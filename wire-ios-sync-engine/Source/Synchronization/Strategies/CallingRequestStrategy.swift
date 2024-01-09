@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireRequestStrategy
 import WireDataModel
@@ -44,9 +45,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     private let ephemeralURLSession = URLSession(configuration: .ephemeral)
     private let fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol
 
+    private var cancellables = Set<AnyCancellable>()
+
     // MARK: - Internal Properties
 
-    var callCenter: WireCallCenterV3?
+    private(set) var callCenter: WireCallCenterV3?
 
     // MARK: - Init
 
@@ -58,7 +61,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         callEventStatus: CallEventStatus,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
         messageSender: MessageSenderInterface
-        // pass in callCenter instead?
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
@@ -85,6 +87,21 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                                                             analytics: managedObjectContext.analytics,
                                                             transport: self)
         }
+
+        setupEventProcessingNotifications()
+    }
+
+    private func setupEventProcessingNotifications() {
+
+        NotificationCenter.default
+            .publisher(for: EventProcessor.didStartProcessingEventsNotification)
+            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: true) }
+            .store(in: &cancellables)
+
+        NotificationCenter.default
+            .publisher(for: EventProcessor.didFinishProcessingEventsNotification)
+            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: false) }
+            .store(in: &cancellables)
     }
 
     // MARK: - Methods

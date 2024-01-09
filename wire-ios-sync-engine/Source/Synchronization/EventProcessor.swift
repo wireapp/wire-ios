@@ -22,8 +22,6 @@ import WireRequestStrategy
 
 actor EventProcessor: UpdateEventProcessor {
 
-    weak var delegate: EventProcessorDelegate?
-
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
 
     private let syncContext: NSManagedObjectContext
@@ -65,7 +63,9 @@ actor EventProcessor: UpdateEventProcessor {
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
         try await enqueueTask {
 
-            await self.delegate?.eventProcessorDidStartProcessingEvents(self)
+            await MainActor.run {
+                NotificationCenter.default.post(name: Self.didStartProcessingEventsNotification, object: self)
+            }
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
             let publicKeys = try? self.earService.fetchPublicKeys()
@@ -75,7 +75,9 @@ actor EventProcessor: UpdateEventProcessor {
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
             try await self.processEvents(callEventsOnly: isLocked)
 
-            await self.delegate?.eventProcessorDidFinishProcessingEvents(self)
+            await MainActor.run {
+                NotificationCenter.default.post(name: Self.didFinishProcessingEventsNotification, object: self)
+            }
 
         }
     }
@@ -201,14 +203,13 @@ actor EventProcessor: UpdateEventProcessor {
         return fetchRequest
     }
 
-    func setDelegate(_ delegate: EventProcessorDelegate?) async {
-        self.delegate = delegate
-    }
-}
+    // MARK: - Notification Names
 
-protocol EventProcessorDelegate: AnyObject {
-    func eventProcessorDidStartProcessingEvents(_ eventProcessor: EventProcessor)
-    func eventProcessorDidFinishProcessingEvents(_ eventProcessor: EventProcessor)
+    /// Published before the first event is processed.
+    static let didStartProcessingEventsNotification = Notification.Name("EventProcessorDidStartProcessingEvents")
+
+    /// Published after the last event has been processed.
+    static let didFinishProcessingEventsNotification = Notification.Name("EventProcessorDidFinishProcessingEvents")
 }
 
 extension NSNotification.Name {
