@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -261,7 +261,7 @@ public class ZMUserSession: NSObject {
     let conversationEventProcessor: ConversationEventProcessor
 
     public init(
-        userId: UUID,
+        userID: UUID,
         transportSession: TransportSessionType,
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
@@ -274,7 +274,7 @@ public class ZMUserSession: NSObject {
         appVersion: String,
         coreDataStack: CoreDataStack,
         configuration: Configuration,
-        earService: EARServiceInterface? = nil,
+        earServiceFactory: EARServiceFactory,
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         sharedUserDefaults: UserDefaults
@@ -299,15 +299,15 @@ public class ZMUserSession: NSObject {
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
-        self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+        self.appLockController = AppLockController(userId: userID, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
         self.coreCryptoProvider = CoreCryptoProvider(
-            selfUserID: userId,
+            selfUserID: userID,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager)
         self.lastEventIDRepository = LastEventIDRepository(
-            userID: userId,
+            userID: userID,
             sharedUserDefaults: sharedUserDefaults
         )
         self.applicationStatusDirectory = ApplicationStatusDirectory(
@@ -318,7 +318,7 @@ public class ZMUserSession: NSObject {
             lastEventIDRepository: lastEventIDRepository,
             analytics: analytics
         )
-        self.earService = earService ?? EARService(
+        earService = earServiceFactory.create(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
@@ -340,7 +340,7 @@ public class ZMUserSession: NSObject {
         updateEventProcessor = eventProcessorFactory.create(
             storeProvider: coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
-            earService: self.earService,
+            earService: earService,
             eventConsumers: strategyDirectory?.eventConsumers ?? [],
             eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
         )

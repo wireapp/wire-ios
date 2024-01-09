@@ -17,7 +17,7 @@
 //
 
 /// `ZMUserSession.init` needs to create an object which conforms to `UpdateEventProcessor`.
-/// This protocol allows for providing it a mock factory for unit tests..
+/// This protocol allows for providing it a mock factory for unit tests.
 public protocol EventProcessorFactory {
     func create(
         storeProvider: CoreDataStack,

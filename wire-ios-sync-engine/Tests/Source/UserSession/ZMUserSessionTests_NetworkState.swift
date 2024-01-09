@@ -33,7 +33,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
         // when
         let testSession = ZMUserSession(
-            userId: userId,
+            userID: userId,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManagerMock,
@@ -46,6 +46,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             appVersion: "00000",
             coreDataStack: coreDataStack,
             configuration: .init(),
+            earServiceFactory: .default,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )

@@ -249,7 +249,7 @@ class APIMigrationManagerTests: MessagingTest {
         )
 
         return ZMUserSession(
-            userId: .create(),
+            userID: .create(),
             transportSession: mockTransportSession,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
@@ -262,6 +262,7 @@ class APIMigrationManagerTests: MessagingTest {
             appVersion: "999",
             coreDataStack: createCoreDataStack(),
             configuration: .init(),
+            earServiceFactory: .default,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )

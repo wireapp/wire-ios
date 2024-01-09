@@ -76,7 +76,7 @@ open class AuthenticatedSessionFactory {
         )
 
         let userSession = ZMUserSession(
-            userId: account.userIdentifier,
+            userID: account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
@@ -86,6 +86,7 @@ open class AuthenticatedSessionFactory {
             appVersion: appVersion,
             coreDataStack: coreDataStack,
             configuration: configuration,
+            earServiceFactory: .default,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             sharedUserDefaults: sharedUserDefaults
         )

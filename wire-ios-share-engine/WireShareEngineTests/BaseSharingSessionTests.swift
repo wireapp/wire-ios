@@ -60,7 +60,6 @@ class BaseTest: ZMTBaseTest {
     var operationLoop: RequestGeneratingOperationLoop!
     var strategyFactory: StrategyFactory!
     var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
-    var mockEARService: MockEARServiceInterface!
     var mockProteusService: MockProteusServiceInterface!
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
@@ -137,12 +136,6 @@ class BaseTest: ZMTBaseTest {
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
-        mockEARService = MockEARServiceInterface()
-        mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
-        mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
-        mockEARService.unlockDatabaseContext_MockMethod = { _ in }
-        mockEARService.lockDatabase_MockMethod = { }
-
         mockProteusService = MockProteusServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
 
@@ -163,7 +156,6 @@ class BaseTest: ZMTBaseTest {
         operationLoop = nil
         strategyFactory = nil
         mockCryptoboxMigrationManager = nil
-        mockEARService = nil
         mockProteusService = nil
         mockMLSDecryptionService = nil
         super.tearDown()
