@@ -94,12 +94,14 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     private func setupEventProcessingNotifications() {
 
         NotificationCenter.default
-            .publisher(for: EventProcessor.didStartProcessingEventsNotification)
+            .publisher(for: .eventProcessorDidStartProcessingEventsNotification)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: true) }
             .store(in: &cancellables)
 
         NotificationCenter.default
-            .publisher(for: EventProcessor.didFinishProcessingEventsNotification)
+            .publisher(for: .eventProcessorDidFinishProcessingEventsNotification)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: false) }
             .store(in: &cancellables)
     }

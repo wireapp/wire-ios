@@ -62,10 +62,7 @@ actor EventProcessor: UpdateEventProcessor {
 
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
         try await enqueueTask {
-
-            await MainActor.run {
-                NotificationCenter.default.post(name: Self.didStartProcessingEventsNotification, object: self)
-            }
+            NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
             let publicKeys = try? self.earService.fetchPublicKeys()
@@ -75,10 +72,7 @@ actor EventProcessor: UpdateEventProcessor {
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
             try await self.processEvents(callEventsOnly: isLocked)
 
-            await MainActor.run {
-                NotificationCenter.default.post(name: Self.didFinishProcessingEventsNotification, object: self)
-            }
-
+            NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
         }
     }
 
@@ -202,16 +196,15 @@ actor EventProcessor: UpdateEventProcessor {
 
         return fetchRequest
     }
-
-    // MARK: - Notification Names
-
-    /// Published before the first event is processed.
-    static let didStartProcessingEventsNotification = Notification.Name("EventProcessorDidStartProcessingEvents")
-
-    /// Published after the last event has been processed.
-    static let didFinishProcessingEventsNotification = Notification.Name("EventProcessorDidFinishProcessingEvents")
 }
 
-extension NSNotification.Name {
+extension Notification.Name {
+
     static let calculateBadgeCount = Self(rawValue: "calculateBadgeCountNotication")
+
+    /// Published before the first event is processed.
+    static let eventProcessorDidStartProcessingEventsNotification = Self("EventProcessorDidStartProcessingEvents")
+
+    /// Published after the last event has been processed.
+    static let eventProcessorDidFinishProcessingEventsNotification = Self("EventProcessorDidFinishProcessingEvents")
 }
