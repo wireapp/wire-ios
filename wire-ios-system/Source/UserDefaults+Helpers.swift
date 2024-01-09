@@ -25,15 +25,6 @@ extension UserDefaults {
         .init(suiteName: UUID().uuidString)
     }
 
-    @objc
-    public func reset() {
-        for key in dictionaryRepresentation().keys {
-            removeObject(forKey: key)
-        }
-
-        synchronize()
-    }
-
     /// Creates an instance with a random (UUID string based) `suiteName`.
     /// When the instance is deallocated, the storage is cleaned up.
     @objc public static func temporary() -> Self {

@@ -55,7 +55,7 @@ final class RecurringActionService: RecurringActionServiceInterface {
 
             let lastActionDate = lastCheckDate(for: action.id) ?? .distantPast
             if (lastActionDate + action.interval) <= now {
-                action.perform()
+                action()
                 persistLastCheckDate(for: action.id)
             }
         }

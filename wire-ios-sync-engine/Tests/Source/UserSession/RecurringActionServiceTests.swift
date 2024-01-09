@@ -24,17 +24,17 @@ import XCTest
 
 final class RecurringActionServiceTests: XCTestCase {
 
-    var suiteName: String!
+    var userDefaults: UserDefaults!
     var dateProvider: MockDateProvider!
     var sut: RecurringActionService!
 
     override func setUp() {
         super.setUp()
 
-        suiteName = String(describing: RecurringActionServiceTests.self) + "." + .random(length: 5)
+        userDefaults = .temporary()
         dateProvider = .init(now: .now)
         sut = RecurringActionService(
-            storage: .init(suiteName: suiteName)!,
+            storage: userDefaults,
             dateProvider: dateProvider
         )
     }
@@ -42,8 +42,7 @@ final class RecurringActionServiceTests: XCTestCase {
     override func tearDown() {
         sut = nil
         dateProvider = nil
-        UserDefaults.standard.removePersistentDomain(forName: suiteName)
-        suiteName = nil
+        userDefaults = nil
 
         super.tearDown()
     }
