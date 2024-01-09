@@ -33,12 +33,12 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
         // when
         let testSession = ZMUserSession(
-            userID: userId,
+            userId: userId,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManagerMock,
             analytics: nil,
-            eventProcessorFactory: .default,
+            eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,

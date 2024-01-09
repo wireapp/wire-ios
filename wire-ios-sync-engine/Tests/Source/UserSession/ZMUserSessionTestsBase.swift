@@ -97,12 +97,12 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockMLSService = MockMLSServiceInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
         sut = ZMUserSession(
-            userID: coreDataStack.account.userIdentifier,
+            userId: coreDataStack.account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManagerMock,
             analytics: nil,
-            eventProcessorFactory: .mock,
+            eventProcessor: mockUpdateEventProcessor,
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,

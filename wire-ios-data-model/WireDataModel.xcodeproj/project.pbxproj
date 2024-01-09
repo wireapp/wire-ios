@@ -2191,15 +2191,15 @@
 		EE22F81029DD82290053E1C6 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
-				EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */,
-				EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */,
-				EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */,
-				EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */,
-				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
 				EEC57C4929E407CC0068DFDA /* EARService.swift */,
+				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
+				EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */,
+				EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */,
 				018964242A6FE72700BCEE0E /* EARStorage.swift */,
-				EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */,
+				EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */,
 				EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */,
+				EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */,
+				EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */,
 			);
 			path = EAR;
 			sourceTree = "<group>";

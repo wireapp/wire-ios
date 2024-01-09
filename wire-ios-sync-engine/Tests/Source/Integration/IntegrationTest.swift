@@ -51,12 +51,11 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
         return ZMUserSession(
-            userID: account.userIdentifier,
+            userId: account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
             analytics: analytics,
-            eventProcessorFactory: .default,
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,

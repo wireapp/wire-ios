@@ -52,7 +52,7 @@ extension ZMConversation {
                 let groups = userSession.syncContext.enterAllGroupsExceptSecondary()
                 Task {
                     // FIXME: [jacob] replace with ConversationEventProcessor
-                    try? await userSession.updateEventProcessor.processEvents([event])
+                    try? await userSession.updateEventProcessor?.processEvents([event])
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success(()))
                     }

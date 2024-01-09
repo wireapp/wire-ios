@@ -76,12 +76,11 @@ open class AuthenticatedSessionFactory {
         )
 
         let userSession = ZMUserSession(
-            userID: account.userIdentifier,
+            userId: account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
             analytics: analytics,
-            eventProcessorFactory: .default,
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,

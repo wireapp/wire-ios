@@ -249,12 +249,12 @@ class APIMigrationManagerTests: MessagingTest {
         )
 
         return ZMUserSession(
-            userID: .create(),
+            userId: .create(),
             transportSession: mockTransportSession,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
             analytics: nil,
-            eventProcessorFactory: .mock,
+            eventProcessor: mockUpdateEventProcessor,
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
