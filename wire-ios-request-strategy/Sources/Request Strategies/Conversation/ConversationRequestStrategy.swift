@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,9 +70,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
         mlsService: MLSServiceInterface,
-        removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil
+        removeLocalConversation: RemoveLocalConversationUseCaseProtocol
     ) {
-        self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
+        self.removeLocalConversation = removeLocalConversation
 
         self.syncProgress = syncProgress
         self.conversationIDsSync = PaginatedSync<Payload.PaginatedConversationIDList>(
@@ -97,7 +97,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         )
 
         self.conversationByQualifiedIDListTranscoder = ConversationByQualifiedIDListTranscoder(
-            context: managedObjectContext
+            context: managedObjectContext,
+            removeLocalConversationUseCase: removeLocalConversation
         )
         self.conversationByQualifiedIDListSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -106,7 +107,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         self.conversationByIDTranscoder = ConversationByIDTranscoder(
             context: managedObjectContext,
-            removeLocalConversation: self.removeLocalConversation
+            removeLocalConversationUseCase: removeLocalConversation
         )
         self.conversationByIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -115,7 +116,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         self.conversationByQualifiedIDTranscoder = ConversationByQualifiedIDTranscoder(
             context: managedObjectContext,
-            removeLocalConversation: self.removeLocalConversation
+            removeLocalConversationUseCase: removeLocalConversation
         )
         self.conversationByQualifiedIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -140,7 +141,11 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             updateAccessRolesActionHandler,
             updateRoleActionHandler,
             SyncConversationActionHandler(context: managedObjectContext),
-            CreateGroupConversationActionHandler(context: managedObjectContext, mlsService: mlsService)
+            CreateGroupConversationActionHandler(
+                context: managedObjectContext,
+mlsService: mlsService,
+                removeLocalConversationUseCase: removeLocalConversation
+            )
         ])
 
         super.init(
@@ -477,15 +482,16 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConversationEventPayloadProcessor()
-    private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+    private let processor: ConversationEventPayloadProcessor
+    private let removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
 
     init(
         context: NSManagedObjectContext,
-        removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
     ) {
         self.context = context
-        self.removeLocalConversation = removeLocalConversation
+        self.removeLocalConversationUseCase = removeLocalConversationUseCase
+        processor = .init(removeLocalConversation: removeLocalConversationUseCase)
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -540,7 +546,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             }
             guard let conversation, conversationType == .group else { continue }
 
-            await removeLocalConversation.invoke(
+            await removeLocalConversationUseCase.invoke(
                 with: conversation,
                 syncContext: context
             )
@@ -587,15 +593,16 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConversationEventPayloadProcessor()
-    private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+    private let processor: ConversationEventPayloadProcessor
+    private let removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
 
     init(
         context: NSManagedObjectContext,
-        removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
     ) {
         self.context = context
-        self.removeLocalConversation = removeLocalConversation
+        self.removeLocalConversationUseCase = removeLocalConversationUseCase
+        processor = .init(removeLocalConversation: removeLocalConversationUseCase)
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -662,7 +669,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            await removeLocalConversation.invoke(
+            await removeLocalConversationUseCase.invoke(
                 with: conversation,
                 syncContext: context
             )
@@ -695,7 +702,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 }
 
-class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
+final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
 
     public typealias T = UUID
 
@@ -705,7 +712,7 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConversationEventPayloadProcessor()
+    private let processor = ConversationEventPayloadProcessor(removeLocalConversation: RemoveLocalConversationUseCase())
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -762,10 +769,14 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConversationEventPayloadProcessor()
+    private let processor: ConversationEventPayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
+    ) {
         self.context = context
+        processor = .init(removeLocalConversation: removeLocalConversationUseCase)
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {

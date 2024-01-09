@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -259,6 +260,11 @@ public final class ConversationService: ConversationServiceInterface {
                     } else {
                         completion(.failure(.conversationNotFound))
                     }
+
+                case .failure(CreateGroupConversationAction.Failure.notConnected):
+                    users.forEach { $0.needsToBeUpdatedFromBackend = true }
+                    self.context.enqueueDelayedSave()
+                    completion(.failure(.networkError(.notConnected)))
 
                 case .failure(let failure):
                     completion(.failure(.networkError(failure)))

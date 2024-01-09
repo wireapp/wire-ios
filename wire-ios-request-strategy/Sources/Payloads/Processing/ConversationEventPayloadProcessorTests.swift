@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -1058,6 +1058,165 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 [self.groupConversation]
             )
         }
+    }
+
+    // MARK: - Handle User Removed
+
+    func testProcessingConverationMemberLeave_SelfUserTriggersAccountDeletedNotification() async {
+        // Given
+        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
+            selfUserLeaves: true
+        )
+        let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
+        expectation.handler = { notification in
+            notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil
+        }
+
+        // When
+        await sut.processPayload(
+            conversationEvent,
+            originalEvent: originalEvent,
+            in: syncMOC
+        )
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 1)
+        await syncMOC.perform { [self] in
+            ensureLastMessage(
+                in: conversation,
+                is: .participantsRemoved,
+                for: users[0],
+                at: originalEvent.timestamp
+            )
+        }
+    }
+
+    func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() async {
+        // Given
+        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
+            selfUserLeaves: false
+        )
+
+        // When
+        await sut.processPayload(
+            conversationEvent,
+            originalEvent: originalEvent,
+            in: syncMOC
+        )
+
+        // Then
+        await syncMOC.perform { [self] in
+            XCTAssertTrue(users[1].isAccountDeleted)
+            XCTAssertFalse(conversation.localParticipants.contains(users[1]))
+
+            ensureLastMessage(
+                in: conversation,
+                is: .participantsRemoved,
+                for: users[1],
+                at: originalEvent.timestamp
+            )
+        }
+    }
+
+    private func setupForProcessingConverationMemberLeaveTests(
+        selfUserLeaves: Bool
+    ) -> (
+        conversation: ZMConversation,
+        users: [ZMUser],
+        conversationEvent: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
+        originalEvent: ZMUpdateEvent
+    ) {
+        syncMOC.performAndWait {
+            let team = Team.fetchOrCreate(with: .init(), create: true, in: syncMOC, created: .none)
+
+            let users: [ZMUser] = [.selfUser(in: syncMOC), .insertNewObject(in: syncMOC)]
+            users.forEach { user in
+                user.remoteIdentifier = .init()
+                user.domain = owningDomain
+                let membership = Member.insertNewObject(in: syncMOC)
+                membership.user = user
+                membership.team = team
+            }
+            let userIndex = selfUserLeaves ? 0 : 1
+
+            let conversation = ZMConversation.insertGroupConversation(moc: syncMOC, participants: users)!
+            conversation.remoteIdentifier = .init(uuidString: "ee8824c5-95d0-4e59-9862-e9bb0fc6e921")
+            conversation.conversationType = .group
+            conversation.domain = owningDomain
+
+            let memberLeavePayload = Payload.UpdateConverationMemberLeave(
+                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap { $0 },
+                reason: .userDeleted
+            )
+            let conversationEvent = Payload.ConversationEvent(
+                id: nil,
+                qualifiedID: groupConversation.qualifiedID,
+                from: nil,
+                qualifiedFrom: nil,
+                timestamp: nil,
+                type: nil,
+                data: memberLeavePayload
+            )
+            let originalEvent = ZMUpdateEvent(
+                uuid: .init(),
+                payload: [
+                    "id": "cf51e6b1-39a6-11ed-8005-520924331b82",
+                    "time": Date().addingTimeInterval(5).transportString(),
+                    "type": "conversation.member-leave",
+                    "from": "f76c1c7a-7278-4b70-9df7-eca7980f3a5d",
+                    "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
+                    "data": [
+                        "qualified_user_ids": [
+                            ["id": users[userIndex].remoteIdentifier.transportString(), "domain": owningDomain]
+                        ],
+                        "reason": "user-delete"
+                    ]
+                ],
+                transient: false,
+                decrypted: true,
+                source: .webSocket
+            )!
+
+            return (conversation, users, conversationEvent, originalEvent)
+        }
+    }
+
+    private func ensureLastMessage(
+        in conversation: ZMConversation,
+        is systemMessageType: ZMSystemMessageType,
+        for user: ZMUser,
+        at timestamp: Date?,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else {
+            return XCTFail(
+                "Last message is not system message",
+                file: file,
+                line: line
+            )
+        }
+        guard lastMessage.systemMessageType == systemMessageType else {
+            return XCTFail(
+                "System message is not \(systemMessageType), but '\(lastMessage.systemMessageType)'",
+                file: file,
+                line: line
+            )
+        }
+        guard let serverTimestamp = lastMessage.serverTimestamp else {
+            return XCTFail(
+                "System message should have timestamp",
+                file: file,
+                line: line
+            )
+        }
+        XCTAssertEqual(
+            serverTimestamp.timeIntervalSince1970,
+            (timestamp ?? .distantPast).timeIntervalSince1970,
+            accuracy: 0.1,
+            file: file,
+            line: line
+        )
     }
 
 }

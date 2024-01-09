@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -154,7 +155,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
             // Create the event
             let payload = Payload.UpdateConverationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .left
             )
             updateEvent = self.updateEvent(from: payload)
         }
@@ -188,7 +190,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
             // create the event
             let payload = Payload.UpdateConverationMemberLeave(
                 userIDs: [user.remoteIdentifier],
-                qualifiedUserIDs: [user.qualifiedID!]
+                qualifiedUserIDs: [user.qualifiedID!],
+                reason: .left
             )
             updateEvent = self.updateEvent(from: payload)
         }
@@ -219,7 +222,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
             // create the event
             let payload = Payload.UpdateConverationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .left
             )
             updateEvent = self.updateEvent(from: payload)
         }

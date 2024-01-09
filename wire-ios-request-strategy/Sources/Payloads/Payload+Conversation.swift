@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -501,14 +502,23 @@ extension Payload {
         enum CodingKeys: String, CodingKey {
             case userIDs = "user_ids"
             case qualifiedUserIDs = "qualified_user_ids"
+            case reason
         }
 
         static var eventType: ZMUpdateEventType {
             return .conversationMemberLeave
         }
 
-        let userIDs: [UUID]?
-        let qualifiedUserIDs: [QualifiedID]?
+        var userIDs: [UUID]?
+        var qualifiedUserIDs: [QualifiedID]?
+        var reason: Reason?
+
+        enum Reason: String, Codable {
+            /// The user has been removed from the team and therefore removed from all conversations.
+            case userDeleted = "user-deleted"
+            case left
+            case removed
+        }
     }
 
     struct UpdateConverationMemberJoin: CodableEventData {

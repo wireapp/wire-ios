@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,8 +69,8 @@ import WireUtilities
     case teamCreate = 23
     case teamDelete = 24
     case teamUpdate = 25
-    // removed: teamMemberJoin = 26 [WPB-4538]: "team.member-join" should not be handled anymore
-    case teamMemberLeave = 27
+    // removed: teamMemberJoin = 26 [WPB-4538]: no need to handle "team.member-join" in clients
+    case teamMemberLeave = 27 // [WPB-4538]: "team.member-leave" is only required for backwards compatibility
     case teamConversationCreate = 28
     case teamConversationDelete = 29
     case teamMemberUpdate = 30

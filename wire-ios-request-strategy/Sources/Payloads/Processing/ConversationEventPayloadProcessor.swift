@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-final class ConversationEventPayloadProcessor {
+struct ConversationEventPayloadProcessor {
 
     enum Source {
         case slowSync
@@ -28,8 +28,8 @@ final class ConversationEventPayloadProcessor {
 
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
-    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil) {
-        self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
+    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol) {
+        self.removeLocalConversation = removeLocalConversation
     }
 
     // MARK: - Conversation creation
@@ -106,41 +106,71 @@ final class ConversationEventPayloadProcessor {
         _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
-    ) {
-        guard
+    ) async {
+        let (conversation, removedUsers) = await context.perform {
             let conversation = fetchOrCreateConversation(
                 from: payload,
                 in: context
-            ),
+            )
             let removedUsers = fetchRemovedUsers(
                 from: payload.data,
                 in: context
             )
-        else {
-            Logging.eventProcessing.error("Member leave update missing conversation or users, aborting...")
-            return
+            return (conversation, removedUsers)
+        }
+        guard let conversation, let removedUsers else {
+            return Logging.eventProcessing.error("Member leave update missing conversation or users, aborting...")
         }
 
-        if !conversation.localParticipants.isDisjoint(with: removedUsers) {
-            // TODO jacob refactor to append method on conversation
-            _ = ZMSystemMessage.createOrUpdate(
-                from: originalEvent,
+        let (isSelfUserRemoved, isMessageProtocolMLS) = await context.perform {
+            if !conversation.localParticipants.isDisjoint(with: removedUsers) {
+                // TODO jacob refactor to append method on conversation
+                _ = ZMSystemMessage.createOrUpdate(
+                    from: originalEvent,
+                    in: context
+                )
+            }
+
+            let initiatingUser = fetchOrCreateSender(
+                from: payload,
                 in: context
             )
+
+            // Idea for improvement, return removed users from this call to benefit from
+            // checking that the participants are in the conversation before being removed
+            conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: initiatingUser)
+
+            let isSelfUserRemoved = removedUsers.contains(where: \.isSelfUser)
+            let isMessageProtocolMLS = conversation.messageProtocol == .mls
+            return (isSelfUserRemoved, isMessageProtocolMLS)
         }
 
-        let sender = fetchOrCreateSender(
-            from: payload,
-            in: context
-        )
+        if isSelfUserRemoved, isMessageProtocolMLS {
+            await MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+        }
 
-        // Idea for improvement, return removed users from this call to benefit from
-        // checking that the participants are in the conversation before being removed
-        conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
+        await context.perform {
+            if payload.data.reason == .userDeleted {
+                // delete the users locally and/or logout if the self user is affected
+                let removedUsers = removedUsers.sorted { !$0.isSelfUser && $1.isSelfUser }
+                for user in removedUsers {
+                    // only delete users that had been members
+                    guard let membership = user.membership else {
+                        WireLogger.updateEvent.error("Trying to delete non existent membership of \(user)")
+                        continue
+                    }
 
-        if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
-            WaitingGroupTask(context: context) {
-                await MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+                    context.delete(membership)
+                    if user.isSelfUser {
+                        // should actually be handled by the "user.delete" event, this is just a fallback
+                        DispatchQueue.main.async {
+                            AccountDeletedNotification(context: context)
+                                .post(in: context.notificationContext)
+                        }
+                    } else {
+                        user.markAccountAsDeleted(at: originalEvent.timestamp ?? Date())
+                    }
+                }
             }
         }
     }
