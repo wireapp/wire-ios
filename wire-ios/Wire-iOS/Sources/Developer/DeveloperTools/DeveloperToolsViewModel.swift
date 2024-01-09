@@ -116,7 +116,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .destination(DestinationItem(title: "Debug actions", makeView: {
                     AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self.selfClient)))
                 })),
-                .destination(DestinationItem(title: "Configure flags", makeView: {
+                .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
             ]
