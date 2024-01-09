@@ -244,7 +244,7 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = context.performAndWait {
+                encryptedData = await context.perform {
                     legacyEncrypt(
                         using: keyStore,
                         for: recipients,
