@@ -234,86 +234,86 @@ final class InputBarButtonsView: UIView {
         }
     }
 
-    private func constrainRowOfButtons(_ buttons: [UIButton],
-                                       inset: CGFloat,
-                                       rowIsFull: Bool,
-                                       referenceButton: UIButton?) -> [NSLayoutConstraint] {
-        guard let firstButton = buttons.first,
-              let lastButton = buttons.last else { return [] }
-
+    private func constrainRowOfButtons(_ buttons: [UIButton], inset: CGFloat, rowIsFull: Bool, referenceButton: UIButton?) -> [NSLayoutConstraint] {
         let buttonPadding: CGFloat = 12
         let buttonHeight = InputBarRowConstants.buttonsBarHeight - buttonPadding * 2
+        let offset = InputBarRowConstants.iconSize / 2 + buttonMargin
+        let constraintMultiplier = 0.5
+
+        var constraints = setupInitialConstraints(for: buttons, rowIsFull: rowIsFull, buttonPadding: buttonPadding)
+
+        for button in buttons {
+            constraints.append(contentsOf: constraintsForButton(button, in: buttons, inset: inset, buttonPadding: buttonPadding, buttonHeight: buttonHeight))
+        }
+
+        constraints.append(contentsOf: constraintsBetweenButtons(buttons, rowIsFull: rowIsFull, offset: offset, constraintMultiplier: constraintMultiplier))
+
+        if let reference = referenceButton, !rowIsFull {
+            [reference, buttons.last!].prepareForLayout()
+            constraints.append(buttons.last!.widthAnchor.constraint(equalTo: reference.widthAnchor))
+        }
+
+        setupInsets(forButtons: buttons, rowIsFull: rowIsFull)
+
+        return constraints
+    }
+
+    private func setupInitialConstraints(for buttons: [UIButton], rowIsFull: Bool, buttonPadding: CGFloat) -> [NSLayoutConstraint] {
+        guard let firstButton = buttons.first, let lastButton = buttons.last else { return [] }
 
         var constraints = [NSLayoutConstraint]()
-
         firstButton.translatesAutoresizingMaskIntoConstraints = false
-        constraints.append(
-            firstButton.leadingAnchor.constraint(equalTo: firstButton.superview!.leadingAnchor, constant: buttonPadding)
-        )
+        constraints.append(firstButton.leadingAnchor.constraint(equalTo: firstButton.superview!.leadingAnchor, constant: buttonPadding))
 
         if rowIsFull {
             lastButton.translatesAutoresizingMaskIntoConstraints = false
-            constraints.append(
-                lastButton.trailingAnchor.constraint(equalTo: lastButton.superview!.trailingAnchor, constant: -buttonPadding)
-            )
+            constraints.append(lastButton.trailingAnchor.constraint(equalTo: lastButton.superview!.trailingAnchor, constant: -buttonPadding))
         }
 
-        for button in buttons {
-            button.translatesAutoresizingMaskIntoConstraints = false
+        return constraints
+    }
 
-            if button == expandRowButton {
-                constraints.append(contentsOf: [
-                    button.topAnchor.constraint(equalTo: topAnchor, constant: buttonPadding),
-                    button.heightAnchor.constraint(equalToConstant: buttonHeight)
-                ])
-            } else {
-                buttonInnerContainer.translatesAutoresizingMaskIntoConstraints = false
+    private func constraintsForButton(_ button: UIButton, in buttons: [UIButton], inset: CGFloat, buttonPadding: CGFloat, buttonHeight: CGFloat) -> [NSLayoutConstraint] {
+        var constraints = [NSLayoutConstraint]()
+        button.translatesAutoresizingMaskIntoConstraints = false
 
-                constraints.append(contentsOf: [
-                    button.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor, constant: inset + buttonPadding),
-                    button.heightAnchor.constraint(equalToConstant: buttonHeight)
-                ])
-            }
+        if button == expandRowButton {
+            constraints.append(contentsOf: [
+                button.topAnchor.constraint(equalTo: topAnchor, constant: buttonPadding),
+                button.heightAnchor.constraint(equalToConstant: buttonHeight)
+            ])
+        } else {
+            buttonInnerContainer.translatesAutoresizingMaskIntoConstraints = false
+            constraints.append(contentsOf: [
+                button.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor, constant: inset + buttonPadding),
+                button.heightAnchor.constraint(equalToConstant: buttonHeight)
+            ])
         }
 
-        var previous: UIButton = firstButton
+        return constraints
+    }
+
+    private func constraintsBetweenButtons(_ buttons: [UIButton], rowIsFull: Bool, offset: CGFloat, constraintMultiplier: CGFloat) -> [NSLayoutConstraint] {
+        var constraints = [NSLayoutConstraint]()
+        var previous: UIButton = buttons.first!
+
         for current: UIButton in buttons.dropFirst() {
             let isFirstButton = previous == buttons.first
             let isLastButton = rowIsFull && current == buttons.last
-            let offset = InputBarRowConstants.iconSize / 2 + buttonMargin
-            let constraintMultiplier = 0.5
 
             [previous, current].prepareForLayout()
-
-            constraints.append(
-                previous.trailingAnchor.constraint(equalTo: current.leadingAnchor)
-            )
+            constraints.append(previous.trailingAnchor.constraint(equalTo: current.leadingAnchor))
 
             if isFirstButton {
-                constraints.append(
-                    previous.widthAnchor.constraint(equalTo: current.widthAnchor, multiplier: constraintMultiplier, constant: offset)
-                )
+                constraints.append(previous.widthAnchor.constraint(equalTo: current.widthAnchor, multiplier: constraintMultiplier, constant: offset))
             } else if isLastButton {
-                constraints.append(
-                    current.widthAnchor.constraint(equalTo: previous.widthAnchor, multiplier: constraintMultiplier, constant: offset)
-                )
+                constraints.append(current.widthAnchor.constraint(equalTo: previous.widthAnchor, multiplier: constraintMultiplier, constant: offset))
             } else {
-                constraints.append(
-                    current.widthAnchor.constraint(equalTo: previous.widthAnchor)
-                )
+                constraints.append(current.widthAnchor.constraint(equalTo: previous.widthAnchor))
             }
 
             previous = current
         }
-
-        if let reference = referenceButton, !rowIsFull {
-            [reference, lastButton].prepareForLayout()
-            constraints.append(
-                lastButton.widthAnchor.constraint(equalTo: reference.widthAnchor)
-            )
-        }
-
-        setupInsets(forButtons: buttons, rowIsFull: rowIsFull)
 
         return constraints
     }
