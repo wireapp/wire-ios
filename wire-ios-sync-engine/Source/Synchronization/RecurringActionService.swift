@@ -30,6 +30,7 @@ struct RecurringAction {
     }
 }
 
+// sourcery: AutoMockable
 protocol RecurringActionServiceInterface {
     func performActionsIfNeeded()
     func registerAction(_ action: RecurringAction)

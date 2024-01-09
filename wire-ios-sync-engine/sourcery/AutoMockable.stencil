@@ -227,8 +227,9 @@ import {{ import }}
 
 {% endfor %}
 }
-{% endif %}{% endfor %}
+{% endif %}
 
+{% endfor %}
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace
