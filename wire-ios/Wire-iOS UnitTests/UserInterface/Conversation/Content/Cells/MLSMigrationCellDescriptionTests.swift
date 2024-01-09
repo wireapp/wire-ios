@@ -129,4 +129,21 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
         XCTAssertNotNil(expectedValue)
     }
+
+    func test_mlsMigrationpotentialGap_doesContainLinkInAttributedString() throws {
+        // GIVEN
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationPotentialGap)
+        var expectedValue: Any?
+
+        // WHEN
+        let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
+
+        // THEN
+        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
+            expectedValue = value
+        })
+
+        XCTAssertNotNil(expectedValue)
+    }
+
 }
