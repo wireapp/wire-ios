@@ -110,12 +110,7 @@ private extension ZMConversation {
             return
         }
         let selfUser = ZMUser.selfUser(in: context)
-
-        appendSystemMessage(type: .conversationIsVerified,
-                            sender: selfUser,
-                            users: [],
-                            clients: [],
-                            timestamp: Date())
+        appendConversationVerifiedSystemMessage(sender: selfUser, at: Date())
     }
 
     func appendConversationDegradedSystemMessage() {
@@ -123,12 +118,7 @@ private extension ZMConversation {
             return
         }
         let selfUser = ZMUser.selfUser(in: context)
-
-        appendSystemMessage(type: .conversationIsDegraded,
-                            sender: selfUser,
-                            users: [],
-                            clients: [],
-                            timestamp: Date())
+        appendConversationDegradedSystemMessage(sender: selfUser, at: Date())
     }
 
 }

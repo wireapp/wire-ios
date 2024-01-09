@@ -625,18 +625,25 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(systemMessageType: ZMSystemMessageType) {
-        let title = NSAttributedString(
-            string: ConversationVerifiedSystemMessageSectionDescription.messageText(for: systemMessageType),
-            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
-        )
-        configuration = View.Configuration(icon: ConversationVerifiedSystemMessageSectionDescription.icon(for: systemMessageType), attributedText: title, showLine: true)
-        accessibilityLabel = title.string
+    init(messageType: ZMSystemMessageType) {
+        let icon = Self.icon(messageType: messageType)
+        let content = Self.makeAttributedString(messageType: messageType)
+
+        configuration = View.Configuration(icon: icon, attributedText: content, showLine: true)
+        accessibilityLabel = content.string
         actionController = nil
     }
 
-    private static func icon(for systemMessageType: ZMSystemMessageType) -> UIImage? {
-        switch systemMessageType {
+    // MARK: Content
+
+    private static func makeAttributedString(messageType: ZMSystemMessageType) -> NSAttributedString {
+        return NSAttributedString(
+            string: Self.messageText(for: messageType) ?? "",
+            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault])
+    }
+
+    private static func icon(messageType: ZMSystemMessageType) -> UIImage? {
+        switch messageType {
         case .conversationIsSecure:
             return Asset.Images.verifiedShield.image
         case .conversationIsVerified:
@@ -648,7 +655,7 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
         }
     }
 
-    private static func messageText(for systemMessageType: ZMSystemMessageType) -> String {
+    private static func messageText(for systemMessageType: ZMSystemMessageType) -> String? {
         switch systemMessageType {
         case .conversationIsSecure:
             return L10n.Localizable.Content.System.isVerified
@@ -657,7 +664,7 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
         case .conversationIsDegraded:
             return L10n.Localizable.Content.System.Mls.conversationIsDegraded
         default:
-            return ""
+            return nil
         }
     }
 }
