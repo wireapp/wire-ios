@@ -151,6 +151,74 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
     }
 
 }
+public class MockMLSEventProcessing: MLSEventProcessing {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - updateConversationIfNeeded
+
+    public var updateConversationIfNeededConversationGroupIDContext_Invocations: [(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)] = []
+    public var updateConversationIfNeededConversationGroupIDContext_MockMethod: ((ZMConversation, String?, NSManagedObjectContext) async -> Void)?
+
+    public func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) async {
+        updateConversationIfNeededConversationGroupIDContext_Invocations.append((conversation: conversation, groupID: groupID, context: context))
+
+        guard let mock = updateConversationIfNeededConversationGroupIDContext_MockMethod else {
+            fatalError("no mock for `updateConversationIfNeededConversationGroupIDContext`")
+        }
+
+        await mock(conversation, groupID, context)
+    }
+
+    // MARK: - process
+
+    public var processWelcomeMessageConversationIDIn_Invocations: [(welcomeMessage: String, conversationID: QualifiedID, context: NSManagedObjectContext)] = []
+    public var processWelcomeMessageConversationIDIn_MockMethod: ((String, QualifiedID, NSManagedObjectContext) async -> Void)?
+
+    public func process(welcomeMessage: String, conversationID: QualifiedID, in context: NSManagedObjectContext) async {
+        processWelcomeMessageConversationIDIn_Invocations.append((welcomeMessage: welcomeMessage, conversationID: conversationID, context: context))
+
+        guard let mock = processWelcomeMessageConversationIDIn_MockMethod else {
+            fatalError("no mock for `processWelcomeMessageConversationIDIn`")
+        }
+
+        await mock(welcomeMessage, conversationID, context)
+    }
+
+    // MARK: - joinMLSGroupWhenReady
+
+    public var joinMLSGroupWhenReadyForConversationContext_Invocations: [(conversation: ZMConversation, context: NSManagedObjectContext)] = []
+    public var joinMLSGroupWhenReadyForConversationContext_MockMethod: ((ZMConversation, NSManagedObjectContext) -> Void)?
+
+    public func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
+        joinMLSGroupWhenReadyForConversationContext_Invocations.append((conversation: conversation, context: context))
+
+        guard let mock = joinMLSGroupWhenReadyForConversationContext_MockMethod else {
+            fatalError("no mock for `joinMLSGroupWhenReadyForConversationContext`")
+        }
+
+        mock(conversation, context)
+    }
+
+    // MARK: - wipeMLSGroup
+
+    public var wipeMLSGroupForConversationContext_Invocations: [(conversation: ZMConversation, context: NSManagedObjectContext)] = []
+    public var wipeMLSGroupForConversationContext_MockMethod: ((ZMConversation, NSManagedObjectContext) async -> Void)?
+
+    public func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async {
+        wipeMLSGroupForConversationContext_Invocations.append((conversation: conversation, context: context))
+
+        guard let mock = wipeMLSGroupForConversationContext_MockMethod else {
+            fatalError("no mock for `wipeMLSGroupForConversationContext`")
+        }
+
+        await mock(conversation, context)
+    }
+
+}
 public class MockMessageAPI: MessageAPI {
 
     // MARK: - Life cycle

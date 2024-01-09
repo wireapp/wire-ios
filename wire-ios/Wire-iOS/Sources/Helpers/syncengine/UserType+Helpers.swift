@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-typealias ConversationCreatedBlock = (ZMConversation?) -> Void
+typealias ConversationCreatedBlock = (Swift.Result<ZMConversation, Error>) -> Void
 
 extension UserType {
 
@@ -50,10 +50,11 @@ extension UserType {
         conversationService.createTeamOneToOneConversation(user: user) { result in
             switch result {
             case .success(let conversation):
-                completion(conversation)
+                completion(.success(conversation))
 
             case .failure(let error):
                 WireLogger.conversation.error("failed to create one to one conversation: \(String(describing: error))")
+                completion(.failure(error))
             }
         }
     }

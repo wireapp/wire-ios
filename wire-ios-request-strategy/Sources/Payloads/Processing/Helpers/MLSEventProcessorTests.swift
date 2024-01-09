@@ -39,7 +39,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         mlsServiceMock = .init()
         mlsServiceMock.registerPendingJoin_MockMethod = { _ in }
         mlsServiceMock.wipeGroup_MockMethod = { _ in }
-        mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = nil
+        mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = .random()
         mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = { }
 
         oneOnOneResolverMock = .init()

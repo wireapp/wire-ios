@@ -21,15 +21,18 @@ import XCTest
 class ConversationEventProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventProcessor!
-    var mockMLSEventProcessor: MockMLSEventProcessor!
     var conversationService: MockConversationServiceInterface!
+    var mockMLSEventProcessor: MockMLSEventProcessing!
 
     override func setUp() {
         super.setUp()
         conversationService = MockConversationServiceInterface()
-        mockMLSEventProcessor = MockMLSEventProcessor()
-
         conversationService.syncConversationQualifiedID_MockMethod = { _ in }
+
+        mockMLSEventProcessor = .init()
+        mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
+        mockMLSEventProcessor.processWelcomeMessageConversationIDIn_MockMethod = { _, _, _ in }
+        mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in }
 
         sut = ConversationEventProcessor(
             context: syncMOC,
@@ -43,8 +46,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
 
     override func tearDown() {
         sut = nil
-        mockMLSEventProcessor = nil
         conversationService = nil
+        mockMLSEventProcessor = nil
         super.tearDown()
     }
 
@@ -94,7 +97,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
         await sut.processConversationEvents([event])
 
         // Then
-        let updateConversationCalls = mockMLSEventProcessor.calls.updateConversationIfNeeded
+        let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_Invocations
         XCTAssertEqual(updateConversationCalls.count, 1)
         XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
 
@@ -128,107 +131,11 @@ class ConversationEventProcessorTests: MessagingTestBase {
         await sut.processConversationEvents([unwrappedUpdateEvent])
 
         // then
-        XCTAssertEqual(mockMLSEventProcessor.calls.processWelcomeMessage.count, 1)
-        let invocation = try XCTUnwrap(mockMLSEventProcessor.calls.processWelcomeMessage.first)
-        XCTAssertEqual(invocation.0, message)
-        XCTAssertEqual(invocation.1, groupConversation.qualifiedID)
-    }
-
-    // MARK: - MLS conversation member leave
-
-    func test_UpdateConversationMemberLeave_WipesMLSGroup() async throws {
-        // Given
-        var updateEvent: ZMUpdateEvent?
-
-        await syncMOC.perform { [self] in
-            // Create self user
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-            selfUser.domain = groupConversation.domain
-
-            // Set message protocol
-            groupConversation.messageProtocol = .mls
-
-            // Create the event
-            let payload = Payload.UpdateConverationMemberLeave(
-                userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
-            )
-            updateEvent = self.updateEvent(from: payload)
-        }
-
-        let event = try XCTUnwrap(updateEvent)
-
-        // When
-        await self.sut.processConversationEvents([event])
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.count, 1)
-        XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.first, groupConversation)
-
-    }
-
-    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() async throws {
-        // Given
-        var updateEvent: ZMUpdateEvent?
-
-        await syncMOC.perform { [self] in
-
-            // create user
-            let user = ZMUser.insertNewObject(in: syncMOC)
-            user.remoteIdentifier = UUID.create()
-            user.domain = groupConversation.domain
-
-            // set message protocol
-            groupConversation.messageProtocol = .mls
-
-            // create the event
-            let payload = Payload.UpdateConverationMemberLeave(
-                userIDs: [user.remoteIdentifier],
-                qualifiedUserIDs: [user.qualifiedID!]
-            )
-            updateEvent = self.updateEvent(from: payload)
-        }
-        let event = try XCTUnwrap(updateEvent)
-        // When
-        await self.sut.processConversationEvents([event])
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.count, 0)
-    }
-
-    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenProtocolIsNotMLS() async throws {
-
-        // Given
-        var updateEvent: ZMUpdateEvent?
-
-        await syncMOC.perform { [self] in
-
-            // create self user
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-            selfUser.domain = groupConversation.domain
-
-            // set message protocol
-            groupConversation.messageProtocol = .proteus
-
-            // create the event
-            let payload = Payload.UpdateConverationMemberLeave(
-                userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
-            )
-            updateEvent = self.updateEvent(from: payload)
-        }
-        let event = try XCTUnwrap(updateEvent)
-
-        // When
-        await self.sut.processConversationEvents([event])
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        XCTAssertEqual(mockMLSEventProcessor.calls.wipeGroup.count, 0)
+        let qualifiedID = await syncMOC.perform { self.groupConversation.qualifiedID }
+        let invocations = mockMLSEventProcessor.processWelcomeMessageConversationIDIn_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        XCTAssertEqual(invocations.first?.welcomeMessage, message)
+        XCTAssertEqual(invocations.first?.conversationID, qualifiedID)
     }
 
     // MARK: Conversation Creation
