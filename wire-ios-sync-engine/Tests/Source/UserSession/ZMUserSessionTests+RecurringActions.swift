@@ -79,6 +79,12 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
     }
 
+    func testTeamMetadataIsUpdated() {
+        XCTFail("TODO")
+    }
+
+    // MARK: - Helpers
+
     private func createUserIsPendingMetadataRefresh(moc: NSManagedObjectContext, domain: String?) -> ZMUser {
         let user = ZMUser(context: moc)
         user.remoteIdentifier = UUID()

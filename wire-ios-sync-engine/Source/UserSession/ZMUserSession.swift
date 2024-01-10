@@ -483,6 +483,7 @@ public class ZMUserSession: NSObject {
     private func configureRecurringActions() {
         recurringActionService.registerAction(refreshUsersMissingMetadata())
         recurringActionService.registerAction(refreshConversationsMissingMetadata())
+        recurringActionService.registerAction(refreshTeamMetadata())
     }
 
     func startRequestLoopTracker() {

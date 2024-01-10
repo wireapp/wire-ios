@@ -56,4 +56,8 @@ extension ZMUserSession {
             }
         }
     }
+
+    func refreshTeamMetadata(interval: TimeInterval = .oneDay) -> RecurringAction {
+        fatalError("TODO: implement")
+    }
 }

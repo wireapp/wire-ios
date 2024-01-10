@@ -25,24 +25,40 @@ import Foundation
     let transportSession: TransportSessionType
     var isTornDown = false
 
-    private var refetchIncompleteUserMetadata: RecurringAction?
-    private var refetchIncompleteConversationMetadata: RecurringAction?
+    private let refreshUsersMissingMetadataAction: RecurringAction
+    private let refreshConversationsMissingMetadataAction: RecurringAction
+    private let refreshTeamMetadataAction: RecurringAction
 
     deinit {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
     }
 
     public convenience init(userSession: ZMUserSession) {
-        self.init(searchContext: userSession.searchManagedObjectContext, contextProvider: userSession, transportSession: userSession.transportSession)
-
-        self.refetchIncompleteUserMetadata = userSession.refreshUsersMissingMetadata()
-        self.refetchIncompleteConversationMetadata = userSession.refreshConversationsMissingMetadata()
+        self.init(
+            searchContext: userSession.searchManagedObjectContext,
+            contextProvider: userSession,
+            transportSession: userSession.transportSession,
+            refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadata(),
+            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadata(),
+            refreshTeamMetadataAction: userSession.refreshTeamMetadata()
+        )
     }
 
-    init(searchContext: NSManagedObjectContext, contextProvider: ContextProvider, transportSession: TransportSessionType) {
+    init(
+        searchContext: NSManagedObjectContext,
+        contextProvider: ContextProvider,
+        transportSession: TransportSessionType,
+        refreshUsersMissingMetadataAction: RecurringAction,
+        refreshConversationsMissingMetadataAction: RecurringAction,
+        refreshTeamMetadataAction: RecurringAction
+    ) {
         self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.transportSession = transportSession
+
+        self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
+        self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
+        self.refreshTeamMetadataAction = refreshTeamMetadataAction
     }
 
     /// Perform a search request.
@@ -79,10 +95,10 @@ import Foundation
     }
 
     public func updateIncompleteMetadataIfNeeded() {
-        refetchIncompleteUserMetadata?.perform()
-        refetchIncompleteConversationMetadata?.perform()
+        refreshUsersMissingMetadataAction()
+        refreshConversationsMissingMetadataAction()
+        refreshTeamMetadataAction()
     }
-
 }
 
 extension SearchDirectory: TearDownCapable {
