@@ -438,7 +438,7 @@ final class ConversationSystemMessageCellDescription {
             let domainsStoppedFederatingCell = DomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
-        case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted, .mlsMigrationUpdateVersion:
+        case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted, .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap:
             let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(description)]
 

@@ -66,6 +66,8 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
             return makeUpdateVersionAttributedString()
         case .mlsMigrationJoinAfterwards:
             return makeJoinAfterwardsAttributedString()
+        case .mlsMigrationPotentialGap:
+            return makePotentialGapAttributedString()
         default:
             assertionFailure("MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!")
             return nil
@@ -127,4 +129,22 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         )
         return [text, link].joined(separator: NSAttributedString(" "))
     }
+
+    private static func makePotentialGapAttributedString() -> NSAttributedString? {
+        typealias Localizable = L10n.Localizable.Content.System.MlsMigration
+
+        let text = NSMutableAttributedString.markdown(
+            from: Localizable.potentialGap,
+            style: .systemMessage
+        )
+
+        let link = NSAttributedString(
+            string: Localizable.learnMore,
+            attributes: linkAttributes
+        )
+
+        return [text, link].joined(separator: NSAttributedString(" "))
+
+    }
+
 }

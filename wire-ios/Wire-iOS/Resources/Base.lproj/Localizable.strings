@@ -465,6 +465,7 @@
 "content.system.mls_migration.join_afterwards" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
 "content.system.mls_migration.ongoing_call" = "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.";
 "content.system.mls_migration.learn_more" = "Learn more about MLS";
+"content.system.mls_migration.potentialGap" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
 
 // Link attachment messages
 
