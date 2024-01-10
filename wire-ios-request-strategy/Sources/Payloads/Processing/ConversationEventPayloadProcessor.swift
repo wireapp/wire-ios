@@ -357,7 +357,7 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        await syncProtocolChangeConversation(qualifiedID, in: context.notificationContext)
+        await syncConversation(qualifiedID, in: context.notificationContext)
 
         addProtocolChangeSystemMessage(
             qualifiedID,
@@ -366,7 +366,7 @@ final class ConversationEventPayloadProcessor {
         )
     }
 
-    private func syncProtocolChangeConversation(_ qualifiedID: QualifiedID, in notificationContext: NotificationContext) async {
+    private func syncConversation(_ qualifiedID: QualifiedID, in notificationContext: NotificationContext) async {
         var action = SyncConversationAction(qualifiedID: qualifiedID)
 
         do {
