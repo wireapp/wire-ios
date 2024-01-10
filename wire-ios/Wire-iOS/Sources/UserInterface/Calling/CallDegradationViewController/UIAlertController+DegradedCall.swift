@@ -32,9 +32,7 @@ extension UIAlertController {
 
         typealias GeneralLocale = L10n.Localizable.General
 
-        let title = callEnded ?
-        DegradedCallLocale.Ended.Alert.title :
-        DegradedCallLocale.Alert.title
+        let title = degradedCallTitle(forCallEnded: callEnded)
 
         let message = degradedCallMessage(forUser: degradedUser, callEnded: callEnded)
 
@@ -54,6 +52,10 @@ extension UIAlertController {
 
         return controller
     }
+
+    static func degradedCallTitle(forCallEnded callEnded: Bool) -> String {
+           return callEnded ? DegradedCallLocale.Ended.Alert.title : DegradedCallLocale.Alert.title
+       }
 
     static func degradedCallMessage(forUser degradedUser: UserType?, callEnded: Bool) -> String {
         if let user = degradedUser {
