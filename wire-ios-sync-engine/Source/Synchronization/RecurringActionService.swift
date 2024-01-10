@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystem
 import WireUtilities
 
 struct RecurringAction {
