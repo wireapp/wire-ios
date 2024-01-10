@@ -229,7 +229,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             }
 
         case .mls:
-            Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: payload.mlsGroupID)))")
+            WireLogger.mls.info("created new conversation on backend, got group ID (\(String(describing: payload.mlsGroupID)))")
 
             // Self user is creator, so we don't need to process a welcome message
             await context.perform {
@@ -255,7 +255,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             }
 
             guard let groupID = await context.perform({ newConversation.mlsGroupID }) else {
-                Logging.mls.warn("failed to create mls group: conversation is missing group id.")
+                WireLogger.mls.warn("failed to create mls group: conversation is missing group id.")
                 action.fail(with: .proccessingError)
                 return
             }
@@ -266,7 +266,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                     action.succeed(with: newConversation.objectID)
                 }
             } catch let error {
-                Logging.mls.error("failed create new mls group: \(String(describing: error))")
+                WireLogger.mls.error("failed create new mls group: \(String(describing: error))")
                 action.fail(with: .proccessingError)
                 return
             }
