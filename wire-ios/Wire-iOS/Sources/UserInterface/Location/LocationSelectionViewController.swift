@@ -148,11 +148,23 @@ final class LocationSelectionViewController: UIViewController {
         return wr_supportedInterfaceOrientations
     }
 
-    fileprivate func presentUnauthorizedAlert() {
-        let localize: (String) -> String = { ("location.unauthorized_alert." + $0).localized }
-        let alertController = UIAlertController(title: localize("title"), message: localize("message"), preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: localize("cancel"), style: .cancel, handler: nil)
-        let settingsAction = UIAlertAction(title: localize("settings"), style: .default) { _ in
+    private func presentUnauthorizedAlert() {
+        let alertController = UIAlertController(
+            title: L10n.Localizable.Location.UnauthorizedAlert.title,
+            message: L10n.Localizable.Location.UnauthorizedAlert.message,
+            preferredStyle: .alert
+        )
+
+        let cancelAction = UIAlertAction(
+            title: L10n.Localizable.Location.UnauthorizedAlert.cancel,
+            style: .cancel,
+            handler: nil
+        )
+
+        let settingsAction = UIAlertAction(
+            title: L10n.Localizable.Location.UnauthorizedAlert.settings,
+            style: .default
+        ) { _ in
             guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
             UIApplication.shared.open(url)
         }
