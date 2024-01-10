@@ -60,6 +60,18 @@
 "meta.degraded.cancel_sending_button" = "Do not send";
 "meta.degraded.send_anyway_button" = "Send anyway";
 
+"meta.legalhold.send_alert_title" = "The conversation is now subject to legal hold.";
+
+"meta.degraded.degradation_reason_message.singular" = "%@ started using a new device.";
+"meta.degraded.degradation_reason_message.plural" = "%@ started using new devices.";
+
 //Feature flag - File sharing
 "feature.flag.file_sharing.alert.title" = "File sharing restrictions";
 "feature.flag.file_sharing.alert.message" = "You can not share this file because this feature is disabled.";
+
+// Share Extension
+"share_extension.voiceover.conversation_under_legal_hold" = "Under legal hold.";
+"share_extension.voiceover.conversation_secure" = "All clients verified.";
+"share_extension.voiceover.conversation_secure_with_ignored" = "Not all clients verified.";
+
+

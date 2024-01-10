@@ -61,6 +61,10 @@ internal enum L10n {
         }
       }
     }
+    internal enum Legalhold {
+      /// The conversation is now subject to legal hold.
+      internal static let sendAlertTitle = L10n.tr("Localizable", "meta.legalhold.send_alert_title", fallback: "The conversation is now subject to legal hold.")
+    }
   }
   internal enum ShareExtension {
     internal enum ConversationSelection {
@@ -144,6 +148,14 @@ internal enum L10n {
         /// Enter your passcode
         internal static let placeholder = L10n.tr("Localizable", "share_extension.unlock.textfield.placeholder", fallback: "Enter your passcode")
       }
+    }
+    internal enum Voiceover {
+      /// All clients verified.
+      internal static let conversationSecure = L10n.tr("Localizable", "share_extension.voiceover.conversation_secure", fallback: "All clients verified.")
+      /// Not all clients verified.
+      internal static let conversationSecureWithIgnored = L10n.tr("Localizable", "share_extension.voiceover.conversation_secure_with_ignored", fallback: "Not all clients verified.")
+      /// Under legal hold.
+      internal static let conversationUnderLegalHold = L10n.tr("Localizable", "share_extension.voiceover.conversation_under_legal_hold", fallback: "Under legal hold.")
     }
   }
 }
