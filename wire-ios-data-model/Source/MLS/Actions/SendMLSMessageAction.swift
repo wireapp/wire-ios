@@ -54,10 +54,14 @@ public final class SendMLSMessageAction: EntityAction {
         // 409
         case mlsStaleMessage
         case mlsClientMismatch
+        case unreachableDomains(Set<String>)
 
         // 422
         case mlsUnsupportedProposal
         case mlsUnsupportedMessage
+
+        // 503
+        case nonFederatingDomains(Set<String>)
 
         case unknown(status: Int, label: String, message: String)
 
@@ -123,6 +127,9 @@ public final class SendMLSMessageAction: EntityAction {
             case .mlsClientMismatch:
                 return "A proposal of type Add or Remove does not apply to the full list of clients for a user"
 
+            case .nonFederatingDomains(let domains):
+                return "Some domains are note fully connected: \(domains)"
+
             case .mlsUnsupportedProposal:
                 return "Unsupported proposal type"
 
@@ -131,6 +138,9 @@ public final class SendMLSMessageAction: EntityAction {
 
             case let .unknown(status, label, message):
                 return "Unknown error (response status: \(status), label: \(label), message: \(message))"
+
+            case .unreachableDomains(let domains):
+                return "Some domains were unrechable: \(domains)"
             }
         }
     }

@@ -121,6 +121,42 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         }
     }
 
+    func test_AddParticipants_Throws_UnreachableDomainsError() async {
+        // GIVEN
+        let unreachableDomains = Set(arrayLiteral: "example.com")
+        let mlsUser = await syncMOC.perform { [self] in
+            MLSUser(from: user)
+        }
+
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
+            throw SendCommitBundleAction.Failure.unreachableDomains(unreachableDomains)
+        }
+
+        // THEN
+        await assertItThrows(error: FederationError.unreachableDomains(unreachableDomains)) {
+            // WHEN
+            try await sut.addParticipants([user], to: conversation)
+        }
+    }
+
+    func test_AddParticipants_Throws_NonFederatingDomainsError() async {
+        // GIVEN
+        let unreachableDomains = Set(arrayLiteral: "example.com")
+        let mlsUser = await syncMOC.perform { [self] in
+            MLSUser(from: user)
+        }
+
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
+            throw SendCommitBundleAction.Failure.nonFederatingDomains(unreachableDomains)
+        }
+
+        // THEN
+        await assertItThrows(error: FederationError.nonFederatingDomains(unreachableDomains)) {
+            // WHEN
+            try await sut.addParticipants([user], to: conversation)
+        }
+    }
+
     func test_AddParticipants_RethrowsErrors() async {
         // GIVEN
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in

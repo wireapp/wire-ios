@@ -36,6 +36,7 @@ protocol MLSConversationParticipantsServiceInterface {
 
 enum MLSConversationParticipantsError: Error, Equatable {
     case failedToClaimKeyPackages(users: Set<ZMUser>)
+    case failedAddUsers(users: Set<ZMUser>)
     case invalidOperation
 }
 
@@ -105,8 +106,15 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             let failedUsers = await context.perform {
                 users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
             }
-
             throw MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set(failedUsers))
+
+        } catch SendCommitBundleAction.Failure.nonFederatingDomains(domains: let domains) {
+
+            throw FederationError.nonFederatingDomains(domains)
+
+        } catch SendCommitBundleAction.Failure.unreachableDomains(domains: let domains) {
+
+            throw FederationError.unreachableDomains(domains)
 
         } catch {
             Logging.mls.warn("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")

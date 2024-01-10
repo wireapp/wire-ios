@@ -159,7 +159,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         }
 
         // Then
-        await assertItThrows(error: CommitError.failedToSendCommit(recovery: recovery)) {
+        await assertItThrows(error: CommitError.failedToSendCommit(recovery: recovery, cause: error)) {
             // When
             _ = try await sut.sendCommitBundle(commitBundle, for: groupID)
         }
@@ -238,7 +238,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         }
 
         // Then
-        await assertItThrows(error: ExternalCommitError.failedToSendCommit(recovery: recovery)) {
+        await assertItThrows(error: ExternalCommitError.failedToSendCommit(recovery: recovery, cause: error)) {
             // When
             _ = try await sut.sendExternalCommitBundle(commitBundle, for: groupID)
         }
