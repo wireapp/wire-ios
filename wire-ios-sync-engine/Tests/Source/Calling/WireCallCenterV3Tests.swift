@@ -1153,13 +1153,13 @@ class WireCallCenterV3Tests: MessagingTest {
         let incomingState = CallState.incoming(video: false, shouldRing: true, degraded: false)
         let incomingCall = CallSnapshotTestFixture.callSnapshot(conversationId: conversationID, callCenter: sut, clients: [], state: incomingState)
         sut.callSnapshots = [conversationID: incomingCall]
-        sut.muted = false
+        sut.isMuted = false
 
         // when
         sut.handle(callState: incomingState, conversationId: conversationID)
 
         // then
-        XCTAssertTrue(sut.muted)
+        XCTAssertTrue(sut.isMuted)
     }
 
     func testThatItDoesntMuteMicrophone_WhenHandlingIncomingGroupCall_WhileAlreadyInACall() {
@@ -1181,15 +1181,17 @@ class WireCallCenterV3Tests: MessagingTest {
             state: incomingState
         )
 
-        sut.callSnapshots = [activeCallConversationId: activeCall,
-                           incomingCallConversationId: incomingCall]
-        sut.muted = false
+        sut.callSnapshots = [
+            activeCallConversationId: activeCall,
+            incomingCallConversationId: incomingCall
+        ]
+        sut.isMuted = false
 
         // when
         sut.handle(callState: incomingState, conversationId: incomingCallConversationId)
 
         // then
-        XCTAssertFalse(sut.muted)
+        XCTAssertFalse(sut.isMuted)
     }
 }
 
@@ -1373,7 +1375,7 @@ extension WireCallCenterV3Tests {
         let token = WireCallCenterV3.addMuteStateObserver(observer: observer, context: uiMOC)
 
         // when
-        mockAVSWrapper.muted = true
+        mockAVSWrapper.isMuted = true
         sut.handleMuteChange(muted: true)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -1398,7 +1400,7 @@ extension WireCallCenterV3Tests {
         XCTAssertNoThrow(try sut.answerCall(conversation: groupConversation, video: false))
 
         // then
-        XCTAssertTrue(sut.muted)
+        XCTAssertTrue(sut.isMuted)
     }
 
     func testThat_ItDoesntMuteUser_When_AnsweringCall_InOneToOneConversation() throws {
@@ -1416,7 +1418,7 @@ extension WireCallCenterV3Tests {
         XCTAssertNoThrow(try sut.answerCall(conversation: oneOnOneConversation, video: false))
 
         // then
-        XCTAssertFalse(sut.muted)
+        XCTAssertFalse(sut.isMuted)
     }
 
 }

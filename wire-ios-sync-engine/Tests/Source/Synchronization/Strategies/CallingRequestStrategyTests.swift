@@ -38,6 +38,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
+
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockRegistrationDelegate = MockClientRegistrationDelegate()
@@ -658,7 +659,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
 
-        sut.callCenter?.muted = false
+        sut.callCenter?.isMuted = false
 
         // WHEN
         syncMOC.performAndWait {
@@ -666,7 +667,7 @@ class CallingRequestStrategyTests: MessagingTest {
         }
 
         // THEN
-        XCTAssertTrue(sut.callCenter?.muted ?? false)
+        XCTAssertTrue(sut.callCenter?.isMuted ?? false)
     }
 
     func test_ThatItHandlesMLSRejectMessage() {
