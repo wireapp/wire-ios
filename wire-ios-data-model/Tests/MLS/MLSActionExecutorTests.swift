@@ -133,7 +133,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             )
         }
 
-        // the decrypt message operaiton should wait for update key material to finish
+        // the decrypt message operation should wait for update key material to finish
         await fulfillment(of: [sendCommitExpectation])
         try await Task.sleep(nanoseconds: 1_000_000_000)
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 0)

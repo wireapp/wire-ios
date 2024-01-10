@@ -160,7 +160,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         if let message = messageBundle.message {
             guard let clientId = messageBundle.senderClientId else {
-                // We are guranteed to have a senderClientId with messages
+                // We are guaranteed to have a senderClientId with messages
                 throw MLSMessageDecryptionError.failedToDecodeSenderClientID
             }
 
@@ -180,7 +180,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         if let message = messageBundle.message {
             guard let clientId = messageBundle.senderClientId else {
-                // We are guranteed to have a senderClientId with messages
+                // We are guaranteed to have a senderClientId with messages
                 throw MLSMessageDecryptionError.failedToDecodeSenderClientID
             }
 
