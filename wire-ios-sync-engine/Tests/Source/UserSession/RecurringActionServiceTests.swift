@@ -32,7 +32,7 @@ final class RecurringActionServiceTests: XCTestCase {
         super.setUp()
 
         userDefaults = .temporary()
-        dateProvider = .init(now: .now)
+        dateProvider = .init(now: .now.addingTimeInterval(-.oneDay))
         sut = RecurringActionService(
             storage: userDefaults,
             dateProvider: dateProvider

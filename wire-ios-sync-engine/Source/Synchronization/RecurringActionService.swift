@@ -77,6 +77,6 @@ final class RecurringActionService: RecurringActionServiceInterface {
     }
 
     private func persistLastCheckDate(for actionID: String) {
-        storage.set(Date.now, forKey: key(for: actionID))
+        storage.set(dateProvider.now, forKey: key(for: actionID))
     }
 }
