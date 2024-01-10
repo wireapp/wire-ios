@@ -73,10 +73,7 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
             return
         }
         conversation.mlsVerificationStatus = newStatus
-        // TODO: check conditions - https://wearezeta.atlassian.net/browse/WPB-3233
-        if newStatus == .degraded || newStatus == .verified {
-            notifyUserAboutStateChanges(newStatus, in: conversation)
-        }
+        notifyUserAboutStateChangesIfNeeded(newStatus, in: conversation)
     }
 
     private func resolveNewStatus(newStatusFromCC: MLSVerificationStatus,
@@ -91,8 +88,37 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
         }
     }
 
-    private func notifyUserAboutStateChanges(_ newStatus: MLSVerificationStatus, in conversation: ZMConversation) {
-        // TODO: add system message - https://wearezeta.atlassian.net/browse/WPB-3233
+    private func notifyUserAboutStateChangesIfNeeded(_ newStatus: MLSVerificationStatus, in conversation: ZMConversation) {
+        switch newStatus {
+        case .verified:
+            conversation.appendConversationVerifiedSystemMessage()
+        case .degraded:
+            conversation.appendConversationDegradedSystemMessage()
+        case .notVerified:
+            return
+        }
+    }
+
+}
+
+// MARK: - Append system messages
+
+private extension ZMConversation {
+
+    func appendConversationVerifiedSystemMessage() {
+        guard let context = managedObjectContext else {
+            return
+        }
+        let selfUser = ZMUser.selfUser(in: context)
+        appendConversationVerifiedSystemMessage(sender: selfUser, at: Date())
+    }
+
+    func appendConversationDegradedSystemMessage() {
+        guard let context = managedObjectContext else {
+            return
+        }
+        let selfUser = ZMUser.selfUser(in: context)
+        appendConversationDegradedSystemMessage(sender: selfUser, at: Date())
     }
 
 }
