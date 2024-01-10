@@ -63,6 +63,7 @@ final class PostContent {
         let allMessagesEnqueuedGroup = DispatchGroup()
         allMessagesEnqueuedGroup.enter()
 
+        ///
         let conversationObserverToken = conversation.add { change in
             // make sure that we notify only when we are done preparing all the ones to be sent
             allMessagesEnqueuedGroup.notify(queue: .main, execute: {

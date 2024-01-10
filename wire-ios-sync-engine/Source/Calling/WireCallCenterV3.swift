@@ -294,12 +294,28 @@ extension WireCallCenterV3 {
      * - returns: Whether the conversation has degraded security or the call in the conversation has a degraded user.
      */
 
-    public func isDegraded(conversationId: AVSIdentifier) -> Bool {
-        guard isEnabled else { return  false }
-        let conversation = ZMConversation.fetch(with: conversationId.identifier, domain: conversationId.domain, in: uiMOC!)
-        let isConversationDegraded = conversation?.securityLevel == .secureWithIgnored
-        let isCallDegraded = callSnapshots[conversationId]?.isDegradedCall ?? false
-        return isConversationDegraded || isCallDegraded
+    public func isDegraded(conversationId: AVSIdentifier) -> CallDegradationReason {
+        guard
+            isEnabled,
+            let context = uiMOC,
+            let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: context)
+        else {
+            return .none
+        }
+
+        if (conversation.securityLevel == .secureWithIgnored) ||  callSnapshots[conversationId]?.degradedUser != nil {
+            return .degradedUser
+        } else if conversation.mlsVerificationStatus == .degraded {
+            return .invalidCertificate
+        } else {
+            return .none
+        }
+//        let isConversationDegraded = conversation.securityLevel == .secureWithIgnored
+//        let isCallDegraded = callSnapshots[conversationId]?.isDegradedCall ?? false
+//        return isConversationDegraded || isCallDegraded
     }
 
     func canJoinCall(conversationId: AVSIdentifier) -> Bool {
@@ -504,7 +520,7 @@ extension WireCallCenterV3 {
             throw Failure.unknown
         }
 
-        let callState: CallState = .answered(degraded: isDegraded(conversationId: conversationId))
+        let callState: CallState = .answered(degradationReason: isDegraded(conversationId: conversationId))
 
         let previousSnapshot = callSnapshots[conversationId]
 
@@ -581,7 +597,7 @@ extension WireCallCenterV3 {
             throw Failure.unknown
         }
 
-        let callState: CallState = .outgoing(degraded: isDegraded(conversationId: conversationId))
+        let callState: CallState = .outgoing(degradationReason: isDegraded(conversationId: conversationId))
         let previousCallState = callSnapshots[conversationId]?.callState
 
         createSnapshot(
@@ -723,7 +739,9 @@ extension WireCallCenterV3 {
 
         if let previousSnapshot = callSnapshots[conversationId] {
             if previousSnapshot.isGroup {
-                let callState: CallState = .incoming(video: previousSnapshot.isVideo, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+                let callState: CallState = .incoming(video: previousSnapshot.isVideo,
+                                                     shouldRing: false,
+                                                     degradationReason: isDegraded(conversationId: conversationId))
                 callSnapshots[conversationId] = previousSnapshot.update(with: callState)
             } else {
                 callSnapshots[conversationId] = previousSnapshot.update(with: .terminating(reason: reason))
@@ -751,7 +769,9 @@ extension WireCallCenterV3 {
         avsWrapper.rejectCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
-            let callState: CallState = .incoming(video: previousSnapshot.isVideo, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+            let callState: CallState = .incoming(video: previousSnapshot.isVideo,
+                                                 shouldRing: false,
+                                                 degradationReason: isDegraded(conversationId: conversationId))
             callSnapshots[conversationId] = previousSnapshot.update(with: callState)
         }
     }
@@ -958,7 +978,9 @@ extension WireCallCenterV3 {
         var callState = callState
 
         if case .terminating(reason: .stillOngoing) = callState, canJoinCall(conversationId: conversationId) {
-            callState = .incoming(video: false, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+            callState = .incoming(video: false,
+                                  shouldRing: false,
+                                  degradationReason: isDegraded(conversationId: conversationId))
         }
 
         if case .incoming = callState, isGroup(conversationId: conversationId), activeCalls.isEmpty {

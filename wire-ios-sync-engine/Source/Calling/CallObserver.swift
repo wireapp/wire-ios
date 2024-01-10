@@ -50,7 +50,7 @@ class CallObserver: WireCallCenterCallStateObserver {
         case .incoming:
             onIncoming?()
 
-        case .answered(degraded: false):
+        case .answered(degradationReason: .none):
             onAnswered?()
 
         case .establishedDataChannel, .established:

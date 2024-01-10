@@ -412,6 +412,7 @@ extension ConversationViewController: InvisibleInputAccessoryViewDelegate {
 
 extension ConversationViewController: ZMConversationObserver {
     func conversationDidChange(_ note: ConversationChangeInfo) {
+        //
         if note.causedByConversationPrivacyChange {
             presentPrivacyWarningAlert(for: note)
         }

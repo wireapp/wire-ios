@@ -37,7 +37,7 @@ extension ZMUserSession {
                 guard let callState = conversation.voiceChannel?.state else { return false }
 
                 switch callState {
-                case .incoming(video: _, shouldRing: true, degraded: _):
+                case .incoming(video: _, shouldRing: true, degradationReason: _):
                     return conversation.mutedMessageTypesIncludingAvailability == .none && callNotificationStyle != .callKit
                 default:
                     return false

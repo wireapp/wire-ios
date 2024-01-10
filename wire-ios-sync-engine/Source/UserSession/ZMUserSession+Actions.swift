@@ -46,7 +46,7 @@ import Foundation
 
         guard let callState = conversation.voiceChannel?.state else { return }
 
-        if case let .incoming(video: video, shouldRing: _, degraded: _) = callState, callCenter?.activeCallConversations(in: self).count == 0 {
+        if case let .incoming(video: video, shouldRing: _, degradationReason: _) = callState, callCenter?.activeCallConversations(in: self).count == 0 {
             _ = conversation.voiceChannel?.join(video: video, userSession: self)
         }
     }

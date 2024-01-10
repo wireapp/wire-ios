@@ -34,7 +34,7 @@ public protocol Conversation: SharingTarget {
 
     /// The status of legal hold in the conversation.
     var legalHoldStatus: ZMConversationLegalHoldStatus { get }
-
+////
     /// Adds an observer for when the conversation verification status degrades
     func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void) -> TearDownCapable
 

@@ -19,11 +19,12 @@
 import Foundation
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 enum CallDegradationState: Equatable {
     case none
-    case incoming(degradedUser: HashBoxUser?)
-    case outgoing(degradedUser: HashBoxUser?)
+    case incoming(degradedUser: HashBoxUser?, reason: CallDegradationReason)
+    case outgoing(degradedUser: HashBoxUser?, reason: CallDegradationReason)
 }
 
 protocol CallDegradationControllerDelegate: AnyObject {
@@ -49,12 +50,15 @@ final class CallDegradationController: UIViewController {
         }
     }
 
+// we try to start call here
     fileprivate func updateState() {
         switch state {
-        case .outgoing(degradedUser: let degradeduser):
-            visibleAlertController = UIAlertController.degradedCall(degradedUser: degradeduser?.value, confirmationBlock: { [weak self] (continueDegradedCall) in
-                continueDegradedCall ? self?.delegate?.continueDegradedCall(): self?.delegate?.cancelDegradedCall()
-            })
+        case .outgoing(degradedUser: let degradeduser, reason: let reason):
+            visibleAlertController = UIAlertController.degradedCall(
+                degradedUser: degradeduser?.value,
+                confirmationBlock: { [weak self] (continueDegradedCall) in
+                    continueDegradedCall ? self?.delegate?.continueDegradedCall(): self?.delegate?.cancelDegradedCall()
+                })
         case .none, .incoming:
             return
         }

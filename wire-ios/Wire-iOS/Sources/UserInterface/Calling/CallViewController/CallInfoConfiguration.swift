@@ -247,7 +247,7 @@ fileprivate extension VoiceChannel {
 
     private var isIncomingVideoCall: Bool {
         switch state {
-        case .incoming(video: true, shouldRing: true, degraded: _): return true
+        case .incoming(video: true, shouldRing: true, degradationReason: _): return true
         default: return false
         }
     }
@@ -272,10 +272,11 @@ extension VoiceChannel {
 
     var degradationState: CallDegradationState {
         switch state {
-        case .incoming(video: _, shouldRing: _, degraded: true):
-            return .incoming(degradedUser: hashboxFirstDegradedUser)
-        case .answered(degraded: true), .outgoing(degraded: true):
-            return .outgoing(degradedUser: hashboxFirstDegradedUser)
+        case .incoming(video: _, shouldRing: _, degradationReason: let reason) where reason != .none:
+            return .incoming(degradedUser: hashboxFirstDegradedUser, reason: reason)
+        case .answered(degradationReason: let reason),
+                .outgoing(degradationReason: let reason) where reason != .none:
+            return .outgoing(degradedUser: hashboxFirstDegradedUser, reason: reason)
         default:
             return .none
         }

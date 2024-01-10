@@ -67,7 +67,7 @@ final class ProximityMonitorManager: NSObject {
 
         let ongoingCalls = callCenter.nonIdleCalls.filter({ (_, callState: CallState) -> Bool in
             switch callState {
-            case .established, .establishedDataChannel, .answered(degraded: false), .outgoing(degraded: false):
+            case .established, .establishedDataChannel, .answered(degradationReason: .none), .outgoing(degradationReason: .none):
                 return true
             default:
                 return false

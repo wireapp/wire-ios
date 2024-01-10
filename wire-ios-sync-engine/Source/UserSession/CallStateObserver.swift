@@ -120,7 +120,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             guard let uiConv = (try? self.uiContext.existingObject(with: convObjectID)) as? ZMConversation else { return }
 
             switch callState {
-            case .incoming(video: _, shouldRing: let shouldRing, degraded: _):
+            case .incoming(video: _, shouldRing: let shouldRing, degradationReason: _):
                 uiConv.isIgnoringCall = uiConv.mutedMessageTypesIncludingAvailability != .none || !shouldRing
                 uiConv.isCallDeviceActive = false
             case .terminating, .none, .mediaStopped:
@@ -165,7 +165,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
 
     private func updateConversation(_ conversation: ZMConversation, with callState: CallState, timestamp: Date?) {
         switch callState {
-        case .incoming(_, shouldRing: true, degraded: _):
+        case .incoming(_, shouldRing: true, degradationReason: _):
             if conversation.isArchived && conversation.mutedMessageTypes != .all {
                 conversation.isArchived = false
             }

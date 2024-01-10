@@ -43,10 +43,10 @@ struct CallSnapshot {
     var conversationObserverToken: NSObjectProtocol?
     var mlsConferenceStaleParticipantsRemover: MLSConferenceStaleParticipantsRemover?
     var updateConferenceInfoTask: Task<Void, Error>?
-
-    var isDegradedCall: Bool {
-        return degradedUser != nil
-    }
+//
+//    var isDegradedCall: Bool {
+//        return degradedUser != nil
+//    }
 
     /**
      * Updates the snapshot with the new state of the call.

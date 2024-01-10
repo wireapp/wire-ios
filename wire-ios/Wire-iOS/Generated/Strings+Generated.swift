@@ -1262,6 +1262,30 @@ internal enum L10n {
           internal static let zoom = L10n.tr("Localizable", "call.grid.hints.zoom", fallback: "Pinch to zoom")
         }
       }
+      internal enum Mls {
+        internal enum Degraded {
+          internal enum Alert {
+            /// At least one participant started using a new device or has an invalid certificate.
+            /// 
+            /// Do you still want to start the call?
+            internal static let message = L10n.tr("Localizable", "call.mls.degraded.alert.message", fallback: "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to start the call?")
+            /// Conversation no longer verified
+            internal static let title = L10n.tr("Localizable", "call.mls.degraded.alert.title", fallback: "Conversation no longer verified")
+            internal enum Action {
+              /// Call anyway
+              internal static let `continue` = L10n.tr("Localizable", "call.mls.degraded.alert.action.continue", fallback: "Call anyway")
+            }
+          }
+          internal enum Ended {
+            internal enum Alert {
+              /// The call was disconnected as at least one participant started using a new device or has an invalid certificate.
+              internal static let message = L10n.tr("Localizable", "call.mls.degraded.ended.alert.message", fallback: "The call was disconnected as at least one participant started using a new device or has an invalid certificate.")
+              /// Conversation no longer verified
+              internal static let title = L10n.tr("Localizable", "call.mls.degraded.ended.alert.title", fallback: "Conversation no longer verified")
+            }
+          }
+        }
+      }
       internal enum Overlay {
         internal enum SwitchTo {
           /// ALL

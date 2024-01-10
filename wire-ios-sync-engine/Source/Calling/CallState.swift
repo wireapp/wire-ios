@@ -164,6 +164,19 @@ public enum ActiveSpeakerState: Hashable {
 }
 
 /**
+ *
+ */
+
+public enum CallDegradationReason: Equatable {
+    ///
+    case invalidCertificate
+    ///
+    case degradedUser
+    ///
+    case none
+}
+
+/**
  * The current state of a call.
  */
 
@@ -172,11 +185,11 @@ public enum CallState: Equatable {
     /// There's no call
     case none
     /// Outgoing call is pending
-    case outgoing(degraded: Bool)
+    case outgoing(degradationReason: CallDegradationReason)
     /// Incoming call is pending
-    case incoming(video: Bool, shouldRing: Bool, degraded: Bool)
+    case incoming(video: Bool, shouldRing: Bool, degradationReason: CallDegradationReason)
     /// Call is answered
-    case answered(degraded: Bool)
+    case answered(degradationReason: CallDegradationReason)
     /// Call is established (data is flowing)
     case establishedDataChannel
     /// Call is established (media is flowing)
@@ -194,16 +207,16 @@ public enum CallState: Equatable {
 
     func logState() {
         switch self {
-        case .answered(degraded: let degraded):
-            zmLog.debug("answered call, degraded: \(degraded)")
-        case .incoming(video: let isVideo, shouldRing: let shouldRing, degraded: let degraded):
-            zmLog.debug("incoming call, isVideo: \(isVideo), shouldRing: \(shouldRing), degraded: \(degraded)")
+        case .answered(degradationReason: let reason):
+            zmLog.debug("answered call, degradation reason: \(reason)")
+        case .incoming(video: let isVideo, shouldRing: let shouldRing, degradationReason: let reason):
+            zmLog.debug("incoming call, isVideo: \(isVideo), shouldRing: \(shouldRing), degradation reason: \(reason)")
         case .establishedDataChannel:
             zmLog.debug("established data channel")
         case .established:
             zmLog.debug("established call")
-        case .outgoing(degraded: let degraded):
-            zmLog.debug("outgoing call, , degraded: \(degraded)")
+        case .outgoing(degradationReason: let reason):
+            zmLog.debug("outgoing call, degradation reason: \(reason)")
         case .terminating(reason: let reason):
             zmLog.debug("terminating call reason: \(reason)")
         case .mediaStopped:
@@ -217,20 +230,20 @@ public enum CallState: Equatable {
 
     /**
      * Updates the state of the call when the security level changes.
-     * - parameter securityLevel: The new security level of the conversation for the call.
+     * - parameter degradationReason: The new security level of the conversation for the call.
      * - returns: The current status, updated with the appropriate degradation information.
      */
 
-    func update(withSecurityLevel securityLevel: ZMConversationSecurityLevel) -> CallState {
-        let degraded = securityLevel == .secureWithIgnored
+    func update(with degradationReason: CallDegradationReason) -> CallState {
+        // let degraded = securityLevel == .secureWithIgnored
 
         switch self {
-        case .incoming(video: let video, shouldRing: let shouldRing, degraded: _):
-            return .incoming(video: video, shouldRing: shouldRing, degraded: degraded)
+        case .incoming(video: let video, shouldRing: let shouldRing, degradationReason: _):
+            return .incoming(video: video, shouldRing: shouldRing, degradationReason: degradationReason)
         case .outgoing:
-            return .outgoing(degraded: degraded)
+            return .outgoing(degradationReason: degradationReason)
         case .answered:
-            return .answered(degraded: degraded)
+            return .answered(degradationReason: degradationReason)
         default:
             return self
         }

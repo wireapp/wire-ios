@@ -92,7 +92,7 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
             analytics.tag(callEvent: .initiated,
                           in: conversation,
                           callInfo: callInfo)
-        case .incoming(video: let video, shouldRing: true, degraded: _):
+        case .incoming(video: let video, shouldRing: true, degradationReason: _):
             let callInfo = CallInfo(connectingDate: nil, establishedDate: nil, maximumCallParticipants: 1, toggledVideo: false, outgoing: false, video: video)
             callInfos[conversationId] = callInfo
             analytics.tag(callEvent: .received, in: conversation, callInfo: callInfo)
@@ -191,6 +191,8 @@ private extension CallClosedReason {
             return "internal_error"
         case .securityDegraded:
             return "security_degraded"
+        case .e2eiDegraded:
+            return "end_to_end_identity_degraded"
         case .anweredElsewhere:
             return "answered_elsewhere"
         case .timeout, .timeoutECONN:

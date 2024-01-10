@@ -816,7 +816,7 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
         logger.info("received new call state: \(callState)")
 
         switch callState {
-        case .incoming(let hasVideo, let shouldRing, degraded: _):
+        case .incoming(let hasVideo, let shouldRing, degradationReason: _):
             if shouldRing {
                 logger.info("should report an incoming call")
 

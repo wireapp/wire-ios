@@ -45,6 +45,7 @@ public enum CallClosedReason: Int32 {
     case stillOngoing
     /// Call was dropped due to the security level degrading
     case securityDegraded
+    case e2eiDegraded
     /// Call was closed because the client version is blacklisted for that call
     case outdatedClient
     /// Call was closed due to an error in data channel connection
@@ -122,7 +123,7 @@ public enum CallClosedReason: Int32 {
             return WCALL_REASON_IO_ERROR
         case .stillOngoing:
             return WCALL_REASON_STILL_ONGOING
-        case .securityDegraded:
+        case .securityDegraded, .e2eiDegraded:
             return WCALL_REASON_ERROR
         case .outdatedClient:
             return WCALL_REASON_OUTDATED_CLIENT

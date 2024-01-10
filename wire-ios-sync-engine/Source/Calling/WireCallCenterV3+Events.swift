@@ -33,7 +33,7 @@ extension WireCallCenterV3: ZMConversationObserver {
 
     private func handleSecurityLevelChange(_ changeInfo: ConversationChangeInfo) {
         guard
-            changeInfo.securityLevelChanged,
+            changeInfo.securityLevelChanged || changeInfo.mlsVerificationStatusChanged,
             let conversationId = changeInfo.conversation.avsIdentifier,
             let previousSnapshot = callSnapshots[conversationId]
         else {
@@ -43,9 +43,13 @@ extension WireCallCenterV3: ZMConversationObserver {
         if changeInfo.conversation.securityLevel == .secureWithIgnored, isActive(conversationId: conversationId) {
             // If an active call degrades we end it immediately
             return closeCall(conversationId: conversationId, reason: .securityDegraded)
+        } else if changeInfo.conversation.mlsVerificationStatus == .degraded, isActive(conversationId: conversationId) {
+            return closeCall(conversationId: conversationId, reason: .e2eiDegraded)
         }
 
-        let updatedCallState = previousSnapshot.callState.update(withSecurityLevel: changeInfo.conversation.securityLevel)
+        let reason: CallDegradationReason = changeInfo.securityLevelChanged ? .degradedUser : .invalidCertificate
+        let updatedCallState = previousSnapshot.callState.update(with: reason)
+        // update(withSecurityLevel: changeInfo.conversation.securityLevel)
 
         if updatedCallState != previousSnapshot.callState {
             callSnapshots[conversationId] = previousSnapshot.update(with: updatedCallState)
@@ -122,7 +126,7 @@ extension WireCallCenterV3 {
     func handleIncomingCall(conversationId: AVSIdentifier, messageTime: Date, client: AVSClient, isVideoCall: Bool, shouldRing: Bool, conversationType: AVSConversationType) {
         handleEvent("incoming-call") {
             let isDegraded = self.isDegraded(conversationId: conversationId)
-            let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
+            let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degradationReason: isDegraded)
             let members = [AVSCallMember(client: client)]
             let isConferenceCall = conversationType == .conference
 
@@ -141,7 +145,7 @@ extension WireCallCenterV3 {
     /// Handles answered calls.
     func handleAnsweredCall(conversationId: AVSIdentifier) {
         handleEvent("answered-call") {
-            let callState = CallState.answered(degraded: self.isDegraded(conversationId: conversationId))
+            let callState = CallState.answered(degradationReason: self.isDegraded(conversationId: conversationId))
             self.handle(callState: callState, conversationId: conversationId)
         }
     }
@@ -416,3 +420,18 @@ private extension Set where Element == ZMUser {
         }
     }
 }
+
+// extension ZMConversation {
+//
+//    var isDegraded: Bool {
+//        return securityLevel == .secureWithIgnored || mlsVerificationStatus == .degraded
+////        switch messageProtocol {
+////        case .proteus:
+////            return securityLevel == .secureWithIgnored
+////        case .mls:
+////            return mlsVerificationStatus == .degraded
+////        }
+//
+//    }
+//
+// }

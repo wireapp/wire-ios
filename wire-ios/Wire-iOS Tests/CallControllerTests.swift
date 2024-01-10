@@ -207,7 +207,7 @@ class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
     }
 
     var presentSecurityDegradedAlertIsCalled: Bool = false
-    func presentSecurityDegradedAlert(degradedUser: UserType?) {
+    func presentSecurityDegradedAlert(degradedUser: UserType?, for conversation: ZMConversation) {
         presentSecurityDegradedAlertIsCalled = true
     }
 

@@ -74,6 +74,9 @@ extension ConversationViewController {
             title = "meta.degraded.degradation_reason_message.\(keySuffix)".localized(args: names)
 
             actions += [.verifyDevices, .sendAnyway, .cancel]
+        } else if conversation.mlsVerificationStatus == .degraded {
+            title = ""
+
         } else {
             // no-op: there is no privacy warning
             return
