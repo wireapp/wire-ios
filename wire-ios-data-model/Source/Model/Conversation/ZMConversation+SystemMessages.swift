@@ -203,4 +203,27 @@ extension ZMConversation {
             timestamp: timestamp
         )
     }
+
+    public func appendMLSMigrationPotentialGapSystemMessage(sender: ZMUser, at timestamp: Date) {
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        let previousLastMessage = lastMessage
+
+        self.appendSystemMessage(
+            type: .mlsMigrationPotentialGap,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: timestamp
+        )
+
+        if let previousLastMessage = previousLastMessage as? ZMSystemMessage, previousLastMessage.systemMessageType == .potentialGap,
+           let previousLastMessageTimestamp = previousLastMessage.serverTimestamp, previousLastMessageTimestamp <= timestamp {
+            context.delete(previousLastMessage)
+        }
+
+    }
+
 }

@@ -478,7 +478,7 @@ final class ConversationEventPayloadProcessor {
             self.updateMembers(from: payload, for: conversation, context: context)
             self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             self.updateConversationStatus(from: payload, for: conversation)
-            self.updateMessageProtocol(from: payload, for: conversation)
+            self.updateMessageProtocol(from: payload, for: conversation, in: context)
 
             return conversation
         }
@@ -529,7 +529,7 @@ final class ConversationEventPayloadProcessor {
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-            updateMessageProtocol(from: payload, for: conversation)
+            updateMessageProtocol(from: payload, for: conversation, in: context)
 
             return (conversation, conversation.mlsGroupID)
         }
@@ -722,7 +722,8 @@ final class ConversationEventPayloadProcessor {
 
     private func updateMessageProtocol(
         from payload: Payload.Conversation,
-        for conversation: ZMConversation
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
     ) {
         guard let messageProtocolString = payload.messageProtocol else {
             Logging.eventProcessing.warn("message protocol is missing")
@@ -732,6 +733,11 @@ final class ConversationEventPayloadProcessor {
         guard let messageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
             Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
+        }
+
+        let previousProtocol = conversation.messageProtocol
+        if previousProtocol == .proteus && messageProtocol == .mls {
+            conversation.appendMLSMigrationPotentialGapSystemMessage(sender: ZMUser.selfUser(in: context), at: conversation.lastModifiedDate ??  Date())
         }
 
         conversation.messageProtocol = messageProtocol
