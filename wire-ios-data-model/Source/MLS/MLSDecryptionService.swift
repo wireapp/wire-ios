@@ -41,6 +41,21 @@ public enum MLSDecryptResult: Equatable {
 
 }
 
+protocol DecryptedMessageBundle {
+
+    var message: Data? { get }
+    var proposals: [WireCoreCrypto.ProposalBundle] { get }
+    var isActive: Bool { get }
+    var commitDelay: UInt64? { get }
+    var senderClientId: WireCoreCrypto.ClientId? { get }
+    var hasEpochChanged: Bool { get }
+    var identity: WireCoreCrypto.WireIdentity? { get }
+
+}
+
+extension DecryptedMessage: DecryptedMessageBundle { }
+extension BufferedDecryptedMessage: DecryptedMessageBundle { }
+
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     // MARK: - Properties
@@ -153,27 +168,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
     }
 
-    private func decryptResult(from messageBundle: DecryptedMessage) throws -> MLSDecryptResult? {
-        if let commitDelay = messageBundle.commitDelay {
-            return MLSDecryptResult.proposal(commitDelay)
-        }
-
-        if let message = messageBundle.message {
-            guard let clientId = messageBundle.senderClientId else {
-                // We are guaranteed to have a senderClientId with messages
-                throw MLSMessageDecryptionError.failedToDecodeSenderClientID
-            }
-
-            return MLSDecryptResult.message(
-                message,
-                try senderClientId(from: clientId).clientID
-            )
-        }
-
-        return nil
-    }
-
-    private func decryptResult(from messageBundle: BufferedDecryptedMessage) throws -> MLSDecryptResult? {
+    private func decryptResult(from messageBundle: some DecryptedMessageBundle) throws -> MLSDecryptResult? {
         if let commitDelay = messageBundle.commitDelay {
             return MLSDecryptResult.proposal(commitDelay)
         }
