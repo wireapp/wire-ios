@@ -29,7 +29,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var userClient: UserClient
     var clientRemovalObserver: ClientRemovalObserver?
     var credentials: ZMEmailCredentials?
-    var certificate: E2eIdentityCertificate?
     var isProcessing: ((Bool) -> Void)?
 
     var isMLSEnabled: Bool {
@@ -44,18 +43,22 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userClient.isSelfClient()
     }
 
+    private var saveFileManager: SaveFileActions
+
     init(
         userClient: UserClient,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding
+        mlsProvider: MLSProviding,
+        saveFileManager: SaveFileActions
     ) {
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
         self.e2eIdentityProvider = e2eIdentityProvider
         self.mlsProvider = mlsProvider
+        self.saveFileManager = saveFileManager
     }
 
     func fetchCertificate() async -> E2eIdentityCertificate? {
@@ -125,29 +128,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         UIPasteboard.general.string = value
     }
 
-    func downloadE2EIdentityCertificate() {
-        guard let certificate = certificate else {
-            return
-        }
-        let fileName = "e2eiCertifcate.txt"
-        let path = getDocumentsDirectory().appendingPathComponent(fileName)
-        do {
-            try certificate.certificateDetails.write(
-                to: path,
-                atomically: true,
-                encoding: String.Encoding.utf8
-            )
-        } catch {
-            logger.error(error.localizedDescription)
-        }
-    }
-
-    private func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(
-            for: .documentDirectory,
-            in: .userDomainMask
+    func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate) {
+        saveFileManager.save(
+            value: certificate.certificateDetails,
+            fileName: userClient.label ?? "e2ecertificate",
+            type: "txt"
         )
-        return paths[0]
     }
 }
 
