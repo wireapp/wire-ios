@@ -20,9 +20,20 @@ import Foundation
 
 extension UserDefaults {
 
+    @available(*, deprecated, message: "Use `.temporary()`")
     @objc
     public static func random() -> UserDefaults? {
         .init(suiteName: UUID().uuidString)
+    }
+
+    @available(*, deprecated, message: "Use `.temporary()`")
+    @objc
+    public func reset() {
+        for key in dictionaryRepresentation().keys {
+            removeObject(forKey: key)
+        }
+
+        synchronize()
     }
 
     /// Creates an instance with a random (UUID string based) `suiteName`.
