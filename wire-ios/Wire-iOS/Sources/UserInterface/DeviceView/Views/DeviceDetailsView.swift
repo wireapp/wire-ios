@@ -123,6 +123,11 @@ struct DeviceDetailsView: View {
         .onDisappear {
             dismissedView?()
         }
+        .onReceive(viewModel.$isRemoved) { isRemoved in
+            if isRemoved {
+                dismiss()
+            }
+        }
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
