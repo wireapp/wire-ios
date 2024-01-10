@@ -650,18 +650,23 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 
-    private func deleteConversations(_ conversations: Set<QualifiedID>) async {
-        for qualifiedID in conversations {
-            guard
+    private func deleteConversations(_ conversationIds: Set<QualifiedID>) async {
+        for qualifiedID in conversationIds {
+
+            let conversation: ZMConversation? = await context.perform { [context] in
                 let conversation = ZMConversation.fetch(
                     with: qualifiedID.uuid,
                     domain: qualifiedID.domain,
-                    in: context
-                ),
-                conversation.conversationType == .group
-            else {
-                continue
+                    in: context)
+                if conversation?.conversationType == .group {
+                    return conversation
+                } else {
+                    return nil
+                }
             }
+
+            guard let conversation else { continue }
+
             await removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context

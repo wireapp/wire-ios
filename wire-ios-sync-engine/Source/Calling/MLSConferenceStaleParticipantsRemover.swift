@@ -111,6 +111,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private func newAndChangedParticipants(between previous: [CallParticipant], and current: [CallParticipant]) -> [CallParticipant] {
         var newAndChanged = [CallParticipant]()
 
+        // FIXME: crash Fatal error: Duplicate values for key: 'AVSIdentifier(identifier: 9FF0E5FD-7909-4FF5-B00D-1FD1E128CBF8, domain: Optional("elna.wire.link"))'
         let previousStates = Dictionary(uniqueKeysWithValues: previous.map { ($0.userId, $0.state) })
 
         current.forEach { participant in
@@ -207,10 +208,9 @@ private extension Array where Element == CallParticipant {
 
 private extension MLSClientID {
     init?(callParticipant: CallParticipant) {
-        guard
-            let userID = callParticipant.user.remoteIdentifier?.transportString(),
-            let domain = callParticipant.user.domain
-        else {
+        let userID = callParticipant.userId.identifier.transportString()
+        guard let domain = callParticipant.userId.domain else {
+            WireLogger.calling.warn("🕵🏽 no domain for MLSClientID")
             return nil
         }
 
