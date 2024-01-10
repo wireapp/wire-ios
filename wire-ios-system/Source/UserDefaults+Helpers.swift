@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@ import Foundation
 
 extension UserDefaults {
 
+    @available(*, deprecated, message: "Use `.temporary()`")
     @objc
     public static func random() -> UserDefaults? {
-        return UserDefaults(suiteName: UUID().uuidString)
+        .init(suiteName: UUID().uuidString)
     }
 
+    @available(*, deprecated, message: "Use `.temporary()`")
     @objc
     public func reset() {
         for key in dictionaryRepresentation().keys {
@@ -34,4 +36,51 @@ extension UserDefaults {
         synchronize()
     }
 
+    /// Creates an instance with a random (UUID string based) `suiteName`.
+    /// When the instance is deallocated, the storage is cleaned up.
+    @objc public static func temporary() -> Self {
+        let suiteName = UUID().uuidString
+        let userDefaults = Self(suiteName: suiteName)!
+        objc_setAssociatedObject(
+            userDefaults,
+            &SuiteCleanUpHandle,
+            SuiteCleanUp(suiteName),
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+        return userDefaults
+    }
 }
+
+// MARK: UserDefaults.temporary() helpers
+
+private let zmLog = ZMSLog(tag: "UserDefaults")
+
+private final class SuiteCleanUp {
+
+    private let suiteName: String
+
+    init(_ suiteName: String) {
+        self.suiteName = suiteName
+    }
+
+    deinit {
+
+        // remove all values
+        UserDefaults.standard.removePersistentDomain(forName: suiteName)
+
+        // try to even delete the plist file from the simulator usually at
+        // ~/Library/Developer/CoreSimulator/Devices/<device id>/data/Containers/Data/Application/<app id>/Library/Preferences/<suiteName>.plist
+        do {
+            let fileManager = FileManager.default
+            let url = try fileManager
+                .url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: .init(string: "/")!, create: false)
+                .appendingPathComponent("Preferences")
+                .appendingPathComponent(suiteName + ".plist")
+            try fileManager.removeItem(at: url)
+        } catch {
+            zmLog.warn("Could not remove temporary user defaults file: " + String(reflecting: error))
+        }
+    }
+}
+
+private var SuiteCleanUpHandle = 0
