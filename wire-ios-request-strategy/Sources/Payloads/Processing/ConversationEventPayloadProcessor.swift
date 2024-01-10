@@ -357,13 +357,30 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
+        let conversationData = await context.perform {
+            let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+            return (conversation: conversation, messageProtocol: conversation?.messageProtocol)
+        }
+
+        guard
+            let conversation = conversationData.conversation,
+            let messageProtocol = conversationData.messageProtocol,
+            let newMessageProtocol = MessageProtocol(rawValue: payload.data.messageProtocol),
+            messageProtocol != newMessageProtocol
+        else {
+            // ignore event if both protocols are already equal
+            return
+        }
+
         await syncConversation(qualifiedID, in: context.notificationContext)
 
-        addProtocolChangeSystemMessage(
-            qualifiedID,
-            messageProtocolRawValue: payload.data.messageProtocol,
-            in: context
-        )
+        await context.perform {
+            self.addProtocolChangeSystemMessage(
+                conversation: conversation,
+                newMessageProtocol: newMessageProtocol,
+                in: context
+            )
+        }
     }
 
     private func syncConversation(_ qualifiedID: QualifiedID, in notificationContext: NotificationContext) async {
@@ -377,31 +394,28 @@ final class ConversationEventPayloadProcessor {
     }
 
     private func addProtocolChangeSystemMessage(
-        _ qualifiedID: QualifiedID,
-        messageProtocolRawValue: String,
+        conversation: ZMConversation,
+        newMessageProtocol: MessageProtocol,
         in context: NSManagedObjectContext
     ) {
-        context.perform {
-            let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
-            let messageProtocol = MessageProtocol(rawValue: messageProtocolRawValue)
-            let selfUser = ZMUser.selfUser(in: context)
-            let now = Date()
+        let selfUser = ZMUser.selfUser(in: context)
+        let now = Date()
 
-            switch messageProtocol {
-            case .mixed:
-                conversation?.appendMLSMigrationStartedSystemMessage(
-                    sender: selfUser,
-                    at: now
-                )
-            case .mls:
-                conversation?.appendMLSMigrationFinalizedSystemMessage(
-                    sender: selfUser,
-                    at: now
-                )
-            case .none, .proteus:
-                assertionFailure("unexpected value for 'messageProtocol' '\(String(describing: messageProtocol))', that can not be processed!")
-            }
+        switch newMessageProtocol {
+        case .mixed:
+            conversation.appendMLSMigrationStartedSystemMessage(
+                sender: selfUser,
+                at: now
+            )
+        case .mls:
+            conversation.appendMLSMigrationFinalizedSystemMessage(
+                sender: selfUser,
+                at: now
+            )
+        case .proteus:
+            assertionFailure("unexpected value for 'messageProtocol' '\(String(describing: newMessageProtocol))', that can not be processed!")
         }
+
     }
 
     // MARK: - Helpers
