@@ -147,35 +147,37 @@ extension ZMConversation.Action {
     }
 
     var title: String {
+        typealias MetaMenuLocale = L10n.Localizable.Meta.Menu
+        typealias ProfileLocale = L10n.Localizable.Profile
         switch self {
         case .deleteGroup:
-            return L10n.Localizable.Meta.Menu.delete
+            return MetaMenuLocale.delete
         case .moveToFolder:
-            return L10n.Localizable.Meta.Menu.moveToFolder
+            return MetaMenuLocale.moveToFolder
         case .removeFromFolder(let folder):
-            return L10n.Localizable.Meta.Menu.removeFromFolder(folder)
+            return MetaMenuLocale.removeFromFolder(folder)
         case .remove:
-            return L10n.Localizable.Profile.removeDialogButtonRemove
+            return ProfileLocale.removeDialogButtonRemove
         case .clearContent:
-            return L10n.Localizable.Meta.Menu.clearContent
+            return MetaMenuLocale.clearContent
         case .leave:
-            return L10n.Localizable.Meta.Menu.leave
+            return MetaMenuLocale.leave
         case .markRead:
-            return L10n.Localizable.Meta.Menu.markRead
+            return MetaMenuLocale.markRead
         case .markUnread:
-            return L10n.Localizable.Meta.Menu.markUnread
+            return MetaMenuLocale.markUnread
         case .configureNotifications:
-            return L10n.Localizable.Meta.Menu.configureNotifications
+            return MetaMenuLocale.configureNotifications
         case .silence(isSilenced: let muted):
-            return muted ? L10n.Localizable.Meta.Menu.Silence.unmute : L10n.Localizable.Meta.Menu.Silence.mute
+            return muted ? MetaMenuLocale.Silence.unmute : MetaMenuLocale.Silence.mute
         case .archive(isArchived: let archived):
-            return archived ? L10n.Localizable.Meta.Menu.unarchive : L10n.Localizable.Meta.Menu.archive
+            return archived ? MetaMenuLocale.unarchive : MetaMenuLocale.archive
         case .cancelRequest:
-            return L10n.Localizable.Meta.Menu.cancelConnectionRequest
+            return MetaMenuLocale.cancelConnectionRequest
         case .block(isBlocked: let blocked):
-            return blocked ? L10n.Localizable.Profile.unblockButtonTitle : L10n.Localizable.Profile.blockButtonTitle
+            return blocked ? ProfileLocale.unblockButtonTitle : ProfileLocale.blockButtonTitle
         case .favorite(isFavorite: let favorited):
-            return favorited ? L10n.Localizable.Profile.unfavoriteButtonTitle: L10n.Localizable.Profile.favoriteButtonTitle
+            return favorited ? ProfileLocale.unfavoriteButtonTitle: ProfileLocale.favoriteButtonTitle
         }
     }
 
