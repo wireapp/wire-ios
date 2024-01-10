@@ -44,7 +44,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     }
 
     private var saveFileManager: SaveFileActions
-    private var continuation: CheckedContinuation<Bool, Never>?
 
     init(
         userClient: UserClient,
@@ -86,7 +85,9 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             guard let self = self else {
                 return
             }
-            self.continuation = continuation
+            // (Continuation)[https://developer.apple.com/documentation/swift/checkedcontinuation]
+            // Using the same continuation twice results in a crash.
+            var optionalContinuation: CheckedContinuation<Bool, Never>? = continuation
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
@@ -94,9 +95,9 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
                 completion: {
                     error in
                     defer {
-                        self.continuation = nil
+                        optionalContinuation = nil
                     }
-                    self.continuation?.resume(returning: error == nil)
+                    optionalContinuation?.resume(returning: error == nil)
                     if let error = error {
                         WireLogger.e2ei.error(error.localizedDescription)
                     }
