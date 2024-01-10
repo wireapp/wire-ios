@@ -572,6 +572,8 @@
 "content.system.reactivated_device" = "You started using [this device](%@) again. Messages sent in the meantime will not appear here.";
 
 "content.system.is_verified" = "All fingerprints are verified";
+"content.system.mls.conversation_is_verified" = "All devices are verified by End-to-end Identity. [Learn more](%@)";
+"content.system.mls.conversation_is_degraded" = "This conversation is no longer verified, as some user uses at least one device without a valid end-to-end identity certificate.";
 
 "content.system.new_users" = "New user joined.";
 "content.system.verify_devices" = "Verify devices";

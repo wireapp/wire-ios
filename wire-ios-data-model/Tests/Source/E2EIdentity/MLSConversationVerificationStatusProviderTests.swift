@@ -62,6 +62,10 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         // Then
         await syncMOC.perform {
             XCTAssertEqual(mockConversation.mlsVerificationStatus, .verified)
+            guard let lastMessage = mockConversation.lastMessage as? ZMSystemMessage else {
+                return XCTFail()
+            }
+            XCTAssertEqual(lastMessage.systemMessageType, .conversationIsVerified)
         }
     }
 
@@ -86,6 +90,10 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         // Then
         await syncMOC.perform {
             XCTAssertEqual(mockConversation.mlsVerificationStatus, .degraded)
+            guard let lastMessage = mockConversation.lastMessage as? ZMSystemMessage else {
+                return XCTFail()
+            }
+            XCTAssertEqual(lastMessage.systemMessageType, .conversationIsDegraded)
         }
     }
 

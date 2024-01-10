@@ -367,8 +367,8 @@ final class ConversationSystemMessageCellDescription {
             let timerCell = ConversationMessageTimerCellDescription(message: message, data: systemMessageData, timer: timer, sender: sender)
             return [AnyConversationMessageCellDescription(timerCell)]
 
-        case .conversationIsSecure:
-            let shieldCell = ConversationVerifiedSystemMessageSectionDescription()
+        case .conversationIsSecure, .conversationIsVerified, .conversationIsDegraded:
+            let shieldCell = ConversationVerifiedSystemMessageSectionDescription(messageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(shieldCell)]
 
         case .sessionReset:
@@ -625,15 +625,47 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init() {
-        let title = NSAttributedString(
-            string: L10n.Localizable.Content.System.isVerified,
-            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
-        )
+    init(messageType: ZMSystemMessageType) {
+        let icon = Self.icon(messageType: messageType)
+        let content = Self.makeAttributedString(messageType: messageType)
 
-        configuration = View.Configuration(icon: WireStyleKit.imageOfShieldverified, attributedText: title, showLine: true)
-        accessibilityLabel = title.string
+        configuration = View.Configuration(icon: icon, attributedText: content, showLine: true)
+        accessibilityLabel = content.string
         actionController = nil
+    }
+
+    // MARK: Content
+
+    private static func makeAttributedString(messageType: ZMSystemMessageType) -> NSAttributedString {
+        return NSAttributedString(
+            string: Self.messageText(for: messageType) ?? "",
+            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault])
+    }
+
+    private static func icon(messageType: ZMSystemMessageType) -> UIImage? {
+        switch messageType {
+        case .conversationIsSecure:
+            return Asset.Images.verifiedShield.image
+        case .conversationIsVerified:
+            return Asset.Images.certificateValid.image
+        case .conversationIsDegraded:
+            return Asset.Images.attention.image
+        default:
+            return nil
+        }
+    }
+
+    private static func messageText(for systemMessageType: ZMSystemMessageType) -> String? {
+        switch systemMessageType {
+        case .conversationIsSecure:
+            return L10n.Localizable.Content.System.isVerified
+        case .conversationIsVerified:
+            return L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore.absoluteString)
+        case .conversationIsDegraded:
+            return L10n.Localizable.Content.System.Mls.conversationIsDegraded
+        default:
+            return nil
+        }
     }
 }
 
