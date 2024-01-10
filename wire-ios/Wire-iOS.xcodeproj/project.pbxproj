@@ -4130,8 +4130,8 @@
 		168A16AA1D9597C2005CFA6C /* Wire-iOS Share Extension */ = {
 			isa = PBXGroup;
 			children = (
+				E96301B62B4ED92F00726CDB /* Resources */,
 				5E7F012F213E928300C6F3E9 /* Sources */,
-				5E7F012E213E921400C6F3E9 /* Resources */,
 				5E7F012D213E91F700C6F3E9 /* Supporting Files */,
 				BF2756DA1E38E16D00082786 /* ShareExtensionAnalytics.swift */,
 				EF3B26E42370596300245701 /* CrashReporter.swift */,
@@ -4644,14 +4644,6 @@
 				161285E01DD201A1004728E9 /* Wire-iOS Share Extension.entitlements */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		5E7F012E213E921400C6F3E9 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				BF2ADF481E27C3DB00E81B1E /* Localizable.strings */,
-			);
-			name = Resources;
 			sourceTree = "<group>";
 		};
 		5E7F012F213E928300C6F3E9 /* Sources */ = {
@@ -7398,6 +7390,14 @@
 				E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */,
 			);
 			path = "SwiftUI Helpers";
+			sourceTree = "<group>";
+		};
+		E96301B62B4ED92F00726CDB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BF2ADF481E27C3DB00E81B1E /* Localizable.strings */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */ = {
