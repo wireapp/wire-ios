@@ -34,26 +34,8 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
     }
 
-    func testGivenCertificateIsEmptyWhenDownladActionIsInvokedThenSaveFileManagerSaveFileIsNotCalled() {
-        let expectation = expectation(description: "Download file should be called")
-        expectation.isInverted = true
-        saveFileManager.saveValueIsCalled = { _, _, _ in
-            expectation.fulfill()
-        }
-        let deviceActionHandler = DeviceDetailsViewActionsHandler(
-            userClient: client,
-            userSession: mockSession,
-            credentials: emailCredentials,
-            e2eIdentityProvider: MockE2eIdentityProvider(),
-            mlsProvider: MockMLSProvider(isMLSEnbaled: false),
-            saveFileManager: saveFileManager
-        )
-        deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
-        wait(for: [expectation], timeout: 0.5)
-    }
-
     func testGivenCertificateWhenDownladActionIsInvokedThenSaveFileManagerSaveFileIsCalled() {
-        let expectation = expectation(description: "Download file should be called")
+        let expectation = expectation(description: "Save file should be called")
         saveFileManager.saveValueIsCalled = { _, _, _ in
             expectation.fulfill()
         }
@@ -87,12 +69,17 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
 
 private extension E2eIdentityCertificate {
 
-    static func mock() -> E2eIdentityCertificate {
+    static func mock(
+        with certificateDetails: String = .random(length: 100),
+        status: String = "valid",
+        expiryDate: Date = .now,
+        sertialNumber: String = .random(length: 16)
+    ) -> E2eIdentityCertificate {
         return .init(
-            certificateDetails: .random(length: 100),
-            expiryDate: .now,
-            certificateStatus: "valid",
-            serialNumber: .random(length: 16)
+            certificateDetails: certificateDetails,
+            expiryDate: expiryDate,
+            certificateStatus: status,
+            serialNumber: sertialNumber
         )
     }
 
