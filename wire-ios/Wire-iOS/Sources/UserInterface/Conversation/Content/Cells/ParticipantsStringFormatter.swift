@@ -111,9 +111,7 @@ final class ParticipantsStringFormatter {
         message: ZMConversationMessage,
         font: UIFont = .mediumFont,
         largeFont: UIFont = .largeSemiboldFont,
-        textColor: UIColor = .from(
-            scheme: .textForeground
-        )
+        textColor: UIColor = .from(scheme: .textForeground)
     ) {
         self.message = message
         self.font = font
