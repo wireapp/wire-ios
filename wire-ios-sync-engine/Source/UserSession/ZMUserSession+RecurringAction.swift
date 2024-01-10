@@ -17,38 +17,43 @@
 //
 
 import Foundation
+import WireDataModel
 
 extension ZMUserSession {
 
     func refreshUsersMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
-
         .init(id: "refreshUserMetadata", interval: interval) { [weak self] in
-            self?.perform {
+
+            guard let moc = self?.managedObjectContext else { return }
+            moc.performGroupedBlockAndWait {
+
                 let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
-                guard let users = self?.managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
+                guard let users = moc.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
                     return
                 }
+
                 users.forEach { $0.refreshData() }
+                moc.saveOrRollback()
             }
         }
-
     }
 
     func refreshConversationsMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
-
         .init(id: "refreshConversationMetadata", interval: interval) { [weak self] in
-            self?.perform {
+
+            guard let moc = self?.managedObjectContext else { return }
+            moc.performGroupedBlockAndWait {
+
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
-                guard let conversations = self?.managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
+                guard let conversations = moc.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
                     return
                 }
+
                 conversations.forEach { $0.needsToBeUpdatedFromBackend = true }
+                moc.saveOrRollback()
             }
-
         }
-
     }
-
 }

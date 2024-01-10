@@ -90,8 +90,6 @@
 		54D06C5C1BC81AFF005F0FBB /* android_image.encrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C581BC81976005F0FBB /* android_image.encrypted */; };
 		54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C5A1BC81983005F0FBB /* android_image.decrypted */; };
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
-		59059B8B2B4DA3A00087D1F1 /* DateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B8A2B4DA3A00087D1F1 /* DateProviding.swift */; };
-		59059B8E2B4DA4A30087D1F1 /* SystemDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B8D2B4DA4A30087D1F1 /* SystemDateProvider.swift */; };
 		5E0A1FF92105DBBA00949B3E /* Map+KeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */; };
 		5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */; };
 		5E4BC1BC2189E6A400A8682E /* AnyProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */; };
@@ -340,8 +338,6 @@
 		54D06C581BC81976005F0FBB /* android_image.encrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.encrypted; sourceTree = "<group>"; };
 		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.decrypted; sourceTree = "<group>"; };
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
-		59059B8A2B4DA3A00087D1F1 /* DateProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateProviding.swift; sourceTree = "<group>"; };
-		59059B8D2B4DA4A30087D1F1 /* SystemDateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemDateProvider.swift; sourceTree = "<group>"; };
 		5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Map+KeyPath.swift"; sourceTree = "<group>"; };
 		5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKeyPathTests.swift; sourceTree = "<group>"; };
 		5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyProperty.swift; sourceTree = "<group>"; };
@@ -565,7 +561,6 @@
 		3E88BD3A1B1F3EA300232589 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				59059B8C2B4DA48B0087D1F1 /* DateProviding */,
 				A9A3B1EE24D9811B001AF38E /* Keychain */,
 				871939C421D4D93600738968 /* ZMMobileProvisionParser.m */,
 				54CA31141B74F2C400B820C0 /* Public */,
@@ -738,15 +733,6 @@
 				EEBFE03D2A3AE58E001F1060 /* String+Random.swift */,
 			);
 			path = Public;
-			sourceTree = "<group>";
-		};
-		59059B8C2B4DA48B0087D1F1 /* DateProviding */ = {
-			isa = PBXGroup;
-			children = (
-				59059B8A2B4DA3A00087D1F1 /* DateProviding.swift */,
-				59059B8D2B4DA4A30087D1F1 /* SystemDateProvider.swift */,
-			);
-			path = DateProviding;
 			sourceTree = "<group>";
 		};
 		A9A3B1EE24D9811B001AF38E /* Keychain */ = {
@@ -1115,7 +1101,6 @@
 				16B75F66222EDC5000DCAFF2 /* String+Stripping.swift in Sources */,
 				F15BDB1E20889773002F36E8 /* TearDownCapable.swift in Sources */,
 				EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */,
-				59059B8E2B4DA4A30087D1F1 /* SystemDateProvider.swift in Sources */,
 				54181A541F594F6B00155ABC /* FileManager+Protection.swift in Sources */,
 				A9A3B1F024D9814D001AF38E /* Keychain.swift in Sources */,
 				7C8BFFE522FD611700B3C8A5 /* ZMEmailAddressValidator.swift in Sources */,
@@ -1169,7 +1154,6 @@
 				D53DB99F203ED59C00655CB4 /* Result+success.swift in Sources */,
 				E9C337542ABC91DE0084ABCF /* Array+Cardinality.swift in Sources */,
 				A9CDCDC2237D9928008A9BC6 /* UIColor+Hex.swift in Sources */,
-				59059B8B2B4DA3A00087D1F1 /* DateProviding.swift in Sources */,
 				8735AE6F2035E3BC00DCE66E /* StringLengthValidator.swift in Sources */,
 				F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */,
 				EE1E354221E7739400F1144B /* DarwinNotificationCenter.swift in Sources */,

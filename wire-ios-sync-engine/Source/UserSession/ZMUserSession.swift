@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSystem
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
