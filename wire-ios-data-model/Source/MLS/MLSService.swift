@@ -373,11 +373,11 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func updateKeyMaterialForAllStaleGroups() async {
-        Logging.mls.info("beginning to update key material for all stale groups")
+        WireLogger.mls.info("beginning to update key material for all stale groups")
 
         let staleGroups = staleKeyMaterialDetector.groupsWithStaleKeyingMaterial
 
-        Logging.mls.info("found \(staleGroups.count) groups with stale key material")
+        WireLogger.mls.info("found \(staleGroups.count) groups with stale key material")
 
         for staleGroup in staleGroups {
             try? await updateKeyMaterial(for: staleGroup)
@@ -393,12 +393,12 @@ public final class MLSService: MLSServiceInterface {
 
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
-            Logging.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
             let events = try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             await conversationEventProcessor.processConversationEvents(events)
         } catch {
-            Logging.mls.warn("failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            WireLogger.mls.warn("failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
         }
     }
@@ -829,11 +829,15 @@ public final class MLSService: MLSServiceInterface {
             return
         }
         let pendingJoins = await context.perform { self.generatePendingJoins(in: context) }
-        for pendingJoin in pendingJoins {
-            try await joinByExternalCommit(groupID: pendingJoin.groupID)
-        }
 
-        groupsPendingJoin.removeAll()
+        for pendingJoin in pendingJoins {
+            do {
+                try await joinByExternalCommit(groupID: pendingJoin.groupID)
+                groupsPendingJoin.remove(pendingJoin.groupID)
+            } catch {
+                WireLogger.mls.error("failed pending join for group \(pendingJoin.groupID)")
+            }
+        }
     }
 
     private func generatePendingJoins(in context: NSManagedObjectContext) -> [PendingJoin] {
@@ -890,7 +894,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
-        if let subgroupInfo = subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
+        if let subgroupInfo = await subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
             await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
         } else {
             await fetchAndRepairParentGroup(with: groupID)
@@ -1298,7 +1302,7 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("committing any scheduled pending proposals")
 
-        let groupsWithPendingCommits = self.sortedGroupsWithPendingCommits()
+        let groupsWithPendingCommits = await self.sortedGroupsWithPendingCommits()
 
         logger.info("\(groupsWithPendingCommits.count) groups with scheduled pending proposals")
 
@@ -1316,34 +1320,34 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func sortedGroupsWithPendingCommits() -> [(MLSGroupID, Date)] {
+    private func sortedGroupsWithPendingCommits() async -> [(MLSGroupID, Date)] {
         guard let context = context else {
             return []
         }
 
         var result: [(MLSGroupID, Date)] = []
 
-        context.performAndWait {
-            let conversations = ZMConversation.fetchConversationsWithPendingProposals(in: context)
+        let conversations = await context.perform { ZMConversation.fetchConversationsWithPendingProposals(in: context) }
 
-            for conversation in conversations {
-                guard
-                    let groupID = conversation.mlsGroupID,
-                    let timestamp = conversation.commitPendingProposalDate
-                else {
+        for conversation in conversations {
+            let (groupID, timestamp) = await context.perform({
+                (conversation.mlsGroupID,
+                conversation.commitPendingProposalDate)
+            })
+
+            guard let groupID, let timestamp else {
                     continue
-                }
+            }
 
-                result.append((groupID, timestamp))
+            result.append((groupID, timestamp))
 
-                // The pending proposal might be for the subconversation,
-                // so include it just in case.
-                if let subgroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
-                    forType: .conference,
-                    parentGroupID: groupID
-                ) {
-                    result.append((subgroupID, timestamp))
-                }
+            // The pending proposal might be for the subconversation,
+            // so include it just in case.
+            if let subgroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
+                forType: .conference,
+                parentGroupID: groupID
+            ) {
+                result.append((subgroupID, timestamp))
             }
         }
 
@@ -1498,7 +1502,7 @@ public final class MLSService: MLSServiceInterface {
                 )
             }
 
-            subconversationGroupIDRepository.storeSubconversationGroupID(
+            await subconversationGroupIDRepository.storeSubconversationGroupID(
                 subgroup.groupID,
                 forType: .conference,
                 parentGroupID: parentID
@@ -1591,7 +1595,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         if
-            let subConversationGroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
+            let subConversationGroupID = await  subconversationGroupIDRepository.fetchSubconversationGroupID(
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
@@ -1616,7 +1620,7 @@ public final class MLSService: MLSServiceInterface {
         parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
     ) async throws {
-        guard let subconversationGroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
+        guard let subconversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
             forType: subconversationType,
             parentGroupID: parentGroupID
         ) else {
@@ -1651,7 +1655,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
 
-            subconversationGroupIDRepository.storeSubconversationGroupID(
+            await subconversationGroupIDRepository.storeSubconversationGroupID(
                 nil,
                 forType: subconversationType,
                 parentGroupID: parentGroupID

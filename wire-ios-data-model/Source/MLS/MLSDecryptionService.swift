@@ -112,7 +112,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         if
             let type = subconversationType,
             // TODO: [F] does subconverationGroupIDRepository needs to be an actor?
-            let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+            let subconversationGroupID = await subconverationGroupIDRepository.fetchSubconversationGroupID(
                 forType: type,
                 parentGroupID: groupID
             )
