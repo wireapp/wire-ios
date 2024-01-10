@@ -18,15 +18,7 @@
 
 import Foundation
 
-public extension TimeInterval {
-
-    static let fourWeeks = 4 * oneWeek
-    static let oneWeek = 7 * oneDay
-    static let oneDay = 24 * oneHour
-    static let oneHour = 60 * oneMinute
-    static let fiveMinutes = 5 * oneMinute
-    static let oneMinute = 60 * oneSecond
-    static let tenSeconds = 10 * oneSecond
-    static let oneSecond = TimeInterval(1)
-
+/// Abstracts accessing specific date/time values like `.now` in order to be mockable in unit tests.
+public protocol DateProviding {
+    var now: Date { get }
 }

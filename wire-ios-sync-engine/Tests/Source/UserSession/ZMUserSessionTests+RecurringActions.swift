@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,20 @@
 //
 
 import Foundation
+import WireTesting
 import XCTest
+
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
-class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
-    var mockRecurringActionService: MockRecurringActionService!
+    var mockRecurringActionService: MockRecurringActionServiceInterface!
 
     override func setUp() {
         super.setUp()
 
-        mockRecurringActionService = MockRecurringActionService()
+        mockRecurringActionService = .init()
     }
 
     override func tearDown() {
@@ -37,55 +40,42 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
     }
 
     func testThatItCallsPerformActionsAfterQuickSync() {
-        // given
+        // Given
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
         sut.recurringActionService = mockRecurringActionService
 
-        // when
-        XCTAssertFalse(mockRecurringActionService.performActionsIsCalled)
+        // When
+        XCTAssertTrue(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
         sut.didFinishQuickSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // then
-        XCTAssertTrue(mockRecurringActionService.performActionsIsCalled)
+        // Then
+        XCTAssertFalse(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
     }
 
     func testThatItUpdatesUsersMissingMetadata() {
-        // given
+        // Given
         let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
         syncMOC.saveOrRollback()
+        let recurringAction = sut.refreshUsersMissingMetadata(interval: 1)
 
-        let recurringActionService = RecurringActionService()
-        sut.recurringActionService = recurringActionService
+        // When
+        recurringAction()
 
-        recurringActionService.persistLastCheckDate(for: "refreshUserMetadata")
-        recurringActionService.registerAction(sut.refreshUsersMissingMetadata(interval: 1))
-
-        // when
-        XCTAssertFalse(otherUser.needsToBeUpdatedFromBackend)
-        Thread.sleep(forTimeInterval: 3)
-        recurringActionService.performActionsIfNeeded()
-
-        // then
+        // Then
         XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
     }
 
     func testThatItUpdatesConversationsMissingMetadata() {
-        // given
+        // Given
         let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
         syncMOC.saveOrRollback()
+        let recurringAction = sut.refreshConversationsMissingMetadata(interval: 1)
 
-        let recurringActionService = RecurringActionService()
-        sut.recurringActionService = recurringActionService
+        // When
+        recurringAction()
 
-        recurringActionService.persistLastCheckDate(for: "refreshConversationMetadata")
-        recurringActionService.registerAction(sut.refreshConversationsMissingMetadata(interval: 1))
-
-        // when
-        XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
-        Thread.sleep(forTimeInterval: 3)
-        recurringActionService.performActionsIfNeeded()
-
-        // then
+        // Then
         XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
     }
 
@@ -95,9 +85,7 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         user.domain = domain
         user.needsToBeUpdatedFromBackend = false
         user.isPendingMetadataRefresh = true
-
         return user
-
     }
 
     private func createConversationIsPendingMetadataRefresh(moc: NSManagedObjectContext, domain: String?) -> ZMConversation {
@@ -106,9 +94,6 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         conversation.domain = domain
         conversation.needsToBeUpdatedFromBackend = false
         conversation.isPendingMetadataRefresh = true
-
         return conversation
-
     }
-
 }
