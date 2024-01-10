@@ -43,13 +43,16 @@ extension UnsentSendableError: LocalizedError {
         switch self {
         case .fileSizeTooBig:
 
-            let maxSizeString = ByteCountFormatter.string(fromByteCount: Int64(AccountManager.fileSizeLimitInBytes), countStyle: .binary)
+            let maxSizeString = ByteCountFormatter.string(
+                fromByteCount: Int64(AccountManager.fileSizeLimitInBytes),
+                countStyle: .binary
+            )
 
-            return String(format: "content.file.too_big".localized, maxSizeString)
+            return L10n.Content.File.tooBig(maxSizeString)
         case .unsupportedAttachment:
-            return "content.file.unsupported_attachment".localized
+            return L10n.Content.File.unsupportedAttachment
         case .conversationDoesNotExist:
-            return "share_extension.error.conversation_not_exist.message".localized
+            return L10n.ShareExtension.Error.ConversationDoesNotExist.message
         }
     }
 }

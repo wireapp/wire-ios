@@ -43,12 +43,14 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     // MARK: - Elements
 
+    typealias ShareExtensionConversationLocale = L10n.ShareExtension.ConversationSelection
+
     lazy var accountItem: SLComposeSheetConfigurationItem = { [weak self] in
         let item = SLComposeSheetConfigurationItem()!
         let accountName = self?.currentAccount?.shareExtensionDisplayName
 
-        item.title = "share_extension.conversation_selection.account".localized
-        item.value = accountName ?? "share_extension.conversation_selection.empty.value".localized
+        item.title = ShareExtensionConversationLocale.account
+        item.value = accountName ?? ShareExtensionConversationLocale.Empty.value
         item.tapHandler = { [weak self] in
             self?.presentChooseAccount()
         }
@@ -58,8 +60,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     lazy var conversationItem: SLComposeSheetConfigurationItem = {
         let item = SLComposeSheetConfigurationItem()!
 
-        item.title = "share_extension.conversation_selection.title".localized
-        item.value = "share_extension.conversation_selection.empty.value".localized
+        item.title = ShareExtensionConversationLocale.title
+        item.value = ShareExtensionConversationLocale.Empty.value
         item.tapHandler = { [weak self] in
             self?.presentChooseConversation()
         }
@@ -147,14 +149,15 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         self.appendTextToEditor()
         appendFileTextToEditor()
         self.updatePreview()
-        self.placeholder = "share_extension.input.placeholder".localized
+
+        self.placeholder = L10n.ShareExtension.Input.placeholder
     }
 
     private func setupNavigationBar() {
         let iconSize = CGSize(width: 32, height: 26.3)
         guard let item = navigationController?.navigationBar.items?.first else { return }
         item.rightBarButtonItem?.action = #selector(appendPostTapped)
-        item.rightBarButtonItem?.title = "share_extension.send_button.title".localized
+        item.rightBarButtonItem?.title = L10n.ShareExtension.SendButton.title
         item.titleView = UIImageView(image: WireStyleKit.imageOfLogo(color: UIColor.Wire.primaryLabel).downscaling(to: iconSize))
     }
 
@@ -313,7 +316,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 WireLogger.shareExtension.error("progress event: timed out")
                 self.popConfigurationViewController()
 
-                let alert = UIAlertController.alertWithOKButton(title: "share_extension.timeout.title".localized, message: "share_extension.timeout.message".localized)
+                let alert = UIAlertController.alertWithOKButton(title: L10n.ShareExtension.Timeout.title, message: L10n.ShareExtension.Timeout.message)
 
                 self.present(alert, animated: true)
 
@@ -331,8 +334,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 }
             case .fileSharingRestriction:
                 WireLogger.shareExtension.warn("progress event: file sharing restricted")
-                let alert = UIAlertController.alertWithOKButton(title: "feature.flag.file_sharing.alert.title".localized,
-                                                                message: "feature.flag.file_sharing.alert.message" .localized)
+                let alert = UIAlertController.alertWithOKButton(title: L10n.Feature.Flag.FileSharing.Alert.title,
+                                                                message: L10n.Feature.Flag.FileSharing.Alert.message)
                 self.present(alert, animated: true)
             }
         }
@@ -420,7 +423,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     func updateState(conversation: WireShareEngine.Conversation?) {
-        conversationItem.value = conversation?.name ?? "share_extension.conversation_selection.empty.value".localized
+        conversationItem.value = conversation?.name ?? L10n.ShareExtension.ConversationSelection.Empty.value
         postContent?.target = conversation
     }
 
@@ -443,7 +446,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         } catch let error as SharingSession.InitializationError {
             guard error == .loggedOut else { return }
 
-            let alert = UIAlertController.alertWithOKButton(title: "share_extension.logged_out.title".localized, message: "share_extension.logged_out.message".localized)
+            let alert = UIAlertController.alertWithOKButton(title: L10n.ShareExtension.LoggedOut.title, message: L10n.ShareExtension.LoggedOut.message)
 
             self.present(alert, animated: true)
             return
@@ -453,7 +456,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
         currentAccount = account
         accountItem.value = account?.shareExtensionDisplayName ?? ""
-        conversationItem.value = "share_extension.conversation_selection.empty.value".localized
+        conversationItem.value = L10n.ShareExtension.ConversationSelection.Empty.value
 
         guard account != currentAccount else { return }
         postContent?.target = nil
@@ -505,11 +508,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func conversationDidDegrade(change: ConversationDegradationInfo, callback: @escaping DegradationStrategyChoice) {
         let title = titleForMissingClients(causedBy: change)
-        let alert = UIAlertController(title: title, message: "meta.degraded.dialog_message".localized, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "meta.degraded.send_anyway_button".localized, style: .destructive, handler: { _ in
+        let alert = UIAlertController(title: title, message: L10n.Meta.Degraded.dialogMessage, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Meta.Degraded.sendAnywayButton, style: .destructive, handler: { _ in
             callback(.sendAnyway)
         }))
-        alert.addAction(UIAlertAction(title: "meta.degraded.cancel_sending_button".localized, style: .cancel, handler: { _ in
+        alert.addAction(UIAlertAction(title: L10n.Meta.Degraded.cancelSendingButton, style: .cancel, handler: { _ in
             callback(.cancelSending)
         }))
         self.present(alert, animated: true)
@@ -550,7 +553,8 @@ extension ShareExtensionViewController {
         }
 
         let appLock = sharingSession.appLockController
-        let description = "share_extension.privacy_security.lock_app.description".localized
+
+        let description = L10n.ShareExtension.PrivacySecurity.LockApp.description
         let passcodePreference: AppLockPasscodePreference
 
         if sharingSession.encryptMessagesAtRest {
@@ -582,7 +586,7 @@ extension ShareExtensionViewController {
         case .needCustomPasscode:
             let isCustomPasscodeSet = sharingSession?.appLockController.isCustomPasscodeSet ?? false
             if !isCustomPasscodeSet {
-                let alert = UIAlertController(title: "", message: "share_extension.unlock.alert.message".localized, alertAction: .ok(style: .cancel))
+                let alert = UIAlertController(title: "", message: L10n.ShareExtension.Unlock.Alert.message, alertAction: .ok(style: .cancel))
                 self.present(alert, animated: true, completion: nil)
 
                 localAuthenticationStatus = .denied
