@@ -178,7 +178,7 @@ final class ParticipantsStringFormatter {
             return result += " " + learnMore
 
         case .removed(reason: .federationTermination):
-            let formatString = "\(L10n.Localizable.Content.System.FederationTermination.participantsRemoved(names.totalUsers)) \(nameSequence.string)"
+            let formatString = "content.system.federation_termination.participants_removed".localized(args: names.totalUsers, nameSequence.string)
             result = .markdown(from: formatString, style: .systemMessage)
 
             return result
