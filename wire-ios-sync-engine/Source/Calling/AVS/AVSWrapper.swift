@@ -77,7 +77,7 @@ public final class AVSWrapper: AVSWrapperType {
     /// won't be handled.
     required public init(userId: AVSIdentifier, clientId: String, observer: UnsafeMutableRawPointer?) {
         Self.logger.trace("init")
-        defer { Self.logger.info("init finished") }
+        defer { Self.logger.trace("init finished") }
 
         AVSWrapper.initialize()
 
