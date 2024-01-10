@@ -93,7 +93,7 @@ public class MockAVSWrapper: AVSWrapperType {
     }
 
     public func notify(isProcessingNotifications isProcessing: Bool) {
-        fatalError("not implemented")
+        // do nothing
     }
 
     var mockSetMLSConferenceInfo: ((AVSIdentifier, MLSConferenceInfo) -> Void)?
