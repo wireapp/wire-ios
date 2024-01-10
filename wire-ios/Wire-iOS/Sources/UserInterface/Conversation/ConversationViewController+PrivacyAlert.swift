@@ -59,7 +59,7 @@ extension ConversationViewController {
         var actions: [PrivacyAlertAction] = []
 
         if conversation.legalHoldStatus == .pendingApproval {
-            title = " L10n.Localizable.Meta.Legalhold.sendAlertTitle"
+            title = L10n.Localizable.Meta.Legalhold.sendAlertTitle
             actions.append(.legalHoldDetails)
 
             if conversation.securityLevel == .secureWithIgnored {
