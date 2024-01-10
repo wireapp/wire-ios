@@ -78,13 +78,14 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     // MARK: - Configure elements
 
     func configure(deniedAuthorization: DeniedAuthorizationType) {
+        typealias KeyboardPhotoAccessDeniedLocale = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard
         var title: String
 
         switch deniedAuthorization {
-        case .camera:           title = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.camera
-        case .photos:           title = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.photos
-        case .cameraAndPhotos:  title = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.cameraAndPhotos
-        case .ongoingCall:      title = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.ongoingCall
+        case .camera:           title = KeyboardPhotoAccessDeniedLocale.camera
+        case .photos:           title = KeyboardPhotoAccessDeniedLocale.photos
+        case .cameraAndPhotos:  title = KeyboardPhotoAccessDeniedLocale.cameraAndPhotos
+        case .ongoingCall:      title = KeyboardPhotoAccessDeniedLocale.ongoingCall
         }
 
         descriptionLabel.font = UIFont.systemFont(ofSize: (deniedAuthorization == .ongoingCall ? 14.0 : 16.0),
