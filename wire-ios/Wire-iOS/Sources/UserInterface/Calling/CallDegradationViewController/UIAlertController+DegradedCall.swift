@@ -22,42 +22,57 @@ import WireSyncEngine
 
 extension UIAlertController {
 
-    static func degradedCall(degradedUser: UserType?, callEnded: Bool = false, confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil) -> UIAlertController {
+    typealias DegradedCallLocale = L10n.Localizable.Call.Degraded
 
-        // Choose localization prefix
-        let prefix = callEnded
-            ? "call.degraded.ended.alert"
-            : "call.degraded.alert"
+    static func degradedCall(
+        degradedUser: UserType?,
+        callEnded: Bool = false,
+        confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil
+    ) -> UIAlertController {
 
-        // Set message
-        var message = "\(prefix).message"
+        typealias GeneralLocale = L10n.Localizable.General
 
-        switch degradedUser {
-        case .some(let user) where user.isSelfUser:
-            message = "\(message).self".localized
-        case .some(let user):
-            message = "\(message).user".localized(args: user.name ?? "")
-        default:
-            message = "\(message).unknown".localized
-        }
+        let title = degradedCallTitle(forCallEnded: callEnded)
 
-        // Create controller
-        let controller = UIAlertController(title: "\(prefix).title".localized, message: message, preferredStyle: .alert)
+        let message = degradedCallMessage(forUser: degradedUser, callEnded: callEnded)
 
-        // Add actions
+        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
         if let confirmationBlock = confirmationBlock {
-            controller.addAction(UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { _ in
+            controller.addAction(UIAlertAction(title: GeneralLocale.cancel, style: .cancel) { _ in
                 confirmationBlock(false)
             })
 
-            controller.addAction(UIAlertAction(title: L10n.Localizable.Call.Degraded.Alert.Action.continue, style: .default) { _ in
+            controller.addAction(UIAlertAction(title: DegradedCallLocale.Alert.Action.continue, style: .default) { _ in
                 confirmationBlock(true)
             })
         } else {
-            controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
+            controller.addAction(UIAlertAction(title: GeneralLocale.ok, style: .default))
         }
 
         return controller
+    }
+
+    static func degradedCallTitle(forCallEnded callEnded: Bool) -> String {
+           return callEnded ? DegradedCallLocale.Ended.Alert.title : DegradedCallLocale.Alert.title
+       }
+
+    static func degradedCallMessage(forUser degradedUser: UserType?, callEnded: Bool) -> String {
+        if let user = degradedUser {
+            if callEnded {
+                return user.isSelfUser ?
+                DegradedCallLocale.Ended.Alert.Message.`self` :
+                DegradedCallLocale.Ended.Alert.Message.user(user.name ?? "")
+            } else {
+                return user.isSelfUser ?
+                DegradedCallLocale.Alert.Message.`self` :
+                DegradedCallLocale.Alert.Message.user(user.name ?? "")
+            }
+        } else {
+            return callEnded ?
+            DegradedCallLocale.Ended.Alert.Message.unknown :
+            DegradedCallLocale.Alert.Message.unknown
+        }
     }
 
 }

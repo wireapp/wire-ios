@@ -111,7 +111,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     private func setupNavigationTitle() {
-        guard let deviceClass = userClient.deviceClass?.localizedDescription.localized else { return }
+        guard let deviceClass = userClient.deviceClass?.localizedDescription else { return }
         navigationItem.setupNavigationBarTitle(title: deviceClass.capitalized)
     }
 

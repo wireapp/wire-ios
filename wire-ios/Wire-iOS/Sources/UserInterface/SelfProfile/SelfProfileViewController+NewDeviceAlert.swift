@@ -120,7 +120,7 @@ extension UIAlertController {
 
         let title = L10n.Localizable.Self.NewDeviceAlert.title
 
-        let messageFormat = clients.count > 1 ? "self.new_device_alert.message_plural".localized : "self.new_device_alert.message".localized
+        let messageFormat = clients.count > 1 ? L10n.Localizable.Self.NewDeviceAlert.messagePlural(clients.count) : L10n.Localizable.Self.NewDeviceAlert.message(clients.count)
 
         let message = String(format: messageFormat, deviceNamesAndDates.joined(separator: "\n\n"))
 
