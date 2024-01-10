@@ -262,8 +262,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             }
 
             do {
-                try await mlsService.createGroup(for: groupID)
-                try await mlsService.addMembersToConversation(with: users, for: groupID)
+                try await mlsService.createGroup(for: groupID, with: users)
                 await self.context.perform {
                     action.succeed(with: newConversation.objectID)
                 }
