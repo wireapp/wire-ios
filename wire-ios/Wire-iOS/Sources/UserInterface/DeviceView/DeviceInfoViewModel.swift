@@ -31,7 +31,7 @@ protocol DeviceDetailsViewActions {
     func fetchCertificate() async -> E2eIdentityCertificate?
     func fetchMLSThumbprint() async -> String?
     func removeDevice() async -> Bool
-    func resetSession() async -> Bool
+    func resetSession()
     func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
     func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate)
@@ -92,7 +92,6 @@ final class DeviceInfoViewModel: ObservableObject {
         return Settings.isClipboardEnabled
     }
     @Published var isRemoved: Bool = false
-    @Published var isReset: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
@@ -160,15 +159,8 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
-    func resetSession() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
-        let isReset =  await actionsHandler.resetSession()
-        DispatchQueue.main.async {
-            self.isReset = isReset
-            self.isActionInProgress = false
-        }
+    func resetSession() {
+        actionsHandler.resetSession()
     }
 
     func updateVerifiedStatus(_ value: Bool) async {

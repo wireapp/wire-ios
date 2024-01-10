@@ -99,12 +99,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         }
     }
 
-    func resetSession() async -> Bool {
-        return await withCheckedContinuation { continuation in
-            userClient.resetSession { value in
-                continuation.resume(returning: value)
-            }
-        }
+    func resetSession() {
+        userClient.resetSession()
     }
 
     @MainActor
