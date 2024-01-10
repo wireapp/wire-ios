@@ -4130,6 +4130,7 @@
 		168A16AA1D9597C2005CFA6C /* Wire-iOS Share Extension */ = {
 			isa = PBXGroup;
 			children = (
+				E96301B92B4EE0FC00726CDB /* Generated */,
 				E96301B62B4ED92F00726CDB /* Resources */,
 				5E7F012F213E928300C6F3E9 /* Sources */,
 				5E7F012D213E91F700C6F3E9 /* Supporting Files */,
@@ -7400,6 +7401,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		E96301B92B4EE0FC00726CDB /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
 		E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -8126,6 +8134,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 168A16B41D9597C2005CFA6C /* Build configuration list for PBXNativeTarget "Wire Share Extension" */;
 			buildPhases = (
+				E96301B82B4EDFE700726CDB /* Run SwiftGen */,
 				168A16A51D9597C2005CFA6C /* Sources */,
 				168A16A61D9597C2005CFA6C /* Frameworks */,
 				168A16A71D9597C2005CFA6C /* Resources */,
@@ -8526,6 +8535,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "rm -rf \"${SOURCE_ROOT}\"/SnapshotResults/*\n";
+		};
+		E96301B82B4EDFE700726CDB /* Run SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftGen";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-swiftgen.sh\n";
 		};
 		EE00ACE125E43FA2005FEC14 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;

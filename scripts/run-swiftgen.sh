@@ -22,6 +22,8 @@ set -Eeuo pipefail
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SCRIPTS_DIR="$REPO_ROOT/scripts"
 SWIFTGEN="$SCRIPTS_DIR/.build/artifacts/scripts/swiftgen/swiftgen.artifactbundle/swiftgen/bin/swiftgen"
+SWIFTGEN_CONFIG_MAIN="$REPO_ROOT/wire-ios/swiftgen.yml" # path to main config
+SWIFTGEN_CONFIG_SHARE_EXT="$REPO_ROOT/wire-ios/swiftgenShareExtension.yml" # path to share extension config
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping SwiftGen in CI environment"
@@ -32,7 +34,25 @@ if [[ ! -f "$SWIFTGEN" ]]; then
     xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
 fi
 
+# Run SwiftGen for main app
 (
     cd "$REPO_ROOT/wire-ios"
-    "$SWIFTGEN"
+    if [[ -f "$SWIFTGEN_CONFIG_MAIN" ]]; then
+        "$SWIFTGEN" config run --config "$SWIFTGEN_CONFIG_MAIN"
+    else
+        echo "SwiftGen config not found for main app: $SWIFTGEN_CONFIG_MAIN"
+        exit 1
+    fi
 )
+
+# Run SwiftGen for share extension
+(
+    cd "$REPO_ROOT/wire-ios"
+    if [[ -f "$SWIFTGEN_CONFIG_SHARE_EXT" ]]; then
+        "$SWIFTGEN" config run --config "$SWIFTGEN_CONFIG_SHARE_EXT"
+    else
+        echo "SwiftGen config not found for share extension: $SWIFTGEN_CONFIG_SHARE_EXT"
+        exit 1
+    fi
+)
+
