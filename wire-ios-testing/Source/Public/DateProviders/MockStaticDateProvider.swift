@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireUtilities
+import WireSystem
 
 extension DateProviding where Self == MockStaticDateProvider {
     public static func mock(_ now: Date) -> Self { .init(now: now) }

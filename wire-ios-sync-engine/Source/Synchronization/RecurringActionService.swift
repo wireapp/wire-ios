@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireUtilities
+import WireSystem
 
 struct RecurringAction {
 
@@ -30,6 +30,7 @@ struct RecurringAction {
     }
 }
 
+// sourcery: AutoMockable
 protocol RecurringActionServiceInterface {
     func performActionsIfNeeded()
     func registerAction(_ action: RecurringAction)
@@ -55,7 +56,7 @@ final class RecurringActionService: RecurringActionServiceInterface {
 
             let lastActionDate = lastCheckDate(for: action.id) ?? .distantPast
             if (lastActionDate + action.interval) <= now {
-                action.perform()
+                action()
                 persistLastCheckDate(for: action.id)
             }
         }
@@ -76,6 +77,6 @@ final class RecurringActionService: RecurringActionServiceInterface {
     }
 
     private func persistLastCheckDate(for actionID: String) {
-        storage.set(Date.now, forKey: key(for: actionID))
+        storage.set(dateProvider.now, forKey: key(for: actionID))
     }
 }

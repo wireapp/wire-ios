@@ -33,7 +33,6 @@
 		06CDC6F82A2DFB4400EB518D /* RecurringActionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CDC6F72A2DFB4400EB518D /* RecurringActionServiceTests.swift */; };
 		06DE14CF24B85CA0006CB6B3 /* ZMSyncStateDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 06DE14CE24B85BD0006CB6B3 /* ZMSyncStateDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		06E0979C2A261E5D00B38C4A /* ZMUserSession+RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E0979B2A261E5D00B38C4A /* ZMUserSession+RecurringAction.swift */; };
-		06E0979E2A264E4600B38C4A /* MockRecurringActionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E0979D2A264E4600B38C4A /* MockRecurringActionService.swift */; };
 		06E097A02A264F0300B38C4A /* ZMUserSessionTests+RecurringActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E0979F2A264F0300B38C4A /* ZMUserSessionTests+RecurringActions.swift */; };
 		06EB24FE27D6576500094E6E /* LoginFlowTests+PushToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EB24FD27D6576500094E6E /* LoginFlowTests+PushToken.swift */; };
 		06F98D602437916B007E914A /* SignatureRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F98D5E24379143007E914A /* SignatureRequestStrategyTests.swift */; };
@@ -740,7 +739,6 @@
 		06CDC6F72A2DFB4400EB518D /* RecurringActionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringActionServiceTests.swift; sourceTree = "<group>"; };
 		06DE14CE24B85BD0006CB6B3 /* ZMSyncStateDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSyncStateDelegate.h; sourceTree = "<group>"; };
 		06E0979B2A261E5D00B38C4A /* ZMUserSession+RecurringAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+RecurringAction.swift"; sourceTree = "<group>"; };
-		06E0979D2A264E4600B38C4A /* MockRecurringActionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRecurringActionService.swift; sourceTree = "<group>"; };
 		06E0979F2A264F0300B38C4A /* ZMUserSessionTests+RecurringActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSessionTests+RecurringActions.swift"; sourceTree = "<group>"; };
 		06EB24FD27D6576500094E6E /* LoginFlowTests+PushToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LoginFlowTests+PushToken.swift"; sourceTree = "<group>"; };
 		06F98D5E24379143007E914A /* SignatureRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureRequestStrategyTests.swift; sourceTree = "<group>"; };
@@ -1945,7 +1943,6 @@
 				F1AE5F6E21F73388009CDBBC /* ZMUserSessionTests+Timers.swift */,
 				06E0979F2A264F0300B38C4A /* ZMUserSessionTests+RecurringActions.swift */,
 				06CDC6F72A2DFB4400EB518D /* RecurringActionServiceTests.swift */,
-				06E0979D2A264E4600B38C4A /* MockRecurringActionService.swift */,
 				168474252252579A004DE9EC /* ZMUserSessionTests+Syncing.swift */,
 				16E0FBB4233119FE000E3235 /* ZMUserSessionTests+Authentication.swift */,
 				1673C35224CB36D800AE2714 /* ZMUserSessionTests+EncryptionAtRest.swift */,
@@ -3307,7 +3304,6 @@
 				093694451BA9633300F36B3A /* UserClientRequestFactoryTests.swift in Sources */,
 				168474262252579A004DE9EC /* ZMUserSessionTests+Syncing.swift in Sources */,
 				F94F6B331E54B9C000D46A29 /* CallingRequestStrategyTests.swift in Sources */,
-				06E0979E2A264E4600B38C4A /* MockRecurringActionService.swift in Sources */,
 				166B2B6E23EB2CD3003E8581 /* DatabaseTest.swift in Sources */,
 				5E8BB8A52149130800EEA64B /* AVSBridgingTests.swift in Sources */,
 				161C887723FD4CFD00CB0B8E /* MockPushChannel.swift in Sources */,

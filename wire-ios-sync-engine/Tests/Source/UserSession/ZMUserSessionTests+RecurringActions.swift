@@ -21,15 +21,16 @@ import WireTesting
 import XCTest
 
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
-    var mockRecurringActionService: MockRecurringActionService!
+    var mockRecurringActionService: MockRecurringActionServiceInterface!
 
     override func setUp() {
         super.setUp()
 
-        mockRecurringActionService = MockRecurringActionService()
+        mockRecurringActionService = .init()
     }
 
     override func tearDown() {
@@ -39,16 +40,17 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
     }
 
     func testThatItCallsPerformActionsAfterQuickSync() {
-        // given
+        // Given
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
         sut.recurringActionService = mockRecurringActionService
 
-        // when
-        XCTAssertFalse(mockRecurringActionService.performActionsIsCalled)
+        // When
+        XCTAssertTrue(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
         sut.didFinishQuickSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // then
-        XCTAssertTrue(mockRecurringActionService.performActionsIsCalled)
+        // Then
+        XCTAssertFalse(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
     }
 
     func testThatItUpdatesUsersMissingMetadata() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,19 +22,19 @@ import XCTest
 
 @testable import WireSyncEngine
 
-final class RecurringActionServiceTests: ZMTBaseTest {
+final class RecurringActionServiceTests: XCTestCase {
 
-    var suiteName: String!
+    var userDefaults: UserDefaults!
     var dateProvider: MockDateProvider!
     var sut: RecurringActionService!
 
     override func setUp() {
         super.setUp()
 
-        suiteName = String(describing: RecurringActionServiceTests.self) + "." + .random(length: 5)
-        dateProvider = .init(now: .now)
+        userDefaults = .temporary()
+        dateProvider = .init(now: .now.addingTimeInterval(-.oneDay))
         sut = RecurringActionService(
-            storage: .init(suiteName: suiteName)!,
+            storage: userDefaults,
             dateProvider: dateProvider
         )
     }
@@ -42,8 +42,7 @@ final class RecurringActionServiceTests: ZMTBaseTest {
     override func tearDown() {
         sut = nil
         dateProvider = nil
-        UserDefaults.standard.removePersistentDomain(forName: suiteName)
-        suiteName = nil
+        userDefaults = nil
 
         super.tearDown()
     }
@@ -95,5 +94,4 @@ final class RecurringActionServiceTests: ZMTBaseTest {
         // Then
         XCTAssertTrue(actionPerformed)
     }
-
 }

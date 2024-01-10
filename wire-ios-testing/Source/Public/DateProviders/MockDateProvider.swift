@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireUtilities
+import WireSystem
 
 public final class MockDateProvider: DateProviding {
 
