@@ -381,24 +381,26 @@ final class ConversationEventPayloadProcessor {
         messageProtocolRawValue: String,
         in context: NSManagedObjectContext
     ) {
-        let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
-        let messageProtocol = MessageProtocol(rawValue: messageProtocolRawValue)
-        let selfUser = ZMUser.selfUser(in: context)
-        let now = Date()
+        context.perform {
+            let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+            let messageProtocol = MessageProtocol(rawValue: messageProtocolRawValue)
+            let selfUser = ZMUser.selfUser(in: context)
+            let now = Date()
 
-        switch messageProtocol {
-        case .mixed:
-            conversation?.appendMLSMigrationStartedSystemMessage(
-                sender: selfUser,
-                at: now
-            )
-        case .mls:
-            conversation?.appendMLSMigrationFinalizedSystemMessage(
-                sender: selfUser,
-                at: now
-            )
-        case .none, .proteus:
-            assertionFailure("unexpected value for 'messageProtocol' '\(String(describing: messageProtocol))', that can not be processed!")
+            switch messageProtocol {
+            case .mixed:
+                conversation?.appendMLSMigrationStartedSystemMessage(
+                    sender: selfUser,
+                    at: now
+                )
+            case .mls:
+                conversation?.appendMLSMigrationFinalizedSystemMessage(
+                    sender: selfUser,
+                    at: now
+                )
+            case .none, .proteus:
+                assertionFailure("unexpected value for 'messageProtocol' '\(String(describing: messageProtocol))', that can not be processed!")
+            }
         }
     }
 

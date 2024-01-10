@@ -599,30 +599,28 @@ extension ZMConversation {
         guard let context = managedObjectContext else {
             fatalError("can not append system message without managedObjectContext!")
         }
-        return context.performAndWait {
-            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
-            systemMessage.systemMessageType = type
-            systemMessage.sender = sender
-            systemMessage.users = users ?? Set()
-            systemMessage.addedUsers = addedUsers
-            systemMessage.clients = clients ?? Set()
-            systemMessage.serverTimestamp = timestamp
-            if let duration = duration {
-                systemMessage.duration = duration
-            }
-
-            if let messageTimer = messageTimer {
-                systemMessage.messageTimer = NSNumber(value: messageTimer)
-            }
-
-            systemMessage.relevantForConversationStatus = relevantForStatus
-            systemMessage.participantsRemovedReason = removedReason
-            systemMessage.domains = domains
-
-            self.append(systemMessage)
-
-            return systemMessage
+        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
+        systemMessage.systemMessageType = type
+        systemMessage.sender = sender
+        systemMessage.users = users ?? Set()
+        systemMessage.addedUsers = addedUsers
+        systemMessage.clients = clients ?? Set()
+        systemMessage.serverTimestamp = timestamp
+        if let duration = duration {
+            systemMessage.duration = duration
         }
+
+        if let messageTimer = messageTimer {
+            systemMessage.messageTimer = NSNumber(value: messageTimer)
+        }
+
+        systemMessage.relevantForConversationStatus = relevantForStatus
+        systemMessage.participantsRemovedReason = removedReason
+        systemMessage.domains = domains
+
+        self.append(systemMessage)
+
+        return systemMessage
     }
 
     /// Returns a timestamp that is shortly (as short as possible) before the given message,
