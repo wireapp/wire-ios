@@ -44,6 +44,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     }
 
     private var saveFileManager: SaveFileActions
+    private var continuation: CheckedContinuation<Bool, Never>?
 
     init(
         userClient: UserClient,
@@ -79,20 +80,27 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         return nil
     }
 
+    @MainActor
     func removeDevice() async -> Bool {
         isProcessing?(true)
         return await withCheckedContinuation {[weak self] continuation in
             guard let self = self else {
                 return
             }
+            self.continuation = continuation
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
                 credentials: credentials,
                 completion: {
                     error in
-                    let isRemoved = error == nil
-                    continuation.resume(returning: isRemoved)
+                    defer {
+                        self.continuation = nil
+                    }
+                    self.continuation?.resume(returning: error == nil)
+                    if let error = error {
+                        WireLogger.e2ei.error(error.localizedDescription)
+                    }
                 }
             )
             clientRemovalObserver?.startRemoval()
@@ -138,7 +146,9 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         _ clientRemovalObserver: ClientRemovalObserver,
         viewControllerToPresent: UIViewController
     ) {
-        UIViewController.presentTopmost(viewController: viewControllerToPresent)
+        if !(UIApplication.shared.topmostViewController()?.presentedViewController is UIAlertController) {
+                    UIViewController.presentTopmost(viewController: viewControllerToPresent)
+        }
     }
 
     func setIsLoadingViewVisible(

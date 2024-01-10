@@ -91,7 +91,7 @@ final class DeviceInfoViewModel: ObservableObject {
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
     }
-    @Published var isRemoved: Bool = false
+    @Published var shouldDissmissView: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
@@ -148,15 +148,10 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func removeDevice() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
         let isRemoved = await actionsHandler.removeDevice()
-        DispatchQueue.main.async {
-            self.isRemoved = isRemoved
-            self.isActionInProgress = false
-        }
+        shouldDissmissView = isRemoved
     }
 
     func resetSession() {
