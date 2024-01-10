@@ -82,7 +82,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func removeDevice() async -> Bool {
-        isProcessing?(true)
         return await withCheckedContinuation {[weak self] continuation in
             guard let self = self else {
                 return
