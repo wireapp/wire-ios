@@ -35,7 +35,7 @@ extension MessagePresenter {
                               isPreviewing: Bool,
                               userSession: UserSession) -> UIViewController {
 
-        guard let conversation = message.conversationLike else {
+        guard let conversation = message.conversation else {
             fatal("Message has no conversation.")
         }
 

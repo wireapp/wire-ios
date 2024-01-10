@@ -562,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "This conversation is under legal hold";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "Legal hold deactivated for this conversation";
 
 "content.system.message_legal_hold.learn_more" = "Learn more";
@@ -572,6 +572,8 @@
 "content.system.reactivated_device" = "You started using [this device](%@) again. Messages sent in the meantime will not appear here.";
 
 "content.system.is_verified" = "All fingerprints are verified";
+"content.system.mls.conversation_is_verified" = "All devices are verified by End-to-end Identity. [Learn more](%@)";
+"content.system.mls.conversation_is_degraded" = "This conversation is no longer verified, as some user uses at least one device without a valid end-to-end identity certificate.";
 
 "content.system.new_users" = "New user joined.";
 "content.system.verify_devices" = "Verify devices";
@@ -989,10 +991,12 @@
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
 
+"group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
+"group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Legal hold subjects";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "Legal Hold";
 "legalhold.header.other_description" = "Legal Hold has been activated for at least one person in this conversation.\nAll messages will be preserved for future access, including deleted, edited, and self-deleting messages.";
 "legalhold.header.self_description" = "Legal Hold has been activated for your account.\nAll messages will be preserved for future access, including deleted, edited, and self-deleting messages.\nYour conversation partners will be aware of the recording.";

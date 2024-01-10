@@ -2041,8 +2041,10 @@ internal enum L10n {
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")
-          /// This conversation is under legal hold
-          internal static let enabled = L10n.tr("Localizable", "content.system.message_legal_hold.enabled", fallback: "This conversation is under legal hold")
+          /// This conversation is under legal hold [LEARN MORE](%@)
+          internal static func enabled(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.message_legal_hold.enabled", String(describing: p1), fallback: "This conversation is under legal hold [LEARN MORE](%@)")
+          }
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "content.system.message_legal_hold.learn_more", fallback: "Learn more")
         }
@@ -2100,6 +2102,14 @@ internal enum L10n {
             internal static func singular(_ p1: Any) -> String {
               return L10n.tr("Localizable", "content.system.missing_messages.users_removed.singular", String(describing: p1), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.")
             }
+          }
+        }
+        internal enum Mls {
+          /// This conversation is no longer verified, as some user uses at least one device without a valid end-to-end identity certificate.
+          internal static let conversationIsDegraded = L10n.tr("Localizable", "content.system.mls.conversation_is_degraded", fallback: "This conversation is no longer verified, as some user uses at least one device without a valid end-to-end identity certificate.")
+          /// All devices are verified by End-to-end Identity. [Learn more](%@)
+          internal static func conversationIsVerified(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.mls.conversation_is_verified", String(describing: p1), fallback: "All devices are verified by End-to-end Identity. [Learn more](%@)")
           }
         }
         internal enum RenamedConv {
@@ -3235,6 +3245,12 @@ internal enum L10n {
         /// Group members
         internal static let title = L10n.tr("Localizable", "group_details.conversation_members_header.title", fallback: "Group members")
       }
+      internal enum ConversationVerificationStatus {
+        /// Verified (End-to-end Identity)
+        internal static let e2ei = L10n.tr("Localizable", "group_details.conversation_verification_status.e2ei", fallback: "Verified (End-to-end Identity)")
+        /// Verified (Proteus)
+        internal static let proteus = L10n.tr("Localizable", "group_details.conversation_verification_status.proteus", fallback: "Verified (Proteus)")
+      }
       internal enum GuestOptionsCell {
         /// Off
         internal static let disabled = L10n.tr("Localizable", "group_details.guest_options_cell.disabled", fallback: "Off")
@@ -3554,8 +3570,10 @@ internal enum L10n {
       }
       internal enum Participants {
         internal enum Section {
-          /// Legal hold subjects
-          internal static let title = L10n.tr("Localizable", "legalhold.participants.section.title", fallback: "Legal hold subjects")
+          /// Legal hold subjects %@
+          internal static func title(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "legalhold.participants.section.title", String(describing: p1), fallback: "Legal hold subjects %@")
+          }
         }
       }
     }

@@ -44,8 +44,8 @@ public protocol E2eIServiceInterface {
 /// This class provides an interface for WireE2eIdentityProtocol (CoreCrypto) methods.
 public final class E2eIService: E2eIServiceInterface {
 
-    public let e2eIdentity: WireE2eIdentityProtocol
-    public init(e2eIdentity: WireE2eIdentityProtocol) {
+    public let e2eIdentity: E2eiEnrollmentProtocol
+    public init(e2eIdentity: E2eiEnrollmentProtocol) {
         self.e2eIdentity = e2eIdentity
     }
 
@@ -54,67 +54,70 @@ public final class E2eIService: E2eIServiceInterface {
     // MARK: - Methods
 
     public func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory {
-        return try e2eIdentity.directoryResponse(directory: directoryData.bytes)
+        return try await e2eIdentity.directoryResponse(directory: directoryData)
     }
 
     public func getNewAccountRequest(nonce: String) async throws -> Data {
-        return try e2eIdentity.newAccountRequest(previousNonce: nonce).data
+        return try await e2eIdentity.newAccountRequest(previousNonce: nonce)
     }
 
     public func setAccountResponse(accountData: Data) async throws {
-        try e2eIdentity.newAccountResponse(account: accountData.bytes)
+        try await e2eIdentity.newAccountResponse(account: accountData)
     }
 
     public func getNewOrderRequest(nonce: String) async throws -> Data {
-        return try e2eIdentity.newOrderRequest(previousNonce: nonce).data
+        return try await e2eIdentity.newOrderRequest(previousNonce: nonce)
     }
 
     public func setOrderResponse(order: Data) async throws -> NewAcmeOrder {
-        return try e2eIdentity.newOrderResponse(order: order.bytes)
+        return try await e2eIdentity.newOrderResponse(order: order)
     }
 
     public func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data {
-        return try e2eIdentity.newAuthzRequest(url: url, previousNonce: previousNonce).data
+        return try await e2eIdentity.newAuthzRequest(url: url, previousNonce: previousNonce)
     }
 
     public func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz {
-        return try e2eIdentity.newAuthzResponse(authz: authz.bytes)
+        return try await e2eIdentity.newAuthzResponse(authz: authz)
     }
 
     public func createDpopToken(nonce: String) async throws -> String {
-        return try e2eIdentity.createDpopToken(expirySecs: defaultDPoPTokenExpiry, backendNonce: nonce)
+        return try await e2eIdentity.createDpopToken(expirySecs: defaultDPoPTokenExpiry, backendNonce: nonce)
     }
 
     public func getNewDpopChallengeRequest(accessToken: String, nonce: String) async throws -> Data {
-        return try e2eIdentity.newDpopChallengeRequest(accessToken: accessToken, previousNonce: nonce).data
+        return try await e2eIdentity.newDpopChallengeRequest(accessToken: accessToken, previousNonce: nonce)
     }
 
     public func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data {
-        return try e2eIdentity.newOidcChallengeRequest(idToken: idToken, previousNonce: nonce).data
+        return try await e2eIdentity.newOidcChallengeRequest(idToken: idToken,
+                                                             refreshToken: "",
+                                                             previousNonce: nonce)
     }
 
     public func setChallengeResponse(challenge: Data) async throws {
-        return try e2eIdentity.newChallengeResponse(challenge: challenge.bytes)
+        // TODO: Update method with a new parameters
+        // return try e2eIdentity.newOidcChallengeResponse(challenge: challenge)
     }
 
     public func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data {
-        return try e2eIdentity.checkOrderRequest(orderUrl: orderUrl, previousNonce: nonce).data
+        return try await e2eIdentity.checkOrderRequest(orderUrl: orderUrl, previousNonce: nonce)
     }
 
     public func checkOrderResponse(order: Data) async throws -> String {
-        return try e2eIdentity.checkOrderResponse(order: order.bytes)
+        return try await e2eIdentity.checkOrderResponse(order: order)
     }
 
     public func finalizeRequest(nonce: String) async throws -> Data {
-        return try e2eIdentity.finalizeRequest(previousNonce: nonce).data
+        return try await e2eIdentity.finalizeRequest(previousNonce: nonce)
     }
 
     public func finalizeResponse(finalize: Data) async throws -> String {
-        return try e2eIdentity.finalizeResponse(finalize: finalize.bytes)
+        return try await e2eIdentity.finalizeResponse(finalize: finalize)
     }
 
     public func certificateRequest(nonce: String) async throws -> Data {
-        return try e2eIdentity.certificateRequest(previousNonce: nonce).data
+        return try await e2eIdentity.certificateRequest(previousNonce: nonce)
     }
 
 }

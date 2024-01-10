@@ -37,7 +37,8 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         previousApiVersion = BackendInfo.apiVersion
         let acmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
                                           newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                          newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order")
+                                          newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
+                                          revokeCert: "")
         mockAcmeApi = MockAcmeApi()
         mockApiProvider = MockAPIProviderInterface()
         mockE2eiService = MockE2eIService()
@@ -94,7 +95,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         // expectation
         let expectedNonce = "Nonce"
         let expectedLocation = "Location"
-        let expectedAcmeOrder = NewAcmeOrder(delegate: [], authorizations: ["new order"])
+        let expectedAcmeOrder = NewAcmeOrder(delegate: Data(), authorizations: ["new order"])
 
         // given
         mockAcmeApi.mockNonce = expectedNonce
@@ -114,8 +115,8 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         // expectation
         let expectedNonce = "Nonce"
         let expectedLocation = "Location"
-        let wireDpopChallenge = AcmeChallenge(delegate: [], url: "url", target: "wire server")
-        let wireOidcChallenge = AcmeChallenge(delegate: [], url: "url", target: "google")
+        let wireDpopChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "wire server")
+        let wireOidcChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "google")
 
         // given
         mockAcmeApi.mockNonce = expectedNonce
@@ -198,7 +199,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         // when
         let result = try await sut.validateDPoPChallenge(accessToken: "11",
                                                          prevNonce: "Nonce",
-                                                         acmeChallenge: AcmeChallenge(delegate: [],
+                                                         acmeChallenge: AcmeChallenge(delegate: Data(),
                                                                                       url: "",
                                                                                       target: ""))
 
@@ -220,7 +221,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         // when
         let result = try await sut.validateOIDCChallenge(idToken: "idToken",
                                                          prevNonce: "Nonce",
-                                                         acmeChallenge: AcmeChallenge(delegate: [],
+                                                         acmeChallenge: AcmeChallenge(delegate: Data(),
                                                                                       url: "",
                                                                                       target: ""))
 
@@ -375,7 +376,7 @@ class MockE2eIService: E2eIServiceInterface {
     var mockFinalizeResponse: String?
 
     func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory {
-        return AcmeDirectory(newNonce: "", newAccount: "", newOrder: "")
+        return AcmeDirectory(newNonce: "", newAccount: "", newOrder: "", revokeCert: "")
     }
 
     func getNewAccountRequest(nonce: String) async throws -> Data {
@@ -390,7 +391,7 @@ class MockE2eIService: E2eIServiceInterface {
     }
 
     func setOrderResponse(order: Data) async throws -> NewAcmeOrder {
-        return mockAcmeOrder ?? NewAcmeOrder(delegate: [], authorizations: [])
+        return mockAcmeOrder ?? NewAcmeOrder(delegate: Data(), authorizations: [])
     }
 
     func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data {

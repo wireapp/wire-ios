@@ -580,13 +580,15 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
-        do {
-            if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
-                // Make sure MLS client exists, mls public keys will be generated upon creation
-                _ = try coreCryptoProvider.coreCrypto(requireMLS: true)
+        if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
+            WaitingGroupTask(context: syncContext) { [self] in
+                do {
+                    // Make sure MLS client exists, mls public keys will be generated upon creation
+                    _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+                } catch {
+                    WireLogger.mls.error("Failed to create MLS client: \(error)")
+                }
             }
-        } catch {
-            WireLogger.mls.error("Failed to create MLS client: \(error)")
         }
     }
 
@@ -737,7 +739,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
         if selfClient?.hasRegisteredMLSClient == true {
-            mlsService.repairOutOfSyncConversations()
+            Task {
+                await mlsService.repairOutOfSyncConversations()
+            }
         }
     }
 

@@ -64,6 +64,7 @@ public enum SemanticColors {
 
         static let textCertificateValid = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let textCertificateInvalid = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
+        static let textCertificateVerified = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
     }
 
     public enum SearchBar {

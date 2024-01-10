@@ -140,7 +140,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     func test_itWipesGroup() async {
         // Given
         let groupID = MLSGroupID(Data.random())
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             conversation.messageProtocol = .mls
             conversation.mlsGroupID = groupID
         }
@@ -157,7 +157,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     }
 
     func test_itDoesntWipeGroup_WhenProtocolIsNotMLS() async {
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             // Given
             conversation.messageProtocol = .proteus
             conversation.mlsGroupID = MLSGroupID(Data.random())

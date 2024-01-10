@@ -23,14 +23,10 @@ enum LeaveResult: AlertResultConfiguration {
     case leave(delete: Bool), cancel
 
     var title: String {
-        return localizationKey.localized
-    }
-
-    private var localizationKey: String {
         switch self {
-        case .cancel: return "general.cancel"
-        case .leave(delete: true): return "meta.leave_conversation_button_leave_and_delete"
-        case .leave(delete: false): return "meta.leave_conversation_button_leave"
+        case .cancel: return L10n.Localizable.General.cancel
+        case .leave(delete: true): return L10n.Localizable.Meta.leaveConversationButtonLeaveAndDelete
+        case .leave(delete: false): return L10n.Localizable.Meta.leaveConversationButtonLeave
         }
     }
 

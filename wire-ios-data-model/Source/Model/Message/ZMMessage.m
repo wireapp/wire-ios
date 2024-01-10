@@ -880,7 +880,9 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
             case ZMSystemMessageTypeLegalHoldEnabled:
             case ZMSystemMessageTypeLegalHoldDisabled:
             case ZMSystemMessageTypeSessionReset:
-                
+            case ZMSystemMessageTypeConversationIsVerified:
+            case ZMSystemMessageTypeConversationIsDegraded:
+
                 return YES;
             case ZMSystemMessageTypeInvalid:
             case ZMSystemMessageTypeConversationNameChanged:
