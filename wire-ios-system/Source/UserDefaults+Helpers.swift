@@ -25,15 +25,6 @@ extension UserDefaults {
         .init(suiteName: UUID().uuidString)
     }
 
-    @objc
-    public func reset() {
-        for key in dictionaryRepresentation().keys {
-            removeObject(forKey: key)
-        }
-
-        synchronize()
-    }
-
     /// Creates an instance with a random (UUID string based) `suiteName`.
     /// When the instance is deallocated, the storage is cleaned up.
     @objc public static func temporary() -> Self {
@@ -51,6 +42,8 @@ extension UserDefaults {
 
 // MARK: UserDefaults.temporary() helpers
 
+private let zmLog = ZMSLog(tag: "UserDefaults")
+
 private final class SuiteCleanUp {
 
     private let suiteName: String
@@ -60,7 +53,22 @@ private final class SuiteCleanUp {
     }
 
     deinit {
+
+        // remove all values
         UserDefaults.standard.removePersistentDomain(forName: suiteName)
+
+        // try to even delete the plist file from the simulator usually at
+        // ~/Library/Developer/CoreSimulator/Devices/<device id>/data/Containers/Data/Application/<app id>/Library/Preferences/<suiteName>.plist
+        do {
+            let fileManager = FileManager.default
+            let url = try fileManager
+                .url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: .init(string: "/")!, create: false)
+                .appendingPathComponent("Preferences")
+                .appendingPathComponent(suiteName + ".plist")
+            try fileManager.removeItem(at: url)
+        } catch {
+            zmLog.warn("Could not remove temporary user defaults file: " + String(reflecting: error))
+        }
     }
 }
 
