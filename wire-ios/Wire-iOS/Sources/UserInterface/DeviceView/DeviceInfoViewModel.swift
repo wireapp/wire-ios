@@ -91,7 +91,7 @@ final class DeviceInfoViewModel: ObservableObject {
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
     }
-    @Published var shouldDissmissView: Bool = false
+    @Published var isRemoved: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
@@ -151,7 +151,7 @@ final class DeviceInfoViewModel: ObservableObject {
     @MainActor
     func removeDevice() async {
         let isRemoved = await actionsHandler.removeDevice()
-        shouldDissmissView = isRemoved
+        self.isRemoved = isRemoved
     }
 
     func resetSession() {

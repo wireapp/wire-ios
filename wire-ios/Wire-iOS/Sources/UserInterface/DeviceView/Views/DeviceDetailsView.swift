@@ -123,8 +123,8 @@ struct DeviceDetailsView: View {
         .onDisappear {
             dismissedView?()
         }
-        .onReceive(viewModel.$shouldDissmissView) { shouldDismiss in
-            if shouldDismiss {
+        .onReceive(viewModel.$isRemoved) { isRemoved in
+            if isRemoved {
                 dismiss()
             }
         }
