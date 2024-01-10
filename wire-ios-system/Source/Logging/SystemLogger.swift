@@ -45,11 +45,17 @@ struct SystemLogger: LoggerProtocol {
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {
+        var logger: OSLog = OSLog.default
+        if let tag = attributes?["tag"] as? String {
 
+            logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
+        }
         #if DEBUG
-            os_log(osLogType, log: .default, "%{public}@", "\(message.logDescription)")
+            os_log(osLogType, log: logger, "%{public}@", "\(message.logDescription)")
         #else
-            os_log(osLogType, log: .default, "\(message.logDescription)")
+            os_log(osLogType, log: logger, "\(message.logDescription)")
         #endif
     }
 }
+
+private var loggers: [String: OSLog] = [:]
