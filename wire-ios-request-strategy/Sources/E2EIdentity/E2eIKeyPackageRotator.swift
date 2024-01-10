@@ -24,7 +24,7 @@ import WireDataModel
 public protocol E2eIKeyPackageRotating {
 
     func rotateKeysAndMigrateConversations(
-        e2eIService: E2eIServiceInterface,
+        enrollment: E2eiEnrollmentProtocol,
         certificateChain: String
     ) async throws
 
@@ -49,8 +49,8 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
     private let newKeyPackageCount: UInt32 = 100
 
     private var coreCrypto: SafeCoreCryptoProtocol {
-        get throws {
-            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
         }
     }
 
@@ -74,22 +74,23 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
     // MARK: - Interface
 
     public func rotateKeysAndMigrateConversations(
-        e2eIService: E2eIServiceInterface,
+        enrollment: E2eiEnrollmentProtocol,
         certificateChain: String
     ) async throws {
 
-        // We need to cast this to `WireE2eIdentity` because we only have access
-        // to the protocol it conforms to (WireE2eiIdentityProtocol)
-        guard let identity = e2eIService.e2eIdentity as? WireE2eIdentity else {
+        // We need to cast this to `E2eiEnrollment` because we only have access
+        // to the protocol it conforms to (E2eiEnrollmentProtocol),
+        // but the `e2eiRotateAll` function below expects the `E2eiEnrollment` type
+        guard let enrollment = enrollment as? E2eiEnrollment else {
             throw Error.invalidIdentity
         }
 
         // Get the rotate bundle from core crypto
         let rotateBundle = try await coreCrypto.perform {
             try await $0.e2eiRotateAll(
-                enrollment: identity,
+                enrollment: enrollment,
                 certificateChain: certificateChain,
-                newKeyPackageCount: newKeyPackageCount
+                newKeyPackagesCount: newKeyPackageCount
             )
         }
 
@@ -115,7 +116,7 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
             throw Error.noSelfClient
         }
 
-        let newKeyPackages = rotateBundle.newKeyPackages.map { $0.data.base64String() }
+        let newKeyPackages = rotateBundle.newKeyPackages.map { $0.base64String() }
         var action = ReplaceSelfMLSKeyPackagesAction(
             clientID: clientID,
             keyPackages: newKeyPackages
@@ -136,28 +137,4 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
         await conversationEventProcessor.processConversationEvents(events)
     }
 
-}
-
-// TODO: Remove after core crypto update
-// https://wearezeta.atlassian.net/browse/WPB-3384
-
-public struct RotateBundle {
-    /// An Update commit for each conversation
-    public var commits: [String: CommitBundle]
-    /// Fresh KeyPackages with the new Credential
-    public var newKeyPackages: [[UInt8]]
-    /// All the now deprecated KeyPackages. Once deleted remotely, delete them locally with ``CoreCrypto/deleteKeypackages``
-    public var keyPackageRefsToRemove: [[UInt8]]
-
-    public init(commits: [String: CommitBundle], newKeyPackages: [[UInt8]], keyPackageRefsToRemove: [[UInt8]]) {
-        self.commits = commits
-        self.newKeyPackages = newKeyPackages
-        self.keyPackageRefsToRemove = keyPackageRefsToRemove
-    }
-}
-
-extension CoreCryptoProtocol {
-    public func e2eiRotateAll(enrollment: WireE2eIdentity, certificateChain: String, newKeyPackageCount: UInt32) async throws -> RotateBundle {
-        return .init(commits: [:], newKeyPackages: [], keyPackageRefsToRemove: [])
-    }
 }

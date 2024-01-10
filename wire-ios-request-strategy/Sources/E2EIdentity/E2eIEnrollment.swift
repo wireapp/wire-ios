@@ -309,7 +309,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
     public func rotateKeysAndMigrateConversations(certificateChain: String) async throws {
         do {
             try await keyRotator.rotateKeysAndMigrateConversations(
-                e2eIService: e2eiService,
+                enrollment: e2eiService.e2eIdentity,
                 certificateChain: certificateChain
             )
         } catch {

@@ -59,14 +59,13 @@ class E2eIKeyPackageRotatorTests: MessagingTestBase {
 
     func test_rotateKeys() {
         // In the implementation of `rotateKeysAndMigrateConversations`
-        // Core crypto expects the type `WireE2eIdentity`
+        // Core crypto expects the type `E2eiEnrollment`
         // Unfortunately, we cannot mock or stub this type
         // So we're unable to test the behaviour of the key package rotator
         //
-        // If core crypto changes method signatures to expect a type we're able to mock,
-        // Or we implement a wrapper around `WireE2eIdentity` to enable mocking,
-        // Then we can resolve this.
-        // Until then we're unable to test anything that has a dependency on `WireE2eIdentity`
+        // If core crypto changes method signatures to expect `E2eiEnrollmentProtocol` instead,
+        // then we can resolve this.
+        // Until then we're unable to test anything that has a dependency on `E2eiEnrollment`
         //
         // TODO: Investigate solutions to mock core crypto types
         // https://wearezeta.atlassian.net/browse/WPB-6035

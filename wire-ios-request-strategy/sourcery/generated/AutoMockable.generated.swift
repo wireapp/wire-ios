@@ -233,22 +233,22 @@ public class MockE2eIKeyPackageRotating: E2eIKeyPackageRotating {
 
     // MARK: - rotateKeysAndMigrateConversations
 
-    public var rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_Invocations: [(e2eIService: E2eIServiceInterface, certificateChain: String)] = []
-    public var rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockError: Error?
-    public var rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockMethod: ((E2eIServiceInterface, String) async throws -> Void)?
+    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollmentProtocol, certificateChain: String)] = []
+    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError: Error?
+    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod: ((E2eiEnrollmentProtocol, String) async throws -> Void)?
 
-    public func rotateKeysAndMigrateConversations(e2eIService: E2eIServiceInterface, certificateChain: String) async throws {
-        rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_Invocations.append((e2eIService: e2eIService, certificateChain: certificateChain))
+    public func rotateKeysAndMigrateConversations(enrollment: E2eiEnrollmentProtocol, certificateChain: String) async throws {
+        rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
 
-        if let error = rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockError {
+        if let error = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError {
             throw error
         }
 
-        guard let mock = rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockMethod else {
-            fatalError("no mock for `rotateKeysAndMigrateConversationsE2eIServiceCertificateChain`")
+        guard let mock = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod else {
+            fatalError("no mock for `rotateKeysAndMigrateConversationsEnrollmentCertificateChain`")
         }
 
-        try await mock(e2eIService, certificateChain)
+        try await mock(enrollment, certificateChain)
     }
 
 }

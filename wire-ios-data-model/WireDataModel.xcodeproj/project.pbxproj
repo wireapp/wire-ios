@@ -11,8 +11,6 @@
 		0125F73D2B28A31C00D989AB /* MockProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0125F73B2B28A31C00D989AB /* MockProteusProvider.swift */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
-		0140A0D12B31028D004D8B40 /* MockSafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0140A0CF2B31028D004D8B40 /* MockSafeCoreCrypto.swift */; };
-		0140A0D02B31028D004D8B40 /* MockCoreCryptoProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0140A0CE2B31028D004D8B40 /* MockCoreCryptoProtocol.swift */; };
 		01482E8A2B10ED0800F3B2CB /* MLSSubgroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F0781129F6C59D0031E19D /* MLSSubgroup.swift */; };
 		01482E8B2B10EEB000F3B2CB /* FetchSubgroupAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F0780C29F292770031E19D /* FetchSubgroupAction.swift */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
@@ -65,7 +63,6 @@
 		069BCC5B2B30945500DF4EC2 /* E2eISetupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC542B30945500DF4EC2 /* E2eISetupService.swift */; };
 		069BCC5C2B30945500DF4EC2 /* E2eIVerificationStatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC552B30945500DF4EC2 /* E2eIVerificationStatusService.swift */; };
 		069BCC5E2B3094D000DF4EC2 /* E2eIServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC562B30945500DF4EC2 /* E2eIServiceTests.swift */; };
-		069BCC642B30990600DF4EC2 /* MockWireE2eIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC502B30945500DF4EC2 /* MockWireE2eIdentity.swift */; };
 		069BCC662B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC652B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift */; };
 		069BCC682B30996200DF4EC2 /* MLSConversationVerificationStatusProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC672B30996200DF4EC2 /* MLSConversationVerificationStatusProviderTests.swift */; };
 		069BCC6C2B31DD0D00DF4EC2 /* MLSConversationVerificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC6B2B31DD0D00DF4EC2 /* MLSConversationVerificationManager.swift */; };
@@ -298,9 +295,9 @@
 		63370CC9242E3B990072C37F /* ZMMessage+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63370CC8242E3B990072C37F /* ZMMessage+Conversation.swift */; };
 		63370CF52431F3ED0072C37F /* CompositeMessageItemContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63370CF42431F3ED0072C37F /* CompositeMessageItemContentTests.swift */; };
 		63370CF82431F5DE0072C37F /* BaseCompositeMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63370CF72431F5DE0072C37F /* BaseCompositeMessageTests.swift */; };
-		63457C0D2B309CBD00AFFEF3 /* MockWireE2eIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D61FB92B0D565F00C2699A /* MockWireE2eIdentity.swift */; };
 		63495DF023F6BD2A002A7C59 /* GenericMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63495DEF23F6BD2A002A7C59 /* GenericMessageTests.swift */; };
 		63495E1B23FED9A9002A7C59 /* ZMUser+Protobuf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63495E1A23FED9A9002A7C59 /* ZMUser+Protobuf.swift */; };
+		635101EE2B4EE449009D6166 /* MockE2eiEnrollment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635101ED2B4EE449009D6166 /* MockE2eiEnrollment.swift */; };
 		6354BDF32746C30900880D50 /* ZMConversation+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */; };
 		6354BDF62747BF9200880D50 /* ZMConversationTests+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */; };
 		6374562229C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */; };
@@ -902,7 +899,6 @@
 		068DCC5A29BFEC4E00F7E4F1 /* ZMMessageTests+ExpirationReasonCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessageTests+ExpirationReasonCode.swift"; sourceTree = "<group>"; };
 		069BCC4C2B2C8C5200DF4EC2 /* zmessaging2.112.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.112.0.xcdatamodel; sourceTree = "<group>"; };
 		069BCC4D2B2CA47700DF4EC2 /* store2-112-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-112-0.wiredatabase"; sourceTree = "<group>"; };
-		069BCC502B30945500DF4EC2 /* MockWireE2eIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockWireE2eIdentity.swift; sourceTree = "<group>"; };
 		069BCC512B30945500DF4EC2 /* E2eIService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2eIService.swift; sourceTree = "<group>"; };
 		069BCC522B30945500DF4EC2 /* MLSConversationVerificationStatusProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSConversationVerificationStatusProvider.swift; sourceTree = "<group>"; };
 		069BCC532B30945500DF4EC2 /* E2eIClientID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2eIClientID.swift; sourceTree = "<group>"; };
@@ -1144,6 +1140,7 @@
 		63370CF72431F5DE0072C37F /* BaseCompositeMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCompositeMessageTests.swift; sourceTree = "<group>"; };
 		63495DEF23F6BD2A002A7C59 /* GenericMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericMessageTests.swift; sourceTree = "<group>"; };
 		63495E1A23FED9A9002A7C59 /* ZMUser+Protobuf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Protobuf.swift"; sourceTree = "<group>"; };
+		635101ED2B4EE449009D6166 /* MockE2eiEnrollment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockE2eiEnrollment.swift; sourceTree = "<group>"; };
 		6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Federation.swift"; sourceTree = "<group>"; };
 		6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+Federation.swift"; sourceTree = "<group>"; };
 		6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoKeyProviderTests.swift; sourceTree = "<group>"; };
@@ -1758,7 +1755,7 @@
 		0125F7392B28A31C00D989AB /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				06D61FB92B0D565F00C2699A /* MockWireE2eIdentity.swift */,
+				635101ED2B4EE449009D6166 /* MockE2eiEnrollment.swift */,
 				0125F73A2B28A31C00D989AB /* SpyUserClientKeyStore.swift */,
 				0140A0CF2B31028D004D8B40 /* MockSafeCoreCrypto.swift */,
 				0125F73B2B28A31C00D989AB /* MockProteusProvider.swift */,
@@ -1837,7 +1834,6 @@
 		069BCC632B3098F500DF4EC2 /* E2EIdentity */ = {
 			isa = PBXGroup;
 			children = (
-				069BCC502B30945500DF4EC2 /* MockWireE2eIdentity.swift */,
 				069BCC562B30945500DF4EC2 /* E2eIServiceTests.swift */,
 				069BCC652B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift */,
 				069BCC672B30996200DF4EC2 /* MLSConversationVerificationStatusProviderTests.swift */,
@@ -3705,10 +3701,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				0125F73C2B28A31C00D989AB /* SpyUserClientKeyStore.swift in Sources */,
+				635101EE2B4EE449009D6166 /* MockE2eiEnrollment.swift in Sources */,
 				594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */,
 				0125F73D2B28A31C00D989AB /* MockProteusProvider.swift in Sources */,
 				6398545C2B3346F700AA10DE /* MockSafeCoreCrypto.swift in Sources */,
-				63457C0D2B309CBD00AFFEF3 /* MockWireE2eIdentity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4258,7 +4254,6 @@
 				068DCC5B29BFEC4E00F7E4F1 /* ZMMessageTests+ExpirationReasonCode.swift in Sources */,
 				F9DD60C11E8916170019823F /* ChangedIndexesTests.swift in Sources */,
 				F9A7083D1CAEEB7500C2F5FE /* ModelObjectsTests.m in Sources */,
-				069BCC642B30990600DF4EC2 /* MockWireE2eIdentity.swift in Sources */,
 				F9B71F921CB2BEF4001DB03F /* BaseClientMessageTests.swift in Sources */,
 				63D41E6D245733AC0076826F /* ZMMessageTests+Removal.swift in Sources */,
 				F963E9861D9D485900098AD3 /* ZMClientMessageTests+Ephemeral.swift in Sources */,
@@ -4345,7 +4340,6 @@
 				63370CF52431F3ED0072C37F /* CompositeMessageItemContentTests.swift in Sources */,
 				E9C7DD9B27B533D000FB9AE8 /* AccessRoleMappingTests.swift in Sources */,
 				BF491CEC1F063F4B0055EE44 /* AccountStoreTests.swift in Sources */,
-				06D61FBB2B0D567C00C2699A /* MockWireE2eIdentity.swift in Sources */,
 				598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */,
 				164A55D320F3AF6700AE62A6 /* ZMSearchUserTests+ProfileImages.swift in Sources */,
 				EE74E4E02A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift in Sources */,

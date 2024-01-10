@@ -310,13 +310,14 @@ class E2eIEnrollmentTests: ZMTBaseTest {
     func testThatItRotateKeysAndMigrateConversations() async throws {
         // Given
         let certificateChain = "123456"
-        mockKeyRotator.rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockMethod = { _, _ in }
+        mockKeyRotator.rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod = { _, _ in }
+        mockE2eiService.mockE2eIdentity = MockE2eiEnrollment()
 
         // When
         try await sut.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
 
         // Then
-        let invocations = mockKeyRotator.rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_Invocations
+        let invocations = mockKeyRotator.rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations
         XCTAssertEqual(invocations.count, 1)
         XCTAssertEqual(invocations.first?.certificateChain, certificateChain)
     }
@@ -440,8 +441,8 @@ class MockE2eIService: E2eIServiceInterface {
         return Data()
     }
 
-    var mockE2eIdentity: MockWireE2eIdentity?
-    var e2eIdentity: WireE2eIdentityProtocol {
+    var mockE2eIdentity: MockE2eiEnrollment?
+    var e2eIdentity: E2eiEnrollmentProtocol {
         guard let mock = mockE2eIdentity else {
             fatalError("no mock for `e2eIdentity`")
         }

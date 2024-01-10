@@ -19,7 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
-class MockWireE2eIdentity: E2eiEnrollmentProtocol {
+class MockE2eiEnrollment: E2eiEnrollmentProtocol {
 
     // MARK: - directoryResponse
 

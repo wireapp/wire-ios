@@ -37,7 +37,7 @@ public protocol E2eIServiceInterface {
     func finalizeRequest(nonce: String) async throws -> Data
     func finalizeResponse(finalize: Data) async throws -> String
     func certificateRequest(nonce: String) async throws -> Data
-    var e2eIdentity: WireE2eIdentityProtocol { get }
+    var e2eIdentity: E2eiEnrollmentProtocol { get }
 
 }
 
