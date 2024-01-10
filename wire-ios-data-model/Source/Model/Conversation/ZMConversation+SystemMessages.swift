@@ -221,7 +221,7 @@ extension ZMConversation {
             timestamp: timestamp
         )
 
-        if let previousLastMessage = previousLastMessage as? ZMSystemMessage, previousLastMessage.systemMessageType == .potentialGap,
+        if let previousLastMessage = previousLastMessage as? ZMSystemMessage, previousLastMessage.systemMessageType == .mlsMigrationPotentialGap,
            let previousLastMessageTimestamp = previousLastMessage.serverTimestamp, previousLastMessageTimestamp <= timestamp {
             context.delete(previousLastMessage)
         }
