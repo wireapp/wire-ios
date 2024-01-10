@@ -50,8 +50,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let commitSender: CommitSending
-    private var continuations: [CheckedContinuation<Void, Never>] = []
-    private var executingGroups: Set<MLSGroupID> = Set()
+    private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -86,17 +85,29 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     /// inside `performNonReentrant`
     /// 
     func performNonReentrant<T>(groupID: MLSGroupID, operation: () async throws -> T) async rethrows -> T {
-        if executingGroups.contains(groupID) {
+        if continuationsByGroupID.keys.contains(groupID) {
             await withCheckedContinuation { continuation in
-                continuations.append(continuation)
+                continuationsByGroupID[groupID]?.append(continuation)
             }
         }
 
-        executingGroups.insert(groupID)
+        if !continuationsByGroupID.keys.contains(groupID) {
+            // an empty entry means an operation is currently executing, a non-empty
+            // entry are queued operations.
+            continuationsByGroupID[groupID] = []
+        }
 
         defer {
-            executingGroups.remove(groupID)
-            if continuations.isNonEmpty { continuations.removeFirst().resume() }
+            if var continuations = continuationsByGroupID[groupID] {
+                if continuations.isNonEmpty {
+                    continuations.removeFirst().resume()
+                    continuationsByGroupID[groupID] = continuations
+                }
+
+                if continuations.isEmpty {
+                    continuationsByGroupID.removeValue(forKey: groupID)
+                }
+            }
         }
 
         return try await operation()
