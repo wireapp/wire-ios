@@ -148,15 +148,10 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func removeDevice() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
         let isRemoved = await actionsHandler.removeDevice()
-        DispatchQueue.main.async {
-            self.isRemoved = isRemoved
-            self.isActionInProgress = false
-        }
+        self.isRemoved = isRemoved
     }
 
     func resetSession() {

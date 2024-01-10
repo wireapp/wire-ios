@@ -79,20 +79,28 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         return nil
     }
 
+    @MainActor
     func removeDevice() async -> Bool {
-        isProcessing?(true)
         return await withCheckedContinuation {[weak self] continuation in
             guard let self = self else {
                 return
             }
+            // (Continuation)[https://developer.apple.com/documentation/swift/checkedcontinuation]
+            // Using the same continuation twice results in a crash.
+            var optionalContinuation: CheckedContinuation<Bool, Never>? = continuation
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
                 credentials: credentials,
                 completion: {
                     error in
-                    let isRemoved = error == nil
-                    continuation.resume(returning: isRemoved)
+                    defer {
+                        optionalContinuation = nil
+                    }
+                    optionalContinuation?.resume(returning: error == nil)
+                    if let error = error {
+                        WireLogger.e2ei.error(error.localizedDescription)
+                    }
                 }
             )
             clientRemovalObserver?.startRemoval()
@@ -138,7 +146,9 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         _ clientRemovalObserver: ClientRemovalObserver,
         viewControllerToPresent: UIViewController
     ) {
-        UIViewController.presentTopmost(viewController: viewControllerToPresent)
+        if !(UIApplication.shared.topmostViewController()?.presentedViewController is UIAlertController) {
+                    UIViewController.presentTopmost(viewController: viewControllerToPresent)
+        }
     }
 
     func setIsLoadingViewVisible(
