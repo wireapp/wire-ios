@@ -22,7 +22,7 @@ class ManagedObjectContextChangeObserverTests: ZMBaseManagedObjectTest {
 
     func testThatItCallsTheCallbackWhenObjectsAreInserted() {
         // given
-        let changeExpectation = expectation(description: "The callback should be called")
+        let changeExpectation = customExpectation(description: "The callback should be called")
         let sut = ManagedObjectContextChangeObserver(context: uiMOC) {
             changeExpectation.fulfill()
         }
@@ -42,7 +42,7 @@ class ManagedObjectContextChangeObserverTests: ZMBaseManagedObjectTest {
         let message = ZMMessage(nonce: UUID(), managedObjectContext: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
-        let changeExpectation = expectation(description: "The callback should be called")
+        let changeExpectation = customExpectation(description: "The callback should be called")
         let sut = ManagedObjectContextChangeObserver(context: uiMOC) {
             changeExpectation.fulfill()
         }
@@ -62,7 +62,7 @@ class ManagedObjectContextChangeObserverTests: ZMBaseManagedObjectTest {
         let message = ZMMessage(nonce: UUID(), managedObjectContext: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
-        let changeExpectation = expectation(description: "The callback should be called")
+        let changeExpectation = customExpectation(description: "The callback should be called")
         let sut = ManagedObjectContextChangeObserver(context: uiMOC) {
             changeExpectation.fulfill()
         }

@@ -65,7 +65,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             var action = GetFeatureConfigsAction()
 
             // Expectation
-            let gotResult = self.expectation(description: "gotResult")
+            let gotResult = self.customExpectation(description: "gotResult")
 
             action.onResult { result in
                 switch result {
@@ -143,7 +143,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             var action = GetFeatureConfigsAction()
 
             // Expectation
-            let gotResult = self.expectation(description: "gotResult")
+            let gotResult = self.customExpectation(description: "gotResult")
 
             action.onResult { result in
                 switch result {
@@ -219,7 +219,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -244,7 +244,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -269,7 +269,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -294,7 +294,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -319,7 +319,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {

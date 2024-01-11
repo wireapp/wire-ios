@@ -314,7 +314,7 @@ extension EventDecoderTest {
     func testThatItProcessesEventsWithDifferentUUIDWhenThroughPushEventsFirst() async {
 
         // given
-        let pushProcessed = self.expectation(description: "Push event processed")
+        let pushProcessed = self.customExpectation(description: "Push event processed")
 
         let pushEvent = await syncMOC.perform {
             self.pushNotificationEvent()
@@ -334,7 +334,7 @@ extension EventDecoderTest {
         XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
         // and when
-        let streamProcessed = self.expectation(description: "Stream event processed")
+        let streamProcessed = self.customExpectation(description: "Stream event processed")
         _ = await sut.decryptAndStoreEvents([streamEvent])
         await sut.processStoredEvents { (events) in
             XCTAssertTrue(events.contains(streamEvent))
@@ -348,7 +348,7 @@ extension EventDecoderTest {
     func testThatItDoesNotProcessesEventsWithSameUUIDWhenThroughPushEventsFirst() async {
 
         // given
-        let pushProcessed = self.expectation(description: "Push event processed")
+        let pushProcessed = self.customExpectation(description: "Push event processed")
         let uuid = UUID.create()
 
         let pushEvent = await syncMOC.perform {
@@ -369,7 +369,7 @@ extension EventDecoderTest {
         XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
         // and when
-        let streamProcessed = self.expectation(description: "Stream event not processed")
+        let streamProcessed = self.customExpectation(description: "Stream event not processed")
 
         _ = await sut.decryptAndStoreEvents([streamEvent])
         await sut.processStoredEvents { (events) in
@@ -384,7 +384,7 @@ extension EventDecoderTest {
     func testThatItProcessesEventsWithSameUUIDWhenThroughPushEventsFirstAndDiscarding() async {
 
         // given
-        let pushProcessed = self.expectation(description: "Push event processed")
+        let pushProcessed = self.customExpectation(description: "Push event processed")
         let uuid = UUID.create()
 
         let pushEvent = await syncMOC.perform {
@@ -406,7 +406,7 @@ extension EventDecoderTest {
         XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
         // and when
-        let streamProcessed = self.expectation(description: "Stream event processed")
+        let streamProcessed = self.customExpectation(description: "Stream event processed")
 
         _ = await self.sut.decryptAndStoreEvents([streamEvent])
         await self.sut.processStoredEvents { (events) in

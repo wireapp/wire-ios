@@ -284,7 +284,7 @@
     // WHEN
     NSString *path = [NSString stringWithFormat:@"/conversations/ids"];
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got a response"];
     
     ZMTransportSession *mockedTransportSession = self.sut.mockedTransportSession;
     

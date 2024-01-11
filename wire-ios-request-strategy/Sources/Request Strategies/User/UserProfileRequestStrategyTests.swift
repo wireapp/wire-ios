@@ -477,9 +477,11 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             let event = self.userDeleteEvent(userID: ZMUser.selfUser(in: self.syncMOC).remoteIdentifier)
 
             // expect
-            self.expectation(forNotification: AccountDeletedNotification.notificationName,
-                             object: nil,
-                             handler: nil)
+            self.customExpectation(
+                forNotification: AccountDeletedNotification.notificationName,
+                object: nil,
+                handler: nil
+            )
 
             // when
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)

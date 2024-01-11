@@ -381,7 +381,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             )
             handler = sut
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -436,7 +436,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             )
             handler = sut
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {

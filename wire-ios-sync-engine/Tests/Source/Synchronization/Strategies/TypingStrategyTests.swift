@@ -544,7 +544,7 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMConversation.clearTypingNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       using: { note in
@@ -670,7 +670,7 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       using: { _ in
@@ -696,7 +696,7 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       using: { _ in
@@ -723,7 +723,7 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMConversation.clearTypingNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       using: { _ in

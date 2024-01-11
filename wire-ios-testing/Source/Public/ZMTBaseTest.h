@@ -66,9 +66,14 @@ typedef BOOL(^VerificationBlock)(void);
 /// Wait for all dispatch groups to be empty
 - (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
 
+- (XCTestExpectation *_Nonnull)customExpectationWithDescription:(NSString *_Nonnull)description NS_SWIFT_NAME(customExpectation(description:));
+
+- (XCTestExpectation *_Nonnull)customExpectationForNotification:(NSNotificationName _Nonnull)notificationName object:(id _Nullable)objectToObserve handler:(XCNotificationExpectationHandler _Nullable)handlerOrNil;
+
+- (XCTestExpectation *_Nonnull)customKeyValueObservingExpectationForObject:(id _Nonnull)objectToObserve keyPath:(NSString *_Nonnull)keyPath expectedValue:(id  _Nullable)expectedValue;
+
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN;
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
-- (BOOL)verifyAllExpectationsNow ZM_MUST_USE_RETURN;
 
 /// perform operations while not considering ZMLogErrors as test failure
 - (void)performIgnoringZMLogError:(nonnull void(^)(void))block;

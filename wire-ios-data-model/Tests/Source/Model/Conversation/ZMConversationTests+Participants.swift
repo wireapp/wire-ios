@@ -822,7 +822,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             context: syncMOC.notificationContext
         )
 
-        let expectation = expectation(description: "System message is added")
+        let expectation = customExpectation(description: "System message is added")
 
         // WHEN
         conversation.addParticipants([user1, user2]) { _ in
@@ -913,7 +913,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             context: syncMOC.notificationContext
         )
 
-        let isDone = expectation(description: "isDone")
+        let isDone = customExpectation(description: "isDone")
 
         // WHEN
         conversation.addParticipants([applesUser, bananasUser, carrotsUser]) { _ in

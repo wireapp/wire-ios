@@ -23,7 +23,7 @@ import avs
 class FlowManagerTests: MessagingTest {
     func testThatItSendsNotificationWhenFlowManagerIsCreated() {
         // GIVEN
-        let expectation = self.expectation(description: "Notification is sent")
+        let expectation = self.customExpectation(description: "Notification is sent")
         let notificationObserver = NotificationCenter.default.addObserver(forName: FlowManager.AVSFlowManagerCreatedNotification, object: nil, queue: nil) { _ in
             expectation.fulfill()
         }

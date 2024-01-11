@@ -289,7 +289,7 @@ final class ServiceUserTests: IntegrationTest {
 
     func testThatItAddsServiceToExistingConversation() throws {
         // given
-        let jobIsDone = expectation(description: "service is added")
+        let jobIsDone = customExpectation(description: "service is added")
         let service = self.createService()
         let conversation = self.conversation(for: self.groupConversation)!
 
@@ -308,7 +308,7 @@ final class ServiceUserTests: IntegrationTest {
 
     func testThatItCreatesConversationAndAddsUser() {
         // given
-        let jobIsDone = expectation(description: "service is added")
+        let jobIsDone = customExpectation(description: "service is added")
         let service = self.createService()
 
         // when

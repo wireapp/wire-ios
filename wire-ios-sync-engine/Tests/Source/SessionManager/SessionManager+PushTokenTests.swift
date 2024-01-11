@@ -62,10 +62,10 @@ class SessionManagerPushTokenTests: IntegrationTest {
             .createVOIPToken(from: .secureRandomData(length: 8))
         ]
 
-        let registrationDone = expectation(description: "registration done")
+        let registrationDone = customExpectation(description: "registration done")
         pushService.onRegistrationComplete = { registrationDone.fulfill() }
 
-        let unregistrationDone = expectation(description: "unregistration done")
+        let unregistrationDone = customExpectation(description: "unregistration done")
         pushService.onUnregistrationComplete = { unregistrationDone.fulfill() }
 
         // When
@@ -107,10 +107,10 @@ class SessionManagerPushTokenTests: IntegrationTest {
             .createVOIPToken(from: .secureRandomData(length: 8))
         ]
 
-        let registrationDone = expectation(description: "registration done")
+        let registrationDone = customExpectation(description: "registration done")
         pushService.onRegistrationComplete = { registrationDone.fulfill() }
 
-        let unregistrationDone = expectation(description: "unregistration done")
+        let unregistrationDone = customExpectation(description: "unregistration done")
         pushService.onUnregistrationComplete = { unregistrationDone.fulfill() }
 
         // When
@@ -150,10 +150,10 @@ class SessionManagerPushTokenTests: IntegrationTest {
             pushService.localToken!
         ]
 
-        let registrationDone = expectation(description: "registration done")
+        let registrationDone = customExpectation(description: "registration done")
         pushService.onRegistrationComplete = { registrationDone.fulfill() }
 
-        let unregistrationDone = expectation(description: "unregistration done")
+        let unregistrationDone = customExpectation(description: "unregistration done")
         pushService.onUnregistrationComplete = { unregistrationDone.fulfill() }
 
         // When

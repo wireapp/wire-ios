@@ -80,7 +80,7 @@ class SearchTaskTests: DatabaseTest {
     func testThatItFindsASingleUnconnectedUserByHandle() {
 
         // given
-        let remoteResultArrived = expectation(description: "received remote result")
+        let remoteResultArrived = customExpectation(description: "received remote result")
 
         mockTransportSession.performRemoteChanges { (remoteChanges) in
             let mockUser = remoteChanges.insertUser(withName: "Dale Cooper")
@@ -123,7 +123,7 @@ class SearchTaskTests: DatabaseTest {
             self.syncMOC.saveOrRollback()
         }
 
-        let remoteResultArrived = expectation(description: "received remote result")
+        let remoteResultArrived = customExpectation(description: "received remote result")
         let request = SearchRequest(query: "einstein", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -143,7 +143,7 @@ class SearchTaskTests: DatabaseTest {
     func testThatItFindsASingleUser() {
 
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA")
 
         let request = SearchRequest(query: "userA", searchOptions: [.contacts])
@@ -162,7 +162,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesFindUsersContainingButNotBeginningWithSearchString() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA")
         let normaliedName = user.normalizedName
 
@@ -182,7 +182,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsUsersBeginningWithSearchString() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA")
 
         let request = SearchRequest(query: "user", searchOptions: [.contacts])
@@ -201,7 +201,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItUsesAllQueryComponentsToFindAUser() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Some Body")
         _ = createConnectedUser(withName: "Some")
         _ = createConnectedUser(withName: "Any Body")
@@ -222,7 +222,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsSeveralUsers() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Grant")
         let user2 = createConnectedUser(withName: "Greg")
         _ = createConnectedUser(withName: "Bob")
@@ -243,7 +243,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatUserSearchIsCaseInsensitive() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Somebody")
 
         let request = SearchRequest(query: "someBodY", searchOptions: [.contacts])
@@ -262,7 +262,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatUserSearchIsInsensitiveToDiacritics() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Sömëbodÿ")
 
         let request = SearchRequest(query: "Sømebôdy", searchOptions: [.contacts])
@@ -281,7 +281,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatUserSearchOnlyReturnsConnectedUsers() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Somebody Blocked")
         user1.connection?.status = .blocked
         let user2 = createConnectedUser(withName: "Somebody Pending")
@@ -304,7 +304,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotReturnTheSelfUser() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.name = "Some self user"
         let user = createConnectedUser(withName: "Somebody")
@@ -327,7 +327,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCanSearchForTeamMembersLocally() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
         let user = ZMUser.insertNewObject(in: uiMOC)
         let member = Member.insertNewObject(in: uiMOC)
@@ -355,7 +355,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCanExcludeNonActiveTeamMembersLocally() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
         let userA = ZMUser.insertNewObject(in: uiMOC)
         let userB = ZMUser.insertNewObject(in: uiMOC)
@@ -394,7 +394,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItIncludesNonActiveTeamMembersLocally_WhenSelfUserWasCreatedByThem() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
         let userA = ZMUser.insertNewObject(in: uiMOC)
         let memberA = Member.insertNewObject(in: uiMOC) // non-active team-member
@@ -428,7 +428,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCanExcludeNonActivePartnersLocally() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
         let userA = ZMUser.insertNewObject(in: uiMOC)
         let userB = ZMUser.insertNewObject(in: uiMOC)
@@ -476,7 +476,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItIncludesNonActivePartnersLocally_WhenSearchingWithExactHandle() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
         let userA = ZMUser.insertNewObject(in: uiMOC)
         let memberA = Member.insertNewObject(in: uiMOC) // non-active partner
@@ -506,7 +506,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItIncludesNonActivePartnersLocally_WhenSelfUserCreatedPartner() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
         let userA = ZMUser.insertNewObject(in: uiMOC)
         let memberA = Member.insertNewObject(in: uiMOC) // non-active partner
@@ -539,7 +539,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsASingleConversation() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Somebody")
 
         let request = SearchRequest(query: "Somebody", searchOptions: [.conversations])
@@ -558,7 +558,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesFindConversationsUsingPartialNames() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Somebody")
 
         let request = SearchRequest(query: "mebo", searchOptions: [.conversations])
@@ -577,7 +577,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsSeveralConversations() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let conversation1 = createGroupConversation(withName: "Candy Apple Records")
         let conversation2 = createGroupConversation(withName: "Landspeed Records")
         _ = createGroupConversation(withName: "New Day Rising")
@@ -598,7 +598,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatConversationSearchIsCaseInsensitive() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "SoMEBody")
 
         let request = SearchRequest(query: "someBodY", searchOptions: [.conversations])
@@ -617,7 +617,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatConversationSearchIsInsensitiveToDiacritics() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Sömëbodÿ")
 
         let request = SearchRequest(query: "Sømebôdy", searchOptions: [.conversations])
@@ -636,7 +636,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItOnlyFindsGroupConversations() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let groupConversation = createGroupConversation(withName: "Group Conversation")
         let oneOnOneConversation = createGroupConversation(withName: "OneOnOne Conversation")
         oneOnOneConversation.conversationType = .oneOnOne
@@ -661,7 +661,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsConversationsThatDoNotHaveAUserDefinedName() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
 
@@ -690,7 +690,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsConversationsThatContainsSearchTermOnlyInParticipantName() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Summertime")
         let user = createConnectedUser(withName: "Rëï")
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
@@ -713,7 +713,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItOrdersConversationsByUserDefinedName() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let conversation1 = createGroupConversation(withName: "FooA")
         let conversation2 = createGroupConversation(withName: "FooC")
         let conversation3 = createGroupConversation(withName: "FooB")
@@ -734,7 +734,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItOrdersConversationsByUserDefinedNameFirstAndByParticipantNameSecond() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Bla")
         let user2 = createConnectedUser(withName: "FooB")
 
@@ -764,7 +764,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItFiltersConversationWhenTheQueryStartsWithAtSymbol() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         _ = createGroupConversation(withName: "New Day Rising")
         _ = createGroupConversation(withName: "Landspeed Records")
 
@@ -784,7 +784,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItReturnsAllConversationsWhenPassingTeamParameter() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
         let conversationInTeam = createGroupConversation(withName: "Beach Club")
         let conversationNotInTeam = createGroupConversation(withName: "Beach Club")
@@ -885,7 +885,7 @@ class SearchTaskTests: DatabaseTest {
     func testThatItCallsCompletionHandlerForDirectorySearch() {
         // given
         setCurrentAPIVersion(.v2)
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -955,7 +955,7 @@ class SearchTaskTests: DatabaseTest {
     func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() {
         // given
         setCurrentAPIVersion(.v2)
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -1012,7 +1012,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForServicesSearch() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         let request = SearchRequest(query: "Service", searchOptions: [.services])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -1071,7 +1071,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForUserLookup() {
         // given
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
 
         var userId: UUID!
         mockTransportSession.performRemoteChanges { (remoteChanges) in
@@ -1127,7 +1127,7 @@ class SearchTaskTests: DatabaseTest {
         // given
         setCurrentAPIVersion(.v3)
         let federatedDomain = "example.com"
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
 
         mockTransportSession.federatedDomains = [federatedDomain]
         mockTransportSession.performRemoteChanges { (remoteChanges) in
@@ -1156,7 +1156,7 @@ class SearchTaskTests: DatabaseTest {
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserDoesntExist() {
         // given
         setCurrentAPIVersion(.v3)
-        let resultArrived = expectation(description: "received result")
+        let resultArrived = customExpectation(description: "received result")
         mockTransportSession.federatedDomains = ["example.com"]
 
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
@@ -1181,7 +1181,7 @@ class SearchTaskTests: DatabaseTest {
     func testThatRemoteResultsIncludePreviousLocalResults() {
         // given
         setCurrentAPIVersion(.v2)
-        let localResultArrived = expectation(description: "received local result")
+        let localResultArrived = customExpectation(description: "received local result")
         let user = createConnectedUser(withName: "userA")
 
         mockTransportSession.performRemoteChanges { (remoteChanges) in
@@ -1202,7 +1202,7 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // given
-        let remoteResultArrived = expectation(description: "received remote result")
+        let remoteResultArrived = customExpectation(description: "received remote result")
 
         // expect
         task.onResult { (result, _) in
@@ -1218,7 +1218,7 @@ class SearchTaskTests: DatabaseTest {
     func testThatLocalResultsIncludePreviousRemoteResults() {
         // given
         setCurrentAPIVersion(.v2)
-        let remoteResultArrived = expectation(description: "received remote result")
+        let remoteResultArrived = customExpectation(description: "received remote result")
         _ = createConnectedUser(withName: "userA")
 
         mockTransportSession.performRemoteChanges { (remoteChanges) in
@@ -1239,7 +1239,7 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // given
-        let localResultArrived = expectation(description: "received local result")
+        let localResultArrived = customExpectation(description: "received local result")
 
         // expect
         task.onResult { (result, _) in
@@ -1254,7 +1254,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatTaskIsCompletedAfterLocalResult() {
         // given
-        let localResultArrived = expectation(description: "received local result")
+        let localResultArrived = customExpectation(description: "received local result")
         let user = createConnectedUser(withName: "userA")
         let request = SearchRequest(query: "user", searchOptions: [.contacts])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
@@ -1274,7 +1274,7 @@ class SearchTaskTests: DatabaseTest {
     func testThatTaskIsCompletedAfterRemoteResults() {
         // given
         setCurrentAPIVersion(.v2)
-        let remoteResultArrived = expectation(description: "received remote result")
+        let remoteResultArrived = customExpectation(description: "received remote result")
         mockTransportSession.performRemoteChanges { (remoteChanges) in
             remoteChanges.insertUser(withName: "UserB")
         }
@@ -1296,8 +1296,8 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatTaskIsCompletedOnlyAfterFinalResultArrives() {
         // given
-        let intermediateResultArrived = expectation(description: "received intermediate result")
-        let finalResultsArrived = expectation(description: "received final result")
+        let intermediateResultArrived = customExpectation(description: "received intermediate result")
+        let finalResultsArrived = customExpectation(description: "received final result")
         _ = createConnectedUser(withName: "userA")
 
         mockTransportSession.performRemoteChanges { (remoteChanges) in
