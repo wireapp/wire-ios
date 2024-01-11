@@ -236,6 +236,14 @@ public class NotificationSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             allowCreation: false
         )
+        let commitSender = CommitSender(
+            coreCryptoProvider: coreCryptoProvider,
+            notificationContext: coreDataStack.syncContext.notificationContext
+        )
+        let mlsActionExecutor = MLSActionExecutor(
+            coreCryptoProvider: coreCryptoProvider,
+            commitSender: commitSender
+        )
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
 
@@ -251,7 +259,7 @@ public class NotificationSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults),
             proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
-            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, coreCryptoProvider: coreCryptoProvider)
+            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
         )
     }
 
