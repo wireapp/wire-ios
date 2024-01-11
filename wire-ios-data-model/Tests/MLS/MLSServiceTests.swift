@@ -252,13 +252,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = "foo"
         let groupID = MLSGroupID.random()
         let subconversationType = SubgroupType.conference
-
         let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
 
-        mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
+        mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
         // When
-        let result = try await sut.decrypt(
+        let results = try await sut.decrypt(
             message: message,
             for: groupID,
             subconversationType: subconversationType
@@ -270,7 +269,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(invocation?.message, message)
         XCTAssertEqual(invocation?.groupID, groupID)
         XCTAssertEqual(invocation?.subconversationType, subconversationType)
-        XCTAssertEqual(result, mockResult)
+        XCTAssertEqual(results.first, mockResult)
     }
 
     // MARK: - Message Decryption
@@ -282,10 +281,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subconversationType = SubgroupType.conference
 
         let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
-        mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
+        mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
         // When
-        let result = try await sut.decrypt(
+        let results = try await sut.decrypt(
             message: message,
             for: groupID,
             subconversationType: subconversationType
@@ -297,7 +296,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(invocation?.message, message)
         XCTAssertEqual(invocation?.groupID, groupID)
         XCTAssertEqual(invocation?.subconversationType, subconversationType)
-        XCTAssertEqual(result, mockResult)
+        XCTAssertEqual(results.first, mockResult)
     }
 
     func test_Decrypt_RepairsConversationOnWrongEpochError() async throws {
