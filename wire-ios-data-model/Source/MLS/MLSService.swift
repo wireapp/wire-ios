@@ -1694,6 +1694,8 @@ public final class MLSService: MLSServiceInterface {
                     context: context.notificationContext
                 )
 
+                // TODO: add system message
+
                 // sync the group conversation
                 try await actionsProvider.syncConversation(
                     qualifiedID: qualifiedID,

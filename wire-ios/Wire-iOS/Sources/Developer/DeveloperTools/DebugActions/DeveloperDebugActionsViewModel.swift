@@ -98,6 +98,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             } catch {
                 assertionFailure("action failed: \(error)!")
             }
+
+            // TODO: add system message
         }
     }
 

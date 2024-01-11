@@ -267,6 +267,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         let qualifiedID = await context.perform { conversation.qualifiedID }
         guard let qualifiedID else { return }
         try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mls, context: context.notificationContext)
+
+        // TODO: add system message
     }
 }
 

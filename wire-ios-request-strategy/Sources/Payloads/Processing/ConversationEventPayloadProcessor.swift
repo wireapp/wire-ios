@@ -372,6 +372,8 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
+        // TODO: add system message
+
         await syncConversation(qualifiedID, in: context.notificationContext)
 
         await context.perform {
