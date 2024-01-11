@@ -68,6 +68,9 @@ typedef BOOL(^VerificationBlock)(void);
 
 - (XCTestExpectation *_Nonnull)customExpectationWithDescription:(NSString *_Nonnull)description NS_SWIFT_NAME(customExpectation(description:));
 
+- (XCTestExpectation *_Nonnull)customExpectationForNotification:(NSNotificationName _Nonnull)notificationName object:(id _Nullable)objectToObserve handler:(XCNotificationExpectationHandler _Nullable)handlerOrNil;
+// NS_SWIFT_NAME(customExpectation(forNotification:object:handler:))
+
 - (XCTestExpectation *_Nonnull)customKeyValueObservingExpectationForObject:(id _Nonnull)objectToObserve keyPath:(NSString *_Nonnull)keyPath expectedValue:(id  _Nullable)expectedValue;
 
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN;

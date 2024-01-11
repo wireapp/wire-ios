@@ -129,7 +129,7 @@ class WireCallCenterV3Tests: MessagingTest {
 
     func checkThatItPostsNotification(expectedCallState: CallState, expectedCallerId: AVSIdentifier, expectedConversationId: AVSIdentifier, line: UInt = #line, file: StaticString = #file, actionBlock: () throws -> Void) rethrows {
         // expect
-        expectation(forNotification: WireCallCenterCallStateNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: WireCallCenterCallStateNotification.notificationName, object: nil) { wrappedNote in
             guard let note = wrappedNote.userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification else { return false }
             XCTAssertEqual(note.conversationId, expectedConversationId, "conversationIds are not the same", file: file, line: line)
             XCTAssertEqual(note.callerId, expectedCallerId, "callerIds are not the same", file: file, line: line)
@@ -198,7 +198,7 @@ class WireCallCenterV3Tests: MessagingTest {
         let timestamp = Date()
 
         // expect
-        expectation(forNotification: WireCallCenterMissedCallNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: WireCallCenterMissedCallNotification.notificationName, object: nil) { wrappedNote in
             guard let note = wrappedNote.userInfo?[WireCallCenterMissedCallNotification.userInfoKey] as? WireCallCenterMissedCallNotification else { return false }
             XCTAssertEqual(note.conversationId, conversationId)
             XCTAssertEqual(note.callerId, userId)
@@ -402,7 +402,7 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // expect
-        expectation(forNotification: WireCallCenterCallStateNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: WireCallCenterCallStateNotification.notificationName, object: nil) { wrappedNote in
             guard let note = wrappedNote.userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification else { return false }
             XCTAssertEqual(note.conversationId, self.groupConversationID)
             XCTAssertEqual(note.callerId, self.otherUserID)
@@ -431,7 +431,7 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // expect
-        expectation(forNotification: WireCallCenterCallStateNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: WireCallCenterCallStateNotification.notificationName, object: nil) { wrappedNote in
             guard let note = wrappedNote.userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification else { return false }
             XCTAssertEqual(note.conversationId, self.oneOnOneConversationID)
             XCTAssertEqual(note.callerId, self.otherUserID)
@@ -907,7 +907,7 @@ class WireCallCenterV3Tests: MessagingTest {
         conferenceCalling.status = .disabled
 
         // expect
-        expectation(forNotification: WireCallCenterConferenceCallingUnavailableNotification.notificationName, object: nil)
+        customExpectation(forNotification: WireCallCenterConferenceCallingUnavailableNotification.notificationName, object: nil)
 
         // when
         assertItThrows(error: WireCallCenterV3.Failure.missingConferencingPermission) {
@@ -959,7 +959,7 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssertNil(sut.establishedDate)
 
         // expect
-        expectation(forNotification: WireCallCenterCallStateNotification.notificationName, object: nil) { _ in
+        customExpectation(forNotification: WireCallCenterCallStateNotification.notificationName, object: nil) { _ in
             XCTAssertNotNil(self.sut.establishedDate)
             return true
         }
@@ -1082,7 +1082,7 @@ class WireCallCenterV3Tests: MessagingTest {
         // expect
         let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
 
-        expectation(forNotification: WireCallCenterCallErrorNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: WireCallCenterCallErrorNotification.notificationName, object: nil) { wrappedNote in
             guard let note = wrappedNote.userInfo?[WireCallCenterCallErrorNotification.userInfoKey] as? WireCallCenterCallErrorNotification else { return false }
             XCTAssertEqual(note.error, self.mockAVSWrapper.callError)
             XCTAssertEqual(note.conversationId, self.oneOnOneConversationID)
@@ -1746,7 +1746,7 @@ extension WireCallCenterV3Tests {
         let change = activeSpeakersChange(for: conversationId, clients: [client])
 
         // EXPECT
-        expectation(forNotification: WireCallCenterActiveSpeakersNotification.notificationName, object: nil) { _ in
+        customExpectation(forNotification: WireCallCenterActiveSpeakersNotification.notificationName, object: nil) { _ in
             return true
         }
 

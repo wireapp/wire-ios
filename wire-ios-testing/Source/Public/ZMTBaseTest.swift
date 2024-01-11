@@ -46,4 +46,11 @@ extension ZMTBaseTest {
         XCTAssert(waitForCustomExpectations(withTimeout: timeout), file: file, line: line)
     }
 
+//    public func customExpectation(
+//        forNotification notificationName: NSNotification.Name,
+//        object: Any?,
+//        handler: XCTNSNotificationExpectation.Handler? = nil
+//    ) -> XCTestExpectation {
+//        self.customExpectation(forNotification: notificationName.rawValue, object: object, handler: handler)
+//    }
 }

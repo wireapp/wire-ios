@@ -1024,7 +1024,7 @@ extension ZMUserTests_Swift {
         let user = createUser(in: uiMOC)
 
         // expect
-        expectation(forNotification: ConnectToUserAction.notificationName, object: nil)
+        customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)
 
         // when
         user.connect { (_) in }
@@ -1039,7 +1039,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }
@@ -1060,7 +1060,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }
@@ -1081,7 +1081,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }
@@ -1102,7 +1102,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }

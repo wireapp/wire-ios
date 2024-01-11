@@ -223,7 +223,7 @@
     return (XCTestExpectation *) expectation;
 }
 
-- (XCTestExpectation *)expectationForNotification:(NSString *)notificationName object:(id)objectToObserve handler:(XCNotificationExpectationHandler)handlerOrNil;
+- (XCTestExpectation *_Nonnull)customExpectationForNotification:(NSNotificationName _Nonnull)notificationName object:(id _Nullable)objectToObserve handler:(XCNotificationExpectationHandler _Nullable)handlerOrNil;
 {
     ZMTNotificationExpectation *expectation = [[ZMTNotificationExpectation alloc] init];
     ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:expectation selector:@selector(observe:) name:notificationName object:objectToObserve]);

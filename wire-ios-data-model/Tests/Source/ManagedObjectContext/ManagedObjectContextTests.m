@@ -388,7 +388,7 @@
 - (void)testThatItDoesNotSaveWhenThereAreNoUserInfoChanges {
     
     // GIVEN
-    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    [self customExpectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
     
     // WHEN
     [self.uiMOC saveOrRollback];
@@ -400,7 +400,7 @@
 - (void)testThatItSaveWhenThereAreUserInfoChanges {
     
     // GIVEN
-    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    [self customExpectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
     self.uiMOC.zm_hasUserInfoChanges = YES;
     
     // WHEN
@@ -413,7 +413,7 @@
 - (void)testThatItResetsUserInfoChangesAfterASave {
     
     // GIVEN
-    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    [self customExpectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
     self.uiMOC.zm_hasUserInfoChanges = YES;
     
     // WHEN
