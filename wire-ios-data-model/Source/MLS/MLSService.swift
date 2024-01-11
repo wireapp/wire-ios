@@ -42,8 +42,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws
 
-    func registerPendingJoin(_ group: MLSGroupID)
-
     func performPendingJoins() async throws
 
     func wipeGroup(_ groupID: MLSGroupID) async
@@ -115,7 +113,6 @@ public final class MLSService: MLSServiceInterface {
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
     private let userDefaults: PrivateUserDefaults<Keys>
     private let logger = WireLogger.mls
-    private var groupsPendingJoin = Set<MLSGroupID>()
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let syncStatus: SyncStatusProtocol
 
@@ -814,12 +811,6 @@ public final class MLSService: MLSServiceInterface {
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
 
-    /// Registers a group to be joined via external commit once the app has finished processing events
-    /// - Parameter groupID: the identifier for the MLS group
-    public func registerPendingJoin(_ groupID: MLSGroupID) {
-        groupsPendingJoin.insert(groupID)
-    }
-
     /// Request to join groups still pending
     ///
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
@@ -828,31 +819,26 @@ public final class MLSService: MLSServiceInterface {
         guard let context = context else {
             return
         }
-        let pendingJoins = await context.perform { self.generatePendingJoins(in: context) }
-        for pendingJoin in pendingJoins {
-            try await joinByExternalCommit(groupID: pendingJoin.groupID)
+
+        let pendingGroups = try await context.perform {
+            try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .pendingJoin,
+                in: context
+            ).compactMap(\.mlsGroupID)
         }
 
-        groupsPendingJoin.removeAll()
-    }
+        logger.info("joining \(pendingGroups.count) group(s)")
 
-    private func generatePendingJoins(in context: NSManagedObjectContext) -> [PendingJoin] {
-        logger.info("generating list of groups pending join")
-
-        return groupsPendingJoin.compactMap { groupID in
-
-            guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
-                logger.warn("conversation not found for group (\(groupID.safeForLoggingDescription))")
-                return nil
+        await withTaskGroup(of: Void.self) { group in
+            for pendingGroup in pendingGroups {
+                group.addTask {
+                    do {
+                        try await self.joinByExternalCommit(groupID: pendingGroup)
+                    } catch {
+                        WireLogger.mls.error("Failed to join pending group (\(pendingGroup): \(error)")
+                    }
+                }
             }
-
-            guard let status = conversation.mlsStatus, status == .pendingJoin else {
-                logger.warn("group (\(groupID.safeForLoggingDescription)) status is not pending join")
-                return nil
-            }
-
-            return (groupID, conversation.epoch)
-
         }
     }
 
