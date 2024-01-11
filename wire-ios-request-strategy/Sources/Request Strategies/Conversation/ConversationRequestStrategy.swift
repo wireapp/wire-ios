@@ -501,7 +501,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             if response.httpStatus == 404 {
                 WaitingGroupTask(context: context) { [self] in
                     await deleteConversations(identifiers)
-                    await context.perform { completionHandler() }
+                    completionHandler()
                 }
                 return
             }
@@ -529,7 +529,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
                 from: payload,
                 in: context
             )
-            await context.perform { completionHandler() }
+            completionHandler()
         }
     }
 
@@ -619,7 +619,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             if response.httpStatus == 404 {
                 WaitingGroupTask(context: context) { [self] in
                     await deleteConversations(identifiers)
-                    await context.perform { completionHandler() }
+                    completionHandler()
                 }
                 return
             }
@@ -649,7 +649,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                 from: payload,
                 in: context
             )
-            await context.perform { completionHandler() }
+            completionHandler()
         }
     }
 
@@ -741,7 +741,7 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
                 let missingIdentifiers = identifiers.subtracting(payload.conversations.compactMap(\.id))
                 self.queryStatusForMissingConversations(missingIdentifiers)
             }
-            await context.perform { completionHandler() }
+            completionHandler()
         }
     }
 
@@ -805,7 +805,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
                 self.queryStatusForMissingConversations(payload.notFound)
                 self.queryStatusForFailedConversations(payload.failed)
             }
-            await context.perform { completionHandler() }
+            completionHandler()
         }
     }
 
