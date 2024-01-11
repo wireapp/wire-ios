@@ -334,8 +334,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 }
             case .fileSharingRestriction:
                 WireLogger.shareExtension.warn("progress event: file sharing restricted")
-                let alert = UIAlertController.alertWithOKButton(title: L10n.Feature.Flag.FileSharing.Alert.title,
-                                                                message: L10n.Feature.Flag.FileSharing.Alert.message)
+                let alert = UIAlertController.alertWithOKButton(title: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.title,
+                                                                message: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.message)
                 self.present(alert, animated: true)
             }
         }
@@ -508,11 +508,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func conversationDidDegrade(change: ConversationDegradationInfo, callback: @escaping DegradationStrategyChoice) {
         let title = titleForMissingClients(causedBy: change)
-        let alert = UIAlertController(title: title, message: L10n.Meta.Degraded.dialogMessage, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Meta.Degraded.sendAnywayButton, style: .destructive, handler: { _ in
+        let alert = UIAlertController(title: title, message: L10n.ShareExtension.Meta.Degraded.dialogMessage, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.ShareExtension.Meta.Degraded.sendAnywayButton, style: .destructive, handler: { _ in
             callback(.sendAnyway)
         }))
-        alert.addAction(UIAlertAction(title: L10n.Meta.Degraded.cancelSendingButton, style: .cancel, handler: { _ in
+        alert.addAction(UIAlertAction(title: L10n.ShareExtension.Meta.Degraded.cancelSendingButton, style: .cancel, handler: { _ in
             callback(.cancelSending)
         }))
         self.present(alert, animated: true)

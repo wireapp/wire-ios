@@ -10,63 +10,27 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
-  internal enum Content {
-    internal enum File {
-      /// You can send files up to %@
-      internal static func tooBig(_ p1: Any) -> String {
-        return L10n.tr("Localizable", "content.file.too_big", String(describing: p1), fallback: "You can send files up to %@")
-      }
-      /// Unsupported attachment
-      internal static let unsupportedAttachment = L10n.tr("Localizable", "content.file.unsupported_attachment", fallback: "Unsupported attachment")
-    }
-  }
   internal enum Conversation {
     internal enum Displayname {
       /// Empty group conversation
       internal static let emptygroup = L10n.tr("Localizable", "conversation.displayname.emptygroup", fallback: "Empty group conversation")
     }
   }
-  internal enum Feature {
-    internal enum Flag {
-      internal enum FileSharing {
-        internal enum Alert {
-          /// You can not share this file because this feature is disabled.
-          internal static let message = L10n.tr("Localizable", "feature.flag.file_sharing.alert.message", fallback: "You can not share this file because this feature is disabled.")
-          /// File sharing restrictions
-          internal static let title = L10n.tr("Localizable", "feature.flag.file_sharing.alert.title", fallback: "File sharing restrictions")
-        }
-      }
-    }
-  }
   internal enum General {
     /// OK
     internal static let ok = L10n.tr("Localizable", "general.ok", fallback: "OK")
   }
-  internal enum Meta {
-    internal enum Degraded {
-      /// Do not send
-      internal static let cancelSendingButton = L10n.tr("Localizable", "meta.degraded.cancel_sending_button", fallback: "Do not send")
-      /// Do you still want to send your message?
-      internal static let dialogMessage = L10n.tr("Localizable", "meta.degraded.dialog_message", fallback: "Do you still want to send your message?")
-      /// Send anyway
-      internal static let sendAnywayButton = L10n.tr("Localizable", "meta.degraded.send_anyway_button", fallback: "Send anyway")
-      internal enum DegradationReasonMessage {
-        /// %@ started using new devices.
-        internal static func plural(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "meta.degraded.degradation_reason_message.plural", String(describing: p1), fallback: "%@ started using new devices.")
+  internal enum ShareExtension {
+    internal enum Content {
+      internal enum File {
+        /// You can send files up to %@
+        internal static func tooBig(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "share_extension.content.file.too_big", String(describing: p1), fallback: "You can send files up to %@")
         }
-        /// %@ started using a new device.
-        internal static func singular(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "meta.degraded.degradation_reason_message.singular", String(describing: p1), fallback: "%@ started using a new device.")
-        }
+        /// Unsupported attachment
+        internal static let unsupportedAttachment = L10n.tr("Localizable", "share_extension.content.file.unsupported_attachment", fallback: "Unsupported attachment")
       }
     }
-    internal enum Legalhold {
-      /// The conversation is now subject to legal hold.
-      internal static let sendAlertTitle = L10n.tr("Localizable", "meta.legalhold.send_alert_title", fallback: "The conversation is now subject to legal hold.")
-    }
-  }
-  internal enum ShareExtension {
     internal enum ConversationSelection {
       /// Account:
       internal static let account = L10n.tr("Localizable", "share_extension.conversation_selection.account", fallback: "Account:")
@@ -83,6 +47,18 @@ internal enum L10n {
         internal static let message = L10n.tr("Localizable", "share_extension.error.conversation_does_not_exist.message", fallback: "Please select a conversation for sharing")
       }
     }
+    internal enum Feature {
+      internal enum Flag {
+        internal enum FileSharing {
+          internal enum Alert {
+            /// You can not share this file because this feature is disabled.
+            internal static let message = L10n.tr("Localizable", "share_extension.feature.flag.file_sharing.alert.message", fallback: "You can not share this file because this feature is disabled.")
+            /// File sharing restrictions
+            internal static let title = L10n.tr("Localizable", "share_extension.feature.flag.file_sharing.alert.title", fallback: "File sharing restrictions")
+          }
+        }
+      }
+    }
     internal enum Input {
       /// Type a message
       internal static let placeholder = L10n.tr("Localizable", "share_extension.input.placeholder", fallback: "Type a message")
@@ -92,6 +68,30 @@ internal enum L10n {
       internal static let message = L10n.tr("Localizable", "share_extension.logged_out.message", fallback: "Please choose another account.")
       /// You've been logged out from this account.
       internal static let title = L10n.tr("Localizable", "share_extension.logged_out.title", fallback: "You've been logged out from this account.")
+    }
+    internal enum Meta {
+      internal enum Degraded {
+        /// Do not send
+        internal static let cancelSendingButton = L10n.tr("Localizable", "share_extension.meta.degraded.cancel_sending_button", fallback: "Do not send")
+        /// Do you still want to send your message?
+        internal static let dialogMessage = L10n.tr("Localizable", "share_extension.meta.degraded.dialog_message", fallback: "Do you still want to send your message?")
+        /// Send anyway
+        internal static let sendAnywayButton = L10n.tr("Localizable", "share_extension.meta.degraded.send_anyway_button", fallback: "Send anyway")
+        internal enum DegradationReasonMessage {
+          /// %@ started using new devices.
+          internal static func plural(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "share_extension.meta.degraded.degradation_reason_message.plural", String(describing: p1), fallback: "%@ started using new devices.")
+          }
+          /// %@ started using a new device.
+          internal static func singular(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "share_extension.meta.degraded.degradation_reason_message.singular", String(describing: p1), fallback: "%@ started using a new device.")
+          }
+        }
+      }
+      internal enum Legalhold {
+        /// The conversation is now subject to legal hold.
+        internal static let sendAlertTitle = L10n.tr("Localizable", "share_extension.meta.legalhold.send_alert_title", fallback: "The conversation is now subject to legal hold.")
+      }
     }
     internal enum NoInternetConnection {
       /// No Internet Connection
