@@ -8556,7 +8556,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftgen.sh\n";
+			shellScript = "../scripts/run-swiftgen.sh --config swiftgenShareExtension.yml\n";
 		};
 		EE00ACE125E43FA2005FEC14 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8595,7 +8595,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftgen.sh\n";
+			shellScript = "../scripts/run-swiftgen.sh --config swiftgen.yml \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
