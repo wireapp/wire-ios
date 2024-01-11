@@ -21,11 +21,11 @@ import WireDataModel
 
 extension ZMUserSession {
 
-    func refreshUsersMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
-        .init(id: "refreshUserMetadata", interval: interval) { [weak self] in
+    var refreshUsersMissingMetadataAction: RecurringAction {
+        .init(id: #function, interval: 3 * .oneHour) { [weak self] in
 
             guard let moc = self?.managedObjectContext else { return }
-            moc.performGroupedBlockAndWait {
+            moc.performGroupedAndWait { moc in
 
                 let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
                 guard let users = moc.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
@@ -38,11 +38,11 @@ extension ZMUserSession {
         }
     }
 
-    func refreshConversationsMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
-        .init(id: "refreshConversationMetadata", interval: interval) { [weak self] in
+    var refreshConversationsMissingMetadataAction: RecurringAction {
+        .init(id: #function, interval: 3 * .oneHour) { [weak self] in
 
             guard let moc = self?.managedObjectContext else { return }
-            moc.performGroupedBlockAndWait {
+            moc.performGroupedAndWait { moc in
 
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
@@ -57,7 +57,15 @@ extension ZMUserSession {
         }
     }
 
-    func refreshTeamMetadata(interval: TimeInterval = .oneDay) -> RecurringAction {
-        fatalError("TODO: implement")
+    var refreshTeamMetadataAction: RecurringAction {
+        .init(id: #function, interval: .oneDay) { [weak self] in
+
+            guard let moc = self?.managedObjectContext else { return }
+            moc.performGroupedAndWait { moc in
+
+                guard let team = ZMUser.selfUser(in: moc).team else { return }
+                team.refreshMetadata()
+            }
+        }
     }
 }

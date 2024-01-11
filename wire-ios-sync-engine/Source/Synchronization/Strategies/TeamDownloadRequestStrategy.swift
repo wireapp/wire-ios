@@ -161,13 +161,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         deleteAccount()
     }
 
-    private func updateTeam(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let existingTeam = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-
-        TeamUpdateEventPayload(data)?.updateTeam(existingTeam, in: managedObjectContext)
-    }
-
     private func processRemovedMember(with event: ZMUpdateEvent) {
         guard let identifier = event.teamId, let data = event.dataPayload else { return }
         guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }

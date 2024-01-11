@@ -38,9 +38,9 @@ import Foundation
             searchContext: userSession.searchManagedObjectContext,
             contextProvider: userSession,
             transportSession: userSession.transportSession,
-            refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadata(),
-            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadata(),
-            refreshTeamMetadataAction: userSession.refreshTeamMetadata()
+            refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadataAction,
+            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction,
+            refreshTeamMetadataAction: userSession.refreshTeamMetadataAction
         )
     }
 
