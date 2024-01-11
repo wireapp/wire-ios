@@ -309,11 +309,6 @@
     return YES;
 }
 
-- (BOOL)verifyAllExpectationsNow
-{
-    return [self waitForCustomExpectationsWithTimeout:0];
-}
-
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout;
 {
     BOOL result = [self waitForCustomExpectationsWithTimeout:timeout handler:nil];

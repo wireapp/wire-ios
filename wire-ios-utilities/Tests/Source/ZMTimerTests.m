@@ -163,7 +163,7 @@
     
     // then
     [self spinMainQueueWithTimeout:1.3];
-    XCTAssertFalse([self verifyAllExpectationsNow]); // Should *not* have fire
+    XCTAssertFalse([self waitForCustomExpectationsWithTimeout:0]); // Should *not* have fire
 }
 
 

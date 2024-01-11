@@ -68,7 +68,6 @@ typedef BOOL(^VerificationBlock)(void);
 
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN;
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
-- (BOOL)verifyAllExpectationsNow ZM_MUST_USE_RETURN;
 
 /// perform operations while not considering ZMLogErrors as test failure
 - (void)performIgnoringZMLogError:(nonnull void(^)(void))block;
