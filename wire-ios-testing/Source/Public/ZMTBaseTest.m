@@ -209,7 +209,7 @@
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 }
 
-- (XCTestExpectation *)expectationWithDescription:(NSString *)description;
+- (XCTestExpectation *_Nonnull)customExpectationWithDescription:(NSString *_Nonnull)description;
 {
     ZMTExpectation *expectation = [[ZMTExpectation alloc] init];
     expectation.name = description;

@@ -66,6 +66,8 @@ typedef BOOL(^VerificationBlock)(void);
 /// Wait for all dispatch groups to be empty
 - (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
 
+- (XCTestExpectation *_Nonnull)customExpectationWithDescription:(NSString *_Nonnull)description NS_SWIFT_NAME(customExpectation(description:));
+
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN;
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
 
