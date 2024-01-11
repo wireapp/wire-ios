@@ -75,7 +75,7 @@
 
 - (void)setUpTimerExpectation
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"timer fired"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"timer fired"];
     
     ZM_WEAK(self);
     self.timerClient.block = ^(ZMTimer *timer) {
@@ -188,8 +188,8 @@
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [self.sut cancel];
     self.sut = [ZMTimer timerWithTarget:self.timerClient operationQueue:queue];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"timer fired"];
-    
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"timer fired"];
+
     ZM_WEAK(self);
     self.timerClient.block = ^(ZMTimer *timer) {
         ZM_STRONG(self);

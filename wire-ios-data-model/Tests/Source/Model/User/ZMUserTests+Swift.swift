@@ -273,7 +273,7 @@ extension ZMUserTests_Swift {
 extension ZMUserTests_Swift {
 
     func testThatItPostsPreviewRequestNotifications() {
-        let noteExpectation = expectation(description: "PreviewAssetFetchNotification should be fired")
+        let noteExpectation = customExpectation(description: "PreviewAssetFetchNotification should be fired")
         var userObjectId: NSManagedObjectID?
 
         let token = ManagedObjectObserverToken(name: .userDidRequestPreviewAsset,
@@ -296,7 +296,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatItPostsCompleteRequestNotifications() {
-        let noteExpectation = expectation(description: "CompleteAssetFetchNotification should be fired")
+        let noteExpectation = customExpectation(description: "CompleteAssetFetchNotification should be fired")
         var userObjectId: NSManagedObjectID?
 
         let token = ManagedObjectObserverToken(name: .userDidRequestCompleteAsset,

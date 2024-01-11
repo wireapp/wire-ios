@@ -136,7 +136,7 @@ class ConversationTests_Guests: IntegrationTest {
             self.mockTransportSession?.resetReceivedRequests()
 
             // WHEN
-            let didFail  = self.expectation(description: "did fail")
+            let didFail  = self.customExpectation(description: "did fail")
             conversation.canGenerateGuestLink(in: self.userSession!) { result in
                 // THEN
                 switch result {

@@ -479,7 +479,7 @@ class WireCallCenterV3Tests: MessagingTest {
             syncMOC.mlsService = mlsService
         }
 
-        let didLeaveSubconversation = expectation(description: "didLeaveSubconversation")
+        let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
         mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { parentID, parentGroupID, subconversationType in
             XCTAssertEqual(parentID, self.groupConversation.qualifiedID)
             XCTAssertEqual(parentGroupID, self.groupConversation.mlsGroupID)
@@ -509,7 +509,7 @@ class WireCallCenterV3Tests: MessagingTest {
             syncMOC.mlsService = mlsService
         }
 
-        let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
+        let didLeaveSubconversationIfNeeded = customExpectation(description: "didLeaveSubconversationIfNeeded")
         mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
             XCTAssertEqual($0, self.groupConversation.qualifiedID)
             XCTAssertEqual($1, self.groupConversation.mlsGroupID)
@@ -550,7 +550,7 @@ class WireCallCenterV3Tests: MessagingTest {
             syncMOC.mlsService = mlsService
         }
 
-        let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
+        let didLeaveSubconversationIfNeeded = customExpectation(description: "didLeaveSubconversationIfNeeded")
         mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
             XCTAssertEqual($0, self.groupConversation.qualifiedID)
             XCTAssertEqual($1, self.groupConversation.mlsGroupID)
@@ -586,7 +586,7 @@ class WireCallCenterV3Tests: MessagingTest {
             syncMOC.mlsService = mlsService
         }
 
-        let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
+        let didLeaveSubconversationIfNeeded = customExpectation(description: "didLeaveSubconversationIfNeeded")
         mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
             XCTAssertEqual($0, self.groupConversation.qualifiedID)
             XCTAssertEqual($1, self.groupConversation.mlsGroupID)
@@ -838,7 +838,7 @@ class WireCallCenterV3Tests: MessagingTest {
 
         let mlsService = MockMLSServiceInterface()
 
-        let didJoinSubgroup = expectation(description: "didJoinSubgroup")
+        let didJoinSubgroup = customExpectation(description: "didJoinSubgroup")
         mlsService.createOrJoinSubgroupParentQualifiedIDParentID_MockMethod = {
             defer { didJoinSubgroup.fulfill() }
             XCTAssertEqual($0, self.groupConversation.qualifiedID)
@@ -846,7 +846,7 @@ class WireCallCenterV3Tests: MessagingTest {
             return subconversationGroupID
         }
 
-        let didGenerateConferenceInfo1 = expectation(description: "didGenerateConferenceInfo1")
+        let didGenerateConferenceInfo1 = customExpectation(description: "didGenerateConferenceInfo1")
         mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = {
             XCTAssertEqual($0, parentGroupID)
             XCTAssertEqual($1, subconversationGroupID)
@@ -854,7 +854,7 @@ class WireCallCenterV3Tests: MessagingTest {
             return conferenceInfo1
         }
 
-        let didSetConferenceInfo1 = expectation(description: "didSetConferenceInfo1")
+        let didSetConferenceInfo1 = customExpectation(description: "didSetConferenceInfo1")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
             XCTAssertEqual($0, self.groupConversation.avsIdentifier)
             XCTAssertEqual($1, conferenceInfo1)
@@ -886,7 +886,7 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let didSetConferenceInfo2 = expectation(description: "didSetConferenceInfo2")
+        let didSetConferenceInfo2 = customExpectation(description: "didSetConferenceInfo2")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
             XCTAssertEqual($0, self.groupConversation.avsIdentifier)
             XCTAssertEqual($1, conferenceInfo2)
@@ -1014,7 +1014,7 @@ class WireCallCenterV3Tests: MessagingTest {
         sut.setCallReady(version: 3)
 
         // expect
-        let calledCompletionHandler = expectation(description: "processCallEvent completion handler called")
+        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
 
         // when
         syncMOC.performAndWait {
@@ -1036,7 +1036,7 @@ class WireCallCenterV3Tests: MessagingTest {
         sut.setCallReady(version: 3)
 
         // expect
-        let calledCompletionHandler = expectation(description: "processCallEvent completion handler called")
+        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
 
         // when
         sut.processCallEvent(callEvent, completionHandler: {
@@ -1055,7 +1055,7 @@ class WireCallCenterV3Tests: MessagingTest {
         let callEvent = CallEvent(data: data, currentTimestamp: Date(), serverTimestamp: Date(), conversationId: oneOnOneConversationID, userId: userId, clientId: clientId)
 
         // expect
-        let calledCompletionHandler = expectation(description: "processCallEvent completion handler called")
+        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
 
         // when
         sut.processCallEvent(callEvent, completionHandler: {
@@ -1080,7 +1080,7 @@ class WireCallCenterV3Tests: MessagingTest {
         sut.setCallReady(version: 3)
 
         // expect
-        let calledCompletionHandler = expectation(description: "processCallEvent completion handler called")
+        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
 
         expectation(forNotification: WireCallCenterCallErrorNotification.notificationName, object: nil) { wrappedNote in
             guard let note = wrappedNote.userInfo?[WireCallCenterCallErrorNotification.userInfoKey] as? WireCallCenterCallErrorNotification else { return false }
@@ -1111,7 +1111,7 @@ class WireCallCenterV3Tests: MessagingTest {
         sut.setCallReady(version: 3)
 
         // expect
-        let calledCompletionHandler = expectation(description: "processCallEvent completion handler called")
+        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
 
         // when
         sut.processCallEvent(callEvent, completionHandler: {
@@ -1872,7 +1872,7 @@ extension WireCallCenterV3Tests {
         let mlsService = MockMLSServiceInterface()
         uiMOC.zm_sync.mlsService = mlsService
 
-        let didGenereateNewEpoch = expectation(description: "didGenerateNewEpoch")
+        let didGenereateNewEpoch = customExpectation(description: "didGenerateNewEpoch")
         mlsService.generateNewEpochGroupID_MockMethod = {
             XCTAssertEqual($0, subconversationGroupID)
             didGenereateNewEpoch.fulfill()
@@ -1928,7 +1928,7 @@ extension WireCallCenterV3Tests {
             AVSClient(userId: otherUserID, clientId: "client2")
         ]
 
-        let didReceiveClientList = expectation(description: "didReceiveClientList")
+        let didReceiveClientList = customExpectation(description: "didReceiveClientList")
         sut.clientsRequestCompletionsByConversationId[groupConversationID] = { _ in
             didReceiveClientList.fulfill()
         }

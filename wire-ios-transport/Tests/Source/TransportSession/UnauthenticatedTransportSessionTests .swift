@@ -205,7 +205,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         // given
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
         sessionMock.nextCompletionParameters = (nil, response, nil)
-        let completionExpectation = expectation(description: "Completion handler should be called")
+        let completionExpectation = customExpectation(description: "Completion handler should be called")
         let request = ZMTransportRequest(getFromPath: "/", apiVersion: 0)
 
         request.add(ZMCompletionHandler(on: fakeUIContext) { response in
@@ -244,7 +244,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         // given
         let response = URLResponse(url: url, mimeType: "", expectedContentLength: 1, textEncodingName: nil)
         sessionMock.nextCompletionParameters = (nil, response, NSError.requestExpiredError())
-        let completionExpectation = expectation(description: "Completion handler should be called with errors")
+        let completionExpectation = customExpectation(description: "Completion handler should be called with errors")
         let request = ZMTransportRequest(getFromPath: "/", apiVersion: 0)
 
         request.add(ZMCompletionHandler(on: fakeUIContext) { response in

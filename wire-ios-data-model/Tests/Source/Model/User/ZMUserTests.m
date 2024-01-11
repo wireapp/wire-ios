@@ -674,8 +674,8 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     }];
     
     // expect
-    XCTestExpectation *previewDataArrived = [self expectationWithDescription:@"preview image data arrived"];
-    XCTestExpectation *completeDataArrived = [self expectationWithDescription:@"complete image data arrived"];
+    XCTestExpectation *previewDataArrived = [self customExpectationWithDescription:@"preview image data arrived"];
+    XCTestExpectation *completeDataArrived = [self customExpectationWithDescription:@"complete image data arrived"];
     
     // when
     [user imageDataFor:ProfileImageSizePreview queue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completion:^(NSData *imageDataResult) {

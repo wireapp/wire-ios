@@ -183,7 +183,7 @@ class UserProfileImageUpdateStatusTests: MessagingTest {
     }
 
     func operationWithExpectation(description: String) -> Operation {
-        let expectation = self.expectation(description: description)
+        let expectation = self.customExpectation(description: description)
         return BlockOperation {
             expectation.fulfill()
         }
