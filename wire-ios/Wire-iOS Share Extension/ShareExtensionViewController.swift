@@ -520,7 +520,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func titleForMissingClients(causedBy change: ConversationDegradationInfo) -> String {
         if change.conversation.legalHoldStatus == .pendingApproval {
-            return "meta.legalhold.send_alert_title".localized
+            return L10n.ShareExtension.Meta.Legalhold.sendAlertTitle
         }
 
         let users = change.users
