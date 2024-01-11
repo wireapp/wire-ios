@@ -3061,21 +3061,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(clientIds, groupID)
     }
 
-    // MARK: - registerPendingJoin
-
-    public var registerPendingJoin_Invocations: [MLSGroupID] = []
-    public var registerPendingJoin_MockMethod: ((MLSGroupID) -> Void)?
-
-    public func registerPendingJoin(_ group: MLSGroupID) {
-        registerPendingJoin_Invocations.append(group)
-
-        guard let mock = registerPendingJoin_MockMethod else {
-            fatalError("no mock for `registerPendingJoin`")
-        }
-
-        mock(group)
-    }
-
     // MARK: - performPendingJoins
 
     public var performPendingJoins_Invocations: [Void] = []
