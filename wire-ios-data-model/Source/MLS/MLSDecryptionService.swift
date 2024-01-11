@@ -157,7 +157,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             // Received already sent or received message, can safely be ignored.
             case CryptoError.DuplicateMessage: return []
 
-            // Received self commit, any unmerged group has know when merged by CoreCrypto.
+            // Received self commit, any pending self commit has now been merged
             case CryptoError.SelfCommitIgnored: return []
 
             // Message arrive in an unmerged group, it has been buffered and will be consumed later.
