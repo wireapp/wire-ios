@@ -159,6 +159,24 @@ public extension ZMConversation {
         return context.executeFetchRequestOrAssert(request) as? [ZMConversation] ?? []
     }
 
+    static func fetchConversationsWithMLSGroupStatus(
+        mlsGroupStatus: MLSGroupStatus,
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
+        let request = Self.fetchRequest()
+
+        let matchingGroupStatus = NSPredicate(
+            format: "%K == \(mlsGroupStatus.rawValue)",
+            argumentArray: [Self.mlsStatusKey]
+        )
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            matchingGroupStatus, .isMLSConversation
+        ])
+
+        return context.executeFetchRequestOrAssert(request) as? [ZMConversation] ?? []
+    }
+
     static func fetchSelfMLSConversation(
         in context: NSManagedObjectContext
     ) -> ZMConversation? {

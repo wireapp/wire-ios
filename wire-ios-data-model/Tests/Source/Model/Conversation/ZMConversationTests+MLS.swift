@@ -56,10 +56,31 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
         }
     }
 
+    func testThatItFetchesConversationWithMLSGroupStatus() {
+        syncMOC.performGroupedBlockAndWait { [self] in
+            // Given
+            BackendInfo.isFederationEnabled = false
+            let groupID = MLSGroupID([1, 2, 3])
+            let pendingConversation = self.createConversation(groupID: groupID)
+            pendingConversation?.mlsStatus = .pendingJoin
+            let readyConversation = self.createConversation(groupID: groupID)
+            readyConversation?.mlsStatus = .ready
+
+            // When
+            let pendingConversations = ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .pendingJoin, in: syncMOC)
+            let readyConversations = ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .ready, in: syncMOC)
+
+            // Then
+            XCTAssertEqual(pendingConversations, [pendingConversation])
+            XCTAssertEqual(readyConversations, [readyConversation])
+        }
+    }
+
     private func createConversation(groupID: MLSGroupID) -> ZMConversation? {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = NSUUID.create()
         conversation.mlsGroupID = groupID
+        conversation.messageProtocol = .mls
         XCTAssert(syncMOC.saveOrRollback())
         return conversation
     }
