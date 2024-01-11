@@ -820,7 +820,12 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        let pendingGroups = await context.perform { self.fetchPendingGroups(in: context) }
+        let pendingGroups = try await context.perform {
+            try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .pendingJoin,
+                in: context
+            ).compactMap(\.mlsGroupID)
+        }
 
         logger.info("joining \(pendingGroups.count) group(s)")
 
@@ -835,15 +840,6 @@ public final class MLSService: MLSServiceInterface {
                 }
             }
         }
-    }
-
-    private func fetchPendingGroups(in context: NSManagedObjectContext) -> [MLSGroupID] {
-        logger.info("fetching list of groups pending join")
-
-        return ZMConversation.fetchConversationsWithMLSGroupStatus(
-            mlsGroupStatus: .pendingJoin,
-            in: context
-        ).compactMap(\.mlsGroupID)
     }
 
     // MARK: - Out-of-sync conversations
