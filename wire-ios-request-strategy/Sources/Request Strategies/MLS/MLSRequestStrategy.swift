@@ -42,7 +42,8 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             FetchMLSConversationGroupInfoActionHandler(context: managedObjectContext),
             FetchSubgroupActionHandler(context: managedObjectContext),
             DeleteSubgroupActionHandler(context: managedObjectContext),
-            LeaveSubconversationActionHandler(context: managedObjectContext)
+            LeaveSubconversationActionHandler(context: managedObjectContext),
+            ReplaceSelfMLSKeyPackagesActionHandler(context: managedObjectContext)
         ])
 
         super.init(

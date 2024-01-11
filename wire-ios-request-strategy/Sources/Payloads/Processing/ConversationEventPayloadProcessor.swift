@@ -661,6 +661,7 @@ final class ConversationEventPayloadProcessor {
         from payload: Payload.Conversation,
         for conversation: ZMConversation
     ) {
+
         guard let messageProtocolString = payload.messageProtocol else {
             Logging.eventProcessing.warn("message protocol is missing")
             return

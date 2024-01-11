@@ -81,6 +81,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
     private let acmeDirectory: AcmeDirectory
     private let apiProvider: APIProviderInterface
     private let e2eiService: E2eIServiceInterface
+    private let keyRotator: E2eIKeyPackageRotating
 
     private let logger = WireLogger.e2ei
 
@@ -88,12 +89,15 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         acmeApi: AcmeAPIInterface,
         apiProvider: APIProviderInterface,
         e2eiService: E2eIServiceInterface,
-        acmeDirectory: AcmeDirectory) {
-            self.acmeApi = acmeApi
-            self.apiProvider = apiProvider
-            self.e2eiService = e2eiService
-            self.acmeDirectory = acmeDirectory
-        }
+        acmeDirectory: AcmeDirectory,
+        keyRotator: E2eIKeyPackageRotating
+    ) {
+        self.acmeApi = acmeApi
+        self.apiProvider = apiProvider
+        self.e2eiService = e2eiService
+        self.acmeDirectory = acmeDirectory
+        self.keyRotator = keyRotator
+    }
 
     public func getACMENonce() async throws -> String {
         logger.info("get ACME nonce from \(acmeDirectory.newNonce)")
@@ -303,8 +307,15 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
     }
 
     public func rotateKeysAndMigrateConversations(certificateChain: String) async throws {
-        /// TODO: in the next PR
-
+        do {
+            try await keyRotator.rotateKeysAndMigrateConversations(
+                enrollment: e2eiService.e2eIdentity,
+                certificateChain: certificateChain
+            )
+        } catch {
+            logger.warn("failed to rotate keys: \(error.localizedDescription)")
+            throw E2EIRepositoryFailure.failedToRotateKeys(error)
+        }
     }
 
 }
@@ -324,6 +335,7 @@ enum E2EIRepositoryFailure: Error {
     case failedToCheckOrderRequest(_ underlyingError: Error)
     case failedToFinalize(_ underlyingError: Error)
     case failedToSendCertificateRequest(_ underlyingError: Error)
+    case failedToRotateKeys(_ underlyingError: Error)
 
 }
 

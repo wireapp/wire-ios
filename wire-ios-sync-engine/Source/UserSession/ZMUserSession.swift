@@ -270,12 +270,25 @@ public class ZMUserSession: NSObject {
         let acmeApi = AcmeAPI(acmeDirectory: acmeDirectory)
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
-            queue: syncContext)
+            queue: syncContext
+        )
+
         let apiProvider = APIProvider(httpClient: httpClient)
+
         let e2eiSetupService = E2eISetupService(coreCryptoProvider: coreCryptoProvider)
-        let e2eiRepository = E2eIRepository(acmeApi: acmeApi,
-                                            apiProvider: apiProvider,
-                                            e2eiSetupService: e2eiSetupService)
+
+        let keyRotator = E2eIKeyPackageRotator(
+            coreCryptoProvider: coreCryptoProvider,
+            conversationEventProcessor: conversationEventProcessor,
+            context: syncContext
+        )
+
+        let e2eiRepository = E2eIRepository(
+            acmeApi: acmeApi,
+            apiProvider: apiProvider,
+            e2eiSetupService: e2eiSetupService,
+            keyRotator: keyRotator
+        )
 
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
