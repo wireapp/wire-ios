@@ -59,7 +59,7 @@ public struct ConversationPostProtocolChangeUpdater {
 
         try await syncConversation(qualifiedID, in: context.notificationContext)
 
-        guard messageProtocol != newMessageProtocol else {
+        if messageProtocol == newMessageProtocol {
             // skip adding system message for equal protocols!
             return
         }
