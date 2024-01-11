@@ -2830,10 +2830,10 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
     public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> MLSDecryptResult?)?
-    public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> [MLSDecryptResult])?
+    public var decryptMessageForSubconversationType_MockValue: [MLSDecryptResult]?
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> MLSDecryptResult? {
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> [MLSDecryptResult] {
         decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
         if let error = decryptMessageForSubconversationType_MockError {
@@ -3059,21 +3059,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         try await mock(clientIds, groupID)
-    }
-
-    // MARK: - registerPendingJoin
-
-    public var registerPendingJoin_Invocations: [MLSGroupID] = []
-    public var registerPendingJoin_MockMethod: ((MLSGroupID) -> Void)?
-
-    public func registerPendingJoin(_ group: MLSGroupID) {
-        registerPendingJoin_Invocations.append(group)
-
-        guard let mock = registerPendingJoin_MockMethod else {
-            fatalError("no mock for `registerPendingJoin`")
-        }
-
-        mock(group)
     }
 
     // MARK: - performPendingJoins
@@ -3365,10 +3350,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
     public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> MLSDecryptResult?)?
-    public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> [MLSDecryptResult])?
+    public var decryptMessageForSubconversationType_MockValue: [MLSDecryptResult]?
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> MLSDecryptResult? {
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> [MLSDecryptResult] {
         decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
         if let error = decryptMessageForSubconversationType_MockError {
