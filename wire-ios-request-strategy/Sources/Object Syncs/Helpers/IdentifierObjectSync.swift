@@ -107,14 +107,16 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
             case .permanentError, .success:
                 self.downloading.subtract(scheduled)
                 self.transcoder?.didReceive(response: response, for: scheduled) {
-                    if case .permanentError = response.result {
-                        self.delegate?.didFailToSyncAllObjects()
-                    }
+                    self.managedObjectContext.perform {
+                        if case .permanentError = response.result {
+                            self.delegate?.didFailToSyncAllObjects()
+                        }
 
-                    if !self.isSyncing {
-                        self.delegate?.didFinishSyncingAllObjects()
+                        if !self.isSyncing {
+                            self.delegate?.didFinishSyncingAllObjects()
+                        }
+                        self.managedObjectContext.enqueueDelayedSave()
                     }
-                    self.managedObjectContext.enqueueDelayedSave()
                 }
             default:
                 self.downloading.subtract(scheduled)

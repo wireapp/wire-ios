@@ -1003,14 +1003,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.domain = domain
             conversation.mlsGroupID = groupID
             conversation.mlsStatus = .pendingJoin
+            conversation.messageProtocol = .mls
             return conversation
         }
 
         // TODO: Mock properly
         let mockUpdateEvents = [ZMUpdateEvent]()
-
-        // register the group to be joined
-        sut.registerPendingJoin(groupID)
 
         // expectation
         let expectation = XCTestExpectation(description: "Send Message")
@@ -1087,11 +1085,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.domain = domain
             conversation.mlsGroupID = groupID
             conversation.mlsStatus = .pendingJoin
+            conversation.messageProtocol = .mls
             return conversation
         }
-
-        // register the group to be joined
-        sut.registerPendingJoin(groupID)
 
         // set up expectations
         let expectation = XCTestExpectation(description: "Send Message")
@@ -1150,9 +1146,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.domain = "domain.com"
             conversation.mlsStatus = .ready
         }
-
-        // register the group to be joined
-        sut.registerPendingJoin(groupID)
 
         // expectation
         let expectation = XCTestExpectation(description: "Send Message")

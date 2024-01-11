@@ -34,8 +34,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         mockMLSService = .init()
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
         mockMLSEventProcessor = .init()
-
-        mockMLSEventProcessor.joinMLSGroupWhenReadyForConversationContext_MockMethod = { _, _ in }
         mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
 
         MLSEventProcessor.setMock(mockMLSEventProcessor)
@@ -912,52 +910,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_Invocations
             XCTAssertEqual(updateConversationCalls.count, 1)
             XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
-        }
-    }
-
-    func testUpdateOrCreateConversation_Group_MLS_AsksToJoinGroupWhenReady_DuringSlowSync() async {
-        // given
-        let qualifiedID = await syncMOC.perform {
-            self.groupConversation.qualifiedID!
-        }
-        let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                           type: BackendConversationType.group.rawValue,
-                                           messageProtocol: "mls")
-
-        // when
-        await sut.updateOrCreateConversation(
-            from: payload,
-            source: .slowSync,
-            in: syncMOC
-        )
-
-        // then
-        await syncMOC.perform { [self] in
-            let joinMLSGroupWhenReadyCalls = mockMLSEventProcessor.joinMLSGroupWhenReadyForConversationContext_Invocations
-            XCTAssertEqual(joinMLSGroupWhenReadyCalls.count, 1)
-            XCTAssertEqual(joinMLSGroupWhenReadyCalls.first?.conversation, groupConversation)
-        }
-    }
-
-    func testUpdateOrCreateConversation_Group_MLS_DoesntAskToJoinGroupWhenReady_DuringQuickSync() async {
-        // given
-        let qualifiedID = await syncMOC.perform {
-            self.groupConversation.qualifiedID!
-        }
-        let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                           type: BackendConversationType.group.rawValue,
-                                           messageProtocol: "mls")
-
-        // when
-        await sut.updateOrCreateConversation(
-            from: payload,
-            source: .eventStream,
-            in: syncMOC
-        )
-
-        // then
-        await syncMOC.perform { [self] in
-            XCTAssertEqual(mockMLSEventProcessor.joinMLSGroupWhenReadyForConversationContext_Invocations.count, 0)
         }
     }
 
