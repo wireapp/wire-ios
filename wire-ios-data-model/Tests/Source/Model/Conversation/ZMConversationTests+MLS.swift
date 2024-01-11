@@ -56,8 +56,8 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
         }
     }
 
-    func testThatItFetchesConversationWithMLSGroupStatus() {
-        syncMOC.performGroupedBlockAndWait { [self] in
+    func testThatItFetchesConversationWithMLSGroupStatus() throws {
+        try syncMOC.performAndWait { [self] in
             // Given
             BackendInfo.isFederationEnabled = false
             let groupID = MLSGroupID([1, 2, 3])
@@ -67,8 +67,8 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
             readyConversation?.mlsStatus = .ready
 
             // When
-            let pendingConversations = ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .pendingJoin, in: syncMOC)
-            let readyConversations = ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .ready, in: syncMOC)
+            let pendingConversations = try ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .pendingJoin, in: syncMOC)
+            let readyConversations = try ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .ready, in: syncMOC)
 
             // Then
             XCTAssertEqual(pendingConversations, [pendingConversation])

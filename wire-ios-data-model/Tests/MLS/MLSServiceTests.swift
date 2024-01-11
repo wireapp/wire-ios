@@ -1003,6 +1003,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.domain = domain
             conversation.mlsGroupID = groupID
             conversation.mlsStatus = .pendingJoin
+            conversation.messageProtocol = .mls
             return conversation
         }
 
@@ -1084,6 +1085,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.domain = domain
             conversation.mlsGroupID = groupID
             conversation.mlsStatus = .pendingJoin
+            conversation.messageProtocol = .mls
             return conversation
         }
 
