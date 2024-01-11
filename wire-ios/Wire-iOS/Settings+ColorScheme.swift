@@ -64,6 +64,14 @@ enum SettingsColorScheme: Int, CaseIterable {
         return .system
     }
 
+    var keyValueString: String {
+        switch self {
+        case .dark: return "dark"
+        case .light: return "light"
+        case .system: return "system"
+        }
+    }
+
     var displayString: String {
         switch self {
         case .dark: return L10n.Localizable.DarkTheme.Option.dark
