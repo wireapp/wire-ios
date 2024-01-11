@@ -1125,7 +1125,7 @@ static XCTestCase *currentTestCase;
     }
     
     // This is what will get called on the ZMOperationLoop:
-    [self expectationForNotification:ZMTransportSessionNewRequestAvailableNotification object:nil handler:nil];
+    [self customExpectationForNotification:ZMTransportSessionNewRequestAvailableNotification object:nil handler:nil];
     
     // when
     // enqueuing max + 1 requests
