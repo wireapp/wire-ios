@@ -287,7 +287,7 @@ extension ActionHandlerTestBase {
         action: inout Action,
         toPassValidation validateResult: @escaping ValidationBlock
     ) {
-        let expectation = self.expectation(description: "didPassValidation")
+        let expectation = self.customExpectation(description: "didPassValidation")
 
         action.onResult { result in
             guard validateResult(result) else { return }

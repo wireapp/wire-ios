@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,16 +30,17 @@ final class LastEventIDRepositoryTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
         userID = UUID.create()
-        userDefaults = .random()
+        userDefaults = .temporary()
         sut = LastEventIDRepository(userID: userID, sharedUserDefaults: userDefaults)
     }
 
     override func tearDown() {
         sut = nil
         userID = nil
-        userDefaults.reset()
         userDefaults = nil
+
         super.tearDown()
     }
 

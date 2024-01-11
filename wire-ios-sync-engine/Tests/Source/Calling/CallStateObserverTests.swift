@@ -249,7 +249,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         uiMOC.zm_callCenter = mockCallCenter
 
         // expect
-        expectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
+        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
             return true
         }
 
@@ -266,7 +266,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         uiMOC.zm_callCenter  = mockCallCenter
 
         // expect
-        expectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
+        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
             return true
         }
 
@@ -285,7 +285,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // expect
-        expectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (note) -> Bool in
             if let open = note.userInfo?[CallStateObserver.CallInProgressKey] as? Bool, open == false {
                 return true
             } else {

@@ -267,7 +267,7 @@ static NSString * const DataKey = @"data";
                                verifyBlock:(void (^)(NSURLSessionTask *, NSArray<NSURLSessionTask *> *))verifyBlock
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"It should call the completionHandler"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"It should call the completionHandler"];
     
     ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"/some/path/" apiVersion:0];
     NSURLSessionTask *task = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:request];
@@ -312,7 +312,7 @@ static NSString * const DataKey = @"data";
 {
     // given
     NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://foo.example.com"] MIMEType:@"application/binary" expectedContentLength:1234 textEncodingName:@"utf8"];
-    XCTestExpectation *e = [self expectationWithDescription:@"completion handler"];
+    XCTestExpectation *e = [self customExpectationWithDescription:@"completion handler"];
     
     // when
     [self.sut URLSession:self.sut.backingSession dataTask:(id) self.taskA didReceiveResponse:response completionHandler:^(NSURLSessionResponseDisposition disposition) {
@@ -364,7 +364,7 @@ static NSString * const DataKey = @"data";
     
     NSURLRequest *newRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:finalURL]];
     
-    XCTestExpectation *completionHandlerCalled = [self expectationWithDescription:@"Completion handler invoked"];
+    XCTestExpectation *completionHandlerCalled = [self customExpectationWithDescription:@"Completion handler invoked"];
     
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"foo"] statusCode:302 HTTPVersion:@"1.1" headerFields:@{}];
     

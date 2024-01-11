@@ -252,13 +252,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = "foo"
         let groupID = MLSGroupID.random()
         let subconversationType = SubgroupType.conference
-
         let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
 
-        mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
+        mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
         // When
-        let result = try await sut.decrypt(
+        let results = try await sut.decrypt(
             message: message,
             for: groupID,
             subconversationType: subconversationType
@@ -270,7 +269,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(invocation?.message, message)
         XCTAssertEqual(invocation?.groupID, groupID)
         XCTAssertEqual(invocation?.subconversationType, subconversationType)
-        XCTAssertEqual(result, mockResult)
+        XCTAssertEqual(results.first, mockResult)
     }
 
     // MARK: - Message Decryption
@@ -282,10 +281,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subconversationType = SubgroupType.conference
 
         let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
-        mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
+        mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
         // When
-        let result = try await sut.decrypt(
+        let results = try await sut.decrypt(
             message: message,
             for: groupID,
             subconversationType: subconversationType
@@ -297,7 +296,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(invocation?.message, message)
         XCTAssertEqual(invocation?.groupID, groupID)
         XCTAssertEqual(invocation?.subconversationType, subconversationType)
-        XCTAssertEqual(result, mockResult)
+        XCTAssertEqual(results.first, mockResult)
     }
 
     func test_Decrypt_RepairsConversationOnWrongEpochError() async throws {
@@ -1003,14 +1002,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.domain = domain
             conversation.mlsGroupID = groupID
             conversation.mlsStatus = .pendingJoin
+            conversation.messageProtocol = .mls
             return conversation
         }
 
         // TODO: Mock properly
         let mockUpdateEvents = [ZMUpdateEvent]()
-
-        // register the group to be joined
-        sut.registerPendingJoin(groupID)
 
         // expectation
         let expectation = XCTestExpectation(description: "Send Message")
@@ -1087,11 +1084,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.domain = domain
             conversation.mlsGroupID = groupID
             conversation.mlsStatus = .pendingJoin
+            conversation.messageProtocol = .mls
             return conversation
         }
-
-        // register the group to be joined
-        sut.registerPendingJoin(groupID)
 
         // set up expectations
         let expectation = XCTestExpectation(description: "Send Message")
@@ -1150,9 +1145,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.domain = "domain.com"
             conversation.mlsStatus = .ready
         }
-
-        // register the group to be joined
-        sut.registerPendingJoin(groupID)
 
         // expectation
         let expectation = XCTestExpectation(description: "Send Message")
@@ -1461,8 +1453,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let unsufficientKeyPackagesAmount = sut.targetUnclaimedKeyPackageCount / 3
 
         // expectation
-        let countUnclaimedKeyPackages = self.expectation(description: "Count unclaimed key packages")
-        let uploadKeyPackages = self.expectation(description: "Upload key packages")
+        let countUnclaimedKeyPackages = self.customExpectation(description: "Count unclaimed key packages")
+        let uploadKeyPackages = self.customExpectation(description: "Upload key packages")
 
         // mock that we queried kp count recently
         userDefaultsTestSuite.set(Date(), forKey: MLSService.Keys.keyPackageQueriedTime.rawValue)
@@ -1626,7 +1618,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Expectations
-        keyMaterialUpdatedExpectation = expectation(description: "did update key material")
+        keyMaterialUpdatedExpectation = customExpectation(description: "did update key material")
 
         // When
         await sut.updateKeyMaterialForAllStaleGroupsIfNeeded()
@@ -2289,7 +2281,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Colect ids for groups with changed epochs
         var receivedGroupIDs = [MLSGroupID]()
-        let didReceiveGroupIDs = expectation(description: "didReceiveGroupIDs")
+        let didReceiveGroupIDs = customExpectation(description: "didReceiveGroupIDs")
         let cancellable = sut.onEpochChanged().collect(3).sink {
             receivedGroupIDs = $0
             didReceiveGroupIDs.fulfill()
@@ -2394,8 +2386,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Given a group.
         let groupID = MLSGroupID.random()
-        let expectation1 = self.expectation(description: "CreateConversation should be called")
-        let expectation2 = self.expectation(description: "UpdateKeyMaterial should be called")
+        let expectation1 = self.customExpectation(description: "CreateConversation should be called")
+        let expectation2 = self.customExpectation(description: "UpdateKeyMaterial should be called")
 
         mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in
             expectation1.fulfill()
@@ -2426,8 +2418,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         BackendInfo.domain = "example.com"
 
         // Given a group.
-        let expectation1 = self.expectation(description: "CreateConversation should be called")
-        let expectation2 = self.expectation(description: "AddMembers should be called")
+        let expectation1 = self.customExpectation(description: "CreateConversation should be called")
+        let expectation2 = self.customExpectation(description: "AddMembers should be called")
         mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in
             expectation1.fulfill()
         }
@@ -2493,7 +2485,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.domain = "example.com"
         }
 
-        let expectation1 = self.expectation(description: "CreateConversation should be called")
+        let expectation1 = self.customExpectation(description: "CreateConversation should be called")
 
         mockMLSActionExecutor.mockJoinGroup = { _, _ in
             return [ZMUpdateEvent()]

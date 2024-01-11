@@ -20,10 +20,6 @@ import Foundation
 import WireUtilities
 import WireRequestStrategy
 
-extension NSNotification.Name {
-    static let calculateBadgeCount = NSNotification.Name(rawValue: "calculateBadgeCountNotication")
-}
-
 actor EventProcessor: UpdateEventProcessor {
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
@@ -66,6 +62,8 @@ actor EventProcessor: UpdateEventProcessor {
 
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
         try await enqueueTask {
+            NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
+
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
             let publicKeys = try? self.earService.fetchPublicKeys()
             let decryptedEvents = await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
@@ -73,6 +71,7 @@ actor EventProcessor: UpdateEventProcessor {
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
             try await self.processEvents(callEventsOnly: isLocked)
             await self.requestToCalculateBadgeCount()
+            NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
         }
     }
 
@@ -87,16 +86,9 @@ actor EventProcessor: UpdateEventProcessor {
             _ = await processingTask?.result
             return try await block()
         }
-        guard let taskResult = await processingTask?.result else {
-            return
-        }
 
-        switch taskResult {
-        case .success:
-            break
-        case .failure(let error):
-            throw error
-        }
+        // throw error if any
+        _ = try await processingTask?.value
     }
 
     private func processBackgroundEvents(_ events: [ZMUpdateEvent]) async {
@@ -146,7 +138,7 @@ actor EventProcessor: UpdateEventProcessor {
         ) { [weak self] (decryptedUpdateEvents) in
             WireLogger.updateEvent.info("retrieved \(decryptedUpdateEvents.count) events from the database")
 
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             let date = Date()
             let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)
@@ -203,4 +195,15 @@ actor EventProcessor: UpdateEventProcessor {
 
         return fetchRequest
     }
+}
+
+extension Notification.Name {
+
+    static let calculateBadgeCount = Self(rawValue: "calculateBadgeCountNotication")
+
+    /// Published before the first event is processed.
+    static let eventProcessorDidStartProcessingEventsNotification = Self("EventProcessorDidStartProcessingEvents")
+
+    /// Published after the last event has been processed.
+    static let eventProcessorDidFinishProcessingEventsNotification = Self("EventProcessorDidFinishProcessingEvents")
 }
