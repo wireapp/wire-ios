@@ -108,7 +108,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         var groupID = groupID
-
+        var debugInfo = "parentID: \(groupID)"
         if
             let type = subconversationType,
             // TODO: [F] does subconverationGroupIDRepository needs to be an actor?
@@ -118,6 +118,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             )
         {
             groupID = subconversationGroupID
+            debugInfo.append("; subconversationGroupID: \(subconversationGroupID)")
         }
 
         do {
@@ -145,7 +146,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             return nil
         } catch {
-            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error))")
+            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
 
             if case CryptoError.WrongEpoch(message: _) = error {
                 throw MLSMessageDecryptionError.wrongEpoch
