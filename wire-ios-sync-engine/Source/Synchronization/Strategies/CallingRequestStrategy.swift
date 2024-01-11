@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireRequestStrategy
 import WireDataModel
@@ -43,6 +44,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private let ephemeralURLSession = URLSession(configuration: .ephemeral)
     private let fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol
+
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Internal Properties
 
@@ -84,6 +87,23 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                                                             analytics: managedObjectContext.analytics,
                                                             transport: self)
         }
+
+        setupEventProcessingNotifications()
+    }
+
+    private func setupEventProcessingNotifications() {
+
+        NotificationCenter.default
+            .publisher(for: .eventProcessorDidStartProcessingEventsNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: true) }
+            .store(in: &cancellables)
+
+        NotificationCenter.default
+            .publisher(for: .eventProcessorDidFinishProcessingEventsNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: false) }
+            .store(in: &cancellables)
     }
 
     // MARK: - Methods
@@ -246,7 +266,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             self.zmLog.debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
 
             guard !callEventContent.isRemoteMute else {
-                callCenter?.muted = true
+                callCenter?.isMuted = true
                 zmLog.debug("muted remotely from calling message")
                 return
             }

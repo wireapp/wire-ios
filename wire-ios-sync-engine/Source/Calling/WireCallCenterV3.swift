@@ -75,13 +75,9 @@ public class WireCallCenterV3: NSObject {
 
     var usePackagingFeatureConfig: Bool = false
 
-    var muted: Bool {
-        get {
-            return avsWrapper.muted
-        }
-        set {
-            avsWrapper.muted = newValue
-        }
+    var isMuted: Bool {
+        get { avsWrapper.isMuted }
+        set { avsWrapper.isMuted = newValue }
     }
 
     /// The snaphot of the call state for each non-idle conversation.
@@ -998,7 +994,7 @@ extension WireCallCenterV3 {
         }
 
         if case .incoming = callState, isGroup(conversationId: conversationId), activeCalls.isEmpty {
-            muted = true
+            isMuted = true
         }
 
         let callerId = initiatorForCall(conversationId: conversationId) ?? userId
