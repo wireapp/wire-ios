@@ -95,11 +95,16 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
             do {
                 try await action.perform(in: context.notificationContext)
-            } catch {
-                assertionFailure("action failed: \(error)!")
-            }
 
-            // TODO: add system message
+                let updater = ConversationPostProtocolChangeUpdater()
+                try await updater.updateLocalConversation(
+                    for: qualifiedID,
+                    to: messageProtocol,
+                    context: context
+                )
+            } catch {
+                assertionFailure("failed with error: \(error)!")
+            }
         }
     }
 

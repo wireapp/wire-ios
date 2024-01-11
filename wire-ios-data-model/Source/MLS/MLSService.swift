@@ -1686,22 +1686,25 @@ public final class MLSService: MLSServiceInterface {
             }
 
             do {
-
                 // update message protocol to `mixed`
+                let messageProtocol: MessageProtocol = .mixed
+
                 try await actionsProvider.updateConversationProtocol(
                     qualifiedID: qualifiedID,
-                    messageProtocol: .mixed,
+                    messageProtocol: messageProtocol,
                     context: context.notificationContext
                 )
 
-                // TODO: add system message
-
-                // sync the group conversation
-                try await actionsProvider.syncConversation(
+                // update and sync the local group conversation
+                let updater = ConversationPostProtocolChangeUpdater()
+                try await updater.updateLocalConversation(
+                    conversation,
                     qualifiedID: qualifiedID,
-                    context: context.notificationContext
+                    to: messageProtocol,
+                    context: context
                 )
 
+                // create MLS group and update keying material
                 let mlsGroupID = await context.perform { conversation.mlsGroupID }
                 guard let mlsGroupID else {
                     logger.warn("failed to convert conversation \(qualifiedID), `mlsGroupID` is `nil`")
@@ -1709,7 +1712,6 @@ public final class MLSService: MLSServiceInterface {
                     continue
                 }
 
-                // create MLS group and update keying material
                 try await createGroup(for: mlsGroupID)
 
                 do {
@@ -1734,9 +1736,7 @@ public final class MLSService: MLSServiceInterface {
                 continue
             }
         }
-
     }
-
 }
 
 // MARK: - Helper types

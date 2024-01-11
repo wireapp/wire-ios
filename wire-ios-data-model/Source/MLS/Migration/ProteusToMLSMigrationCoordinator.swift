@@ -266,9 +266,21 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private func updateConversationProtocolToMLS(for conversation: ZMConversation) async throws {
         let qualifiedID = await context.perform { conversation.qualifiedID }
         guard let qualifiedID else { return }
-        try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mls, context: context.notificationContext)
 
-        // TODO: add system message
+        let messageProtocol: MessageProtocol = .mls
+
+        try await actionsProvider.updateConversationProtocol(
+            qualifiedID: qualifiedID,
+            messageProtocol: messageProtocol,
+            context: context.notificationContext
+        )
+
+        let updater = ConversationPostProtocolChangeUpdater()
+        try await updater.updateLocalConversation(
+            for: qualifiedID,
+            to: messageProtocol,
+            context: context
+        )
     }
 }
 

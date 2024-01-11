@@ -352,72 +352,24 @@ final class ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) async {
-        guard let qualifiedID = payload.qualifiedID else {
+        guard
+            let qualifiedID = payload.qualifiedID,
+            let newMessageProtocol = MessageProtocol(rawValue: payload.data.messageProtocol)
+        else {
             Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
             return
         }
 
-        let conversationData = await context.perform {
-            let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
-            return (conversation: conversation, messageProtocol: conversation?.messageProtocol)
-        }
-
-        guard
-            let conversation = conversationData.conversation,
-            let messageProtocol = conversationData.messageProtocol,
-            let newMessageProtocol = MessageProtocol(rawValue: payload.data.messageProtocol),
-            messageProtocol != newMessageProtocol
-        else {
-            // ignore event if both protocols are already equal
-            return
-        }
-
-        // TODO: add system message
-
-        await syncConversation(qualifiedID, in: context.notificationContext)
-
-        await context.perform {
-            self.addProtocolChangeSystemMessage(
-                conversation: conversation,
-                newMessageProtocol: newMessageProtocol,
-                in: context
-            )
-        }
-    }
-
-    private func syncConversation(_ qualifiedID: QualifiedID, in notificationContext: NotificationContext) async {
-        var action = SyncConversationAction(qualifiedID: qualifiedID)
-
         do {
-            try await action.perform(in: notificationContext)
+            let updater = ConversationPostProtocolChangeUpdater()
+            try await updater.updateLocalConversation(
+                for: qualifiedID,
+                to: newMessageProtocol,
+                context: context
+            )
         } catch {
-            Logging.eventProcessing.error("syncConversation: perform 'SyncConversationAction' failed with error: \(error)")
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): updating conversation failed with error: \(error)")
         }
-    }
-
-    private func addProtocolChangeSystemMessage(
-        conversation: ZMConversation,
-        newMessageProtocol: MessageProtocol,
-        in context: NSManagedObjectContext
-    ) {
-        let selfUser = ZMUser.selfUser(in: context)
-        let now = Date()
-
-        switch newMessageProtocol {
-        case .mixed:
-            conversation.appendMLSMigrationStartedSystemMessage(
-                sender: selfUser,
-                at: now
-            )
-        case .mls:
-            conversation.appendMLSMigrationFinalizedSystemMessage(
-                sender: selfUser,
-                at: now
-            )
-        case .proteus:
-            assertionFailure("unexpected value for 'messageProtocol' '\(String(describing: newMessageProtocol))', that can not be processed!")
-        }
-
     }
 
     // MARK: - Helpers
