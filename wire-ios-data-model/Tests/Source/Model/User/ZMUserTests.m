@@ -2043,7 +2043,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertFalse(user1.isBlocked);
     // expect
 
-    [self keyValueObservingExpectationForObject:user1 keyPath:@"isBlocked" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user1 keyPath:@"isBlocked" expectedValue:nil];
     
     // when
     connection.status = ZMConnectionStatusBlocked;
@@ -2065,7 +2065,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
 
     // expect
 
-    [self keyValueObservingExpectationForObject:user1 keyPath:@"blockStateReason" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user1 keyPath:@"blockStateReason" expectedValue:nil];
 
     // when
     connection.status = ZMConnectionStatusBlockedMissingLegalholdConsent;
@@ -2087,7 +2087,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertFalse(user1.isIgnored);
     // expect
     
-    [self keyValueObservingExpectationForObject:user1 keyPath:@"isIgnored" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user1 keyPath:@"isIgnored" expectedValue:nil];
     
     // when
     connection.status = ZMConnectionStatusIgnored;
@@ -2108,7 +2108,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertTrue(user1.isPendingApprovalBySelfUser);
     // expect
     
-    [self keyValueObservingExpectationForObject:user1 keyPath:@"isPendingApprovalBySelfUser" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user1 keyPath:@"isPendingApprovalBySelfUser" expectedValue:nil];
     
     // when
     connection.status = ZMConnectionStatusAccepted;
@@ -2129,7 +2129,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertTrue(user.isPendingApprovalByOtherUser);
     // expect
     
-    [self keyValueObservingExpectationForObject:user keyPath:@"isPendingApprovalByOtherUser" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user keyPath:@"isPendingApprovalByOtherUser" expectedValue:nil];
     
     // when
     connection.status = ZMConnectionStatusAccepted;

@@ -239,7 +239,7 @@
     return (XCTestExpectation *) expectation;
 }
 
-- (XCTestExpectation *)keyValueObservingExpectationForObject:(id)objectToObserve keyPath:(NSString *)keyPath expectedValue:(id)expectedValue;
+- (XCTestExpectation *)customKeyValueObservingExpectationForObject:(id)objectToObserve keyPath:(NSString *)keyPath expectedValue:(id)expectedValue;
 {
     RequireString(expectedValue == nil, "Not implemented");
     ZMTKeyValueObservingExpectation *expectation = [[ZMTKeyValueObservingExpectation alloc] init];
