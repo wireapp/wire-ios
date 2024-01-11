@@ -284,7 +284,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: group.title.localized.capitalized)
+        navigationItem.setupNavigationBarTitle(title: group.title.capitalized)
     }
 
 }

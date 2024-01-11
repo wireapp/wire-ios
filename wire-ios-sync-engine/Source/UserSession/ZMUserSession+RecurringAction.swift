@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ extension ZMUserSession {
 
     func refreshUsersMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
 
-        return RecurringAction(id: "refreshUserMetadata", interval: interval) { [weak self] in
+        .init(id: "refreshUserMetadata", interval: interval) { [weak self] in
             self?.perform {
                 let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
                 guard let users = self?.managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
@@ -36,7 +36,7 @@ extension ZMUserSession {
 
     func refreshConversationsMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
 
-        return RecurringAction(id: "refreshConversationMetadata", interval: interval) { [weak self] in
+        .init(id: "refreshConversationMetadata", interval: interval) { [weak self] in
             self?.perform {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()

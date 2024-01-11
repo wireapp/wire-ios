@@ -2962,22 +2962,22 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - createGroup
 
-    public var createGroupFor_Invocations: [MLSGroupID] = []
-    public var createGroupFor_MockError: Error?
-    public var createGroupFor_MockMethod: ((MLSGroupID) async throws -> Void)?
+    public var createGroupForWith_Invocations: [(groupID: MLSGroupID, users: [MLSUser])] = []
+    public var createGroupForWith_MockError: Error?
+    public var createGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> Void)?
 
-    public func createGroup(for groupID: MLSGroupID) async throws {
-        createGroupFor_Invocations.append(groupID)
+    public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+        createGroupForWith_Invocations.append((groupID: groupID, users: users))
 
-        if let error = createGroupFor_MockError {
+        if let error = createGroupForWith_MockError {
             throw error
         }
 
-        guard let mock = createGroupFor_MockMethod else {
-            fatalError("no mock for `createGroupFor`")
+        guard let mock = createGroupForWith_MockMethod else {
+            fatalError("no mock for `createGroupForWith`")
         }
 
-        try await mock(groupID)
+        try await mock(groupID, users)
     }
 
     // MARK: - conversationExists
