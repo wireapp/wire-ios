@@ -82,10 +82,15 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let certificateRequest = try await enrollment.certificateRequest(location: finalizeResponse.location, prevNonce: finalizeResponse.acmeResponse.nonce)
 
         do {
-            return try JSONDecoder().decode(String.self, from: certificateRequest.response)
-        } catch {
+            let certificateChain = try JSONDecoder.defaultDecoder.decode(String.self, from: certificateRequest.response)
+            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+            return certificateChain
+        } catch is DecodingError {
             throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
         }
+
+        // TODO: verify enrollment flow after CC bump
+        // https://wearezeta.atlassian.net/browse/WPB-6039
     }
 
 }

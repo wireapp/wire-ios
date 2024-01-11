@@ -26,25 +26,45 @@ public protocol E2eIRepositoryInterface {
 
 public final class E2eIRepository: E2eIRepositoryInterface {
 
-    private var acmeApi: AcmeAPIInterface
-    private var apiProvider: APIProviderInterface
+    private let acmeApi: AcmeAPIInterface
+    private let apiProvider: APIProviderInterface
     private var e2eiSetupService: E2eISetupServiceInterface
+    private let keyRotator: E2eIKeyPackageRotating
 
-    public init(acmeApi: AcmeAPIInterface, apiProvider: APIProviderInterface, e2eiSetupService: E2eISetupServiceInterface) {
+    public init(
+        acmeApi: AcmeAPIInterface,
+        apiProvider: APIProviderInterface,
+        e2eiSetupService: E2eISetupServiceInterface,
+        keyRotator: E2eIKeyPackageRotating
+    ) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
         self.e2eiSetupService = e2eiSetupService
+        self.keyRotator = keyRotator
     }
 
-    public func createEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> E2eIEnrollmentInterface {
-        let e2eIdentity = try await e2eiSetupService.setupEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
+    public func createEnrollment(
+        e2eiClientId: E2eIClientID,
+        userName: String,
+        handle: String
+    ) async throws -> E2eIEnrollmentInterface {
+
+        let e2eIdentity = try await e2eiSetupService.setupEnrollment(
+            e2eiClientId: e2eiClientId,
+            userName: userName,
+            handle: handle
+        )
+
         let e2eiService = E2eIService(e2eIdentity: e2eIdentity)
         let acmeDirectory = try await loadACMEDirectory(e2eiService: e2eiService)
 
-        return E2eIEnrollment(acmeApi: acmeApi,
-                              apiProvider: apiProvider,
-                              e2eiService: e2eiService,
-                              acmeDirectory: acmeDirectory)
+        return E2eIEnrollment(
+            acmeApi: acmeApi,
+            apiProvider: apiProvider,
+            e2eiService: e2eiService,
+            acmeDirectory: acmeDirectory,
+            keyRotator: keyRotator
+        )
     }
 
     private func loadACMEDirectory(e2eiService: E2eIService) async throws -> AcmeDirectory {

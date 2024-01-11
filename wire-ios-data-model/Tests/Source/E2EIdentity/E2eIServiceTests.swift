@@ -19,16 +19,17 @@
 import Foundation
 import WireCoreCrypto
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class E2eIServiceTests: ZMConversationTestsBase {
 
     var sut: E2eIService!
-    var mockE2eIdentity: MockWireE2eIdentity!
+    var mockE2eIdentity: MockE2eiEnrollment!
 
     override func setUp() {
         super.setUp()
 
-        mockE2eIdentity = MockWireE2eIdentity()
+        mockE2eIdentity = MockE2eiEnrollment()
         sut = E2eIService(e2eIdentity: mockE2eIdentity)
     }
 
