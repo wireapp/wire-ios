@@ -58,8 +58,6 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                     textColor: SemanticColors.Label.textCertificateValid.swiftUIColor,
                     image: Image(.certificateValid)
                 )
-            case .none:
-                Spacer()
             }
             Spacer()
         }

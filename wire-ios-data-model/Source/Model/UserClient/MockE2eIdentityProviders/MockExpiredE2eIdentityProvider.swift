@@ -17,24 +17,66 @@
 //
 
 import Foundation
+import WireCoreCrypto
 
 public final class MockExpiredE2eIdentityProvider: E2eIdentityProviding {
-    lazy var dateFormatter = DateFormatter()
 
-    public var isE2EIdentityEnabled: Bool = true
+    public init() {}
 
-    public var certificate: E2eIdentityCertificate {
+    public func isE2EIdentityEnabled() async throws -> Bool {
+        return true
+    }
+
+    public func fetchCertificates(clientIds: [Data]) async throws -> [E2eIdentityCertificate] {
+        [.mockExpired]
+    }
+
+    public func fetchCertificates(userIds: [String]) async throws -> [String: [E2eIdentityCertificate]] {
+        var result = [String: [E2eIdentityCertificate]]()
+        userIds.forEach({ result[$0] = [E2eIdentityCertificate.mockExpired] })
+        return result
+    }
+
+    public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
+        return true
+    }
+}
+
+extension E2eIdentityCertificate {
+
+    static let  dateFormatter = DateFormatter()
+
+    static var mockRevoked: E2eIdentityCertificate {
         E2eIdentityCertificate(
             certificateDetails: .mockCertificate(),
+            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            notValidBefore: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
-            certificateStatus: "Revoked",
+            certificateStatus: .revoked,
             serialNumber: .mockSerialNumber()
         )
     }
 
-    public init() {}
-
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        certificate
+    static var mockValid: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            certificateDetails: .mockCertificate(),
+            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
+            certificateStatus: .valid,
+            serialNumber: .mockSerialNumber()
+        )
     }
+
+    static var mockExpired: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            certificateDetails: .mockCertificate(),
+            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
+            certificateStatus: .expired,
+            serialNumber: .mockSerialNumber()
+        )
+    }
+
 }

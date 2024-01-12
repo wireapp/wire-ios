@@ -101,7 +101,7 @@ public class ZMUserSession: NSObject {
     ) as RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
-    var coreCryptoProvider: CoreCryptoProvider
+    public var coreCryptoProvider: CoreCryptoProvider
     lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     var mlsService: MLSServiceInterface
     var proteusProvider: ProteusProviding!

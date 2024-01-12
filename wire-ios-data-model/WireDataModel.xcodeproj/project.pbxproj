@@ -195,9 +195,9 @@
 		16F7341224F9567000AB93B1 /* ZMConversationTests+DraftMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F7341024F9556600AB93B1 /* ZMConversationTests+DraftMessage.swift */; };
 		16F7341424F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F7341324F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift */; };
 		16F7341624F95F9D00AB93B1 /* store2-85-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */; };
+		255176CB2B514ACB006A4E46 /* X509 in Frameworks */ = {isa = PBXBuildFile; productRef = 255176CA2B514ACB006A4E46 /* X509 */; };
 		25644D942B289EFA007DA01F /* String+mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25644D922B289E30007DA01F /* String+mocks.swift */; };
 		256C1B792B1654BB0015C89D /* E2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256C1B782B1654BB0015C89D /* E2eIdentityProvider.swift */; };
-		2577CB6C2B18ECB0007D3443 /* UserClient+E2eIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB6B2B18ECB0007D3443 /* UserClient+E2eIdentity.swift */; };
 		2577CB6F2B19DA5D007D3443 /* MockValidE2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB6E2B19DA5D007D3443 /* MockValidE2eIdentityProvider.swift */; };
 		2577CB712B19DA7B007D3443 /* MockRevokedE2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB702B19DA7B007D3443 /* MockRevokedE2eIdentityProvider.swift */; };
 		2577CB732B19DAB9007D3443 /* MockExpiredE2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB722B19DAB9007D3443 /* MockExpiredE2eIdentityProvider.swift */; };
@@ -1044,7 +1044,6 @@
 		16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-85-0.wiredatabase"; sourceTree = "<group>"; };
 		25644D922B289E30007DA01F /* String+mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+mocks.swift"; sourceTree = "<group>"; };
 		256C1B782B1654BB0015C89D /* E2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIdentityProvider.swift; sourceTree = "<group>"; };
-		2577CB6B2B18ECB0007D3443 /* UserClient+E2eIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClient+E2eIdentity.swift"; sourceTree = "<group>"; };
 		2577CB6E2B19DA5D007D3443 /* MockValidE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockValidE2eIdentityProvider.swift; sourceTree = "<group>"; };
 		2577CB702B19DA7B007D3443 /* MockRevokedE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRevokedE2eIdentityProvider.swift; sourceTree = "<group>"; };
 		2577CB722B19DAB9007D3443 /* MockExpiredE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExpiredE2eIdentityProvider.swift; sourceTree = "<group>"; };
@@ -1737,6 +1736,7 @@
 				F9C9A66D1CAD778C0039E10C /* Foundation.framework in Frameworks */,
 				EE67F6C3296F05FD001D7C88 /* PINCache.xcframework in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
+				255176CB2B514ACB006A4E46 /* X509 in Frameworks */,
 				017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2757,7 +2757,6 @@
 				F9A706171CAEE01D00C2F5FE /* UserClientTypes.h */,
 				F9A706181CAEE01D00C2F5FE /* UserClientTypes.m */,
 				256C1B782B1654BB0015C89D /* E2eIdentityProvider.swift */,
-				2577CB6B2B18ECB0007D3443 /* UserClient+E2eIdentity.swift */,
 				2577CB7C2B1DC9F8007D3443 /* MLSProvider.swift */,
 			);
 			path = UserClient;
@@ -3508,6 +3507,7 @@
 			);
 			name = WireDataModel;
 			packageProductDependencies = (
+				255176CA2B514ACB006A4E46 /* X509 */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -3592,6 +3592,7 @@
 			mainGroup = F9C9A4F21CAD5DF10039E10C;
 			packageReferences = (
 				255176C82B5149E7006A4E46 /* XCRemoteSwiftPackageReference "swift-crypto" */,
+				255176C92B514ACB006A4E46 /* XCRemoteSwiftPackageReference "swift-certificates" */,
 			);
 			productRefGroup = F9C9A4FD1CAD5DF10039E10C /* Products */;
 			projectDirPath = "";
@@ -3975,7 +3976,6 @@
 				F9A706A91CAEE01D00C2F5FE /* StringKeyPath.swift in Sources */,
 				63298D9A2434D04D006B6018 /* GenericMessage+External.swift in Sources */,
 				A90676EA238EB05F006417AC /* Action.swift in Sources */,
-				2577CB6C2B18ECB0007D3443 /* UserClient+E2eIdentity.swift in Sources */,
 				EE6A57E025BB1C6800F848DD /* AppLockController.State.swift in Sources */,
 				EE032B3129A62CA600E1DDF3 /* ProteusSessionID.swift in Sources */,
 				63B1336E29A503D100009D84 /* StaleMLSKeyMaterialDetector.swift in Sources */,
@@ -4818,7 +4818,23 @@
 				minimumVersion = 3.2.0;
 			};
 		};
+		255176C92B514ACB006A4E46 /* XCRemoteSwiftPackageReference "swift-certificates" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-certificates.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		255176CA2B514ACB006A4E46 /* X509 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 255176C92B514ACB006A4E46 /* XCRemoteSwiftPackageReference "swift-certificates" */;
+			productName = X509;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		167BCC182609E92300E9D7E3 /* ZMEventModel.xcdatamodeld */ = {

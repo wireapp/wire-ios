@@ -187,6 +187,7 @@ final class ClientListViewController: UIViewController,
 
     func openDetailsOfClient(_ client: UserClient) {
         guard let userSession = ZMUserSession.shared() else { return }
+
         if let navigationController = self.navigationController {
             let detailsView = DeviceDetailsView(
                 viewModel: DeviceInfoViewModel.map(
@@ -195,9 +196,7 @@ final class ClientListViewController: UIViewController,
                     userSession: userSession,
                     credentials: self.credentials,
                     getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
-                    // TODO: Replace these once we have actual implementations
-                    e2eIdentityProvider: DeveloperDeviceDetailsSettingsSelectionViewModel.e2eIdentityProvider(),
-                    mlsProvider: DeveloperDeviceDetailsSettingsSelectionViewModel.mlsProvider()
+                    e2eIdentityProvider: self.e2eIProvider(for: userSession)
                 )
             ) {
                 self.navigationController?.setNavigationBarHidden(false, animated: false)
@@ -207,6 +206,13 @@ final class ClientListViewController: UIViewController,
             navigationController.pushViewController(hostingViewController, animated: true)
             navigationController.isNavigationBarHidden = true
         }
+    }
+
+    private func e2eIProvider(for userSession: ZMUserSession) -> E2eIdentityProviding {
+        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
+            return DeveloperDeviceDetailsSettingsSelectionViewModel.e2eIdentityProvider()
+        }
+        return E2eIdentityProvider(gracePeriod: Double(userSession.e2eiFeature.config.verificationExpiration), coreCryptoProvider: userSession.coreCryptoProvider, context: userSession.syncContext)
     }
 
     private func createTableView() {
