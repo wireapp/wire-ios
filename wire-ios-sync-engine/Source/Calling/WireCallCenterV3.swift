@@ -620,7 +620,7 @@ extension WireCallCenterV3 {
     }
 
     func generateInitialConferenceInfo(from conversationID: AVSIdentifier) async throws {
-        guard let context = uiMOC?.zm_sync else { return }
+        guard let context = await uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
         let (parentQualifiedID, parentGroupID) = await context.perform {
             let conversation = ZMConversation.fetch(with: conversationID.identifier, domain: conversationID.domain, in: context)
             return (conversation?.qualifiedID, conversation?.mlsGroupID)
@@ -721,6 +721,22 @@ extension WireCallCenterV3 {
                     ).subscribe(staleParticipantsRemover)
 
                     if var snapshot = self.callSnapshots[conversationID] {
+//                        callSnapshots[conversationId] = CallSnapshot(
+//                            callParticipants: callParticipants,
+//                            callState: callState,
+//                            callStarter: callStarter,
+//                            isVideo: video,
+//                            isGroup: group,
+//                            isConstantBitRate: false,
+//                            videoState: video ? .started : .stopped,
+//                            networkQuality: .normal,
+//                            isConferenceCall: isConferenceCall,
+//                            degradedUser: nil,
+//                            activeSpeakers: [],
+//                            videoGridPresentationMode: .allVideoStreams,
+//                            conversationObserverToken: token
+//                        )
+
                         snapshot.qualifiedID = parentQualifiedID
                         snapshot.groupIDs = (parentGroupID, subgroupID)
                         snapshot.updateConferenceInfoTask = updateConferenceInfoTask

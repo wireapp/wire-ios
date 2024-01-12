@@ -816,40 +816,31 @@ public final class MLSService: MLSServiceInterface {
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
     /// and sends external commits to join these groups
     public func performPendingJoins() async throws {
-        guard let context = context else {
-            return
-        }
-        let pendingJoins = await context.perform { self.generatePendingJoins(in: context) }
+           guard let context = context else {
+               return
+           }
 
-        for pendingJoin in pendingJoins {
-            do {
-                try await joinByExternalCommit(groupID: pendingJoin.groupID)
-                groupsPendingJoin.remove(pendingJoin.groupID)
-            } catch {
-                WireLogger.mls.error("failed pending join for group \(pendingJoin.groupID)")
-            }
-        }
-    }
+           let pendingGroups = try await context.perform {
+               try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                   mlsGroupStatus: .pendingJoin,
+                   in: context
+               ).compactMap(\.mlsGroupID)
+           }
 
-    private func generatePendingJoins(in context: NSManagedObjectContext) -> [PendingJoin] {
-        logger.info("generating list of groups pending join")
+           logger.info("joining \(pendingGroups.count) group(s)")
 
-        return groupsPendingJoin.compactMap { groupID in
-
-            guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
-                logger.warn("conversation not found for group (\(groupID.safeForLoggingDescription))")
-                return nil
-            }
-
-            guard let status = conversation.mlsStatus, status == .pendingJoin else {
-                logger.warn("group (\(groupID.safeForLoggingDescription)) status is not pending join")
-                return nil
-            }
-
-            return (groupID, conversation.epoch)
-
-        }
-    }
+           await withTaskGroup(of: Void.self) { group in
+               for pendingGroup in pendingGroups {
+                   group.addTask {
+                       do {
+                           try await self.joinByExternalCommit(groupID: pendingGroup)
+                       } catch {
+                           WireLogger.mls.error("Failed to join pending group (\(pendingGroup): \(error)")
+                       }
+                   }
+               }
+           }
+       }
 
     // MARK: - Out-of-sync conversations
 
