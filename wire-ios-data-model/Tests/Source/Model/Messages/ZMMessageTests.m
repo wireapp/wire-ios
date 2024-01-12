@@ -618,7 +618,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     [self.uiMOC saveOrRollback];
     
     // expect
-    XCTestExpectation *imageDataArrived = [self expectationWithDescription:@"image data arrived"];
+    XCTestExpectation *imageDataArrived = [self customExpectationWithDescription:@"image data arrived"];
     
     // when
     [message fetchImageDataWithQueue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completionHandler:^(NSData *imageDataResult) {

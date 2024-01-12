@@ -85,7 +85,7 @@ final class SessionManagerTests_Proxy: IntegrationTest {
         XCTAssertFalse(unauthenticatedSessionFactory.readyForRequests)
 
         // EXPECT
-        expectation(forNotification: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: nil) { (_) -> Bool in
+        customExpectation(forNotification: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: nil) { (_) -> Bool in
             return true
         }
 
