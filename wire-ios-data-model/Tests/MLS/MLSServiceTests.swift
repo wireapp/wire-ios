@@ -354,8 +354,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual(config, .init(
                 ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
                 externalSenders: [removalKey],
-                custom: .init(keyRotationSpan: nil, wirePolicy: nil),
-                perDomainTrustAnchors: []
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             ))
         }
 
@@ -373,8 +372,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let config = ConversationConfiguration(
             ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
             externalSenders: [],
-            custom: .init(keyRotationSpan: nil, wirePolicy: nil),
-            perDomainTrustAnchors: []
+            custom: .init(keyRotationSpan: nil, wirePolicy: nil)
         )
 
         var mockCreateConversationCount = 0

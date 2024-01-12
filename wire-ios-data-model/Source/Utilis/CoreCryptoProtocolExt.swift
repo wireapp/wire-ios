@@ -157,8 +157,6 @@ protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func updateKeyingMaterial(conversationId: Data) async throws -> WireCoreCrypto.CommitBundle
 
-    func updateTrustAnchorsFromConversation(id: Data, removeDomainNames: [String], addTrustAnchors: [WireCoreCrypto.PerDomainTrustAnchor]) async throws -> WireCoreCrypto.CommitBundle
-
     func wipe() async throws
 
     func wipeConversation(conversationId: Data) async throws
