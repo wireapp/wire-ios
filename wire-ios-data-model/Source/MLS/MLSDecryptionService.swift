@@ -121,7 +121,8 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         var debugInfo = "parentID: \(groupID)"
         if
             let type = subconversationType,
-            let subconversationGroupID = await subconverationGroupIDRepository.fetchSubconversationGroupID(
+            // TODO: [F] does subconverationGroupIDRepository needs to be an actor?
+            let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
                 forType: type,
                 parentGroupID: groupID
             )
