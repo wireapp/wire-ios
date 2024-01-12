@@ -78,7 +78,7 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var proteusKeyFingerprint: String = ""
 
     private var actionsHandler: any DeviceDetailsViewActions
-    
+
     init(
         title: String,
         addedDate: String,
