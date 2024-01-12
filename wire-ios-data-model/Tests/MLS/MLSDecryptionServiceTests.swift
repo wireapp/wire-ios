@@ -290,7 +290,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         )
 
         var receivedGroupIDs = [MLSGroupID]()
-        let didReceiveGroupIDs = expectation(description: "didReceiveGroupIDs")
+        let didReceiveGroupIDs = customExpectation(description: "didReceiveGroupIDs")
         let cancellable = sut.onEpochChanged().collect(1).sink {
             receivedGroupIDs = $0
             didReceiveGroupIDs.fulfill()
