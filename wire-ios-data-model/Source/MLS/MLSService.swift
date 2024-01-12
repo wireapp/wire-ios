@@ -121,6 +121,7 @@ public final class MLSService: MLSServiceInterface {
     private var groupsPendingJoin = Set<MLSGroupID>()
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let syncStatus: SyncStatusProtocol
+    private let conversationPostProtocolChangeUpdater: ConversationPostProtocolChangeUpdating
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -201,7 +202,8 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
         userID: UUID,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository(),
+        conversationPostProtocolChangeUpdater: ConversationPostProtocolChangeUpdating = ConversationPostProtocolChangeUpdater()
     ) {
         self.context = context
         self.coreCryptoProvider = coreCryptoProvider
@@ -219,6 +221,7 @@ public final class MLSService: MLSServiceInterface {
         self.delegate = delegate
         self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
+        self.conversationPostProtocolChangeUpdater = conversationPostProtocolChangeUpdater
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(coreCryptoProvider: coreCryptoProvider)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
@@ -1696,8 +1699,7 @@ public final class MLSService: MLSServiceInterface {
                 )
 
                 // update and sync the local group conversation
-                let updater = ConversationPostProtocolChangeUpdater()
-                try await updater.updateLocalConversation(
+                try await conversationPostProtocolChangeUpdater.updateLocalConversation(
                     conversation,
                     qualifiedID: qualifiedID,
                     to: messageProtocol,
