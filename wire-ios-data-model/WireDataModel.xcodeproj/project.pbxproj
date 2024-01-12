@@ -3590,6 +3590,9 @@
 				Base,
 			);
 			mainGroup = F9C9A4F21CAD5DF10039E10C;
+			packageReferences = (
+				255176C82B5149E7006A4E46 /* XCRemoteSwiftPackageReference "swift-crypto" */,
+			);
 			productRefGroup = F9C9A4FD1CAD5DF10039E10C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -4805,6 +4808,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		255176C82B5149E7006A4E46 /* XCRemoteSwiftPackageReference "swift-crypto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-crypto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCVersionGroup section */
 		167BCC182609E92300E9D7E3 /* ZMEventModel.xcdatamodeld */ = {
