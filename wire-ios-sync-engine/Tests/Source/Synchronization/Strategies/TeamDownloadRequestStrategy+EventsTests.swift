@@ -113,7 +113,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "data": NSNull()
         ]
 
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -152,7 +152,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "data": NSNull()
         ]
 
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -308,7 +308,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         }
 
         // expect
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {

@@ -209,7 +209,7 @@
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 }
 
-- (XCTestExpectation *)expectationWithDescription:(NSString *)description;
+- (XCTestExpectation *_Nonnull)customExpectationWithDescription:(NSString *_Nonnull)description;
 {
     ZMTExpectation *expectation = [[ZMTExpectation alloc] init];
     expectation.name = description;
@@ -223,7 +223,7 @@
     return (XCTestExpectation *) expectation;
 }
 
-- (XCTestExpectation *)expectationForNotification:(NSString *)notificationName object:(id)objectToObserve handler:(XCNotificationExpectationHandler)handlerOrNil;
+- (XCTestExpectation *_Nonnull)customExpectationForNotification:(NSNotificationName _Nonnull)notificationName object:(id _Nullable)objectToObserve handler:(XCNotificationExpectationHandler _Nullable)handlerOrNil;
 {
     ZMTNotificationExpectation *expectation = [[ZMTNotificationExpectation alloc] init];
     ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:expectation selector:@selector(observe:) name:notificationName object:objectToObserve]);
@@ -239,7 +239,7 @@
     return (XCTestExpectation *) expectation;
 }
 
-- (XCTestExpectation *)keyValueObservingExpectationForObject:(id)objectToObserve keyPath:(NSString *)keyPath expectedValue:(id)expectedValue;
+- (XCTestExpectation *)customKeyValueObservingExpectationForObject:(id)objectToObserve keyPath:(NSString *)keyPath expectedValue:(id)expectedValue;
 {
     RequireString(expectedValue == nil, "Not implemented");
     ZMTKeyValueObservingExpectation *expectation = [[ZMTKeyValueObservingExpectation alloc] init];
@@ -307,11 +307,6 @@
     }
     PrintTimeoutWarning(self, timeout, -[start timeIntervalSinceNow]);
     return YES;
-}
-
-- (BOOL)verifyAllExpectationsNow
-{
-    return [self waitForCustomExpectationsWithTimeout:0];
 }
 
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout;

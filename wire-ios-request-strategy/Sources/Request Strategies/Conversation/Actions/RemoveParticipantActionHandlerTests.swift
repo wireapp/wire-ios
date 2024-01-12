@@ -140,7 +140,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                                                transportSessionError: nil,
                                                apiVersion: APIVersion.v0.rawValue)
 
-            let waitForHandler = self.expectation(description: "wait for Handler to be called")
+            let waitForHandler = self.customExpectation(description: "wait for Handler to be called")
             action.resultHandler = { _ in
                 waitForHandler.fulfill()
             }
@@ -245,7 +245,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             conversation.addParticipantAndUpdateConversationState(user: self.user, role: nil)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             var action = RemoveParticipantAction(user: user, conversation: conversation)
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
@@ -279,7 +279,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
@@ -303,7 +303,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .failure = result {
                     expectation.fulfill()
