@@ -52,6 +52,7 @@ extension UpdateConversationProtocolAction {
         public enum APIFailure: String, CaseIterable, Equatable {
 
             // 400
+            case invalidBody
             case mlsMigrationCriteriaNotSatisfied = "mls-migration-criteria-not-satisfied"
 
             // 403
@@ -68,7 +69,7 @@ extension UpdateConversationProtocolAction {
 
             public var statusCode: Int {
                 switch self {
-                case .mlsMigrationCriteriaNotSatisfied:
+                case .mlsMigrationCriteriaNotSatisfied, .invalidBody:
                     return 400
                 case .operationDenied, .noTeamMember, .invalidOp, .actionDenied, .invalidProtocolTransition:
                     return 403

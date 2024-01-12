@@ -65,8 +65,10 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
             action.succeed()
         case (_, _, .some(let apiFailure)):
             action.fail(with: .api(apiFailure))
-        case (400, _, _): // edge case, where API doesn't return a label
+        case (404, _, _): // edge case, where API doesn't return a label
             action.fail(with: .api(.conversationIdOrDomainNotFound))
+        case (400, _, _):
+            action.fail(with: .api(.invalidBody))
         default:
             action.fail(with: .unknown)
         }
