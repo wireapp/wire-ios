@@ -67,7 +67,7 @@ class DatabaseBaseTest: ZMTBaseTest {
                                   inMemoryStore: false,
                                   dispatchGroup: dispatchGroup)
 
-        let exp = self.expectation(description: "should wait for loadStores to finish")
+        let exp = self.customExpectation(description: "should wait for loadStores to finish")
         stack.setup(onStartMigration: {
             // do nothing
         }, onFailure: { error in
