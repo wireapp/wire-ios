@@ -18,7 +18,24 @@
 
 import Foundation
 
-public struct ConversationPostProtocolChangeUpdater {
+// sourcery: AutoMockable
+public protocol ConversationPostProtocolChangeUpdating {
+
+    func updateLocalConversation(
+        for qualifiedID: QualifiedID,
+        to newMessageProtocol: MessageProtocol,
+        context: NSManagedObjectContext
+    ) async throws
+
+    func updateLocalConversation(
+        _ conversation: ZMConversation,
+        qualifiedID: QualifiedID,
+        to newMessageProtocol: MessageProtocol,
+        context: NSManagedObjectContext
+    ) async throws
+}
+
+public struct ConversationPostProtocolChangeUpdater: ConversationPostProtocolChangeUpdating {
 
     public init() { }
 
