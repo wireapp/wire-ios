@@ -40,6 +40,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var userDefaultsTestSuite: UserDefaults!
     var privateUserDefaults: PrivateUserDefaults<MLSService.Keys>!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
+    var mockConversationPostProtocolChangeUpdating: MockConversationPostProtocolChangeUpdating!
 
     let groupID = MLSGroupID([1, 2, 3])
 
@@ -60,6 +61,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         userDefaultsTestSuite = UserDefaults(suiteName: "com.wire.mls-test-suite")!
         privateUserDefaults = PrivateUserDefaults(userID: userIdentifier, storage: userDefaultsTestSuite)
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
+        mockConversationPostProtocolChangeUpdating = MockConversationPostProtocolChangeUpdating()
 
         mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             return 100
@@ -85,7 +87,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             delegate: self,
             syncStatus: mockSyncStatus,
             userID: userIdentifier,
-            subconversationGroupIDRepository: mockSubconversationGroupIDRepository
+            subconversationGroupIDRepository: mockSubconversationGroupIDRepository,
+            conversationPostProtocolChangeUpdater: mockConversationPostProtocolChangeUpdating
         )
     }
 
@@ -101,6 +104,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider = nil
         mockStaleMLSKeyDetector = nil
         mockSubconversationGroupIDRepository = nil
+        mockConversationPostProtocolChangeUpdating = nil
         super.tearDown()
     }
 
@@ -2602,14 +2606,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             updateConversationProtocolExpectation.fulfill()
         }
 
-        let syncConversationExpectation = XCTestExpectation(description: "syncConversation must be called")
-        mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { [uiMOC] qualifiedID, notificationContext in
-            uiMOC.performAndWait {
-                XCTAssertEqual(qualifiedID, conversation.qualifiedID)
-                XCTAssert(notificationContext === uiMOC.notificationContext)
-                conversation.messageProtocol = .mixed
-            }
-            syncConversationExpectation.fulfill()
+        let updateLocalConversationExpectation = XCTestExpectation(description: "updateLocalConversation must be called")
+        mockConversationPostProtocolChangeUpdating.updateLocalConversationQualifiedIDToContext_MockMethod = { [uiMOC] _, qualifiedID, messageProtocol, _ in
+            XCTAssertEqual(qualifiedID, uiMOC.performAndWait { conversation.qualifiedID })
+            XCTAssertEqual(messageProtocol, .mixed)
+            updateLocalConversationExpectation.fulfill()
         }
 
         let createConversationExpectation = XCTestExpectation(description: "createConversation must be called")
@@ -2653,7 +2654,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await fulfillment(
             of: [
                 updateConversationProtocolExpectation,
-                syncConversationExpectation,
+                updateLocalConversationExpectation,
                 createConversationExpectation,
                 updateKeyMaterialExpectation,
                 commitPendingProposalsExpectation
@@ -2692,9 +2693,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockActionsProvider.updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod = { _, _, _ in }
-        mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { [uiMOC] _, _ in
+
+        mockConversationPostProtocolChangeUpdating.updateLocalConversationQualifiedIDToContext_MockMethod = { [uiMOC] _, _, _, _ in
             uiMOC.performAndWait { conversation.messageProtocol = .mixed }
         }
+
         mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             throw SendMLSMessageAction.Failure.mlsStaleMessage

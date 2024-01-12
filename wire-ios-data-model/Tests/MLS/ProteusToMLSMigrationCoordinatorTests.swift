@@ -30,6 +30,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     var mockFeatureRepository: MockFeatureRepositoryInterface!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockMLSService: MockMLSServiceInterface!
+    var mockPostProtocolChangeUpdater: MockConversationPostProtocolChangeUpdating!
 
     // MARK: - setUp
 
@@ -40,12 +41,14 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockFeatureRepository = MockFeatureRepositoryInterface()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockMLSService = MockMLSServiceInterface()
+        mockPostProtocolChangeUpdater = MockConversationPostProtocolChangeUpdating()
 
         sut = ProteusToMLSMigrationCoordinator(
             context: syncMOC,
             storage: mockStorage,
             featureRepository: mockFeatureRepository,
-            actionsProvider: mockActionsProvider
+            actionsProvider: mockActionsProvider,
+            postProtocolChangeUpdater: mockPostProtocolChangeUpdater
         )
 
         syncMOC.performAndWait {
@@ -57,6 +60,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockMLSService.conversationExistsGroupID_MockValue = true
         mockMLSService.joinGroupWith_MockMethod = { _ in }
         mockFeatureRepository.fetchMLSMigration_MockValue = .init()
+        mockPostProtocolChangeUpdater.updateLocalConversationQualifiedIDToContext_MockMethod = { _, _, _, _ in }
 
         BackendInfo.storage = .random()!
         DeveloperFlag.storage = .random()!
@@ -70,6 +74,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockFeatureRepository = nil
         mockActionsProvider = nil
         mockMLSService = nil
+        mockPostProtocolChangeUpdater = nil
         BackendInfo.storage = .standard
         DeveloperFlag.storage = .standard
         super.tearDown()
