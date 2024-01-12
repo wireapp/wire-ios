@@ -53,7 +53,7 @@
 "share_extension.logged_out.title" = "You've been logged out from this account.";
 "share_extension.logged_out.message" = "Please choose another account.";
 
-"conversation.displayname.emptygroup" = "Empty group conversation";
+"share_extension.conversation.displayname.emptygroup" = "Empty group conversation";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ started using a new device.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ started using new devices.";
 "share_extension.meta.degraded.dialog_message" = "Do you still want to send your message?";
