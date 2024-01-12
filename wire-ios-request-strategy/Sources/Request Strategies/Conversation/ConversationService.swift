@@ -35,7 +35,8 @@ public protocol ConversationServiceInterface {
     )
 
     func syncConversation(
-        qualifiedID: QualifiedID) async
+        qualifiedID: QualifiedID
+    ) async
 
 }
 

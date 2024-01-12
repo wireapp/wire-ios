@@ -145,31 +145,96 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
 
+        let oneOnOneResolver = OneOnOneResolver(
+            protocolSelector: OneOnOneProtocolSelector(),
+            migrator: OneOnOneMigrator(mlsService: mlsService)
+        )
+
+        await process(
+            welcomeMessage: welcomeMessage,
+            conversationID: conversationID,
+            in: context,
+            mlsService: mlsService,
+            oneOnOneResolver: oneOnOneResolver
+        )
+    }
+
+    func process(
+        welcomeMessage: String,
+        conversationID: QualifiedID,
+        in context: NSManagedObjectContext,
+        mlsService: MLSServiceInterface,
+        oneOnOneResolver: OneOnOneResolverInterface
+    ) async {
         do {
             let groupID = try await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
             await mlsService.uploadKeyPackagesIfNeeded()
+            await conversationService.syncConversation(qualifiedID: conversationID)
 
-            let found = await context.perform {
-
-                guard let conversation = ZMConversation.fetch(with: conversationID, in: context) else {
-                    return false
+            let conversation: ZMConversation? = await context.perform {
+                guard let conversation = ZMConversation.fetch(
+                    with: conversationID,
+                    in: context
+                ) else {
+                    return nil
                 }
+
                 conversation.mlsGroupID = groupID
                 conversation.mlsStatus = .ready
-                WireLogger.mls.info("MLS event processor set mlsStatus to ready for group \(groupID.safeForLoggingDescription)")
-                context.saveOrRollback()
-                return true
 
+                return conversation
             }
 
-            if !found {
-                // Conversation doesn't exist locally yet, so fetch it from the backend.
-                // It'll be marked as ready when it's synced locally.
-                await conversationService.syncConversation(qualifiedID: conversationID)
-            }
+            guard let conversation else { return }
+
+            await resolveOneOnOneConversationIfNeeded(
+                conversation: conversation,
+                mlsService: mlsService,
+                oneOneOneResolver: oneOnOneResolver,
+                in: context
+            )
 
         } catch {
-            return WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
+            WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
+            return
+        }
+    }
+
+    private func resolveOneOnOneConversationIfNeeded(
+        conversation: ZMConversation,
+        mlsService: MLSServiceInterface,
+        oneOneOneResolver: OneOnOneResolverInterface,
+        in context: NSManagedObjectContext
+    ) async {
+        WireLogger.mls.debug("resolving one on one conversation")
+
+        let userID: QualifiedID? = await context.perform {
+            guard conversation.conversationType == .oneOnOne else {
+                return nil
+            }
+
+            guard
+                let otherUser = conversation.localParticipantsExcludingSelf.first,
+                let otherUserID = otherUser.remoteIdentifier,
+                let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+            else {
+                WireLogger.mls.warn("failed to resolve one on one conversation: can not get other user id")
+                return nil
+            }
+
+            return QualifiedID(
+                uuid: otherUserID,
+                domain: otherUserDomain
+            )
+        }
+
+        guard let userID else { return }
+
+        do {
+            try await oneOneOneResolver.resolveOneOnOneConversation(with: userID, in: context)
+            WireLogger.mls.debug("successfully resolved one on one conversation")
+        } catch {
+            WireLogger.mls.warn("failed to resolve one on one conversation: \(error)")
         }
     }
 

@@ -226,6 +226,8 @@
 		EE0CEB462893E9390055ECE5 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0CEB452893E9390055ECE5 /* ConversationEventProcessor.swift */; };
 		EE0DE5062A24D4F70029746C /* DeleteSubgroupActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DE5052A24D4F70029746C /* DeleteSubgroupActionHandler.swift */; };
 		EE0DE5082A24D9C20029746C /* DeleteSubgroupActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DE5072A24D9C20029746C /* DeleteSubgroupActionHandlerTests.swift */; };
+		EE19CE212AEBE52F00CB8641 /* SyncMLSOneToOneConversationActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE19CE202AEBE52F00CB8641 /* SyncMLSOneToOneConversationActionHandler.swift */; };
+		EE19CE232AEBE56F00CB8641 /* SyncMLSOneToOneConversationActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE19CE222AEBE56F00CB8641 /* SyncMLSOneToOneConversationActionHandlerTests.swift */; };
 		EE202DAB27F1F4CC00083AB3 /* VoIPPushPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE202DAA27F1F4CC00083AB3 /* VoIPPushPayload.swift */; };
 		EE3245FC2821D41000F2A84A /* VoIPPushHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FB2821D41000F2A84A /* VoIPPushHelper.swift */; };
 		EE3246042823196100F2A84A /* VoIPPushHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3246032823196100F2A84A /* VoIPPushHelperTests.swift */; };
@@ -665,6 +667,8 @@
 		EE0CEB452893E9390055ECE5 /* ConversationEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessor.swift; sourceTree = "<group>"; };
 		EE0DE5052A24D4F70029746C /* DeleteSubgroupActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteSubgroupActionHandler.swift; sourceTree = "<group>"; };
 		EE0DE5072A24D9C20029746C /* DeleteSubgroupActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteSubgroupActionHandlerTests.swift; sourceTree = "<group>"; };
+		EE19CE202AEBE52F00CB8641 /* SyncMLSOneToOneConversationActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMLSOneToOneConversationActionHandler.swift; sourceTree = "<group>"; };
+		EE19CE222AEBE56F00CB8641 /* SyncMLSOneToOneConversationActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMLSOneToOneConversationActionHandlerTests.swift; sourceTree = "<group>"; };
 		EE202DAA27F1F4CC00083AB3 /* VoIPPushPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushPayload.swift; sourceTree = "<group>"; };
 		EE3245FB2821D41000F2A84A /* VoIPPushHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushHelper.swift; sourceTree = "<group>"; };
 		EE3246032823196100F2A84A /* VoIPPushHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushHelperTests.swift; sourceTree = "<group>"; };
@@ -1291,6 +1295,8 @@
 				EEE95CD82A43324F00E136CB /* LeaveSubconversationActionHandlerTests.swift */,
 				EEB930B62ABD5C1400FB35B2 /* FetchSupportedProtocolsActionHandler.swift */,
 				EEB930B82ABD6FCB00FB35B2 /* FetchSupportedProtocolsActionHandlerTests.swift */,
+				EE19CE202AEBE52F00CB8641 /* SyncMLSOneToOneConversationActionHandler.swift */,
+				EE19CE222AEBE56F00CB8641 /* SyncMLSOneToOneConversationActionHandlerTests.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -1976,6 +1982,7 @@
 				06A9FDD228B36FF500B3C730 /* UpdateAccessRolesAction.swift in Sources */,
 				63CC83B12859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift in Sources */,
 				EE4C5FBE27D2C5CD000C0D45 /* BundledMessageNotificationBuilder.swift in Sources */,
+				EE19CE212AEBE52F00CB8641 /* SyncMLSOneToOneConversationActionHandler.swift in Sources */,
 				EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */,
 				166901D61D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m in Sources */,
 				EE88079D2AC427D600278E3C /* MLSMessageSendingStatusPayloadProcessor.swift in Sources */,
@@ -2182,6 +2189,7 @@
 				F19561FB202A13C3005347C0 /* ZMSyncOperationSetTests.m in Sources */,
 				F18401E92073C26700E9F4CC /* AvailabilityRequestStrategyTests.swift in Sources */,
 				EE8DC53928C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift in Sources */,
+				EE19CE232AEBE56F00CB8641 /* SyncMLSOneToOneConversationActionHandlerTests.swift in Sources */,
 				0693114D24F79A1100D14DF5 /* ZMLocalNotificationLocalizationTests.swift in Sources */,
 				EE9BC57E28785FB100AF9AEE /* XCTestCase+APIVersion.swift in Sources */,
 				1662ADD122B14CBA00D84071 /* VerifyLegalHoldRequestStrategyTests.swift in Sources */,

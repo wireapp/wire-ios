@@ -25,6 +25,8 @@ class MLSEventProcessorTests: MessagingTestBase {
     var sut: MLSEventProcessor!
     var mlsServiceMock: MockMLSServiceInterface!
     var conversationServiceMock: MockConversationServiceInterface!
+    var oneOnOneResolverMock: MockOneOnOneResolverInterface!
+
     var conversation: ZMConversation!
     var qualifiedID: QualifiedID!
     let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
@@ -39,6 +41,9 @@ class MLSEventProcessorTests: MessagingTestBase {
         mlsServiceMock.wipeGroup_MockMethod = { _ in }
         mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = .random()
         mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = { }
+
+        oneOnOneResolverMock = .init()
+        oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in }
 
         conversationServiceMock = .init()
         conversationServiceMock.syncConversationQualifiedID_MockMethod = { _ in }
@@ -59,6 +64,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         sut = nil
         mlsServiceMock = nil
         conversationServiceMock = nil
+        oneOnOneResolverMock = nil
         conversation = nil
         qualifiedID = nil
         sut = nil
@@ -67,48 +73,83 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     // MARK: - Process Welcome Message
 
-    func test_itProcessesMessageAndUpdatesConversation() async {
+    func test_itProcessesMessageAndUpdatesConversation_GroupConversation() async {
         // Given
         let message = "welcome message"
 
-        await syncMOC.perform { [self] in
-            conversation.mlsStatus = .pendingJoin
+        await syncMOC.perform {
+            self.conversation.mlsStatus = .pendingJoin
+            self.conversation.conversationType = .group
+            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
         }
 
         // When
         await sut.process(
             welcomeMessage: message,
             conversationID: qualifiedID,
-            in: syncMOC
-        )
-
-        // Then
-        XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
-        XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
-
-        let mlsStatus = await syncMOC.perform { self.conversation.mlsStatus }
-        XCTAssertEqual(mlsStatus, .ready)
-    }
-
-    func test_itProcessesMessage_ConversationDoesNotExist() async {
-        // Given
-        let message = "welcome message"
-        let mlsGroupID = MLSGroupID.random()
-        let qualifiedID = QualifiedID.random()
-
-        mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = mlsGroupID
-
-        // When
-        await sut.process(
-            welcomeMessage: message,
-            conversationID: qualifiedID,
-            in: syncMOC
+            in: syncMOC,
+            mlsService: mlsServiceMock,
+            oneOnOneResolver: oneOnOneResolverMock
         )
 
         // Then
         XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
         XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
         XCTAssertEqual(conversationServiceMock.syncConversationQualifiedID_Invocations, [qualifiedID])
+        XCTAssertTrue(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.isEmpty)
+
+        await syncMOC.perform {
+            XCTAssertEqual(self.conversation.mlsStatus, .ready)
+        }
+    }
+
+    func test_itProcessesMessageAndUpdatesConversation_OneOnOneConversation() async throws {
+        // Given
+        let message = "welcome message"
+
+        let otherUserID = QualifiedID(
+            uuid: .create(),
+            domain: qualifiedID.domain
+        )
+
+        await syncMOC.perform {
+            self.conversation.mlsStatus = .pendingJoin
+            self.conversation.conversationType = .oneOnOne
+            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
+
+            let otherUser = self.createUser()
+            otherUser.remoteIdentifier = otherUserID.uuid
+            otherUser.domain = otherUserID.domain
+
+            self.conversation.addParticipantAndUpdateConversationState(
+                user: otherUser,
+                role: nil
+            )
+        }
+
+        // Mock
+        oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in }
+
+        // When
+        await sut.process(
+            welcomeMessage: message,
+            conversationID: self.qualifiedID,
+            in: self.syncMOC,
+            mlsService: self.mlsServiceMock,
+            oneOnOneResolver: self.oneOnOneResolverMock
+        )
+
+        // Then
+
+        XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
+        XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(conversationServiceMock.syncConversationQualifiedID_Invocations, [qualifiedID])
+        XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.count, 1)
+        XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.first?.userID, otherUserID)
+
+        await syncMOC.perform {
+            XCTAssertEqual(self.conversation.mlsStatus, .ready)
+        }
     }
 
     // MARK: - Update Conversation

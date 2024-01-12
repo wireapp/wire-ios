@@ -124,7 +124,9 @@ extension ZMConversation {
     }
 
     class func predicateForOneToOneConversation() -> NSPredicate {
-        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let hasConnection = NSPredicate(format: "\(ZMConversationConnectionKey) != NULL")
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [isOneOnOne, hasConnection])
     }
 
     class func predicateForTeamOneToOneConversation() -> NSPredicate {
@@ -164,18 +166,41 @@ extension ZMConversation {
 
     private class func predicateForValidConversations() -> NSPredicate {
         let basePredicate = predicateForFilteringResults()
-        let notAConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.connection.rawValue)")
-        let activeConnection = NSPredicate(format: "NOT \(ZMConversationConnectionKey).status IN %@", [NSNumber(value: ZMConnectionStatus.pending.rawValue),
-                                                                                                       NSNumber(value: ZMConnectionStatus.ignored.rawValue),
-                                                                                                       NSNumber(value: ZMConnectionStatus.cancelled.rawValue)]) // pending connections should be in other list, ignored and cancelled are not displayed
-        let predicate1 = NSCompoundPredicate(orPredicateWithSubpredicates: [notAConnection, activeConnection]) // one-to-one conversations and not pending and not ignored connections
-        let noConnection = NSPredicate(format: "\(ZMConversationConnectionKey) == nil") // group conversations
-        let notBlocked = NSPredicate(format: "\(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blocked.rawValue) && \(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blockedMissingLegalholdConsent.rawValue)")
-        let predicate2 = NSCompoundPredicate(orPredicateWithSubpredicates: [noConnection, notBlocked]) // group conversations and not blocked connections
+        return .all(of: [basePredicate, isProtocolReady(), isValidConversation()])
+    }
 
-        let proteusOrMlsAndReady = NSPredicate(format: "(\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.rawValue)) OR ((\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.rawValue)) AND (\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)))")
+    private class func isProtocolReady() -> NSPredicate {
+        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.rawValue)")
+        let isMLSAndReady = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.rawValue) AND \(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)")
+        return .any(of: [isProteus, isMLSAndReady])
+    }
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, predicate1, predicate2, proteusOrMlsAndReady])
+    private class func isValidConversation() -> NSPredicate {
+        return .any(of: [isValidConnection(), isValidOneOnOne(), isValidGroup()])
+    }
+
+    private class func isValidConnection() -> NSPredicate {
+        let isConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+        let isActive = NSPredicate(
+            format: "NOT \(ZMConversationConnectionKey).status IN %@",
+            [
+                NSNumber(value: ZMConnectionStatus.pending.rawValue),
+                NSNumber(value: ZMConnectionStatus.ignored.rawValue),
+                NSNumber(value: ZMConnectionStatus.cancelled.rawValue)
+            ]
+        )
+
+        return .all(of: [isConnection, isActive])
+    }
+
+    private class func isValidOneOnOne() -> NSPredicate {
+        let isOneOneOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isConnectionAccepted = NSPredicate(format: "\(ZMConversationConnectionKey).status == \(ZMConnectionStatus.accepted.rawValue)")
+        return .all(of: [isOneOneOne, isConnectionAccepted])
+    }
+
+    private class func isValidGroup() -> NSPredicate {
+        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
     }
 
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {

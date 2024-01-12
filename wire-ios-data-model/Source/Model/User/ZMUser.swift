@@ -407,15 +407,65 @@ extension ZMUser: UserConnections {
         }
     }
 
+    public enum AcceptConnectionError: Error {
+
+        case invalidState
+        case unableToResolveConversation
+        case unableToSwitchToMLS
+
+    }
+
     public func accept(completion: @escaping (Error?) -> Void) {
-        connection?.updateStatus(.accepted, completion: { result in
+        accept(
+            oneOnOneResolver: nil,
+            completion: completion
+        )
+    }
+
+    func accept(
+        oneOnOneResolver: OneOnOneResolverInterface?,
+        completion: @escaping (Error?) -> Void
+    ) {
+        guard
+            let context = managedObjectContext,
+            let syncContext = context.zm_sync,
+            let connection,
+            let userID = remoteIdentifier,
+            let domain = domain ?? BackendInfo.domain
+        else {
+            completion(AcceptConnectionError.invalidState)
+            return
+        }
+
+        connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                completion(nil)
+                guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
+                    completion(AcceptConnectionError.unableToResolveConversation)
+                    return
+                }
+
+                Task {
+                    do {
+                        try await resolver.resolveOneOnOneConversation(
+                            with: QualifiedID(uuid: userID, domain: domain),
+                            in: context
+                        )
+                        await MainActor.run {
+                            completion(nil)
+                        }
+                    } catch {
+                        await MainActor.run {
+                            completion(error)
+                        }
+                    }
+
+                }
+
             case .failure(let error):
                 completion(error)
             }
-        })
+        }
     }
 
     public func ignore(completion: @escaping (Error?) -> Void) {

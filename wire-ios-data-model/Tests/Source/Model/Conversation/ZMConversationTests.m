@@ -406,9 +406,8 @@
 - (void)testThatTheConversationListFiltersOutConversationOfInvalidType
 {
     // given
-    ZMConversation *oneToOneConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMConversation *oneToOneConversation = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     ZMConversation *invalidConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    oneToOneConversation.conversationType = ZMConversationTypeOneOnOne;
     invalidConversation.conversationType = ZMConversationTypeInvalid;
     
     // when
