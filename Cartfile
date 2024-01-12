@@ -12,5 +12,5 @@ github "wireapp/libPhoneNumber-iOS" "1.1"
 github "wireapp/ocmock" "v3.4.3_Xcode14.3.1"
 github "wireapp/Starscream" "4.0.4_min_tls_version"
 github "wireapp/dd-sdk-ios" ~> 1.22.0
-github "wireapp/core-crypto" "v0.9.2-xcode-14.3.1"
-binary "wire-avs.json" ~> 9.3.12
+github "wireapp/core-crypto" "v1.0.0-rc.23"
+binary "wire-avs.json" ~> 9.6.7

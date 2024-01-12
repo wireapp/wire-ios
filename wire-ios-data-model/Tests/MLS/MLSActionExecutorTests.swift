@@ -73,15 +73,153 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
     }
 
+    // MARK: - Non re-entrant
+
+    func test_TwoOperationsOnSameGroupAreExecutedSerially() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let mockCommit = Data.random()
+        let mockGroupInfo = GroupInfoBundle(
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
+            payload: .random()
+        )
+        let mockCommitBundle = CommitBundle(
+            welcome: nil,
+            commit: mockCommit,
+            groupInfo: mockGroupInfo
+        )
+
+        let sendCommitExpectation = XCTestExpectation(description: "send commit")
+        let decryptMessageExpectation = XCTestExpectation(description: "decrypted message")
+        var sendCommitContinuation: CheckedContinuation<Void, Never>?
+
+        // Mock Update key material.
+        var mockUpdateKeyMaterialArguments = [Data]()
+        mockCoreCrypto.updateKeyingMaterialConversationId_MockMethod = {
+            mockUpdateKeyMaterialArguments.append($0)
+            return mockCommitBundle
+        }
+
+        // Mock send commit bundle.
+        mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
+            await withCheckedContinuation { continuation in
+                sendCommitContinuation = continuation
+                sendCommitExpectation.fulfill()
+            }
+            return []
+        }
+
+        // When
+        Task {
+            _ = try await sut.updateKeyMaterial(for: groupID)
+        }
+        Task {
+            try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
+            try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID)
+        }
+
+        mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
+            decryptMessageExpectation.fulfill()
+            return DecryptedMessage(
+                message: nil,
+                proposals: [],
+                isActive: false,
+                commitDelay: 0,
+                senderClientId: nil,
+                hasEpochChanged: false,
+                identity: nil,
+                bufferedMessages: nil
+            )
+        }
+
+        // the decrypt message operation should wait for update key material to finish
+        await fulfillment(of: [sendCommitExpectation])
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 0)
+
+        // allow update key material to finish
+        sendCommitContinuation?.resume()
+        await fulfillment(of: [decryptMessageExpectation])
+
+        XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
+    }
+
+    func test_TwoOperationsOnDifferentGroupsAreExecutedConcurrently() async throws {
+        // Given
+        let groupID1 = MLSGroupID.random()
+        let groupID2 = MLSGroupID.random()
+        let mockCommit = Data.random()
+        let mockGroupInfo = GroupInfoBundle(
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
+            payload: .random()
+        )
+        let mockCommitBundle = CommitBundle(
+            welcome: nil,
+            commit: mockCommit,
+            groupInfo: mockGroupInfo
+        )
+
+        let sendCommitExpectation = XCTestExpectation(description: "send commit")
+        let decryptMessageExpectation = XCTestExpectation(description: "decrypted message")
+        var sendCommitContinuation: CheckedContinuation<Void, Never>?
+
+        // Mock Update key material.
+        var mockUpdateKeyMaterialArguments = [Data]()
+        mockCoreCrypto.updateKeyingMaterialConversationId_MockMethod = {
+            mockUpdateKeyMaterialArguments.append($0)
+            return mockCommitBundle
+        }
+
+        // Mock send commit bundle.
+        mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
+            await withCheckedContinuation { continuation in
+                sendCommitContinuation = continuation
+                sendCommitExpectation.fulfill()
+            }
+            return []
+        }
+
+        // Mock decrypt message
+        mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
+            decryptMessageExpectation.fulfill()
+            return DecryptedMessage(
+                message: nil,
+                proposals: [],
+                isActive: false,
+                commitDelay: 0,
+                senderClientId: nil,
+                hasEpochChanged: false,
+                identity: nil,
+                bufferedMessages: nil
+            )
+        }
+
+        // When
+        Task {
+            _ = try await sut.updateKeyMaterial(for: groupID1)
+        }
+        Task {
+            try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
+            try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2)
+        }
+
+        // the update key material operation shouldn't block the decrypt message
+        await fulfillment(of: [sendCommitExpectation, decryptMessageExpectation], timeout: .tenSeconds)
+        XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
+        sendCommitContinuation?.resume()
+    }
+
     // MARK: - Add members
 
     func test_AddMembers() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let invitees = [Invitee(id: .random(), kp: .random())]
+        let keyPackages = [KeyPackage(client: "client1", domain: "exampel.com", keyPackage: Data.random().base64String(), keyPackageRef: "", userID: .create())]
 
-        let mockCommit = Data.random().bytes
-        let mockWelcome = Data.random().bytes
+        let mockCommit = Data.random()
+        let mockWelcome = Data.random()
         let mockUpdateEvent = mockMemberJoinUpdateEvent()
         let mockGroupInfo = GroupInfoBundle(
             encryptionType: .plaintext,
@@ -89,14 +227,14 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             payload: .random()
         )
         let mockMemberAddedMessages = MemberAddedMessages(
-            commit: mockCommit,
             welcome: mockWelcome,
+            commit: mockCommit,
             groupInfo: mockGroupInfo
         )
 
         // Mock add clients.
-        var mockAddClientsArguments = [([Byte], [Invitee])]()
-        mockCoreCrypto.mockAddClientsToConversation = {
+        var mockAddClientsArguments = [(Data, [Data])]()
+        mockCoreCrypto.addClientsToConversationConversationIdKeyPackages_MockMethod = {
             mockAddClientsArguments.append(($0, $1))
             return mockMemberAddedMessages
         }
@@ -107,12 +245,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let updateEvents = try await sut.addMembers(invitees, to: groupID)
+        let updateEvents = try await sut.addMembers(keyPackages, to: groupID)
 
         // Then core crypto added the members.
         XCTAssertEqual(mockAddClientsArguments.count, 1)
-        XCTAssertEqual(mockAddClientsArguments.first?.0, groupID.bytes)
-        XCTAssertEqual(mockAddClientsArguments.first?.1, invitees)
+        XCTAssertEqual(mockAddClientsArguments.first?.0, groupID.data)
+        XCTAssertEqual(mockAddClientsArguments.first?.1, keyPackages.compactMap(\.keyPackage.base64DecodedData))
 
         // Then the commit bundle was sent.
         let expectedCommitBundle = CommitBundle(
@@ -139,9 +277,9 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             domain: "example.com"
         )
 
-        let clientIds =  [mlsClientID].compactMap { $0.rawValue.utf8Data?.bytes }
+        let clientIds =  [mlsClientID].compactMap { $0.rawValue.utf8Data }
 
-        let mockCommit = Data.random().bytes
+        let mockCommit = Data.random()
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
         let mockGroupInfo = GroupInfoBundle(
             encryptionType: .plaintext,
@@ -155,8 +293,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         // Mock remove clients.
-        var mockRemoveClientsArguments = [([Byte], [ClientId])]()
-        mockCoreCrypto.mockRemoveClientsFromConversation = {
+        var mockRemoveClientsArguments = [(Data, [ClientId])]()
+        mockCoreCrypto.removeClientsFromConversationConversationIdClients_MockMethod = {
             mockRemoveClientsArguments.append(($0, $1))
             return mockCommitBundle
         }
@@ -171,7 +309,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then core crypto removes the members.
         XCTAssertEqual(mockRemoveClientsArguments.count, 1)
-        XCTAssertEqual(mockRemoveClientsArguments.first?.0, groupID.bytes)
+        XCTAssertEqual(mockRemoveClientsArguments.first?.0, groupID.data)
         XCTAssertEqual(mockRemoveClientsArguments.first?.1, clientIds)
 
         // Then the commit bundle was sent.
@@ -187,7 +325,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func test_UpdateKeyMaterial() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let mockCommit = Data.random().bytes
+        let mockCommit = Data.random()
         let mockGroupInfo = GroupInfoBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
@@ -200,8 +338,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         // Mock Update key material.
-        var mockUpdateKeyMaterialArguments = [[Byte]]()
-        mockCoreCrypto.mockUpdateKeyingMaterial = {
+        var mockUpdateKeyMaterialArguments = [Data]()
+        mockCoreCrypto.updateKeyingMaterialConversationId_MockMethod = {
             mockUpdateKeyMaterialArguments.append($0)
             return mockCommitBundle
         }
@@ -216,7 +354,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then core crypto update key materials.
         XCTAssertEqual(mockUpdateKeyMaterialArguments.count, 1)
-        XCTAssertEqual(mockUpdateKeyMaterialArguments.first, groupID.bytes)
+        XCTAssertEqual(mockUpdateKeyMaterialArguments.first, groupID.data)
 
         // Then the commit bundle was sent.
         XCTAssertEqual(mockCommitSender.sendCommitBundleFor_Invocations.count, 1)
@@ -232,8 +370,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Given
         let groupID = MLSGroupID.random()
 
-        let mockCommit = Data.random().bytes
-        let mockWelcome = Data.random().bytes
+        let mockCommit = Data.random()
+        let mockWelcome = Data.random()
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
         let mockGroupInfo = GroupInfoBundle(
             encryptionType: .plaintext,
@@ -247,8 +385,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         // Mock Commit pending proposals.
-        var mockCommitPendingProposals = [[Byte]]()
-        mockCoreCrypto.mockCommitPendingProposals = {
+        var mockCommitPendingProposals = [Data]()
+        mockCoreCrypto.commitPendingProposalsConversationId_MockMethod = {
             mockCommitPendingProposals.append($0)
             return CommitBundle(
                 welcome: mockWelcome,
@@ -267,7 +405,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then core crypto commit pending proposals.
         XCTAssertEqual(mockCommitPendingProposals.count, 1)
-        XCTAssertEqual(mockCommitPendingProposals.first, groupID.bytes)
+        XCTAssertEqual(mockCommitPendingProposals.first, groupID.data)
 
         // Then the commit bundle was sent.
         XCTAssertEqual(mockCommitSender.sendCommitBundleFor_Invocations.count, 1)
@@ -282,12 +420,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func test_JoinGroup() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let mockCommit = Data.random().bytes
+        let mockCommit = Data.random()
         let mockGroupInfo = Data.random()
         let mockGroupInfoBundle = GroupInfoBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
-            payload: []
+            payload: Data()
         )
         let mockCommitBundle = CommitBundle(
             welcome: nil,
@@ -298,12 +436,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockUpdateEvents = [ZMUpdateEvent]()
 
         // Mock join by external commit
-        var mockJoinByExternalCommitArguments = [[Byte]]()
+        var mockJoinByExternalCommitArguments = [Data]()
 
-        mockCoreCrypto.mockJoinByExternalCommit = { groupState, _, _ in
+        mockCoreCrypto.joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { groupState, _, _ in
             mockJoinByExternalCommitArguments.append(groupState)
             return .init(
-                conversationId: groupID.bytes,
+                conversationId: groupID.data,
                 commit: mockCommit,
                 groupInfo: mockGroupInfoBundle
             )
@@ -319,7 +457,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then core crypto creates conversation init bundle
         XCTAssertEqual(mockJoinByExternalCommitArguments.count, 1)
-        XCTAssertEqual(mockJoinByExternalCommitArguments.first, mockGroupInfo.bytes)
+        XCTAssertEqual(mockJoinByExternalCommitArguments.first, mockGroupInfo)
 
         // Then commit bundle was sent
         XCTAssertEqual(mockCommitSender.sendExternalCommitBundleFor_Invocations.count, 1)
@@ -327,6 +465,36 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then the update event was returned
         XCTAssertEqual(updateEvents, mockUpdateEvents)
+    }
+
+    // MARK: - Decrypt Message
+
+    func test_decryptMessage() async throws {
+
+        // Given
+        let groupID = MLSGroupID.random()
+        let encryptedMessage = Data.random(byteCount: 1)
+        let decryptedMessage = DecryptedMessage(
+            message: nil,
+            proposals: [],
+            isActive: false,
+            commitDelay: 0,
+            senderClientId: nil,
+            hasEpochChanged: false,
+            identity: nil,
+            bufferedMessages: nil
+        )
+
+        mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
+            return decryptedMessage
+        }
+
+        // When
+        let result = try await sut.decryptMessage(encryptedMessage, in: groupID)
+
+        // Then
+        XCTAssertEqual(result, decryptedMessage)
+        XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
     }
 
 }

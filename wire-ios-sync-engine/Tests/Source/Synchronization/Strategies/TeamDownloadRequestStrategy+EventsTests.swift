@@ -113,7 +113,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "data": NSNull()
         ]
 
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -152,7 +152,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "data": NSNull()
         ]
 
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -308,7 +308,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         }
 
         // expect
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -474,7 +474,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         await processEvent(fromPayload: payload)
 
         // then
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             guard let user = ZMUser.fetch(with: userId, in: uiMOC) else { return XCTFail("No user") }
             guard let team = Team.fetch(with: teamId, in: uiMOC) else { return XCTFail("No team") }
             guard let member = user.membership else { return XCTFail("No member") }

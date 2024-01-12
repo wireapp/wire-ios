@@ -183,7 +183,7 @@ class UserProfileImageUpdateStatusTests: MessagingTest {
     }
 
     func operationWithExpectation(description: String) -> Operation {
-        let expectation = self.expectation(description: description)
+        let expectation = self.customExpectation(description: description)
         return BlockOperation {
             expectation.fulfill()
         }
@@ -519,7 +519,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatItSignalsThereIsRequestAvailableAfterPreprocessingCompletes() {
-        expectation(forNotification: NSNotification.Name(rawValue: "RequestAvailableNotification"), object: nil)
+        customExpectation(forNotification: NSNotification.Name(rawValue: "RequestAvailableNotification"), object: nil)
 
         syncMOC.performGroupedBlock {
             // GIVEN

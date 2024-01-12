@@ -31,19 +31,19 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Add members
 
-    typealias AddMembersMock = (([Invitee], MLSGroupID) async throws -> [ZMUpdateEvent])
+    typealias AddMembersMock = (([KeyPackage], MLSGroupID) async throws -> [ZMUpdateEvent])
     private var _mockAddMembers: AddMembersMock?
     var mockAddMembers: AddMembersMock? {
         get { serialQueue.sync { _mockAddMembers } }
         set { serialQueue.sync { _mockAddMembers = newValue } }
     }
 
-    func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    func addMembers(_ keyPackages: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockAddMembers else {
             fatalError("no mock for `addMembers`")
         }
 
-        return try await mock(invitees, groupID)
+        return try await mock(keyPackages, groupID)
     }
 
     // MARK: - Remove clients
@@ -133,6 +133,28 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
         mockJoinGroupCount += 1
         return try await mock(groupID, groupInfo)
+    }
+
+    // MARK: - Decrypt
+
+    typealias DecryptMessage = ((Data, MLSGroupID) async throws -> DecryptedMessage)
+    private var mockDecryptMessage_: DecryptMessage?
+    var mockDecryptMessage: DecryptMessage? {
+        get { serialQueue.sync { mockDecryptMessage_ } }
+        set { serialQueue.sync { mockDecryptMessage_ = newValue } }
+    }
+    private var mockDecryptMessageCount_ = 0
+    var mockDecryptMessageCount: Int {
+        get { serialQueue.sync { mockDecryptMessageCount_ } }
+        set { serialQueue.sync { mockDecryptMessageCount_ = newValue } }
+    }
+    func decryptMessage(_ message: Data, in groupID: WireDataModel.MLSGroupID) async throws -> WireCoreCrypto.DecryptedMessage {
+        guard let mock = mockDecryptMessage else {
+            fatalError("no mock for `decryptMessage`")
+        }
+
+        mockDecryptMessageCount += 1
+        return try await mock(message, groupID)
     }
 
     // MARK: - On epoch changed

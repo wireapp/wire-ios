@@ -30,7 +30,7 @@ public protocol MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) async throws -> MLSDecryptResult?
+    ) async throws -> [MLSDecryptResult]
 
 }
 
@@ -41,11 +41,26 @@ public enum MLSDecryptResult: Equatable {
 
 }
 
+protocol DecryptedMessageBundle {
+
+    var message: Data? { get }
+    var proposals: [WireCoreCrypto.ProposalBundle] { get }
+    var isActive: Bool { get }
+    var commitDelay: UInt64? { get }
+    var senderClientId: WireCoreCrypto.ClientId? { get }
+    var hasEpochChanged: Bool { get }
+    var identity: WireCoreCrypto.WireIdentity? { get }
+
+}
+
+extension DecryptedMessage: DecryptedMessageBundle { }
+extension BufferedDecryptedMessage: DecryptedMessageBundle { }
+
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     // MARK: - Properties
 
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let mlsActionExecutor: MLSActionExecutorProtocol
     private weak var context: NSManagedObjectContext?
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
@@ -59,10 +74,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     public init(
         context: NSManagedObjectContext,
-        coreCryptoProvider: CoreCryptoProviderProtocol,
+        mlsActionExecutor: MLSActionExecutorProtocol,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
-        self.coreCryptoProvider = coreCryptoProvider
+        self.mlsActionExecutor = mlsActionExecutor
         self.context = context
         self.subconverationGroupIDRepository = subconversationGroupIDRepository
     }
@@ -73,6 +88,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         case failedToConvertMessageToBytes
         case failedToDecryptMessage
+        case failedToDecodeSenderClientID
         case wrongEpoch
 
     }
@@ -94,10 +110,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) async throws -> MLSDecryptResult? {
+    ) async throws -> [MLSDecryptResult] {
         WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
 
-        guard let messageBytes = message.base64DecodedBytes else {
+        guard let messageData = message.base64DecodedData else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
         }
 
@@ -115,41 +131,67 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.decryptMessage(
-                conversationId: groupID.bytes,
-                payload: messageBytes
-            ) }
+            let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)
 
             if decryptedMessage.hasEpochChanged {
                 onEpochChangedSubject.send(groupID)
             }
 
-            if let commitDelay = decryptedMessage.commitDelay {
-                return MLSDecryptResult.proposal(commitDelay)
+            var results = try decryptedMessage.bufferedMessages?.compactMap({ try decryptResult(from: $0) }) ?? []
+
+            if let result = try decryptResult(from: decryptedMessage) {
+                results.append(result)
             }
 
-            if let message = decryptedMessage.message {
-                return MLSDecryptResult.message(
-                    message.data,
-                    senderClientId(from: decryptedMessage)
-                )
-            }
-
-            return nil
+            return results
         } catch {
             WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error))")
 
-            if case CryptoError.WrongEpoch(message: _) = error {
-                throw MLSMessageDecryptionError.wrongEpoch
-            } else {
+            switch error {
+            // Received messages targeting a future epoch, we might have lost messages.
+            case CryptoError.WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
+
+            // Message arrive in future epoch, it has been buffered and will be consumed later.
+            case CryptoError.BufferedFutureMessage: return []
+
+            // Received already sent or received message, can safely be ignored.
+            case CryptoError.DuplicateMessage: return []
+
+            // Received self commit, any pending self commit has now been merged
+            case CryptoError.SelfCommitIgnored: return []
+
+            // Message arrive in an unmerged group, it has been buffered and will be consumed later.
+            case CryptoError.UnmergedPendingGroup: return []
+            default:
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
         }
     }
 
-    private func senderClientId(from message: DecryptedMessage) -> String? {
-        guard let senderClientID = message.senderClientId else { return nil }
-        return MLSClientID(data: senderClientID.data)?.clientID
+    private func decryptResult(from messageBundle: some DecryptedMessageBundle) throws -> MLSDecryptResult? {
+        if let commitDelay = messageBundle.commitDelay {
+            return MLSDecryptResult.proposal(commitDelay)
+        }
+
+        if let message = messageBundle.message {
+            guard let clientId = messageBundle.senderClientId else {
+                // We are guaranteed to have a senderClientId with messages
+                throw MLSMessageDecryptionError.failedToDecodeSenderClientID
+            }
+
+            return MLSDecryptResult.message(
+                message,
+                try senderClientId(from: clientId).clientID
+            )
+        }
+
+        return nil
     }
 
+    private func senderClientId(from data: ClientId) throws -> MLSClientID {
+        guard let clientID = MLSClientID(data: data) else {
+            throw MLSMessageDecryptionError.failedToDecodeSenderClientID
+        }
+        return clientID
+    }
 }

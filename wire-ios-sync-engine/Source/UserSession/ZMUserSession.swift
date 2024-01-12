@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -94,7 +94,10 @@ public class ZMUserSession: NSObject {
     // When we move to the monorepo, uncomment hotFixApplicator
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-    var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
+    var recurringActionService = RecurringActionService(
+        storage: .standard,
+        dateProvider: .system
+    ) as RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     var coreCryptoProvider: CoreCryptoProvider
@@ -527,13 +530,15 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
-        do {
-            if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
-                // Make sure MLS client exists, mls public keys will be generated upon creation
-                _ = try coreCryptoProvider.coreCrypto(requireMLS: true)
+        if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
+            WaitingGroupTask(context: syncContext) { [self] in
+                do {
+                    // Make sure MLS client exists, mls public keys will be generated upon creation
+                    _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+                } catch {
+                    WireLogger.mls.error("Failed to create MLS client: \(error)")
+                }
             }
-        } catch {
-            WireLogger.mls.error("Failed to create MLS client: \(error)")
         }
     }
 
@@ -684,7 +689,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
         if selfClient?.hasRegisteredMLSClient == true {
-            mlsService.repairOutOfSyncConversations()
+            Task {
+                await mlsService.repairOutOfSyncConversations()
+            }
         }
     }
 
@@ -709,14 +716,21 @@ extension ZMUserSession: ZMSyncStateDelegate {
         if selfClient?.hasRegisteredMLSClient == true {
 
             WaitingGroupTask(context: syncContext) { [self] in
+                // these operations are not dependent and should not be executed in same do/catch
                 do {
+                    // rework implementation of following method - WPB-6053
                     try await mlsService.performPendingJoins()
-                    await mlsService.uploadKeyPackagesIfNeeded()
-                    await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+                } catch {
+                    Logging.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
+                }
+
+                do {
                     try await mlsService.commitPendingProposals()
                 } catch {
                     Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
                 }
+                await mlsService.uploadKeyPackagesIfNeeded()
+                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
             }
         }
 

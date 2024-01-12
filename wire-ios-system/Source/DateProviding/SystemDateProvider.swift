@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,24 +17,13 @@
 //
 
 import Foundation
-import XCTest
 
-extension XCTestCase {
+extension DateProviding where Self == SystemDateProvider {
+    /// Returns a new instance of `SystemDateProvider`.
+    public static var system: Self { .init() }
+}
 
-    func assertThrows<E: Error & Equatable>(
-        expectedError: E,
-        when: @escaping () async throws -> Void
-    ) async {
-        do {
-            try await when()
-            XCTFail("expected an error")
-        } catch {
-            if let error = error as? E {
-                XCTAssertEqual(error, expectedError)
-            } else {
-                XCTFail("unexpected error: \(String(describing: error))")
-            }
-        }
-    }
-
+/// Provides date values based on the system clock.
+public struct SystemDateProvider: DateProviding {
+    public var now: Date { .now }
 }

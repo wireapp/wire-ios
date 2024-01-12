@@ -28,31 +28,26 @@ import WireTesting
 final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
     var sut: MLSDecryptionService!
-    var mockCoreCrypto: MockCoreCryptoProtocol!
-    var mockSafeCoreCrypto: MockSafeCoreCrypto!
-    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
+    var mockMLSActionExecutor: MockMLSActionExecutor!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        mockCoreCrypto = MockCoreCryptoProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        mockMLSActionExecutor = MockMLSActionExecutor()
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
 
         sut = MLSDecryptionService(
             context: syncMOC,
-            coreCryptoProvider: mockCoreCryptoProvider,
+            mlsActionExecutor: mockMLSActionExecutor,
             subconversationGroupIDRepository: mockSubconversationGroupIDRepository
         )
     }
 
     override func tearDown() {
         sut = nil
-        mockCoreCrypto = nil
+        mockMLSActionExecutor = nil
         mockSubconversationGroupIDRepository = nil
         super.tearDown()
     }
@@ -81,7 +76,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let message = Data.random().base64EncodedString()
-        self.mockCoreCrypto.mockDecryptMessage = { _, _ in
+
+        self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             throw CryptoError.ConversationNotFound(message: "conversation not found")
         }
 
@@ -96,12 +92,12 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         }
     }
 
-    func test_Decrypt_ReturnsNil_WhenCoreCryptoReturnsNil() async {
+    func test_Decrypt_ReturnsEmptyResult_WhenCoreCryptoReturnsNil() async {
 
         // Given
         let groupID = MLSGroupID.random()
         let messageBytes = Data.random().bytes
-        self.mockCoreCrypto.mockDecryptMessage = { _, _ in
+        self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             DecryptedMessage(
                 message: nil,
                 proposals: [],
@@ -109,30 +105,32 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 commitDelay: nil,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil
+                identity: nil,
+                bufferedMessages: nil
             )
         }
 
         // When
-        var result: MLSDecryptResult?
+        var results: [MLSDecryptResult]
         do {
-            result = try await sut.decrypt(
+            results = try await sut.decrypt(
                 message: messageBytes.data.base64EncodedString(),
                 for: groupID,
                 subconversationType: nil
             )
         } catch {
             XCTFail("Unexpected error: \(String(describing: error))")
+            return
         }
 
         // Then
-        XCTAssertNil(result)
+        XCTAssertTrue(results.isEmpty)
     }
 
     func test_Decrypt_IsSuccessful() async {
         // Given
         let groupID = MLSGroupID.random()
-        let messageBytes = Data.random().bytes
+        let messageData = Data.random()
         let sender = MLSClientID(
             userID: UUID.create().transportString(),
             clientID: "client",
@@ -140,90 +138,150 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         )
 
         var mockDecryptMessageCount = 0
-        self.mockCoreCrypto.mockDecryptMessage = {
+        self.mockMLSActionExecutor.mockDecryptMessage = {
             mockDecryptMessageCount += 1
 
-            XCTAssertEqual($0, groupID.bytes)
-            XCTAssertEqual($1, messageBytes)
+            XCTAssertEqual($0, messageData)
+            XCTAssertEqual($1, groupID)
 
             return DecryptedMessage(
-                message: messageBytes,
+                message: messageData,
                 proposals: [],
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: sender.rawValue.data(using: .utf8)!.bytes,
+                senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: false,
-                identity: nil
+                identity: nil,
+                bufferedMessages: nil
             )
         }
 
         // When
-        var result: MLSDecryptResult?
+        var results: [MLSDecryptResult]
         do {
-            result = try await sut.decrypt(
-                message: messageBytes.data.base64EncodedString(),
+            results = try await sut.decrypt(
+                message: messageData.base64EncodedString(),
                 for: groupID,
                 subconversationType: nil
             )
         } catch {
             XCTFail("Unexpected error: \(String(describing: error))")
+            return
         }
 
         // Then
         XCTAssertEqual(mockDecryptMessageCount, 1)
-        XCTAssertEqual(result, MLSDecryptResult.message(messageBytes.data, sender.clientID))
+        XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
     }
 
     func test_Decrypt_ForSubconversation_IsSuccessful() async {
         // Given
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
-        let messageBytes = Data.random().bytes
+        let messageData = Data.random()
         let sender = MLSClientID.random()
 
         mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
 
         var mockDecryptMessageCount = 0
-        self.mockCoreCrypto.mockDecryptMessage = {
+        self.mockMLSActionExecutor.mockDecryptMessage = {
             mockDecryptMessageCount += 1
 
-            XCTAssertEqual($0, subconversationGroupID.bytes)
-            XCTAssertEqual($1, messageBytes)
+            XCTAssertEqual($0, messageData)
+            XCTAssertEqual($1, subconversationGroupID)
 
             return DecryptedMessage(
-                message: messageBytes,
+                message: messageData,
                 proposals: [],
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: sender.rawValue.data(using: .utf8)!.bytes,
+                senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: false,
-                identity: nil
+                identity: nil,
+                bufferedMessages: nil
             )
         }
 
         // When
-        var result: MLSDecryptResult?
+        var results: [MLSDecryptResult]
         do {
-            result = try await sut.decrypt(
-                message: messageBytes.data.base64EncodedString(),
+            results = try await sut.decrypt(
+                message: messageData.base64EncodedString(),
                 for: parentGroupID,
                 subconversationType: .conference
             )
         } catch {
             XCTFail("Unexpected error: \(String(describing: error))")
+            return
         }
 
         // Then
         XCTAssertEqual(mockDecryptMessageCount, 1)
-        XCTAssertEqual(result, MLSDecryptResult.message(messageBytes.data, sender.clientID))
+        XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
 
         XCTAssertEqual(mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count, 1)
+    }
+
+    func test_Decrypt_ReturnsBufferedMessages() async {
+        // Given
+        let groupID = MLSGroupID.random()
+        let messageData = Data.random()
+        let sender = MLSClientID(
+            userID: UUID.create().transportString(),
+            clientID: "client",
+            domain: "example.com"
+        )
+
+        var mockDecryptMessageCount = 0
+        self.mockMLSActionExecutor.mockDecryptMessage = {
+            mockDecryptMessageCount += 1
+
+            XCTAssertEqual($0, messageData)
+            XCTAssertEqual($1, groupID)
+
+            return DecryptedMessage(
+                message: nil,
+                proposals: [],
+                isActive: false,
+                commitDelay: nil,
+                senderClientId: nil,
+                hasEpochChanged: false,
+                identity: nil,
+                bufferedMessages: [
+                    BufferedDecryptedMessage(
+                        message: messageData,
+                        proposals: [],
+                        isActive: false,
+                        commitDelay: nil,
+                        senderClientId: sender.rawValue.data(using: .utf8)!,
+                        hasEpochChanged: false,
+                        identity: nil)
+                ]
+            )
+        }
+
+        // When
+        var results: [MLSDecryptResult]
+        do {
+            results = try await sut.decrypt(
+                message: messageData.base64EncodedString(),
+                for: groupID,
+                subconversationType: nil
+            )
+        } catch {
+            XCTFail("Unexpected error: \(String(describing: error))")
+            return
+        }
+
+        // Then
+        XCTAssertEqual(mockDecryptMessageCount, 1)
+        XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
     }
 
     func test_Decrypt_ReportsEpochChanged() async {
         // Given
         let groupID = MLSGroupID.random()
-        let messageBytes = Data.random().bytes
+        let messageData = Data.random()
         let hasEpochChanged = true
         let sender = MLSClientID(
             userID: UUID.create().transportString(),
@@ -232,28 +290,29 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         )
 
         var receivedGroupIDs = [MLSGroupID]()
-        let didReceiveGroupIDs = expectation(description: "didReceiveGroupIDs")
+        let didReceiveGroupIDs = customExpectation(description: "didReceiveGroupIDs")
         let cancellable = sut.onEpochChanged().collect(1).sink {
             receivedGroupIDs = $0
             didReceiveGroupIDs.fulfill()
         }
 
-        mockCoreCrypto.mockDecryptMessage = { _, _ in
+        self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             return DecryptedMessage(
-                message: messageBytes,
+                message: messageData,
                 proposals: [],
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: sender.rawValue.data(using: .utf8)!.bytes,
+                senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: hasEpochChanged,
-                identity: nil
+                identity: nil,
+                bufferedMessages: nil
             )
         }
 
         // When
         do {
             _ = try await sut.decrypt(
-                message: messageBytes.data.base64EncodedString(),
+                message: messageData.base64EncodedString(),
                 for: groupID,
                 subconversationType: nil
             )

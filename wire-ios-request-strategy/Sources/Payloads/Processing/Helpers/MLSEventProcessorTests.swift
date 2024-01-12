@@ -33,7 +33,6 @@ class MLSEventProcessorTests: MessagingTestBase {
         sut = MLSEventProcessor()
         syncMOC.performGroupedBlockAndWait {
             self.mlsServiceMock = .init()
-            self.mlsServiceMock.registerPendingJoin_MockMethod = { _ in }
             self.mlsServiceMock.wipeGroup_MockMethod = { _ in }
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -110,37 +109,12 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
     }
 
-    // MARK: - Joining new conversations
-
-    func test_itAddsPendingGroupToGroupsPendingJoin() {
-        syncMOC.performAndWait {
-            // Given
-            self.conversation.mlsStatus = .pendingJoin
-
-            // When
-            self.sut.joinMLSGroupWhenReady(
-                forConversation: self.conversation,
-                context: self.syncMOC
-            )
-
-            // Then
-            XCTAssertEqual(self.mlsServiceMock.registerPendingJoin_Invocations.count, 1)
-            XCTAssertEqual(self.mlsServiceMock.registerPendingJoin_Invocations.first, self.conversation.mlsGroupID)
-        }
-    }
-
-    func test_itDoesntAddNotPendingGroupsToGroupsPendingJoin() {
-        test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .ready)
-        test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .pendingLeave)
-        test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .outOfSync)
-    }
-
     // MARK: - Wiping group
 
     func test_itWipesGroup() async {
         // Given
         let groupID = MLSGroupID(Data.random())
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             conversation.messageProtocol = .mls
             conversation.mlsGroupID = groupID
         }
@@ -157,7 +131,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     }
 
     func test_itDoesntWipeGroup_WhenProtocolIsNotMLS() async {
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             // Given
             conversation.messageProtocol = .proteus
             conversation.mlsGroupID = MLSGroupID(Data.random())
@@ -174,22 +148,6 @@ class MLSEventProcessorTests: MessagingTestBase {
     }
 
     // MARK: - Helpers
-
-    func test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus status: MLSGroupStatus) {
-        syncMOC.performAndWait {
-            // Given
-            self.conversation.mlsStatus = status
-
-            // When
-            self.sut.joinMLSGroupWhenReady(
-                forConversation: self.conversation,
-                context: self.syncMOC
-            )
-
-            // Then
-            XCTAssertTrue(self.mlsServiceMock.registerPendingJoin_Invocations.isEmpty)
-        }
-    }
 
     func assert_mlsStatus(
         originalValue: MLSGroupStatus,

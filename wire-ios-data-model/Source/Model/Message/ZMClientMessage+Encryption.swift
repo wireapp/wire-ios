@@ -244,7 +244,7 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = context.performAndWait {
+                encryptedData = await context.perform {
                     legacyEncrypt(
                         using: keyStore,
                         for: recipients,
@@ -290,13 +290,15 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = await legacyEncrypt(
-                    using: keyStore,
-                    for: messageRecipients,
-                    with: missingClientsStrategy,
-                    useQualifiedIdentifiers: useQualifiedIdentifiers,
-                    in: context
-                )
+                await context.perform {
+                    encryptedData = legacyEncrypt(
+                        using: keyStore,
+                        for: messageRecipients,
+                        with: missingClientsStrategy,
+                        useQualifiedIdentifiers: useQualifiedIdentifiers,
+                        in: context
+                    )
+                }
             }
         )
 
@@ -330,13 +332,15 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = await legacyEncrypt(
-                    using: keyStore,
-                    for: recipients,
-                    with: missingClientsStrategy,
-                    useQualifiedIdentifiers: useQualifiedIdentifiers,
-                    in: context
-                )
+                await context.perform {
+                    encryptedData = legacyEncrypt(
+                        using: keyStore,
+                        for: recipients,
+                        with: missingClientsStrategy,
+                        useQualifiedIdentifiers: useQualifiedIdentifiers,
+                        in: context
+                    )
+                }
             }
         )
 
@@ -367,8 +371,6 @@ extension GenericMessage {
 
         var messageData: Data?
 
-        // TODO: get core crypto file lock
-
         if useQualifiedIdentifiers,
             let selfDomain = await context.perform({ ZMUser.selfUser(in: context).domain }) {
 
@@ -380,7 +382,7 @@ extension GenericMessage {
                 externalData: externalData,
                 context: context
             ) { sessionID, plainText in
-                try proteusService.encrypt(
+                try await proteusService.encrypt(
                     data: plainText,
                     forSession: sessionID
                 )
@@ -396,7 +398,7 @@ extension GenericMessage {
                 externalData: externalData,
                 context: context
             ) { sessionID, plainText in
-                try proteusService.encrypt(
+                try await proteusService.encrypt(
                     data: plainText,
                     forSession: sessionID
                 )
@@ -803,7 +805,7 @@ extension GenericMessage {
 
         var loggedId: String {
             get async {
-                await context.perform({ client.remoteIdentifier ?? "<nil>" })
+                await context.perform { String(describing: client.remoteIdentifier) }
             }
         }
 
@@ -853,7 +855,7 @@ extension GenericMessage {
            guard !client.failedToEstablishSession else {
                // If the session is corrupted, we will send a special payload.
                let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-               WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(client.remoteIdentifier ?? "<nil>")", attributes: nil)
+               WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: " + String(describing: client.remoteIdentifier), attributes: nil)
                return Proteus_ClientEntry(withClientId: client.clientId, data: data)
            }
 

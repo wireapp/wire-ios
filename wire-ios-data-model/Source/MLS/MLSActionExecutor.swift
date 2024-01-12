@@ -20,24 +20,25 @@ import Foundation
 import WireCoreCrypto
 import Combine
 
-protocol MLSActionExecutorProtocol {
+public protocol MLSActionExecutorProtocol {
 
-    func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
+    func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent]
+    func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
 
 }
 
-actor MLSActionExecutor: MLSActionExecutorProtocol {
+public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Types
 
     enum Action {
 
-        case addMembers([Invitee])
+        case addMembers([KeyPackage])
         case removeClients([ClientId])
         case updateKeyMaterial
         case proposal
@@ -49,16 +50,17 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let commitSender: CommitSending
+    private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
 
     private var coreCrypto: SafeCoreCryptoProtocol {
-        get throws {
-            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
         }
     }
 
     // MARK: - Life cycle
 
-    init(
+    public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
         commitSender: CommitSending
     ) {
@@ -66,86 +68,151 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         self.commitSender = commitSender
     }
 
+    // MARK: - Non-reentrant
+
+    /// Perform an non-rentrant operation on an MLS group.
+    ///
+    /// That is only one operation is allowed execute concurrently, if multiple operations for the same group is scheduled
+    /// they will be queued and executed in sequence.
+    ///
+    /// This is used for operations where ordering is important. For example when sending a commit to add client to a group, this is a two-step operations:
+    ///
+    /// 1. Create pending commit and send to distribution server
+    /// 2. Merge pending commit when accepted by distribution server
+    ///
+    /// Here's it's critical that no other operation like `decryptMessage` is performed
+    /// between step 1 and 2. We enforce this by wrapping all `decrypt` and `commit` operations
+    /// inside `performNonReentrant`
+    /// 
+    func performNonReentrant<T>(groupID: MLSGroupID, operation: () async throws -> T) async rethrows -> T {
+        if continuationsByGroupID.keys.contains(groupID) {
+            await withCheckedContinuation { continuation in
+                continuationsByGroupID[groupID]?.append(continuation)
+            }
+        }
+
+        if !continuationsByGroupID.keys.contains(groupID) {
+            // an empty entry means an operation is currently executing, a non-empty
+            // entry are queued operations.
+            continuationsByGroupID[groupID] = []
+        }
+
+        defer {
+            if var continuations = continuationsByGroupID[groupID] {
+                if continuations.isNonEmpty {
+                    continuations.removeFirst().resume()
+                    continuationsByGroupID[groupID] = continuations
+                }
+
+                if continuations.isEmpty {
+                    continuationsByGroupID.removeValue(forKey: groupID)
+                }
+            }
+        }
+
+        return try await operation()
+    }
+
     // MARK: - Actions
 
-    func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
-        do {
-            WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
-            let bundle = try commitBundle(for: .addMembers(invitees), in: groupID)
-            let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-            WireLogger.mls.info("success: adding members to group (\(groupID.safeForLoggingDescription))")
-            return result
-        } catch {
-            WireLogger.mls.info("failed: adding members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
-            throw error
+    public func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        try await performNonReentrant(groupID: groupID) {
+            do {
+                WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
+                let bundle = try await commitBundle(for: .addMembers(invitees), in: groupID)
+                let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
+                WireLogger.mls.info("success: adding members to group (\(groupID.safeForLoggingDescription))")
+                return result
+            } catch {
+                WireLogger.mls.info("failed: adding members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                throw error
+            }
         }
     }
 
-    func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
-        do {
-            WireLogger.mls.info("removing clients from group (\(groupID.safeForLoggingDescription))...")
-            let bundle = try commitBundle(for: .removeClients(clients), in: groupID)
-            let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-            WireLogger.mls.info("success: removing clients from group (\(groupID.safeForLoggingDescription))")
-            return result
-        } catch {
-            WireLogger.mls.info("error: removing clients from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
-            throw error
+    public func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        try await performNonReentrant(groupID: groupID) {
+            do {
+                WireLogger.mls.info("removing clients from group (\(groupID.safeForLoggingDescription))...")
+                let bundle = try await commitBundle(for: .removeClients(clients), in: groupID)
+                let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
+                WireLogger.mls.info("success: removing clients from group (\(groupID.safeForLoggingDescription))")
+                return result
+            } catch {
+                WireLogger.mls.info("error: removing clients from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                throw error
+            }
         }
     }
 
-    func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
-        do {
-            WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))...")
-            let bundle = try commitBundle(for: .updateKeyMaterial, in: groupID)
-            let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-            WireLogger.mls.info("success: updating key material for group (\(groupID.safeForLoggingDescription))")
-            return result
-        } catch {
-            WireLogger.mls.info("error: updating key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
-            throw error
+    public func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        try await performNonReentrant(groupID: groupID) {
+            do {
+                WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))...")
+                let bundle = try await commitBundle(for: .updateKeyMaterial, in: groupID)
+                let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
+                WireLogger.mls.info("success: updating key material for group (\(groupID.safeForLoggingDescription))")
+                return result
+            } catch {
+                WireLogger.mls.info("error: updating key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                throw error
+            }
         }
     }
 
-    func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
-        do {
-            WireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
-            let bundle = try commitBundle(for: .proposal, in: groupID)
-            let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-            WireLogger.mls.info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
-            return result
-        } catch CommitError.noPendingProposals {
-            throw CommitError.noPendingProposals
-        } catch {
-            WireLogger.mls.info("error: committing pending proposals for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
-            throw error
+    public func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        try await performNonReentrant(groupID: groupID) {
+            do {
+                WireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
+                let bundle = try await commitBundle(for: .proposal, in: groupID)
+                let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
+                WireLogger.mls.info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
+                return result
+            } catch CommitError.noPendingProposals {
+                throw CommitError.noPendingProposals
+            } catch {
+                WireLogger.mls.info("error: committing pending proposals for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                throw error
+            }
         }
     }
 
-    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
-        do {
-            WireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
-            let bundle = try commitBundle(for: .joinGroup(groupInfo), in: groupID)
-            let result = try await commitSender.sendExternalCommitBundle(bundle, for: groupID)
-            WireLogger.mls.info("success: joining group (\(groupID.safeForLoggingDescription)) via external commit")
-            return result
-        } catch {
-            WireLogger.mls.info("error: joining group (\(groupID.safeForLoggingDescription)) via external commit: \(String(describing: error))")
-            throw error
+    public func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
+        try await performNonReentrant(groupID: groupID) {
+            do {
+                WireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
+                let bundle = try await commitBundle(for: .joinGroup(groupInfo), in: groupID)
+                let result = try await commitSender.sendExternalCommitBundle(bundle, for: groupID)
+                WireLogger.mls.info("success: joining group (\(groupID.safeForLoggingDescription)) via external commit")
+                return result
+            } catch {
+                WireLogger.mls.info("error: joining group (\(groupID.safeForLoggingDescription)) via external commit: \(String(describing: error))")
+                throw error
+            }
+        }
+    }
+
+    // MARK: - Decryption
+
+    public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
+        try await performNonReentrant(groupID: groupID) {
+            try await coreCrypto.perform {
+                try await $0.decryptMessage(conversationId: groupID.data, payload: message)
+            }
         }
     }
 
     // MARK: - Commit generation
 
-    private func commitBundle(for action: Action, in groupID: MLSGroupID) throws -> CommitBundle {
+    private func commitBundle(for action: Action, in groupID: MLSGroupID) async throws -> CommitBundle {
         do {
             WireLogger.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))...")
             switch action {
             case .addMembers(let clients):
-                let memberAddMessages = try coreCrypto.perform {
-                    try $0.addClientsToConversation(
-                        conversationId: groupID.bytes,
-                        clients: clients
+                let memberAddMessages = try await coreCrypto.perform {
+                    try await $0.addClientsToConversation(
+                        conversationId: groupID.data,
+                        keyPackages: clients.compactMap(\.keyPackage.base64DecodedData)
                     )
                 }
 
@@ -156,21 +223,21 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 )
 
             case .removeClients(let clients):
-                return try coreCrypto.perform {
-                    try $0.removeClientsFromConversation(
-                        conversationId: groupID.bytes,
+                return try await coreCrypto.perform {
+                    try await $0.removeClientsFromConversation(
+                        conversationId: groupID.data,
                         clients: clients
                     )
                 }
 
             case .updateKeyMaterial:
-                return try coreCrypto.perform {
-                    try $0.updateKeyingMaterial(conversationId: groupID.bytes)
+                return try await coreCrypto.perform {
+                    try await $0.updateKeyingMaterial(conversationId: groupID.data)
                 }
 
             case .proposal:
-                guard let bundle = try coreCrypto.perform({
-                    try $0.commitPendingProposals(conversationId: groupID.bytes)
+                guard let bundle = try await coreCrypto.perform({
+                    try await $0.commitPendingProposals(conversationId: groupID.data)
                 }) else {
                     throw CommitError.noPendingProposals
                 }
@@ -178,9 +245,9 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return bundle
 
             case .joinGroup(let groupInfo):
-                let conversationInitBundle = try coreCrypto.perform {
-                    try $0.joinByExternalCommit(
-                        groupInfo: groupInfo.bytes,
+                let conversationInitBundle = try await coreCrypto.perform {
+                    try await $0.joinByExternalCommit(
+                        groupInfo: groupInfo,
                         customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),
                         credentialType: .basic
                     )
@@ -203,7 +270,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     // MARK: - Epoch publisher
 
     nonisolated
-    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         commitSender.onEpochChanged()
     }
 }
