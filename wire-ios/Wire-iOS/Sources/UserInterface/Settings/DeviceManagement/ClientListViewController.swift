@@ -186,34 +186,49 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        if let navigationController = self.navigationController {
-            let detailsView = DeviceDetailsView(
-                viewModel: DeviceInfoViewModel.map(
-                    userClient: client,
-                    isSelfClient: client.isSelfClient(),
-                    userSession: userSession,
-                    credentials: self.credentials,
-                    getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
-                    e2eIdentityProvider: self.e2eIProvider(for: userSession)
-                )
-            ) {
-                self.navigationController?.setNavigationBarHidden(false, animated: false)
+     Task {
+            guard let userSession = ZMUserSession.shared(),
+                  let e2eIdentityProvider = await e2eIProvider(for: userSession)
+            else { return }
+           await MainActor.run {
+                if let navigationController = self.navigationController {
+                    let detailsView = DeviceDetailsView(
+                        viewModel: DeviceInfoViewModel.map(
+                            userClient: client,
+                            isSelfClient: client.isSelfClient(),
+                            userSession: userSession,
+                            credentials: self.credentials,
+                            getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
+                            e2eIdentityProvider: e2eIdentityProvider
+                        )
+                    ) {
+                        self.navigationController?.setNavigationBarHidden(false, animated: false)
+                    }
+                    let hostingViewController = UIHostingController(rootView: detailsView)
+                    hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+                    navigationController.pushViewController(hostingViewController, animated: true)
+                    navigationController.isNavigationBarHidden = true
+                }
             }
-            let hostingViewController = UIHostingController(rootView: detailsView)
-            hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-            navigationController.pushViewController(hostingViewController, animated: true)
-            navigationController.isNavigationBarHidden = true
         }
     }
 
-    private func e2eIProvider(for userSession: ZMUserSession) -> E2eIdentityProviding {
+    private func e2eIProvider(for userSession: ZMUserSession) async -> E2eIdentityProviding? {
         if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
             return DeveloperDeviceDetailsSettingsSelectionViewModel.e2eIdentityProvider()
         }
+        guard let conversationId = await fetchSelfConversation(context: userSession.syncContext) else {
+            return nil
+        }
         return E2eIdentityProvider(gracePeriod: Double(userSession.e2eiFeature.config.verificationExpiration),
-                                   coreCryptoProvider: userSession.coreCryptoProvider, context: userSession.syncContext)
+                                   coreCryptoProvider: userSession.coreCryptoProvider, conversationId: conversationId)
+    }
+
+    @MainActor
+    private func fetchSelfConversation(context: NSManagedObjectContext) async -> Data? {
+       return await context.perform {
+            return ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID?.data
+        }
     }
 
     private func createTableView() {

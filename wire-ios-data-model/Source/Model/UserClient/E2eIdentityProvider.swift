@@ -86,16 +86,16 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
     // Grace period fromt he E2ei config settings
     private let gracePeriod: Double
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let context: NSManagedObjectContext
+    private let conversationId: Data
 
     public init(
         gracePeriod: Double,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        context: NSManagedObjectContext // make sure to run on SyncContext
+        conversationId: Data // make sure to run on SyncContext
     ) {
         self.gracePeriod = gracePeriod
         self.coreCryptoProvider = coreCryptoProvider
-        self.context = context
+        self.conversationId = conversationId
     }
 
     var coreCrypto: SafeCoreCryptoProtocol {
@@ -135,26 +135,14 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
     }
 
     private func fetchWireIdentity(clientIDs: [ClientId]) async throws -> [WireIdentity] {
-        guard let conversationId = await fetchSelfConversation() else {
-            return []
-        }
         return try await coreCrypto.perform {
-            return try await $0.getDeviceIdentities(conversationId: conversationId, deviceIds: clientIDs)
+            return try await $0.getDeviceIdentities(conversationId: self.conversationId, deviceIds: clientIDs)
         }
     }
 
     private func fetchWireIdentity(userIds: [String]) async throws -> [String: [WireIdentity]] {
-        guard let converstionId = await fetchSelfConversation() else {
-            return [:]
-        }
         return try await coreCrypto.perform {
-           return try await $0.getUserIdentities(conversationId: converstionId, userIds: userIds)
-        }
-    }
-
-    private func fetchSelfConversation() async -> Data? {
-       return await context.perform {
-            return ZMConversation.fetchSelfMLSConversation(in: self.context)?.mlsGroupID?.data
+            return try await $0.getUserIdentities(conversationId: self.conversationId, userIds: userIds)
         }
     }
 }
