@@ -355,6 +355,7 @@
         <attribute name="deviceClass" optional="YES" attributeType="String"/>
         <attribute name="discoveryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="label" optional="YES" attributeType="String"/>
+        <attribute name="lastActiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="markedToDelete" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="mlsPublicKeys" optional="YES" attributeType="Binary"/>
         <attribute name="model" optional="YES" attributeType="String"/>
