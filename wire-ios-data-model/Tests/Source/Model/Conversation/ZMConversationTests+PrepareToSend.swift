@@ -38,6 +38,24 @@ class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
         }
     }
 
+    func testThatMessagesAddedToDegradedMlsConversationAreExpiredAndFlaggedAsCauseDegradation() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.messageProtocol = .mls
+        conversation.mlsVerificationStatus = .degraded
+
+        // WHEN
+        let message = try! conversation.appendText(content: "Foo") as! ZMMessage
+        self.uiMOC.saveOrRollback()
+
+        // THEN
+        self.syncMOC.performGroupedBlockAndWait {
+            let message = self.syncMOC.object(with: message.objectID) as! ZMMessage
+            XCTAssertTrue(message.isExpired)
+            XCTAssertTrue(message.causedSecurityLevelDegradation)
+        }
+    }
+
     func testThatMessagesResentToDegradedConversationAreExpiredAndFlaggedAsCauseDegradation() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)

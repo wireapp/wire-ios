@@ -728,6 +728,42 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         }
     }
 
+    func testItMarksMLSConversationAsNotVerifiedAfterResendMessage() async {
+        // GIVEN
+        let conversation = await syncMOC.perform {
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .group
+            conversation.messageProtocol = .mls
+            conversation.mlsVerificationStatus = .degraded
+
+            return conversation
+        }
+
+        let message = await syncMOC.perform {
+            return try! conversation.appendText(content: "foo") as! ZMOTRMessage
+        }
+
+        await syncMOC.perform {
+            XCTAssertEqual(message.deliveryState, .failedToSend)
+            XCTAssertTrue(message.isExpired)
+            XCTAssertTrue(message.causedSecurityLevelDegradation)
+        }
+
+        // WHEN
+        await uiMOC.perform {
+            let uiConversation = try? self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation
+            uiConversation?.acknowledgePrivacyWarning(withResendIntent: true)
+        }
+
+        await syncMOC.perform {
+            self.syncMOC.refreshAllObjects()
+
+            // THEN
+            XCTAssertFalse(message.isExpired)
+            XCTAssertEqual(conversation.mlsVerificationStatus, .notVerified)
+        }
+    }
+
     func testItResendsAllMessagesThatCausedDegradation() {
         var conversation: ZMConversation! = nil
         var message1: ZMOTRMessage! = nil

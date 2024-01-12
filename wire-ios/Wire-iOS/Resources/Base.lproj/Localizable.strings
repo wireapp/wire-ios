@@ -867,6 +867,9 @@
 "meta.legalhold.info_button" = "What Is Legal Hold?";
 "meta.legalhold.send_alert_title" = "The conversation is now subject to legal hold.";
 
+"meta.mls.degraded.alert.title" = "Conversation no longer verified";
+"meta.mls.degraded.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to send the message?";
+
 // Remove from conversation dialogue
 "profile.remove_dialog_title" = "Remove?";
 "profile.remove_dialog_message" = "%@ won’t be able to send or receive messages in this conversation.";

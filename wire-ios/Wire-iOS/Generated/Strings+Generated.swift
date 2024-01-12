@@ -3916,6 +3916,18 @@ internal enum L10n {
           internal static let unmute = L10n.tr("Localizable", "meta.menu.silence.unmute", fallback: "Unmute")
         }
       }
+      internal enum Mls {
+        internal enum Degraded {
+          internal enum Alert {
+            /// At least one participant started using a new device or has an invalid certificate.
+            /// 
+            /// Do you still want to send the message?
+            internal static let message = L10n.tr("Localizable", "meta.mls.degraded.alert.message", fallback: "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to send the message?")
+            /// Conversation no longer verified
+            internal static let title = L10n.tr("Localizable", "meta.mls.degraded.alert.title", fallback: "Conversation no longer verified")
+          }
+        }
+      }
     }
     internal enum Migration {
       /// One moment, please
