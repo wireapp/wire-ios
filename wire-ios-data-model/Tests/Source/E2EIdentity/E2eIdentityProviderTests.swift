@@ -23,24 +23,32 @@ import WireDataModelSupport
 
 final class E2eIdentityProviderTests: XCTestCase {
     lazy var dateFormatter = DateFormatter()
+
     func testThatItsFalse_whenCertificateIsExpired() {
-        let e2eIdentityProvider = E2eIdentityProvider(gracePeriod: 0, coreCryptoProvider: MockCoreCryptoProviderProtocol(), conversationId: Data())
+        let e2eIdentityProvider = E2eIdentityProvider(gracePeriod: 0,
+                                                      coreCryptoProvider: MockCoreCryptoProviderProtocol(),
+                                                      conversationId: Data())
         XCTAssertFalse(e2eIdentityProvider.shouldUpdateCertificate(for: .mockExpired))
     }
 
     func testThatItsFalse_whenCertificateIsRevoked() {
-        let e2eIdentityProvider = E2eIdentityProvider(gracePeriod: 0, coreCryptoProvider: MockCoreCryptoProviderProtocol(), conversationId: Data())
+        let e2eIdentityProvider = E2eIdentityProvider(gracePeriod: 0,
+                                                      coreCryptoProvider: MockCoreCryptoProviderProtocol(),
+                                                      conversationId: Data())
         XCTAssertFalse(e2eIdentityProvider.shouldUpdateCertificate(for: .mockRevoked))
     }
 
     func testThatItsFalse_whenCertificateIsValid() {
-        let e2eIdentityProvider = E2eIdentityProvider(gracePeriod: 0, coreCryptoProvider: MockCoreCryptoProviderProtocol(), conversationId: Data())
+        let e2eIdentityProvider = E2eIdentityProvider(gracePeriod: 0,
+                                                      coreCryptoProvider: MockCoreCryptoProviderProtocol(),
+                                                      conversationId: Data())
         XCTAssertFalse(e2eIdentityProvider.shouldUpdateCertificate(for: .mockValid))
     }
 
     func testThatItReturnsTrue_giveOnlyFewDaysAreLeftwhenShouldUpdateCertificateIsCalled() {
        let e2eIdentityProvider = E2eIdentityProvider(gracePeriod: 0,
-                                                     coreCryptoProvider: MockCoreCryptoProviderProtocol(), conversationId: Data())
+                                                     coreCryptoProvider: MockCoreCryptoProviderProtocol(),
+                                                     conversationId: Data())
        let certificate =  E2eIdentityCertificate(
             certificateDetails: .mockCertificate(),
             mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",

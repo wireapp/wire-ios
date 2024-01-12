@@ -126,11 +126,13 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
     }
 
     public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
-        guard  certificate.notValidBefore <= Date.now  else {
+        guard  certificate.notValidBefore <= Date.now,
+                certificate.expiryDate > Date.now else {
             return false
         }
-        var remainingTimeToUpdate = DateInterval(start: Date.now, end: certificate.expiryDate).duration
-        remainingTimeToUpdate -= gracePeriod - Double(kServerRetainedDays) - Double(kRandomInterval)
+        let validTimeInterval = certificate.expiryDate.timeIntervalSince(Date.now)
+        let unavailableInterval = gracePeriod + Double(kServerRetainedDays) + Double(kRandomInterval)
+        let remainingTimeToUpdate = validTimeInterval - unavailableInterval
         return remainingTimeToUpdate <= 0.0
     }
 
