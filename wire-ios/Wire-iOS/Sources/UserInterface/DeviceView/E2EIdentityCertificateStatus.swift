@@ -18,10 +18,7 @@
 
 import Foundation
 import SwiftUI
-
-enum E2EIdentityCertificateStatus: CaseIterable {
-    case notActivated, revoked, expired, valid, none
-}
+import WireDataModel
 
 extension E2EIdentityCertificateStatus {
     func titleForStatus() -> String {
@@ -34,8 +31,6 @@ extension E2EIdentityCertificateStatus {
             return L10n.Localizable.Device.Details.Section.E2ei.Status.expired
         case .valid:
             return L10n.Localizable.Device.Details.Section.E2ei.Status.valid
-        case .none:
-            return ""
         }
     }
 
@@ -49,14 +44,12 @@ extension E2EIdentityCertificateStatus {
             return Image(.certificateExpired)
         case .valid:
             return Image(.certificateValid)
-        case .none:
-            return nil
         }
     }
 
     static func status(for string: String) -> E2EIdentityCertificateStatus {
         E2EIdentityCertificateStatus.allCases.filter({
             $0.titleForStatus() == string
-        }).first ?? .none
+        }).first ?? .notActivated
     }
 }

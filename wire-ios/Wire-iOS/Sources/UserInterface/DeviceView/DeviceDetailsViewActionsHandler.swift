@@ -21,23 +21,14 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
-    let logger = WireLogger.e2ei
-    let e2eIdentityProvider: E2eIdentityProviding
-    let userSession: UserSession
-    let mlsProvider: MLSProviding
+    private let logger: LoggerProtocol
+    private let e2eIdentityProvider: E2eIdentityProviding
+    private let userSession: UserSession
 
-    var userClient: UserClient
-    var clientRemovalObserver: ClientRemovalObserver?
-    var credentials: ZMEmailCredentials?
+    private var userClient: UserClient
+    private var clientRemovalObserver: ClientRemovalObserver?
+    private var credentials: ZMEmailCredentials?
     var isProcessing: ((Bool) -> Void)?
-
-    var isMLSEnabled: Bool {
-        mlsProvider.isMLSEnbaled
-    }
-
-    var isE2eIdentityEnabled: Bool {
-        e2eIdentityProvider.isE2EIdentityEnabled
-    }
 
     var isSelfClient: Bool {
         userClient.isSelfClient()
@@ -50,33 +41,37 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding,
-        saveFileManager: SaveFileActions
+        saveFileManager: SaveFileActions,
+        logger: LoggerProtocol = WireLogger.e2ei
     ) {
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
         self.e2eIdentityProvider = e2eIdentityProvider
-        self.mlsProvider = mlsProvider
         self.saveFileManager = saveFileManager
+        self.logger = logger
     }
 
     func fetchCertificate() async -> E2eIdentityCertificate? {
-        do {
-            return try await userClient.fetchE2eIdentityCertificate(e2eIdentityProvider: e2eIdentityProvider)
-        } catch {
-            logger.error(error.localizedDescription)
+        guard let mlsClientID = MLSClientID(userClient: userClient)?.clientID,
+              let data = mlsClientID.data(using: .utf8) else {
+            return nil
         }
-        return nil
+        do {
+            return try await e2eIdentityProvider.fetchCertificates(clientIds: [data]).first
+        } catch {
+            logger.error(error.localizedDescription, attributes: nil)
+            return nil
+        }
     }
 
-    func fetchMLSThumbprint() async -> String? {
+    func isE2eIdentityEnabled() async -> Bool {
         do {
-            return try await mlsProvider.fetchMLSThumbprint()
+            return try await e2eIdentityProvider.isE2EIdentityEnabled()
         } catch {
-            logger.error(error.localizedDescription)
+            logger.error(error.localizedDescription, attributes: nil)
+            return false
         }
-        return nil
     }
 
     @MainActor

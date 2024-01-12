@@ -19,22 +19,24 @@
 import Foundation
 
 public final class MockValidE2eIdentityProvider: E2eIdentityProviding {
-    lazy var dateFormatter = DateFormatter()
-
-    public var isE2EIdentityEnabled: Bool = true
-
-    public var certificate: E2eIdentityCertificate {
-        E2eIdentityCertificate(
-            certificateDetails: .mockCertificate(),
-            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
-            certificateStatus: "Valid",
-            serialNumber: .mockSerialNumber()
-        )
-    }
 
     public init() {}
 
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        certificate
+    public func isE2EIdentityEnabled() async throws -> Bool {
+        return true
+    }
+
+    public func fetchCertificates(clientIds: [Data]) async throws -> [E2eIdentityCertificate] {
+        [.mockValid]
+    }
+
+    public func fetchCertificates(userIds: [String]) async throws -> [String: [E2eIdentityCertificate]] {
+        var result = [String: [E2eIdentityCertificate]]()
+        userIds.forEach({ result[$0] = [E2eIdentityCertificate.mockValid] })
+        return result
+    }
+
+    public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
+        return true
     }
 }
