@@ -126,7 +126,7 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
     }
 
     public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
-        guard  certificate.notValidBefore >= Date.now  else {
+        guard  certificate.notValidBefore <= Date.now  else {
             return false
         }
         var remainingTimeToUpdate = DateInterval(start: Date.now, end: certificate.expiryDate).duration
