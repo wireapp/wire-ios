@@ -52,6 +52,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.logger = logger
     }
 
+    @MainActor
     func fetchCertificate() async -> E2eIdentityCertificate? {
         guard let mlsClientID = MLSClientID(userClient: userClient)?.clientID,
               let data = mlsClientID.data(using: .utf8) else {
@@ -65,6 +66,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         }
     }
 
+    @MainActor
     func isE2eIdentityEnabled() async -> Bool {
         do {
             return try await e2eIdentityProvider.isE2EIdentityEnabled()

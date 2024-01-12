@@ -212,7 +212,8 @@ final class ClientListViewController: UIViewController,
         if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
             return DeveloperDeviceDetailsSettingsSelectionViewModel.e2eIdentityProvider()
         }
-        return E2eIdentityProvider(gracePeriod: Double(userSession.e2eiFeature.config.verificationExpiration), coreCryptoProvider: userSession.coreCryptoProvider, context: userSession.syncContext)
+        return E2eIdentityProvider(gracePeriod: Double(userSession.e2eiFeature.config.verificationExpiration),
+                                   coreCryptoProvider: userSession.coreCryptoProvider, context: userSession.syncContext)
     }
 
     private func createTableView() {
