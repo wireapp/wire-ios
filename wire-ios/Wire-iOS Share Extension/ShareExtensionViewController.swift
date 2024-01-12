@@ -507,15 +507,35 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func conversationDidDegrade(change: ConversationDegradationInfo, callback: @escaping DegradationStrategyChoice) {
+
+        typealias MetaDegradedLocale = L10n.ShareExtension.Meta.Degraded
+
         let title = titleForMissingClients(causedBy: change)
-        let alert = UIAlertController(title: title, message: L10n.ShareExtension.Meta.Degraded.dialogMessage, preferredStyle: .alert)
+        let alert = createDegradationAlert(title: title, message: MetaDegradedLocale.dialogMessage, callback: callback)
+
+        self.present(alert, animated: true)
+    }
+
+    private func createDegradationAlert(title: String, message: String, callback: @escaping DegradationStrategyChoice) -> UIAlertController {
+
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
         alert.addAction(UIAlertAction(title: L10n.ShareExtension.Meta.Degraded.sendAnywayButton, style: .destructive, handler: { _ in
-            callback(.sendAnyway)
+            self.handleSendAnyway(callback)
         }))
         alert.addAction(UIAlertAction(title: L10n.ShareExtension.Meta.Degraded.cancelSendingButton, style: .cancel, handler: { _ in
-            callback(.cancelSending)
+            self.handleCancelSending(callback)
         }))
-        self.present(alert, animated: true)
+
+        return alert
+    }
+
+    private func handleSendAnyway(_ callback: DegradationStrategyChoice) {
+        callback(.sendAnyway)
+    }
+
+    private func handleCancelSending(_ callback: DegradationStrategyChoice) {
+        callback(.cancelSending)
     }
 
     private func titleForMissingClients(causedBy change: ConversationDegradationInfo) -> String {
@@ -523,11 +543,19 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             return L10n.ShareExtension.Meta.Legalhold.sendAlertTitle
         }
 
-        let users = change.users
-        let template = users.count > 1 ? "meta.degraded.degradation_reason_message.plural" : "meta.degraded.degradation_reason_message.singular"
+        let usersString = formattedUserNames(from: change.users)
+        return degradationMessageForUsers(usersString, count: change.users.count)
+    }
 
-        let allUsers = (users.compactMap(\.name) as NSArray).componentsJoined(by: ", ") as NSString
-        return String.localizedStringWithFormat(template.localized, allUsers)
+    private func formattedUserNames(from users: Set<ZMUser>) -> String {
+        let names = users.compactMap { $0.name }.joined(separator: ", ")
+        return names
+    }
+
+    private func degradationMessageForUsers(_ users: String, count: Int) -> String {
+        typealias DegradationReasonMessageLocale = L10n.ShareExtension.Meta.Degraded.DegradationReasonMessage
+        let messageKey = count > 1 ? DegradationReasonMessageLocale.plural(users) : DegradationReasonMessageLocale.singular(users)
+        return messageKey
     }
 
 }
