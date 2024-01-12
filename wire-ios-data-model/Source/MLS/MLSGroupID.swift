@@ -24,7 +24,7 @@ public struct MLSGroupID: Equatable, Hashable {
 
     // MARK: - Properties
 
-    let data: Data
+    public let data: Data
 
     // MARK: - Life cycle
 
