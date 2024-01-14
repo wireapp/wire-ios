@@ -86,7 +86,7 @@ extension ZMConversation {
         case ConversationAddParticipantsError.missingLegalHoldConsent:
             UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.missingLegalholdConsent)
         default:
-            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.cannotAdd)
+            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.cannotAdd + "\n(\(error.localizedDescription))")
         }
     }
 
