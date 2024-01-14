@@ -227,6 +227,7 @@ extension VoiceChannelV3: CallActionsInternal {
             let conversation = conversation,
             let callCenter = callCenter
         else {
+            WireLogger.calling.warn("🕵🏽 no conversation: \(conversation?.description ?? "<nil>")  callCenter: \(callCenter?.description ?? "<nil>")")
             return false
         }
 

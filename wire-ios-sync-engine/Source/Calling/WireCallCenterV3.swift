@@ -81,7 +81,11 @@ public class WireCallCenterV3: NSObject {
     }
 
     /// The snaphot of the call state for each non-idle conversation.
-    var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
+    var callSnapshots: [AVSIdentifier: CallSnapshot] = [:] {
+        didSet {
+            WireLogger.calling.debug("🕵🏽 callSnapshots: \(callSnapshots)")
+        }
+    }
 
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
     var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)]  = []
@@ -483,7 +487,7 @@ extension WireCallCenterV3 {
             throw Failure.missingAVSIdentifier
         }
 
-        endAllCalls(exluding: conversationId)
+//        endAllCalls(exluding: conversationId)
 
         let callType = self.callType(
             for: conversation,
@@ -621,23 +625,20 @@ extension WireCallCenterV3 {
 
     func generateInitialConferenceInfo(from conversationID: AVSIdentifier) async throws {
         guard let context = await uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
-        let (parentQualifiedID, parentGroupID) = await context.perform {
+        let parentGroupID = await context.perform {
             let conversation = ZMConversation.fetch(with: conversationID.identifier, domain: conversationID.domain, in: context)
-            return (conversation?.qualifiedID, conversation?.mlsGroupID)
+            return conversation?.mlsGroupID
         }
-        guard let parentGroupID, let parentQualifiedID
-        else {
-            return
-        }
+        guard let parentGroupID else { return }
 
         guard let mlsService = await context.perform({ context.mlsService }) else {
             return
         }
 
-        let subgroupID = try await mlsService.createOrJoinSubgroup(
-            parentQualifiedID: parentQualifiedID,
-            parentID: parentGroupID
-        )
+        guard let subgroupID = mlsService.fetchSubconversationGroupID(forType: .conference, parentGroupID: parentGroupID) else {
+            WireLogger.mls.warn("subgroupID not found for group : \(parentGroupID)")
+            return
+        }
 
         let initialConferenceInfo = try await mlsService.generateConferenceInfo(
             parentGroupID: parentGroupID,
@@ -711,14 +712,14 @@ extension WireCallCenterV3 {
                         }
                     }
 
-                    let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
-                        mlsService: mlsService,
-                        syncContext: syncContext
-                    )
-
-                    self.onMLSConferenceParticipantsChanged(
-                        subconversationID: subgroupID
-                    ).subscribe(staleParticipantsRemover)
+//                    let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
+//                        mlsService: mlsService,
+//                        syncContext: syncContext
+//                    )
+//
+//                    self.onMLSConferenceParticipantsChanged(
+//                        subconversationID: subgroupID
+//                    ).subscribe(staleParticipantsRemover)
 
                     if var snapshot = self.callSnapshots[conversationID] {
 //                        callSnapshots[conversationId] = CallSnapshot(
@@ -740,7 +741,7 @@ extension WireCallCenterV3 {
                         snapshot.qualifiedID = parentQualifiedID
                         snapshot.groupIDs = (parentGroupID, subgroupID)
                         snapshot.updateConferenceInfoTask = updateConferenceInfoTask
-                        snapshot.mlsConferenceStaleParticipantsRemover = staleParticipantsRemover
+//                        snapshot.mlsConferenceStaleParticipantsRemover = staleParticipantsRemover
                         self.callSnapshots[conversationID] = snapshot
                     }
                 } catch {
@@ -778,9 +779,9 @@ extension WireCallCenterV3 {
         }
 
         if let mlsParentIDs = mlsParentIDS(for: conversationId) {
-            var snapshot = callSnapshots[conversationId]
-            snapshot?.updateConferenceInfoTask?.cancel()
-            snapshot?.updateConferenceInfoTask = nil
+            let snapshot = callSnapshots[conversationId]
+//            snapshot?.updateConferenceInfoTask?.cancel()
+//            snapshot?.updateConferenceInfoTask = nil
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,

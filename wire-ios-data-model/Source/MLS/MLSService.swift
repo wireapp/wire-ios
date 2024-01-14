@@ -50,6 +50,11 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws
 
+    func fetchSubconversationGroupID(
+        forType type: SubgroupType,
+        parentGroupID: MLSGroupID
+    ) -> MLSGroupID?
+
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
@@ -349,13 +354,16 @@ public final class MLSService: MLSServiceInterface {
         ) { [weak self] _ in
             guard
                 let self,
-                let context = context,
-                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true else {
-                self?.logger.info("Skip periodic key material check since MLS is not enabled")
+                let context = context else {
                 return
             }
 
-            Task {
+            Task { [context] in
+                guard await context.perform({ ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true }) == true else {
+                    self.logger.info("Skip periodic key material check since MLS is not enabled")
+                    return
+                }
+
                 await self.updateKeyMaterialForAllStaleGroupsIfNeeded()
             }
         }
@@ -1449,6 +1457,13 @@ public final class MLSService: MLSServiceInterface {
         case failedToJoinSubgroup
         case missingSubgroupID
 
+    }
+
+    public func fetchSubconversationGroupID(
+        forType type: SubgroupType,
+        parentGroupID: MLSGroupID
+    ) -> MLSGroupID? {
+       return subconversationGroupIDRepository.fetchSubconversationGroupID(forType: type, parentGroupID: parentGroupID)
     }
 
     public func createOrJoinSubgroup(
