@@ -21,15 +21,18 @@
 public final class MockE2eIdentityProvider: E2eIdentityProviding {
 
     public let certificate: E2eIdentityCertificate = .mock()
+    public let isE2EIdentityEnabled: Bool = false
+    public let shouldUpdateCertificate = false
 
-    public init() {}
+    public init() {
+    }
 
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
         certificate
     }
 
     public func isE2EIdentityEnabled() async throws -> Bool {
-        return false
+        return isE2EIdentityEnabled
     }
 
     public func fetchCertificates(clientIds: [Data]) async throws -> [WireDataModel.E2eIdentityCertificate] {
@@ -41,6 +44,6 @@ public final class MockE2eIdentityProvider: E2eIdentityProviding {
     }
 
     public func shouldUpdateCertificate(for certificate: WireDataModel.E2eIdentityCertificate) -> Bool {
-        false
+        return shouldUpdateCertificate
     }
 }

@@ -26,7 +26,6 @@ struct DeviceDetailsView: View {
 
     @StateObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
-    @State var isE2eIdentityEnabled: Bool = false
 
     var dismissedView: (() -> Void)?
 
@@ -74,7 +73,7 @@ struct DeviceDetailsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if isE2eIdentityEnabled {
+                if viewModel.isE2eIdentityEnabled {
                     mlsView
                     e2eIdentityCertificateView
                 }
@@ -114,14 +113,7 @@ struct DeviceDetailsView: View {
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            Task {
-                let isE2eIdentityEnabled = await viewModel.isE2eIdenityEnabled()
-                await viewModel.fetchFingerPrintForProteus()
-                await viewModel.fetchE2eCertificate()
-                await MainActor.run {
-                    self.isE2eIdentityEnabled = isE2eIdentityEnabled
-                }
-            }
+            viewModel.onAppear()
         }
         .onDisappear {
             dismissedView?()

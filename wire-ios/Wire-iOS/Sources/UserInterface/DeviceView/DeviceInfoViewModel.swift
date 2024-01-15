@@ -76,6 +76,7 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
+    @Published var isE2eIdentityEnabled = false
 
     private var actionsHandler: any DeviceDetailsViewActions
 
@@ -160,7 +161,19 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     func isE2eIdenityEnabled() async -> Bool {
-        return await actionsHandler.isE2eIdentityEnabled()
+        let result = await actionsHandler.isE2eIdentityEnabled()
+        await MainActor.run {
+            self.isE2eIdentityEnabled = result
+        }
+        return result
+    }
+
+    func onAppear() {
+        Task {
+            _ = await isE2eIdenityEnabled()
+            await fetchFingerPrintForProteus()
+            await fetchE2eCertificate()
+        }
     }
 }
 
@@ -183,7 +196,8 @@ extension DeviceInfoViewModel {
                 userSession: userSession,
                 credentials: credentials,
                 e2eIdentityProvider: e2eIdentityProvider,
-                saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+                saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
+                mlsClientResolver: MLSClientResolver()
             ),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,

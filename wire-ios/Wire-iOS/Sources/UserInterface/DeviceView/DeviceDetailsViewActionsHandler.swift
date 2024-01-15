@@ -24,10 +24,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     private let logger: LoggerProtocol
     private let e2eIdentityProvider: E2eIdentityProviding
     private let userSession: UserSession
+    private let mlsClientResolver: MLSClientResolving
 
     private var userClient: UserClient
     private var clientRemovalObserver: ClientRemovalObserver?
     private var credentials: ZMEmailCredentials?
+
     var isProcessing: ((Bool) -> Void)?
 
     var isSelfClient: Bool {
@@ -42,7 +44,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         credentials: ZMEmailCredentials?,
         e2eIdentityProvider: E2eIdentityProviding,
         saveFileManager: SaveFileActions,
-        logger: LoggerProtocol = WireLogger.e2ei
+        logger: LoggerProtocol = WireLogger.e2ei,
+        mlsClientResolver: MLSClientResolving
     ) {
         self.userClient = userClient
         self.credentials = credentials
@@ -50,11 +53,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.e2eIdentityProvider = e2eIdentityProvider
         self.saveFileManager = saveFileManager
         self.logger = logger
+        self.mlsClientResolver = mlsClientResolver
     }
 
     @MainActor
     func fetchCertificate() async -> E2eIdentityCertificate? {
-        guard let mlsClientID = MLSClientID(userClient: userClient)?.clientID,
+        guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient),
               let data = mlsClientID.data(using: .utf8) else {
             return nil
         }

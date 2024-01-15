@@ -19,25 +19,28 @@
 import Foundation
 
 public final class MockRevokedE2eIdentityProvider: E2eIdentityProviding {
+    public let certificate: E2eIdentityCertificate = .mockRevoked
+    public let isE2EIdentityEnabled: Bool = false
+    public let shouldUpdateCertificate = false
 
     public init() {}
 
     public func isE2EIdentityEnabled() async throws -> Bool {
-        return true
+        return isE2EIdentityEnabled
     }
 
     public func fetchCertificates(clientIds: [Data]) async throws -> [E2eIdentityCertificate] {
-        [.mockRevoked]
+        [certificate]
     }
 
     public func fetchCertificates(userIds: [String]) async throws -> [String: [E2eIdentityCertificate]] {
         var result = [String: [E2eIdentityCertificate]]()
-        userIds.forEach({ result[$0] = [E2eIdentityCertificate.mockRevoked] })
+        userIds.forEach({ result[$0] = [certificate] })
         return result
     }
 
     public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
-        return true
+        return shouldUpdateCertificate
     }
 
 }
