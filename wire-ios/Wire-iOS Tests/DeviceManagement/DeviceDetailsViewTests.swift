@@ -109,7 +109,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     func testWhenE2eidentityViewIsDisabled() {
         let e2eIdentityProvider = MockE2eIdentityProvider()
         let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
-                                         isProteusVerificationEnabled: false,
+                                         isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
                                          certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -124,7 +124,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     func testGivenSelfClientWhenE2eidentityViewIsDisabled() {
         let e2eIdentityProvider = MockE2eIdentityProvider()
         let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
-                                         isProteusVerificationEnabled: false,
+                                         isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
                                          certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
