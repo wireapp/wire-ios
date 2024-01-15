@@ -194,36 +194,6 @@ private extension ConversationLike {
 
 // MARK: - Descriptions
 
-class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
-    typealias View = ConversationSystemMessageCell
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
-
-    init() {
-        let title = NSAttributedString(
-            string: L10n.Localizable.Content.System.isVerified,
-            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
-        )
-
-        configuration = View.Configuration(icon: WireStyleKit.imageOfShieldverified, attributedText: title, showLine: true)
-        accessibilityLabel = title.string
-        actionController = nil
-    }
-}
-
 final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
 
     typealias View = ConversationStartedSystemMessageCell
