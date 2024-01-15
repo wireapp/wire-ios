@@ -63,7 +63,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         )
         let fetchedCertificate = await deviceActionHandler.fetchCertificate()
         XCTAssertNotNil(fetchedCertificate)
-        XCTAssertEqual(fetchedCertificate!.certificateDetails, e2eIdentityProvider.certificate.certificateDetails)
+        XCTAssertEqual(fetchedCertificate!.details, e2eIdentityProvider.certificate.details)
     }
 }
 

@@ -33,6 +33,7 @@ protocol DeviceDetailsViewActions {
     func copyToClipboard(_ value: String)
     func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate)
     func isE2eIdentityEnabled() async -> Bool
+    func shouldCertificateBeUpdated(certificate: E2eIdentityCertificate) -> Bool
 }
 
 final class DeviceInfoViewModel: ObservableObject {
@@ -45,31 +46,17 @@ final class DeviceInfoViewModel: ObservableObject {
 
     var isSelfClient: Bool
 
-    var isValidCerificate: Bool {
-        guard let certificate = e2eIdentityCertificate,
-              certificate.certificateStatus != .valid else {
-            return false
-        }
-        return true
-    }
-
-    var certificateStatus: E2EIdentityCertificateStatus {
-        guard let certificate = e2eIdentityCertificate else {
-            return .notActivated
-        }
-        return certificate.certificateStatus
-    }
-
-    var isCertificateExpiringSoon: Bool {
-        guard let certificate = e2eIdentityCertificate else {
-            return false
-        }
-        return certificate.expiryDate < Date.now + .oneDay + .oneDay
-    }
-
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
     }
+
+    var isCertificateExpiringSoon: Bool? {
+        guard let certificate = e2eIdentityCertificate else {
+            return nil
+        }
+        return actionsHandler.shouldCertificateBeUpdated(certificate: certificate)
+    }
+
     @Published
     var e2eIdentityCertificate: E2eIdentityCertificate?
     @Published var isRemoved: Bool = false
@@ -205,4 +192,12 @@ extension DeviceInfoViewModel {
             isSelfClient: isSelfClient
         )
     }
+}
+
+extension E2eIdentityCertificate {
+
+    var isValid: Bool {
+        status == .valid
+    }
+
 }

@@ -29,39 +29,41 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             .multilineTextAlignment(.leading)
             .padding([.top, .bottom], ViewConstants.Padding.standard)
         HStack {
-            switch viewModel.certificateStatus {
-            case .notActivated:
-                viewForStatus(
-                    titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
-                    statusText: viewModel.certificateStatus.titleForStatus(),
-                    textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
-                    image: Image(.certificateExpired)
-                )
-            case .revoked:
-                viewForStatus(
-                    titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
-                    statusText: viewModel.certificateStatus.titleForStatus(),
-                    textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
-                    image: Image(.certificateRevoked)
-                )
-            case .expired:
-                viewForStatus(
-                    titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
-                    statusText: viewModel.certificateStatus.titleForStatus(),
-                    textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
-                    image: Image(.certificateExpired)
-                )
-            case .valid:
-                viewForStatus(
-                    titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
-                    statusText: viewModel.certificateStatus.titleForStatus(),
-                    textColor: SemanticColors.Label.textCertificateValid.swiftUIColor,
-                    image: Image(.certificateValid)
-                )
+            if let status = viewModel.e2eIdentityCertificate?.status {
+                switch status {
+                case .notActivated:
+                    viewForStatus(
+                        titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
+                        statusText: status.titleForStatus(),
+                        textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
+                        image: Image(.certificateExpired)
+                    )
+                case .revoked:
+                    viewForStatus(
+                        titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
+                        statusText: status.titleForStatus(),
+                        textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
+                        image: Image(.certificateRevoked)
+                    )
+                case .expired:
+                    viewForStatus(
+                        titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
+                        statusText: status.titleForStatus(),
+                        textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
+                        image: Image(.certificateExpired)
+                    )
+                case .valid:
+                    viewForStatus(
+                        titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
+                        statusText: status.titleForStatus(),
+                        textColor: SemanticColors.Label.textCertificateValid.swiftUIColor,
+                        image: Image(.certificateValid)
+                    )
+                }
             }
             Spacer()
         }
-        if viewModel.isValidCerificate, let certificate = viewModel.e2eIdentityCertificate {
+        if let certificate = viewModel.e2eIdentityCertificate, certificate.isValid {
             Text(L10n.Localizable.Device.Details.Section.E2ei.serialNumber)
                 .font(FontSpec.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)

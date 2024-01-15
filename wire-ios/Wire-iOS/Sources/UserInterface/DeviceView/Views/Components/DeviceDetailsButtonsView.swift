@@ -69,27 +69,29 @@ struct DeviceDetailsButtonsView: View {
     }
 
     var body: some View {
-        switch viewModel.certificateStatus {
-        case .valid:
-            if viewModel.isCertificateExpiringSoon {
+        if let status = viewModel.e2eIdentityCertificate?.status {
+            switch status {
+            case .valid:
+                if let isExpiring = viewModel.isCertificateExpiringSoon, isExpiring {
+                    Divider()
+                    updateCertificateButton.padding()
+                }
+                Divider()
+                showCertificateButton.padding()
+            case .notActivated:
+                Divider()
+                getCertificateButton.padding()
+                Divider()
+                showCertificateButton.padding()
+            case .revoked:
+                Divider()
+                showCertificateButton.padding()
+            case .expired:
                 Divider()
                 updateCertificateButton.padding()
+                Divider()
+                showCertificateButton.padding()
             }
-            Divider()
-            showCertificateButton.padding()
-        case .notActivated:
-            Divider()
-            getCertificateButton.padding()
-            Divider()
-            showCertificateButton.padding()
-        case .revoked:
-            Divider()
-            showCertificateButton.padding()
-        case .expired:
-            Divider()
-            updateCertificateButton.padding()
-            Divider()
-            showCertificateButton.padding()
         }
         Divider()
     }

@@ -27,9 +27,10 @@ struct DeviceView: View {
             Text(viewModel.title.clippedValue())
                 .font(FontSpec.headerSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-            if let e2eIdentityCertificateStatusImage = viewModel.certificateStatus.imageForStatus()
-                , viewModel.isE2eIdentityEnabled {
-                e2eIdentityCertificateStatusImage
+            if viewModel.isE2eIdentityEnabled,
+                let certificate = viewModel.e2eIdentityCertificate,
+                let imageForStatus = certificate.status.imageForStatus() {
+                imageForStatus
             }
             if viewModel.isProteusVerificationEnabled {
                 Image(.verifiedShield)

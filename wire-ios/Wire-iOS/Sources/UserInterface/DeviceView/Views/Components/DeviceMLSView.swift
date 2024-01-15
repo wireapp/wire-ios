@@ -25,7 +25,7 @@ struct DeviceMLSView: View {
     var body: some View {
         VStack {
             CopyValueView(
-                title: L10n.Localizable.Device.Details.Secion.Mls.title,
+                title: L10n.Localizable.Device.Details.Section.Mls.title,
                 value: viewModel.e2eIdentityCertificate?.mlsThumbprint ?? "",
                 isCopyEnabled: viewModel.isCopyEnabled,
                 performCopy: viewModel.copyToClipboard
