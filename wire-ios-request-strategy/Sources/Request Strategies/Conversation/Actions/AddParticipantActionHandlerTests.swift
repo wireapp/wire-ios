@@ -171,7 +171,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             )
         }
 
-        let waitForHandler = self.expectation(description: "wait for Handler to be called")
+        let waitForHandler = self.customExpectation(description: "wait for Handler to be called")
 
         action.resultHandler = { _ in
             waitForHandler.fulfill()
@@ -228,7 +228,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             action = AddParticipantAction(users: [user], conversation: conversation)
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
@@ -272,7 +272,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
@@ -296,7 +296,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .failure = result {
                     expectation.fulfill()
@@ -335,7 +335,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 conversation: conversation
             )
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -379,7 +379,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 conversation: conversation
             )
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {

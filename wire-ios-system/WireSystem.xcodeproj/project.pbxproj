@@ -43,6 +43,8 @@
 		54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */; };
 		54FF9F141C4906C700B29ACE /* ZMTimePointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */; };
 		54FF9F161C4914D100B29ACE /* ZMSTestDetectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */; };
+		59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */; };
+		59059B9C2B4DBA1D0087D1F1 /* DateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B9A2B4DBA1D0087D1F1 /* DateProviding.swift */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
@@ -112,6 +114,8 @@
 		54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTimePoint.m; sourceTree = "<group>"; };
 		54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimePointTests.m; sourceTree = "<group>"; };
 		54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTestDetectionTests.m; sourceTree = "<group>"; };
+		59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemDateProvider.swift; sourceTree = "<group>"; };
+		59059B9A2B4DBA1D0087D1F1 /* DateProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateProviding.swift; sourceTree = "<group>"; };
 		8701221520F64171001E6342 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
@@ -193,7 +197,7 @@
 		5473E7C61B31A95A00C6A937 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				EE08D03829A79F9B00A9AB02 /* Logging */,
+				59059B982B4DBA1D0087D1F1 /* DateProviding */,
 				8701221520F64171001E6342 /* Cache.swift */,
 				54180BD61F459DCF0020D2BD /* MemoryReferenceDebugger.h */,
 				54180BD71F459DCF0020D2BD /* MemoryReferenceDebugger.swift */,
@@ -266,19 +270,21 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		59059B982B4DBA1D0087D1F1 /* DateProviding */ = {
+			isa = PBXGroup;
+			children = (
+				59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */,
+				59059B9A2B4DBA1D0087D1F1 /* DateProviding.swift */,
+			);
+			path = DateProviding;
+			sourceTree = "<group>";
+		};
 		E66EC68A2B21D179003052F7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		EE08D03829A79F9B00A9AB02 /* Logging */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Logging;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -441,6 +447,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				544CFC511B70B933007AA694 /* ZMSLog.swift in Sources */,
+				59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */,
 				01CB030F2A0CED010000CFF2 /* Flow.swift in Sources */,
 				8701221620F64171001E6342 /* Cache.swift in Sources */,
 				01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */,
@@ -453,6 +460,7 @@
 				096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */,
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
 				16962EDE20221F970069D88D /* ZMSLogNotifications.m in Sources */,
+				59059B9C2B4DBA1D0087D1F1 /* DateProviding.swift in Sources */,
 				F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */,
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,

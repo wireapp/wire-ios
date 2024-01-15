@@ -497,23 +497,23 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
-        defer { completionHandler() }
 
         guard response.result != .permanentError else {
             if response.httpStatus == 404 {
-                Task {
+                WaitingGroupTask(context: context) { [self] in
                     await deleteConversations(identifiers)
+                    completionHandler()
                 }
                 return
             }
 
             if response.httpStatus == 403 {
                 removeSelfUser(identifiers)
-                return
+                return completionHandler()
             }
 
             markConversationsAsFetched(identifiers)
-            return
+            return completionHandler()
         }
 
         guard
@@ -522,14 +522,15 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             let payload = Payload.Conversation(rawData, apiVersion: apiVersion, decoder: decoder)
         else {
             Logging.network.warn("Can't process response, aborting.")
-            return
+            return completionHandler()
         }
 
-        Task {
+        WaitingGroupTask(context: context) { [self] in
             await processor.updateOrCreateConversation(
                 from: payload,
                 in: context
             )
+            completionHandler()
         }
     }
 
@@ -617,23 +618,23 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
-        defer { completionHandler() }
 
         guard response.result != .permanentError else {
             markConversationsAsFetched(identifiers)
 
             if response.httpStatus == 404 {
-                Task {
+                WaitingGroupTask(context: context) { [self] in
                     await deleteConversations(identifiers)
+                    completionHandler()
                 }
                 return
             }
 
             if response.httpStatus == 403 {
                 removeSelfUser(identifiers)
-                return
+                return completionHandler()
             }
-            return
+            return completionHandler()
         }
 
         guard
@@ -645,14 +646,16 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                 decoder: decoder
             )
         else {
-            return Logging.network.warn("Can't process response, aborting.")
+            Logging.network.warn("Can't process response, aborting.")
+            return completionHandler()
         }
 
-        Task {
+        WaitingGroupTask(context: context) { [self] in
             await processor.updateOrCreateConversation(
                 from: payload,
                 in: context
             )
+            completionHandler()
         }
     }
 
@@ -730,17 +733,16 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
-        defer { completionHandler() }
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
             let payload = Payload.ConversationList(rawData, apiVersion: apiVersion, decoder: decoder)
         else {
             Logging.network.warn("Can't process response, aborting.")
-            return
+            return completionHandler()
         }
 
-        Task {
+        WaitingGroupTask(context: context) { [self] in
             await processor.updateOrCreateConversations(
                 from: payload,
                 in: context
@@ -750,6 +752,7 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
                 let missingIdentifiers = identifiers.subtracting(payload.conversations.compactMap(\.id))
                 self.queryStatusForMissingConversations(missingIdentifiers)
             }
+            completionHandler()
         }
     }
 
@@ -793,7 +796,6 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
-        defer { completionHandler() }
 
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
@@ -801,10 +803,10 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
             let payload = Payload.QualifiedConversationList(rawData, apiVersion: apiVersion, decoder: decoder)
         else {
             Logging.network.warn("Can't process response, aborting.")
-            return
+            return completionHandler()
         }
 
-        Task {
+        WaitingGroupTask(context: context) { [self] in
             await processor.updateOrCreateConverations(
                 from: payload,
                 in: context
@@ -814,6 +816,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
                 self.queryStatusForMissingConversations(payload.notFound)
                 self.queryStatusForFailedConversations(payload.failed)
             }
+            completionHandler()
         }
     }
 

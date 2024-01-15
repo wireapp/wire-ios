@@ -28,11 +28,11 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
     }
 
     func testThatItFetchesConversationWithGroupID() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait { syncMOC in
             // Given
             BackendInfo.isFederationEnabled = false
             let groupID = MLSGroupID([1, 2, 3])
-            let conversation = try groupID.createConversation(in: syncMOC)
+            let conversation = groupID.createConversation(in: syncMOC)
 
             // When
             let fetchedConversation = ZMConversation.fetch(with: groupID, in: syncMOC)
@@ -43,11 +43,11 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
     }
 
     func testThatItFetchesConversationWithGroupID_FederationEnabled() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait { syncMOC in
             // Given
             BackendInfo.isFederationEnabled = true
             let groupID = MLSGroupID([1, 2, 3])
-            let conversation = try groupID.createConversation(in: syncMOC)
+            let conversation = groupID.createConversation(in: syncMOC)
 
             // When
             let fetchedConversation = ZMConversation.fetch(with: groupID, in: syncMOC)
@@ -57,6 +57,25 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
         }
     }
 
+    func testThatItFetchesConversationWithMLSGroupStatus() throws {
+        try syncMOC.performAndWait { [self] in
+            // Given
+            BackendInfo.isFederationEnabled = false
+            let groupID = MLSGroupID([1, 2, 3])
+            let pendingConversation = groupID.createConversation(in: syncMOC)
+            pendingConversation.mlsStatus = .pendingJoin
+            let readyConversation = groupID.createConversation(in: syncMOC)
+            readyConversation.mlsStatus = .ready
+
+            // When
+            let pendingConversations = try ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .pendingJoin, in: syncMOC)
+            let readyConversations = try ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .ready, in: syncMOC)
+
+            // Then
+            XCTAssertEqual(pendingConversations, [pendingConversation])
+            XCTAssertEqual(readyConversations, [readyConversation])
+        }
+    }
 }
 
 // MARK: - Migration releated fetch requests
@@ -72,8 +91,8 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
             selfUser.teamIdentifier = .init()
 
             // create specific conversations
-            let conversations = try (0..<4).map { _ in
-                let conversation = try MLSGroupID.random().createConversation(in: syncMOC)
+            let conversations = (0..<4).map { _ in
+                let conversation = MLSGroupID.random().createConversation(in: syncMOC)
                 conversation.messageProtocol = .proteus
                 conversation.conversationType = .group
                 conversation.teamRemoteIdentifier = selfUser.teamIdentifier
@@ -105,8 +124,8 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
             selfUser.teamIdentifier = .init()
 
             // create specific conversations
-            let conversations = try (0..<4).map { _ in
-                let conversation = try MLSGroupID.random().createConversation(in: syncMOC)
+            let conversations = (0..<4).map { _ in
+                let conversation = MLSGroupID.random().createConversation(in: syncMOC)
                 conversation.messageProtocol = .mixed
                 conversation.conversationType = .group
                 conversation.teamRemoteIdentifier = selfUser.teamIdentifier
@@ -138,11 +157,12 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
 
 extension MLSGroupID {
 
-    fileprivate func createConversation(in managedObjectContext: NSManagedObjectContext) throws -> ZMConversation {
+    fileprivate func createConversation(in managedObjectContext: NSManagedObjectContext) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: managedObjectContext)
         conversation.remoteIdentifier = NSUUID.create()
         conversation.mlsGroupID = self
-        try managedObjectContext.save()
+        conversation.messageProtocol = .mls
+        XCTAssert(managedObjectContext.saveOrRollback())
         return conversation
     }
 
