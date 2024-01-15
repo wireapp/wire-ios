@@ -272,45 +272,6 @@ class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessage
 
 }
 
-class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationSystemMessageCell
-
-    var message: ZMConversationMessage?
-    var delegate: ConversationMessageCellDelegate?
-    var actionController: ConversationMessageActionController?
-
-    var topMargin: Float = 0
-    var isFullWidth: Bool = true
-    var supportsActions: Bool = false
-    var showEphemeralTimer: Bool = false
-    var containsHighlightableContent: Bool = false
-    var accessibilityIdentifier: String?
-    var accessibilityLabel: String?
-
-    var configuration: ConversationSystemMessageCell.Configuration
-
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
-        let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)
-        let title = Self.makeAttributedString(sender)
-        configuration = View.Configuration(icon: icon,
-                                           attributedText: title,
-                                           showLine: true)
-        accessibilityLabel = title.string
-    }
-
-    static func makeAttributedString(_ sender: UserType) -> NSAttributedString {
-        let string: String
-        if sender.isSelfUser {
-            string =  L10n.Localizable.Content.System.SessionReset.`self`
-        } else {
-            string = L10n.Localizable.Content.System.SessionReset.other(sender.name ?? "")
-        }
-
-        return NSMutableAttributedString.markdown(from: string, style: .systemMessage)
-    }
-
-}
-
 class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationCannotDecryptSystemMessageCell
     let configuration: View.Configuration
