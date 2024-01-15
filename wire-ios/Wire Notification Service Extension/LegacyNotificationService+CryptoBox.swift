@@ -52,9 +52,18 @@ extension LegacyNotificationService {
         }
 
         if configuration.shouldSetupMLSService, syncContext.mlsDecryptionService == nil {
+            let commitSender = CommitSender(
+                coreCryptoProvider: provider,
+                notificationContext: syncContext.notificationContext
+            )
+            let mlsActionExecutor = MLSActionExecutor(
+                coreCryptoProvider: provider,
+                commitSender: commitSender
+            )
+
             syncContext.mlsDecryptionService = MLSDecryptionService(
                 context: syncContext,
-                coreCryptoProvider: provider
+                mlsActionExecutor: mlsActionExecutor
             )
         }
     }
