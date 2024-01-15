@@ -42,14 +42,14 @@ class ConversationParticipantsChangedSystemMessageCellDescription: ConversationM
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
-        let color = IconColors.backgroundDefault
+        let iconColor = IconColors.backgroundDefault
         let textColor = LabelColors.textDefault
 
         let model = ParticipantsCellViewModel(
             font: .mediumFont,
             largeFont: .largeSemiboldFont,
             textColor: textColor,
-            iconColor: color,
+            iconColor: iconColor,
             message: message
         )
 
