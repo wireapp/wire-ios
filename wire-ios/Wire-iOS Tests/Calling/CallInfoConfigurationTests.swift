@@ -24,11 +24,13 @@ func == (lhs: CallInfoViewControllerInput, rhs: CallInfoViewControllerInput) -> 
     return lhs.isEqual(toConfiguration: rhs)
 }
 
-final class CallInfoConfigurationTests: XCTestCase {
+final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     var mockOtherUser: MockUserType!
     var mockSelfUser: MockUserType!
     var mockUsers: [MockUserType]!
+    var selfUser: ZMUser!
+    var otherUser: ZMUser!
 
     override func setUp() {
         super.setUp()
@@ -37,12 +39,20 @@ final class CallInfoConfigurationTests: XCTestCase {
         mockUsers = SwiftMockLoader.mockUsers()
         mockOtherUser = mockUsers.first!
         CallingConfiguration.config = .largeConferenceCalls
+
+        otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = UUID()
+        otherUser.name = "Bruno"
+
+        selfUser = ZMUser.selfUser(in: uiMOC)
     }
 
     override func tearDown() {
         mockSelfUser = nil
         mockOtherUser = nil
         mockUsers = nil
+        selfUser = nil
+        otherUser = nil
         CallingConfiguration.resetDefaultConfig()
 
         super.tearDown()
@@ -114,40 +124,78 @@ final class CallInfoConfigurationTests: XCTestCase {
         assertEquals(fixture.oneToOneOutgoingAudioRinging, configuration)
     }
 
-    func testOneToOneIncomingAudioDegraded() {
+    func testOneToOneProteusConversationIncomingAudioDegraded() {
         // given
-        let mockConversation = ((MockConversation.oneOnOneConversation(otherUser: mockOtherUser) as Any) as! ZMConversation)
+        let mockConversation = createOneToOneConversation(selfUser: selfUser, otherUser: otherUser, messageProtocol: .proteus)
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
-        let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: mockSelfUser, mockUsers: mockUsers)
+        let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: [otherUser])
 
         ((mockConversation.sortedActiveParticipants.first as Any) as? MockUser)?.isTrusted = true
         mockVoiceChannel.mockCallState = .incoming(video: false, shouldRing: true, degraded: true)
-        mockVoiceChannel.mockInitiator = mockOtherUser
-        mockVoiceChannel.mockFirstDegradedUser = mockOtherUser
+        mockVoiceChannel.mockInitiator = otherUser
+        mockVoiceChannel.mockFirstDegradedUser = otherUser
 
         // when
-        let configuration = CallInfoConfiguration(voiceChannel: mockVoiceChannel, preferedVideoPlaceholderState: .hidden, permissions: CallPermissions(), cameraType: .front, userEnabledCBR: false, selfUser: mockSelfUser)
+        let configuration = CallInfoConfiguration(voiceChannel: mockVoiceChannel,
+                                                  preferedVideoPlaceholderState: .hidden,
+                                                  permissions: CallPermissions(),
+                                                  cameraType: .front,
+                                                  userEnabledCBR: false,
+                                                  selfUser: selfUser)
 
         // then
         assertEquals(fixture.oneToOneIncomingAudioDegraded, configuration)
     }
 
-    func testOneToOneOutgoingAudioDegraded() {
+    func testOneToOneProteusConversationOutgoingAudioDegraded() {
         // given
-        let mockConversation = ((MockConversation.oneOnOneConversation(otherUser: mockOtherUser) as Any) as! ZMConversation)
+        let mockConversation = createOneToOneConversation(selfUser: selfUser, otherUser: otherUser, messageProtocol: .proteus)
+
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
-        let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: mockSelfUser, mockUsers: mockUsers)
+        let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!,
+                                          selfUser: selfUser,
+                                          mockUsers: [otherUser])
 
         ((mockConversation.sortedActiveParticipants.first as Any) as? MockUser)?.isTrusted = true
         mockVoiceChannel.mockCallState = .outgoing(degraded: true)
-        mockVoiceChannel.mockInitiator = mockSelfUser
-        mockVoiceChannel.mockFirstDegradedUser = mockOtherUser
+        mockVoiceChannel.mockInitiator = selfUser
+        mockVoiceChannel.mockFirstDegradedUser = otherUser
 
         // when
-        let configuration = CallInfoConfiguration(voiceChannel: mockVoiceChannel, preferedVideoPlaceholderState: .hidden, permissions: CallPermissions(), cameraType: .front, userEnabledCBR: false, selfUser: mockSelfUser)
+        let configuration = CallInfoConfiguration(voiceChannel: mockVoiceChannel,
+                                                  preferedVideoPlaceholderState: .hidden,
+                                                  permissions: CallPermissions(),
+                                                  cameraType: .front,
+                                                  userEnabledCBR: false,
+                                                  selfUser: selfUser)
 
         // then
         assertEquals(fixture.oneToOneOutgoingAudioDegraded, configuration)
+    }
+
+    func testOneToOneMlsConversationOutgoingAudioDegraded() {
+        // given
+        let mockConversation = createOneToOneConversation(selfUser: selfUser, otherUser: otherUser, messageProtocol: .mls)
+
+        let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
+        let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!,
+                                          selfUser: selfUser,
+                                          mockUsers: [otherUser])
+
+        mockVoiceChannel.mockCallState = .outgoing(degraded: true)
+        mockVoiceChannel.mockInitiator = selfUser
+        mockVoiceChannel.mockFirstDegradedUser = otherUser
+
+        // when
+        let configuration = CallInfoConfiguration(voiceChannel: mockVoiceChannel,
+                                                  preferedVideoPlaceholderState: .hidden,
+                                                  permissions: CallPermissions(),
+                                                  cameraType: .front,
+                                                  userEnabledCBR: false,
+                                                  selfUser: selfUser)
+
+        // then
+        assertEquals(fixture.oneToOneMlsOutgoingAudioDegraded, configuration)
     }
 
     func testOneToOneAudioConnecting() {
@@ -694,6 +742,28 @@ final class CallInfoConfigurationTests: XCTestCase {
 
         // then
         XCTAssertEqual(configuration.videoPlaceholderState, .hidden)
+    }
+
+    // MARK: - Mock ZMConversation
+
+    func createOneToOneConversation(selfUser: ZMUser,
+                                    otherUser: ZMUser,
+                                    messageProtocol: MessageProtocol) -> ZMConversation {
+
+        let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
+        mockConversation.messageProtocol = messageProtocol
+        mockConversation.add(participants: selfUser)
+
+        mockConversation.conversationType = .oneOnOne
+        mockConversation.remoteIdentifier = UUID.create()
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
+        connection.to = otherUser
+        connection.status = .accepted
+        connection.conversation = mockConversation
+
+        connection.add(user: otherUser)
+
+        return mockConversation
     }
 
 }

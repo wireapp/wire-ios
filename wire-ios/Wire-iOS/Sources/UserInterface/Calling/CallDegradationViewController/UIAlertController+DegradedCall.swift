@@ -60,4 +60,29 @@ extension UIAlertController {
         return controller
     }
 
+    static func degradedMLSConference(
+        conferenceEnded: Bool = false,
+        confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil) -> UIAlertController {
+
+            typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
+            typealias EndedCall = L10n.Localizable.Call.Mls.Degraded.Ended.Alert
+
+            let title = DegradedCall.title
+            let message = conferenceEnded ? EndedCall.message : DegradedCall.message
+            let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+            // Add actions
+            if let confirmationBlock = confirmationBlock {
+                controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
+                    confirmationBlock(true)
+                })
+
+                controller.addAction(.cancel())
+            } else {
+                controller.addAction(.ok())
+            }
+
+            return controller
+        }
+
 }

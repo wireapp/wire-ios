@@ -369,7 +369,7 @@ extension ZMConversation {
 // MARK: - Messages resend/expiration
 extension ZMConversation {
 
-    var isDegraded: Bool {
+    public var isDegraded: Bool {
         switch messageProtocol {
         case .proteus:
             return securityLevel == .secureWithIgnored

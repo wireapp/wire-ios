@@ -190,7 +190,7 @@ extension VoiceChannelV3: CallActions {
 
     public func continueByDecreasingConversationSecurity(userSession: ZMUserSession) {
         guard let conversation = conversation else { return }
-        conversation.acknowledgePrivacyWarning(withResendIntent: false)
+        conversation.acknowledgePrivacyWarning(withResendIntent: true)
     }
 
     public func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {
