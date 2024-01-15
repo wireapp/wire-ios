@@ -263,6 +263,8 @@ extension VoiceChannel {
     }
 
     var degradationState: CallDegradationState {
+        guard let degradationReason else { return .none }
+
         switch state {
         case .incoming(video: _, shouldRing: _, degraded: true):
             return .incoming(reason: degradationReason)
@@ -281,10 +283,8 @@ extension VoiceChannel {
         return HashBox(value: firstDegradedUser)
     }
 
-    private var degradationReason: CallDegradationReason {
-        guard let conversation = conversation else {
-            return .invalidCertificate
-        }
+    private var degradationReason: CallDegradationReason? {
+        guard let conversation else { return nil }
 
         switch conversation.messageProtocol {
         case .mls:
