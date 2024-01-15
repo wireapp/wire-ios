@@ -1287,6 +1287,7 @@
 		E94784EB278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784EA278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift */; };
 		E94784ED278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784EC278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift */; };
 		E9559B4927B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */; };
+		E95B0A142B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B0A132B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift */; };
 		E95CF9522AEA79F800DCAC6D /* ConversationMessageSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95CF9512AEA79F800DCAC6D /* ConversationMessageSnapshotTestCase.swift */; };
 		E961C0752A332E7400A36DE6 /* ConversationReactionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */; };
 		E96301BB2B4EEDD600726CDB /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */; };
@@ -3316,6 +3317,7 @@
 		E94784EC278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServicesOptionsViewController.swift; sourceTree = "<group>"; };
 		E950F5EF2ABC67FC00B09C43 /* GermanLocaleTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = GermanLocaleTests.xctestplan; sourceTree = "<group>"; };
 		E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ConfirmRemovingServices.swift"; sourceTree = "<group>"; };
+		E95B0A132B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationNewDeviceSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E95CF9512AEA79F800DCAC6D /* ConversationMessageSnapshotTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageSnapshotTestCase.swift; sourceTree = "<group>"; };
 		E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReactionMessageTests.swift; sourceTree = "<group>"; };
 		E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
@@ -4560,6 +4562,7 @@
 				E9C0B3622B55940500BC80E8 /* ConversationMessageTimerCellDescription.swift */,
 				E9C0B3642B5594A500BC80E8 /* ConversationCallSystemMessageCellDescription.swift */,
 				E9C0B3662B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift */,
+				E95B0A132B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -8944,6 +8947,7 @@
 				F18993B822413C9800535A74 /* ConversationContentViewController+ScrollViewDelegate.swift in Sources */,
 				D5168F532010F20B00F8222A /* BlurEffectTransition.swift in Sources */,
 				1671D6D1200CDC380022D289 /* InviteTeamMemberCell.swift in Sources */,
+				E95B0A142B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift in Sources */,
 				D5D65A11207509F300D7F3C3 /* BackupPasswordViewController.swift in Sources */,
 				5EC7C87A219038F6004662AC /* ImageResourceThumbnailView.swift in Sources */,
 				EE0768EE2A9FB99700BA47A3 /* EmojiRepository.swift in Sources */,
