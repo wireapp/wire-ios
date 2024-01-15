@@ -280,47 +280,6 @@ extension NewDeviceSystemMessageCell {
 
 // MARK: - ConversationRenamedSystemMessageCell
 
-class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
-    struct Configuration {
-        let attributedText: NSAttributedString
-        let newConversationName: NSAttributedString
-    }
-
-    var nameLabelFont: UIFont? = .normalSemiboldFont
-    private let nameLabel = UILabel()
-
-    override func configureSubviews() {
-        super.configureSubviews()
-        nameLabel.numberOfLines = 0
-        imageView.setTemplateIcon(.pencil, size: 16)
-        imageView.tintColor = IconColors.backgroundDefault
-        bottomContentView.addSubview(nameLabel)
-    }
-
-    override func configureConstraints() {
-        super.configureConstraints()
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: bottomContentView.topAnchor),
-            nameLabel.bottomAnchor.constraint(equalTo: bottomContentView.bottomAnchor),
-            nameLabel.leadingAnchor.constraint(equalTo: bottomContentView.leadingAnchor),
-            nameLabel.trailingAnchor.constraint(equalTo: bottomContentView.trailingAnchor)
-        ])
-    }
-
-    // MARK: - Configuration
-
-    func configure(with object: Configuration, animated: Bool) {
-        lineView.isHidden = false
-        attributedText = object.attributedText
-        nameLabel.attributedText = object.newConversationName
-        nameLabel.accessibilityLabel = nameLabel.attributedText?.string
-    }
-
-}
-
 // MARK: - Factory
 
 final class ConversationSystemMessageCellDescription {
