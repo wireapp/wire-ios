@@ -703,12 +703,36 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        let previousProtocol = conversation.messageProtocol
-        if previousProtocol == .proteus && messageProtocol == .mls {
-            conversation.appendMLSMigrationPotentialGapSystemMessage(sender: ZMUser.selfUser(in: context), at: conversation.lastModifiedDate ??  Date())
-        }
+        appendSystemMessageIfNeeded(
+            conversation: conversation,
+            sender: ZMUser.selfUser(in: context),
+            previousProtocol: conversation.messageProtocol,
+            messageProtocol: messageProtocol
+        )
 
         conversation.messageProtocol = messageProtocol
+    }
+
+    private func appendSystemMessageIfNeeded(
+        conversation: ZMConversation,
+        sender: ZMUser,
+        previousProtocol: MessageProtocol,
+        messageProtocol: MessageProtocol
+    ) {
+        switch previousProtocol {
+        case .proteus where messageProtocol == .mixed:
+            conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
+
+        case .proteus where messageProtocol == .mls:
+            let date = conversation.lastModifiedDate ?? .now
+            conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
+
+        case .mixed where messageProtocol == .mls:
+            conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+
+        default:
+            break
+        }
     }
 
     private func updateMLSStatus(
