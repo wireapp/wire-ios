@@ -163,6 +163,26 @@ public class NotificationSession {
             transportSession: transportSession
         )
 
+        let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let coreCryptoProvider = CoreCryptoProvider(
+            selfUserID: accountIdentifier,
+            sharedContainerURL: coreDataStack.applicationContainer,
+            accountDirectory: coreDataStack.accountContainer,
+            syncContext: coreDataStack.syncContext,
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            allowCreation: false
+        )
+        let commitSender = CommitSender(
+            coreCryptoProvider: coreCryptoProvider,
+            notificationContext: coreDataStack.syncContext.notificationContext
+        )
+        let mlsActionExecutor = MLSActionExecutor(
+            coreCryptoProvider: coreCryptoProvider,
+            commitSender: commitSender
+        )
+
+        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
+
         self.init(
             applicationStatusDirectory: applicationStatusDirectory,
             accountIdentifier: accountIdentifier,

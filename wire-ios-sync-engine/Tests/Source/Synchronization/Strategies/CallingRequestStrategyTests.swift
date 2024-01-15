@@ -38,6 +38,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
+
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockRegistrationDelegate = MockClientRegistrationDelegate()
@@ -80,7 +81,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // given
         let expectedCallConfig = "{\"config\":true}"
-        let receivedCallConfigExpectation = expectation(description: "Received CallConfig")
+        let receivedCallConfigExpectation = customExpectation(description: "Received CallConfig")
 
         sut.requestCallConfig { (callConfig, httpStatusCode) in
             if callConfig == expectedCallConfig, httpStatusCode == 200 {
@@ -131,7 +132,7 @@ class CallingRequestStrategyTests: MessagingTest {
     func testThatItDoesNotForwardUnsuccessfulResponses() {
         // given
         let expectedCallConfig = "{\"config\":true}"
-        let receivedCallConfigExpectation = expectation(description: "Received CallConfig")
+        let receivedCallConfigExpectation = customExpectation(description: "Received CallConfig")
 
         sut.requestCallConfig { (callConfig, httpStatusCode) in
             if callConfig == expectedCallConfig, httpStatusCode == 200 {
@@ -199,7 +200,7 @@ class CallingRequestStrategyTests: MessagingTest {
             """
 
             // Expectation
-            let receivedClientList = expectation(description: "Received client list")
+            let receivedClientList = customExpectation(description: "Received client list")
 
             let avsClient1 = try XCTUnwrap(AVSClient(userClient: client1))
             let avsClient2 = try XCTUnwrap(AVSClient(userClient: client2))
@@ -286,7 +287,7 @@ class CallingRequestStrategyTests: MessagingTest {
             """
 
             // Expectation
-            let receivedClientList = expectation(description: "Received client list")
+            let receivedClientList = customExpectation(description: "Received client list")
 
             let avsClient1 = try XCTUnwrap(AVSClient(userClient: client1))
             let avsClient2 = try XCTUnwrap(AVSClient(userClient: client2))
@@ -359,7 +360,7 @@ class CallingRequestStrategyTests: MessagingTest {
             syncMOC.saveOrRollback()
 
             // Expectations
-            let receivedClientList = expectation(description: "Received client list")
+            let receivedClientList = customExpectation(description: "Received client list")
 
             let avsClient1 = try XCTUnwrap(AVSClient(userClient: client1))
             let avsClient2 = try XCTUnwrap(AVSClient(userClient: client2))
@@ -658,7 +659,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
 
-        sut.callCenter?.muted = false
+        sut.callCenter?.isMuted = false
 
         // WHEN
         syncMOC.performAndWait {
@@ -666,7 +667,7 @@ class CallingRequestStrategyTests: MessagingTest {
         }
 
         // THEN
-        XCTAssertTrue(sut.callCenter?.muted ?? false)
+        XCTAssertTrue(sut.callCenter?.isMuted ?? false)
     }
 
     func test_ThatItHandlesMLSRejectMessage() {
@@ -709,7 +710,7 @@ class CallingRequestStrategyTests: MessagingTest {
         let avsClient1 = AVSClient(userId: user1AVSIdentifier, clientId: client1RemoteIdentifier)
         let targets = [avsClient1]
 
-        let expectation = self.expectation(description: "reject message is sent to MLS self conversation")
+        let expectation = self.customExpectation(description: "reject message is sent to MLS self conversation")
         // When we schedule the message
         syncMOC.performGroupedBlock {
             self.sut.send(

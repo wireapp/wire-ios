@@ -135,6 +135,28 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         return try await mock(groupID, groupInfo)
     }
 
+    // MARK: - Decrypt
+
+    typealias DecryptMessage = ((Data, MLSGroupID) async throws -> DecryptedMessage)
+    private var mockDecryptMessage_: DecryptMessage?
+    var mockDecryptMessage: DecryptMessage? {
+        get { serialQueue.sync { mockDecryptMessage_ } }
+        set { serialQueue.sync { mockDecryptMessage_ = newValue } }
+    }
+    private var mockDecryptMessageCount_ = 0
+    var mockDecryptMessageCount: Int {
+        get { serialQueue.sync { mockDecryptMessageCount_ } }
+        set { serialQueue.sync { mockDecryptMessageCount_ = newValue } }
+    }
+    func decryptMessage(_ message: Data, in groupID: WireDataModel.MLSGroupID) async throws -> WireCoreCrypto.DecryptedMessage {
+        guard let mock = mockDecryptMessage else {
+            fatalError("no mock for `decryptMessage`")
+        }
+
+        mockDecryptMessageCount += 1
+        return try await mock(message, groupID)
+    }
+
     // MARK: - On epoch changed
 
     typealias OnEpochChangedMock = () -> AnyPublisher<MLSGroupID, Never>
