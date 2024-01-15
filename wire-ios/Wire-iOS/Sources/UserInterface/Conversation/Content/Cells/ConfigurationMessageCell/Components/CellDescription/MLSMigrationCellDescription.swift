@@ -22,10 +22,16 @@ import WireDataModel
 final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
+    typealias SystemMessageMLSMigrationLocale = L10n.Localizable.Content.System.MlsMigration
 
     private static let linkAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.mediumSemiboldFont,
         .link: URL.wr_mlsLearnMore
+    ]
+
+    private static let linkAttributesForDownloadingWire: [NSAttributedString.Key: Any] = [
+        .font: UIFont.mediumSemiboldFont,
+        .link: URL.wr_wireAppOnItunes
     ]
 
     let configuration: View.Configuration
@@ -44,9 +50,9 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
     var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
 
-    init(messageType: ZMSystemMessageType) {
+    init(messageType: ZMSystemMessageType, for user: UserType) {
         let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
-        let content = Self.makeAttributedString(messageType: messageType)
+        let content = Self.makeAttributedString(messageType: messageType, for: user)
 
         configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
         accessibilityLabel = content?.string
@@ -54,7 +60,7 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     // MARK: Attributed Strings
 
-    private static func makeAttributedString(messageType: ZMSystemMessageType) -> NSAttributedString? {
+    private static func makeAttributedString(messageType: ZMSystemMessageType, for user: UserType) -> NSAttributedString? {
         switch messageType {
         case .mlsMigrationFinalized:
             return makeFinalizedAttributedString()
@@ -68,6 +74,10 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
             return makeJoinAfterwardsAttributedString()
         case .mlsMigrationPotentialGap:
             return makePotentialGapAttributedString()
+        case .mlsMigrationMLSNotSupportedSelfUser:
+            return makeMLSNotSupportedForSelfUser(username: user.name ?? "")
+        case .mlsMigrationMLSNotSupportedOtherUser:
+            return makeMLSNotSupportedForOtherUser(username: user.name ?? "")
         default:
             assertionFailure("MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!")
             return nil
@@ -75,14 +85,13 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
     }
 
     private static func makeFinalizedAttributedString() -> NSAttributedString? {
-        typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let text = NSMutableAttributedString.markdown(
-            from: Localizable.Finalized.done,
+            from: SystemMessageMLSMigrationLocale.Finalized.done,
             style: .systemMessage
         )
         let link = NSAttributedString(
-            string: Localizable.learnMore,
+            string: SystemMessageMLSMigrationLocale.learnMore,
             attributes: linkAttributes
         )
         return [text, link].joined(separator: NSAttributedString(" "))
@@ -92,11 +101,11 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let text = NSMutableAttributedString.markdown(
-            from: Localizable.Started.description,
+            from: SystemMessageMLSMigrationLocale.Started.description,
             style: .systemMessage
         )
         let link = NSAttributedString(
-            string: Localizable.learnMore,
+            string: SystemMessageMLSMigrationLocale.learnMore,
             attributes: linkAttributes
         )
         return [text, link].joined(separator: NSAttributedString(" "))
@@ -104,46 +113,70 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     private static func makeOngoingCallAttributedString() -> NSAttributedString? {
         NSAttributedString.markdown(
-            from: L10n.Localizable.Content.System.MlsMigration.ongoingCall,
+            from: SystemMessageMLSMigrationLocale.ongoingCall,
             style: .systemMessage
         )
     }
 
     private static func makeUpdateVersionAttributedString() -> NSAttributedString? {
         NSAttributedString.markdown(
-            from: L10n.Localizable.Content.System.MlsMigration.Started.updateLatestVersion,
+            from: SystemMessageMLSMigrationLocale.Started.updateLatestVersion,
             style: .systemMessage
         )
     }
 
     private static func makeJoinAfterwardsAttributedString() -> NSAttributedString? {
-        typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let text = NSMutableAttributedString.markdown(
-            from: Localizable.joinAfterwards,
+            from: SystemMessageMLSMigrationLocale.joinAfterwards,
             style: .systemMessage
         )
         let link = NSAttributedString(
-            string: Localizable.learnMore,
+            string: SystemMessageMLSMigrationLocale.learnMore,
             attributes: linkAttributes
         )
         return [text, link].joined(separator: NSAttributedString(" "))
     }
 
     private static func makePotentialGapAttributedString() -> NSAttributedString? {
-        typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let text = NSMutableAttributedString.markdown(
-            from: Localizable.potentialGap,
+            from: SystemMessageMLSMigrationLocale.potentialGap,
             style: .systemMessage
         )
 
         let link = NSAttributedString(
-            string: Localizable.learnMore,
+            string: SystemMessageMLSMigrationLocale.learnMore,
             attributes: linkAttributes
         )
 
         return [text, link].joined(separator: NSAttributedString(" "))
+
+    }
+
+    private static func makeMLSNotSupportedForSelfUser(username: String) -> NSAttributedString? {
+
+        let text = NSMutableAttributedString.markdown(
+            from: SystemMessageMLSMigrationLocale.mlsNotSupportedByYou(username),
+            style: .systemMessage
+        )
+
+        let link = NSMutableAttributedString(
+            string: SystemMessageMLSMigrationLocale.Download.Mls.wire,
+            attributes: linkAttributesForDownloadingWire
+        )
+
+        return [text, link].joined(separator: NSAttributedString(" "))
+    }
+
+    private static func makeMLSNotSupportedForOtherUser(username: String) -> NSAttributedString? {
+
+        let text = NSMutableAttributedString.markdown(
+            from: SystemMessageMLSMigrationLocale.mlsNotSupportedByOtherUser(username, username),
+            style: .systemMessage
+        )
+
+        return text
 
     }
 

@@ -439,9 +439,11 @@ final class ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
         case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted, .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap, .mlsMigrationMLSNotSupportedSelfUser, .mlsMigrationMLSNotSupportedOtherUser:
-            let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType)
-            return [AnyConversationMessageCellDescription(description)]
+            if let user = conversation.connectedUserType {
+                let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType, for: user)
 
+                return [AnyConversationMessageCellDescription(description)]
+            }
         case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
