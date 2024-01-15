@@ -155,7 +155,7 @@ final class ConversationSystemMessageCellDescription {
 
         case .failedToAddParticipants:
             if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction = buttonAction {
-                let cellDescription = ConversationFailedToAddParticipantsCellDescription(failedUsers: users,
+                let cellDescription = ConversationFailedToAddParticipantsSystemMessageCellDescription(failedUsers: users,
                                                                                          isCollapsed: isCollapsed,
                                                                                          buttonAction: buttonAction)
                 return [AnyConversationMessageCellDescription(cellDescription)]
@@ -194,7 +194,7 @@ private extension ConversationLike {
 
 // MARK: - Descriptions
 
-final class ConversationFailedToAddParticipantsCellDescription: ConversationMessageCellDescription {
+final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
     typealias View = FailedUsersSystemMessageCell
@@ -217,8 +217,8 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
 
     init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
         configuration = View.Configuration(
-            title: ConversationFailedToAddParticipantsCellDescription.configureTitle(for: failedUsers),
-            content: ConversationFailedToAddParticipantsCellDescription.configureContent(for: failedUsers),
+            title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
+            content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
             isCollapsed: isCollapsed,
             icon: Asset.Images.attention.image,
             buttonAction: buttonAction)
