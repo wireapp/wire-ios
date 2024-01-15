@@ -216,68 +216,6 @@ extension CannotDecryptSystemMessageCell {
 
 // MARK: - NewDeviceSystemMessageCell
 
-class NewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
-    static let userClientURL: URL = URL(string: "settings://user-client")!
-
-    var linkTarget: LinkTarget?
-
-    enum LinkTarget {
-        case user(UserType)
-        case conversation(ZMConversation)
-    }
-
-    struct Configuration {
-        let attributedText: NSAttributedString?
-        var icon: UIImage?
-        var linkTarget: LinkTarget
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        setupView()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
-    func setupView() {
-        lineView.isHidden = false
-    }
-
-    func configure(with object: Configuration, animated: Bool) {
-        attributedText = object.attributedText
-        imageView.image = object.icon
-        linkTarget = object.linkTarget
-    }
-
-}
-
-// MARK: - UITextViewDelegate
-
-extension NewDeviceSystemMessageCell {
-
-    public override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-
-        guard let linkTarget = linkTarget,
-              url == type(of: self).userClientURL,
-              let zClientViewController = ZClientViewController.shared else { return false }
-
-        switch linkTarget {
-        case .user(let user):
-            zClientViewController.openClientListScreen(for: user)
-        case .conversation(let conversation):
-            zClientViewController.openDetailScreen(for: conversation)
-        }
-
-        return false
-    }
-
-}
-
 // MARK: - ConversationRenamedSystemMessageCell
 
 // MARK: - Factory
