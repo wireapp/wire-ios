@@ -100,6 +100,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         case .conversationMLSWelcome:
             await processConversationMLSWelcome(event)
 
+        case .conversationProtocolUpdate:
+            await processConversationProtocolChange(event)
+
         default:
             break
         }
@@ -244,6 +247,19 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
         await MLSEventProcessor.shared.process(
             welcomeMessage: payload.data,
+            in: context
+        )
+    }
+
+    private func processConversationProtocolChange(_ event: ZMUpdateEvent) async {
+        guard let payload = try? eventPayloadDecoder.decode(
+            Payload.ConversationEvent<Payload.UpdateConversationProtocolChange>.self,
+            from: event.payload
+        ) else { return }
+
+        await processor.processPayload(
+            payload,
+            originalEvent: event,
             in: context
         )
     }

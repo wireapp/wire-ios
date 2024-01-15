@@ -36,10 +36,12 @@ extension ZMManagedObject {
         let localDomain = ZMUser.selfUser(in: context).domain
         let isSearchingLocalDomain = domain == nil || localDomain == nil || localDomain == domain
 
-        return internalFetch(withRemoteIdentifier: remoteIdentifier,
-                             domain: domain ?? localDomain,
-                             searchingLocalDomain: isSearchingLocalDomain,
-                             in: context)
+        return internalFetch(
+            withRemoteIdentifier: remoteIdentifier,
+            domain: domain ?? localDomain,
+            searchingLocalDomain: isSearchingLocalDomain,
+            in: context
+        )
     }
 
     public static func fetch(with qualifiedId: QualifiedID, in context: NSManagedObjectContext) -> Self? {

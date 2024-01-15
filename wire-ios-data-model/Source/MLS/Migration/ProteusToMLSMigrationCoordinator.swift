@@ -55,6 +55,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let featureRepository: FeatureRepositoryInterface
     private let actionsProvider: MLSActionsProviderProtocol
     private var storage: ProteusToMLSMigrationStorageInterface
+    private let postProtocolChangeUpdater: ConversationPostProtocolChangeUpdating
+
     private let logger = WireLogger.mls
 
     // MARK: - Life cycle
@@ -76,12 +78,14 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         context: NSManagedObjectContext,
         storage: ProteusToMLSMigrationStorageInterface,
         featureRepository: FeatureRepositoryInterface? = nil,
-        actionsProvider: MLSActionsProviderProtocol? = nil
+        actionsProvider: MLSActionsProviderProtocol? = nil,
+        postProtocolChangeUpdater: ConversationPostProtocolChangeUpdating? = nil
     ) {
         self.context = context
         self.storage = storage
         self.featureRepository = featureRepository ?? FeatureRepository(context: context)
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
+        self.postProtocolChangeUpdater = postProtocolChangeUpdater ?? ConversationPostProtocolChangeUpdater()
     }
 
     // MARK: - Public Interface
@@ -266,7 +270,20 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private func updateConversationProtocolToMLS(for conversation: ZMConversation) async throws {
         let qualifiedID = await context.perform { conversation.qualifiedID }
         guard let qualifiedID else { return }
-        try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mls, context: context.notificationContext)
+
+        let messageProtocol: MessageProtocol = .mls
+
+        try await actionsProvider.updateConversationProtocol(
+            qualifiedID: qualifiedID,
+            messageProtocol: messageProtocol,
+            context: context.notificationContext
+        )
+
+        try await postProtocolChangeUpdater.updateLocalConversation(
+            for: qualifiedID,
+            to: messageProtocol,
+            context: context
+        )
     }
 }
 

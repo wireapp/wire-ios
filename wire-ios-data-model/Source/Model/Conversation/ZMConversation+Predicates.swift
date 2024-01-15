@@ -165,17 +165,37 @@ extension ZMConversation {
     private class func predicateForValidConversations() -> NSPredicate {
         let basePredicate = predicateForFilteringResults()
         let notAConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.connection.rawValue)")
-        let activeConnection = NSPredicate(format: "NOT \(ZMConversationConnectionKey).status IN %@", [NSNumber(value: ZMConnectionStatus.pending.rawValue),
-                                                                                                       NSNumber(value: ZMConnectionStatus.ignored.rawValue),
-                                                                                                       NSNumber(value: ZMConnectionStatus.cancelled.rawValue)]) // pending connections should be in other list, ignored and cancelled are not displayed
-        let predicate1 = NSCompoundPredicate(orPredicateWithSubpredicates: [notAConnection, activeConnection]) // one-to-one conversations and not pending and not ignored connections
+
+        // pending connections should be in other list, ignored and cancelled are not displayed
+        let activeConnection = NSPredicate(format: "NOT \(ZMConversationConnectionKey).status IN %@", [
+            NSNumber(value: ZMConnectionStatus.pending.rawValue),
+            NSNumber(value: ZMConnectionStatus.ignored.rawValue),
+            NSNumber(value: ZMConnectionStatus.cancelled.rawValue)
+        ])
+
+        // one-to-one conversations and not pending and not ignored connections
+        let predicate1 = NSCompoundPredicate(orPredicateWithSubpredicates: [notAConnection, activeConnection])
         let noConnection = NSPredicate(format: "\(ZMConversationConnectionKey) == nil") // group conversations
         let notBlocked = NSPredicate(format: "\(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blocked.rawValue) && \(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blockedMissingLegalholdConsent.rawValue)")
         let predicate2 = NSCompoundPredicate(orPredicateWithSubpredicates: [noConnection, notBlocked]) // group conversations and not blocked connections
 
-        let proteusOrMlsAndReady = NSPredicate(format: "(\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)) OR ((\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)) AND (\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)))")
+        // protocols
+        let hasProteusProtocol =  NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
+        let hasMixedProtocol =  NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mixed.int16Value)")
+        let hasMLSProtocol =  NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
+        let hasMLSReadyStatus = NSPredicate(format: "\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)")
+        let hasValidProtocols = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            hasProteusProtocol,
+            hasMixedProtocol,
+            NSCompoundPredicate(andPredicateWithSubpredicates: [hasMLSProtocol, hasMLSReadyStatus])
+        ])
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, predicate1, predicate2, proteusOrMlsAndReady])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            basePredicate,
+            predicate1,
+            predicate2,
+            hasValidProtocols
+        ])
     }
 
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {

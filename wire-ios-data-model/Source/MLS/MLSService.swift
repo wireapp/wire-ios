@@ -121,6 +121,7 @@ public final class MLSService: MLSServiceInterface {
     private var groupsPendingJoin = Set<MLSGroupID>()
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let syncStatus: SyncStatusProtocol
+    private let conversationPostProtocolChangeUpdater: ConversationPostProtocolChangeUpdating
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -201,7 +202,8 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
         userID: UUID,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository(),
+        conversationPostProtocolChangeUpdater: ConversationPostProtocolChangeUpdating = ConversationPostProtocolChangeUpdater()
     ) {
         self.context = context
         self.coreCryptoProvider = coreCryptoProvider
@@ -219,6 +221,7 @@ public final class MLSService: MLSServiceInterface {
         self.delegate = delegate
         self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
+        self.conversationPostProtocolChangeUpdater = conversationPostProtocolChangeUpdater
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(coreCryptoProvider: coreCryptoProvider)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
@@ -1686,20 +1689,24 @@ public final class MLSService: MLSServiceInterface {
             }
 
             do {
-
                 // update message protocol to `mixed`
+                let messageProtocol: MessageProtocol = .mixed
+
                 try await actionsProvider.updateConversationProtocol(
                     qualifiedID: qualifiedID,
-                    messageProtocol: .mixed,
+                    messageProtocol: messageProtocol,
                     context: context.notificationContext
                 )
 
-                // sync the group conversation
-                try await actionsProvider.syncConversation(
+                // update and sync the local group conversation
+                try await conversationPostProtocolChangeUpdater.updateLocalConversation(
+                    conversation,
                     qualifiedID: qualifiedID,
-                    context: context.notificationContext
+                    to: messageProtocol,
+                    context: context
                 )
 
+                // create MLS group and update keying material
                 let mlsGroupID = await context.perform { conversation.mlsGroupID }
                 guard let mlsGroupID else {
                     logger.warn("failed to convert conversation \(qualifiedID), `mlsGroupID` is `nil`")
@@ -1707,7 +1714,6 @@ public final class MLSService: MLSServiceInterface {
                     continue
                 }
 
-                // create MLS group and update keying material
                 try await createGroup(for: mlsGroupID)
 
                 do {
@@ -1732,9 +1738,7 @@ public final class MLSService: MLSServiceInterface {
                 continue
             }
         }
-
     }
-
 }
 
 // MARK: - Helper types
