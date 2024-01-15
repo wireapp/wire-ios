@@ -101,45 +101,6 @@ extension ConversationStartedSystemMessageCell {
 
 // MARK: - ConversationWarningSystemMessageCell
 
-class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-    struct Configuration {
-        let topText: String
-        let bottomText: String
-    }
-
-    private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                                   color: LabelColors.textDefault)
-    private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                                      color: LabelColors.textDefault)
-
-    func configure(with object: Configuration, animated: Bool) {
-        encryptionLabel.text = object.topText
-        sensitiveInfoLabel.text = object.bottomText
-    }
-
-    override func configureSubviews() {
-        super.configureSubviews()
-        encryptionLabel.numberOfLines = 0
-        encryptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        topContentView.addSubview(encryptionLabel)
-
-        sensitiveInfoLabel.numberOfLines = 0
-        sensitiveInfoLabel.translatesAutoresizingMaskIntoConstraints = false
-        bottomContentView.addSubview(sensitiveInfoLabel)
-
-        lineView.isHidden = true
-        imageView.image =  Asset.Images.attention.image.withTintColor(IconColors.backgroundDefault)
-    }
-
-    override func configureConstraints() {
-        super.configureConstraints()
-        encryptionLabel.fitIn(view: topContentView)
-        sensitiveInfoLabel.fitIn(view: bottomContentView)
-        NSLayoutConstraint.activate([
-            imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required)])
-    }
-}
-
 // MARK: - ParticipantsConversationSystemMessageCell
 
 class ParticipantsConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
@@ -179,44 +140,6 @@ class ParticipantsConversationSystemMessageCell: ConversationIconBasedCell, Conv
 }
 
 // MARK: - CannotDecryptSystemMessageCell
-
-class CannotDecryptSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
-    struct Configuration {
-        let icon: UIImage?
-        let attributedText: NSAttributedString?
-        let showLine: Bool
-    }
-
-    var lastConfiguration: Configuration?
-
-    // MARK: - Configuration
-
-    func configure(with object: Configuration, animated: Bool) {
-        lastConfiguration = object
-        lineView.isHidden = !object.showLine
-        imageView.image = object.icon
-        attributedText = object.attributedText
-        textLabel.linkTextAttributes = [:]
-    }
-}
-
-// MARK: - UITextViewDelegate
-
-extension CannotDecryptSystemMessageCell {
-
-    public override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-
-        delegate?.perform(action: .resetSession, for: message, view: self)
-
-        return false
-    }
-
-}
-
-// MARK: - NewDeviceSystemMessageCell
-
-// MARK: - ConversationRenamedSystemMessageCell
 
 // MARK: - Factory
 

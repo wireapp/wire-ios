@@ -1306,6 +1306,8 @@
 		E9B8EB802A0CEE160056E417 /* ReactionToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */; };
 		E9C0B3532B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */; };
 		E9C0B3552B558B1D00BC80E8 /* NewDeviceSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3542B558B1D00BC80E8 /* NewDeviceSystemMessageCell.swift */; };
+		E9C0B3572B558C0A00BC80E8 /* CannotDecryptSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3562B558C0A00BC80E8 /* CannotDecryptSystemMessageCell.swift */; };
+		E9C0B3592B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3582B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift */; };
 		E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; };
 		E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9CCCF9729101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */; };
@@ -3322,6 +3324,8 @@
 		E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionToggle.swift; sourceTree = "<group>"; };
 		E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenamedSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C0B3542B558B1D00BC80E8 /* NewDeviceSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewDeviceSystemMessageCell.swift; sourceTree = "<group>"; };
+		E9C0B3562B558C0A00BC80E8 /* CannotDecryptSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannotDecryptSystemMessageCell.swift; sourceTree = "<group>"; };
+		E9C0B3582B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationWarningSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+NavigationBarTitle.swift"; sourceTree = "<group>"; };
 		E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandlerTests.swift; sourceTree = "<group>"; };
@@ -4533,6 +4537,8 @@
 				06024ABB29E69A850032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift */,
 				E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */,
 				E9C0B3542B558B1D00BC80E8 /* NewDeviceSystemMessageCell.swift */,
+				E9C0B3562B558C0A00BC80E8 /* CannotDecryptSystemMessageCell.swift */,
+				E9C0B3582B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -9370,6 +9376,7 @@
 				543DF6AD25309641001F6EA6 /* AppRootRouter.swift in Sources */,
 				067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */,
 				1682AEBF20483F73003A052A /* ParticipantsSectionController.swift in Sources */,
+				E9C0B3572B558C0A00BC80E8 /* CannotDecryptSystemMessageCell.swift in Sources */,
 				5E4BC1C0218A0A4300A8682E /* UnknownMessageCellDescription.swift in Sources */,
 				010497D92940F4F40046124D /* TextFieldWrapper.swift in Sources */,
 				A9A3B1F324D9A009001AF38E /* WipeCompletionViewController.swift in Sources */,
@@ -9864,6 +9871,7 @@
 				63A5E6F624C87E0000F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift in Sources */,
 				A9D19B16238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift in Sources */,
 				D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */,
+				E9C0B3592B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift in Sources */,
 				D525426B2093637D001C04C1 /* IconButton+Factory.swift in Sources */,
 				EF68E71B20BD5B5A003F3594 /* IPadPopoverConstants.swift in Sources */,
 				A9681D8123883877004FE917 /* IconToggleSubtitleCell.swift in Sources */,
