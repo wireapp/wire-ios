@@ -55,7 +55,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let featureRepository: FeatureRepositoryInterface
     private let actionsProvider: MLSActionsProviderProtocol
     private var storage: ProteusToMLSMigrationStorageInterface
-    private let postProtocolChangeUpdater: ConversationPostProtocolChangeUpdating
 
     private let logger = WireLogger.mls
 
@@ -78,14 +77,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         context: NSManagedObjectContext,
         storage: ProteusToMLSMigrationStorageInterface,
         featureRepository: FeatureRepositoryInterface? = nil,
-        actionsProvider: MLSActionsProviderProtocol? = nil,
-        postProtocolChangeUpdater: ConversationPostProtocolChangeUpdating? = nil
+        actionsProvider: MLSActionsProviderProtocol? = nil
     ) {
         self.context = context
         self.storage = storage
         self.featureRepository = featureRepository ?? FeatureRepository(context: context)
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
-        self.postProtocolChangeUpdater = postProtocolChangeUpdater ?? ConversationPostProtocolChangeUpdater()
     }
 
     // MARK: - Public Interface
@@ -271,18 +268,15 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         let qualifiedID = await context.perform { conversation.qualifiedID }
         guard let qualifiedID else { return }
 
-        let messageProtocol: MessageProtocol = .mls
-
         try await actionsProvider.updateConversationProtocol(
             qualifiedID: qualifiedID,
-            messageProtocol: messageProtocol,
+            messageProtocol: .mls,
             context: context.notificationContext
         )
 
-        try await postProtocolChangeUpdater.updateLocalConversation(
-            for: qualifiedID,
-            to: messageProtocol,
-            context: context
+        try await actionsProvider.syncConversation(
+            qualifiedID: qualifiedID,
+            context: context.notificationContext
         )
     }
 }

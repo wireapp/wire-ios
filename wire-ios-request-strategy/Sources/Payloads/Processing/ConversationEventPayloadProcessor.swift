@@ -361,14 +361,10 @@ final class ConversationEventPayloadProcessor {
         }
 
         do {
-            let updater = ConversationPostProtocolChangeUpdater()
-            try await updater.updateLocalConversation(
-                for: qualifiedID,
-                to: newMessageProtocol,
-                context: context
-            )
+            var action = SyncConversationAction(qualifiedID: qualifiedID)
+            try await action.perform(in: context.notificationContext)
         } catch {
-            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): updating conversation failed with error: \(error)")
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)")
         }
     }
 
