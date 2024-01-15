@@ -80,6 +80,7 @@ struct DeviceDetailsButtonsView: View {
         case .notActivated:
             Divider()
             getCertificateButton.padding()
+            Divider()
             showCertificateButton.padding()
         case .revoked:
             Divider()
