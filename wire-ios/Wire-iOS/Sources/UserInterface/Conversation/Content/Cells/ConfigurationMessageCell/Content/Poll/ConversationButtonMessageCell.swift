@@ -18,12 +18,6 @@
 import UIKit
 import WireDataModel
 
-extension ButtonMessageState {
-    var localizedName: String {
-        return "button_message_cell.state.\(self)".localized
-    }
-}
-
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     var isSelected: Bool = false
 
@@ -77,17 +71,18 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
             button.legacyStyle = .empty
             button.isLoading = false
             button.isEnabled = true
+            button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.unselected
         case .selected:
             button.legacyStyle = .empty
             button.isLoading = true
             button.isEnabled = false
+            button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.selected
         case .confirmed:
             button.legacyStyle = .full
             button.isLoading = false
             button.isEnabled = false
+            button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.confirmed
         }
-
-        button.accessibilityValue = config.state.localizedName
 
         errorMessage = config.hasError ? L10n.Localizable.ButtonMessageCell.genericError : nil
     }

@@ -169,6 +169,55 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
 
 }
 
+public class MockConversationPostProtocolChangeUpdating: ConversationPostProtocolChangeUpdating {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - updateLocalConversation
+
+    public var updateLocalConversationForToContext_Invocations: [(qualifiedID: QualifiedID, newMessageProtocol: MessageProtocol, context: NSManagedObjectContext)] = []
+    public var updateLocalConversationForToContext_MockError: Error?
+    public var updateLocalConversationForToContext_MockMethod: ((QualifiedID, MessageProtocol, NSManagedObjectContext) async throws -> Void)?
+
+    public func updateLocalConversation(for qualifiedID: QualifiedID, to newMessageProtocol: MessageProtocol, context: NSManagedObjectContext) async throws {
+        updateLocalConversationForToContext_Invocations.append((qualifiedID: qualifiedID, newMessageProtocol: newMessageProtocol, context: context))
+
+        if let error = updateLocalConversationForToContext_MockError {
+            throw error
+        }
+
+        guard let mock = updateLocalConversationForToContext_MockMethod else {
+            fatalError("no mock for `updateLocalConversationForToContext`")
+        }
+
+        try await mock(qualifiedID, newMessageProtocol, context)
+    }
+
+    // MARK: - updateLocalConversation
+
+    public var updateLocalConversationQualifiedIDToContext_Invocations: [(conversation: ZMConversation, qualifiedID: QualifiedID, newMessageProtocol: MessageProtocol, context: NSManagedObjectContext)] = []
+    public var updateLocalConversationQualifiedIDToContext_MockError: Error?
+    public var updateLocalConversationQualifiedIDToContext_MockMethod: ((ZMConversation, QualifiedID, MessageProtocol, NSManagedObjectContext) async throws -> Void)?
+
+    public func updateLocalConversation(_ conversation: ZMConversation, qualifiedID: QualifiedID, to newMessageProtocol: MessageProtocol, context: NSManagedObjectContext) async throws {
+        updateLocalConversationQualifiedIDToContext_Invocations.append((conversation: conversation, qualifiedID: qualifiedID, newMessageProtocol: newMessageProtocol, context: context))
+
+        if let error = updateLocalConversationQualifiedIDToContext_MockError {
+            throw error
+        }
+
+        guard let mock = updateLocalConversationQualifiedIDToContext_MockMethod else {
+            fatalError("no mock for `updateLocalConversationQualifiedIDToContext`")
+        }
+
+        try await mock(conversation, qualifiedID, newMessageProtocol, context)
+    }
+
+}
+
 class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - Life cycle
@@ -1629,29 +1678,6 @@ class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
-    // MARK: - updateTrustAnchorsFromConversation
-
-    var updateTrustAnchorsFromConversationIdRemoveDomainNamesAddTrustAnchors_Invocations: [(id: Data, removeDomainNames: [String], addTrustAnchors: [WireCoreCrypto.PerDomainTrustAnchor])] = []
-    var updateTrustAnchorsFromConversationIdRemoveDomainNamesAddTrustAnchors_MockError: Error?
-    var updateTrustAnchorsFromConversationIdRemoveDomainNamesAddTrustAnchors_MockMethod: ((Data, [String], [WireCoreCrypto.PerDomainTrustAnchor]) async throws -> WireCoreCrypto.CommitBundle)?
-    var updateTrustAnchorsFromConversationIdRemoveDomainNamesAddTrustAnchors_MockValue: WireCoreCrypto.CommitBundle?
-
-    func updateTrustAnchorsFromConversation(id: Data, removeDomainNames: [String], addTrustAnchors: [WireCoreCrypto.PerDomainTrustAnchor]) async throws -> WireCoreCrypto.CommitBundle {
-        updateTrustAnchorsFromConversationIdRemoveDomainNamesAddTrustAnchors_Invocations.append((id: id, removeDomainNames: removeDomainNames, addTrustAnchors: addTrustAnchors))
-
-        if let error = updateTrustAnchorsFromConversationIdRemoveDomainNamesAddTrustAnchors_MockError {
-            throw error
-        }
-
-        if let mock = updateTrustAnchorsFromConversationIdRemoveDomainNamesAddTrustAnchors_MockMethod {
-            return try await mock(id, removeDomainNames, addTrustAnchors)
-        } else if let mock = updateTrustAnchorsFromConversationIdRemoveDomainNamesAddTrustAnchors_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `updateTrustAnchorsFromConversationIdRemoveDomainNamesAddTrustAnchors`")
-        }
-    }
-
     // MARK: - wipe
 
     var wipe_Invocations: [Void] = []
@@ -2903,10 +2929,10 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
     public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> MLSDecryptResult?)?
-    public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> [MLSDecryptResult])?
+    public var decryptMessageForSubconversationType_MockValue: [MLSDecryptResult]?
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> MLSDecryptResult? {
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> [MLSDecryptResult] {
         decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
         if let error = decryptMessageForSubconversationType_MockError {
@@ -3035,22 +3061,22 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - createGroup
 
-    public var createGroupFor_Invocations: [MLSGroupID] = []
-    public var createGroupFor_MockError: Error?
-    public var createGroupFor_MockMethod: ((MLSGroupID) async throws -> Void)?
+    public var createGroupForWith_Invocations: [(groupID: MLSGroupID, users: [MLSUser])] = []
+    public var createGroupForWith_MockError: Error?
+    public var createGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> Void)?
 
-    public func createGroup(for groupID: MLSGroupID) async throws {
-        createGroupFor_Invocations.append(groupID)
+    public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+        createGroupForWith_Invocations.append((groupID: groupID, users: users))
 
-        if let error = createGroupFor_MockError {
+        if let error = createGroupForWith_MockError {
             throw error
         }
 
-        guard let mock = createGroupFor_MockMethod else {
-            fatalError("no mock for `createGroupFor`")
+        guard let mock = createGroupForWith_MockMethod else {
+            fatalError("no mock for `createGroupForWith`")
         }
 
-        try await mock(groupID)
+        try await mock(groupID, users)
     }
 
     // MARK: - conversationExists
@@ -3132,21 +3158,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         try await mock(clientIds, groupID)
-    }
-
-    // MARK: - registerPendingJoin
-
-    public var registerPendingJoin_Invocations: [MLSGroupID] = []
-    public var registerPendingJoin_MockMethod: ((MLSGroupID) -> Void)?
-
-    public func registerPendingJoin(_ group: MLSGroupID) {
-        registerPendingJoin_Invocations.append(group)
-
-        guard let mock = registerPendingJoin_MockMethod else {
-            fatalError("no mock for `registerPendingJoin`")
-        }
-
-        mock(group)
     }
 
     // MARK: - performPendingJoins
@@ -3463,10 +3474,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
     public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> MLSDecryptResult?)?
-    public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> [MLSDecryptResult])?
+    public var decryptMessageForSubconversationType_MockValue: [MLSDecryptResult]?
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> MLSDecryptResult? {
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> [MLSDecryptResult] {
         decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
         if let error = decryptMessageForSubconversationType_MockError {

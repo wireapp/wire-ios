@@ -39,7 +39,7 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
         let domain = action.qualifiedID.domain
         let conversationID = action.qualifiedID.uuid.transportString()
         let messageProtocol = action.messageProtocol.rawValue
-        let path = "/conversations/\(domain)/\(conversationID)/\(messageProtocol)"
+        let path = "/conversations/\(domain)/\(conversationID)/protocol"
         let payload = ["protocol": messageProtocol] as ZMTransportData
 
         return .init(
@@ -65,8 +65,10 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
             action.succeed()
         case (_, _, .some(let apiFailure)):
             action.fail(with: .api(apiFailure))
-        case (400, _, _): // edge case, where API doesn't return a label
+        case (404, _, _): // edge case, where API doesn't return a label
             action.fail(with: .api(.conversationIdOrDomainNotFound))
+        case (400, _, _):
+            action.fail(with: .api(.invalidBody))
         default:
             action.fail(with: .unknown)
         }

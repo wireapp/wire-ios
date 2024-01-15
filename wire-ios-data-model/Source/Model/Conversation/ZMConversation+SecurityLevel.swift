@@ -433,7 +433,7 @@ extension ZMConversation {
                 // Delivery receipt: just expire it
                 message.expire()
             } else {
-                WireLogger.messaging.warn("expiring message due to security degradation \(message.nonce?.transportString().readableHash ?? "<nil>")")
+                WireLogger.messaging.warn("expiring message due to security degradation " + String(describing: message.nonce?.transportString().readableHash))
                 // All other messages: expire and mark that it caused security degradation
                 message.expire()
                 message.causedSecurityLevelDegradation = true
@@ -583,17 +583,22 @@ extension ZMConversation {
     }
 
     @discardableResult
-    func appendSystemMessage(type: ZMSystemMessageType,
-                             sender: ZMUser,
-                             users: Set<ZMUser>?,
-                             addedUsers: Set<ZMUser> = Set(),
-                             clients: Set<UserClient>?,
-                             timestamp: Date,
-                             duration: TimeInterval? = nil,
-                             messageTimer: Double? = nil,
-                             relevantForStatus: Bool = true,
-                             removedReason: ZMParticipantsRemovedReason = .none,
-                             domains: [String]? = nil) -> ZMSystemMessage {
+    func appendSystemMessage(
+        type: ZMSystemMessageType,
+        sender: ZMUser,
+        users: Set<ZMUser>?,
+        addedUsers: Set<ZMUser> = Set(),
+        clients: Set<UserClient>?,
+        timestamp: Date,
+        duration: TimeInterval? = nil,
+        messageTimer: Double? = nil,
+        relevantForStatus: Bool = true,
+        removedReason: ZMParticipantsRemovedReason = .none,
+        domains: [String]? = nil
+    ) -> ZMSystemMessage {
+        guard let context = managedObjectContext else {
+            fatalError("can not append system message without managedObjectContext!")
+        }
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender

@@ -345,6 +345,33 @@ final class ConversationEventPayloadProcessor {
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
     }
 
+    // MARK: - Protocol Change
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationProtocolChange>,
+        originalEvent: ZMUpdateEvent,
+        in context: NSManagedObjectContext
+    ) async {
+        guard
+            let qualifiedID = payload.qualifiedID,
+            let newMessageProtocol = MessageProtocol(rawValue: payload.data.messageProtocol)
+        else {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
+            return
+        }
+
+        do {
+            let updater = ConversationPostProtocolChangeUpdater()
+            try await updater.updateLocalConversation(
+                for: qualifiedID,
+                to: newMessageProtocol,
+                context: context
+            )
+        } catch {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): updating conversation failed with error: \(error)")
+        }
+    }
+
     // MARK: - Helpers
 
     @discardableResult
@@ -697,15 +724,6 @@ final class ConversationEventPayloadProcessor {
             groupID: payload.mlsGroupID,
             context: context
         )
-
-        if source == .slowSync {
-            await context.perform {
-                mlsEventProcessor.joinMLSGroupWhenReady(
-                    forConversation: conversation,
-                    context: context
-                )
-            }
-        }
     }
 
     func fetchCreator(

@@ -32,7 +32,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func createGroup(for groupID: MLSGroupID) async throws
+    func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws
 
     func conversationExists(groupID: MLSGroupID) async -> Bool
 
@@ -41,8 +41,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
     func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws
-
-    func registerPendingJoin(_ group: MLSGroupID)
 
     func performPendingJoins() async throws
 
@@ -118,9 +116,9 @@ public final class MLSService: MLSServiceInterface {
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
     private let userDefaults: PrivateUserDefaults<Keys>
     private let logger = WireLogger.mls
-    private var groupsPendingJoin = Set<MLSGroupID>()
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let syncStatus: SyncStatusProtocol
+    private let conversationPostProtocolChangeUpdater: ConversationPostProtocolChangeUpdating
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -201,7 +199,8 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
         userID: UUID,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository(),
+        conversationPostProtocolChangeUpdater: ConversationPostProtocolChangeUpdating = ConversationPostProtocolChangeUpdater()
     ) {
         self.context = context
         self.coreCryptoProvider = coreCryptoProvider
@@ -219,11 +218,12 @@ public final class MLSService: MLSServiceInterface {
         self.delegate = delegate
         self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
+        self.conversationPostProtocolChangeUpdater = conversationPostProtocolChangeUpdater
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(coreCryptoProvider: coreCryptoProvider)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
             context: context,
-            coreCryptoProvider: coreCryptoProvider,
+            mlsActionExecutor: self.mlsActionExecutor,
             subconversationGroupIDRepository: subconversationGroupIDRepository
         )
 
@@ -420,7 +420,20 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func createGroup(for groupID: MLSGroupID) async throws {
+    public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+        guard let context else { return }
+
+        try await createGroup(for: groupID)
+        let mlsSelfUser = await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            return MLSUser(from: selfUser)
+        }
+
+        let usersWithSelfUser = users + [mlsSelfUser]
+        try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
+    }
+
+    func createGroup(for groupID: MLSGroupID) async throws {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
         await fetchBackendPublicKeys()
 
@@ -428,8 +441,7 @@ public final class MLSService: MLSServiceInterface {
             let config = ConversationConfiguration(
                 ciphersuite: CiphersuiteName.default.rawValue,
                 externalSenders: backendPublicKeys.ed25519Keys,
-                custom: .init(keyRotationSpan: nil, wirePolicy: nil),
-                perDomainTrustAnchors: []
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
             try await coreCrypto.perform {
@@ -796,12 +808,6 @@ public final class MLSService: MLSServiceInterface {
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
 
-    /// Registers a group to be joined via external commit once the app has finished processing events
-    /// - Parameter groupID: the identifier for the MLS group
-    public func registerPendingJoin(_ groupID: MLSGroupID) {
-        groupsPendingJoin.insert(groupID)
-    }
-
     /// Request to join groups still pending
     ///
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
@@ -810,31 +816,26 @@ public final class MLSService: MLSServiceInterface {
         guard let context = context else {
             return
         }
-        let pendingJoins = await context.perform { self.generatePendingJoins(in: context) }
-        for pendingJoin in pendingJoins {
-            try await joinByExternalCommit(groupID: pendingJoin.groupID)
+
+        let pendingGroups = try await context.perform {
+            try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .pendingJoin,
+                in: context
+            ).compactMap(\.mlsGroupID)
         }
 
-        groupsPendingJoin.removeAll()
-    }
+        logger.info("joining \(pendingGroups.count) group(s)")
 
-    private func generatePendingJoins(in context: NSManagedObjectContext) -> [PendingJoin] {
-        logger.info("generating list of groups pending join")
-
-        return groupsPendingJoin.compactMap { groupID in
-
-            guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
-                logger.warn("conversation not found for group (\(groupID.safeForLoggingDescription))")
-                return nil
+        await withTaskGroup(of: Void.self) { group in
+            for pendingGroup in pendingGroups {
+                group.addTask {
+                    do {
+                        try await self.joinByExternalCommit(groupID: pendingGroup)
+                    } catch {
+                        WireLogger.mls.error("Failed to join pending group (\(pendingGroup): \(error)")
+                    }
+                }
             }
-
-            guard let status = conversation.mlsStatus, status == .pendingJoin else {
-                logger.warn("group (\(groupID.safeForLoggingDescription)) status is not pending join")
-                return nil
-            }
-
-            return (groupID, conversation.epoch)
-
         }
     }
 
@@ -1244,7 +1245,7 @@ public final class MLSService: MLSServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) async throws -> MLSDecryptResult? {
+    ) async throws -> [MLSDecryptResult] {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
         do {
@@ -1290,6 +1291,7 @@ public final class MLSService: MLSServiceInterface {
                 try await commitPendingProposals(in: groupID)
             } else {
                 logger.info("commit scheduled in the future, waiting...")
+                // FIXME: change logic not to wait for all commits
                 try await Task.sleep(nanoseconds: timestamp.timeIntervalSinceNow.nanoseconds)
                 logger.info("scheduled commit is ready, committing...")
                 try await commitPendingProposals(in: groupID)
@@ -1686,20 +1688,24 @@ public final class MLSService: MLSServiceInterface {
             }
 
             do {
-
                 // update message protocol to `mixed`
+                let messageProtocol: MessageProtocol = .mixed
+
                 try await actionsProvider.updateConversationProtocol(
                     qualifiedID: qualifiedID,
-                    messageProtocol: .mixed,
+                    messageProtocol: messageProtocol,
                     context: context.notificationContext
                 )
 
-                // sync the group conversation
-                try await actionsProvider.syncConversation(
+                // update and sync the local group conversation
+                try await conversationPostProtocolChangeUpdater.updateLocalConversation(
+                    conversation,
                     qualifiedID: qualifiedID,
-                    context: context.notificationContext
+                    to: messageProtocol,
+                    context: context
                 )
 
+                // create MLS group and update keying material
                 let mlsGroupID = await context.perform { conversation.mlsGroupID }
                 guard let mlsGroupID else {
                     logger.warn("failed to convert conversation \(qualifiedID), `mlsGroupID` is `nil`")
@@ -1707,7 +1713,6 @@ public final class MLSService: MLSServiceInterface {
                     continue
                 }
 
-                // create MLS group and update keying material
                 try await createGroup(for: mlsGroupID)
 
                 do {
@@ -1732,9 +1737,7 @@ public final class MLSService: MLSServiceInterface {
                 continue
             }
         }
-
     }
-
 }
 
 // MARK: - Helper types
