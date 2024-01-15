@@ -1335,6 +1335,7 @@
 		E9F2D6422B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6412B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift */; };
 		E9F2D6442B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6432B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift */; };
 		E9F2D6462B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6452B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift */; };
+		E9F2D6482B55E03200133C59 /* ConversationSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6472B55E03200133C59 /* ConversationSystemMessageCellDescription.swift */; };
 		E9F3183B28D9B03100FDB244 /* UIButton+RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */; };
 		EE01D08525ADA3D5001DB205 /* AppLockModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08025ADA3D5001DB205 /* AppLockModule.swift */; };
 		EE01D08625ADA3D5001DB205 /* AppLockModule.Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */; };
@@ -3370,6 +3371,7 @@
 		E9F2D6412B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationIgnoredDeviceSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D6432B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEncryptionInfoSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D6452B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationFailedToAddParticipantsSystemMessageCellDescription.swift; sourceTree = "<group>"; };
+		E9F2D6472B55E03200133C59 /* ConversationSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+RoundedCorners.swift"; sourceTree = "<group>"; };
 		EE01D08025ADA3D5001DB205 /* AppLockModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.swift; sourceTree = "<group>"; };
 		EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Presenter.swift; sourceTree = "<group>"; };
@@ -4587,6 +4589,7 @@
 				E9F2D6412B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift */,
 				E9F2D6432B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift */,
 				E9F2D6452B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift */,
+				E9F2D6472B55E03200133C59 /* ConversationSystemMessageCellDescription.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -8825,6 +8828,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9F2D6482B55E03200133C59 /* ConversationSystemMessageCellDescription.swift in Sources */,
 				D56A2D46207DFE8700DB59F5 /* UIAlertController+ImportWarning.swift in Sources */,
 				EECA90AC28744A060024B301 /* DeveloperFlagsViewModel.swift in Sources */,
 				EF3CB75321DD0F0C0030C3E8 /* ConversationViewController+ParticipantsPopover.swift in Sources */,
