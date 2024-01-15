@@ -352,10 +352,7 @@ final class ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) async {
-        guard
-            let qualifiedID = payload.qualifiedID,
-            let newMessageProtocol = MessageProtocol(rawValue: payload.data.messageProtocol)
-        else {
+        guard let qualifiedID = payload.qualifiedID else {
             Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
             return
         }
@@ -434,15 +431,19 @@ final class ConversationEventPayloadProcessor {
                 in: context,
                 created: &created
             )
-            conversation.conversationType = .group
-            conversation.remoteIdentifier = conversationID
-            conversation.isPendingMetadataRefresh = false
-            self.updateAttributes(from: payload, for: conversation, context: context)
-            self.updateMetadata(from: payload, for: conversation, context: context)
-            self.updateMembers(from: payload, for: conversation, context: context)
-            self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-            self.updateConversationStatus(from: payload, for: conversation)
-            self.updateMessageProtocol(from: payload, for: conversation, in: context)
+            if created {
+                conversation.conversationType = .group
+                conversation.remoteIdentifier = conversationID
+                conversation.isPendingMetadataRefresh = false
+                self.updateAttributes(from: payload, for: conversation, context: context)
+                self.updateMetadata(from: payload, for: conversation, context: context)
+                self.updateMembers(from: payload, for: conversation, context: context)
+                self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+                self.updateConversationStatus(from: payload, for: conversation)
+                self.updateMessageProtocol(from: payload, for: conversation, in: context)
+            } else {
+                conversation.needsToBeUpdatedFromBackend = true
+            }
 
             return conversation
         }
