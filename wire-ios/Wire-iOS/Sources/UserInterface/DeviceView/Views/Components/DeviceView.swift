@@ -21,13 +21,14 @@ import WireCommonComponents
 
 struct DeviceView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
-
+    
     var titleView: some View {
         HStack {
             Text(viewModel.title.clippedValue())
                 .font(FontSpec.headerSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-            if let e2eIdentityCertificateStatusImage = viewModel.certificateStatus.imageForStatus() {
+            if let e2eIdentityCertificateStatusImage = viewModel.certificateStatus.imageForStatus()
+                , viewModel.isE2eIdentityEnabled {
                 e2eIdentityCertificateStatusImage
             }
             if viewModel.isProteusVerificationEnabled {

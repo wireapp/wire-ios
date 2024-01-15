@@ -25,7 +25,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var mockSession: UserSessionMock!
     var emailCredentials: ZMEmailCredentials!
     let saveFileManager = MockSaveFileManager()
-
+    let mockMLSClientResolver = MockMLSClentResolver()
     override func setUp() {
         super.setUp()
         coreDataFixture = CoreDataFixture()
@@ -43,20 +43,23 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            e2eIdentityProvider: MockE2eIdentityProvider(), saveFileManager: saveFileManager
+            e2eIdentityProvider: MockValidE2eIdentityProvider(),
+            saveFileManager: saveFileManager,
+            mlsClientResolver: mockMLSClientResolver
         )
         deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
         wait(for: [expectation], timeout: 0.5)
     }
 
     func testWhenFetchCertificateIsInvokedThenValidCertificateIsReturned() async {
-        let e2eIdentityProvider = MockE2eIdentityProvider()
+        let e2eIdentityProvider = MockValidE2eIdentityProvider()
         let deviceActionHandler = DeviceDetailsViewActionsHandler(
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
             e2eIdentityProvider: e2eIdentityProvider,
-            saveFileManager: MockSaveFileManager()
+            saveFileManager: MockSaveFileManager(),
+            mlsClientResolver: mockMLSClientResolver
         )
         let fetchedCertificate = await deviceActionHandler.fetchCertificate()
         XCTAssertNotNil(fetchedCertificate)

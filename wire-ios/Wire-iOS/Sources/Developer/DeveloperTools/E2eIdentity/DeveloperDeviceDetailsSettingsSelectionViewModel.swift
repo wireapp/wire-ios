@@ -119,10 +119,4 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
         }
     }
 
-    static func mlsProvider() -> MLSProviding {
-        guard DeveloperFlag.enableMLSSupport.isOn else {
-            return MLSProvider()
-        }
-        return MockMLSProvider(isMLSEnbaled: true)
-    }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,11 @@
 //
 
 import Foundation
+@testable import Wire
 
-public final class MockMLSProvider: MLSProviding {
-    public var isMLSEnbaled: Bool
+final class MockMLSClentResolver: MLSClientResolving {
 
-    public var mlsThumbPrint: String {
-        return "abcdefghijklmnopqrstuvwxabcdefghijklmnopqrstuvwxabcdefghijklmnop"
-    }
-
-    public init(isMLSEnbaled: Bool) {
-        self.isMLSEnbaled = isMLSEnbaled
-    }
-
-    public func fetchMLSThumbprint() async throws -> String {
-        return mlsThumbPrint
+    func mlsClientId(for userClient: UserClient) -> String? {
+        return "abcdefghijkl"
     }
 }
