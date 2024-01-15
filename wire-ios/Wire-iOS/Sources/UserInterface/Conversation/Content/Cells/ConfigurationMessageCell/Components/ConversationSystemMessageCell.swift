@@ -91,7 +91,7 @@ final class ConversationSystemMessageCellDescription {
                 fallthrough
             }
 
-            let timerCell = ConversationMessageTimerCellDescription(message: message, data: systemMessageData, timer: timer, sender: sender)
+            let timerCell = ConversationMessageTimerSystemMessageCellDescription(message: message, data: systemMessageData, timer: timer, sender: sender)
             return [AnyConversationMessageCellDescription(timerCell)]
 
         case .conversationIsSecure:
