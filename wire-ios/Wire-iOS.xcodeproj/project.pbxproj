@@ -1332,6 +1332,8 @@
 		E9EC273429D4440C00599D0A /* String+Capitalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EC273329D4440C00599D0A /* String+Capitalization.swift */; };
 		E9F2D63E2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */; };
 		E9F2D6402B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */; };
+		E9F2D6422B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6412B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift */; };
+		E9F2D6442B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6432B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift */; };
 		E9F3183B28D9B03100FDB244 /* UIButton+RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */; };
 		EE01D08525ADA3D5001DB205 /* AppLockModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08025ADA3D5001DB205 /* AppLockModule.swift */; };
 		EE01D08625ADA3D5001DB205 /* AppLockModule.Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */; };
@@ -3364,6 +3366,8 @@
 		E9EC273529D4462000599D0A /* StringCapitalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringCapitalizationTests.swift; sourceTree = "<group>"; };
 		E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCannotDecryptSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStartedSystemMessageCellDescription.swift; sourceTree = "<group>"; };
+		E9F2D6412B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationIgnoredDeviceSystemMessageCellDescription.swift; sourceTree = "<group>"; };
+		E9F2D6432B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEncryptionInfoSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+RoundedCorners.swift"; sourceTree = "<group>"; };
 		EE01D08025ADA3D5001DB205 /* AppLockModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.swift; sourceTree = "<group>"; };
 		EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Presenter.swift; sourceTree = "<group>"; };
@@ -4578,6 +4582,8 @@
 				E95B0A192B559C850088B778 /* ConversationDomainsStoppedFederatingCellDescription.swift */,
 				E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */,
 				E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */,
+				E9F2D6412B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift */,
+				E9F2D6432B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -9527,6 +9533,7 @@
 				F1B5EAC92029AC7E0081D402 /* SimpleTextFieldValidator.swift in Sources */,
 				06B3091326AEDC990057AF9E /* UIAlertController+FeatureConfig.swift in Sources */,
 				163FB99120518BF400E74F83 /* UIFont+FontSpec.swift in Sources */,
+				E9F2D6442B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift in Sources */,
 				87B48EBE20A050AA00DBAD9D /* ViewControllerDismisser.swift in Sources */,
 				6363EC9B23D7622F00E74F67 /* NSMutableAttributedString+CompanyLogin.swift in Sources */,
 				EFDB3135217F5E0300D2A7CE /* ConversationListCell.swift in Sources */,
@@ -9718,6 +9725,7 @@
 				EF17B0D6223A70D1006252A8 /* SketchColorPickerController.swift in Sources */,
 				16829EDF2010D60800F579A0 /* InviteTeamMemberSection.swift in Sources */,
 				87E8D0BD21821E6F00BD26AC /* ConversationContentViewController+Reply.swift in Sources */,
+				E9F2D6422B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift in Sources */,
 				A9CBBEC324CF7FF9006543D4 /* AccessoryTextField+factory.swift in Sources */,
 				D525426D209363AF001C04C1 /* IconLabelButton.swift in Sources */,
 				EE88E00623FAC9EA00D24703 /* SelfUser.swift in Sources */,
