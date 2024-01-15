@@ -55,7 +55,7 @@ final class E2eIdentityProviderTests: XCTestCase {
             notValidBefore: Date.now - .oneDay,
             expiryDate: Date.now + .oneDay,
             certificateStatus: .expired,
-            serialNumber: .mockSerialNumber()
+            serialNumber: .mockSerialNumber
         )
         XCTAssertTrue(e2eIdentityProvider.shouldUpdateCertificate(for: certificate))
     }
