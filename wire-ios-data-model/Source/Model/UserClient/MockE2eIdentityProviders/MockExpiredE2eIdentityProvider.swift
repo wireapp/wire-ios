@@ -20,9 +20,10 @@ import Foundation
 import WireCoreCrypto
 
 public final class MockExpiredE2eIdentityProvider: E2eIdentityProviding {
+
     public let certificate: E2eIdentityCertificate = .mockExpired
     public let isE2EIdentityEnabled: Bool = false
-    public let shouldUpdateCertificate = true
+    public let shouldCertificateBeUpdated = true
 
     public init() {}
 
@@ -40,7 +41,7 @@ public final class MockExpiredE2eIdentityProvider: E2eIdentityProviding {
         return result
     }
 
-    public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
-        return shouldUpdateCertificate
+    public func shouldCertificateBeUpdated(for certificate: E2eIdentityCertificate) -> Bool {
+        shouldCertificateBeUpdated
     }
 }

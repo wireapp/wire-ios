@@ -135,10 +135,14 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate) {
         saveFileManager.save(
-            value: certificate.certificateDetails,
+            value: certificate.details,
             fileName: userClient.label ?? "e2ecertificate",
             type: "txt"
         )
+    }
+
+    func shouldCertificateBeUpdated(certificate: E2eIdentityCertificate) -> Bool {
+        e2eIdentityProvider.shouldCertificateBeUpdated(for: certificate)
     }
 }
 

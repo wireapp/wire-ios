@@ -64,7 +64,7 @@ struct DeviceDetailsView: View {
 
     var mlsView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Secion.Mls.signature.uppercased())
+            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
@@ -126,7 +126,7 @@ struct DeviceDetailsView: View {
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
-                    certificateDetails: certificate.certificateDetails.uppercased(),
+                    certificateDetails: certificate.details.uppercased(),
                     isDownloadAndCopyEnabled: viewModel.isCopyEnabled,
                     isMenuPresented: false,
                     performDownload: viewModel.downloadE2EIdentityCertificate,

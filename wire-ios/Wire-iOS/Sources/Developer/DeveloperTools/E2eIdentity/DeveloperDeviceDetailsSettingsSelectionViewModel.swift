@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-// TODO: Remove this
+// TODO: Remove this once this feature/e2ei is ready to be merged to develop
 
 class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
 
@@ -119,4 +119,12 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
         }
     }
 
+}
+
+private extension E2EIdentityCertificateStatus {
+    static func status(for string: String) -> E2EIdentityCertificateStatus {
+        E2EIdentityCertificateStatus.allCases.filter({
+            $0.titleForStatus() == string
+        }).first ?? .notActivated
+    }
 }

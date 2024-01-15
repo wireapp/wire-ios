@@ -26,11 +26,11 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
 }
 
 public struct E2eIdentityCertificate {
-    public var certificateDetails: String
+    public var details: String
     public var mlsThumbprint: String
     public var notValidBefore: Date
     public var expiryDate: Date
-    public var certificateStatus: E2EIdentityCertificateStatus
+    public var status: E2EIdentityCertificateStatus
     public var serialNumber: String
 
     public init(
@@ -41,11 +41,11 @@ public struct E2eIdentityCertificate {
         certificateStatus: E2EIdentityCertificateStatus,
         serialNumber: String
     ) {
-        self.certificateDetails = certificateDetails
+        self.details = certificateDetails
         self.mlsThumbprint = mlsThumbprint
         self.notValidBefore = notValidBefore
         self.expiryDate = expiryDate
-        self.certificateStatus = certificateStatus
+        self.status = certificateStatus
         self.serialNumber = serialNumber
     }
 
@@ -55,11 +55,11 @@ public struct E2eIdentityCertificate {
            certificateStatus: E2EIdentityCertificateStatus,
            mlsThumbprint: String
        ) {
-           self.certificateDetails = certificateDetails
+           self.details = certificateDetails
            self.notValidBefore = certificate.notValidBefore
            self.expiryDate = certificate.notValidAfter
            self.serialNumber = certificate.serialNumber.description.replacingOccurrences(of: ":", with: "")
-           self.certificateStatus = certificateStatus
+           self.status = certificateStatus
            self.mlsThumbprint = mlsThumbprint
        }
 }
@@ -68,7 +68,7 @@ public protocol E2eIdentityProviding {
     func isE2EIdentityEnabled() async throws -> Bool
     func fetchCertificates(clientIds: [Data]) async throws -> [E2eIdentityCertificate]
     func fetchCertificates(userIds: [String]) async throws -> [String: [E2eIdentityCertificate]]
-    func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool
+    func shouldCertificateBeUpdated(for certificate: E2eIdentityCertificate) -> Bool
 }
 
 enum E2eIdentityCertificateError: Error {
@@ -76,12 +76,6 @@ enum E2eIdentityCertificateError: Error {
 }
 
 public final class E2eIdentityProvider: E2eIdentityProviding {
-
-    // current default days the certificate is retained on server
-    private let kServerRetainedDays: Double = 28 * 24 * 60 * 60
-
-    // Randomising time so that not all clients update certificate at the same time
-    private let kRandomInterval = Int.random(in: 0..<86400)
 
     // Grace period fromt he E2ei config settings
     private let gracePeriod: Double
@@ -93,6 +87,7 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         conversationId: Data // make sure to run on SyncContext
     ) {
+        // TODO: precondition(zm_isSyncContext, "MLSService should only be accessed on the sync context")
         self.gracePeriod = gracePeriod
         self.coreCryptoProvider = coreCryptoProvider
         self.conversationId = conversationId
@@ -111,6 +106,7 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
 
     public func fetchCertificates(clientIds: [Data]) async throws -> [E2eIdentityCertificate] {
         let wireIdentities = try await fetchWireIdentity(clientIDs: clientIds)
+        // TODO: Ask Mojtaba about Not Activated Device status
         return try wireIdentities.map({
             try $0.mapToE2eIdenityCertificate()
         })
@@ -125,15 +121,13 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
         })
     }
 
-    public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
-        guard  certificate.notValidBefore <= Date.now,
-                certificate.expiryDate > Date.now else {
+    public func shouldCertificateBeUpdated(for certificate: E2eIdentityCertificate) -> Bool {
+        guard  certificate.isActivated,
+                certificate.isExpired,
+               (certificate.lastUpdatedDate + gracePeriod) < Date.now else {
             return false
         }
-        let validTimeInterval = certificate.expiryDate.timeIntervalSince(Date.now)
-        let unavailableInterval = gracePeriod + Double(kServerRetainedDays) + Double(kRandomInterval)
-        let remainingTimeToUpdate = validTimeInterval - unavailableInterval
-        return remainingTimeToUpdate <= 0.0
+        return true
     }
 
     private func fetchWireIdentity(clientIDs: [ClientId]) async throws -> [WireIdentity] {
@@ -146,6 +140,26 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
         return try await coreCrypto.perform {
             return try await $0.getUserIdentities(conversationId: self.conversationId, userIds: userIds)
         }
+    }
+}
+
+private extension E2eIdentityCertificate {
+    // current default days the certificate is retained on server
+    private var kServerRetainedDays: Double { 28 * 24 * 60 * 60 }
+
+    // Randomising time so that not all clients update certificate at the same time
+    private var kRandomInterval: Double { Double(Int.random(in: 0..<86400)) }
+
+    var isExpired: Bool {
+        return expiryDate > Date.now
+    }
+
+    var isActivated: Bool {
+        return notValidBefore <= Date.now
+    }
+
+    var lastUpdatedDate: Date {
+        return notValidBefore + kServerRetainedDays + kRandomInterval
     }
 }
 

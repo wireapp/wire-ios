@@ -46,10 +46,4 @@ extension E2EIdentityCertificateStatus {
             return Image(.certificateValid)
         }
     }
-
-    static func status(for string: String) -> E2EIdentityCertificateStatus {
-        E2EIdentityCertificateStatus.allCases.filter({
-            $0.titleForStatus() == string
-        }).first ?? .notActivated
-    }
 }
