@@ -162,7 +162,7 @@ final class ConversationSystemMessageCellDescription {
             }
 
         case .domainsStoppedFederating:
-            let domainsStoppedFederatingCell = DomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
+            let domainsStoppedFederatingCell = ConversationDomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
         case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted, .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap:
@@ -488,65 +488,6 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
         let learnMore = NSAttributedString.unreachableBackendLearnMoreLink
 
         return [attributedText, learnMore].joined(separator: " ".attributedString)
-    }
-
-}
-
-final class DomainsStoppedFederatingCellDescription: ConversationMessageCellDescription {
-
-    typealias View = ConversationSystemMessageCell
-    typealias System = L10n.Localizable.Content.System
-    let configuration: View.Configuration
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
-
-    var message: WireDataModel.ZMConversationMessage?
-    var delegate: ConversationMessageCellDelegate?
-    var actionController: ConversationMessageActionController?
-
-    init(systemMessageData: ZMSystemMessageData) {
-        let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
-        let content = DomainsStoppedFederatingCellDescription.makeAttributedString(for: systemMessageData)
-        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
-
-        accessibilityLabel = content?.string
-    }
-
-    private static func makeAttributedString(for systemMessageData: ZMSystemMessageData) -> NSAttributedString? {
-        typealias BackendsStopFederating = L10n.Localizable.Content.System.BackendsStopFederating
-
-        guard let domains = systemMessageData.domains,
-              domains.count == 2 else {
-            return nil
-        }
-
-        var text: String
-        if domains.hasSelfDomain, let user = SelfUser.provider?.providedSelfUser {
-            let withoutSelfDomain = domains.filter { $0 != user.domain }
-            text = BackendsStopFederating.selfBackend(withoutSelfDomain.first ?? "", URL.wr_FederationLearnMore.absoluteString)
-        } else {
-            text = BackendsStopFederating.otherBackends(domains.first ?? "", domains.last ?? "", URL.wr_FederationLearnMore.absoluteString)
-        }
-
-        let attributedString = NSAttributedString.markdown(from: text, style: .systemMessage)
-
-        return attributedString
-    }
-
-}
-
-private extension Array where Element == String {
-
-    var hasSelfDomain: Bool {
-        return self.contains(SelfUser.provider?.providedSelfUser.domain ?? "")
     }
 
 }
