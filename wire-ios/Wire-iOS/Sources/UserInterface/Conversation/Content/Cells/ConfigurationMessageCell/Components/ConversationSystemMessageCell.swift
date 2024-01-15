@@ -236,47 +236,6 @@ class ConversationCallSystemMessageCellDescription: ConversationMessageCellDescr
     }
 }
 
-class ConversationMessageTimerCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationSystemMessageCell
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
-
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, timer: NSNumber, sender: UserType) {
-        let senderText = message.senderName
-        let timeoutValue = MessageDestructionTimeoutValue(rawValue: timer.doubleValue)
-
-        var updateText: NSAttributedString?
-        let baseAttributes: [NSAttributedString.Key: AnyObject] = [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
-
-        if timeoutValue == .none {
-            updateText = NSAttributedString(string: "content.system.message_timer_off".localized(pov: sender.pov, args: senderText), attributes: baseAttributes)
-
-        } else if let displayString = timeoutValue.displayString {
-            let timerString = displayString.replacingOccurrences(of: String.breakingSpace, with: String.nonBreakingSpace)
-            updateText = NSAttributedString(string: "content.system.message_timer_changes".localized(pov: sender.pov, args: senderText, timerString), attributes: baseAttributes)
-        }
-
-        let icon = StyleKitIcon.hourglass.makeImage(size: 16, color: IconColors.backgroundDefault)
-        configuration = View.Configuration(icon: icon, attributedText: updateText, showLine: false)
-        accessibilityLabel = updateText?.string
-        actionController = nil
-    }
-
-}
-
 class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
     typealias View = ConversationSystemMessageCell
     let configuration: View.Configuration
