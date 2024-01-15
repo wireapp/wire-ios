@@ -162,7 +162,7 @@ final class ConversationSystemMessageCellDescription {
             }
 
         case .domainsStoppedFederating:
-            let domainsStoppedFederatingCell = ConversationDomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
+            let domainsStoppedFederatingCell = ConversationDomainsStoppedFederatingSystemMessageCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
         case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted, .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap:
