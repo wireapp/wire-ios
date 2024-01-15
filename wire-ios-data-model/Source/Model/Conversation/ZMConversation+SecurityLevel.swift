@@ -447,7 +447,7 @@ extension ZMConversation {
                 // Delivery receipt: just expire it
                 message.expire()
             } else {
-                WireLogger.messaging.warn("expiring message due to security degradation \(message.nonce?.transportString().readableHash ?? "<nil>")")
+                WireLogger.messaging.warn("expiring message due to security degradation " + String(describing: message.nonce?.transportString().readableHash))
                 // All other messages: expire and mark that it caused security degradation
                 message.expire()
                 message.causedSecurityLevelDegradation = true

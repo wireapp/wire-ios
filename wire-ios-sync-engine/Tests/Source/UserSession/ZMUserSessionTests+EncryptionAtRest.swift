@@ -244,7 +244,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         setEncryptionAtRest(enabled: true)
 
         // expect
-        let databaseIsLocked = expectation(description: "database is locked")
+        let databaseIsLocked = customExpectation(description: "database is locked")
         var token: Any? = sut.registerDatabaseLockedHandler { (isDatabaseLocked) in
             if isDatabaseLocked {
                 databaseIsLocked.fulfill()
@@ -270,7 +270,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // expect
-        let databaseIsUnlocked = expectation(description: "database is unlocked")
+        let databaseIsUnlocked = customExpectation(description: "database is unlocked")
         var token: Any? = sut.registerDatabaseLockedHandler { (isDatabaseLocked) in
             if !isDatabaseLocked {
                 databaseIsUnlocked.fulfill()
