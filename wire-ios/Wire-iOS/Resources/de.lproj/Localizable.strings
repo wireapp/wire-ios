@@ -562,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
+"content.system.message_legal_hold.enabled" = "Diese Unterhaltung unterliegt der gesetzlichen Aufbewahrung [MEHR ERFAHREN](%@)";
 "content.system.message_legal_hold.disabled" = "Die gesetzliche Aufbewahrung wurde für diese Unterhaltung deaktiviert";
 
 "content.system.message_legal_hold.learn_more" = "Mehr erfahren";
@@ -992,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Legal hold subjects %@";
+"legalhold.participants.section.title" = "Personen, die der gesetzlichen Aufbewahrung unterliegen %@";
 "legalhold.header.title" = "Gesetzliche Aufbewahrung";
 "legalhold.header.other_description" = "Die gesetzlichen Aufbewahrung wurde für mindestens eine Person dieser Unterhaltung aktiviert.\nAlle Nachrichten werden für den künftigen Zugriff aufbewahrt, einschließlich gelöschter, bearbeiteter und selbstlöschender Nachrichten.";
 "legalhold.header.self_description" = "Die gesetzliche Aufbewahrung wurde für dieses Konto aktiviert. \nAlle Nachrichten werden für den künftigen Zugriff aufbewahrt, einschließlich gelöschter, bearbeiteter und selbstlöschender Nachrichten.\nAlle Gesprächspartner werden über die Aufnahme in Kenntnis gesetzt.\n    ";

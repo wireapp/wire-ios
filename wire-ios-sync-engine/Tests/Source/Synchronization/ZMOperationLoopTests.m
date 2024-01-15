@@ -562,7 +562,7 @@
     NSDictionary *pushPayload = [self noticePushPayloadWithUUID:notificationID];
     
     // expect
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Called completion handler"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Called completion handler"];
     [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{
         [expectation fulfill];
     }];
@@ -585,7 +585,7 @@
     
     // expect
     __block BOOL completionHandlerHasBeenCalled = NO;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Called completion handler"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Called completion handler"];
     [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{
         [expectation fulfill];
         completionHandlerHasBeenCalled = YES;

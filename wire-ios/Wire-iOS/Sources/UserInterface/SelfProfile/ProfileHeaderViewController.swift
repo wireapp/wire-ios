@@ -299,7 +299,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     private func updateTeamLabel() {
         if let teamName = user.teamName, !options.contains(.hideTeamName) {
-            teamNameLabel.text = teamName.localized
+            teamNameLabel.text = teamName
             teamNameLabel.accessibilityValue = teamNameLabel.text
             teamNameLabel.isHidden = false
         } else {

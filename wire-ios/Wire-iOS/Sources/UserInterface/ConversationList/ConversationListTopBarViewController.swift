@@ -178,7 +178,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
         if let selfUser = ZMUser.selfUser(),
            selfUser.clientsRequiringUserAttention.count > 0 {
-            accountView.accessibilityLabel = "self.new-device.voiceover.label".localized
+            accountView.accessibilityLabel = L10n.Localizable.Self.NewDevice.Voiceover.label
         }
 
         return accountView.wrapInAvatarSizeContainer()

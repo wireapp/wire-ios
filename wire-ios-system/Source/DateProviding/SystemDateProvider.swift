@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,12 @@
 
 import Foundation
 
-extension UserDefaults {
+extension DateProviding where Self == SystemDateProvider {
+    /// Returns a new instance of `SystemDateProvider`.
+    public static var system: Self { .init() }
+}
 
-    func reset() {
-        for key in dictionaryRepresentation().keys {
-            removeObject(forKey: key)
-        }
-
-        synchronize()
-    }
-
+/// Provides date values based on the system clock.
+public struct SystemDateProvider: DateProviding {
+    public var now: Date { .now }
 }

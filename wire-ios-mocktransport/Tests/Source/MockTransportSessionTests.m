@@ -219,7 +219,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForImageData:(NSData *)imageData contentDisposition:(NSDictionary *)contentDisposition path:(NSString *)path apiVersion:(APIVersion)apiVersion;
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got an image response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got an image response"];
     
     __block ZMTransportResponse *response;
     ZMTransportRequestGenerator postGenerator = ^ZMTransportRequest*(void) {
@@ -247,7 +247,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForFileData:(NSData *)fileData path:(NSString *)path metadata:(NSData *)metadata contentType:(NSString *)contentType apiVersion:(APIVersion)apiVersion;
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got a file upload response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got a file upload response"];
     __block ZMTransportResponse *response;
     
     ZMTransportRequestGenerator generator = ^ZMTransportRequest *{
@@ -292,7 +292,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForImageData:(NSData *)imageData metaData:(NSData *)metaData imageMediaType:(NSString *)imageMediaType path:(NSString *)path apiVersion:(APIVersion)apiVersion;
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got an image response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got an image response"];
     
     __block ZMTransportResponse *response;
     ZMTransportRequestGenerator postGenerator = ^ZMTransportRequest*(void) {
@@ -314,7 +314,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got a response"];
     
     ZMTransportSession *mockedTransportSession = self.sut.mockedTransportSession;
     
@@ -337,7 +337,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got a response"];
     
     ZMTransportSession *mockedTransportSession = self.sut.mockedTransportSession;
     

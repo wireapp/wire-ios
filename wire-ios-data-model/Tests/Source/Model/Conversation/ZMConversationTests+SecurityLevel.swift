@@ -320,7 +320,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
             // expect
-            let expectation = self.expectation(description: "Notified")
+            let expectation = self.customExpectation(description: "Notified")
             token = NotificationInContext.addObserver(
                 name: ZMConversation.isVerifiedNotificationName,
                 context: self.uiMOC.notificationContext) {

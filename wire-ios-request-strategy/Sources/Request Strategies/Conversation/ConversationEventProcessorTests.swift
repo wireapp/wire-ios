@@ -22,18 +22,34 @@ class ConversationEventProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventProcessor!
     var conversationService: MockConversationServiceInterface!
+    var mockMLSEventProcessor: MockMLSEventProcessing!
 
     override func setUp() {
         super.setUp()
         conversationService = MockConversationServiceInterface()
         conversationService.syncConversationQualifiedID_MockMethod = { _ in
         }
+
+        mockMLSEventProcessor = .init()
+        mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
+        mockMLSEventProcessor.processWelcomeMessageIn_MockMethod = { _, _ in }
+        mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in }
+
         sut = ConversationEventProcessor(
             context: syncMOC,
             conversationService: conversationService
         )
         BackendInfo.storage = .random()!
         BackendInfo.apiVersion = .v0
+        MLSEventProcessor.setMock(mockMLSEventProcessor)
+    }
+
+    override func tearDown() {
+        sut = nil
+        conversationService = nil
+        mockMLSEventProcessor = nil
+        MLSEventProcessor.reset()
+        super.tearDown()
     }
 
     // MARK: - Helpers
@@ -52,8 +68,6 @@ class ConversationEventProcessorTests: MessagingTestBase {
     func test_ProcessMemberJoinEvent() async throws {
         // Given
         var transportPayload: ZMTransportData!
-        let mockMLSEventProcessor = MockMLSEventProcessor()
-        MLSEventProcessor.setMock(mockMLSEventProcessor)
 
         try await syncMOC.perform { [self] in
 
@@ -84,7 +98,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
         await sut.processConversationEvents([event])
 
         // Then
-        let updateConversationCalls = mockMLSEventProcessor.calls.updateConversationIfNeeded
+        let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_Invocations
         XCTAssertEqual(updateConversationCalls.count, 1)
         XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
 
@@ -96,8 +110,6 @@ class ConversationEventProcessorTests: MessagingTestBase {
         // given
         var updateEvent: ZMUpdateEvent?
         let message = "welcome message"
-        let mockEventProcessor = MockMLSEventProcessor()
-        MLSEventProcessor.setMock(mockEventProcessor)
 
         try await syncMOC.perform {
 
@@ -120,7 +132,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
         await self.sut.processConversationEvents([unwrappedUpdateEvent])
 
         // then
-        XCTAssertEqual(message, mockEventProcessor.calls.processWelcomeMessage.first)
+        XCTAssertEqual(message, mockMLSEventProcessor.processWelcomeMessageIn_Invocations.first?.welcomeMessage)
 
     }
 
@@ -129,9 +141,6 @@ class ConversationEventProcessorTests: MessagingTestBase {
     func test_UpdateConversationMemberLeave_WipesMLSGroup() async throws {
         // Given
         var updateEvent: ZMUpdateEvent?
-        // set mock event processor
-        let mockEventProcessor = MockMLSEventProcessor()
-        MLSEventProcessor.setMock(mockEventProcessor)
 
         await syncMOC.perform { [self] in
             // Create self user
@@ -157,18 +166,14 @@ class ConversationEventProcessorTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 1)
-        XCTAssertEqual(mockEventProcessor.calls.wipeGroup.first, groupConversation)
-
+        let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations
+        XCTAssertEqual(wipeGroupInvocations.count, 1)
+        XCTAssertEqual(wipeGroupInvocations.first?.conversation, groupConversation)
     }
 
     func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() async throws {
         // Given
         var updateEvent: ZMUpdateEvent?
-
-        // set mock event processor
-        let mockEventProcessor = MockMLSEventProcessor()
-        MLSEventProcessor.setMock(mockEventProcessor)
 
         await syncMOC.perform { [self] in
 
@@ -193,17 +198,13 @@ class ConversationEventProcessorTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
+        XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
     }
 
     func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenProtocolIsNotMLS() async throws {
 
         // Given
         var updateEvent: ZMUpdateEvent?
-
-        // set mock event processor
-        let mockEventProcessor = MockMLSEventProcessor()
-        MLSEventProcessor.setMock(mockEventProcessor)
 
         await syncMOC.perform { [self] in
 
@@ -229,7 +230,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
+        XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
     }
 
     // MARK: Conversation Creation

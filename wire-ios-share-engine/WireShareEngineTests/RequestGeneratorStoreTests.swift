@@ -96,7 +96,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
 
     func testThatItCallsTheGivenGenerator() {
 
-        let expectation = self.expectation(description: "calledGenerator")
+        let expectation = self.customExpectation(description: "calledGenerator")
         let generator = DummyGenerator(requestBlock: {
             expectation.fulfill()
             return nil

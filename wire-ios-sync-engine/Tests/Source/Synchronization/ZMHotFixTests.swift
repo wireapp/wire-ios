@@ -269,7 +269,7 @@ class ZMHotFixTests_Integration: MessagingTest {
         }
 
         // expect
-        let expectation = expectation(description: "Notified")
+        let expectation = customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: UpdateAccessRolesAction.notificationName,
                                                       context: self.syncMOC.notificationContext,
                                                       using: { note in

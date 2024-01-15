@@ -49,7 +49,7 @@ extension ZMSyncStrategyTests {
 
     func testThatItNotifiesTheOperationLoopOfNewOperation_WhenContextIsSaved() {
         // expect
-        expectation(forNotification: NSNotification.Name("RequestAvailableNotification"), object: nil, handler: nil)
+        customExpectation(forNotification: NSNotification.Name("RequestAvailableNotification"), object: nil, handler: nil)
 
         // when
         _ = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: uiMOC)

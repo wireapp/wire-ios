@@ -59,7 +59,7 @@
     [self.application setBackground];
     
     // when
-    XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
+    XCTestExpectation *fetchingExpectation = [self customExpectationWithDescription:@"fetching notification"];
 
     NSUUID *lastNotificationId = [self.lastEventIDRepository fetchLastEventID];
 
@@ -113,7 +113,7 @@
     [self.application setBackground];
     
     // when
-    XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
+    XCTestExpectation *fetchingExpectation = [self customExpectationWithDescription:@"fetching notification"];
     
     __block NSUInteger requestCount = 0;
 

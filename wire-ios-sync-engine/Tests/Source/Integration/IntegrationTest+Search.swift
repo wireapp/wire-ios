@@ -28,7 +28,7 @@ extension IntegrationTest {
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
         self.overrideAPIVersion(.v2)
 
-        let searchCompleted = expectation(description: "Search result arrived")
+        let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
@@ -50,7 +50,7 @@ extension IntegrationTest {
         XCTAssertNotNil(searchUser)
         XCTAssertEqual(searchUser?.name, name)
 
-        let didConnect = expectation(description: "did connect to user")
+        let didConnect = customExpectation(description: "did connect to user")
         searchUser?.connect { _ in
             didConnect.fulfill()
         }
@@ -63,7 +63,7 @@ extension IntegrationTest {
         // this only work for v2 and above
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
         setCurrentAPIVersion(.v2)
-        let searchCompleted = expectation(description: "Search result arrived")
+        let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
@@ -87,7 +87,7 @@ extension IntegrationTest {
     public func searchForConnectedUser(withName name: String, searchQuery: String) -> ZMUser? {
         createSharedSearchDirectory()
 
-        let searchCompleted = expectation(description: "Search result arrived")
+        let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.contacts])
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?

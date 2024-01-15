@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireSystem;
 @import OCMock;
@@ -113,25 +112,21 @@
 - (void)setUp
 {
     [super setUp];
-    
+
     if (_dispatchGroup == nil) {
         _dispatchGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTBaseTest"];
     }
-    
+
     self.expectations = nil;
-    
+
     [self registerLogErrorHook];
-    
+
     self.innerFakeUIContext = [FakeGroupContext main];
     self.innerFakeSyncContext = [FakeGroupContext sync];
-    
+
     [NSUUID reseedUUID:self.name];
 
-    self.sharedUserDefaults = [NSUserDefaults random];
-
-    if (self.sharedUserDefaults == nil) {
-        self.sharedUserDefaults = [NSUserDefaults standardUserDefaults];
-    }
+    self.sharedUserDefaults = [NSUserDefaults temporary];
 }
 
 - (void)tearDown
@@ -143,7 +138,8 @@
     self.innerFakeSyncContext = nil;
     self.mocksToBeVerified = nil;
     self.expectations = nil;
-    [self.sharedUserDefaults reset];
+    self.sharedUserDefaults = nil;
+
     [super tearDown];
 }
 
@@ -213,7 +209,7 @@
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 }
 
-- (XCTestExpectation *)expectationWithDescription:(NSString *)description;
+- (XCTestExpectation *_Nonnull)customExpectationWithDescription:(NSString *_Nonnull)description;
 {
     ZMTExpectation *expectation = [[ZMTExpectation alloc] init];
     expectation.name = description;
@@ -227,7 +223,7 @@
     return (XCTestExpectation *) expectation;
 }
 
-- (XCTestExpectation *)expectationForNotification:(NSString *)notificationName object:(id)objectToObserve handler:(XCNotificationExpectationHandler)handlerOrNil;
+- (XCTestExpectation *_Nonnull)customExpectationForNotification:(NSNotificationName _Nonnull)notificationName object:(id _Nullable)objectToObserve handler:(XCNotificationExpectationHandler _Nullable)handlerOrNil;
 {
     ZMTNotificationExpectation *expectation = [[ZMTNotificationExpectation alloc] init];
     ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:expectation selector:@selector(observe:) name:notificationName object:objectToObserve]);
@@ -243,7 +239,7 @@
     return (XCTestExpectation *) expectation;
 }
 
-- (XCTestExpectation *)keyValueObservingExpectationForObject:(id)objectToObserve keyPath:(NSString *)keyPath expectedValue:(id)expectedValue;
+- (XCTestExpectation *)customKeyValueObservingExpectationForObject:(id)objectToObserve keyPath:(NSString *)keyPath expectedValue:(id)expectedValue;
 {
     RequireString(expectedValue == nil, "Not implemented");
     ZMTKeyValueObservingExpectation *expectation = [[ZMTKeyValueObservingExpectation alloc] init];
@@ -311,11 +307,6 @@
     }
     PrintTimeoutWarning(self, timeout, -[start timeIntervalSinceNow]);
     return YES;
-}
-
-- (BOOL)verifyAllExpectationsNow
-{
-    return [self waitForCustomExpectationsWithTimeout:0];
 }
 
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout;

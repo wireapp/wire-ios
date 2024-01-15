@@ -63,7 +63,7 @@
 - (void)testThatEnteringGroupsWithoutAllGroupsLeavingDoesNotNofity;
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"notifyWhenGroupIsEmpty"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"notifyWhenGroupIsEmpty"];
     
     NSArray *groups = [self.MOC enterAllGroups];
     
@@ -83,7 +83,7 @@
 - (void)testThatManagedObjextAutomaticallyEnterLeaveGroupWhenUsingPerformGroup;
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"notifyWhenGroupIsEmpty called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"notifyWhenGroupIsEmpty called"];
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     

@@ -131,12 +131,8 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     }
 
     public var muted: Bool {
-        get {
-            return callCenter?.muted ?? false
-        }
-        set {
-            callCenter?.muted = newValue
-        }
+        get { callCenter?.isMuted ?? false }
+        set { callCenter?.isMuted = newValue }
     }
 
     public var isConferenceCall: Bool {

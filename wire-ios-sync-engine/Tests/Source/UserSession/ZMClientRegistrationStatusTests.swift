@@ -32,10 +32,28 @@ extension ZMClientRegistrationStatusTests {
         XCTAssertEqual(sut.currentPhase, ZMClientRegistrationPhase.fetchingClients)
     }
 
-    func testThatItNeedsToRegisterMLSClient_WhenNoClientIsAlreadyRegisteredAndAllowed() {
+    func testThatItDoesNotNeedToRegisterMLSClient_WhenNoClientIsAlreadyRegisteredAndAllowed() {
         // given
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier = UUID()
+        DeveloperFlag.storage = .random()!
+        DeveloperFlag.enableMLSSupport.enable(true)
+        BackendInfo.storage = .random()!
+        BackendInfo.apiVersion = .v5
+
+        // then
+        XCTAssertFalse(sut.needsToRegisterMLSCLient)
+    }
+
+    func testThatItNeeddToRegisterMLSClient_WhenClientIsRegisteredAndAllowed() {
+        // given
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier = UUID()
+
+        let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
+        selfClient.remoteIdentifier = UUID.create().transportString()
+        sut.didRegister(selfClient)
+
         DeveloperFlag.storage = .random()!
         DeveloperFlag.enableMLSSupport.enable(true)
         BackendInfo.storage = .random()!

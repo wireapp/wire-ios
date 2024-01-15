@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,20 +17,12 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
+import WireSystem
 
-class MockRecurringActionService: RecurringActionServiceInterface {
+extension DateProviding where Self == MockStaticDateProvider {
+    public static func mock(_ now: Date) -> Self { .init(now: now) }
+}
 
-    var performActionsIsCalled: Bool = false
-
-    var actions = [RecurringAction]()
-
-    func performActionsIfNeeded() {
-        performActionsIsCalled = true
-    }
-
-    func registerAction(_ action: RecurringAction) {
-        actions.append(action)
-    }
-
+public struct MockStaticDateProvider: DateProviding {
+    public var now = Date.now
 }

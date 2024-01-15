@@ -77,18 +77,6 @@ private final class FormatSequence {
 
 final class ParticipantsStringFormatter {
 
-    private struct Key {
-        static let youStartedTheConversation = "content.system.conversation.with_name.title-you"
-        static let xStartedTheConversation = "content.system.conversation.with_name.title"
-        static let xOthers = "content.system.started_conversation.truncated_people.others"
-        static let andX = "content.system.started_conversation.truncated_people"
-        static let with = "content.system.conversation.with_name.participants"
-        static let xAndY = "content.system.participants_1_other"
-        static let completeTeam = "content.system.started_conversation.complete_team"
-        static let completeTeamWithGuests = "content.system.started_conversation.complete_team.guests"
-        static let participantsRemoved = "content.system.federation_termination.participants_removed"
-    }
-
     struct NameList {
         let names: [String]
         let collapsed: Int
@@ -119,7 +107,12 @@ final class ParticipantsStringFormatter {
         return [.link: ParticipantsCellViewModel.showMoreLinkURL]
     }
 
-    init(message: ZMConversationMessage, font: UIFont = .mediumFont, largeFont: UIFont = .largeSemiboldFont, textColor: UIColor = .from(scheme: .textForeground)) {
+    init(
+        message: ZMConversationMessage,
+        font: UIFont = .mediumFont,
+        largeFont: UIFont = .largeSemiboldFont,
+        textColor: UIColor = .from(scheme: .textForeground)
+    ) {
         self.message = message
         self.font = font
         self.largeFont = largeFont
@@ -127,10 +120,14 @@ final class ParticipantsStringFormatter {
     }
 
     /// This is only used when a conversation (with a name) is started.
-    func heading(senderName: String, senderIsSelf: Bool, convName: String) -> NSAttributedString {
+    func heading(
+        senderName: String,
+        senderIsSelf: Bool,
+        convName: String
+    ) -> NSAttributedString {
         // "You/Bob started the conversation"
-        let key = senderIsSelf ? Key.youStartedTheConversation : Key.xStartedTheConversation
-        let text = key.localized(args: senderName) && font
+        let key = senderIsSelf ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName) : L10n.Localizable.Content.System.Conversation.WithName.title(senderName)
+        let text = key && font
 
         // "Italy Trip"
         let title = convName.attributedString && largeFont
@@ -179,7 +176,7 @@ final class ParticipantsStringFormatter {
             return result += " " + learnMore
 
         case .removed(reason: .federationTermination):
-            let formatString = Key.participantsRemoved.localized(args: names.totalUsers, nameSequence.string)
+            let formatString = "content.system.federation_termination.participants_removed".localized(args: names.totalUsers, nameSequence.string)
             result = .markdown(from: formatString, style: .systemMessage)
 
             return result
@@ -188,7 +185,7 @@ final class ParticipantsStringFormatter {
             result = formatKey(senderIsSelf).localized(args: senderName, nameSequence.string) && font && textColor
 
         case .started(withName: .some):
-            result = "\(Key.with.localized) \(nameSequence.string)" && font && textColor
+            result = "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(nameSequence.string)" && font && textColor
 
         default: return nil
         }
@@ -218,7 +215,7 @@ final class ParticipantsStringFormatter {
             result.append(names.last!, with: attrsForLastName)
         case 2:
             // "x and y"
-            let part = Key.xAndY.localized(args: names.first!, names.last!)
+            let part = L10n.Localizable.Content.System.participants1Other(names.first!, names.last!)
             result.append(part, with: normalAttributes)
             result.define(boldAttributes, forComponent: names.first!)
             result.define(attrsForLastName, forComponent: names.last!)
@@ -230,13 +227,13 @@ final class ParticipantsStringFormatter {
                 // "you/z, "
                 result.append(names.last! + ", ", with: attrsForLastName)
                 // "and X others
-                let linkText = Key.xOthers.localized(args: "\(nameList.collapsed)")
-                let linkPart = Key.andX.localized(args: linkText)
+                let linkText =  L10n.Localizable.Content.System.StartedConversation.TruncatedPeople.others(nameList.collapsed)
+                let linkPart = L10n.Localizable.Content.System.StartedConversation.truncatedPeople(linkText)
                 result.append(linkPart, with: normalAttributes)
                 result.define(linkAttributes, forComponent: linkText)
             } else {
                 // "and you/z"
-                let lastPart = Key.andX.localized(args: names.last!)
+                let lastPart = L10n.Localizable.Content.System.StartedConversation.truncatedPeople(names.last!)
                 result.append(lastPart, with: normalAttributes)
                 result.define(attrsForLastName, forComponent: names.last!)
             }
@@ -250,7 +247,7 @@ final class ParticipantsStringFormatter {
             let systemMessage = message as? ZMSystemMessage,
             systemMessage.allTeamUsersAdded,
             (message.conversationLike as? CanManageAccessProvider)?.canManageAccess ?? false
-            else { return nil }
+        else { return nil }
 
         // we only collapse whole team if there are more than 10 participants
         guard nameList.totalUsers + Int(systemMessage.numberOfGuestsAdded) > 10 else {
@@ -258,9 +255,9 @@ final class ParticipantsStringFormatter {
         }
 
         if systemMessage.numberOfGuestsAdded > 0 {
-            return Key.completeTeamWithGuests.localized(args: String(systemMessage.numberOfGuestsAdded))
+            return L10n.Localizable.Content.System.StartedConversation.CompleteTeam.guests(String(systemMessage.numberOfGuestsAdded))
         } else {
-            return Key.completeTeam.localized
+            return L10n.Localizable.Content.System.StartedConversation.completeTeam
         }
     }
 }

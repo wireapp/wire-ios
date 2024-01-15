@@ -368,6 +368,14 @@ public class SharingSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             allowCreation: false
         )
+        let commitSender = CommitSender(
+            coreCryptoProvider: coreCryptoProvider,
+            notificationContext: coreDataStack.syncContext.notificationContext
+        )
+        let mlsActionExecutor = MLSActionExecutor(
+            coreCryptoProvider: coreCryptoProvider,
+            commitSender: commitSender
+        )
         let earService = EARService(
             accountID: accountIdentifier,
             databaseContexts: [
@@ -377,7 +385,7 @@ public class SharingSession {
             sharedUserDefaults: sharedUserDefaults
         )
         let proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
-        let mlsDecryptionService = MLSDecryptionService(context: coreDataStack.syncContext, coreCryptoProvider: coreCryptoProvider)
+        let mlsDecryptionService = MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
 
         try self.init(
             accountIdentifier: accountIdentifier,
