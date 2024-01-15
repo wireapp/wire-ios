@@ -195,6 +195,7 @@ private extension ConversationLike {
 // MARK: - Descriptions
 
 class ConversationParticipantsChangedSystemMessageCellDescription: ConversationMessageCellDescription {
+
     typealias View = ConversationParticipantsSystemMessageCell
     let configuration: View.Configuration
 
@@ -221,38 +222,6 @@ class ConversationParticipantsChangedSystemMessageCellDescription: ConversationM
         accessibilityLabel = model.attributedTitle()?.string
         actionController = nil
     }
-}
-
-class ConversationRenamedSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationRenamedSystemMessageCell
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
-
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType, newName: String) {
-        let senderText = message.senderName
-        let titleString = "content.system.renamed_conv.title".localized(pov: sender.pov, args: senderText)
-
-        let title = NSAttributedString(string: titleString, attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault])
-
-        let conversationName = NSAttributedString(string: newName, attributes: [.font: UIFont.normalSemiboldFont, .foregroundColor: LabelColors.textDefault])
-        configuration = View.Configuration(attributedText: title, newConversationName: conversationName)
-        actionController = nil
-        accessibilityLabel = "\(titleString), \(newName)"
-    }
-
 }
 
 class ConversationCallSystemMessageCellDescription: ConversationMessageCellDescription {
