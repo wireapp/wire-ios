@@ -99,48 +99,6 @@ extension ConversationStartedSystemMessageCell {
 
 }
 
-// MARK: - ConversationWarningSystemMessageCell
-
-// MARK: - ParticipantsConversationSystemMessageCell
-
-class ParticipantsConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
-    struct Configuration: Equatable {
-        let icon: UIImage?
-        let attributedText: NSAttributedString?
-        let showLine: Bool
-        let warning: String?
-    }
-
-    private let warningLabel = UILabel()
-
-    override func configureSubviews() {
-        super.configureSubviews()
-        warningLabel.numberOfLines = 0
-        warningLabel.isAccessibilityElement = true
-        warningLabel.font = FontSpec(.small, .regular).font
-        warningLabel.textColor = LabelColors.textErrorDefault
-        bottomContentView.addSubview(warningLabel)
-    }
-
-    override func configureConstraints() {
-        super.configureConstraints()
-        warningLabel.translatesAutoresizingMaskIntoConstraints = false
-        warningLabel.fitIn(view: bottomContentView)
-    }
-
-    // MARK: - Configuration
-
-    func configure(with object: Configuration, animated: Bool) {
-        lineView.isHidden = !object.showLine
-        imageView.image = object.icon
-        attributedText = object.attributedText
-        warningLabel.text = object.warning
-    }
-}
-
-// MARK: - CannotDecryptSystemMessageCell
-
 // MARK: - Factory
 
 final class ConversationSystemMessageCellDescription {

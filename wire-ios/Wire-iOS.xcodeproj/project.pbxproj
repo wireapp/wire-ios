@@ -1308,6 +1308,7 @@
 		E9C0B3552B558B1D00BC80E8 /* NewDeviceSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3542B558B1D00BC80E8 /* NewDeviceSystemMessageCell.swift */; };
 		E9C0B3572B558C0A00BC80E8 /* CannotDecryptSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3562B558C0A00BC80E8 /* CannotDecryptSystemMessageCell.swift */; };
 		E9C0B3592B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3582B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift */; };
+		E9C0B35B2B558D8600BC80E8 /* ParticipantsConversationSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B35A2B558D8600BC80E8 /* ParticipantsConversationSystemMessageCell.swift */; };
 		E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; };
 		E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9CCCF9729101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */; };
@@ -3326,6 +3327,7 @@
 		E9C0B3542B558B1D00BC80E8 /* NewDeviceSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewDeviceSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C0B3562B558C0A00BC80E8 /* CannotDecryptSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannotDecryptSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C0B3582B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationWarningSystemMessageCell.swift; sourceTree = "<group>"; };
+		E9C0B35A2B558D8600BC80E8 /* ParticipantsConversationSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsConversationSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+NavigationBarTitle.swift"; sourceTree = "<group>"; };
 		E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandlerTests.swift; sourceTree = "<group>"; };
@@ -4539,6 +4541,7 @@
 				E9C0B3542B558B1D00BC80E8 /* NewDeviceSystemMessageCell.swift */,
 				E9C0B3562B558C0A00BC80E8 /* CannotDecryptSystemMessageCell.swift */,
 				E9C0B3582B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift */,
+				E9C0B35A2B558D8600BC80E8 /* ParticipantsConversationSystemMessageCell.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -9152,6 +9155,7 @@
 				5E39FC63225CCEFA00C682B8 /* ValueValidationCell.swift in Sources */,
 				7C440E7823472DFB00D91B5F /* FolderCreationNameSectionController.swift in Sources */,
 				F1CB5D252158FE1F001CCF5D /* MentionsHandler+TextView.swift in Sources */,
+				E9C0B35B2B558D8600BC80E8 /* ParticipantsConversationSystemMessageCell.swift in Sources */,
 				5EA73D7920D900830001D106 /* GroupOptionsSectionController.swift in Sources */,
 				BF79B10220AB236A001BF4FE /* SectionFooter.swift in Sources */,
 				8710673F1C0DC5570035603B /* SettingsPropertySelectValueCellDescriptor.swift in Sources */,
