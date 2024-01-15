@@ -47,7 +47,12 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
             attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
         )
 
-        configuration = View.Configuration(icon: WireStyleKit.imageOfShieldverified, attributedText: title, showLine: true)
+        configuration = View.Configuration(
+            icon: WireStyleKit.imageOfShieldverified,
+            attributedText: title,
+            showLine: true
+        )
+
         accessibilityLabel = title.string
         actionController = nil
     }
