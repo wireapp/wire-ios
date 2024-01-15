@@ -194,36 +194,6 @@ private extension ConversationLike {
 
 // MARK: - Descriptions
 
-class ConversationParticipantsChangedSystemMessageCellDescription: ConversationMessageCellDescription {
-
-    typealias View = ConversationParticipantsSystemMessageCell
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
-
-    init(message: ZMConversationMessage, data: ZMSystemMessageData) {
-        let color = IconColors.backgroundDefault
-        let textColor = LabelColors.textDefault
-
-        let model = ParticipantsCellViewModel(font: .mediumFont, largeFont: .largeSemiboldFont, textColor: textColor, iconColor: color, message: message)
-        configuration = View.Configuration(icon: model.image(), attributedText: model.attributedTitle(), showLine: true, warning: model.warning())
-        accessibilityLabel = model.attributedTitle()?.string
-        actionController = nil
-    }
-}
-
 class ConversationCallSystemMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationSystemMessageCell
     let configuration: View.Configuration
