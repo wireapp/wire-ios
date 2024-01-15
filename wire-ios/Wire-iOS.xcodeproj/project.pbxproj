@@ -1289,6 +1289,7 @@
 		E9559B4927B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */; };
 		E95B0A142B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B0A132B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift */; };
 		E95B0A162B559A440088B778 /* ConversationMissingMessagesSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B0A152B559A440088B778 /* ConversationMissingMessagesSystemMessageCellDescription.swift */; };
+		E95B0A182B559AD30088B778 /* ConversationSessionResetSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B0A172B559AD30088B778 /* ConversationSessionResetSystemMessageCellDescription.swift */; };
 		E95CF9522AEA79F800DCAC6D /* ConversationMessageSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95CF9512AEA79F800DCAC6D /* ConversationMessageSnapshotTestCase.swift */; };
 		E961C0752A332E7400A36DE6 /* ConversationReactionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */; };
 		E96301BB2B4EEDD600726CDB /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */; };
@@ -3320,6 +3321,7 @@
 		E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ConfirmRemovingServices.swift"; sourceTree = "<group>"; };
 		E95B0A132B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationNewDeviceSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E95B0A152B559A440088B778 /* ConversationMissingMessagesSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissingMessagesSystemMessageCellDescription.swift; sourceTree = "<group>"; };
+		E95B0A172B559AD30088B778 /* ConversationSessionResetSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSessionResetSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E95CF9512AEA79F800DCAC6D /* ConversationMessageSnapshotTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageSnapshotTestCase.swift; sourceTree = "<group>"; };
 		E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReactionMessageTests.swift; sourceTree = "<group>"; };
 		E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
@@ -4566,6 +4568,7 @@
 				E9C0B3662B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift */,
 				E95B0A132B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift */,
 				E95B0A152B559A440088B778 /* ConversationMissingMessagesSystemMessageCellDescription.swift */,
+				E95B0A172B559AD30088B778 /* ConversationSessionResetSystemMessageCellDescription.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -9888,6 +9891,7 @@
 				EEFF3E7C21B6D1FB000834A6 /* ConversationCreateSectionController.swift in Sources */,
 				5E766D9921144DFC005242B4 /* AuthenticationCoordinator.swift in Sources */,
 				63A5E6E424C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift in Sources */,
+				E95B0A182B559AD30088B778 /* ConversationSessionResetSystemMessageCellDescription.swift in Sources */,
 				F15650EC21DD1B4100210504 /* ImageCache.swift in Sources */,
 				D550F57020444924009E09DD /* ConversationActionController+ClearContent.swift in Sources */,
 				8784D4551E817D13007A6867 /* ConversationListTopBarViewController.swift in Sources */,
