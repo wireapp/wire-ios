@@ -16,4 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 3.112
+=======
+WIRE_SHORT_VERSION = 3.111.7
+>>>>>>> 7245c2abed (fix: remove background task for CoreData setup - WPB-6143 (#856))
