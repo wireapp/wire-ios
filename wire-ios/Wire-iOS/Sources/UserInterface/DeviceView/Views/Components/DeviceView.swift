@@ -21,7 +21,7 @@ import WireCommonComponents
 
 struct DeviceView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
-    
+
     var titleView: some View {
         HStack {
             Text(viewModel.title.clippedValue())
