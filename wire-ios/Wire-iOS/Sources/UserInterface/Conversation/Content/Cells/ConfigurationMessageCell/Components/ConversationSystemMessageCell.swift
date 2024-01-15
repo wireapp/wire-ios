@@ -147,7 +147,7 @@ final class ConversationSystemMessageCellDescription {
                 cells.append(AnyConversationMessageCellDescription(GuestsAllowedCellDescription()))
             }
             if conversation.isOpenGroup {
-                let encryptionInfoCell = ConversationEncryptionInfoDescription()
+                let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription()
                 cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
             }
 
@@ -193,76 +193,6 @@ private extension ConversationLike {
 }
 
 // MARK: - Descriptions
-
-class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
-
-    typealias View = ConversationNewDeviceSystemMessageCell
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
-
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, user: UserType) {
-        let title = ConversationIgnoredDeviceSystemMessageCellDescription.makeAttributedString(systemMessage: data, user: user)
-
-        configuration = View.Configuration(attributedText: title, icon: WireStyleKit.imageOfShieldnotverified, linkTarget: .user(user))
-        accessibilityLabel = configuration.attributedText?.string
-        actionController = nil
-    }
-
-    private static func makeAttributedString(systemMessage: ZMSystemMessageData, user: UserType) -> NSAttributedString {
-        let string: String
-        let link = View.userClientURL.absoluteString
-
-        if user.isSelfUser == true {
-            string = L10n.Localizable.Content.System.unverifiedSelfDevices(link)
-        } else {
-            string = L10n.Localizable.Content.System.unverifiedOtherDevices(user.name ?? "", link)
-        }
-
-        return .markdown(from: string, style: .systemMessage)
-    }
-
-}
-
-class ConversationEncryptionInfoDescription: ConversationMessageCellDescription {
-    typealias View = ConversationWarningSystemMessageCell
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 26.0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
-
-    init() {
-        typealias connectionView = L10n.Localizable.Conversation.ConnectionView
-
-        configuration = View.Configuration(topText: connectionView.encryptionInfo,
-                                           bottomText: connectionView.sensitiveInformationWarning)
-        accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"
-        actionController = nil
-    }
-}
 
 final class ConversationFailedToAddParticipantsCellDescription: ConversationMessageCellDescription {
 
