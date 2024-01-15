@@ -65,7 +65,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     func prepareViewModel(
         mode: UIUserInterfaceStyle,
         e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding,
         isProteusVerificationEnabled: Bool,
         isSelfClient: Bool
     ) -> DeviceInfoViewModel {
@@ -81,7 +80,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
                 userSession: mockSession,
                 credentials: emailCredentials,
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 saveFileManager: MockSaveFileManager()
             ),
             userSession: mockSession,
@@ -90,7 +88,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             isSelfClient: isSelfClient
         )
         viewModel.proteusKeyFingerprint = kFingerPrint
-        viewModel.mlsThumbprint = kFingerPrint
         viewModel.isSelfClient = isSelfClient
         return viewModel
     }
@@ -98,20 +95,16 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     func setupWrappedInNavigationController(
         mode: UIUserInterfaceStyle = .light,
         e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding,
         isProteusVerificationEnabled: Bool = true,
         isE2EIdentityEnabled: Bool = true,
-        isSelfClient: Bool = false,
-        e2eIdentityCertificate: E2eIdentityCertificate? = nil
+        isSelfClient: Bool = false
     ) -> UINavigationController {
         let viewModel = prepareViewModel(
             mode: mode,
             e2eIdentityProvider: e2eIdentityProvider,
-            mlsProvider: mlsProvider,
             isProteusVerificationEnabled: isProteusVerificationEnabled,
             isSelfClient: isSelfClient
         )
-        viewModel.e2eIdentityCertificate = e2eIdentityCertificate
         sut = UIHostingController(rootView: DeviceDetailsView(viewModel: viewModel))
         sut.overrideUserInterfaceStyle = mode
         return  sut.wrapInNavigationController()
@@ -123,7 +116,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 isE2EIdentityEnabled: false
             )
         )
@@ -135,7 +127,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 isProteusVerificationEnabled: false,
                 isE2EIdentityEnabled: false,
                 isSelfClient: true
@@ -147,11 +138,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         let e2eIdentityProvider = MockValidE2eIdentityProvider()
         let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
-            matching: setupWrappedInNavigationController(
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
-            )
+            matching: setupWrappedInNavigationController(e2eIdentityProvider: e2eIdentityProvider)
         )
     }
 
@@ -161,9 +148,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                isProteusVerificationEnabled: false,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
+                isProteusVerificationEnabled: false
             )
         )
     }
@@ -172,11 +157,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         let e2eIdentityProvider = MockRevokedE2eIdentityProvider()
         let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
-            matching: setupWrappedInNavigationController(
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
-            )
+            matching: setupWrappedInNavigationController(e2eIdentityProvider: e2eIdentityProvider)
         )
     }
 
@@ -184,11 +165,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         let e2eIdentityProvider = MockExpiredE2eIdentityProvider()
         let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
-            matching: setupWrappedInNavigationController(
-                    e2eIdentityProvider: e2eIdentityProvider,
-                    mlsProvider: mlsProvider,
-                    e2eIdentityCertificate: e2eIdentityProvider.certificate
-                )
+            matching: setupWrappedInNavigationController(e2eIdentityProvider: e2eIdentityProvider)
             )
     }
 
@@ -196,11 +173,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
         let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
-            matching: setupWrappedInNavigationController(
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
-            )
+            matching: setupWrappedInNavigationController(e2eIdentityProvider: e2eIdentityProvider)
         )
     }
 
@@ -213,10 +186,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             matching: setupWrappedInNavigationController(
                 mode: .dark,
                 e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
                 isE2EIdentityEnabled: false,
-                isSelfClient: true,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
+                isSelfClient: true
             )
         )
     }
@@ -227,9 +198,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         verify(matching:
                 setupWrappedInNavigationController(
                     mode: .dark,
-                    e2eIdentityProvider: e2eIdentityProvider,
-                    mlsProvider: mlsProvider,
-                    e2eIdentityCertificate: e2eIdentityProvider.certificate
+                    e2eIdentityProvider: e2eIdentityProvider
                 )
         )
     }
@@ -240,73 +209,54 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         verify(matching:
                 setupWrappedInNavigationController(
                     mode: .dark,
-                    e2eIdentityProvider: e2eIdentityProvider,
-                    mlsProvider: mlsProvider,
-                    e2eIdentityCertificate: e2eIdentityProvider.certificate
+                    e2eIdentityProvider: e2eIdentityProvider
                 )
         )
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevokedInDarkMode() {
         let e2eIdentityProvider = MockRevokedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
+                e2eIdentityProvider: e2eIdentityProvider
             )
         )
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkMode() {
         let e2eIdentityProvider = MockExpiredE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
+                e2eIdentityProvider: e2eIdentityProvider
             )
         )
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkMode() {
         let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: false)
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
+                e2eIdentityProvider: e2eIdentityProvider
             )
         )
     }
 
     func testWhenE2eidentityViewAndMLSViewIsEnabledThenShowBothTheSections() {
         let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: true)
         verify(
-            matching: setupWrappedInNavigationController(
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
-            )
+            matching: setupWrappedInNavigationController(e2eIdentityProvider: e2eIdentityProvider)
         )
     }
 
     func testWhenE2eidentityViewAndMLSViewIsEnabledThenShowBothTheSectionsInDarkMode() {
         let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
-        let mlsProvider = MockMLSProvider(isMLSEnbaled: true)
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                e2eIdentityCertificate: e2eIdentityProvider.certificate
+                e2eIdentityProvider: e2eIdentityProvider
             )
         )
     }

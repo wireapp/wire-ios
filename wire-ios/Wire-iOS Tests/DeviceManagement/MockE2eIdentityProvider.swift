@@ -19,22 +19,28 @@
 @testable import WireDataModel
 
 public final class MockE2eIdentityProvider: E2eIdentityProviding {
-    lazy var dateFormatter = DateFormatter()
 
-    public var isE2EIdentityEnabled: Bool = false
-
-    public var certificate: E2eIdentityCertificate {
-        E2eIdentityCertificate(
-            certificateDetails: String(repeating: "abcdefghijklmno", count: 100),
-            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
-            certificateStatus: "",
-            serialNumber: String(repeating: "abcdefghijklmno", count: 2)
-        )
-    }
+    public let certificate: E2eIdentityCertificate = .mock()
 
     public init() {}
 
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
         certificate
+    }
+
+    public func isE2EIdentityEnabled() async throws -> Bool {
+        return false
+    }
+
+    public func fetchCertificates(clientIds: [Data]) async throws -> [WireDataModel.E2eIdentityCertificate] {
+        []
+    }
+
+    public func fetchCertificates(userIds: [String]) async throws -> [String: [WireDataModel.E2eIdentityCertificate]] {
+        [:]
+    }
+
+    public func shouldUpdateCertificate(for certificate: WireDataModel.E2eIdentityCertificate) -> Bool {
+        false
     }
 }

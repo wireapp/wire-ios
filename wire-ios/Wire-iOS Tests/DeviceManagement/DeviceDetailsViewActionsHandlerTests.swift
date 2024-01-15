@@ -43,9 +43,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            e2eIdentityProvider: MockE2eIdentityProvider(),
-            mlsProvider: MockMLSProvider(isMLSEnbaled: false),
-            saveFileManager: saveFileManager
+            e2eIdentityProvider: MockE2eIdentityProvider(), saveFileManager: saveFileManager
         )
         deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
         wait(for: [expectation], timeout: 0.5)
@@ -58,7 +56,6 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userSession: mockSession,
             credentials: emailCredentials,
             e2eIdentityProvider: e2eIdentityProvider,
-            mlsProvider: MockMLSProvider(isMLSEnbaled: false),
             saveFileManager: MockSaveFileManager()
         )
         let fetchedCertificate = await deviceActionHandler.fetchCertificate()
@@ -67,16 +64,19 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     }
 }
 
-private extension E2eIdentityCertificate {
+extension E2eIdentityCertificate {
 
     static func mock(
-        with certificateDetails: String = .random(length: 100),
-        status: String = "valid",
+        with certificateDetails: String = .mockCertificate(),
+        status: E2EIdentityCertificateStatus = .valid,
+        notValidBefore: Date = .now - .oneDay,
         expiryDate: Date = .now,
-        sertialNumber: String = .random(length: 16)
+        sertialNumber: String = .mockSerialNumber
     ) -> E2eIdentityCertificate {
         return .init(
             certificateDetails: certificateDetails,
+            mlsThumbprint: .mockMlsThumbprint,
+            notValidBefore: notValidBefore,
             expiryDate: expiryDate,
             certificateStatus: status,
             serialNumber: sertialNumber
