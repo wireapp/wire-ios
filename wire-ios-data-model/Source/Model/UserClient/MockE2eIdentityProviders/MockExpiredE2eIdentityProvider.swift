@@ -53,7 +53,7 @@ extension E2eIdentityCertificate {
             notValidBefore: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: .revoked,
-            serialNumber: .mockSerialNumber()
+            serialNumber: .mockSerialNumber
         )
     }
 
@@ -64,7 +64,7 @@ extension E2eIdentityCertificate {
             notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
             certificateStatus: .valid,
-            serialNumber: .mockSerialNumber()
+            serialNumber: .mockSerialNumber
         )
     }
 
@@ -75,7 +75,7 @@ extension E2eIdentityCertificate {
             notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: .expired,
-            serialNumber: .mockSerialNumber()
+            serialNumber: .mockSerialNumber
         )
     }
 
