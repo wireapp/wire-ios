@@ -38,7 +38,7 @@ extension ZMClientRegistrationStatusTests {
         selfUser.remoteIdentifier = UUID()
         DeveloperFlag.storage = .temporary()
         DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v5
 
         // then
