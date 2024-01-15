@@ -22,7 +22,7 @@ public final class MockE2eIdentityProvider: E2eIdentityProviding {
 
     public let certificate: E2eIdentityCertificate = .mock()
     public let isE2EIdentityEnabled: Bool = false
-    public let shouldUpdateCertificate = false
+    public let shouldCertificateBeUpdated = false
 
     public init() {
     }
@@ -43,7 +43,8 @@ public final class MockE2eIdentityProvider: E2eIdentityProviding {
         [:]
     }
 
-    public func shouldUpdateCertificate(for certificate: WireDataModel.E2eIdentityCertificate) -> Bool {
-        return shouldUpdateCertificate
+    public func shouldCertificateBeUpdated(for certificate: WireDataModel.E2eIdentityCertificate) -> Bool {
+        shouldCertificateBeUpdated
     }
+
 }
