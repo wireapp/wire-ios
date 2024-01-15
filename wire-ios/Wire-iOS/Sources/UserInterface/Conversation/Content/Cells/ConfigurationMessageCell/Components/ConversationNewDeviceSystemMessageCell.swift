@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 
-class NewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     static let userClientURL: URL = URL(string: "settings://user-client")!
 
@@ -62,7 +61,7 @@ class NewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessage
 
 // MARK: - UITextViewDelegate
 
-extension NewDeviceSystemMessageCell {
+extension ConversationNewDeviceSystemMessageCell {
 
     public override func textView(
         _ textView: UITextView,

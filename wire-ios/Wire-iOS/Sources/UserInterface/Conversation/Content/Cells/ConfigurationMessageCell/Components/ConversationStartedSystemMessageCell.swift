@@ -17,35 +17,52 @@
 //
 
 import UIKit
+import WireDataModel
 
-class CannotDecryptSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+class ConversationStartedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     struct Configuration {
+        let title: NSAttributedString?
+        let message: NSAttributedString
+        let selectedUsers: [UserType]
         let icon: UIImage?
-        let attributedText: NSAttributedString?
-        let showLine: Bool
     }
 
-    var lastConfiguration: Configuration?
+    private let titleLabel = UILabel()
+    private var selectedUsers: [UserType] = []
 
-    // MARK: - Configuration
+    override func configureSubviews() {
+        super.configureSubviews()
+
+        titleLabel.numberOfLines = 0
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        topContentView.addSubview(titleLabel)
+    }
+
+    override func configureConstraints() {
+        super.configureConstraints()
+        titleLabel.fitIn(view: topContentView)
+    }
 
     func configure(with object: Configuration, animated: Bool) {
-        lastConfiguration = object
-        lineView.isHidden = !object.showLine
+        titleLabel.attributedText = object.title
+        attributedText = object.message
         imageView.image = object.icon
-        attributedText = object.attributedText
-        textLabel.linkTextAttributes = [:]
+        imageView.isAccessibilityElement = false
+        selectedUsers = object.selectedUsers
+        accessibilityLabel = object.title?.string
     }
+
 }
 
 // MARK: - UITextViewDelegate
 
-extension CannotDecryptSystemMessageCell {
+extension ConversationStartedSystemMessageCell {
 
     public override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
 
-        delegate?.perform(action: .resetSession, for: message, view: self)
+        delegate?.conversationMessageWantsToOpenParticipantsDetails(self, selectedUsers: selectedUsers, sourceView: self)
 
         return false
     }

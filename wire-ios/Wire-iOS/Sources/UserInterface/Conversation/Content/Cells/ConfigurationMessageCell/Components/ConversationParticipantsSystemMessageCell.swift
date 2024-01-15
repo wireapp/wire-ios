@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-class ParticipantsConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+class ConversationParticipantsSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     private typealias LabelColors = SemanticColors.Label
 

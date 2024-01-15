@@ -48,57 +48,6 @@ class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMess
 
 }
 
-// MARK: - ConversationStartedSystemMessageCell
-
-class ConversationStartedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
-    struct Configuration {
-        let title: NSAttributedString?
-        let message: NSAttributedString
-        let selectedUsers: [UserType]
-        let icon: UIImage?
-    }
-
-    private let titleLabel = UILabel()
-    private var selectedUsers: [UserType] = []
-
-    override func configureSubviews() {
-        super.configureSubviews()
-
-        titleLabel.numberOfLines = 0
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        topContentView.addSubview(titleLabel)
-    }
-
-    override func configureConstraints() {
-        super.configureConstraints()
-        titleLabel.fitIn(view: topContentView)
-    }
-
-    func configure(with object: Configuration, animated: Bool) {
-        titleLabel.attributedText = object.title
-        attributedText = object.message
-        imageView.image = object.icon
-        imageView.isAccessibilityElement = false
-        selectedUsers = object.selectedUsers
-        accessibilityLabel = object.title?.string
-    }
-
-}
-
-// MARK: - UITextViewDelegate
-extension ConversationStartedSystemMessageCell {
-
-    public override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-
-        delegate?.conversationMessageWantsToOpenParticipantsDetails(self, selectedUsers: selectedUsers, sourceView: self)
-
-        return false
-    }
-
-}
-
 // MARK: - Factory
 
 final class ConversationSystemMessageCellDescription {
@@ -246,7 +195,7 @@ private extension ConversationLike {
 // MARK: - Descriptions
 
 class ConversationParticipantsChangedSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ParticipantsConversationSystemMessageCell
+    typealias View = ConversationParticipantsSystemMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -542,7 +491,7 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
 
 class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = NewDeviceSystemMessageCell
+    typealias View = ConversationNewDeviceSystemMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -622,7 +571,7 @@ class ConversationSessionResetSystemMessageCellDescription: ConversationMessageC
 }
 
 class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = CannotDecryptSystemMessageCell
+    typealias View = ConversationCannotDecryptSystemMessageCell
     let configuration: View.Configuration
 
     static fileprivate let resetSessionURL: URL = URL(string: "action://reset-session")!
@@ -761,7 +710,7 @@ class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessage
 
 final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = NewDeviceSystemMessageCell
+    typealias View = ConversationNewDeviceSystemMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
