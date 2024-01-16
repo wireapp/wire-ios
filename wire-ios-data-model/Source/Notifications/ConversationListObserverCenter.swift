@@ -243,8 +243,7 @@ class ConversationListSnapshot: NSObject {
                 conversationChanges.append(changes)
             }
             needsToRecalculate = true
-        }
-        else if list.predicateMatchesConversation(conversation) {
+        } else if list.predicateMatchesConversation(conversation) {
             // list did not contain conversation and now it should
             zmLog.debug("Inserted conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) into list \(list.identifier)")
             list.insertConversations(Set(arrayLiteral: conversation))
