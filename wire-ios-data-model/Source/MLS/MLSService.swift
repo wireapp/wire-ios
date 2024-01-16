@@ -50,11 +50,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws
 
-    func fetchSubconversationGroupID(
-        forType type: SubgroupType,
-        parentGroupID: MLSGroupID
-    ) -> MLSGroupID?
-
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
@@ -1457,13 +1452,6 @@ public final class MLSService: MLSServiceInterface {
         case failedToJoinSubgroup
         case missingSubgroupID
 
-    }
-
-    public func fetchSubconversationGroupID(
-        forType type: SubgroupType,
-        parentGroupID: MLSGroupID
-    ) -> MLSGroupID? {
-       return subconversationGroupIDRepository.fetchSubconversationGroupID(forType: type, parentGroupID: parentGroupID)
     }
 
     public func createOrJoinSubgroup(

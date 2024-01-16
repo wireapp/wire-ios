@@ -619,36 +619,6 @@ extension WireCallCenterV3 {
         return conferenceCalling.status == .enabled
     }
 
-    func generateInitialConferenceInfo(from conversationID: AVSIdentifier) async throws {
-        return
-        guard let context = await uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
-        let parentGroupID = await context.perform {
-            let conversation = ZMConversation.fetch(with: conversationID.identifier, domain: conversationID.domain, in: context)
-            return conversation?.mlsGroupID
-        }
-        guard let parentGroupID else { return }
-
-        guard let mlsService = await context.perform({ context.mlsService }) else {
-            return
-        }
-
-        guard let subgroupID = mlsService.fetchSubconversationGroupID(forType: .conference, parentGroupID: parentGroupID) else {
-            WireLogger.mls.warn("subgroupID not found for group : \(parentGroupID)")
-            return
-        }
-
-        let initialConferenceInfo = try await mlsService.generateConferenceInfo(
-            parentGroupID: parentGroupID,
-            subconversationGroupID: subgroupID
-        )
-
-        self.avsWrapper.setMLSConferenceInfo(
-            conversationId: conversationID,
-            info: initialConferenceInfo
-        )
-
-    }
-
     private func setUpMLSConference(in conversation: ZMConversation) throws {
         guard let conversationID = conversation.avsIdentifier else {
             throw Failure.failedToSetupMLSConference

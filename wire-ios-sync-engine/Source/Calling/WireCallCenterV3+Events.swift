@@ -170,10 +170,6 @@ extension WireCallCenterV3 {
             }
 
             self.handle(callState: .established, conversationId: conversationId)
-
-            Task {
-                try await self.generateInitialConferenceInfo(from: conversationId)
-            }
         }
     }
 
