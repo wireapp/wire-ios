@@ -107,10 +107,9 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         }
 
         do {
-            try await mlsService.createGroup(for: mlsGroupID)
-            try await mlsService.addMembersToConversation(
-                with: [MLSUser(userID)],
-                for: mlsGroupID
+            try await mlsService.createGroup(
+                for: mlsGroupID,
+                with: [MLSUser(userID)]
             )
         } catch {
             throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)

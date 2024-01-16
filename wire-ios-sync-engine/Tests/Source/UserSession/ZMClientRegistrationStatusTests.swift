@@ -32,13 +32,31 @@ extension ZMClientRegistrationStatusTests {
         XCTAssertEqual(sut.currentPhase, ZMClientRegistrationPhase.fetchingClients)
     }
 
-    func testThatItNeedsToRegisterMLSClient_WhenNoClientIsAlreadyRegisteredAndAllowed() {
+    func testThatItDoesNotNeedToRegisterMLSClient_WhenNoClientIsAlreadyRegisteredAndAllowed() {
         // given
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier = UUID()
-        DeveloperFlag.storage = .random()!
+        DeveloperFlag.storage = .temporary()
         DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
+        BackendInfo.apiVersion = .v5
+
+        // then
+        XCTAssertFalse(sut.needsToRegisterMLSCLient)
+    }
+
+    func testThatItNeeddToRegisterMLSClient_WhenClientIsRegisteredAndAllowed() {
+        // given
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier = UUID()
+
+        let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
+        selfClient.remoteIdentifier = UUID.create().transportString()
+        sut.didRegister(selfClient)
+
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.enableMLSSupport.enable(true)
+        BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v5
 
         // then
@@ -52,9 +70,9 @@ extension ZMClientRegistrationStatusTests {
         let selfClient = createSelfClient()
         selfClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "someKey")
         selfClient.needsToUploadMLSPublicKeys = false
-        DeveloperFlag.storage = .random()!
+        DeveloperFlag.storage = .temporary()
         DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v5
 
         // then

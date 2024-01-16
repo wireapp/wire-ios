@@ -188,21 +188,6 @@ public class MockMLSEventProcessing: MLSEventProcessing {
         await mock(welcomeMessage, conversationID, context)
     }
 
-    // MARK: - joinMLSGroupWhenReady
-
-    public var joinMLSGroupWhenReadyForConversationContext_Invocations: [(conversation: ZMConversation, context: NSManagedObjectContext)] = []
-    public var joinMLSGroupWhenReadyForConversationContext_MockMethod: ((ZMConversation, NSManagedObjectContext) -> Void)?
-
-    public func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
-        joinMLSGroupWhenReadyForConversationContext_Invocations.append((conversation: conversation, context: context))
-
-        guard let mock = joinMLSGroupWhenReadyForConversationContext_MockMethod else {
-            fatalError("no mock for `joinMLSGroupWhenReadyForConversationContext`")
-        }
-
-        mock(conversation, context)
-    }
-
     // MARK: - wipeMLSGroup
 
     public var wipeMLSGroupForConversationContext_Invocations: [(conversation: ZMConversation, context: NSManagedObjectContext)] = []

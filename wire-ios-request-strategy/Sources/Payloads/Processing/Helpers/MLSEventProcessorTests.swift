@@ -37,7 +37,6 @@ class MLSEventProcessorTests: MessagingTestBase {
         qualifiedID = QualifiedID(uuid: .create(), domain: "example.com")
 
         mlsServiceMock = .init()
-        mlsServiceMock.registerPendingJoin_MockMethod = { _ in }
         mlsServiceMock.wipeGroup_MockMethod = { _ in }
         mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = .random()
         mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = { }
@@ -200,31 +199,6 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
     }
 
-    // MARK: - Joining new conversations
-
-    func test_itAddsPendingGroupToGroupsPendingJoin() {
-        syncMOC.performAndWait {
-            // Given
-            self.conversation.mlsStatus = .pendingJoin
-
-            // When
-            self.sut.joinMLSGroupWhenReady(
-                forConversation: self.conversation,
-                context: self.syncMOC
-            )
-
-            // Then
-            XCTAssertEqual(self.mlsServiceMock.registerPendingJoin_Invocations.count, 1)
-            XCTAssertEqual(self.mlsServiceMock.registerPendingJoin_Invocations.first, self.conversation.mlsGroupID)
-        }
-    }
-
-    func test_itDoesntAddNotPendingGroupsToGroupsPendingJoin() {
-        test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .ready)
-        test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .pendingLeave)
-        test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .outOfSync)
-    }
-
     // MARK: - Wiping group
 
     func test_itWipesGroup() async {
@@ -265,22 +239,6 @@ class MLSEventProcessorTests: MessagingTestBase {
     }
 
     // MARK: - Helpers
-
-    func test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus status: MLSGroupStatus) {
-        syncMOC.performAndWait {
-            // Given
-            self.conversation.mlsStatus = status
-
-            // When
-            self.sut.joinMLSGroupWhenReady(
-                forConversation: self.conversation,
-                context: self.syncMOC
-            )
-
-            // Then
-            XCTAssertTrue(self.mlsServiceMock.registerPendingJoin_Invocations.isEmpty)
-        }
-    }
 
     func assert_mlsStatus(
         originalValue: MLSGroupStatus,

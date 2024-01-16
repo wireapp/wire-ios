@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,10 @@
 //
 
 import Foundation
+import WireSystem
+import WireUtilities
 
+// sourcery: AutoMockable
 protocol RecurringActionServiceInterface {
 
     func registerAction(_ action: RecurringAction)
@@ -28,20 +31,30 @@ protocol RecurringActionServiceInterface {
 
 struct RecurringAction {
 
-    typealias Action = () -> Void
-
     let id: String
     let interval: TimeInterval
-    let perform: Action
+    let perform: () -> Void
 
+    func callAsFunction() {
+        perform()
+    }
 }
 
-class RecurringActionService: RecurringActionServiceInterface {
+final class RecurringActionService: RecurringActionServiceInterface {
 
     // MARK: - Properties
 
-    var storage: UserDefaults = .standard
     private(set) var actionsByID = [String: RecurringAction]()
+    private let storage: UserDefaults
+    private let dateProvider: DateProviding
+
+    public init(
+        storage: UserDefaults,
+        dateProvider: DateProviding
+    ) {
+        self.storage = storage
+        self.dateProvider = dateProvider
+    }
 
     // MARK: - Methods
 
@@ -50,14 +63,14 @@ class RecurringActionService: RecurringActionServiceInterface {
     }
 
     public func performActionsIfNeeded() {
-        for (id, action) in actionsByID {
-            guard let lastActionDate = lastCheckDate(for: id) else {
-                persistLastCheckDate(for: id)
-                return
-            }
+        let now = dateProvider.now
 
-            if (lastActionDate + action.interval) <= Date() {
-                action.perform()
+        for (id, action) in actionsByID {
+
+            let lastActionDate = lastCheckDate(for: action.id) ?? .distantPast
+
+            if (lastActionDate + action.interval) <= now {
+                action()
                 persistLastCheckDate(for: id)
             }
         }
@@ -65,22 +78,21 @@ class RecurringActionService: RecurringActionServiceInterface {
 
     public func forcePerformAction(id: String) {
         guard let action = actionsByID[id] else { return }
-        action.perform()
+        action()
         persistLastCheckDate(for: id)
     }
 
     // MARK: - Helpers
 
     private func key(for actionID: String) -> String {
-        return "lastCheckDate_\(actionID)"
+        "lastCheckDate_\(actionID)"
     }
 
     private func lastCheckDate(for actionID: String) -> Date? {
-        return storage.object(forKey: key(for: actionID)) as? Date
+        storage.object(forKey: key(for: actionID)) as? Date
     }
 
     func persistLastCheckDate(for actionID: String) {
-        storage.set(Date(), forKey: key(for: actionID))
+        storage.set(dateProvider.now, forKey: key(for: actionID))
     }
-
 }

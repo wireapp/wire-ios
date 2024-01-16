@@ -40,7 +40,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
             mlsEventProcessor: mockMLSEventProcessor
         )
 
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v0
     }
 

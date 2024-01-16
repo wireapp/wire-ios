@@ -734,14 +734,6 @@ final class ConversationEventPayloadProcessor {
             context: context
         )
 
-        if source == .slowSync {
-            await context.perform { [self] in
-                mlsEventProcessor.joinMLSGroupWhenReady(
-                    forConversation: conversation,
-                    context: context
-                )
-            }
-        }
     }
 
     func fetchCreator(

@@ -674,8 +674,8 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     }];
     
     // expect
-    XCTestExpectation *previewDataArrived = [self expectationWithDescription:@"preview image data arrived"];
-    XCTestExpectation *completeDataArrived = [self expectationWithDescription:@"complete image data arrived"];
+    XCTestExpectation *previewDataArrived = [self customExpectationWithDescription:@"preview image data arrived"];
+    XCTestExpectation *completeDataArrived = [self customExpectationWithDescription:@"complete image data arrived"];
     
     // when
     [user imageDataFor:ProfileImageSizePreview queue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completion:^(NSData *imageDataResult) {
@@ -2046,7 +2046,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertFalse(user1.isBlocked);
     // expect
 
-    [self keyValueObservingExpectationForObject:user1 keyPath:@"isBlocked" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user1 keyPath:@"isBlocked" expectedValue:nil];
     
     // when
     connection.status = ZMConnectionStatusBlocked;
@@ -2068,7 +2068,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
 
     // expect
 
-    [self keyValueObservingExpectationForObject:user1 keyPath:@"blockStateReason" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user1 keyPath:@"blockStateReason" expectedValue:nil];
 
     // when
     connection.status = ZMConnectionStatusBlockedMissingLegalholdConsent;
@@ -2090,7 +2090,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertFalse(user1.isIgnored);
     // expect
     
-    [self keyValueObservingExpectationForObject:user1 keyPath:@"isIgnored" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user1 keyPath:@"isIgnored" expectedValue:nil];
     
     // when
     connection.status = ZMConnectionStatusIgnored;
@@ -2111,7 +2111,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertTrue(user1.isPendingApprovalBySelfUser);
     // expect
     
-    [self keyValueObservingExpectationForObject:user1 keyPath:@"isPendingApprovalBySelfUser" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user1 keyPath:@"isPendingApprovalBySelfUser" expectedValue:nil];
     
     // when
     connection.status = ZMConnectionStatusAccepted;
@@ -2132,7 +2132,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertTrue(user.isPendingApprovalByOtherUser);
     // expect
     
-    [self keyValueObservingExpectationForObject:user keyPath:@"isPendingApprovalByOtherUser" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:user keyPath:@"isPendingApprovalByOtherUser" expectedValue:nil];
     
     // when
     connection.status = ZMConnectionStatusAccepted;
