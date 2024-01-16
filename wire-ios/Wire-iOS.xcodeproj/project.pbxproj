@@ -240,7 +240,6 @@
 		252183272B4C183A000C4325 /* SystemSaveFilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252183252B4C16CB000C4325 /* SystemSaveFilePresenter.swift */; };
 		2521832C2B4C1B8B000C4325 /* SaveFileManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2521832B2B4C1B8B000C4325 /* SaveFileManagerTests.swift */; };
 		2521832E2B4C1BDB000C4325 /* MockSystemSaveFilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2521832D2B4C1BDB000C4325 /* MockSystemSaveFilePresenter.swift */; };
-		252A83892B1E4CD100AB98C0 /* MockE2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252A83882B1E4CD100AB98C0 /* MockE2eIdentityProvider.swift */; };
 		255176CF2B5528F5006A4E46 /* MLSClientResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255176CE2B5528F5006A4E46 /* MLSClientResolver.swift */; };
 		255176D12B552A0A006A4E46 /* MockMLSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255176D02B552A0A006A4E46 /* MockMLSResolver.swift */; };
 		25644D8B2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25644D8A2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift */; };
@@ -260,6 +259,7 @@
 		2577CB6A2B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB692B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift */; };
 		2577CB7B2B1DC787007D3443 /* DeviceMLSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */; };
 		2577CB822B1DFF66007D3443 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB812B1DFF66007D3443 /* ViewConstants.swift */; };
+		259303192B56E6250027C68A /* E2eIdentityCertificate+mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259303132B56E4CF0027C68A /* E2eIdentityCertificate+mocks.swift */; };
 		4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		40C69D702A8627C900376B1C /* TemporaryFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D6F2A8627C900376B1C /* TemporaryFileService.swift */; };
@@ -2241,7 +2241,6 @@
 		252183252B4C16CB000C4325 /* SystemSaveFilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSaveFilePresenter.swift; sourceTree = "<group>"; };
 		2521832B2B4C1B8B000C4325 /* SaveFileManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveFileManagerTests.swift; sourceTree = "<group>"; };
 		2521832D2B4C1BDB000C4325 /* MockSystemSaveFilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSystemSaveFilePresenter.swift; sourceTree = "<group>"; };
-		252A83882B1E4CD100AB98C0 /* MockE2eIdentityProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockE2eIdentityProvider.swift; sourceTree = "<group>"; };
 		255176CE2B5528F5006A4E46 /* MLSClientResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSClientResolver.swift; sourceTree = "<group>"; };
 		255176D02B552A0A006A4E46 /* MockMLSResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSResolver.swift; sourceTree = "<group>"; };
 		25644D8A2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIdentityCertificateDetailsView.swift; sourceTree = "<group>"; };
@@ -2261,6 +2260,7 @@
 		2577CB692B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDeviceDetailsSettingsSelectionViewModel.swift; sourceTree = "<group>"; };
 		2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceMLSView.swift; sourceTree = "<group>"; };
 		2577CB812B1DFF66007D3443 /* ViewConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstants.swift; sourceTree = "<group>"; };
+		259303132B56E4CF0027C68A /* E2eIdentityCertificate+mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "E2eIdentityCertificate+mocks.swift"; sourceTree = "<group>"; };
 		2B56189E29A517E800D8CCCA /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2B6F6AB329ACC04A001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityLevelViewTests.swift; sourceTree = "<group>"; };
@@ -4501,6 +4501,14 @@
 			path = E2eIdentity;
 			sourceTree = "<group>";
 		};
+		259303142B56E4CF0027C68A /* MockE2eIdentityProviders */ = {
+			isa = PBXGroup;
+			children = (
+				259303132B56E4CF0027C68A /* E2eIdentityCertificate+mocks.swift */,
+			);
+			path = MockE2eIdentityProviders;
+			sourceTree = "<group>";
+		};
 		2B56189C29A508E900D8CCCA /* TestPlans */ = {
 			isa = PBXGroup;
 			children = (
@@ -6674,6 +6682,7 @@
 		8FC8564919924D4E0008B66B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				259303142B56E4CF0027C68A /* MockE2eIdentityProviders */,
 				EF39BD2D233E2FDA00F02DDB /* main.swift */,
 				8FC853A0199245770008B66B /* Wire-Info.plist */,
 				8FC853A1199245770008B66B /* Wire-iOS-Prefix.pch */,
@@ -7966,7 +7975,6 @@
 				EF27CD9C20C161500077FE55 /* ProfileClientViewControllerTests.swift */,
 				EF27CD9D20C161500077FE55 /* ClientListViewControllerTests.swift */,
 				EF98987120C5A47A005680C5 /* DeviceDetailsViewTests.swift */,
-				252A83882B1E4CD100AB98C0 /* MockE2eIdentityProvider.swift */,
 				25644D8C2B222892007DA01F /* E2eIdentityCertificateViewTests.swift */,
 				252183232B4C0457000C4325 /* DeviceDetailsViewActionsHandlerTests.swift */,
 				255176D02B552A0A006A4E46 /* MockMLSResolver.swift */,
@@ -9585,6 +9593,7 @@
 				D550F57920445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift in Sources */,
 				E662588B2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift in Sources */,
 				871BC3601D34F94200DF0793 /* SettingsPropertyFactory.swift in Sources */,
+				259303192B56E6250027C68A /* E2eIdentityCertificate+mocks.swift in Sources */,
 				EF2C246F22AFA76C009389C6 /* ZClientViewController+ZMUserObserver.swift in Sources */,
 				6328284324A11847000748D2 /* UserTypeIconStyle.swift in Sources */,
 				5E35F78421833AF000D3F4FE /* ZMConversationMessage+Sender.swift in Sources */,
@@ -10149,7 +10158,6 @@
 				EE9EE24028DB12920009F144 /* JobTests.swift in Sources */,
 				EF1FDC8221DE677600C9CEB1 /* XCTestCase+EmoticonSubstitutionConfiguration.swift in Sources */,
 				87BEB0DC1C734D710094BFE9 /* MockConversation.m in Sources */,
-				252A83892B1E4CD100AB98C0 /* MockE2eIdentityProvider.swift in Sources */,
 				EE118C012031D1C300BC68D6 /* MarkdownTextViewTests.swift in Sources */,
 				5E39FC65225CDA7800C682B8 /* ChangeEmailViewControllerTests.swift in Sources */,
 				BFFE943E1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift in Sources */,

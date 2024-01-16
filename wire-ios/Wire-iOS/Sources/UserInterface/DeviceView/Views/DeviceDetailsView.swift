@@ -73,8 +73,10 @@ struct DeviceDetailsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if viewModel.isE2eIdentityEnabled {
+                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
                     mlsView
+                }
+                if viewModel.isE2eIdentityEnabled {
                     e2eIdentityCertificateView
                 }
                 proteusView

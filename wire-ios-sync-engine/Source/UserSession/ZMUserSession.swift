@@ -101,7 +101,7 @@ public class ZMUserSession: NSObject {
     ) as RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
-    public var coreCryptoProvider: CoreCryptoProvider
+    var coreCryptoProvider: CoreCryptoProvider
     lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     var mlsService: MLSServiceInterface
     var proteusProvider: ProteusProviding!
@@ -298,6 +298,10 @@ public class ZMUserSession: NSObject {
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 
+    var getIsE2eIdentityEnabledUseCase: GetIsE2EIdentityEnabledUsecaseProtocol
+
+    var getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUsecaseProtocol
+
     lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface = {
         let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         return MLSConversationVerificationStatusProvider(
@@ -333,6 +337,9 @@ public class ZMUserSession: NSObject {
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
         sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        getIsE2eIdentityEnabledUseCase: GetIsE2EIdentityEnabledUsecaseProtocol = GetIsE2EIdentityEnabledUsecase(),
+        getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUsecaseProtocol = GetE2eIdentityCertificatesUsecase()
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -398,6 +405,8 @@ public class ZMUserSession: NSObject {
             userID: userId
         )
 
+        self.getIsE2eIdentityEnabledUseCase = getIsE2eIdentityEnabledUseCase
+        self.getE2eIdentityCertificatesUseCase = getE2eIdentityCertificatesUseCase
         super.init()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
@@ -712,6 +721,26 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         networkState = state
     }
 
+    public func getE2eIdentityCertificates(for clients: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
+        guard let conversationId = await fetchSelfConversation(context: syncContext) else {
+            return Array(repeating: .notActivated, count: clients.count)
+        }
+        return try await getE2eIdentityCertificatesUseCase.invoke(
+            conversationId: conversationId,
+            coreCryptoProvider: coreCryptoProvider,
+            clientIds: clients
+        )
+    }
+
+    public func getIsE2eIdentityEnabled() async throws -> Bool {
+        return try await getIsE2eIdentityEnabledUseCase.invoke(coreCryptoProvider: coreCryptoProvider)
+    }
+
+    private func fetchSelfConversation(context: NSManagedObjectContext) async -> Data? {
+       return await context.perform {
+            return ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID?.data
+        }
+    }
 }
 
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder

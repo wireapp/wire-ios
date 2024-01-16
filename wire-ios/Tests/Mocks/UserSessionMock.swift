@@ -22,12 +22,16 @@ import LocalAuthentication
 import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
+    var isE2eIdentityEnabled  = false
+    var certificate = E2eIdentityCertificate.mockNotActivated
     typealias Preference = AppLockPasscodePreference
     typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
 
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
-        mock.invokeUserClient_MockMethod = { _ in return "102030405060708090102030405060708090102030405060708090".data(using: .utf8) }
+        mock.invokeUserClient_MockMethod = { _ in
+            return "102030405060708090102030405060708090102030405060708090".data(using: .utf8)
+        }
         return mock
     }()
 
@@ -242,6 +246,14 @@ final class UserSessionMock: UserSession {
 
     func cancelProxiedRequest(_ request: WireSyncEngine.ProxyRequest) {
 
+    }
+
+    func getIsE2eIdentityEnabled() async throws -> Bool {
+        isE2eIdentityEnabled
+    }
+
+    func getE2eIdentityCertificates(for clients: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
+        [certificate]
     }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {

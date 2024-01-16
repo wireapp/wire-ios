@@ -279,6 +279,8 @@
 		16F7343C250F588100AB93B1 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		16FF474C1F0D54B20044C491 /* SessionManager+Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */; };
 		1836188BC0E48C1AC1671FC2 /* ZMSyncStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6B0837E10BD4D5E88805E3 /* ZMSyncStrategyTests.swift */; };
+		25E11B0B2B56A15F005D51FA /* GetE2eIdentityCertificatesUsecase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUsecase.swift */; };
+		25E11B0D2B56B497005D51FA /* GetIsE2EIdentityEnabledUsecase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUsecase.swift */; };
 		2B15596A295093360069AE34 /* HotfixPatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B155969295093360069AE34 /* HotfixPatch.swift */; };
 		3E05F252192A4FBD00F22D80 /* UserSessionErrorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E05F250192A4FBD00F22D80 /* UserSessionErrorTests.m */; };
 		3E1858BC1951D6DA005FE78F /* MemoryLeaksObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E1858B31951D69B005FE78F /* MemoryLeaksObserver.m */; };
@@ -917,6 +919,13 @@
 		16FF47461F0CD58A0044C491 /* IntegrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegrationTest.m; sourceTree = "<group>"; };
 		16FF47481F0CD6610044C491 /* IntegrationTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrationTest.h; sourceTree = "<group>"; };
 		16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SessionManager+Logs.swift"; sourceTree = "<group>"; };
+		259303092B56E4A20027C68A /* MockValidE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockValidE2eIdentityProvider.swift; sourceTree = "<group>"; };
+		2593030A2B56E4A20027C68A /* MockRevokedE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRevokedE2eIdentityProvider.swift; sourceTree = "<group>"; };
+		2593030B2B56E4A20027C68A /* MockExpiredE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExpiredE2eIdentityProvider.swift; sourceTree = "<group>"; };
+		2593030C2B56E4A20027C68A /* MockNotActivatedE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNotActivatedE2eIdentityProvider.swift; sourceTree = "<group>"; };
+		2593030D2B56E4A20027C68A /* E2eIdentityCertificate+mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "E2eIdentityCertificate+mocks.swift"; sourceTree = "<group>"; };
+		25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUsecase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetE2eIdentityCertificatesUsecase.swift; sourceTree = "<group>"; };
+		25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUsecase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetIsE2EIdentityEnabledUsecase.swift; sourceTree = "<group>"; };
 		2B155969295093360069AE34 /* HotfixPatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotfixPatch.swift; sourceTree = "<group>"; };
 		2B56189B29A5074000D8CCCA /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		3D6B0837E10BD4D5E88805E3 /* ZMSyncStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMSyncStrategyTests.swift; sourceTree = "<group>"; };
@@ -1627,6 +1636,19 @@
 			path = Recorders;
 			sourceTree = "<group>";
 		};
+		2593030E2B56E4A20027C68A /* MockE2eIdentityProviders */ = {
+			isa = PBXGroup;
+			children = (
+				259303092B56E4A20027C68A /* MockValidE2eIdentityProvider.swift */,
+				2593030A2B56E4A20027C68A /* MockRevokedE2eIdentityProvider.swift */,
+				2593030B2B56E4A20027C68A /* MockExpiredE2eIdentityProvider.swift */,
+				2593030C2B56E4A20027C68A /* MockNotActivatedE2eIdentityProvider.swift */,
+				2593030D2B56E4A20027C68A /* E2eIdentityCertificate+mocks.swift */,
+			);
+			name = MockE2eIdentityProviders;
+			path = "../../wire-ios/MockE2eIdentityProviders";
+			sourceTree = "<group>";
+		};
 		3E18605A191A4EF8000FE027 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1856,6 +1878,7 @@
 				3EAD6A08199BB6C800D519DB /* Calling */,
 				EEE46E5528C5EF3B005F48D7 /* Use cases */,
 				3E18605B191A4F28000FE027 /* Public */,
+				2593030E2B56E4A20027C68A /* MockE2eIdentityProviders */,
 				3E18605C191A4F3B000FE027 /* WireSyncEngine-iOS.pch */,
 			);
 			path = Source;
@@ -2585,6 +2608,8 @@
 			children = (
 				EEE46E5628C5EF56005F48D7 /* FetchUserClientsUseCase.swift */,
 				018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */,
+				25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUsecase.swift */,
+				25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUsecase.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -3599,6 +3624,7 @@
 				6349770A268A250E00824A05 /* Encodable+JSONString.swift in Sources */,
 				1658C2371F503CF800889F22 /* FlowManager.swift in Sources */,
 				7CD279882338E52000E638CD /* ProcessInfo+SystemBootTime.swift in Sources */,
+				25E11B0D2B56B497005D51FA /* GetIsE2EIdentityEnabledUsecase.swift in Sources */,
 				549710081F6FF5C100026EDD /* NotificationInContext+UserSession.swift in Sources */,
 				16D0A11D234C8CD700A83F87 /* LabelUpstreamRequestStrategy.swift in Sources */,
 				63FE4B9E25C1D2EC002878E5 /* VideoGridPresentationMode.swift in Sources */,
@@ -3624,6 +3650,7 @@
 				8717DFA71F6EF44E0087EFE4 /* SessionManager+Push.swift in Sources */,
 				D52257232062637500562561 /* DeletableAssetIdentifierProvider.swift in Sources */,
 				70355A7327AAE62E00F02C76 /* ZMUserSession+SecurityClassification.swift in Sources */,
+				25E11B0B2B56A15F005D51FA /* GetE2eIdentityCertificatesUsecase.swift in Sources */,
 				D5225720206261AA00562561 /* AssetDeletionStatus.swift in Sources */,
 				5E8BB8A02147F5BC00EEA64B /* CallSnapshot.swift in Sources */,
 				63B1FADB2763A636000766F8 /* ZMUser+AVSIdentifier.swift in Sources */,

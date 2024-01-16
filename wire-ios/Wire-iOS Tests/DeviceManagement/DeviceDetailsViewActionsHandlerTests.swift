@@ -43,7 +43,6 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            e2eIdentityProvider: MockValidE2eIdentityProvider(),
             saveFileManager: saveFileManager,
             mlsClientResolver: mockMLSClientResolver
         )
@@ -51,19 +50,19 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         wait(for: [expectation], timeout: 0.5)
     }
 
-    func testWhenFetchCertificateIsInvokedThenValidCertificateIsReturned() async {
-        let e2eIdentityProvider = MockValidE2eIdentityProvider()
+    func testWhenFetchCertificateIsInvokedThenValidCertificateIsReturned() async throws {
         let deviceActionHandler = DeviceDetailsViewActionsHandler(
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            e2eIdentityProvider: e2eIdentityProvider,
             saveFileManager: MockSaveFileManager(),
             mlsClientResolver: mockMLSClientResolver
         )
-        let fetchedCertificate = await deviceActionHandler.fetchCertificate()
+        let fetchedCertificate = await deviceActionHandler.getCertificate()
+        let suppliedCertificate = try await mockSession.getE2eIdentityCertificates(for: []).first
         XCTAssertNotNil(fetchedCertificate)
-        XCTAssertEqual(fetchedCertificate!.details, e2eIdentityProvider.certificate.details)
+        XCTAssertNotNil(suppliedCertificate)
+        XCTAssertEqual(fetchedCertificate, suppliedCertificate)
     }
 }
 

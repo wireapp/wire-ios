@@ -103,22 +103,6 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
         }
     }
 
-    static func e2eIdentityProvider() -> E2eIdentityProviding {
-        let status = E2EIdentityCertificateStatus.status(
-            for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
-        )
-        switch status {
-        case .notActivated:
-            return MockNotActivatedE2eIdentityProvider()
-        case .revoked:
-            return MockRevokedE2eIdentityProvider()
-        case .expired:
-            return MockExpiredE2eIdentityProvider()
-        case .valid:
-            return MockValidE2eIdentityProvider()
-        }
-    }
-
 }
 
 private extension E2EIdentityCertificateStatus {
