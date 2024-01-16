@@ -257,4 +257,5 @@ extension ZMConversation {
             timestamp: timestamp
         )
     }
+
 }
