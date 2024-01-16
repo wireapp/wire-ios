@@ -115,6 +115,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         expectedRequestPayload = nil
         successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
+        BackendInfo.storage = .standard
         super.tearDown()
     }
 

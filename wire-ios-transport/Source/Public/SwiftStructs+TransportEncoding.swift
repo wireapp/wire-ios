@@ -30,4 +30,11 @@ extension Date {
     public func transportString() -> String {
         return (self as NSDate).transportString()
     }
+
+    public init?(transportString: String) {
+        guard let date = NSDate(transport: transportString) as? Date else {
+            return nil
+        }
+        self = date
+    }
 }

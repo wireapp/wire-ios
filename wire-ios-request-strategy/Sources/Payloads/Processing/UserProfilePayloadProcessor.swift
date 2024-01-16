@@ -18,7 +18,15 @@
 
 import Foundation
 
-final class UserProfilePayloadProcessor {
+// sourcery: AutoMockable
+protocol UserProfilePayloadProcessing {
+    func updateUserProfiles(
+        from userProfiles: Payload.UserProfiles,
+        in context: NSManagedObjectContext
+    )
+}
+
+final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
     /// Update all user entities with the data from the user profiles.
     ///

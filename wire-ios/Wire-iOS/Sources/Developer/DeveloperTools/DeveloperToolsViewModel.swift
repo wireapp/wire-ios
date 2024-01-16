@@ -110,13 +110,17 @@ final class DeveloperToolsViewModel: ObservableObject {
         self.onDismiss = onDismiss
         sections = []
 
+        setupSections()
+    }
+
+    private func setupSections() {
         sections.append(Section(
             header: "Actions",
             items: [
-                .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
-                .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
-                .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
-                .destination(DestinationItem(title: "Configure flags", makeView: {
+                .destination(DestinationItem(title: "Debug actions", makeView: {
+                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self.selfClient)))
+                })),
+                .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
             ]
@@ -222,21 +226,6 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     // MARK: - Actions
-
-    private func breakNextQuickSync() {
-        ZMUserSession.shared()?.setBogusLastEventID()
-    }
-
-    private func sendDebugLogs() {
-        DebugLogSender.sendLogsByEmail(message: "Send logs")
-    }
-
-    private func performQuickSync() {
-        Task {
-            guard let session = ZMUserSession.shared() else { return }
-            await session.syncStatus.performQuickSync()
-        }
-    }
 
     private func checkRegisteredTokens() {
         guard

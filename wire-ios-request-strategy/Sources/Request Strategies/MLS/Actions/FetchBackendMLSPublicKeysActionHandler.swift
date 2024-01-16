@@ -59,8 +59,8 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
     override func handleResponse(_ response: ZMTransportResponse, action: FetchBackendMLSPublicKeysAction) {
         var action = action
 
-        switch response.httpStatus {
-        case 200:
+        switch (response.httpStatus, response.payloadLabel()) {
+        case (200, _):
             guard
                 let data = response.rawData,
                 let payload = try? JSONDecoder().decode(ResponsePayload.self, from: data)
@@ -73,6 +73,9 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
                 .map(\.data)
 
             action.succeed(with: Action.Result(removal: .init(ed25519: ed25519RemovalKey)))
+
+        case (400, "mls-not-enabled"):
+            action.fail(with: .mlsNotEnabled)
 
         default:
             let error = response.errorInfo

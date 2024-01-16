@@ -99,7 +99,7 @@ final class ParticipantDeviceHeaderView: UIView {
         return [
             NSAttributedString.Key.font: font,
             NSAttributedString.Key.foregroundColor: linkAttributeColor,
-            NSAttributedString.Key.link: NSURL.wr_fingerprintLearnMoreURL,
+            NSAttributedString.Key.link: URL.wr_fingerprintLearnMore,
             NSAttributedString.Key.paragraphStyle: paragraphStyleForFingerprint
         ]
     }

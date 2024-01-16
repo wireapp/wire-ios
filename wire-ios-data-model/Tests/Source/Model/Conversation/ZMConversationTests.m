@@ -273,14 +273,14 @@
 {
     // given
     NSSet *expected = [NSSet setWithArray:@[
-                          ZMConversationUserDefinedNameKey,
-                          ZMConversationIsForcedReadOnlyKey,
-                          ZMConversationLastReadServerTimeStampKey,
-                          ZMConversationClearedTimeStampKey,
-                          ZMConversationSilencedChangedTimeStampKey,
-                          ZMConversationArchivedChangedTimeStampKey
-                          ]];
-    
+        ZMConversationUserDefinedNameKey,
+        ZMConversationIsForcedReadOnlyKey,
+        ZMConversationLastReadServerTimeStampKey,
+        ZMConversationClearedTimeStampKey,
+        ZMConversationSilencedChangedTimeStampKey,
+        ZMConversationArchivedChangedTimeStampKey
+    ]];
+
     // when
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
 
