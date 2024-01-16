@@ -24,14 +24,22 @@ import enum WireCommonComponents.FontScheme
 
 final class MLSMigrationCellDescriptionTests: XCTestCase {
 
+    var otherUser: MockUserType!
+
     override func setUp() {
         super.setUp()
+        otherUser = MockUserType.createUser(name: "Bruno")
         FontScheme.configure(with: .large)
+    }
+
+    override func tearDown() {
+        otherUser = nil
+        super.tearDown()
     }
 
     func testProperties() {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted, for: otherUser)
 
         // WHEN && THEN
         XCTAssertEqual(cellDescription.topMargin, .zero)
@@ -51,7 +59,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationStarted_doesContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted, for: otherUser)
         var expectedValue: Any?
 
         // WHEN
@@ -67,7 +75,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationFinalized_doesContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationFinalized)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationFinalized, for: otherUser)
         var expectedValue: Any?
 
         // WHEN
@@ -83,7 +91,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationOngoingCall_doesNotContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationOngoingCall)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationOngoingCall, for: otherUser)
         var expectedValue: Any?
 
         // WHEN
@@ -99,7 +107,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationUpdateVersion_doesNotContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationUpdateVersion)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationUpdateVersion, for: otherUser)
         var expectedValue: Any?
 
         // WHEN
@@ -115,7 +123,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationJoinAfterwards_doesContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationJoinAfterwards)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationJoinAfterwards, for: otherUser)
         var expectedValue: Any?
 
         // WHEN
@@ -131,7 +139,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationPotentialGap_doesContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationPotentialGap)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationPotentialGap, for: otherUser)
         var expectedValue: Any?
 
         // WHEN
