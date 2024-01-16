@@ -101,7 +101,6 @@ final class PreferredAPIVersionViewModel: ObservableObject {
                 BackendInfo.preferredAPIVersion = nil
             case .apiVersion(let version):
                 BackendInfo.preferredAPIVersion = version
-                SessionManager.shared?.resolveAPIVersion()
             }
         }
     }

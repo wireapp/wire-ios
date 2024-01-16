@@ -30,33 +30,7 @@ public enum ConversationAddParticipantsError: Error, Equatable {
     case failedToAddMLSMembers
     case unreachableDomains(Set<String>)
     case nonFederatingDomains(Set<String>)
-}
 
-extension ConversationAddParticipantsError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .unknown:
-            return "unknown"
-        case .invalidOperation:
-            return "invalidOperation"
-        case .accessDenied:
-            return "accessDenied"
-        case .notConnectedToUser:
-            return "notConnectedToUser"
-        case .conversationNotFound:
-            return "conversationNotFound"
-        case .tooManyMembers:
-            return "tooManyMembers"
-        case .missingLegalHoldConsent:
-            return "missingLegalHoldConsent"
-        case .failedToAddMLSMembers:
-            return "failedToAddMLSMembers"
-        case .unreachableDomains(let set):
-            return "unreachableDomains(\(set.description)"
-        case .nonFederatingDomains(let set):
-            return "nonFederatingDomains(\(set.description)"
-        }
-    }
 }
 
 public class AddParticipantAction: EntityAction {
