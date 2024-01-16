@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+private let zmLog = ZMSLog(tag: "local-storage")
+
 protocol TemporaryFileServiceInterface {
     func removeTemporaryData()
 }
@@ -33,6 +35,7 @@ class TemporaryFileService: TemporaryFileServiceInterface {
             .forEach { file in
                 try? manager.removeItem(atPath: file.path)
             }
-        WireLogger.localStorage.debug("clearing temp directory!!", attributes: .public)
+        WireLogger.localStorage.debug("clearing temp directory!!")
+        zmLog.safePublic("clearing temp directory!!", level: .debug)
     }
 }

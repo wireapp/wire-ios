@@ -129,9 +129,6 @@ public struct WireLogger: LoggerProtocol {
 
 public typealias LogAttributes = [String: Encodable]
 
-extension LogAttributes {
-    public static let `public` = ["public": true]
-}
 public protocol LoggerProtocol {
 
   func debug(_ message: LogConvertible, attributes: LogAttributes?)
