@@ -182,10 +182,6 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--preferred-api-version 5"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "--disable-interactive-keyboard-dismissal"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -230,8 +226,8 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-BackendEnvironmentTypeOverrideKey elna"
-            isEnabled = "YES">
+            argument = "-BackendEnvironmentTypeOverrideKey staging"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--persist-backend-type"
