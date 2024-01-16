@@ -215,9 +215,10 @@ private extension Array where Element == CallParticipant {
 
 private extension MLSClientID {
     init?(callParticipant: CallParticipant) {
+        // do not use callParticipant.user here as it might be called from swift cooperative pool
+        // user is CoreData entity that must be accessed from its context's queue
         let userID = callParticipant.userId.identifier.transportString()
         guard let domain = callParticipant.userId.domain else {
-            WireLogger.calling.warn("🕵🏽 no domain for MLSClientID")
             return nil
         }
 
