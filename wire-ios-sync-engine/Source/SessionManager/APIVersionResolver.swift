@@ -108,9 +108,7 @@ final class APIVersionResolver {
             WireLogger.environment.warn("api version was not resolved")
             BackendInfo.apiVersion = nil
         }
-        #if DEBUG
-        BackendInfo.apiVersion = backendDevVersions.max()
-        #endif
+
         let previousBackendDomain = BackendInfo.domain
         BackendInfo.domain = payload.domain
 
