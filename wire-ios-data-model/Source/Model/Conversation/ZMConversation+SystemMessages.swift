@@ -227,7 +227,6 @@ extension ZMConversation {
     }
 
     public func appendMLSMigrationMLSNotSupportedForSelfUser(
-        sender: ZMUser,
         user: ZMUser,
         at timestamp: Date
     ) {
@@ -244,7 +243,6 @@ extension ZMConversation {
     }
 
     public func appendMLSMigrationMLSNotSupportedForOtherUser(
-        sender: ZMUser,
         user: ZMUser,
         at timestamp: Date
     ) {
