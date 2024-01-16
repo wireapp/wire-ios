@@ -597,9 +597,12 @@ extension ZMConversation {
         domains: [String]? = nil
     ) -> ZMSystemMessage {
         guard let context = managedObjectContext else {
+            let message = "can not append system message without managedObjectContext!"
+            WireLogger.updateEvent.critical(message)
+            zmLog.safePublic(SanitizedString(stringLiteral: message))
             fatalError("can not append system message without managedObjectContext!")
         }
-        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
+        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
         systemMessage.users = users ?? Set()

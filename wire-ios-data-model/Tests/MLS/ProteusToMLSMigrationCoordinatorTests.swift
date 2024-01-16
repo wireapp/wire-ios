@@ -62,8 +62,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockFeatureRepository.fetchMLSMigration_MockValue = .init()
         mockPostProtocolChangeUpdater.updateLocalConversationQualifiedIDToContext_MockMethod = { _, _, _, _ in }
 
-        BackendInfo.storage = .random()!
-        DeveloperFlag.storage = .random()!
+        BackendInfo.storage = .temporary()
+        DeveloperFlag.storage = .temporary()
     }
 
     // MARK: - tearDown

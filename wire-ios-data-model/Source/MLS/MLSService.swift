@@ -527,7 +527,10 @@ public final class MLSService: MLSServiceInterface {
         for users: [MLSUser]
     ) async throws -> [KeyPackage] {
 
-        guard let context = context else { return [] }
+        guard let context else {
+            assertionFailure("MLSService.context is nil")
+            return []
+        }
 
         var result = [KeyPackage]()
         var failedUsers = [MLSUser]()
