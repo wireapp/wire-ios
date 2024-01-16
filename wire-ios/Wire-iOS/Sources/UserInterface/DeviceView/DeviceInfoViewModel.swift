@@ -26,24 +26,25 @@ protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
-    func fetchCertificate() async -> E2eIdentityCertificate?
+    func getCertificate() async -> E2eIdentityCertificate?
+    func enrollClient() async -> E2eIdentityCertificate?
+    func updateCertificate() async -> E2eIdentityCertificate?
     func removeDevice() async -> Bool
     func resetSession()
     func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
     func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate)
     func isE2eIdentityEnabled() async -> Bool
-    func shouldCertificateBeUpdated(certificate: E2eIdentityCertificate) -> Bool
+    func getProteusFingerPrint() async -> String
 }
 
 final class DeviceInfoViewModel: ObservableObject {
-    let userSession: UserSession
     let addedDate: String
     let proteusID: String
-    let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
     let userClient: UserClient
-    var title: String
+    let gracePeriod: TimeInterval
 
+    var title: String
     var isSelfClient: Bool
 
     var isCopyEnabled: Bool {
@@ -54,7 +55,11 @@ final class DeviceInfoViewModel: ObservableObject {
         guard let certificate = e2eIdentityCertificate else {
             return nil
         }
-        return actionsHandler.shouldCertificateBeUpdated(certificate: certificate)
+        return certificate.shouldCertificateBeUpdated(with: gracePeriod)
+    }
+
+    var mlsThumbprint: String? {
+        (userClient.mlsPublicKeys.ed25519 ?? e2eIdentityCertificate?.mlsThumbprint)?.uppercased().splitStringIntoLines(charactersPerLine: 16)
     }
 
     @Published
@@ -73,20 +78,18 @@ final class DeviceInfoViewModel: ObservableObject {
         proteusID: String,
         isProteusVerificationEnabled: Bool,
         actionsHandler: any DeviceDetailsViewActions,
-        userSession: UserSession,
-        getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol,
         userClient: UserClient,
-        isSelfClient: Bool
+        isSelfClient: Bool,
+        gracePeriod: TimeInterval
     ) {
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
         self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
-        self.userSession = userSession
-        self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
         self.isSelfClient = isSelfClient
+        self.gracePeriod = gracePeriod
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
@@ -94,29 +97,28 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
-    func fetchFingerPrintForProteus() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
-        guard let data = await getUserClientFingerprint.invoke(userClient: userClient),
-                let fingerPrint = String(data: data, encoding: .utf8) else {
-            return
-        }
-        DispatchQueue.main.async {
-            self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
-            self.isActionInProgress = false
-        }
+    @MainActor
+    func getE2eCertificate() async {
+        self.isActionInProgress = true
+        let certificate = await actionsHandler.getCertificate()
+        self.e2eIdentityCertificate = certificate
+        self.isActionInProgress = false
     }
 
-    func fetchE2eCertificate() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
-        let certificate = await actionsHandler.fetchCertificate()
-        DispatchQueue.main.async {
-            self.e2eIdentityCertificate = certificate
-            self.isActionInProgress = false
-        }
+    @MainActor
+    func updateCertificate() async {
+        self.isActionInProgress = true
+        let certificate = await actionsHandler.updateCertificate()
+        self.e2eIdentityCertificate = certificate
+        self.isActionInProgress = false
+    }
+
+    @MainActor
+    func enrollClient() async {
+        self.isActionInProgress = true
+        let certificate = await actionsHandler.enrollClient()
+        self.e2eIdentityCertificate = certificate
+        self.isActionInProgress = false
     }
 
     @MainActor
@@ -147,19 +149,23 @@ final class DeviceInfoViewModel: ObservableObject {
         actionsHandler.downloadE2EIdentityCertificate(certificate: certificate)
     }
 
-    func isE2eIdenityEnabled() async -> Bool {
+    @MainActor
+    func isE2eIdenityEnabled() async {
         let result = await actionsHandler.isE2eIdentityEnabled()
-        await MainActor.run {
-            self.isE2eIdentityEnabled = result
-        }
-        return result
+        self.isE2eIdentityEnabled = result
+    }
+
+    @MainActor
+    func getProteusFingerPrint() async {
+        let result = await actionsHandler.getProteusFingerPrint()
+        self.proteusKeyFingerprint = result
     }
 
     func onAppear() {
         Task {
-            _ = await isE2eIdenityEnabled()
-            await fetchFingerPrintForProteus()
-            await fetchE2eCertificate()
+            await isE2eIdenityEnabled()
+            await getE2eCertificate()
+            await getProteusFingerPrint()
         }
     }
 }
@@ -167,37 +173,64 @@ final class DeviceInfoViewModel: ObservableObject {
 extension DeviceInfoViewModel {
     static func map(
         userClient: UserClient,
+        title: String,
+        addedDate: String,
+        proteusID: String?,
         isSelfClient: Bool,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol,
-        e2eIdentityProvider: E2eIdentityProviding
+        gracePeriod: TimeInterval
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
-            title: userClient.model ?? "",
-            addedDate: userClient.activationDate?.formattedDate ?? "",
-            proteusID: userClient.proteusSessionID?.clientID.fingerprintStringWithSpaces.uppercased() ?? "",
+            title: title,
+            addedDate: addedDate,
+            proteusID: proteusID?.uppercased().fingerprintStringWithSpaces ?? "",
             isProteusVerificationEnabled: userClient.verified,
             actionsHandler: DeviceDetailsViewActionsHandler(
                 userClient: userClient,
                 userSession: userSession,
                 credentials: credentials,
-                e2eIdentityProvider: e2eIdentityProvider,
                 saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
                 mlsClientResolver: MLSClientResolver()
             ),
-            userSession: userSession,
-            getUserClientFingerprint: getUserClientFingerprintUseCase,
             userClient: userClient,
-            isSelfClient: isSelfClient
+            isSelfClient: isSelfClient,
+            gracePeriod: gracePeriod
         )
     }
 }
 
 extension E2eIdentityCertificate {
 
+    // current default days the certificate is retained on server
+    private var kServerRetainedDays: Double { 28 * 24 * 60 * 60 }
+
+    // Randomising time so that not all clients update certificate at the same time
+    private var kRandomInterval: Double { Double(Int.random(in: 0..<86400)) }
+
+    var isExpired: Bool {
+        return expiryDate > Date.now
+    }
+
     var isValid: Bool {
         status == .valid
+    }
+
+    var isActivated: Bool {
+        return notValidBefore <= Date.now
+    }
+
+    var lastUpdatedDate: Date {
+        return notValidBefore + kServerRetainedDays + kRandomInterval
+    }
+
+    func shouldCertificateBeUpdated(with gracePeriod: TimeInterval) -> Bool {
+        guard isActivated,
+              isExpired,
+              (lastUpdatedDate + gracePeriod) < Date.now else {
+            return false
+        }
+        return true
     }
 
 }

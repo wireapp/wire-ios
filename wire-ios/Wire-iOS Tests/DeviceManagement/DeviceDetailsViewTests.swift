@@ -26,13 +26,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     var sut: UIHostingController<DeviceDetailsView>!
     var client: UserClient!
 
-    lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
-        let mock = MockGetUserClientFingerprintUseCaseProtocol()
-        mock.invokeUserClient_MockMethod = { _ in return "102030405060708090102030405060708090102030405060708090".data(using: .utf8) }
-        mock.invokeUserClient_Invocations = [client]
-        return mock
-    }()
-
     lazy var kSerialNumber: String = {
         return "abcdefghijklmnopqrstuvwxyz"
             .uppercased()
@@ -63,37 +56,41 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func prepareViewModel(
-        e2eIdentityProvider: E2eIdentityProviding,
+        status: E2EIdentityCertificateStatus,
         isProteusVerificationEnabled: Bool,
         isE2eIdentityEnabled: Bool,
-        certificate: E2eIdentityCertificate,
         proteusKeyFingerPrint: String,
         isSelfClient: Bool
     ) -> DeviceInfoViewModel {
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
+        mockSession.isE2eIdentityEnabled = isE2eIdentityEnabled
+        switch status {
+        case .notActivated:
+            mockSession.certificate = .mockNotActivated
+        case .revoked:
+            mockSession.certificate = .mockRevoked
+        case .expired:
+            mockSession.certificate = .mockExpired
+        case .valid:
+            mockSession.certificate = .mockValid
+        }
         let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
-        let viewModel = DeviceInfoViewModel(
+        let dateFormater = DateFormatter()
+
+        let viewModel = DeviceInfoViewModel.map(
+            userClient: client,
             title: "some title",
             addedDate: "Monday 15 Oct, 2023",
             proteusID: kSerialNumber,
-            isProteusVerificationEnabled: isProteusVerificationEnabled,
-            actionsHandler: DeviceDetailsViewActionsHandler(
-                userClient: client,
-                userSession: mockSession,
-                credentials: emailCredentials,
-                e2eIdentityProvider: e2eIdentityProvider,
-                saveFileManager: MockSaveFileManager(),
-                mlsClientResolver: MockMLSClentResolver()
-            ),
+            isSelfClient: isSelfClient,
             userSession: mockSession,
-            getUserClientFingerprint: mockGetUserClientFingerprintUseCaseProtocol,
-            userClient: client,
-            isSelfClient: isSelfClient
+            credentials: emailCredentials,
+            gracePeriod: 3
         )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isE2eIdentityEnabled = isE2eIdentityEnabled
-        viewModel.e2eIdentityCertificate = certificate
         viewModel.isSelfClient = isSelfClient
+        viewModel.e2eIdentityCertificate = mockSession.certificate
         return viewModel
     }
 
@@ -107,11 +104,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsDisabled() {
-        let e2eIdentityProvider = MockE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -122,11 +117,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testGivenSelfClientWhenE2eidentityViewIsDisabled() {
-        let e2eIdentityProvider = MockE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: true)
         verify(
@@ -135,11 +128,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValid() {
-        let e2eIdentityProvider = MockValidE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .valid,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -148,11 +139,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidWhenProteusIsNotVerifiedThenBlueShieldIsNotShown() {
-        let e2eIdentityProvider = MockValidE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .valid,
                                          isProteusVerificationEnabled: false,
                                          isE2eIdentityEnabled: true,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -161,11 +150,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevoked() {
-        let e2eIdentityProvider = MockRevokedE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .revoked,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -174,11 +161,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpired() {
-        let e2eIdentityProvider = MockExpiredE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .expired,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -187,11 +172,10 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivated() {
-        let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+
+        let viewModel = prepareViewModel(status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -202,11 +186,10 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     // MARK: - Dark mode
 
     func testGivenSelfClientWhenE2eidentityViewIsDisabledInDarkMode() {
-        let e2eIdentityProvider = MockE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+
+        let viewModel = prepareViewModel(status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: true)
         verify(
@@ -215,11 +198,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsDisabledInDarkMode() {
-        let e2eIdentityProvider = MockE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -228,11 +209,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidInDarkMode() {
-        let e2eIdentityProvider = MockValidE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .valid,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -241,11 +220,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevokedInDarkMode() {
-        let e2eIdentityProvider = MockRevokedE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .revoked,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -254,11 +231,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkMode() {
-        let e2eIdentityProvider = MockExpiredE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .expired,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(
@@ -267,11 +242,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkMode() {
-        let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
-        let viewModel = prepareViewModel(e2eIdentityProvider: e2eIdentityProvider,
+        let viewModel = prepareViewModel(status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         certificate: e2eIdentityProvider.certificate,
                                          proteusKeyFingerPrint: kFingerPrint,
                                          isSelfClient: false)
         verify(

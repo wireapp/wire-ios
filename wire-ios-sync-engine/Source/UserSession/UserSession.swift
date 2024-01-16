@@ -214,6 +214,10 @@ public protocol UserSession: AnyObject {
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
+
+    func getIsE2eIdentityEnabled() async throws -> Bool
+
+    func getE2eIdentityCertificates(for clients: [MLSClientID]) async throws -> [E2eIdentityCertificate]
 }
 
 extension ZMUserSession: UserSession {

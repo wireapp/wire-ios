@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 extension E2eIdentityCertificate {
 
@@ -59,8 +60,8 @@ extension E2eIdentityCertificate {
         E2eIdentityCertificate(
             certificateDetails: .mockCertificate(),
             mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
-            notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
-            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
+            notValidBefore: dateFormatter.date(from: "15.09.2024") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
             certificateStatus: .notActivated,
             serialNumber: .mockSerialNumber
         )

@@ -29,7 +29,7 @@ public protocol SafeCoreCryptoProtocol {
 }
 
 extension CiphersuiteName {
-    var rawValue: UInt16 {
+    public var rawValue: UInt16 {
         switch self {
         case .mls128Dhkemx25519Aes128gcmSha256Ed25519:
             return 1

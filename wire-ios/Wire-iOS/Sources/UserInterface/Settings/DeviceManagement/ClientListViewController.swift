@@ -77,7 +77,7 @@ final class ClientListViewController: UIViewController,
     var credentials: ZMEmailCredentials?
     var clientsObserverToken: Any?
     var userObserverToken: NSObjectProtocol?
-
+    var userSession: ZMUserSession?
     var leftBarButtonItem: UIBarButtonItem? {
         if self.isIPadRegular() {
             return UIBarButtonItem.createNavigationRightBarButtonItem(
@@ -99,12 +99,14 @@ final class ClientListViewController: UIViewController,
 
     required init(
         clientsList: [UserClient]?,
+        userSession: ZMUserSession? = ZMUserSession.shared(),
         selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
         credentials: ZMEmailCredentials? = .none,
         detailedView: Bool = false,
         showTemporary: Bool = true,
         showLegalHold: Bool = true
     ) {
+        self.userSession = userSession
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
@@ -186,42 +188,26 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-     Task {
-            guard let userSession = ZMUserSession.shared(),
-                  let e2eIdentityProvider = await e2eIProvider(for: userSession)
-            else { return }
-           await MainActor.run {
-                if let navigationController = self.navigationController {
-                    let detailsView = DeviceDetailsView(
-                        viewModel: DeviceInfoViewModel.map(
-                            userClient: client,
-                            isSelfClient: client.isSelfClient(),
-                            userSession: userSession,
-                            credentials: self.credentials,
-                            getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
-                            e2eIdentityProvider: e2eIdentityProvider
-                        )
-                    ) {
-                        self.navigationController?.setNavigationBarHidden(false, animated: false)
-                    }
-                    let hostingViewController = UIHostingController(rootView: detailsView)
-                    hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-                    navigationController.pushViewController(hostingViewController, animated: true)
-                    navigationController.isNavigationBarHidden = true
-                }
-            }
-        }
-    }
+        guard let userSession = userSession, let navigationController = self.navigationController  else { return }
 
-    private func e2eIProvider(for userSession: ZMUserSession) async -> E2eIdentityProviding? {
-        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
-            return DeveloperDeviceDetailsSettingsSelectionViewModel.e2eIdentityProvider()
+        let detailsView = DeviceDetailsView(
+            viewModel: DeviceInfoViewModel.map(
+                userClient: client,
+                title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
+                addedDate: client.activationDate?.formattedDate ?? "",
+                proteusID: client.proteusSessionID?.clientID,
+                isSelfClient: client.isSelfClient(),
+                userSession: userSession,
+                credentials: self.credentials,
+                gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration)
+            )
+        ) {
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
         }
-        guard let conversationId = await fetchSelfConversation(context: userSession.syncContext) else {
-            return nil
-        }
-        return E2eIdentityProvider(gracePeriod: Double(userSession.e2eiFeature.config.verificationExpiration),
-                                   coreCryptoProvider: userSession.coreCryptoProvider, conversationId: conversationId)
+        let hostingViewController = UIHostingController(rootView: detailsView)
+        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.pushViewController(hostingViewController, animated: true)
+        navigationController.isNavigationBarHidden = true
     }
 
     @MainActor

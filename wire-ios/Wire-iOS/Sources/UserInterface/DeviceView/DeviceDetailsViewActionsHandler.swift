@@ -22,14 +22,11 @@ import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
     private let logger: LoggerProtocol
-    private let e2eIdentityProvider: E2eIdentityProviding
     private let userSession: UserSession
     private let mlsClientResolver: MLSClientResolving
-
     private var userClient: UserClient
     private var clientRemovalObserver: ClientRemovalObserver?
     private var credentials: ZMEmailCredentials?
-
     var isProcessing: ((Bool) -> Void)?
 
     var isSelfClient: Bool {
@@ -42,7 +39,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userClient: UserClient,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        e2eIdentityProvider: E2eIdentityProviding,
         saveFileManager: SaveFileActions,
         logger: LoggerProtocol = WireLogger.e2ei,
         mlsClientResolver: MLSClientResolving
@@ -50,30 +46,37 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
-        self.e2eIdentityProvider = e2eIdentityProvider
         self.saveFileManager = saveFileManager
         self.logger = logger
         self.mlsClientResolver = mlsClientResolver
     }
 
+    func updateCertificate() async -> E2eIdentityCertificate? {
+        // TODO: after this task https://wearezeta.atlassian.net/browse/WPB-6039
+        return nil
+    }
+
+    func enrollClient() async -> E2eIdentityCertificate? {
+        // TODO: after this task https://wearezeta.atlassian.net/browse/WPB-6039
+        return nil
+    }
+
     @MainActor
-    func fetchCertificate() async -> E2eIdentityCertificate? {
-        guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient),
-              let data = mlsClientID.data(using: .utf8) else {
+    func getCertificate() async -> E2eIdentityCertificate? {
+        guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient) else {
             return nil
         }
         do {
-            return try await e2eIdentityProvider.fetchCertificates(clientIds: [data]).first
+            return try await userSession.getE2eIdentityCertificates(for: [mlsClientID]).first
         } catch {
             logger.error(error.localizedDescription, attributes: nil)
             return nil
         }
     }
 
-    @MainActor
     func isE2eIdentityEnabled() async -> Bool {
         do {
-            return try await e2eIdentityProvider.isE2EIdentityEnabled()
+            return try await userSession.getIsE2eIdentityEnabled()
         } catch {
             logger.error(error.localizedDescription, attributes: nil)
             return false
@@ -141,8 +144,13 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         )
     }
 
-    func shouldCertificateBeUpdated(certificate: E2eIdentityCertificate) -> Bool {
-        e2eIdentityProvider.shouldCertificateBeUpdated(for: certificate)
+    @MainActor
+    func getProteusFingerPrint() async -> String {
+        guard let data = await userSession.getUserClientFingerprint.invoke(userClient: userClient),
+                let fingerPrint = String(data: data, encoding: .utf8) else {
+            return ""
+        }
+        return fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
     }
 }
 

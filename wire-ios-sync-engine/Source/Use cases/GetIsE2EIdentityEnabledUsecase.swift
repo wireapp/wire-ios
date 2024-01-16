@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,23 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import WireCoreCrypto
 
-struct DeviceMLSView: View {
+public protocol GetIsE2EIdentityEnabledUsecaseProtocol {
+    func invoke(coreCryptoProvider: CoreCryptoProviderProtocol) async throws -> Bool
+}
 
-    @ObservedObject var viewModel: DeviceInfoViewModel
+public final class GetIsE2EIdentityEnabledUsecase: GetIsE2EIdentityEnabledUsecaseProtocol {
 
-    var body: some View {
-        VStack {
-            CopyValueView(
-                title: L10n.Localizable.Device.Details.Section.Mls.title,
-                value: viewModel.mlsThumbprint ?? "",
-                isCopyEnabled: viewModel.isCopyEnabled,
-                performCopy: viewModel.copyToClipboard
-            )
-            .frame(maxHeight: .infinity)
-            .padding(.all, ViewConstants.Padding.standard)
+    public init() { }
+
+    public func invoke(coreCryptoProvider: CoreCryptoProviderProtocol) async throws -> Bool {
+        let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        return try await coreCrypto.perform {
+            try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue)
         }
     }
-
 }

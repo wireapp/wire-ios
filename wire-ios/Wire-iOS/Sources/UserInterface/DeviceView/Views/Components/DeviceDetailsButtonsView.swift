@@ -26,7 +26,7 @@ struct DeviceDetailsButtonsView: View {
     var getCertificateButton: some View {
         SwiftUI.Button {
             Task {
-                await viewModel.fetchE2eCertificate()
+                await viewModel.enrollClient()
             }
         } label: {
             Text(L10n.Localizable.Device.Details.Section.E2ei.getCertificate)
@@ -38,7 +38,7 @@ struct DeviceDetailsButtonsView: View {
     var updateCertificateButton: some View {
         SwiftUI.Button {
             Task {
-                await viewModel.fetchE2eCertificate()
+                await viewModel.updateCertificate()
             }
         } label: {
             VStack(alignment: .leading) {
