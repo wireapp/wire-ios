@@ -20,7 +20,6 @@ disabled_rules:
     - discarded_notification_center_observer
     - xctfail_message
     - compiler_protocol_init
-    - reduce_boolean
     - legacy_cggeometry_functions
     - legacy_constructor
     - legacy_hashing
