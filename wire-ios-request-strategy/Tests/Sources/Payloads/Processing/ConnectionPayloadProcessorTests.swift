@@ -26,7 +26,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         sut = ConnectionPayloadProcessor()
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
     }
 
     override func tearDown() {
