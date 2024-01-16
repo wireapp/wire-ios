@@ -132,7 +132,6 @@ extension WireCallCenterV3 {
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID
     ) {
-        WireLogger.calling.info("leaveSubconversation: start parentQualifiedID \(parentQualifiedID) - groupId \(parentGroupID)")
         guard
             let context = uiMOC,
             let syncContext = context.zm_sync
@@ -143,6 +142,7 @@ extension WireCallCenterV3 {
         syncContext.perform {
             guard let mlsService = syncContext.mlsService else {
                 WireLogger.calling.error("failed to leave subconversation: mlsService is missing")
+                assertionFailure("mlsService is nil")
                 return
             }
 
@@ -156,7 +156,6 @@ extension WireCallCenterV3 {
                 } catch {
                     WireLogger.calling.error("failed to leave subconversation: \(String(reflecting: error))")
                 }
-                WireLogger.calling.info("leaveSubconversation: end parentQualifiedID \(parentQualifiedID) - groupId \(parentGroupID)")
             }
         }
     }

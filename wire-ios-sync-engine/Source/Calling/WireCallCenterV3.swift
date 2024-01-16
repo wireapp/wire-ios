@@ -177,7 +177,6 @@ extension WireCallCenterV3 {
 
     func createSnapshot(callState: CallState, members: [AVSCallMember], callStarter: AVSIdentifier, video: Bool, for conversationId: AVSIdentifier, isConferenceCall: Bool) {
         guard
-            // FIXME: [F] does this has to be on uiMoc?
             let moc = uiMOC,
             let conversation = ZMConversation.fetch(with: conversationId.identifier,
                                                     domain: conversationId.domain,
