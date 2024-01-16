@@ -491,7 +491,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                         completionHandler(avsClients)
 
                     } catch {
-                        WireLogger.mls.error("Failed to fetch client list for MLS conference: \(String(describing: error))")
+                        Logging.mls.error("Failed to fetch client list for MLS conference: \(String(describing: error))")
                     }
                 }
             }

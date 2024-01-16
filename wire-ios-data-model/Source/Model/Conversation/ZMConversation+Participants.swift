@@ -176,7 +176,7 @@ extension ZMConversation {
             action.send(in: context.notificationContext)
 
         case .mls:
-            WireLogger.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
+            Logging.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
 
             var mlsService: MLSServiceInterface?
 
@@ -189,7 +189,7 @@ extension ZMConversation {
                 let groupID = mlsGroupID?.base64EncodedString,
                 let mlsGroupID = MLSGroupID(base64Encoded: groupID)
             else {
-                WireLogger.mls.warn("failed to add participants to conversation (\(String(describing: qualifiedID))): invalid operation")
+                Logging.mls.warn("failed to add participants to conversation (\(String(describing: qualifiedID))): invalid operation")
                 completion(.failure(.invalidOperation))
                 return
             }
@@ -209,7 +209,7 @@ extension ZMConversation {
                     }
 
                 } catch {
-                    WireLogger.mls.error("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
+                    Logging.mls.error("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
 
                     await context.perform {
                         completion(.failure(.failedToAddMLSMembers))
@@ -257,7 +257,7 @@ extension ZMConversation {
             action.send(in: context.notificationContext)
 
         case (.mls, false):
-            WireLogger.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
+            Logging.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
 
             var mlsService: MLSServiceInterface?
 
@@ -270,7 +270,7 @@ extension ZMConversation {
                 let groupID = mlsGroupID,
                 let userID = user.qualifiedID
             else {
-                WireLogger.mls.info("failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation")
+                Logging.mls.info("failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation")
                 completion(.failure(.invalidOperation))
                 return
             }
@@ -286,7 +286,7 @@ extension ZMConversation {
 
                 } catch {
                     await context.perform {
-                        WireLogger.mls.warn("failed to remove participant from conversation (\(String(describing: self.qualifiedID))): \(String(describing: error))")
+                        Logging.mls.warn("failed to remove participant from conversation (\(String(describing: self.qualifiedID))): \(String(describing: error))")
                         completion(.failure(.failedToRemoveMLSMembers))
                     }
                 }
