@@ -52,7 +52,7 @@ extension ZMClientRegistrationStatusTests {
 
         let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
         selfClient.remoteIdentifier = UUID.create().transportString()
-        sut.didRegister(selfClient)
+        sut.didRegisterProteusClient(selfClient)
 
         DeveloperFlag.storage = .temporary()
         DeveloperFlag.enableMLSSupport.enable(true)
@@ -113,6 +113,41 @@ extension ZMClientRegistrationStatusTests {
         XCTAssertEqual(self.sut.currentPhase, .generatingPrekeys)
     }
 
+    func testThatItReturnsRegisteringMLSClient_IfIfMLSIsEnabledAfterRegisteringProteusClient() {
+        // given
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier = UUID()
+        selfUser.emailAddress = "email@domain.com"
+        let selfUserClient = createSelfClient()
+        selfUserClient.remoteIdentifier = "clientID"
+
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.enableMLSSupport.enable(true)
+        BackendInfo.storage = .temporary()
+        BackendInfo.apiVersion = .v5
+
+        // when
+        sut.didRegisterProteusClient(selfUserClient)
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .registeringMLSClient)
+    }
+
+    func testThatItReturnsRegistered_IfMLSIsDisabledAfterRegisteringProteusClient() {
+        // given
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier = UUID()
+        selfUser.emailAddress = "email@domain.com"
+        let selfUserClient = createSelfClient()
+        selfUserClient.remoteIdentifier = "clientID"
+
+        // when
+        sut.didRegisterProteusClient(selfUserClient)
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .registered)
+    }
+
     func testThatItReturnsUnregistered_AfterPrekeyGenerationIsCompleted() {
         // given
         let prekey = IdPrekeyTuple(id: 1, prekey: "prekey1")
@@ -140,7 +175,7 @@ extension ZMClientRegistrationStatusTests {
         // when
         let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
         selfClient.remoteIdentifier = UUID.create().transportString()
-        sut.didRegister(selfClient)
+        sut.didRegisterProteusClient(selfClient)
 
         // then
         XCTAssertEqual(self.sut.currentPhase, .registered)

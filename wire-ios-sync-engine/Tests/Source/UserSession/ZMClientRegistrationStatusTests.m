@@ -238,7 +238,7 @@
     UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
     client.remoteIdentifier = [NSUUID createUUID].transportString;
 
-    [self.sut didRegisterClient:client];
+    [self.sut didRegisterProteusClient:client];
 
     // then
     XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseRegistered);
@@ -257,7 +257,7 @@
     [[self.mockClientRegistrationDelegate expect] didRegisterSelfUserClient:client];
     
     // when
-    [self.sut didRegisterClient:client];
+    [self.sut didRegisterProteusClient:client];
     
     // then
     [self.mockClientRegistrationDelegate verify];
@@ -360,7 +360,7 @@
     [[self.mockClientRegistrationDelegate expect] didRegisterSelfUserClient:client];
     
     // when
-    [self.sut didRegisterClient:client];
+    [self.sut didRegisterProteusClient:client];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then

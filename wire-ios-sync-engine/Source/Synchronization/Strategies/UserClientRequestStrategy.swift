@@ -46,6 +46,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     fileprivate var didRetryRegisteringSignalingKeys: Bool = false
     fileprivate var didRetryUpdatingCapabilities: Bool = false
     let prekeyGenerator: PrekeyGenerator
+    let coreCryptoProvider: CoreCryptoProviderProtocol
 
     public var requestsFactory: UserClientRequestFactory
     public var minNumberOfRemainingKeys: UInt = 20
@@ -61,12 +62,14 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         clientRegistrationStatus: ZMClientRegistrationStatus,
         clientUpdateStatus: ClientUpdateStatus,
         context: NSManagedObjectContext,
-        proteusProvider: ProteusProviding
+        proteusProvider: ProteusProviding,
+        coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
         self.requestsFactory = UserClientRequestFactory()
         self.prekeyGenerator = PrekeyGenerator(proteusProvider: proteusProvider)
+        self.coreCryptoProvider = coreCryptoProvider
 
         super.init(managedObjectContext: context)
 
@@ -179,6 +182,17 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     WireLogger.proteus.error("prekeys: failed to generatePrekeys: \(error.localizedDescription)")
                 }
                 managedObjectContext?.leaveAllGroups(groups)
+            }
+        }
+
+        if clientRegistrationStatus.currentPhase == .registeringMLSClient {
+            WaitingGroupTask(context: managedObjectContext!) { [self] in
+                do {
+                    // Make sure MLS client exists, mls public keys will be generated upon creation
+                    _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+                } catch {
+                    WireLogger.mls.error("Failed to create MLS client: \(error)")
+                }
             }
         }
 
@@ -408,7 +422,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             client.numberOfKeysRemaining = Int32(prekeyGenerator.keyCount)
             guard let moc = self.managedObjectContext else { return }
             _ = UserClient.createOrUpdateSelfUserClient(payload, context: moc)
-            clientRegistrationStatus?.didRegister(client)
+            clientRegistrationStatus?.didRegisterProteusClient(client)
         } else {
             fatal("Called updateInsertedObject() on \(managedObject.safeForLoggingDescription)")
         }
