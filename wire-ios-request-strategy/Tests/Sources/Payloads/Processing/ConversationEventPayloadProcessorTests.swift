@@ -536,6 +536,74 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    func testUpdateOrCreateConversation_Group_Updates_MessageProtocol_DoNotRevertToProteus() async {
+        // given
+        let qualifiedID = await syncMOC.perform {
+            self.groupConversation.messageProtocol = .proteus
+            return self.groupConversation.qualifiedID!
+        }
+        let payloadProteus = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mixed.rawValue
+        )
+        let payloadMixed = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mixed.rawValue
+        )
+
+        // when
+        await sut.updateOrCreateConversation(
+            from: payloadMixed,
+            in: syncMOC
+        )
+        // try to reset the protocol to 'proteus'
+        await sut.updateOrCreateConversation(
+            from: payloadProteus,
+            in: syncMOC
+        )
+
+        // then
+        await syncMOC.perform {
+            XCTAssertEqual(self.groupConversation.messageProtocol, .mixed)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Group_Updates_MessageProtocol_DoNotRevertToMixed() async {
+        // given
+        let qualifiedID = await syncMOC.perform {
+            self.groupConversation.messageProtocol = .mixed
+            return self.groupConversation.qualifiedID!
+        }
+        let payloadMixed = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mixed.rawValue
+        )
+        let payloadMLS = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mls.rawValue
+        )
+
+        // when
+        await sut.updateOrCreateConversation(
+            from: payloadMLS,
+            in: syncMOC
+        )
+        // try to reset the protocol to 'mixed'
+        await sut.updateOrCreateConversation(
+            from: payloadMixed,
+            in: syncMOC
+        )
+
+        // then
+        await syncMOC.perform {
+            XCTAssertEqual(self.groupConversation.messageProtocol, .mls)
+        }
+    }
+
     // MARK: 1:1 / Connection Conversations
 
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
@@ -967,7 +1035,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) async {
         // given
-        let conversation = await syncMOC.perform { [self] in
+        let conversation = await syncMOC.perform {
             let domain = "example.com"
             let id = QualifiedID(uuid: UUID(), domain: domain)
             return Payload.Conversation(
