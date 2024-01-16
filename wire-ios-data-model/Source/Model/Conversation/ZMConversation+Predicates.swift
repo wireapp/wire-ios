@@ -170,9 +170,18 @@ extension ZMConversation {
     }
 
     private class func isProtocolReady() -> NSPredicate {
-        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.rawValue)")
-        let isMLSAndReady = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.rawValue) AND \(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)")
-        return .any(of: [isProteus, isMLSAndReady])
+        // Proteus
+        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
+
+        // Mixed
+        let isMixed = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mixed.int16Value)")
+
+        // MLS
+        let isMLS = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
+        let isMLSStatusReady = NSPredicate(format: "\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)")
+        let isMLSAndReady = NSPredicate.all(of: [isMLS, isMLSStatusReady])
+
+        return .any(of: [isProteus, isMixed, isMLSAndReady])
     }
 
     private class func isValidConversation() -> NSPredicate {
@@ -181,14 +190,12 @@ extension ZMConversation {
 
     private class func isValidConnection() -> NSPredicate {
         let isConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
-        let isActive = NSPredicate(
-            format: "NOT \(ZMConversationConnectionKey).status IN %@",
-            [
-                NSNumber(value: ZMConnectionStatus.pending.rawValue),
-                NSNumber(value: ZMConnectionStatus.ignored.rawValue),
-                NSNumber(value: ZMConnectionStatus.cancelled.rawValue)
-            ]
-        )
+
+        let isActive = NSPredicate(format: "NOT \(ZMConversationConnectionKey).status IN %@", [
+            NSNumber(value: ZMConnectionStatus.pending.rawValue),
+            NSNumber(value: ZMConnectionStatus.ignored.rawValue),
+            NSNumber(value: ZMConnectionStatus.cancelled.rawValue)
+        ])
 
         return .all(of: [isConnection, isActive])
     }

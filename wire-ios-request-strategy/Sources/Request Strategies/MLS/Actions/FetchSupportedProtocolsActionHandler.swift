@@ -71,7 +71,7 @@ final class FetchSupportedProtocolsActionHandler: ActionHandler<FetchSupportedPr
                 return
             }
 
-            let result = payload.compactMap(MessageProtocol.init(string:))
+            let result = payload.compactMap(MessageProtocol.init(rawValue:))
 
             guard payload.count == result.count else {
                 action.fail(with: .invalidResponse)

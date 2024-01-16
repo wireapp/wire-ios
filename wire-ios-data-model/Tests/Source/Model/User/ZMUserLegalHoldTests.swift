@@ -22,7 +22,7 @@ import XCTest
 class ZMUserLegalHoldTests: ModelObjectsTests {
 
     override func setUp() {
-        DeveloperFlag.storage = .random()!
+        DeveloperFlag.storage = .temporary()
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
         super.setUp()

@@ -33,7 +33,7 @@ extension ZMUser {
             willAccessValue(forKey: Self.supportedProtocolsKey)
             let result = primitiveSupportedProtocols ?? []
             didAccessValue(forKey: Self.supportedProtocolsKey)
-            return Set(result.compactMap(MessageProtocol.init))
+            return Set(result.compactMap(MessageProtocol.init(int16Value:)))
         }
 
         set {
@@ -46,7 +46,7 @@ extension ZMUser {
             }
 
             willChangeValue(forKey: Self.supportedProtocolsKey)
-            primitiveSupportedProtocols = newValue.map(\.rawValue)
+            primitiveSupportedProtocols = newValue.map(\.int16Value)
             didChangeValue(forKey: Self.supportedProtocolsKey)
 
             if isSelfUser {

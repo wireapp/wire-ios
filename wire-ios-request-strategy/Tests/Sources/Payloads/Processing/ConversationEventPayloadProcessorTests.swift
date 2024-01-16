@@ -963,12 +963,12 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             let conversationDeleted = Payload.UpdateConversationDeleted()
             return Payload.ConversationEvent(
                 id: nil,
-                qualifiedID: self.groupConversation.qualifiedID,
+                data: conversationDeleted,
                 from: nil,
+                qualifiedID: self.groupConversation.qualifiedID,
                 qualifiedFrom: nil,
                 timestamp: nil,
-                type: nil,
-                data: conversationDeleted
+                type: nil
             )
         }
 

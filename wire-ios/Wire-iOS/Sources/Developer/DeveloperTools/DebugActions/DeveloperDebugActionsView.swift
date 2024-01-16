@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-extension ZMUpdateEvent {
-    var payloadData: Data? {
-        guard let payloadAsDictionary = payload as? [String: Any] else {
-            return nil
+struct DeveloperDebugActionsView: View {
+
+    @ObservedObject var viewModel: DeveloperDebugActionsViewModel
+
+    var body: some View {
+        List(viewModel.buttons) { button in
+            SwiftUI.Button(action: button.action) {
+                Text(button.title)
+            }
         }
-        return try? JSONSerialization.data(withJSONObject: payloadAsDictionary, options: [])
     }
+}
 
-    func eventPayload<T: Codable>(type: T.Type) -> T? {
-        guard let payloadData = payloadData else {
-            return nil
-        }
+// MARK: - Previews
 
-        return T(payloadData)
-    }
+#Preview {
+    DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: nil))
 }

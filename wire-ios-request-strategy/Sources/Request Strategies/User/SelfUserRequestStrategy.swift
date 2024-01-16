@@ -83,7 +83,7 @@ private extension SelfUserRequestStrategy {
             }
 
             var payload = [AnyHashable: Any]()
-            payload["supported_protocols"] = user.supportedProtocols.map(\.stringValue)
+            payload["supported_protocols"] = user.supportedProtocols.map(\.rawValue)
 
             let request = ZMTransportRequest(
                 path: "/self/supported-protocols",

@@ -232,7 +232,11 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 
-        await mlsService.wipeGroup(groupID)
+        do {
+            try await mlsService.wipeGroup(groupID)
+        } catch {
+            WireLogger.mls.error("mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))")
+        }
     }
 
     // MARK: Log Helpers

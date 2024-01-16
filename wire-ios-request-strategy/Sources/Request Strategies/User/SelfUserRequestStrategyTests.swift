@@ -75,7 +75,7 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
 
             XCTAssertEqual(
                 Set(supportedProtocols),
-                Set(selfUser.supportedProtocols.map(\.stringValue))
+                Set(selfUser.supportedProtocols.map(\.rawValue))
             )
         }
 

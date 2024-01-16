@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Protocols for exchanging end-to-end-encrypted messages
 /// between clients.
 
-public enum MessageProtocol: Int16 {
+public enum MessageProtocol: String, CaseIterable {
 
     /// With proteus, inidividual encryption sessions are created between
     /// every pair of clients in a conversation. This imposes constraints on
@@ -37,24 +35,25 @@ public enum MessageProtocol: Int16 {
 
     case mls
 
-    public init?(string: String) {
-        switch string {
-        case "mls":
-            self = .mls
-        case "proteus":
-            self = .proteus
-        default:
-            return nil
-        }
+    /// Conversations with the mixed message protocol are in the state of migrating from
+    /// proteus to mls. Message encryption is done using the proteus protocol,
+    /// while other operations (such as adding / removing participants) are reflected on the underlying mls group.
+    /// Calling is still done the proteus way until the migration is finalised
+
+    case mixed
+}
+
+// MARK: MessageProtocol + int16Value
+
+extension MessageProtocol {
+
+    var int16Value: Int16 {
+        let index = Self.allCases.firstIndex(of: self)!
+        return .init(index)
     }
 
-    public var stringValue: String {
-        switch self {
-        case .proteus:
-            return "proteus"
-
-        case .mls:
-            return "mls"
-        }
+    init?(int16Value: Int16) {
+        guard Self.allCases.indices.contains(.init(int16Value)) else { return nil }
+        self = Self.allCases[.init(int16Value)]
     }
 }

@@ -92,6 +92,13 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         case .some(.proteus):
             break
+
+        // This should never happen:
+        // Users can only support proteus and mls protocols.
+        // Mixed protocol is used by conversations to represent
+        // the migration state when migrating from proteus to mls.
+        case .some(.mixed):
+            break
         }
     }
 

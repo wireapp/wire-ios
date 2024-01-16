@@ -55,13 +55,20 @@ extension MockTransportSession {
                     "defaultProtocol": "proteus",
                     "allowedCipherSuites": [1],
                     "defaultCipherSuite": 1,
-                    "supportedProtocols": ["proteus"]
+                    "supportedProtocols": []
                 ]
             ],
             "selfDeletingMessages": [
                 "status": "enabled",
                 "config": [
                     "enforcedTimeoutSeconds": 0
+                ]
+            ],
+            "mlsMigration": [
+                "status": "disabled",
+                "config": [
+                    "startTime": nil,
+                    "finaliseRegardlessAfter": nil
                 ]
             ]
         ]

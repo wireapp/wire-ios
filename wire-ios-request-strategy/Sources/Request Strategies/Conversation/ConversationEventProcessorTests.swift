@@ -18,7 +18,7 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class ConversationEventProcessorTests: MessagingTestBase {
+final class ConversationEventProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventProcessor!
     var conversationService: MockConversationServiceInterface!
@@ -28,6 +28,10 @@ class ConversationEventProcessorTests: MessagingTestBase {
         super.setUp()
         conversationService = MockConversationServiceInterface()
         conversationService.syncConversationQualifiedID_MockMethod = { _ in }
+
+        conversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
+            completion()
+        }
 
         mockMLSEventProcessor = .init()
         mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
@@ -75,15 +79,15 @@ class ConversationEventProcessorTests: MessagingTestBase {
 
             let payload = ConversationEventProcessor.MemberJoinPayload(
                 id: groupConversation.remoteIdentifier,
-                qualifiedID: groupConversation.qualifiedID,
-                from: otherUser.remoteIdentifier,
-                qualifiedFrom: otherUser.qualifiedID,
-                timestamp: nil,
-                type: "conversation.member-join",
                 data: Payload.UpdateConverationMemberJoin(
                     userIDs: [],
                     users: [selfMember]
-                )
+                ),
+                from: otherUser.remoteIdentifier,
+                qualifiedID: groupConversation.qualifiedID,
+                qualifiedFrom: otherUser.qualifiedID,
+                timestamp: nil,
+                type: "conversation.member-join"
             )
 
             transportPayload = try payload.toTransportDictionary()

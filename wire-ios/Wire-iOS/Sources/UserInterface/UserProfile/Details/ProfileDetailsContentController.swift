@@ -291,7 +291,7 @@ final class ProfileDetailsContentController: NSObject,
                 reuseIdentifier: messageProtocolCellID
             )
             cell.propertyName = "Message protocol"
-            cell.propertyValue = messageProtocol.stringValue
+            cell.propertyValue = messageProtocol.rawValue
             return cell
         }
     }

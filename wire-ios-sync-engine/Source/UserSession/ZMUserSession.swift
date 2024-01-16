@@ -104,6 +104,7 @@ public class ZMUserSession: NSObject {
     lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     var mlsService: MLSServiceInterface
     var proteusProvider: ProteusProviding!
+    let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     public var syncStatus: SyncStatusProtocol {
         return applicationStatusDirectory.syncStatus
@@ -280,6 +281,7 @@ public class ZMUserSession: NSObject {
         earService: EARServiceInterface? = nil,
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
         sharedUserDefaults: UserDefaults
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
@@ -340,6 +342,11 @@ public class ZMUserSession: NSObject {
             userID: coreDataStack.account.userIdentifier)
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
+
+        self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
+            context: coreDataStack.syncContext,
+            userID: userId
+        )
 
         super.init()
 
@@ -502,6 +509,7 @@ public class ZMUserSession: NSObject {
     private func configureRecurringActions() {
         recurringActionService.registerAction(refreshUsersMissingMetadata())
         recurringActionService.registerAction(refreshConversationsMissingMetadata())
+        recurringActionService.registerAction(updateProteusToMLSMigrationStatus())
     }
 
     func startRequestLoopTracker() {

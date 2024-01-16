@@ -140,7 +140,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             updateAccessRolesActionHandler,
             updateRoleActionHandler,
             SyncConversationActionHandler(context: managedObjectContext),
-            CreateGroupConversationActionHandler(context: managedObjectContext, mlsService: mlsService)
+            CreateGroupConversationActionHandler(context: managedObjectContext, mlsService: mlsService),
+            UpdateConversationProtocolActionHandler(context: managedObjectContext)
         ])
 
         super.init(
@@ -542,12 +543,17 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
                 let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context)
                 return (conversation, conversation?.conversationType)
             }
+
             guard let conversation, conversationType == .group else { continue }
 
-            await removeLocalConversation.invoke(
-                with: conversation,
-                syncContext: context
-            )
+            do {
+                try await removeLocalConversation.invoke(
+                    with: conversation,
+                    syncContext: context
+                )
+            } catch {
+                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+            }
         }
     }
 
@@ -668,10 +674,15 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            await removeLocalConversation.invoke(
-                with: conversation,
-                syncContext: context
-            )
+
+            do {
+                try  await removeLocalConversation.invoke(
+                    with: conversation,
+                    syncContext: context
+                )
+            } catch {
+                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+            }
         }
     }
 
