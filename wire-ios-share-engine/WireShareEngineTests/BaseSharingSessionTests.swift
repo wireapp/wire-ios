@@ -190,7 +190,7 @@ class BaseTest: ZMTBaseTest {
             earService: earService,
             proteusService: mockProteusService,
             mlsDecryptionService: mockMLSDecryptionService,
-            sharedUserDefaults: .random()!
+            sharedUserDefaults: .temporary()
         )
     }
 

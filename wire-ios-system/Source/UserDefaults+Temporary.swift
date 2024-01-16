@@ -19,23 +19,6 @@
 import Foundation
 
 extension UserDefaults {
-
-    @available(*, deprecated, message: "Use `.temporary()`")
-    @objc
-    public static func random() -> UserDefaults? {
-        .init(suiteName: UUID().uuidString)
-    }
-
-    @available(*, deprecated, message: "Use `.temporary()`")
-    @objc
-    public func reset() {
-        for key in dictionaryRepresentation().keys {
-            removeObject(forKey: key)
-        }
-
-        synchronize()
-    }
-
     /// Creates an instance with a random (UUID string based) `suiteName`.
     /// When the instance is deallocated, the storage is cleaned up.
     @objc public static func temporary() -> Self {

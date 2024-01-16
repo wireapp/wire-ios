@@ -100,7 +100,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.base64EncodedString
         successResponsePayloadMLS.epoch = 0
 
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.com"
     }
 

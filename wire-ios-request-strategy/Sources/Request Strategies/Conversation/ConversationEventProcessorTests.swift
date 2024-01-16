@@ -39,7 +39,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
             context: syncMOC,
             conversationService: conversationService
         )
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v0
         MLSEventProcessor.setMock(mockMLSEventProcessor)
     }
