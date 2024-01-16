@@ -1770,17 +1770,9 @@ internal enum L10n {
         internal static func peopleStartedUsing(_ p1: Any, _ p2: Int, _ p3: Int) -> String {
           return L10n.tr("Localizable", "content.system.people_started_using", String(describing: p1), p2, p3, fallback: "Plural format key: \"%@%#@d_number_of_others@ started using %#@d_new_devices@\"")
         }
-        /// You started using [this device](%@) again. Messages sent in the meantime will not appear here.
-        internal static func reactivatedDevice(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "content.system.reactivated_device", String(describing: p1), fallback: "You started using [this device](%@) again. Messages sent in the meantime will not appear here.")
-        }
         /// You started using [a new device](%@)
         internal static func selfUserNewClient(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.self_user_new_client", String(describing: p1), fallback: "You started using [a new device](%@)")
-        }
-        /// You started using [this device](%@)
-        internal static func selfUserNewSelfClient(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "content.system.self_user_new_self_client", String(describing: p1), fallback: "You started using [this device](%@)")
         }
         /// You unverified one of [%1$@’s devices](%2$@)
         internal static func unverifiedOtherDevices(_ p1: Any, _ p2: Any) -> String {
@@ -2101,6 +2093,30 @@ internal enum L10n {
             /// Meanwhile, %@ has been removed.
             internal static func singular(_ p1: Any) -> String {
               return L10n.tr("Localizable", "content.system.missing_messages.users_removed.singular", String(describing: p1), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.")
+            }
+          }
+        }
+        internal enum MlsMigration {
+          /// You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.
+          internal static let joinAfterwards = L10n.tr("Localizable", "content.system.mls_migration.join_afterwards", fallback: "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.")
+          /// Learn more about MLS
+          internal static let learnMore = L10n.tr("Localizable", "content.system.mls_migration.learn_more", fallback: "Learn more about MLS")
+          /// Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.
+          internal static let ongoingCall = L10n.tr("Localizable", "content.system.mls_migration.ongoing_call", fallback: "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.")
+          /// You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.
+          internal static let potentialGap = L10n.tr("Localizable", "content.system.mls_migration.potentialGap", fallback: "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.")
+          internal enum Finalized {
+            /// This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.
+            internal static let done = L10n.tr("Localizable", "content.system.mls_migration.finalized.done", fallback: "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.")
+          }
+          internal enum Started {
+            /// The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS).
+            internal static let description = L10n.tr("Localizable", "content.system.mls_migration.started.description", fallback: "The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS).")
+            /// Ensure you use the latest version of Wire to be ready for MLS and continue communicating seamlessly.
+            internal static let updateLatestVersion = L10n.tr("Localizable", "content.system.mls_migration.started.update_latest_version", fallback: "Ensure you use the latest version of Wire to be ready for MLS and continue communicating seamlessly.")
+            /// Update Wire until %@ to be ready for MLS and continue communicating seamlessly.
+            internal static func updateWithDate(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.mls_migration.started.update_with_date", String(describing: p1), fallback: "Update Wire until %@ to be ready for MLS and continue communicating seamlessly.")
             }
           }
         }
