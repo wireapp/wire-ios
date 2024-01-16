@@ -239,7 +239,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
         // Given
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.isFederationEnabled = true
         let (conversation, payload) = try syncMOC.performAndWait {
             let selfClient = createSelfClient()
