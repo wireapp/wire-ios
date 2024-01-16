@@ -24,7 +24,7 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
+final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     var sut: MLSService!
     var mockCoreCrypto: MockCoreCryptoProtocol!
@@ -2572,7 +2572,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_startProteusToMLSMigration_succeeds() async throws {
         // Given
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.com"
         let mlsGroupID = MLSGroupID.random()
         let conversation = await uiMOC.perform { [self] in
@@ -2666,7 +2666,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_startProteusToMLSMigration_staleMessageErrorWipesGroup() async throws {
         // Given
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.com"
         let mlsGroupID = MLSGroupID.random()
         let conversation = await uiMOC.perform { [self] in
