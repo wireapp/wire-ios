@@ -25,19 +25,19 @@ public protocol SubconversationGroupIDRepositoryInterface {
         _ groupID: MLSGroupID?,
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
-    )
+    ) async
 
     func fetchSubconversationGroupID(
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
-    ) -> MLSGroupID?
+    ) async -> MLSGroupID?
 
     func findSubgroupTypeAndParentID(
         for targetGroupID: MLSGroupID
-    ) -> (parentID: MLSGroupID, type: SubgroupType)?
+    ) async -> (parentID: MLSGroupID, type: SubgroupType)?
 }
 
-public final class SubconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface {
+public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface {
 
     // MARK: - Properties
 
@@ -55,7 +55,7 @@ public final class SubconversationGroupIDRepository: SubconversationGroupIDRepos
         _ groupID: MLSGroupID?,
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
-    ) {
+    ) async {
         storage[parentGroupID, default: [:]][type] = groupID
     }
 
@@ -64,7 +64,7 @@ public final class SubconversationGroupIDRepository: SubconversationGroupIDRepos
     public func fetchSubconversationGroupID(
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
-    ) -> MLSGroupID? {
+    ) async -> MLSGroupID? {
         return storage[parentGroupID]?[type]
     }
 
@@ -72,7 +72,7 @@ public final class SubconversationGroupIDRepository: SubconversationGroupIDRepos
 
     public func findSubgroupTypeAndParentID(
         for targetGroupID: MLSGroupID
-    ) -> (parentID: MLSGroupID, type: SubgroupType)? {
+    ) async -> (parentID: MLSGroupID, type: SubgroupType)? {
 
         for (parentID, subgroupIDsByType) in storage {
             if let entry = subgroupIDsByType.first(where: { _, subgroupID in
