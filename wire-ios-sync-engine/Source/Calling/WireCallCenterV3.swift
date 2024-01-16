@@ -721,7 +721,7 @@ extension WireCallCenterV3 {
         avsWrapper.endCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
-            if prevdiousSnapshot.isGroup {
+            if previousSnapshot.isGroup {
                 let callState: CallState = .incoming(video: previousSnapshot.isVideo, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
                 callSnapshots[conversationId] = previousSnapshot.update(with: callState)
             } else {
