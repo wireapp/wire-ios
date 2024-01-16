@@ -349,6 +349,7 @@ public final class AVSWrapper: AVSWrapperType {
         let targets = targetsCString
             .flatMap { String(cString: $0)?.data(using: .utf8) }
             .flatMap { AVSClientList($0) }
+
         return AVSWrapper.withCallCenter(contextRef, conversationId, senderUserId, senderClientId) {
             $0.handleCallMessageRequest(token: token,
                                         conversationId: AVSIdentifier.from(string: $1),

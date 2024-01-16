@@ -315,7 +315,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         }
 
         // TODO: do we need to check there doesn't already exist a call?
-//        WirecallRegister.lookupCalls(by: handle)
         let call = callRegister.registerNewCall(with: handle)
 
         let action = CXStartCallAction(call: call.id, handle: handle.cxHandle)

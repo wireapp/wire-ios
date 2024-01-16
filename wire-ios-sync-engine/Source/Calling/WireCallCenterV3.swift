@@ -81,11 +81,7 @@ public class WireCallCenterV3: NSObject {
     }
 
     /// The snaphot of the call state for each non-idle conversation.
-    var callSnapshots: [AVSIdentifier: CallSnapshot] = [:] {
-        didSet {
-            WireLogger.calling.debug("🕵🏽 callSnapshots: \(callSnapshots)")
-        }
-    }
+    var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
 
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
     var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)]  = []
@@ -487,7 +483,7 @@ extension WireCallCenterV3 {
             throw Failure.missingAVSIdentifier
         }
 
-//        endAllCalls(exluding: conversationId)
+        endAllCalls(exluding: conversationId)
 
         let callType = self.callType(
             for: conversation,
@@ -624,6 +620,7 @@ extension WireCallCenterV3 {
     }
 
     func generateInitialConferenceInfo(from conversationID: AVSIdentifier) async throws {
+        return
         guard let context = await uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
         let parentGroupID = await context.perform {
             let conversation = ZMConversation.fetch(with: conversationID.identifier, domain: conversationID.domain, in: context)
@@ -712,36 +709,20 @@ extension WireCallCenterV3 {
                         }
                     }
 
-//                    let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
-//                        mlsService: mlsService,
-//                        syncContext: syncContext
-//                    )
-//
-//                    self.onMLSConferenceParticipantsChanged(
-//                        subconversationID: subgroupID
-//                    ).subscribe(staleParticipantsRemover)
+                    let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
+                        mlsService: mlsService,
+                        syncContext: syncContext
+                    )
+
+                    self.onMLSConferenceParticipantsChanged(
+                        subconversationID: subgroupID
+                    ).subscribe(staleParticipantsRemover)
 
                     if var snapshot = self.callSnapshots[conversationID] {
-//                        callSnapshots[conversationId] = CallSnapshot(
-//                            callParticipants: callParticipants,
-//                            callState: callState,
-//                            callStarter: callStarter,
-//                            isVideo: video,
-//                            isGroup: group,
-//                            isConstantBitRate: false,
-//                            videoState: video ? .started : .stopped,
-//                            networkQuality: .normal,
-//                            isConferenceCall: isConferenceCall,
-//                            degradedUser: nil,
-//                            activeSpeakers: [],
-//                            videoGridPresentationMode: .allVideoStreams,
-//                            conversationObserverToken: token
-//                        )
-
                         snapshot.qualifiedID = parentQualifiedID
                         snapshot.groupIDs = (parentGroupID, subgroupID)
                         snapshot.updateConferenceInfoTask = updateConferenceInfoTask
-//                        snapshot.mlsConferenceStaleParticipantsRemover = staleParticipantsRemover
+                        snapshot.mlsConferenceStaleParticipantsRemover = staleParticipantsRemover
                         self.callSnapshots[conversationID] = snapshot
                     }
                 } catch {
@@ -770,7 +751,7 @@ extension WireCallCenterV3 {
         avsWrapper.endCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
-            if previousSnapshot.isGroup {
+            if prevdiousSnapshot.isGroup {
                 let callState: CallState = .incoming(video: previousSnapshot.isVideo, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
                 callSnapshots[conversationId] = previousSnapshot.update(with: callState)
             } else {
@@ -779,9 +760,9 @@ extension WireCallCenterV3 {
         }
 
         if let mlsParentIDs = mlsParentIDS(for: conversationId) {
-            let snapshot = callSnapshots[conversationId]
-//            snapshot?.updateConferenceInfoTask?.cancel()
-//            snapshot?.updateConferenceInfoTask = nil
+            var snapshot = callSnapshots[conversationId]
+            snapshot?.updateConferenceInfoTask?.cancel()
+            snapshot?.updateConferenceInfoTask = nil
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
