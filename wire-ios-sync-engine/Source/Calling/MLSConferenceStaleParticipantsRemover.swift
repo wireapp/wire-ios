@@ -111,13 +111,20 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private func newAndChangedParticipants(between previous: [CallParticipant], and current: [CallParticipant]) -> [CallParticipant] {
         var newAndChanged = [CallParticipant]()
 
-        // FIXME: crash Fatal error: Duplicate values for key: 'AVSIdentifier(identifier: 9FF0E5FD-7909-4FF5-B00D-1FD1E128CBF8, domain: Optional("elna.wire.link"))'
-        let previousStates = Dictionary(uniqueKeysWithValues: previous.map { ($0.userId, $0.state) })
+        // Object to uniquely identify and compare participant
+        struct UniqueKey: Hashable {
+            var clientId: String
+            var userId: AVSIdentifier
+        }
+
+        let previousStates = Dictionary(uniqueKeysWithValues: previous.map { (UniqueKey(clientId: $0.clientId, userId: $0.userId), $0.state) })
 
         current.forEach { participant in
-            if let previousState = previousStates[participant.userId], previousState != participant.state {
+            let participantUniqueKey = UniqueKey(clientId: participant.clientId,
+                                                 userId: participant.userId)
+            if let previousState = previousStates[participantUniqueKey], previousState != participant.state {
                 newAndChanged.append(participant)
-            } else if previousStates[participant.userId] == nil {
+            } else if previousStates[participantUniqueKey] == nil {
                 newAndChanged.append(participant)
             }
         }
