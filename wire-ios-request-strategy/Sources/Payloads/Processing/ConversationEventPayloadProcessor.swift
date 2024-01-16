@@ -431,19 +431,16 @@ final class ConversationEventPayloadProcessor {
                 in: context,
                 created: &created
             )
-            if created {
-                conversation.conversationType = .group
-                conversation.remoteIdentifier = conversationID
-                conversation.isPendingMetadataRefresh = false
-                self.updateAttributes(from: payload, for: conversation, context: context)
-                self.updateMetadata(from: payload, for: conversation, context: context)
-                self.updateMembers(from: payload, for: conversation, context: context)
-                self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-                self.updateConversationStatus(from: payload, for: conversation)
-                self.updateMessageProtocol(from: payload, for: conversation, in: context)
-            } else {
-                conversation.needsToBeUpdatedFromBackend = true
-            }
+
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = conversationID
+            conversation.isPendingMetadataRefresh = false
+            self.updateAttributes(from: payload, for: conversation, context: context)
+            self.updateMetadata(from: payload, for: conversation, context: context)
+            self.updateMembers(from: payload, for: conversation, context: context)
+            self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            self.updateConversationStatus(from: payload, for: conversation)
+            self.updateMessageProtocol(from: payload, for: conversation, in: context)
 
             return conversation
         }
@@ -695,40 +692,45 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        guard let messageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
+        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
             Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
 
-        appendSystemMessageIfNeeded(
-            conversation: conversation,
-            sender: ZMUser.selfUser(in: context),
-            previousProtocol: conversation.messageProtocol,
-            messageProtocol: messageProtocol
-        )
+        let sender = ZMUser.selfUser(in: context)
 
-        conversation.messageProtocol = messageProtocol
-    }
+        switch conversation.messageProtocol {
+        case .proteus:
+            switch newMessageProtocol {
+            case .proteus:
+                break // no update, ignore
+            case .mixed:
+                conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+            case .mls:
+                let date = conversation.lastModifiedDate ?? .now
+                conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
+                conversation.messageProtocol = newMessageProtocol
+            }
 
-    private func appendSystemMessageIfNeeded(
-        conversation: ZMConversation,
-        sender: ZMUser,
-        previousProtocol: MessageProtocol,
-        messageProtocol: MessageProtocol
-    ) {
-        switch previousProtocol {
-        case .proteus where messageProtocol == .mixed:
-            conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
+        case .mixed:
+            switch newMessageProtocol {
+            case .proteus:
+                WireLogger.updateEvent.warn("update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!")
+            case .mixed:
+                break // no update, ignore
+            case .mls:
+                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+            }
 
-        case .proteus where messageProtocol == .mls:
-            let date = conversation.lastModifiedDate ?? .now
-            conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
-
-        case .mixed where messageProtocol == .mls:
-            conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
-
-        default:
-            break
+        case .mls:
+            switch newMessageProtocol {
+            case .proteus, .mixed:
+                WireLogger.updateEvent.warn("update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!")
+            case .mls:
+                break // no update, ignore
+            }
         }
     }
 
