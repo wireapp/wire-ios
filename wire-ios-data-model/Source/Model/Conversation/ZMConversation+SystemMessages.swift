@@ -240,7 +240,7 @@ extension ZMConversation {
     public func appendMLSMigrationMLSNotSupportedForOtherUser(sender: ZMUser, at timestamp: Date) {
 
         self.appendSystemMessage(
-            type: .mlsMigrationMLSNotSupportedSelfUser,
+            type: .mlsMigrationMLSNotSupportedOtherUser,
             sender: sender,
             users: nil,
             clients: nil,
