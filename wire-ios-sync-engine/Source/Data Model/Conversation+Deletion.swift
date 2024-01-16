@@ -76,12 +76,19 @@ extension ZMConversation {
                 }
 
                 Task {
-                    await removeLocalConversation.invoke(
-                        with: conversation,
-                        syncContext: contextProvider.syncContext
-                    )
-                    await MainActor.run {
-                        completion(.success())
+                    do {
+                        try await removeLocalConversation.invoke(
+                            with: conversation,
+                            syncContext: contextProvider.syncContext
+                        )
+                        await MainActor.run {
+                            completion(.success())
+                        }
+                    } catch {
+                        WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+                        await MainActor.run {
+                            completion(.failure(error))
+                        }
                     }
                 }
             } else {

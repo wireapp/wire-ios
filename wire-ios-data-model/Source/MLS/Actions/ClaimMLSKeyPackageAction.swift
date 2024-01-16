@@ -32,6 +32,7 @@ public class ClaimMLSKeyPackageAction: EntityAction {
         case malformedResponse
         case invalidSelfClientId
         case userOrDomainNotFound
+        case emptyKeyPackages
         case unknown(status: Int)
 
         public var errorDescription: String? {
@@ -46,6 +47,8 @@ public class ClaimMLSKeyPackageAction: EntityAction {
                 return "Invalid self client id for parameter: skip own."
             case .userOrDomainNotFound:
                 return "User domain or user not found."
+            case .emptyKeyPackages:
+                return "The list of key packages is empty"
             case .unknown(let status):
                 return "Unknown error (response status: \(status))"
             }

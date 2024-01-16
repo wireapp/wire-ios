@@ -520,7 +520,7 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             break
 
         case .mls:
@@ -601,9 +601,8 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             break
-
         case .mls:
             try setUpMLSConference(in: conversation)
         }
