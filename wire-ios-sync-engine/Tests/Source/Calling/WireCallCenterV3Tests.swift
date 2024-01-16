@@ -123,6 +123,7 @@ class WireCallCenterV3Tests: MessagingTest {
         mockTransport = nil
         mockAVSWrapper = nil
         conferenceCalling = nil
+        BackendInfo.storage = .standard
 
         super.tearDown()
     }
