@@ -63,7 +63,7 @@ import Foundation
     public func perform(_ request: SearchRequest) -> SearchTask {
         let task = SearchTask(task: .search(searchRequest: request), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
 
-        task.onResult { [weak self] (result, _) in
+        task.addResultHandler { [weak self] result, _ in
             self?.observeSearchUsers(result)
         }
 
@@ -77,7 +77,7 @@ import Foundation
     public func lookup(userId: UUID) -> SearchTask {
         let task = SearchTask(task: .lookup(userId: userId), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
 
-        task.onResult { [weak self] (result, _) in
+        task.addResultHandler { [weak self] (result, _) in
             self?.observeSearchUsers(result)
         }
 

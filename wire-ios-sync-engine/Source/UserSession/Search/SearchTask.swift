@@ -80,8 +80,7 @@ public class SearchTask {
         self.contextProvider = contextProvider
     }
 
-    /// Add a result handler
-    public func onResult(_ resultHandler: @escaping ResultHandler) {
+    public func addResultHandler(_ resultHandler: @escaping ResultHandler) {
         resultHandlers.append(resultHandler)
     }
 
@@ -220,15 +219,15 @@ extension SearchTask {
             let query = query.strippingLeadingAtSign()
             let selfUser = ZMUser.selfUser(in: searchContext)
             let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
-            let activeContacts = Set(activeConversations.flatMap({ $0.localParticipants }))
+            let activeContacts = Set(activeConversations.flatMap { $0.localParticipants })
 
-            result = result.filter({
-                if let user = $0.user {
-                    return user.teamRole != .partner || user.handle == query || user.membership?.createdBy == selfUser || activeContacts.contains(user)
+            result = result.filter { membership in
+                if let user = membership.user {
+                    return user.teamRole != .partner || user.handle == query || membership.createdBy == selfUser || activeContacts.contains(user)
                 } else {
                     return false
                 }
-            })
+            }
         }
 
         return result
