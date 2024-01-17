@@ -373,7 +373,7 @@ extension ZMConversation {
         switch messageProtocol {
         case .proteus:
             return securityLevel == .secureWithIgnored
-        case .mls:
+        case .mls, .mixed:
             return mlsVerificationStatus == .degraded
         }
     }
@@ -386,7 +386,7 @@ extension ZMConversation {
             switch messageProtocol {
             case .proteus:
                 securityLevel = .notSecure
-            case .mls:
+            case .mls, .mixed:
                 mlsVerificationStatus = .notVerified
             }
         }
