@@ -25,8 +25,9 @@ extension GroupDetailsConversation where Self: ZMConversation {
 }
 
 extension ZMConversation {
-    private enum NetworkError: Error {
+    private enum ConversationError: Error {
         case offline
+        case invalidOperation
     }
 
     static let legacyGroupVideoParticipantLimit: Int = 4
@@ -38,66 +39,110 @@ extension ZMConversation {
     }
 
     func addOrShowError(participants: [UserType]) {
-        guard let session = ZMUserSession.shared(),
-                session.networkState != .offline else {
-            self.showAlertForAdding(for: NetworkError.offline)
-            return
+        guard
+            let session = ZMUserSession.shared(),
+            session.networkState != .offline
+        else {
+            return showAlertForAdding(for: ConversationError.offline)
         }
 
-        addParticipants(participants) { (result) in
-            switch result {
-            case .failure(let error):
-                self.showAlertForAdding(for: error)
-            default:
-                break
+        let users = participants.materialize(in: session.viewContext)
+        let syncContext = session.syncContext
+        let service = ConversationParticipantsService(context: syncContext)
+
+        Task {
+            do {
+                let users = await syncContext.perform {
+                    users.compactMap {
+                        ZMUser.existingObject(for: $0.objectID, in: syncContext)
+                    }
+                }
+
+                let conversation = try await syncContext.perform { [self] in
+                    return try ZMConversation.existingObject(for: self.objectID, in: syncContext)
+                }
+
+                try await service.addParticipants(users, to: conversation)
+            } catch {
+                await MainActor.run {
+                    self.showAlertForAdding(for: error)
+                }
             }
         }
     }
 
     func removeOrShowError(participant user: UserType, completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
-        guard let session = ZMUserSession.shared(),
-            session.networkState != .offline else {
-            self.showAlertForRemoval(for: NetworkError.offline)
-            return
+
+        @Sendable func fail(with error: Error) {
+            showAlertForRemoval(for: error)
+            completion?(.failure(error))
         }
 
-        removeParticipant(user) { (result) in
-            switch result {
-            case .success:
-                if let serviceUser = user as? ServiceUser, user.isServiceUser {
-                    Analytics.shared.tagDidRemoveService(serviceUser)
+        guard
+            let session = ZMUserSession.shared(),
+            session.networkState != .offline
+        else {
+            return fail(with: ConversationError.offline)
+        }
+
+        guard let user = user.materialize(in: session.viewContext) else {
+            return fail(with: ConversationError.invalidOperation)
+        }
+
+        let syncContext = session.syncContext
+        let service = ConversationParticipantsService(context: syncContext)
+
+        Task {
+            do {
+                let user = try await syncContext.perform {
+                    return try ZMUser.existingObject(for: user.objectID, in: syncContext)
                 }
-                completion?(.success(()))
-            case .failure(let error):
-                self.showAlertForRemoval(for: error)
-                completion?(.failure(error))
+
+                let conversation = try await syncContext.perform { [self] in
+                    return try ZMConversation.existingObject(for: self.objectID, in: syncContext)
+                }
+
+                try await service.removeParticipant(user, from: conversation)
+
+                if await syncContext.perform({ user.isServiceUser }) {
+                    Analytics.shared.tagDidRemoveService(user as ServiceUser)
+                }
+
+                await MainActor.run {
+                    completion?(.success(()))
+                }
+
+            } catch {
+                await MainActor.run {
+                    fail(with: error)
+                }
             }
         }
     }
 
     private func showAlertForAdding(for error: Error) {
-        typealias ConversationError = L10n.Localizable.Error.Conversation
+        typealias ErrorString = L10n.Localizable.Error.Conversation
 
         switch error {
         case ConversationAddParticipantsError.tooManyMembers:
-            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.tooManyMembers)
-        case NetworkError.offline:
-            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.offline)
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.tooManyMembers)
+        case ConversationError.offline:
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.offline)
         case ConversationAddParticipantsError.missingLegalHoldConsent:
-            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.missingLegalholdConsent)
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.missingLegalholdConsent)
         default:
-            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.cannotAdd)
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.cannotAdd)
         }
     }
 
     private func showAlertForRemoval(for error: Error) {
-        typealias ConversationError = L10n.Localizable.Error.Conversation
+        typealias ErrorString = L10n.Localizable.Error.Conversation
 
         switch error {
-        case NetworkError.offline:
-            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.offline)
+        case ConversationError.offline:
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.offline)
         default:
-            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.cannotRemove)
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.cannotRemove)
         }
     }
 }

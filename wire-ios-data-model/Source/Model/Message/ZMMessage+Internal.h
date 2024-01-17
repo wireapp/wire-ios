@@ -264,7 +264,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (ZMSystemMessageType)systemMessageTypeFromUpdateEvent:(ZMUpdateEvent *)updateEvent;
 + (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent inManagedObjectContext:(NSManagedObjectContext *)moc;
-+ (NSPredicate *)predicateForSystemMessagesInsertedLocally;
 
 @end
 

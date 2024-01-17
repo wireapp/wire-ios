@@ -20,7 +20,9 @@ import Foundation
 import WireSystem
 
 public protocol RemoveLocalConversationUseCaseProtocol {
-    func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext) async
+
+    func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext) async throws
+
 }
 
 public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol {
@@ -30,19 +32,19 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
     public func invoke(
         with conversation: ZMConversation,
         syncContext: NSManagedObjectContext
-    ) async {
+    ) async throws {
         let isSyncContext = await syncContext.perform { syncContext.zm_isSyncContext }
         precondition(isSyncContext, "use case should only be accessed on the sync context")
 
         await syncContext.perform { conversation.isDeletedRemotely = true }
-        await wipeMLSGroupIfNeeded(for: conversation, in: syncContext)
+        try await wipeMLSGroupIfNeeded(for: conversation, in: syncContext)
         await syncContext.perform { _ = syncContext.saveOrRollback() }
     }
 
     func wipeMLSGroupIfNeeded(
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
-    ) async {
+    ) async throws {
         let (mlsService, groupID) = await context.perform {
             guard conversation.messageProtocol == .mls else {
                 return (MLSServiceInterface?.none, MLSGroupID?.none)
@@ -58,6 +60,6 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
             return WireLogger.mls.warn("failed to wipe conversation: missing `mlsService`")
         }
 
-        await mlsService.wipeGroup(groupID)
+        try await mlsService.wipeGroup(groupID)
     }
 }

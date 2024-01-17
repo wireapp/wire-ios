@@ -22,17 +22,19 @@ import XCTest
 
 @testable import WireRequestStrategy
 
-class VoIPPushHelperTests: XCTestCase {
+final class VoIPPushHelperTests: XCTestCase {
+
+    private let userDefaultsSuiteName = "VoIPPushHelperTests"
 
     // MARK: - Set up
 
     override func setUp() {
         super.setUp()
-        VoIPPushHelper.storage = UserDefaults(suiteName: "VoIPPushHelperTests")!
+        VoIPPushHelper.storage = UserDefaults(suiteName: userDefaultsSuiteName)!
     }
 
     override func tearDown() {
-        VoIPPushHelper.storage.reset()
+        VoIPPushHelper.storage.removePersistentDomain(forName: userDefaultsSuiteName)
         super.tearDown()
     }
 

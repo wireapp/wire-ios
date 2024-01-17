@@ -352,7 +352,7 @@ private extension GroupDetailsViewController {
         switch conversation.messageProtocol {
         case .proteus:
             return ConversationVerificationStatus.proteus
-        case .mls:
+        case .mls, .mixed:
             return ConversationVerificationStatus.e2ei
         }
     }
@@ -361,7 +361,7 @@ private extension GroupDetailsViewController {
         switch conversation.messageProtocol {
         case .proteus:
             return Asset.Images.verifiedShield.image
-        case .mls:
+        case .mls, .mixed:
             return Asset.Images.certificateValid.image
         }
     }
@@ -370,7 +370,7 @@ private extension GroupDetailsViewController {
         switch conversation.messageProtocol {
         case .proteus:
             return SemanticColors.Label.textCertificateVerified
-        case .mls:
+        case .mls, .mixed:
             return SemanticColors.Label.textCertificateValid
         }
     }

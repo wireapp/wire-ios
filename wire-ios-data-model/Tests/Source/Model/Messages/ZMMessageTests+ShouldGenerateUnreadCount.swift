@@ -131,25 +131,31 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
     // MARK: Non-unread count generating system messages
 
     func testThatRemainingSystemMessages_doesntGenerateUnreadCount() {
-
-        let nonUnreadCountGeneratingSystemMessages: [ZMSystemMessageType] = [.connectionRequest,
-                                                                             .connectionUpdate,
-                                                                             .conversationIsSecure,
-                                                                             .conversationNameChanged,
-                                                                             .decryptionFailed,
-                                                                             .decryptionFailed_RemoteIdentityChanged,
-                                                                             .ignoredClient,
-                                                                             .messageDeletedForEveryone,
-                                                                             .messageTimerUpdate,
-                                                                             .newClient,
-                                                                             .performedCall,
-                                                                             .potentialGap,
-                                                                             .reactivatedDevice,
-                                                                             .readReceiptsDisabled,
-                                                                             .readReceiptsEnabled,
-                                                                             .readReceiptsOn,
-                                                                             .teamMemberLeave,
-                                                                             .usingNewDevice]
+        let nonUnreadCountGeneratingSystemMessages: [ZMSystemMessageType] = [
+            .connectionRequest,
+            .connectionUpdate,
+            .conversationIsSecure,
+            .conversationNameChanged,
+            .decryptionFailed,
+            .decryptionFailed_RemoteIdentityChanged,
+            .ignoredClient,
+            .messageDeletedForEveryone,
+            .messageTimerUpdate,
+            .newClient,
+            .performedCall,
+            .potentialGap,
+            .reactivatedDevice,
+            .readReceiptsDisabled,
+            .readReceiptsEnabled,
+            .readReceiptsOn,
+            .teamMemberLeave,
+            .usingNewDevice,
+            .mlsMigrationFinalized,
+            .mlsMigrationOngoingCall,
+            .mlsMigrationJoinAfterwards,
+            .mlsMigrationStarted,
+            .mlsMigrationUpdateVersion
+        ]
 
         for systemMessageType in nonUnreadCountGeneratingSystemMessages {
             // given

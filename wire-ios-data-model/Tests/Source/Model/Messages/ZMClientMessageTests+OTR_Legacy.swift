@@ -22,7 +22,7 @@
  final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
 
     override func setUp() {
-        DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .random())
+        DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .temporary())
         super.setUp()
     }
 
@@ -293,7 +293,7 @@ extension ClientMessageTests_OTR_Legacy {
 
     func testThatItCreatesPayloadForZMLastReadMessages() async throws {
         // Given
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.domain.com"
 
         let message = try await self.syncMOC.perform {

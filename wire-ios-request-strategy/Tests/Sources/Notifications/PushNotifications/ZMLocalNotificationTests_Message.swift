@@ -811,7 +811,7 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                sharedUserDefaults: UserDefaults.random()!
+                sharedUserDefaults: UserDefaults.temporary()
             )
             earService.setInitialEARFlagValue(true)
 
@@ -834,7 +834,7 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                sharedUserDefaults: UserDefaults.random()!
+                sharedUserDefaults: UserDefaults.temporary()
             )
             earService.setInitialEARFlagValue(true)
 

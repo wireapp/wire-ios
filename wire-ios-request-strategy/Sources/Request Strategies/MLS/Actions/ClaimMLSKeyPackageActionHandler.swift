@@ -69,6 +69,10 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
                 $0.client != action.excludedSelfClientId
             }
 
+            guard keyPackagesExcludingSelfClient.isNonEmpty else {
+                return action.fail(with: .emptyKeyPackages)
+            }
+
             action.succeed(with: keyPackagesExcludingSelfClient)
 
         case 400:
