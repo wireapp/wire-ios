@@ -154,7 +154,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 
-            let expectation = self.expectation(description: "Notification fired")
+            let expectation = self.customExpectation(description: "Notification fired")
             token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: nil) {_ in

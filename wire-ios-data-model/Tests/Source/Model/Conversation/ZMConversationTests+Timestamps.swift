@@ -297,7 +297,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
 
         // expect
-        expectation(forNotification: ZMConversation.lastReadDidChangeNotificationName, object: nil) { (_) -> Bool in
+        customExpectation(forNotification: ZMConversation.lastReadDidChangeNotificationName, object: nil) { (_) -> Bool in
             return true
         }
 

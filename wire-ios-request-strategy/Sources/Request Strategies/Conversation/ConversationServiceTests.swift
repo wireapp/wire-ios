@@ -22,17 +22,23 @@ import XCTest
 final class ConversationServiceTests: MessagingTestBase {
 
     var sut: ConversationService!
+    var mockParticipantsService: MockConversationParticipantsServiceInterface!
     var user1: ZMUser!
     var user2: ZMUser!
 
     override func setUp() {
         super.setUp()
-        sut = ConversationService(context: uiMOC)
+        mockParticipantsService = MockConversationParticipantsServiceInterface()
+        sut = ConversationService(
+            context: uiMOC,
+            participantsService: mockParticipantsService
+        )
         user1 = createUser(alsoCreateClient: true, in: uiMOC)
         user2 = createUser(alsoCreateClient: true, in: uiMOC)
     }
 
     override func tearDown() {
+        mockParticipantsService = nil
         sut = nil
         user1 = nil
         user2 = nil
@@ -51,7 +57,7 @@ final class ConversationServiceTests: MessagingTestBase {
             in: uiMOC
         )
 
-        let didFinish = expectation(description: "didFinish")
+        let didFinish = customExpectation(description: "didFinish")
 
         // Mock
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
@@ -105,7 +111,7 @@ final class ConversationServiceTests: MessagingTestBase {
             in: uiMOC
         )
 
-        let didFinish = expectation(description: "didFinish")
+        let didFinish = customExpectation(description: "didFinish")
 
         // Mock
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
@@ -159,7 +165,7 @@ final class ConversationServiceTests: MessagingTestBase {
             in: uiMOC
         )
 
-        let didFinish = expectation(description: "didFinish")
+        let didFinish = customExpectation(description: "didFinish")
 
         // Mock
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
@@ -199,7 +205,7 @@ final class ConversationServiceTests: MessagingTestBase {
         selfUser.membership?.permissions.remove(.member)
         XCTAssertFalse(selfUser.canCreateConversation(type: .group))
 
-        let didFinish = expectation(description: "didFinish")
+        let didFinish = customExpectation(description: "didFinish")
 
         // When
         sut.createGroupConversation(
@@ -229,7 +235,7 @@ final class ConversationServiceTests: MessagingTestBase {
     func test_CreateGroupConversation_ConversationNotFoundFailure() throws {
         // Given
         let randomObjectID = otherUser.objectID
-        let didFinish = expectation(description: "didFinish")
+        let didFinish = customExpectation(description: "didFinish")
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
             result: .success(randomObjectID),
@@ -264,7 +270,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
     func test_CreateGroupConversation_NetworkErrorFailure() throws {
         // Given
-        let didFinish = expectation(description: "didFinish")
+        let didFinish = customExpectation(description: "didFinish")
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
             result: .failure(.operationDenied),
@@ -299,7 +305,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
     func test_CreateGroupConversation_UnreachableDomainsFailure() throws {
         // GIVEN
-        let didFinish = expectation(description: "didFinish")
+        let didFinish = customExpectation(description: "didFinish")
         let unreachableDomain = "foma.wire.link"
         user2.domain = unreachableDomain
 
@@ -352,7 +358,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
     func test_CreateGroupConversation_NonFederatingDomainsFailure() throws {
         // GIVEN
-        let didFinish = expectation(description: "didFinish")
+        let didFinish = customExpectation(description: "didFinish")
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
             result: .failure(.nonFederatingDomains(["example.com"])),
@@ -390,10 +396,10 @@ final class ConversationServiceTests: MessagingTestBase {
     func test_SyncConversation() throws {
         // Given
         let qualifiedID = QualifiedID.randomID()
-        let didSync = expectation(description: "didSync")
+        let didSync = customExpectation(description: "didSync")
 
         // Mock
-        let mockActionHandler = MockActionHandler<SyncConversationAction>(
+        _ = MockActionHandler<SyncConversationAction>(
             result: .success(()),
             context: uiMOC.notificationContext
         )

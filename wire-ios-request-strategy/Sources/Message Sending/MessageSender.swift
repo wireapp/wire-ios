@@ -134,7 +134,7 @@ public class MessageSender: MessageSenderInterface {
 
         do {
             return switch messageProtocol {
-            case .proteus:
+            case .proteus, .mixed:
                 try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
             case .mls:
                 try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)

@@ -90,7 +90,7 @@
     // when
     [socket open];
     [socket writeData:requestData];
-    [self expectationForNotification:@"ZMNetworkSocketTest" object:nil handler:^BOOL(NSNotification *notification) {
+    [self customExpectationForNotification:@"ZMNetworkSocketTest" object:nil handler:^BOOL(NSNotification *notification) {
         NOT_USED(notification);
         return YES;
     }];
@@ -155,7 +155,7 @@
 
         [self.sut open];
         [self.sut writeData:requestData];
-        [self expectationForNotification:@"ZMNetworkSocketClosed" object:nil handler:^BOOL(NSNotification *notification) {
+        [self customExpectationForNotification:@"ZMNetworkSocketClosed" object:nil handler:^BOOL(NSNotification *notification) {
             NOT_USED(notification);
             return YES;
         }];
@@ -181,7 +181,7 @@
     XCTAssertNotNil(self.sut);
     
     // WHEN
-    [self expectationForNotification:@"ZMNetworkSocketClosed" object:nil handler:^BOOL(NSNotification *notification) {
+    [self customExpectationForNotification:@"ZMNetworkSocketClosed" object:nil handler:^BOOL(NSNotification *notification) {
         NOT_USED(notification);
         return YES;
     }];

@@ -109,7 +109,7 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
     // MARK: - Helpers
 
     func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<SSOSettings>, payload: ZMTransportData?) {
-        let resultExpectation = expectation(description: "Expected result: \(expectedResult)")
+        let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")
 
         // given
         sut.fetchSSOSettings { result in

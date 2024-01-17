@@ -41,7 +41,7 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
         super.tearDown()
     }
 
-    func test_itMarksConversationAsDeleted_AndWipesMLSGroup() async {
+    func test_itMarksConversationAsDeleted_AndWipesMLSGroup() async throws {
         // Given
         let groupID = MLSGroupID.random()
         let conversation = await syncMOC.perform { [syncMOC] in
@@ -53,7 +53,7 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
         mockMLSService.wipeGroup_MockMethod = { _ in }
 
         // When
-        await sut.invoke(with: conversation, syncContext: syncMOC)
+        try await sut.invoke(with: conversation, syncContext: syncMOC)
 
         // Then
         await syncMOC.perform {

@@ -125,7 +125,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         )!
 
         let response = ZMTransportResponse(httpurlResponse: HTTPResponse, data: data, error: error, apiVersion: APIVersion.v0.rawValue)
-        let expectation = self.expectation(description: "Callback invoked")
+        let expectation = self.customExpectation(description: "Callback invoked")
 
         requestsStatus.add(request: ProxyRequest(type: .giphy, path: "/foo/bar1", method: .get, callback: { responseData, responseURLResponse, responseError in
             XCTAssertEqual(data, responseData)

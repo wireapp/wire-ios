@@ -27,7 +27,7 @@ class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
         let path = "foo/bar"
         let url = URL(string: path, relativeTo: nil)!
 
-        let exp = self.expectation(description: "expected callback")
+        let exp = self.customExpectation(description: "expected callback")
         let callback: (Data?, HTTPURLResponse?, Error?) -> Void = { (_, _, _) -> Void in
             exp.fulfill()
         }
@@ -48,7 +48,7 @@ class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
     func testThatAddingRequestStartsOperationLoop() {
 
         // given
-        let exp = self.expectation(description: "new operation loop started")
+        let exp = self.customExpectation(description: "new operation loop started")
         let token = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "RequestAvailableNotification"), object: nil, queue: nil) { (_) -> Void in
             exp.fulfill()
         }

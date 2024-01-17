@@ -253,9 +253,9 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
         }
 
         if response.result == .permanentError {
-            WaitingGroupTask(context: managedObjectContext) { [self] in
+            WaitingGroupTask(context: managedObjectContext) {
                 await client.deleteClientAndEndSession()
-                await managedObjectContext.perform { completionHandler() }
+                completionHandler()
             }
         } else if let rawData = response.rawData,
                   let payload = Payload.UserClient(rawData, decoder: decoder) {
@@ -371,7 +371,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v1, .v2, .v3, .v4, .v5:
             WaitingGroupTask(context: managedObjectContext) { [self] in
                 await commonResponseHandling(response: response, for: identifiers)
-                await managedObjectContext.perform { completionHandler() }
+                completionHandler()
             }
         }
     }
@@ -480,7 +480,7 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
                 for: user,
                 selfClient: selfClient
             )
-            await managedObjectContext.perform { completionHandler() }
+            completionHandler()
         }
     }
 }

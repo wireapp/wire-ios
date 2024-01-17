@@ -38,7 +38,7 @@ class LoginFlowTests_PushToken: IntegrationTest {
         XCTAssertTrue(self.login())
 
         let pushService = try XCTUnwrap(sessionManager?.pushTokenService)
-        let registrationComplete = expectation(description: "registrtation complete")
+        let registrationComplete = customExpectation(description: "registrtation complete")
         pushService.onRegistrationComplete = { registrationComplete.fulfill() }
 
         // when

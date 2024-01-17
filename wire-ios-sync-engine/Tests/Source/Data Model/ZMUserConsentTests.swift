@@ -102,7 +102,7 @@ final class ZMUserConsentTests: DatabaseTest {
             return ZMTransportResponse(payload: ["results": [["type": 2, "value": 1]]] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let fetchedData = expectation(description: "fetched data")
+        let fetchedData = customExpectation(description: "fetched data")
 
         // when
         selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
@@ -128,7 +128,7 @@ final class ZMUserConsentTests: DatabaseTest {
             return ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let receivedError = expectation(description: "received error")
+        let receivedError = customExpectation(description: "received error")
         // when
 
         selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
@@ -154,7 +154,7 @@ final class ZMUserConsentTests: DatabaseTest {
             return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let successExpectation = expectation(description: "set is successful")
+        let successExpectation = customExpectation(description: "set is successful")
 
         // when
         selfUser.setConsent(to: true, for: .marketing, on: mockTransportSession) { result in
@@ -179,7 +179,7 @@ final class ZMUserConsentTests: DatabaseTest {
             return ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let receivedError = expectation(description: "received error")
+        let receivedError = customExpectation(description: "received error")
 
         // when
         selfUser.setConsent(to: true, for: .marketing, on: mockTransportSession) { result in

@@ -128,7 +128,7 @@
     [(id<ZMUserObserver>)[userObserver expect] userDidChange:OCMOCK_ANY]; // <- DONE: when receiving this, I know that the phone number was set
     
     // expect
-    XCTestExpectation *phoneNumberVerificationCodeExpectation = [self expectationWithDescription:@"phoneNumberVerificationCodeExpectation"];
+    XCTestExpectation *phoneNumberVerificationCodeExpectation = [self customExpectationWithDescription:@"phoneNumberVerificationCodeExpectation"];
     [[[editableUserObserver expect] andDo:^(NSInvocation *inv) {
         NOT_USED(inv);
         [phoneNumberVerificationCodeExpectation fulfill];

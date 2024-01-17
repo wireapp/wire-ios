@@ -30,7 +30,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
     override func setUp() {
         super.setUp()
-        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .random())
+        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
         mockProteusService = MockProteusServiceInterface()
 
         // Mock
@@ -336,7 +336,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
     func testThatItCreatesPayloadForZMLastReadMessages() async throws {
         // Given
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.domain.com"
 
         let message = try await self.syncMOC.perform {

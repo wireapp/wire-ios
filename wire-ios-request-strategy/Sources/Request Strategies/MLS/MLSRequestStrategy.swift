@@ -49,6 +49,8 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
         )
+
+        configuration = [.allowsRequestsDuringSlowSync, .allowsRequestsWhileOnline]
     }
 
     // MARK: - Requests

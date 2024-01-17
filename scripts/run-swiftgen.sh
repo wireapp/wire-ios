@@ -34,5 +34,5 @@ fi
 
 (
     cd "$REPO_ROOT/wire-ios"
-    "$SWIFTGEN"
+    "$SWIFTGEN" "$@"
 )

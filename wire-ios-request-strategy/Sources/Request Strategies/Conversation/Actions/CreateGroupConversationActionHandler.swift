@@ -270,6 +270,9 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 action.fail(with: .proccessingError)
                 return
             }
+        case .mixed:
+            // Conversations should never be created with mixed protocol, that's why we break here
+            break
         }
     }
 }

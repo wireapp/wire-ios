@@ -31,7 +31,7 @@ class DispatchGroupQueueTests: ZMTBaseTest {
 
     func testPerformedGroupedBlockEntersAndLeavesAllGroups() {
         // given
-        let groupIsEmpty = expectation(description: "group1 is emtpy")
+        let groupIsEmpty = customExpectation(description: "group1 is emtpy")
         let group = ZMSDispatchGroup(label: "group1")!
         sut = DispatchGroupQueue(queue: DispatchQueue.main)
         sut.add(group)

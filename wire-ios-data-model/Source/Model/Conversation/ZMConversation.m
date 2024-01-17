@@ -359,7 +359,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.mlsGroupIdKey,
             ZMConversation.mlsStatusKey,
             ZMConversation.commitPendingProposalDateKey,
+            ZMConversation.cipherSuiteKey,
             ZMConversation.epochKey,
+            ZMConversation.epochTimestampKey,
             ZMConversationIsDeletedRemotelyKey
         };
         

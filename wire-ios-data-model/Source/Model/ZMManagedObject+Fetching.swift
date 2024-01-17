@@ -36,10 +36,12 @@ extension ZMManagedObject {
         let localDomain = ZMUser.selfUser(in: context).domain
         let isSearchingLocalDomain = domain == nil || localDomain == nil || localDomain == domain
 
-        return internalFetch(withRemoteIdentifier: remoteIdentifier,
-                             domain: domain ?? localDomain,
-                             searchingLocalDomain: isSearchingLocalDomain,
-                             in: context)
+        return internalFetch(
+            withRemoteIdentifier: remoteIdentifier,
+            domain: domain ?? localDomain,
+            searchingLocalDomain: isSearchingLocalDomain,
+            in: context
+        )
     }
 
     public static func fetch(with qualifiedId: QualifiedID, in context: NSManagedObjectContext) -> Self? {
@@ -51,6 +53,18 @@ public extension ZMManagedObject {
 
     static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) -> Self? {
         return try? context.existingObject(with: id) as? Self
+    }
+
+    static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) throws -> Self {
+        guard let object = try context.existingObject(with: id) as? Self else {
+            throw ObjectError.nonMatchingType
+        }
+
+        return object
+    }
+
+    enum ObjectError: Error {
+        case nonMatchingType
     }
 
 }

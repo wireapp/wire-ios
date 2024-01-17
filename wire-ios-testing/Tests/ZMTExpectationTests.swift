@@ -25,7 +25,7 @@ class ZMTExpectationTests: ZMTBaseTest {
     func testNotificationExpectationNotSent() {
 
         var handlerIsCalled = false
-        self.expectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: {
+        self.customExpectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: {
             _ in handlerIsCalled = true
             return true
         })
@@ -38,7 +38,7 @@ class ZMTExpectationTests: ZMTBaseTest {
     func testNotificationExpectationSent() {
 
         var handlerIsCalled = false
-        self.expectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: {
+        self.customExpectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: {
             _ in handlerIsCalled = true
             return true
         })

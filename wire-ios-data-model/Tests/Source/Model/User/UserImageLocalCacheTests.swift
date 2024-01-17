@@ -63,8 +63,8 @@ class UserImageLocalCacheTests: BaseZMMessageTests {
         sut = UserImageLocalCache(location: nil)
 
         // then
-        let previewImageArrived = expectation(description: "Preview image arrived")
-        let completeImageArrived = expectation(description: "Complete image arrived")
+        let previewImageArrived = customExpectation(description: "Preview image arrived")
+        let completeImageArrived = customExpectation(description: "Complete image arrived")
         sut.userImage(testUser, size: .preview, queue: .global()) { (smallDataResult) in
             XCTAssertEqual(smallDataResult, smallData)
             previewImageArrived.fulfill()

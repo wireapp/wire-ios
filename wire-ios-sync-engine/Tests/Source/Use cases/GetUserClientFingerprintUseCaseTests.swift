@@ -33,7 +33,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
     let fingerprint = "1234"
 
     override func setUp() {
-        DeveloperFlag.storage = .random()!
+        DeveloperFlag.storage = .temporary()
         mockProteusService = MockProteusServiceInterface()
         mockSessionEstablisher = MockSessionEstablisherInterface()
         super.setUp()

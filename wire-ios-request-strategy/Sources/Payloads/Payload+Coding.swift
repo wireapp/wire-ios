@@ -21,21 +21,21 @@ import Foundation
 
 extension JSONDecoder {
 
-    static var defaultDecoder: JSONDecoder {
+    public static var defaultDecoder: JSONDecoder {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
+        decoder.dateDecodingStrategy = .custom { decoder in
             let container = try decoder.singleValueContainer()
             let rawDate = try container.decode(String.self)
 
-            if let date = NSDate(transport: rawDate) {
-                return date as Date
-            } else {
+            guard let date = NSDate(transport: rawDate) else {
                 throw DecodingError.dataCorruptedError(
                     in: container,
                     debugDescription: "Expected date string to be ISO8601-formatted with fractional seconds"
                 )
             }
-        })
+
+            return date as Date
+        }
 
         return decoder
     }
