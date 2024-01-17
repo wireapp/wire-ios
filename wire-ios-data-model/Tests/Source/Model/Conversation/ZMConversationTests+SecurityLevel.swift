@@ -728,7 +728,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         }
     }
 
-    func testItMarksMLSConversationAsNotVerifiedAfterResendMessage() async {
+    func testItMarksMLSConversationAsNotVerifiedAfterResendMessage() async throws {
         // GIVEN
         let conversation = await syncMOC.perform {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
