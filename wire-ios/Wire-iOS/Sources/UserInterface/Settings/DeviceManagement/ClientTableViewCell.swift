@@ -27,14 +27,12 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
     // MARK: - Properties
     typealias LabelColors = SemanticColors.Label
 
-    let nameLabel = DynamicFontLabel(fontSpec: .normalSemiboldFont,
-                                     color: LabelColors.textDefault)
-    let labelLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
-                                      color: LabelColors.textDefault)
-    let activationLabel = UILabel(frame: CGRect.zero)
-    let fingerprintLabel = UILabel(frame: CGRect.zero)
-    let verifiedLabel = DynamicFontLabel(fontSpec: .smallFont,
-                                         color: LabelColors.textDefault)
+    let proteusVerficiationStatusImageView = UIImageView()
+
+    let nameLabel =  DynamicFontLabel(fontSpec: .normalBoldFont, color: SemanticColors.Label.textDefault)
+    let labelLabel = DynamicFontLabel(fontSpec: .smallLightFont, color: SemanticColors.Label.textDefault)
+    let proteusIDLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textCellSubtitle)
+    let mlsThumbprintLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textCellSubtitle)
 
     private let activationLabelFont = FontSpec.smallLightFont
     private let activationLabelDateFont = FontSpec.smallSemiboldFont
@@ -51,21 +49,7 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
         }
     }
 
-    var fingerprintLabelFont: FontSpec? {
-        didSet {
-            updateFingerprint()
-        }
-    }
-    var fingerprintLabelBoldFont: FontSpec? {
-        didSet {
-            updateFingerprint()
-        }
-    }
-    var fingerprintTextColor: UIColor? {
-        didSet {
-            updateFingerprint()
-        }
-    }
+    private typealias deviceDetailsSection = L10n.Localizable.Device.Details.Section
 
     var userClient: UserClient? {
         didSet {
@@ -77,15 +61,6 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             }
 
             updateLabel()
-
-            activationLabel.text = ""
-            if let date = userClient.activationDate?.formattedDate {
-                let text = L10n.Localizable.Registration.Devices.activated(date)
-                var attrText = NSAttributedString(string: text) && activationLabelFont.font
-                attrText = attrText.adding(font: activationLabelDateFont.font!, to: date)
-                activationLabel.attributedText = attrText
-            }
-
             updateFingerprint()
             updateVerifiedLabel()
         }
@@ -116,19 +91,12 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
 
     // MARK: - Methods
     func setupStyle() {
-        let textColor = SemanticColors.Label.textDefault
         nameLabel.accessibilityIdentifier = "device name"
         labelLabel.accessibilityIdentifier = "device label"
-        activationLabel.accessibilityIdentifier = "device activation date"
-        fingerprintLabel.accessibilityIdentifier = "device fingerprint"
-        verifiedLabel.accessibilityIdentifier = "device verification status"
-
-        activationLabel.numberOfLines = 0
-        activationLabel.textColor = textColor
-
-        fingerprintLabelFont = .smallLightFont
-        fingerprintLabelBoldFont = .smallSemiboldFont
-        fingerprintTextColor = textColor
+        proteusIDLabel.accessibilityIdentifier = "device proteus ID"
+        mlsThumbprintLabel.accessibilityIdentifier = "device mls thumbprint"
+        mlsThumbprintLabel.numberOfLines = 1
+        proteusIDLabel.numberOfLines = 1
 
         backgroundColor = SemanticColors.View.backgroundUserCell
 
@@ -136,62 +104,73 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
     }
 
     private func createConstraints() {
-        [nameLabel, labelLabel, activationLabel, fingerprintLabel, verifiedLabel].forEach(contentView.addSubview)
-
-        [nameLabel, labelLabel, activationLabel, fingerprintLabel, verifiedLabel].prepareForLayout()
+        [
+            nameLabel,
+            labelLabel,
+            proteusIDLabel,
+            mlsThumbprintLabel,
+            proteusVerficiationStatusImageView
+        ].forEach(contentView.addSubview)
+        [
+            nameLabel,
+            labelLabel,
+            proteusIDLabel,
+            mlsThumbprintLabel,
+            proteusVerficiationStatusImageView
+        ].prepareForLayout()
 
         // Setting the constraints for the view
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             nameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-            nameLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
+
+            proteusVerficiationStatusImageView.topAnchor.constraint(equalTo: nameLabel.topAnchor),
+            proteusVerficiationStatusImageView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: 8),
+            proteusVerficiationStatusImageView.heightAnchor.constraint(equalToConstant: 16),
+            proteusVerficiationStatusImageView.widthAnchor.constraint(equalToConstant: 16),
+            proteusVerficiationStatusImageView.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
 
             labelLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             labelLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             labelLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
 
-            fingerprintLabel.topAnchor.constraint(equalTo: labelLabel.bottomAnchor, constant: 4),
-            fingerprintLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-            fingerprintLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
-            fingerprintLabel.heightAnchor.constraint(equalToConstant: 16),
+            mlsThumbprintLabel.topAnchor.constraint(equalTo: labelLabel.bottomAnchor, constant: 4),
+            mlsThumbprintLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            mlsThumbprintLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
+            mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 16),
 
-            activationLabel.topAnchor.constraint(equalTo: fingerprintLabel.bottomAnchor, constant: 8),
-            activationLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-            activationLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
+            proteusIDLabel.topAnchor.constraint(equalTo: mlsThumbprintLabel.bottomAnchor, constant: 2),
+            proteusIDLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            proteusIDLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
+            proteusIDLabel.bottomAnchor.constraint(greaterThanOrEqualTo: contentView.bottomAnchor, constant: -16)
 
-            verifiedLabel.topAnchor.constraint(equalTo: activationLabel.bottomAnchor, constant: 4),
-            verifiedLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-            verifiedLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
-            verifiedLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
 
     private func updateVerifiedLabel() {
         if let userClient = userClient,
            showVerified {
-
             if userClient.verified {
-                verifiedLabel.text = L10n.Localizable.Device.verified.capitalized
+                proteusVerficiationStatusImageView.image = Asset.Images.verifiedShield.image
             } else {
-                verifiedLabel.text = L10n.Localizable.Device.notVerified.capitalized
+                proteusVerficiationStatusImageView.image = .none
             }
         } else {
-            verifiedLabel.text = ""
+            proteusVerficiationStatusImageView.image = .none
         }
     }
 
     private func updateFingerprint() {
-        if let fingerprintLabelBoldMonoFont = fingerprintLabelBoldFont?.font?.monospaced(),
-           let fingerprintLabelMonoFont = fingerprintLabelFont?.font?.monospaced(),
-           let fingerprintLabelTextColor = fingerprintTextColor,
-           let userClient = userClient, userClient.remoteIdentifier != nil {
-
-            fingerprintLabel.attributedText =  userClient.attributedRemoteIdentifier(
-                [.font: fingerprintLabelMonoFont, .foregroundColor: fingerprintLabelTextColor],
-                boldAttributes: [.font: fingerprintLabelBoldMonoFont, .foregroundColor: fingerprintLabelTextColor],
-                uppercase: true
-            )
+        guard let userClient = userClient else {
+            return
         }
+        proteusIDLabel.text =  deviceDetailsSection.Proteus.id
+        + ": "
+        + userClient.displayIdentifier.fingerprintStringWithSpaces.uppercased()
+
+        mlsThumbprintLabel.text =  deviceDetailsSection.Mls.title
+        + ": "
+        + (userClient.mlsPublicKeys.ed25519?.fingerprintStringWithSpaces.uppercased() ?? "")
     }
 
     private func updateLabel() {

@@ -70,6 +70,16 @@ public class UserClient: ZMManagedObject, UserClientType {
     private enum Keys {
         static let PushToken = "pushToken"
         static let DeviceClass = "deviceClass"
+        static let type = "type"
+        static let id = "id"
+        static let `class` = "class"
+        static let capabilities = "capabilities"
+        static let cookie = "cookie"
+        static let model = "model"
+        static let time = "time"
+        static let mlsPublicKeys = "mls_public_keys"
+        static let mlsEd25519 = "ed25519"
+        static let label = "label"
     }
 
     // DO NOT USE THIS PROPERTY.
@@ -395,16 +405,16 @@ public extension UserClient {
     ) -> UserClient? {
         WireLogger.userClient.info("create or update self user client")
 
-        guard let id = payloadData["id"] as? String,
-              let type = payloadData["type"] as? String
+        guard let id = payloadData[Keys.id] as? String,
+              let type = payloadData[Keys.type] as? String
         else { return nil }
 
         let payloadAsDictionary = payloadData as NSDictionary
 
-        let label = payloadAsDictionary.optionalString(forKey: "label")?.removingExtremeCombiningCharacters
-        let model = payloadAsDictionary.optionalString(forKey: "model")?.removingExtremeCombiningCharacters
-        let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
-        let activationDate = payloadAsDictionary.date(for: "time")
+        let label = payloadAsDictionary.optionalString(forKey: Keys.label)?.removingExtremeCombiningCharacters
+        let model = payloadAsDictionary.optionalString(forKey: Keys.model)?.removingExtremeCombiningCharacters
+        let deviceClass = payloadAsDictionary.optionalString(forKey: Keys.class)
+        let activationDate = payloadAsDictionary.date(for: Keys.time)
 
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
@@ -416,7 +426,10 @@ public extension UserClient {
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
         client.remoteIdentifier = id
-
+        if let mlsPublicKey = payloadAsDictionary.dictionary(forKey: Keys.mlsPublicKeys),
+           let ed25519 = mlsPublicKey.optionalString(forKey: Keys.mlsEd25519) {
+            client.mlsPublicKeys = MLSPublicKeys(ed25519: ed25519)
+        }
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
 
