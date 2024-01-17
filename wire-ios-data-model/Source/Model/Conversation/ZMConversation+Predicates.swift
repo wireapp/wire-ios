@@ -127,7 +127,7 @@ extension ZMConversation {
         return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
     }
 
-    class func predicateForTeamOneToOneConversation() -> NSPredicate {
+    public class func predicateForTeamOneToOneConversation() -> NSPredicate {
         // We consider a conversation being an existing 1:1 team conversation in case the following point are true:
         //  1. It is a conversation inside a team
         //  2. The only participants are the current user and the selected user
