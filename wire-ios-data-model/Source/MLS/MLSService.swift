@@ -360,7 +360,9 @@ public final class MLSService: MLSServiceInterface {
             }
 
             Task { [context] in
-                guard await context.perform({ ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true }) == true else {
+                let hasRegisteredMLSClient = await context.perform { ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true }
+
+                guard hasRegisteredMLSClient else {
                     self.logger.info("Skip periodic key material check since MLS is not enabled")
                     return
                 }
