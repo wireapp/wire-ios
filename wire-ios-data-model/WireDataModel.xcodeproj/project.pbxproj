@@ -461,7 +461,6 @@
 		E6BDA1152B1642A400488D92 /* store2-110-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */; };
 		E6BFE8382B3320C7000F0FBE /* DatabaseMigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */; };
 		E6BFE83A2B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8392B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift */; };
-		E6E68B2B2B18D7B4003C29D2 /* ZMMessage+ServerTimestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E68B2A2B18D7B4003C29D2 /* ZMMessage+ServerTimestamp.swift */; };
 		E6F443232B16294400D2B08A /* zmessaging.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E6F443042B16294000D2B08A /* zmessaging.xcdatamodeld */; };
 		E90AAE34279719D8003C7DB0 /* store2-98-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E90AAE33279719D8003C7DB0 /* store2-98-0.wiredatabase */; };
 		E97A542827B122D80009DCCF /* AccessRoleMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97A542727B122D80009DCCF /* AccessRoleMigrationTests.swift */; };
@@ -4052,7 +4051,6 @@
 				F9B720041CB2C770001DB03F /* UserClientTests.swift in Sources */,
 				872A2E8A1FFD2FBF00900B22 /* ZMSearchUserPayloadParsingTests.swift in Sources */,
 				163D01E22472E44000984999 /* InvalidConnectionRemovalTests.swift in Sources */,
-				E6E68B2B2B18D7B4003C29D2 /* ZMMessage+ServerTimestamp.swift in Sources */,
 				1672A5FE23434FA200380537 /* ZMConversationTests+Labels.swift in Sources */,
 				BF0D07FB1E4C7B7A00B934EB /* TextSearchQueryTests.swift in Sources */,
 				0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */,
