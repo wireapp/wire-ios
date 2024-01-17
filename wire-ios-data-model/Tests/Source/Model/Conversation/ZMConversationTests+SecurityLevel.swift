@@ -752,9 +752,9 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         }
 
         // WHEN
-        await uiMOC.perform {
-            let uiConversation = try? self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation
-            uiConversation?.acknowledgePrivacyWarning(withResendIntent: true)
+        try await uiMOC.perform {
+            let uiConversation = try XCTUnwrap(try self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation)
+            uiConversation.acknowledgePrivacyWarning(withResendIntent: true)
         }
 
         await syncMOC.perform {

@@ -287,7 +287,7 @@ extension VoiceChannel {
         guard let conversation else { return nil }
 
         switch conversation.messageProtocol {
-        case .mls:
+        case .mls, .mixed:
             return .invalidCertificate
         case .proteus:
             return .degradedUser(user: hashboxFirstDegradedUser)

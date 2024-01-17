@@ -84,9 +84,12 @@ extension ConversationViewController {
     }
 
     private func clientVerificationPrivacyWarningAlertContent(degradedUsers: Set<ZMUser>) -> AlertContent {
+        typealias DegradationReasonMessage = L10n.Localizable.Meta.Degraded.DegradationReasonMessage
+
         let names = degradedUsers.compactMap(\.name).joined(separator: ", ")
-        let keySuffix = degradedUsers.count <= 1 ? "singular" : "plural"
-        let title = "meta.degraded.degradation_reason_message.\(keySuffix)".localized(args: names)
+        let title = degradedUsers.count <= 1
+                    ? DegradationReasonMessage.singular(names)
+                    : DegradationReasonMessage.plural(names)
         let message = L10n.Localizable.Meta.Degraded.dialogMessage
 
         let actions: [PrivacyAlertAction] = [.verifyDevices, .sendAnyway, .cancel]
