@@ -96,7 +96,7 @@ final class ClientListViewController: UIViewController,
 
         return nil
     }
-
+    let mlsClientResolver: MLSClientResolving
     required init(
         clientsList: [UserClient]?,
         userSession: ZMUserSession? = ZMUserSession.shared(),
@@ -104,13 +104,14 @@ final class ClientListViewController: UIViewController,
         credentials: ZMEmailCredentials? = .none,
         detailedView: Bool = false,
         showTemporary: Bool = true,
-        showLegalHold: Bool = true
+        showLegalHold: Bool = true,
+        mlsClientResolver: MLSClientResolving = MLSClientResolver()
     ) {
         self.userSession = userSession
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
-
+        self.mlsClientResolver = mlsClientResolver
         clientFilter = {
             $0 != selfClient && (showTemporary || $0.type != .temporary) && (showLegalHold || $0.type != .legalHold)
         }
@@ -285,9 +286,37 @@ final class ClientListViewController: UIViewController,
     // MARK: - ClientRegistrationObserver
 
     func finishedFetching(_ userClients: [UserClient]) {
-        dismissLoadingView()
-
-        self.clients = userClients.filter { !$0.isSelfClient() }
+        var theUserClients = userClients.filter({ $0.mlsPublicKeys.ed25519 == nil })
+        Task {
+            do {
+                guard let session = ZMUserSession.shared() else { return }
+                let isE2eIdenityEnabled = try await session.getIsE2eIdentityEnabled()
+                var userClientsByMlsThumbprint = [String: UserClient]()
+                userClients.forEach { client in
+                    if let mlsThumbprint = client.mlsPublicKeys.ed25519 {
+                        userClientsByMlsThumbprint[mlsThumbprint] = client
+                    }
+                }
+                let mlsClients = userClients.compactMap { mlsClientResolver.mlsClientId(for: $0) }
+                if isE2eIdenityEnabled {
+                    let certificates = try await session.getE2eIdentityCertificates(for: mlsClients)
+                    certificates.forEach({ certificate in
+                        if let client = userClientsByMlsThumbprint[certificate.mlsThumbprint] {
+                            client.e2eIdentityCertificate = certificate
+                            userClientsByMlsThumbprint[certificate.mlsThumbprint] = client
+                        }
+                    })
+                }
+                theUserClients.append(contentsOf: userClientsByMlsThumbprint.values)
+            } catch {
+                WireLogger.e2ei.error(error.localizedDescription)
+            }
+            await MainActor.run {
+                dismissLoadingView()
+                clients = theUserClients.filter { !$0.isSelfClient() }
+                selfClient?.e2eIdentityCertificate = theUserClients.filter { $0.isSelfClient() }.first?.e2eIdentityCertificate
+            }
+        }
     }
 
     func failedToFetchClients(_ error: Error) {

@@ -28,6 +28,7 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
     typealias LabelColors = SemanticColors.Label
 
     let proteusVerficiationStatusImageView = UIImageView()
+    let e2eIdentityStatusImageView = UIImageView()
 
     let nameLabel =  DynamicFontLabel(fontSpec: .normalBoldFont, color: SemanticColors.Label.textDefault)
     let labelLabel = DynamicFontLabel(fontSpec: .smallLightFont, color: SemanticColors.Label.textDefault)
@@ -109,14 +110,17 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             labelLabel,
             proteusIDLabel,
             mlsThumbprintLabel,
-            proteusVerficiationStatusImageView
+            proteusVerficiationStatusImageView,
+            e2eIdentityStatusImageView
         ].forEach(contentView.addSubview)
+
         [
             nameLabel,
             labelLabel,
             proteusIDLabel,
             mlsThumbprintLabel,
-            proteusVerficiationStatusImageView
+            proteusVerficiationStatusImageView,
+            e2eIdentityStatusImageView
         ].prepareForLayout()
 
         // Setting the constraints for the view
@@ -128,7 +132,12 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             proteusVerficiationStatusImageView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: 8),
             proteusVerficiationStatusImageView.heightAnchor.constraint(equalToConstant: 16),
             proteusVerficiationStatusImageView.widthAnchor.constraint(equalToConstant: 16),
-            proteusVerficiationStatusImageView.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
+
+            e2eIdentityStatusImageView.topAnchor.constraint(equalTo: proteusVerficiationStatusImageView.topAnchor),
+            e2eIdentityStatusImageView.leftAnchor.constraint(equalTo: proteusVerficiationStatusImageView.rightAnchor, constant: 4),
+            e2eIdentityStatusImageView.heightAnchor.constraint(equalToConstant: 16),
+            e2eIdentityStatusImageView.widthAnchor.constraint(equalToConstant: 16),
+            e2eIdentityStatusImageView.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
 
             labelLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             labelLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
@@ -177,6 +186,22 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             labelLabel.text = userClientLabel
         } else {
             labelLabel.text = ""
+        }
+    }
+
+    private func updateE2eIdentityStatus() {
+        guard let userClient = userClient, let certificate = userClient.e2eIdentityCertificate else {
+            return
+        }
+        switch certificate.status {
+        case .notActivated:
+            e2eIdentityStatusImageView.image = Asset.Images.certificateExpired.image
+        case .revoked:
+            e2eIdentityStatusImageView.image = Asset.Images.certificateRevoked.image
+        case .expired:
+            e2eIdentityStatusImageView.image = Asset.Images.certificateExpired.image
+        case .valid:
+            e2eIdentityStatusImageView.image = Asset.Images.certificateValid.image
         }
     }
 

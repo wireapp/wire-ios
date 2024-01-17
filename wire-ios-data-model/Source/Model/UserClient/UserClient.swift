@@ -67,6 +67,8 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
 
+    public var e2eIdentityCertificate: E2eIdentityCertificate?
+
     private enum Keys {
         static let PushToken = "pushToken"
         static let DeviceClass = "deviceClass"
