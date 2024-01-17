@@ -88,20 +88,15 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 return
             }
 
-            var action = UpdateConversationProtocolAction(
-                qualifiedID: qualifiedID,
-                messageProtocol: messageProtocol
-            )
-
             do {
-                try await action.perform(in: context.notificationContext)
-
-                let updater = ConversationPostProtocolChangeUpdater()
-                try await updater.updateLocalConversation(
-                    for: qualifiedID,
-                    to: messageProtocol,
-                    context: context
+                var updateAction = UpdateConversationProtocolAction(
+                    qualifiedID: qualifiedID,
+                    messageProtocol: messageProtocol
                 )
+                try await updateAction.perform(in: context.notificationContext)
+
+                var syncAction = SyncConversationAction(qualifiedID: qualifiedID)
+                try await syncAction.perform(in: context.notificationContext)
             } catch {
                 assertionFailure("failed with error: \(error)!")
             }
