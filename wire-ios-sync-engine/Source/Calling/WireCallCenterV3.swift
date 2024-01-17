@@ -647,16 +647,17 @@ extension WireCallCenterV3 {
                         parentID: parentGroupID
                     )
 
-                    let updateConferenceInfoTask = Task {
-                        let initialConferenceInfo = try await mlsService.generateConferenceInfo(
-                            parentGroupID: parentGroupID,
-                            subconversationGroupID: subgroupID
-                        )
+                    let initialConferenceInfo = try await mlsService.generateConferenceInfo(
+                        parentGroupID: parentGroupID,
+                        subconversationGroupID: subgroupID
+                    )
 
-                        self.avsWrapper.setMLSConferenceInfo(
-                            conversationId: conversationID,
-                            info: initialConferenceInfo
-                        )
+                    self.avsWrapper.setMLSConferenceInfo(
+                        conversationId: conversationID,
+                        info: initialConferenceInfo
+                    )
+
+                    let updateConferenceInfoTask = Task {
 
                         let onConferenceInfoChange = mlsService.onConferenceInfoChange(
                             parentGroupID: parentGroupID,
@@ -665,6 +666,7 @@ extension WireCallCenterV3 {
 
                         do {
                             for try await conferenceInfo in onConferenceInfoChange {
+                                try Task.checkCancellation()
                                 self.avsWrapper.setMLSConferenceInfo(
                                     conversationId: conversationID,
                                     info: conferenceInfo
@@ -726,8 +728,9 @@ extension WireCallCenterV3 {
         }
 
         if let mlsParentIDs = mlsParentIDS(for: conversationId) {
-            let snapshot = callSnapshots[conversationId]
+            var snapshot = callSnapshots[conversationId]
             snapshot?.updateConferenceInfoTask?.cancel()
+            snapshot?.updateConferenceInfoTask = nil
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
