@@ -118,16 +118,16 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         var groupID = groupID
-
+        var debugInfo = "parentID: \(groupID)"
         if
             let type = subconversationType,
-            // TODO: [F] does subconverationGroupIDRepository needs to be an actor?
-            let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+            let subconversationGroupID = await subconverationGroupIDRepository.fetchSubconversationGroupID(
                 forType: type,
                 parentGroupID: groupID
             )
         {
             groupID = subconversationGroupID
+            debugInfo.append("; subconversationGroupID: \(subconversationGroupID)")
         }
 
         do {
@@ -145,7 +145,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             return results
         } catch {
-            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error))")
+            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
 
             switch error {
             // Received messages targeting a future epoch, we might have lost messages.
