@@ -31,6 +31,12 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
         mockConversation = SwiftMockConversation.oneOnOneConversation(otherUser: otherUser)
     }
 
+    override func tearDown() {
+        otherUser = nil
+        mockConversation = nil
+        super.tearDown()
+    }
+
     func test_mlsMigrationFinalized() {
         let message = makeMessage(messageType: .mlsMigrationFinalized)
         verify(message: message)
