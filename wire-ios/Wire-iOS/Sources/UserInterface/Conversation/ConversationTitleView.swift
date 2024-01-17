@@ -69,7 +69,7 @@ final class ConversationTitleView: TitleView {
         switch conversation.messageProtocol {
         case .proteus:
             return .proteusVerifiedShield()
-        case .mls:
+        case .mls, .mixed:
             return .e2eiVerifiedShield()
         }
     }
