@@ -1781,69 +1781,6 @@ class MockCoreCryptoProtocol: CoreCryptoProtocol {
         try await mock(conversationId)
     }
 
-    // MARK: - e2eiRegisterAcmeCa
-
-    var e2eiRegisterAcmeCaTrustAnchorPem_Invocations: [String] = []
-    var e2eiRegisterAcmeCaTrustAnchorPem_MockError: Error?
-    var e2eiRegisterAcmeCaTrustAnchorPem_MockMethod: ((String) async throws -> Void)?
-
-    func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws {
-        e2eiRegisterAcmeCaTrustAnchorPem_Invocations.append(trustAnchorPem)
-
-        if let error = e2eiRegisterAcmeCaTrustAnchorPem_MockError {
-            throw error
-        }
-
-        guard let mock = e2eiRegisterAcmeCaTrustAnchorPem_MockMethod else {
-            fatalError("no mock for `e2eiRegisterAcmeCaTrustAnchorPem`")
-        }
-
-        try await mock(trustAnchorPem)
-    }
-
-    // MARK: - e2eiRegisterCrl
-
-    var e2eiRegisterCrlCrlDpCrlDer_Invocations: [(crlDp: String, crlDer: Data)] = []
-    var e2eiRegisterCrlCrlDpCrlDer_MockError: Error?
-    var e2eiRegisterCrlCrlDpCrlDer_MockMethod: ((String, Data) async throws -> WireCoreCrypto.CrlRegistration)?
-    var e2eiRegisterCrlCrlDpCrlDer_MockValue: WireCoreCrypto.CrlRegistration?
-
-    func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration {
-        e2eiRegisterCrlCrlDpCrlDer_Invocations.append((crlDp: crlDp, crlDer: crlDer))
-
-        if let error = e2eiRegisterCrlCrlDpCrlDer_MockError {
-            throw error
-        }
-
-        if let mock = e2eiRegisterCrlCrlDpCrlDer_MockMethod {
-            return try await mock(crlDp, crlDer)
-        } else if let mock = e2eiRegisterCrlCrlDpCrlDer_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `e2eiRegisterCrlCrlDpCrlDer`")
-        }
-    }
-
-    // MARK: - e2eiRegisterIntermediateCa
-
-    var e2eiRegisterIntermediateCaCertPem_Invocations: [String] = []
-    var e2eiRegisterIntermediateCaCertPem_MockError: Error?
-    var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> Void)?
-
-    func e2eiRegisterIntermediateCa(certPem: String) async throws {
-        e2eiRegisterIntermediateCaCertPem_Invocations.append(certPem)
-
-        if let error = e2eiRegisterIntermediateCaCertPem_MockError {
-            throw error
-        }
-
-        guard let mock = e2eiRegisterIntermediateCaCertPem_MockMethod else {
-            fatalError("no mock for `e2eiRegisterIntermediateCaCertPem`")
-        }
-
-        try await mock(certPem)
-    }
-
 }
 
 public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
