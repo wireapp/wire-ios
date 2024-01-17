@@ -55,7 +55,7 @@ public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepos
         _ groupID: MLSGroupID?,
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
-    ) async {
+    ) {
         storage[parentGroupID, default: [:]][type] = groupID
     }
 
@@ -64,7 +64,7 @@ public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepos
     public func fetchSubconversationGroupID(
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
-    ) async -> MLSGroupID? {
+    ) -> MLSGroupID? {
         return storage[parentGroupID]?[type]
     }
 
@@ -72,7 +72,7 @@ public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepos
 
     public func findSubgroupTypeAndParentID(
         for targetGroupID: MLSGroupID
-    ) async -> (parentID: MLSGroupID, type: SubgroupType)? {
+    ) -> (parentID: MLSGroupID, type: SubgroupType)? {
 
         for (parentID, subgroupIDsByType) in storage {
             if let entry = subgroupIDsByType.first(where: { _, subgroupID in
