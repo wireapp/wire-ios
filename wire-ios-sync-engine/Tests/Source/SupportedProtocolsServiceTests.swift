@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 @testable import WireSyncEngine
+import WireDataModelSupport
 
 final class SupportedProtocolsServiceTests: MessagingTest {
 
