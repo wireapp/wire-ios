@@ -20,7 +20,6 @@ import Foundation
 import XCTest
 @testable import WireSyncEngine
 
-@available(iOS 15, *)
 final class SupportedProtocolsServiceTests: MessagingTest {
 
     var featureRepository: MockFeatureRepositoryInterface!
