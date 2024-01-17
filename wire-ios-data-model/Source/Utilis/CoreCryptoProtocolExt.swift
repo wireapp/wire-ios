@@ -69,6 +69,12 @@ protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func e2eiNewRotateEnrollment(displayName: String?, handle: String?, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
 
+    func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws
+
+    func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration
+
+    func e2eiRegisterIntermediateCa(certPem: String) async throws
+
     func e2eiRotateAll(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, newKeyPackagesCount: UInt32) async throws -> WireCoreCrypto.RotateBundle
 
     func encryptMessage(conversationId: Data, message: Data) async throws -> Data
@@ -160,11 +166,4 @@ protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
     func wipe() async throws
 
     func wipeConversation(conversationId: Data) async throws
-
-    func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws
-
-    func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration
-
-    func e2eiRegisterIntermediateCa(certPem: String) async throws
-
 }
