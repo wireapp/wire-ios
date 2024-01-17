@@ -22,36 +22,38 @@ import XCTest
 
 final class SubconversationGroupIDRepositoryTests: XCTestCase {
 
-    func test_StoreAndFetchGroupID() throws {
+    func test_StoreAndFetchGroupID() async throws {
         // Given
         let sut = SubconversationGroupIDRepository()
         let subconversationGroupID = MLSGroupID.random()
         let subconversationType = SubgroupType.conference
         let parentGroupID = MLSGroupID.random()
 
-        XCTAssertNil(sut.fetchSubconversationGroupID(
+        let result = await sut.fetchSubconversationGroupID(
             forType: subconversationType,
             parentGroupID: parentGroupID
-        ))
+        )
+        XCTAssertNil(result)
 
         // When
-        sut.storeSubconversationGroupID(
+        await sut.storeSubconversationGroupID(
             subconversationGroupID,
             forType: subconversationType,
             parentGroupID: parentGroupID
         )
 
         // Then
+        let fetchResult = await sut.fetchSubconversationGroupID(
+            forType: subconversationType,
+            parentGroupID: parentGroupID
+        )
         XCTAssertEqual(
-            sut.fetchSubconversationGroupID(
-                forType: subconversationType,
-                parentGroupID: parentGroupID
-            ),
+            fetchResult,
             subconversationGroupID
         )
     }
 
-    func test_FindSubgroupTypeAndParentID() {
+    func test_FindSubgroupTypeAndParentID() async {
         // GIVEN
         let sut = SubconversationGroupIDRepository()
         let parentGroupID = MLSGroupID.random()
@@ -64,14 +66,14 @@ final class SubconversationGroupIDRepositoryTests: XCTestCase {
             parentGroupID: [.conference: subgroupID]
         ]
 
-        repositoryData.forEach { parent in
-            parent.value.forEach { subgroup in
-                sut.storeSubconversationGroupID(subgroup.value, forType: .conference, parentGroupID: parent.key)
+        await repositoryData.asyncForEach { parent in
+            await parent.value.asyncForEach { subgroup in
+                await sut.storeSubconversationGroupID(subgroup.value, forType: .conference, parentGroupID: parent.key)
             }
         }
 
         // WHEN
-        let subgroupInfo = sut.findSubgroupTypeAndParentID(for: subgroupID)
+        let subgroupInfo = await sut.findSubgroupTypeAndParentID(for: subgroupID)
 
         // THEN
         XCTAssertNotNil(subgroupInfo)

@@ -25,19 +25,19 @@ public protocol SubconversationGroupIDRepositoryInterface {
         _ groupID: MLSGroupID?,
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
-    )
+    ) async
 
     func fetchSubconversationGroupID(
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
-    ) -> MLSGroupID?
+    ) async -> MLSGroupID?
 
     func findSubgroupTypeAndParentID(
         for targetGroupID: MLSGroupID
-    ) -> (parentID: MLSGroupID, type: SubgroupType)?
+    ) async -> (parentID: MLSGroupID, type: SubgroupType)?
 }
 
-public final class SubconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface {
+public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface {
 
     // MARK: - Properties
 
