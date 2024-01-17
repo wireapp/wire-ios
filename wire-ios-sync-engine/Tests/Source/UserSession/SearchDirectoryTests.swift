@@ -21,7 +21,7 @@ import Foundation
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
-class SearchDirectoryTests: DatabaseTest {
+final class SearchDirectoryTests: DatabaseTest {
 
     func testThatItEmptiesTheSearchUserCacheOnTeardown() {
         // given
@@ -33,8 +33,7 @@ class SearchDirectoryTests: DatabaseTest {
             contextProvider: coreDataStack!,
             transportSession: mockTransport,
             refreshUsersMissingMetadataAction: .dummy,
-            refreshConversationsMissingMetadataAction: .dummy,
-            refreshTeamMetadataAction: .dummy
+            refreshConversationsMissingMetadataAction: .dummy
         )
         _ = ZMSearchUser(contextProvider: coreDataStack!, name: "John Doe", handle: "john", accentColor: .brightOrange, remoteIdentifier: uuid)
         XCTAssertNotNil(uiMOC.zm_searchUserCache?.object(forKey: uuid as NSUUID))
@@ -46,5 +45,4 @@ class SearchDirectoryTests: DatabaseTest {
         // then
         XCTAssertNil(uiMOC.zm_searchUserCache?.object(forKey: uuid as NSUUID))
     }
-
 }

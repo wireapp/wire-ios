@@ -27,7 +27,6 @@ import Foundation
 
     private let refreshUsersMissingMetadataAction: RecurringAction
     private let refreshConversationsMissingMetadataAction: RecurringAction
-    private let refreshTeamMetadataAction: RecurringAction
 
     deinit {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
@@ -39,8 +38,7 @@ import Foundation
             contextProvider: userSession,
             transportSession: userSession.transportSession,
             refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadataAction,
-            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction,
-            refreshTeamMetadataAction: userSession.refreshTeamMetadataAction
+            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction
         )
     }
 
@@ -49,8 +47,7 @@ import Foundation
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         refreshUsersMissingMetadataAction: RecurringAction,
-        refreshConversationsMissingMetadataAction: RecurringAction,
-        refreshTeamMetadataAction: RecurringAction
+        refreshConversationsMissingMetadataAction: RecurringAction
     ) {
         self.searchContext = searchContext
         self.contextProvider = contextProvider
@@ -58,7 +55,6 @@ import Foundation
 
         self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
         self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
-        self.refreshTeamMetadataAction = refreshTeamMetadataAction
     }
 
     /// Perform a search request.
@@ -97,7 +93,6 @@ import Foundation
     public func updateIncompleteMetadataIfNeeded() {
         refreshUsersMissingMetadataAction()
         refreshConversationsMissingMetadataAction()
-        refreshTeamMetadataAction()
     }
 }
 
