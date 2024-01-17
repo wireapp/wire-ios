@@ -88,7 +88,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         )
 
         // Then
-        XCTAssertEqual(mlsService.createSelfGroupFor_Invocations.count, 1)
+        XCTAssertEqual(mlsService.createGroupForWith_Invocations.count, 1)
         let createGroupInvocation = try XCTUnwrap(mlsService.createGroupForWith_Invocations.first)
         XCTAssertEqual(createGroupInvocation.groupID, mlsGroupID)
         XCTAssertEqual(createGroupInvocation.users, [MLSUser(userID)])
