@@ -739,8 +739,10 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             return conversation
         }
 
-        let message = await syncMOC.perform {
-            return try! conversation.appendText(content: "foo") as! ZMOTRMessage
+        let message = try await syncMOC.perform {
+            return try XCTUnwrap(
+                try conversation.appendText(content: "foo") as? ZMOTRMessage
+            )
         }
 
         await syncMOC.perform {
