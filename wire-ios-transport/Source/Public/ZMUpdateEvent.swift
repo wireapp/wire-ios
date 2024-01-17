@@ -69,7 +69,7 @@ import WireUtilities
     case userPropertiesDelete = 33
     case teamCreate = 23
     case teamDelete = 24
-    case teamUpdate = 25
+    // removed: teamUpdate = 25 [WPB-4552]: The event is no longer sent, clients must fetch team metadata (e.g. name, icon) every 24h 
     // removed: teamMemberJoin = 26 [WPB-4538]: no need to handle "team.member-join" in clients
     case teamMemberLeave = 27 // [WPB-4538]: "team.member-leave" is only required for backwards compatibility
     case teamConversationCreate = 28
@@ -154,8 +154,6 @@ extension ZMUpdateEventType {
             return "team.create"
         case .teamDelete:
             return "team.delete"
-        case .teamUpdate:
-            return "team.update"
         case .teamMemberLeave:
             return "team.member-leave"
         case .teamConversationCreate:

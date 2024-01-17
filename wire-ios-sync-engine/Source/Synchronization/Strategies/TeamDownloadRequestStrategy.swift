@@ -144,7 +144,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         switch event.type {
         case .teamCreate: createTeam(with: event)
         case .teamDelete: deleteTeam(with: event)
-        case .teamUpdate: updateTeam(with: event)
         case .teamMemberLeave: processRemovedMember(with: event)
         case .teamMemberUpdate: processUpdatedMember(with: event)
         default: break
@@ -160,13 +159,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
     private func deleteTeam(with event: ZMUpdateEvent) {
         deleteAccount()
-    }
-
-    private func updateTeam(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let existingTeam = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-
-        TeamUpdateEventPayload(data)?.updateTeam(existingTeam, in: managedObjectContext)
     }
 
     private func processRemovedMember(with event: ZMUpdateEvent) {
