@@ -440,13 +440,13 @@ extension ZMUser: UserConnections {
         connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
-                    completion(AcceptConnectionError.unableToResolveConversation)
-                    return
-                }
-
                 Task {
                     do {
+                        guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
+                            completion(AcceptConnectionError.unableToResolveConversation)
+                            return
+                        }
+
                         try await resolver.resolveOneOnOneConversation(
                             with: QualifiedID(uuid: userID, domain: domain),
                             in: context
