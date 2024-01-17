@@ -32,9 +32,9 @@ disabled_rules:
 custom_rules:
   todo_requires_jira_link:
     name: "TODO: Requires Jira Link"
-    regex: '(TODO|FIX\s?ME|FIXME): (?!.*https:\/\/wearezeta\.atlassian\.net\/browse\/WPB-\d+)'
+    regex: '(TODO|FIX\s?ME|FIXME): (?!.*\\[WPB-\\d+\\])'
     match_kinds: [comment]
-    message: "Do not add TODOs without a JIRA reference. Create new JIRA Task and add Issue Id to comment."
+    message: "Do not add TODOs or FIX MEs without a JIRA reference. Include the JIRA ID like [WPB-680]."
     severity: warning
 
 excluded:
