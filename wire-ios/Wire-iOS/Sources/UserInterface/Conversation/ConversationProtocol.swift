@@ -132,7 +132,7 @@ extension GroupDetailsConversation {
         switch messageProtocol {
         case .proteus:
             return securityLevel == .secure
-        case .mls:
+        case .mls, .mixed:
             return mlsVerificationStatus == .verified
         }
     }

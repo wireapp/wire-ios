@@ -373,7 +373,7 @@ extension ZMConversation {
         switch messageProtocol {
         case .proteus:
             return securityLevel == .secureWithIgnored
-        case .mls:
+        case .mls, .mixed:
             return mlsVerificationStatus == .degraded
         }
     }
@@ -386,7 +386,7 @@ extension ZMConversation {
             switch messageProtocol {
             case .proteus:
                 securityLevel = .notSecure
-            case .mls:
+            case .mls, .mixed:
                 mlsVerificationStatus = .notVerified
             }
         }
@@ -597,18 +597,26 @@ extension ZMConversation {
     }
 
     @discardableResult
-    func appendSystemMessage(type: ZMSystemMessageType,
-                             sender: ZMUser,
-                             users: Set<ZMUser>?,
-                             addedUsers: Set<ZMUser> = Set(),
-                             clients: Set<UserClient>?,
-                             timestamp: Date,
-                             duration: TimeInterval? = nil,
-                             messageTimer: Double? = nil,
-                             relevantForStatus: Bool = true,
-                             removedReason: ZMParticipantsRemovedReason = .none,
-                             domains: [String]? = nil) -> ZMSystemMessage {
-        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
+    func appendSystemMessage(
+        type: ZMSystemMessageType,
+        sender: ZMUser,
+        users: Set<ZMUser>?,
+        addedUsers: Set<ZMUser> = Set(),
+        clients: Set<UserClient>?,
+        timestamp: Date,
+        duration: TimeInterval? = nil,
+        messageTimer: Double? = nil,
+        relevantForStatus: Bool = true,
+        removedReason: ZMParticipantsRemovedReason = .none,
+        domains: [String]? = nil
+    ) -> ZMSystemMessage {
+        guard let context = managedObjectContext else {
+            let message = "can not append system message without managedObjectContext!"
+            WireLogger.updateEvent.critical(message)
+            zmLog.safePublic(SanitizedString(stringLiteral: message))
+            fatalError("can not append system message without managedObjectContext!")
+        }
+        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
         systemMessage.users = users ?? Set()

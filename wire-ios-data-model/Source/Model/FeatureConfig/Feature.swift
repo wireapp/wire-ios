@@ -41,6 +41,7 @@ public class Feature: ZMManagedObject {
         case digitalSignature
         case mls
         case e2ei = "mlsE2EId"
+        case mlsMigration
 
     }
 
@@ -217,6 +218,7 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
+<<<<<<< HEAD
         case .conferenceCalling,
                 .fileSharing,
                 .conversationGuestLinks,
@@ -224,6 +226,13 @@ public class Feature: ZMManagedObject {
                 .digitalSignature,
                 .mls,
                 .e2ei:
+=======
+        case .conferenceCalling, .fileSharing, .conversationGuestLinks, .classifiedDomains, .digitalSignature, .mls, .mlsMigration:
+            break
+        case .e2ei:
+            /// TODO: in the next PR
+            /// https://wearezeta.atlassian.net/browse/WPB-3321
+>>>>>>> feat/degraded-conversation-warnings1
             break
         }
     }

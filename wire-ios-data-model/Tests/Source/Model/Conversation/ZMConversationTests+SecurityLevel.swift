@@ -728,7 +728,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         }
     }
 
-    func testItMarksMLSConversationAsNotVerifiedAfterResendMessage() async {
+    func testItMarksMLSConversationAsNotVerifiedAfterResendMessage() async throws {
         // GIVEN
         let conversation = await syncMOC.perform {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -739,8 +739,10 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             return conversation
         }
 
-        let message = await syncMOC.perform {
-            return try! conversation.appendText(content: "foo") as! ZMOTRMessage
+        let message = try await syncMOC.perform {
+            return try XCTUnwrap(
+                try conversation.appendText(content: "foo") as? ZMOTRMessage
+            )
         }
 
         await syncMOC.perform {
@@ -750,9 +752,9 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         }
 
         // WHEN
-        await uiMOC.perform {
-            let uiConversation = try? self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation
-            uiConversation?.acknowledgePrivacyWarning(withResendIntent: true)
+        try await uiMOC.perform {
+            let uiConversation = try XCTUnwrap(try self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation)
+            uiConversation.acknowledgePrivacyWarning(withResendIntent: true)
         }
 
         await syncMOC.perform {

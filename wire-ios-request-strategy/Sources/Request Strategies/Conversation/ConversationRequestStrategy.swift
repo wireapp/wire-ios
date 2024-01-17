@@ -140,7 +140,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             updateAccessRolesActionHandler,
             updateRoleActionHandler,
             SyncConversationActionHandler(context: managedObjectContext),
-            CreateGroupConversationActionHandler(context: managedObjectContext, mlsService: mlsService)
+            CreateGroupConversationActionHandler(context: managedObjectContext, mlsService: mlsService),
+            UpdateConversationProtocolActionHandler(context: managedObjectContext)
         ])
 
         super.init(
@@ -539,12 +540,17 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
                 let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context)
                 return (conversation, conversation?.conversationType)
             }
+
             guard let conversation, conversationType == .group else { continue }
 
-            await removeLocalConversation.invoke(
-                with: conversation,
-                syncContext: context
-            )
+            do {
+                try await removeLocalConversation.invoke(
+                    with: conversation,
+                    syncContext: context
+                )
+            } catch {
+                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+            }
         }
     }
 
@@ -653,22 +659,31 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 
-    private func deleteConversations(_ conversations: Set<QualifiedID>) async {
-        for qualifiedID in conversations {
-            guard
+    private func deleteConversations(_ conversationIds: Set<QualifiedID>) async {
+        for qualifiedID in conversationIds {
+
+            let conversation: ZMConversation? = await context.perform { [context] in
                 let conversation = ZMConversation.fetch(
                     with: qualifiedID.uuid,
                     domain: qualifiedID.domain,
-                    in: context
-                ),
-                conversation.conversationType == .group
-            else {
-                continue
+                    in: context)
+                if conversation?.conversationType == .group {
+                    return conversation
+                } else {
+                    return nil
+                }
             }
-            await removeLocalConversation.invoke(
-                with: conversation,
-                syncContext: context
-            )
+
+            guard let conversation else { continue }
+
+            do {
+                try  await removeLocalConversation.invoke(
+                    with: conversation,
+                    syncContext: context
+                )
+            } catch {
+                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+            }
         }
     }
 

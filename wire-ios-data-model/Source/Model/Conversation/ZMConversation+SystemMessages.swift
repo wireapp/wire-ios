@@ -152,4 +152,96 @@ extension ZMConversation {
                             timestamp: timestamp)
     }
 
+    // MARK: - MLS Migration
+
+    public func appendMLSMigrationFinalizedSystemMessage(
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationFinalized,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationJoinAfterwardsSystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationJoinAfterwards,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationOngoingCallSystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationOngoingCall,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationStartedSystemMessage(
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationStarted,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationUpdateVersionSystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationUpdateVersion,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationPotentialGapSystemMessage(sender: ZMUser, at timestamp: Date) {
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        let previousLastMessage = lastMessage
+
+        self.appendSystemMessage(
+            type: .mlsMigrationPotentialGap,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: timestamp
+        )
+
+        if let previousLastMessage = previousLastMessage as? ZMSystemMessage, previousLastMessage.systemMessageType == .mlsMigrationPotentialGap,
+           let previousLastMessageTimestamp = previousLastMessage.serverTimestamp, previousLastMessageTimestamp <= timestamp {
+            context.delete(previousLastMessage)
+        }
+
+    }
+
 }

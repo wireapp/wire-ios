@@ -20,23 +20,21 @@ import Foundation
 @testable import WireDataModel
 
 final class ZMConversationTests_Knock: ZMConversationTestsBase {
-    func testThatItCanInsertAKnock() {
-        let context = syncMOC
-
-        context.performGroupedBlockAndWait {
+    func testThatItCanInsertAKnock() throws {
+        try syncMOC.performGroupedAndWait { context in
 
             // given
             let conversation = self.createConversationWithMessages(context: context)
             let selfUser = ZMUser.selfUser(in: context)
 
             // when
-            let knock = try? conversation?.appendKnock()
-            let msg = conversation?.lastMessage as! ZMMessage
+            let knock = try XCTUnwrap(conversation?.appendKnock() as? ZMMessage)
+            let msg = try XCTUnwrap(conversation?.lastMessage as? ZMMessage)
 
             // then
-            XCTAssertEqual(knock as? ZMMessage, msg)
-            XCTAssertNotNil(knock?.knockMessageData)
-            XCTAssert(knock!.isUserSender(selfUser))
+            XCTAssertEqual(knock, msg)
+            XCTAssertNotNil(knock.knockMessageData)
+            XCTAssert(knock.isUserSender(selfUser))
         }
 
     }

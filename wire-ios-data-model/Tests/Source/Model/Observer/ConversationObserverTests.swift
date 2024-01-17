@@ -843,7 +843,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssertTrue(securityNotification.securityLevelChanged)
     }
 
-    func testThatItNotifiesAboutSecurityLevelChange_SendingMessageToDegradedMlsConversation() {
+    func testThatItNotifiesAboutSecurityLevelChange_SendingMessageToDegradedMlsConversation() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.messageProtocol = .mls
@@ -856,7 +856,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
 
         // when
-        try! conversation.appendText(content: "Foo")
+        try conversation.appendText(content: "Foo")
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

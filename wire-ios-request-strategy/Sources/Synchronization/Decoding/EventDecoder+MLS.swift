@@ -31,7 +31,8 @@ extension EventDecoder {
             fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
-        guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
+        let decoder = EventPayloadDecoder()
+        guard let payload = try? decoder.decode(Payload.UpdateConversationMLSMessageAdd.self, from: updateEvent.payload) else {
             WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
             return []
         }

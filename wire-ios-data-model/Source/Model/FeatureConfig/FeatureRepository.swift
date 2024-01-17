@@ -39,6 +39,8 @@ public protocol FeatureRepositoryInterface {
     func storeMLS(_ mls: Feature.MLS)
     func fetchE2EI() -> Feature.E2EI
     func storeE2EI(_ e2ei: Feature.E2EI)
+    func fetchMLSMigration() -> Feature.MLSMigration
+    func storeMLSMigration(_ mlsMigration: Feature.MLSMigration)
 
 }
 
@@ -57,6 +59,8 @@ public class FeatureRepository: FeatureRepositoryInterface {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
 
     // MARK: - Life cycle
 
@@ -71,12 +75,12 @@ public class FeatureRepository: FeatureRepositoryInterface {
               let featureConfig = feature.config else {
                   return .init()
               }
-        let config = try! JSONDecoder().decode(Feature.AppLock.Config.self, from: featureConfig)
+        let config = try! decoder.decode(Feature.AppLock.Config.self, from: featureConfig)
         return.init(status: feature.status, config: config)
     }
 
     public func storeAppLock(_ appLock: Feature.AppLock) {
-        let config = try! JSONEncoder().encode(appLock.config)
+        let config = try! encoder.encode(appLock.config)
 
         Feature.updateOrCreate(havingName: .appLock, in: context) {
             $0.status = appLock.status
@@ -141,12 +145,12 @@ public class FeatureRepository: FeatureRepositoryInterface {
               let featureConfig = feature.config else {
                   return .init()
               }
-        let config = try! JSONDecoder().decode(Feature.SelfDeletingMessages.Config.self, from: featureConfig)
+        let config = try! decoder.decode(Feature.SelfDeletingMessages.Config.self, from: featureConfig)
         return .init(status: feature.status, config: config)
     }
 
     public func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages) {
-        let config = try! JSONEncoder().encode(selfDeletingMessages.config)
+        let config = try! encoder.encode(selfDeletingMessages.config)
 
         Feature.updateOrCreate(havingName: .selfDeletingMessages, in: context) {
             $0.status = selfDeletingMessages.status
@@ -202,12 +206,12 @@ public class FeatureRepository: FeatureRepositoryInterface {
             return .init()
         }
 
-        let config = try! JSONDecoder().decode(Feature.ClassifiedDomains.Config.self, from: featureConfig)
+        let config = try! decoder.decode(Feature.ClassifiedDomains.Config.self, from: featureConfig)
         return .init(status: feature.status, config: config)
     }
 
     public func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains) {
-        let config = try! JSONEncoder().encode(classifiedDomains.config)
+        let config = try! encoder.encode(classifiedDomains.config)
 
         Feature.updateOrCreate(havingName: .classifiedDomains, in: context) {
             $0.status = classifiedDomains.status
@@ -241,12 +245,12 @@ public class FeatureRepository: FeatureRepositoryInterface {
             return .init()
         }
 
-        let config = try! JSONDecoder().decode(Feature.MLS.Config.self, from: featureConfig)
+        let config = try! decoder.decode(Feature.MLS.Config.self, from: featureConfig)
         return .init(status: feature.status, config: config)
     }
 
     public func storeMLS(_ mls: Feature.MLS) {
-        let config = try! JSONEncoder().encode(mls.config)
+        let config = try! encoder.encode(mls.config)
 
         Feature.updateOrCreate(havingName: .mls, in: context) {
             $0.status = mls.status
@@ -286,6 +290,29 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
+    // MARK: - MLSMigration
+
+    public func fetchMLSMigration() -> Feature.MLSMigration {
+        guard
+            let feature = Feature.fetch(name: .mlsMigration, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        let config = try! decoder.decode(Feature.MLSMigration.Config.self, from: featureConfig)
+        return .init(status: feature.status, config: config)
+    }
+
+    public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
+        let config = try! encoder.encode(mlsMigration.config)
+
+        Feature.updateOrCreate(havingName: .mlsMigration, in: context) {
+            $0.status = mlsMigration.status
+            $0.config = config
+        }
+    }
+
     // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {
@@ -317,6 +344,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
             case .e2ei:
                 storeE2EI(.init())
+
+            case .mlsMigration:
+                storeMLSMigration(.init())
             }
         }
     }
