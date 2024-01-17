@@ -21,6 +21,18 @@ import WireDataModel
 
 extension ZMUserSession {
 
+    var updateProteusToMLSMigrationStatusAction: RecurringAction {
+        .init(id: #function, interval: .oneDay) { [weak self] in
+            Task { [weak self] in
+                do {
+                    try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
+                } catch {
+                    WireLogger.mls.error("proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))")
+                }
+            }
+        }
+    }
+
     var refreshUsersMissingMetadataAction: RecurringAction {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
 
