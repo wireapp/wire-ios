@@ -1580,7 +1580,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         if
-            let subConversationGroupID = await  subconversationGroupIDRepository.fetchSubconversationGroupID(
+            let subConversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
