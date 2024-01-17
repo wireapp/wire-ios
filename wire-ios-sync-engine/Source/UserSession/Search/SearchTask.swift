@@ -131,17 +131,14 @@ extension SearchTask {
             options.updateForSelfUserTeamRole(selfUser: selfUser)
 
             /// search for the local user with matching user ID and active
-            let activeMembers = self.teamMembers(matchingQuery: "", team: selfUser.team, searchOptions: options)
-            let teamMembers = activeMembers.filter({ $0.remoteIdentifier == userId})
             let connectedUsers = self.connectedUsers(matchingQuery: "").filter({ $0.remoteIdentifier == userId})
 
             self.contextProvider.viewContext.performGroupedBlock {
 
-                let copiedTeamMembers = teamMembers.compactMap(\.user).compactMap { self.contextProvider.viewContext.object(with: $0.objectID) as? Member}
                 let copiedConnectedUsers = connectedUsers.compactMap { self.contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
 
                 let result = SearchResult(contacts: copiedConnectedUsers.map { ZMSearchUser(contextProvider: self.contextProvider, user: $0)},
-                                          teamMembers: copiedTeamMembers.compactMap(\.user).map { ZMSearchUser(contextProvider: self.contextProvider, user: $0)},
+                                          teamMembers: [],
                                           addressBook: [],
                                           directory: [],
                                           conversations: [],
@@ -161,13 +158,7 @@ extension SearchTask {
 
         searchContext.performGroupedBlock {
 
-            var team: Team?
-            if let teamObjectID = request.team?.objectID {
-                team = (try? self.searchContext.existingObject(with: teamObjectID)) as? Team
-            }
-
             let connectedUsers = request.searchOptions.contains(.contacts) ? self.connectedUsers(matchingQuery: request.normalizedQuery) : []
-            let teamMembers = request.searchOptions.contains(.teamMembers) ? self.teamMembers(matchingQuery: request.normalizedQuery, team: team, searchOptions: request.searchOptions) : []
             let conversations = request.searchOptions.contains(.conversations) ? self.conversations(matchingQuery: request.query) : []
 
             self.contextProvider.viewContext.performGroupedBlock {
@@ -176,11 +167,9 @@ extension SearchTask {
                 let searchConnectedUsers = copiedConnectedUsers
                                            .map { ZMSearchUser(contextProvider: self.contextProvider, user: $0) }
                                            .filter { !$0.hasEmptyName }
-                let copiedteamMembers = teamMembers.compactMap({ self.contextProvider.viewContext.object(with: $0.objectID) as? Member })
-                let searchTeamMembers = copiedteamMembers.compactMap(\.user).map { ZMSearchUser(contextProvider: self.contextProvider, user: $0) }
 
                 let result = SearchResult(contacts: searchConnectedUsers,
-                                          teamMembers: searchTeamMembers,
+                                          teamMembers: [],
                                           addressBook: [],
                                           directory: [],
                                           conversations: conversations,
@@ -206,31 +195,6 @@ extension SearchTask {
             guard let user = $0.user else { return false }
             return selfUser.membership?.createdBy == user || activeContacts.contains(user)
         })
-    }
-
-    func teamMembers(matchingQuery query: String, team: Team?, searchOptions: SearchOptions) -> [Member] {
-        var result =  team?.members(matchingQuery: query) ?? []
-
-        if searchOptions.contains(.excludeNonActiveTeamMembers) {
-            result = filterNonActiveTeamMembers(members: result)
-        }
-
-        if searchOptions.contains(.excludeNonActivePartners) {
-            let query = query.strippingLeadingAtSign()
-            let selfUser = ZMUser.selfUser(in: searchContext)
-            let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
-            let activeContacts = Set(activeConversations.flatMap { $0.localParticipants })
-
-            result = result.filter { membership in
-                if let user = membership.user {
-                    return user.teamRole != .partner || user.handle == query || membership.createdBy == selfUser || activeContacts.contains(user)
-                } else {
-                    return false
-                }
-            }
-        }
-
-        return result
     }
 
     func connectedUsers(matchingQuery query: String) -> [ZMUser] {
