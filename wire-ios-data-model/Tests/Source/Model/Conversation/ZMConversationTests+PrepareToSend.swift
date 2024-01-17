@@ -38,7 +38,7 @@ class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
         }
     }
 
-    func testThatMessagesAddedToDegradedMlsConversationAreExpiredAndFlaggedAsCauseDegradation() {
+    func testThatMessagesAddedToDegradedMlsConversationAreExpiredAndFlaggedAsCauseDegradation() throws {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.messageProtocol = .mls
