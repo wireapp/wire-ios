@@ -367,6 +367,8 @@ extension ZMSLog {
 
         if !manager.fileExists(atPath: currentLogPath) {
             manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
+            // if there was no file, force to recreate the fileHandle
+            updatingHandle = nil
         }
 
         if updatingHandle == nil {
