@@ -545,12 +545,17 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
                 let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context)
                 return (conversation, conversation?.conversationType)
             }
+
             guard let conversation, conversationType == .group else { continue }
 
-            await removeLocalConversationUseCase.invoke(
-                with: conversation,
-                syncContext: context
-            )
+            do {
+                try await removeLocalConversationUseCase.invoke(
+                    with: conversation,
+                    syncContext: context
+                )
+            } catch {
+                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+            }
         }
     }
 
@@ -672,10 +677,15 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            await removeLocalConversationUseCase.invoke(
-                with: conversation,
-                syncContext: context
-            )
+
+            do {
+                try await removeLocalConversationUseCase.invoke(
+                    with: conversation,
+                    syncContext: context
+                )
+            } catch {
+                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+            }
         }
     }
 

@@ -104,7 +104,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.base64EncodedString
         successResponsePayloadMLS.epoch = 0
 
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.com"
     }
 
@@ -119,6 +119,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         expectedRequestPayload = nil
         successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
+        BackendInfo.storage = .standard
         super.tearDown()
     }
 

@@ -119,7 +119,11 @@ struct MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 
-        await mlsService.wipeGroup(mlsGroupID)
+        do {
+            try await mlsService.wipeGroup(mlsGroupID)
+        } catch {
+            WireLogger.mls.error("mlsService.wipeGroup(\(mlsGroupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))")
+        }
     }
 
     // MARK: Log Helpers

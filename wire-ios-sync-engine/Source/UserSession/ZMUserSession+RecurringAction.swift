@@ -21,19 +21,31 @@ import WireDataModel
 
 extension ZMUserSession {
 
+    var updateProteusToMLSMigrationStatusAction: RecurringAction {
+        .init(id: #function, interval: .oneDay) { [weak self] in
+            Task { [weak self] in
+                do {
+                    try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
+                } catch {
+                    WireLogger.mls.error("proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))")
+                }
+            }
+        }
+    }
+
     var refreshUsersMissingMetadataAction: RecurringAction {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
 
-            guard let moc = self?.managedObjectContext else { return }
-            moc.performGroupedAndWait { moc in
+            guard let context = self?.managedObjectContext else { return }
+            context.performGroupedAndWait { context in
 
                 let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
-                guard let users = moc.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
+                guard let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
                     return
                 }
 
                 users.forEach { $0.refreshData() }
-                moc.saveOrRollback()
+                context.saveOrRollback()
             }
         }
     }
@@ -41,18 +53,18 @@ extension ZMUserSession {
     var refreshConversationsMissingMetadataAction: RecurringAction {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
 
-            guard let moc = self?.managedObjectContext else { return }
-            moc.performGroupedAndWait { moc in
+            guard let context = self?.managedObjectContext else { return }
+            context.performGroupedAndWait { context in
 
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
-                guard let conversations = moc.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
+                guard let conversations = context.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
                     return
                 }
 
                 conversations.forEach { $0.needsToBeUpdatedFromBackend = true }
-                moc.saveOrRollback()
+                context.saveOrRollback()
             }
         }
     }
@@ -60,10 +72,10 @@ extension ZMUserSession {
     var refreshTeamMetadataAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
 
-            guard let moc = self?.managedObjectContext else { return }
-            moc.performGroupedAndWait { moc in
+            guard let context = self?.managedObjectContext else { return }
+            context.performGroupedAndWait { context in
 
-                guard let team = ZMUser.selfUser(in: moc).team else { return }
+                guard let team = ZMUser.selfUser(in: context).team else { return }
                 team.refreshMetadata()
             }
         }
