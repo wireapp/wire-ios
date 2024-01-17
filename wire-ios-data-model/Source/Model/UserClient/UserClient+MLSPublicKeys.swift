@@ -41,7 +41,7 @@ extension UserClient {
     public var mlsPublicKeys: MLSPublicKeys {
         get {
             willAccessValue(forKey: Self.mlsPublicKeysKey)
-            let result = primitiveMlsPublicKeys?.decode(as: MLSPublicKeys.self) ?? .init()
+            let result = decodedMLSPublicKeys(from: primitiveMlsPublicKeys)
             didAccessValue(forKey: Self.mlsPublicKeysKey)
             return result
         }
@@ -61,6 +61,20 @@ extension UserClient {
         return mlsPublicKeys.ed25519 != nil && needsToUploadMLSPublicKeys == false
     }
 
+    // MARK: MLSPublicKeys
+
+    private  func decodedMLSPublicKeys(from data: Data?) -> MLSPublicKeys {
+        guard let data else {
+            return .init()
+        }
+
+        do {
+            return try JSONDecoder().decode(MLSPublicKeys.self, from: data)
+        } catch {
+            // all errors are ignored
+            return .init()
+        }
+    }
 }
 
 extension UserClient {

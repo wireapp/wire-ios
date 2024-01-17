@@ -18,14 +18,6 @@
 
 import Foundation
 
-extension Data {
-
-    func decode<T: Decodable>(as type: T.Type) -> T? {
-        return try? JSONDecoder().decode(type, from: self)
-    }
-
-}
-
 extension Encodable {
 
     func encodeToJSON() -> Data? {
