@@ -389,7 +389,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         )
 
         await context.perform { [self] in
-            self.processDecodedEvents(decodedEvents)
+            processDecodedEvents(decodedEvents)
         }
     }
 
