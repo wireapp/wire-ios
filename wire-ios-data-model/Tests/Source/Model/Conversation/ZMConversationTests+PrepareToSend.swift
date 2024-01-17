@@ -45,7 +45,9 @@ class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
         conversation.mlsVerificationStatus = .degraded
 
         // WHEN
-        let message = try! conversation.appendText(content: "Foo") as! ZMMessage
+        let message = try XCTUnwrap(
+            try conversation.appendText(content: "Foo") as? ZMMessage
+        )
         self.uiMOC.saveOrRollback()
 
         // THEN
