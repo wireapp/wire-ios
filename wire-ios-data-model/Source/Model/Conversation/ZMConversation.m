@@ -45,8 +45,6 @@
 static NSString* ZMLogTag ZM_UNUSED = @"Conversations";
 
 NSString *const ZMConversationOneOnOneUserKey = @"oneOnOneUser";
-// TODO: delete this
-NSString *const ZMConversationConnectionKey = @"oneOnOneUser.connection";
 NSString *const ZMConversationHasUnreadMissedCallKey = @"hasUnreadMissedCall";
 NSString *const ZMConversationHasUnreadUnsentMessageKey = @"hasUnreadUnsentMessage";
 NSString *const ZMConversationNeedsToCalculateUnreadMessagesKey = @"needsToCalculateUnreadMessages";
@@ -309,7 +307,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     dispatch_once(&onceToken, ^{
         NSSet *keys = [super ignoredKeys];
         NSString * const KeysIgnoredForTrackingModifications[] = {
-            ZMConversationConnectionKey,
             ZMConversationConversationTypeKey,
             CreatorKey,
             DraftMessageDataKey,
@@ -486,11 +483,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (BOOL)isPendingConnectionConversation;
 {
     return self.oneOnOneUser.connection != nil && self.oneOnOneUser.connection.status == ZMConnectionStatusPending;
-}
-
-+ (NSSet *)keyPathsForValuesAffectingIsPendingConnectionConversation
-{
-    return [NSSet setWithObjects:ZMConversationConnectionKey, @"connection.status", nil];
 }
 
 - (ZMConversationListIndicator)conversationListIndicator;

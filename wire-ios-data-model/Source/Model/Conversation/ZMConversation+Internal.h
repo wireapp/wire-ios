@@ -39,7 +39,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 extern NSString *const ZMConversationOneOnOneUserKey;
-extern NSString *const ZMConversationConnectionKey;
 extern NSString *const ZMConversationHasUnreadMissedCallKey;
 extern NSString *const ZMConversationHasUnreadUnsentMessageKey;
 extern NSString *const ZMConversationNeedsToCalculateUnreadMessagesKey;

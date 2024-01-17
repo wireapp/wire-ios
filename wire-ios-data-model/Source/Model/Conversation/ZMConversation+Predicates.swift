@@ -80,7 +80,7 @@ extension ZMConversation {
     @objc(predicateForPendingConversations)
     class func predicateForPendingConversations() -> NSPredicate {
         let basePredicate = predicateForFilteringResults()
-        let pendingConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue) AND \(ZMConversationConnectionKey).status == \(ZMConnectionStatus.pending.rawValue)")
+        let pendingConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue) AND \(ZMConversationOneOnOneUserKey).connection.status == \(ZMConnectionStatus.pending.rawValue)")
 
         return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, pendingConversationPredicate])
     }
@@ -182,7 +182,7 @@ extension ZMConversation {
     private class func isValidConnection() -> NSPredicate {
         let isConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
         let isActive = NSPredicate(
-            format: "NOT \(ZMConversationConnectionKey).status IN %@",
+            format: "NOT \(ZMConversationOneOnOneUserKey).connection.status IN %@",
             [
                 NSNumber(value: ZMConnectionStatus.pending.rawValue),
                 NSNumber(value: ZMConnectionStatus.ignored.rawValue),
@@ -195,7 +195,7 @@ extension ZMConversation {
 
     private class func isValidOneOnOne() -> NSPredicate {
         let isOneOneOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
-        let isConnectionAccepted = NSPredicate(format: "\(ZMConversationConnectionKey).status == \(ZMConnectionStatus.accepted.rawValue)")
+        let isConnectionAccepted = NSPredicate(format: "\(ZMConversationOneOnOneUserKey).connection.status == \(ZMConnectionStatus.accepted.rawValue)")
         return .all(of: [isOneOneOne, isConnectionAccepted])
     }
 
