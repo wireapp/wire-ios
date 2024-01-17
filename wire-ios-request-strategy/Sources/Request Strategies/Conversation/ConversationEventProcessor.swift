@@ -245,7 +245,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationMLSWelcome(_ event: ZMUpdateEvent) async {
-        guard 
+        guard
             let payload = try? eventPayloadDecoder.decode(
                 Payload.UpdateConversationMLSWelcome.self,
                 from: event.payload
