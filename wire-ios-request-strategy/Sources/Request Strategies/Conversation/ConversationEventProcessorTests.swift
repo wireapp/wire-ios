@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class ConversationEventProcessorTests: MessagingTestBase {
+final class ConversationEventProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventProcessor!
     var conversationService: MockConversationServiceInterface!
@@ -31,6 +31,10 @@ class ConversationEventProcessorTests: MessagingTestBase {
         conversationService.syncConversationQualifiedID_MockMethod = { _ in
         }
 
+        conversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
+            completion()
+        }
+
         mockMLSEventProcessor = .init()
         mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
         mockMLSEventProcessor.processWelcomeMessageIn_MockMethod = { _, _ in }
@@ -40,7 +44,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
             context: syncMOC,
             conversationService: conversationService
         )
-        BackendInfo.storage = .random()!
+
+        BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v0
         MLSEventProcessor.setMock(mockMLSEventProcessor)
     }
@@ -77,15 +82,15 @@ class ConversationEventProcessorTests: MessagingTestBase {
 
             let payload = ConversationEventProcessor.MemberJoinPayload(
                 id: groupConversation.remoteIdentifier,
-                qualifiedID: groupConversation.qualifiedID,
-                from: otherUser.remoteIdentifier,
-                qualifiedFrom: otherUser.qualifiedID,
-                timestamp: nil,
-                type: "conversation.member-join",
                 data: Payload.UpdateConverationMemberJoin(
                     userIDs: [],
                     users: [selfMember]
-                )
+                ),
+                from: otherUser.remoteIdentifier,
+                qualifiedID: groupConversation.qualifiedID,
+                qualifiedFrom: otherUser.qualifiedID,
+                timestamp: nil,
+                type: "conversation.member-join"
             )
 
             transportPayload = try payload.toTransportDictionary()

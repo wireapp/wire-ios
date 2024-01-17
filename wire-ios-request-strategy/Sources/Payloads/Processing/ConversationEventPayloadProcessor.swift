@@ -94,10 +94,14 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
-        await removeLocalConversation.invoke(
-            with: conversation,
-            syncContext: context
-        )
+        do {
+            try await removeLocalConversation.invoke(
+                with: conversation,
+                syncContext: context
+            )
+        } catch {
+            WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+        }
     }
 
     // MARK: - Member leave
@@ -371,6 +375,33 @@ struct ConversationEventPayloadProcessor {
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
     }
 
+    // MARK: - Protocol Change
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationProtocolChange>,
+        originalEvent: ZMUpdateEvent,
+        in context: NSManagedObjectContext
+    ) async {
+        guard
+            let qualifiedID = payload.qualifiedID,
+            let newMessageProtocol = MessageProtocol(rawValue: payload.data.messageProtocol)
+        else {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
+            return
+        }
+
+        do {
+            let updater = ConversationPostProtocolChangeUpdater()
+            try await updater.updateLocalConversation(
+                for: qualifiedID,
+                to: newMessageProtocol,
+                context: context
+            )
+        } catch {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): updating conversation failed with error: \(error)")
+        }
+    }
+
     // MARK: - Helpers
 
     @discardableResult
@@ -445,7 +476,7 @@ struct ConversationEventPayloadProcessor {
             self.updateMembers(from: payload, for: conversation, context: context)
             self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             self.updateConversationStatus(from: payload, for: conversation)
-            self.updateMessageProtocol(from: payload, for: conversation)
+            self.updateMessageProtocol(from: payload, for: conversation, in: context)
 
             return conversation
         }
@@ -496,7 +527,7 @@ struct ConversationEventPayloadProcessor {
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-            updateMessageProtocol(from: payload, for: conversation)
+            updateMessageProtocol(from: payload, for: conversation, in: context)
 
             return (conversation, conversation.mlsGroupID)
         }
@@ -689,16 +720,22 @@ struct ConversationEventPayloadProcessor {
 
     private func updateMessageProtocol(
         from payload: Payload.Conversation,
-        for conversation: ZMConversation
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
     ) {
         guard let messageProtocolString = payload.messageProtocol else {
             Logging.eventProcessing.warn("message protocol is missing")
             return
         }
 
-        guard let messageProtocol = MessageProtocol(string: messageProtocolString) else {
+        guard let messageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
             Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
+        }
+
+        let previousProtocol = conversation.messageProtocol
+        if previousProtocol == .proteus && messageProtocol == .mls {
+            conversation.appendMLSMigrationPotentialGapSystemMessage(sender: ZMUser.selfUser(in: context), at: conversation.lastModifiedDate ??  Date())
         }
 
         conversation.messageProtocol = messageProtocol
