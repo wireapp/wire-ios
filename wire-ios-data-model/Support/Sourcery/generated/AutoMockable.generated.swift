@@ -1781,6 +1781,69 @@ class MockCoreCryptoProtocol: CoreCryptoProtocol {
         try await mock(conversationId)
     }
 
+    // MARK: - e2eiRegisterAcmeCa
+
+    var e2eiRegisterAcmeCaTrustAnchorPem_Invocations: [String] = []
+    var e2eiRegisterAcmeCaTrustAnchorPem_MockError: Error?
+    var e2eiRegisterAcmeCaTrustAnchorPem_MockMethod: ((String) async throws -> Void)?
+
+    func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws {
+        e2eiRegisterAcmeCaTrustAnchorPem_Invocations.append(trustAnchorPem)
+
+        if let error = e2eiRegisterAcmeCaTrustAnchorPem_MockError {
+            throw error
+        }
+
+        guard let mock = e2eiRegisterAcmeCaTrustAnchorPem_MockMethod else {
+            fatalError("no mock for `e2eiRegisterAcmeCaTrustAnchorPem`")
+        }
+
+        try await mock(trustAnchorPem)
+    }
+
+    // MARK: - e2eiRegisterCrl
+
+    var e2eiRegisterCrlCrlDpCrlDer_Invocations: [(crlDp: String, crlDer: Data)] = []
+    var e2eiRegisterCrlCrlDpCrlDer_MockError: Error?
+    var e2eiRegisterCrlCrlDpCrlDer_MockMethod: ((String, Data) async throws -> WireCoreCrypto.CrlRegistration)?
+    var e2eiRegisterCrlCrlDpCrlDer_MockValue: WireCoreCrypto.CrlRegistration?
+
+    func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration {
+        e2eiRegisterCrlCrlDpCrlDer_Invocations.append((crlDp: crlDp, crlDer: crlDer))
+
+        if let error = e2eiRegisterCrlCrlDpCrlDer_MockError {
+            throw error
+        }
+
+        if let mock = e2eiRegisterCrlCrlDpCrlDer_MockMethod {
+            return try await mock(crlDp, crlDer)
+        } else if let mock = e2eiRegisterCrlCrlDpCrlDer_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eiRegisterCrlCrlDpCrlDer`")
+        }
+    }
+
+    // MARK: - e2eiRegisterIntermediateCa
+
+    var e2eiRegisterIntermediateCaCertPem_Invocations: [String] = []
+    var e2eiRegisterIntermediateCaCertPem_MockError: Error?
+    var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> Void)?
+
+    func e2eiRegisterIntermediateCa(certPem: String) async throws {
+        e2eiRegisterIntermediateCaCertPem_Invocations.append(certPem)
+
+        if let error = e2eiRegisterIntermediateCaCertPem_MockError {
+            throw error
+        }
+
+        guard let mock = e2eiRegisterIntermediateCaCertPem_MockMethod else {
+            fatalError("no mock for `e2eiRegisterIntermediateCaCertPem`")
+        }
+
+        try await mock(certPem)
+    }
+
 }
 
 public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
@@ -3581,6 +3644,91 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
 }
 
+public class MockOneOnOneMigratorInterface: OneOnOneMigratorInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - migrateToMLS
+
+    public var migrateToMLSUserIDIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
+    public var migrateToMLSUserIDIn_MockError: Error?
+    public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> Void)?
+
+    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws {
+        migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
+
+        if let error = migrateToMLSUserIDIn_MockError {
+            throw error
+        }
+
+        guard let mock = migrateToMLSUserIDIn_MockMethod else {
+            fatalError("no mock for `migrateToMLSUserIDIn`")
+        }
+
+        try await mock(userID, context)
+    }
+
+}
+
+public class MockOneOnOneProtocolSelectorInterface: OneOnOneProtocolSelectorInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getProtocolForUser
+
+    public var getProtocolForUserWithIn_Invocations: [(id: QualifiedID, context: NSManagedObjectContext)] = []
+    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) -> MessageProtocol?)?
+    public var getProtocolForUserWithIn_MockValue: MessageProtocol??
+
+    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) -> MessageProtocol? {
+        getProtocolForUserWithIn_Invocations.append((id: id, context: context))
+
+        if let mock = getProtocolForUserWithIn_MockMethod {
+            return mock(id, context)
+        } else if let mock = getProtocolForUserWithIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getProtocolForUserWithIn`")
+        }
+    }
+
+}
+
+public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - resolveOneOnOneConversation
+
+    public var resolveOneOnOneConversationWithIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
+    public var resolveOneOnOneConversationWithIn_MockError: Error?
+    public var resolveOneOnOneConversationWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> Void)?
+
+    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext) async throws {
+        resolveOneOnOneConversationWithIn_Invocations.append((userID: userID, context: context))
+
+        if let error = resolveOneOnOneConversationWithIn_MockError {
+            throw error
+        }
+
+        guard let mock = resolveOneOnOneConversationWithIn_MockMethod else {
+            fatalError("no mock for `resolveOneOnOneConversationWithIn`")
+        }
+
+        try await mock(userID, context)
+    }
+
+}
+
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle
@@ -3947,6 +4095,33 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
             return mock
         } else {
             fatalError("no mock for `findSubgroupTypeAndParentIDFor`")
+        }
+    }
+
+}
+
+public class MockUserRepositoryInterface: UserRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - selfUser
+
+    public var selfUser_Invocations: [Void] = []
+    public var selfUser_MockMethod: (() -> ZMUser)?
+    public var selfUser_MockValue: ZMUser?
+
+    public func selfUser() -> ZMUser {
+        selfUser_Invocations.append(())
+
+        if let mock = selfUser_MockMethod {
+            return mock()
+        } else if let mock = selfUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `selfUser`")
         }
     }
 

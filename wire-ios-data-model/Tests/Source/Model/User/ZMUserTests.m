@@ -1244,14 +1244,17 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForSelfUser
 {
     // given
-    NSSet *expected = [NSSet setWithArray:@[@"accentColorValue",
-                                            @"emailAddress",
-                                            @"previewProfileAssetIdentifier",
-                                            @"completeProfileAssetIdentifier",
-                                            @"name",
-                                            @"phoneNumber",
-                                            @"availability",
-                                            @"readReceiptsEnabled"]];
+    NSSet *expected = [NSSet setWithArray:@[
+        @"accentColorValue",
+        @"emailAddress",
+        @"previewProfileAssetIdentifier",
+        @"completeProfileAssetIdentifier",
+        @"name",
+        @"phoneNumber",
+        @"availability",
+        @"readReceiptsEnabled",
+        @"supportedProtocols"
+    ]];
     
     // when
     ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];

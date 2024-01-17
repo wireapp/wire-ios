@@ -22,42 +22,132 @@ import XCTest
 
 class MLSEventProcessorTests: MessagingTestBase {
 
-    var mlsServiceMock: MockMLSServiceInterface!
     var sut: MLSEventProcessor!
+    var mlsServiceMock: MockMLSServiceInterface!
+    var conversationServiceMock: MockConversationServiceInterface!
+    var oneOnOneResolverMock: MockOneOnOneResolverInterface!
+
     var conversation: ZMConversation!
-    var domain = "example.com"
+    var qualifiedID: QualifiedID!
     let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
 
     override func setUp() {
         super.setUp()
-        sut = MLSEventProcessor()
+
+        qualifiedID = QualifiedID(uuid: .create(), domain: "example.com")
+
+        mlsServiceMock = .init()
+        mlsServiceMock.wipeGroup_MockMethod = { _ in }
+        mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = .random()
+        mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = { }
+
+        oneOnOneResolverMock = .init()
+        oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in }
+
+        conversationServiceMock = .init()
+        conversationServiceMock.syncConversationQualifiedID_MockMethod = { _ in }
+
         syncMOC.performGroupedBlockAndWait {
-            self.mlsServiceMock = .init()
-            self.mlsServiceMock.wipeGroup_MockMethod = { _ in }
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            self.conversation.remoteIdentifier = self.qualifiedID.uuid
             self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64DecodedBytes!)
-            self.conversation.domain = self.domain
+            self.conversation.domain = self.qualifiedID.domain
             self.conversation.messageProtocol = .mls
         }
+
+        sut = MLSEventProcessor(conversationService: conversationServiceMock)
     }
 
     override func tearDown() {
         sut = nil
         mlsServiceMock = nil
+        conversationServiceMock = nil
+        oneOnOneResolverMock = nil
         conversation = nil
+        qualifiedID = nil
+        sut = nil
         super.tearDown()
     }
 
     // MARK: - Process Welcome Message
 
-    func test_itProcessesMessageAndUpdatesConversation() async {
+    func test_itProcessesMessageAndUpdatesConversation_GroupConversation() async {
         // Given
         let message = "welcome message"
-        syncMOC.performGroupedBlockAndWait {
-            self.mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = self.conversation.mlsGroupID ?? MLSGroupID(Data())
+
+        await syncMOC.perform {
             self.conversation.mlsStatus = .pendingJoin
+            self.conversation.conversationType = .group
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
+        }
+
+        // When
+        await sut.process(
+            welcomeMessage: message,
+            conversationID: qualifiedID,
+            in: syncMOC,
+            mlsService: mlsServiceMock,
+            oneOnOneResolver: oneOnOneResolverMock
+        )
+
+        // Then
+        XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
+        XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(conversationServiceMock.syncConversationQualifiedID_Invocations, [qualifiedID])
+        XCTAssertTrue(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.isEmpty)
+
+        await syncMOC.perform {
+            XCTAssertEqual(self.conversation.mlsStatus, .ready)
+        }
+    }
+
+    func test_itProcessesMessageAndUpdatesConversation_OneOnOneConversation() async throws {
+        // Given
+        let message = "welcome message"
+
+        let otherUserID = QualifiedID(
+            uuid: .create(),
+            domain: qualifiedID.domain
+        )
+
+        await syncMOC.perform {
+            self.conversation.mlsStatus = .pendingJoin
+            self.conversation.conversationType = .oneOnOne
+            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
+
+            let otherUser = self.createUser()
+            otherUser.remoteIdentifier = otherUserID.uuid
+            otherUser.domain = otherUserID.domain
+
+            self.conversation.addParticipantAndUpdateConversationState(
+                user: otherUser,
+                role: nil
+            )
+        }
+
+        // Mock
+        oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in }
+
+        // When
+        await sut.process(
+            welcomeMessage: message,
+            conversationID: self.qualifiedID,
+            in: self.syncMOC,
+            mlsService: self.mlsServiceMock,
+            oneOnOneResolver: self.oneOnOneResolverMock
+        )
+
+        // Then
+
+        XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
+        XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(conversationServiceMock.syncConversationQualifiedID_Invocations, [qualifiedID])
+        XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.count, 1)
+        XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.first?.userID, otherUserID)
+
+        await syncMOC.perform {
+            XCTAssertEqual(self.conversation.mlsStatus, .ready)
         }
     }
 
@@ -113,7 +203,8 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     func test_itWipesGroup() async {
         // Given
-        let groupID = MLSGroupID(Data.random())
+        let groupID = MLSGroupID.random()
+
         await syncMOC.perform { [self] in
             conversation.messageProtocol = .mls
             conversation.mlsGroupID = groupID
@@ -131,10 +222,10 @@ class MLSEventProcessorTests: MessagingTestBase {
     }
 
     func test_itDoesntWipeGroup_WhenProtocolIsNotMLS() async {
+        // Given
         await syncMOC.perform { [self] in
-            // Given
             conversation.messageProtocol = .proteus
-            conversation.mlsGroupID = MLSGroupID(Data.random())
+            conversation.mlsGroupID = MLSGroupID.random()
         }
 
         // When

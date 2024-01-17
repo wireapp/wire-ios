@@ -38,4 +38,12 @@ class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActi
         )
     }
 
+    func test_itDoesntGenerateRequests_APIV4() {
+        test_itDoesntGenerateARequest(
+            action: action,
+            apiVersion: .v4,
+            expectedError: .endpointUnavailable
+        )
+    }
+
 }

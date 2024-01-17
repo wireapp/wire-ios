@@ -56,7 +56,8 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             context: syncMOC,
             eventProcessor: ConversationEventProcessor(
                 context: syncMOC,
-                conversationService: mockConversationService
+                conversationService: mockConversationService,
+                mlsEventProcessor: MockMLSEventProcessing()
             )
         )
     }

@@ -25,11 +25,19 @@ public extension NSPredicate {
     }
 
     func and(_ other: NSPredicate) -> NSPredicate {
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [self, other])
+        return Self.all(of: [self, other])
     }
 
     func or(_ other: NSPredicate) -> NSPredicate {
-        return NSCompoundPredicate(orPredicateWithSubpredicates: [self, other])
+        return Self.any(of: [self, other])
+    }
+
+    class func any(of predicates: [NSPredicate]) -> NSPredicate {
+        return NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+    }
+
+    class func all(of predicates: [NSPredicate]) -> NSPredicate {
+        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
 
 }

@@ -264,7 +264,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return false
         }
 
-        return finaliseDate.isPast
+        return finaliseDate.isInThePast
     }
 
     private func updateConversationProtocolToMLS(for conversation: ZMConversation) async throws {
@@ -284,14 +284,5 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             to: messageProtocol,
             context: context
         )
-    }
-}
-
-// This is temporary until John's work on 1on1 conversations
-// is merged to develop and then we can pull the changes into the migration branch.
-// TODO: [AGIS] Get rid of this extension
-extension ZMUser {
-    var supportedProtocols: [MessageProtocol] {
-        return [.mls, .proteus]
     }
 }

@@ -315,9 +315,12 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         return false
     }
 
-    public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject,
-                                    forKeys keys: Set<String>,
-                                    withSync sync: Any) -> Bool {
+    public func shouldCreateRequest(
+        toSyncObject managedObject: ZMManagedObject,
+        forKeys keys: Set<String>,
+        withSync sync: Any,
+        apiVersion: APIVersion
+    ) -> Bool {
         guard (sync as AnyObject) === modifiedSync else {
             return true
         }
@@ -478,7 +481,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConversationEventPayloadProcessor()
+    private lazy var processor = ConversationEventPayloadProcessor(context: context)
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
     init(
@@ -594,7 +597,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConversationEventPayloadProcessor()
+    private lazy var processor = ConversationEventPayloadProcessor(context: context)
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
     init(
@@ -723,7 +726,7 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConversationEventPayloadProcessor()
+    private lazy var processor = ConversationEventPayloadProcessor(context: context)
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -780,7 +783,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConversationEventPayloadProcessor()
+    private lazy var processor = ConversationEventPayloadProcessor(context: context)
 
     init(context: NSManagedObjectContext) {
         self.context = context

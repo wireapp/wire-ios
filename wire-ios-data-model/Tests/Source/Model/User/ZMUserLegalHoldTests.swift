@@ -17,9 +17,21 @@
 //
 
 import XCTest
-import WireDataModel
+@testable import WireDataModel
 
 class ZMUserLegalHoldTests: ModelObjectsTests {
+
+    override func setUp() {
+        DeveloperFlag.storage = .temporary()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+        super.setUp()
+    }
+
+    override func tearDown() {
+        DeveloperFlag.storage = .standard
+        super.tearDown()
+    }
 
     func testThatLegalHoldStatusIsDisabled_ByDefault() {
         // GIVEN
