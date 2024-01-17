@@ -16,41 +16,55 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
 @testable import Wire
 
 final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnapshotTestCase {
 
     // MARK: MLS Migration
+    var mockConversation: SwiftMockConversation!
+    var otherUser: MockUserType!
+
+    override func setUp() {
+        super.setUp()
+        otherUser = MockUserType.createDefaultOtherUser()
+        mockConversation = SwiftMockConversation.oneOnOneConversation(otherUser: otherUser)
+    }
 
     func test_mlsMigrationFinalized() {
-        verify(message: makeMessage(messageType: .mlsMigrationFinalized))
+        let message = makeMessage(messageType: .mlsMigrationFinalized)
+        verify(message: message)
     }
 
     func test_mlsMigrationJoinAfterwards() {
-        verify(message: makeMessage(messageType: .mlsMigrationJoinAfterwards))
+        let message = makeMessage(messageType: .mlsMigrationJoinAfterwards)
+        verify(message: message)
     }
 
     func test_mlsMigrationOngoingCall() {
-        verify(message: makeMessage(messageType: .mlsMigrationOngoingCall))
+        let message = makeMessage(messageType: .mlsMigrationOngoingCall)
+        verify(message: message)
     }
 
     func test_mlsMigrationStarted() {
-        verify(message: makeMessage(messageType: .mlsMigrationStarted))
+        let message = makeMessage(messageType: .mlsMigrationStarted)
+        verify(message: message)
     }
 
     func test_mlsMigrationUpdateVersion() {
-        verify(message: makeMessage(messageType: .mlsMigrationUpdateVersion))
+        let message = makeMessage(messageType: .mlsMigrationUpdateVersion)
+        verify(message: message)
     }
 
     func test_mlsMigrationPotentialGap() {
-        verify(message: makeMessage(messageType: .mlsMigrationPotentialGap))
+        let message = makeMessage(messageType: .mlsMigrationPotentialGap)
+        message.backingSystemMessageData?.userTypes = Set<AnyHashable>([SwiftMockLoader.mockUsers().last])
+        verify(message: message)
     }
 
     // MARK: - Helpers
 
     private func makeMessage(messageType: ZMSystemMessageType) -> MockMessage {
-        MockMessageFactory.systemMessage(with: messageType)!
+        MockMessageFactory.systemMessage(with: messageType, conversation: mockConversation)!
     }
 }
