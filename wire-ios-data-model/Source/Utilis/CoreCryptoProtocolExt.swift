@@ -161,4 +161,10 @@ protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func wipeConversation(conversationId: Data) async throws
 
+    func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws
+
+    func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration
+
+    func e2eiRegisterIntermediateCa(certPem: String) async throws
+
 }
