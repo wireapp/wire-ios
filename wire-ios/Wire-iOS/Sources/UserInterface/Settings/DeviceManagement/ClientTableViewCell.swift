@@ -124,7 +124,7 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             nameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
 
-            proteusVerficiationStatusImageView.topAnchor.constraint(equalTo: nameLabel.topAnchor),
+            proteusVerficiationStatusImageView.topAnchor.constraint(equalTo: nameLabel.topAnchor, constant: 2),
             proteusVerficiationStatusImageView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: 8),
             proteusVerficiationStatusImageView.heightAnchor.constraint(equalToConstant: 16),
             proteusVerficiationStatusImageView.widthAnchor.constraint(equalToConstant: 16),
@@ -139,11 +139,10 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             mlsThumbprintLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
             mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 16),
 
-            proteusIDLabel.topAnchor.constraint(equalTo: mlsThumbprintLabel.bottomAnchor, constant: 2),
+            proteusIDLabel.topAnchor.constraint(equalTo: mlsThumbprintLabel.bottomAnchor, constant: 0),
             proteusIDLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             proteusIDLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
-            proteusIDLabel.bottomAnchor.constraint(greaterThanOrEqualTo: contentView.bottomAnchor, constant: -16)
-
+            proteusIDLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16)
         ])
     }
 
