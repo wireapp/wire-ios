@@ -169,55 +169,6 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
 
 }
 
-public class MockConversationPostProtocolChangeUpdating: ConversationPostProtocolChangeUpdating {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - updateLocalConversation
-
-    public var updateLocalConversationForToContext_Invocations: [(qualifiedID: QualifiedID, newMessageProtocol: MessageProtocol, context: NSManagedObjectContext)] = []
-    public var updateLocalConversationForToContext_MockError: Error?
-    public var updateLocalConversationForToContext_MockMethod: ((QualifiedID, MessageProtocol, NSManagedObjectContext) async throws -> Void)?
-
-    public func updateLocalConversation(for qualifiedID: QualifiedID, to newMessageProtocol: MessageProtocol, context: NSManagedObjectContext) async throws {
-        updateLocalConversationForToContext_Invocations.append((qualifiedID: qualifiedID, newMessageProtocol: newMessageProtocol, context: context))
-
-        if let error = updateLocalConversationForToContext_MockError {
-            throw error
-        }
-
-        guard let mock = updateLocalConversationForToContext_MockMethod else {
-            fatalError("no mock for `updateLocalConversationForToContext`")
-        }
-
-        try await mock(qualifiedID, newMessageProtocol, context)
-    }
-
-    // MARK: - updateLocalConversation
-
-    public var updateLocalConversationQualifiedIDToContext_Invocations: [(conversation: ZMConversation, qualifiedID: QualifiedID, newMessageProtocol: MessageProtocol, context: NSManagedObjectContext)] = []
-    public var updateLocalConversationQualifiedIDToContext_MockError: Error?
-    public var updateLocalConversationQualifiedIDToContext_MockMethod: ((ZMConversation, QualifiedID, MessageProtocol, NSManagedObjectContext) async throws -> Void)?
-
-    public func updateLocalConversation(_ conversation: ZMConversation, qualifiedID: QualifiedID, to newMessageProtocol: MessageProtocol, context: NSManagedObjectContext) async throws {
-        updateLocalConversationQualifiedIDToContext_Invocations.append((conversation: conversation, qualifiedID: qualifiedID, newMessageProtocol: newMessageProtocol, context: context))
-
-        if let error = updateLocalConversationQualifiedIDToContext_MockError {
-            throw error
-        }
-
-        guard let mock = updateLocalConversationQualifiedIDToContext_MockMethod else {
-            fatalError("no mock for `updateLocalConversationQualifiedIDToContext`")
-        }
-
-        try await mock(conversation, qualifiedID, newMessageProtocol, context)
-    }
-
-}
-
 class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - Life cycle
