@@ -35,7 +35,7 @@ class OneOnOneConversationMigrationPolicy: NSEntityMigrationPolicy {
             manager: manager
         )
 
-        guard 
+        guard
             dInstance.entity.name == ZMUser.entityName(),
             let sInstance = manager.sourceInstances(
                 forEntityMappingName: mapping.name,

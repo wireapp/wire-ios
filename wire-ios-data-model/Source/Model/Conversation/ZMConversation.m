@@ -44,7 +44,9 @@
 
 static NSString* ZMLogTag ZM_UNUSED = @"Conversations";
 
-NSString *const ZMConversationConnectionKey = @"connection";
+NSString *const ZMConversationOneOnOneUserKey = @"oneOnOneUser";
+// TODO: delete this
+NSString *const ZMConversationConnectionKey = @"oneOnOneUser.connection";
 NSString *const ZMConversationHasUnreadMissedCallKey = @"hasUnreadMissedCall";
 NSString *const ZMConversationHasUnreadUnsentMessageKey = @"hasUnreadUnsentMessage";
 NSString *const ZMConversationNeedsToCalculateUnreadMessagesKey = @"needsToCalculateUnreadMessages";
@@ -272,7 +274,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMConversationType internalConversationType = self.internalConversationType;
     
     if (internalConversationType == ZMConversationTypeOneOnOne || internalConversationType == ZMConversationTypeConnection) {
-        return self.connection.to;
+        return self.oneOnOneUser;
     }
     else if (self.conversationType == ZMConversationTypeOneOnOne) {
         return self.localParticipantsExcludingSelf.anyObject;
@@ -289,8 +291,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMConnectionStatus)relatedConnectionState
 {
-    if(self.connection != nil) {
-        return self.connection.status;
+    if(self.oneOnOneUser.connection != nil) {
+        return self.oneOnOneUser.connection.status;
     }
     return ZMConnectionStatusInvalid;
 }
@@ -387,7 +389,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 + (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ContextProvider>)session;
 {
     NOT_USED(session);
-    return otherUser.connection.conversation;
+    return otherUser.oneOnOneConversation;
 }
 
 - (void)setClearedTimeStamp:(NSDate *)clearedTimeStamp
@@ -483,7 +485,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (BOOL)isPendingConnectionConversation;
 {
-    return self.connection != nil && self.connection.status == ZMConnectionStatusPending;
+    return self.oneOnOneUser.connection != nil && self.oneOnOneUser.connection.status == ZMConnectionStatusPending;
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsPendingConnectionConversation
@@ -595,7 +597,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 @implementation ZMConversation (Internal)
 
-@dynamic connection;
 @dynamic creator;
 @dynamic lastModifiedDate;
 @dynamic normalizedUserDefinedName;
@@ -722,7 +723,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (NSString *)connectionMessage;
 {
-    return self.connection.message.stringByRemovingExtremeCombiningCharacters;
+    return self.oneOnOneUser.connection.message.stringByRemovingExtremeCombiningCharacters;
 }
 
 @end

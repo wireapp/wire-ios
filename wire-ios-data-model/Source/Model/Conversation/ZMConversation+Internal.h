@@ -38,6 +38,7 @@
 @class Team;
 
 NS_ASSUME_NONNULL_BEGIN
+extern NSString *const ZMConversationOneOnOneUserKey;
 extern NSString *const ZMConversationConnectionKey;
 extern NSString *const ZMConversationHasUnreadMissedCallKey;
 extern NSString *const ZMConversationHasUnreadUnsentMessageKey;
@@ -116,7 +117,6 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, nullable) NSUUID *teamRemoteIdentifier;
 @property (readonly, nonatomic, nonnull) NSMutableSet<ZMMessage *> *mutableMessages;
 @property (readonly, nonatomic, nonnull) NSSet<ZMMessage *> *hiddenMessages;
-@property (nonatomic, nullable) ZMConnection *connection;
 @property (readonly, nonatomic) enum ZMConnectionStatus relatedConnectionState; // This is a computed property, needed for snapshoting
 @property (nonatomic, nonnull) ZMUser *creator;
 @property (nonatomic, nullable) NSDate *lastModifiedDate;

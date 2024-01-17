@@ -26,16 +26,15 @@ extension ZMConversation {
     static func createOtherUserConversation(moc: NSManagedObjectContext, otherUser: ZMUser) -> ZMConversation {
 
         let otherUserConversation = ZMConversation.insertNewObject(in: moc)
-        otherUserConversation.add(participants: ZMUser.selfUser(in: moc))
+        otherUserConversation.add(participants: [ZMUser.selfUser(in: moc), otherUser])
 
         otherUserConversation.conversationType = .oneOnOne
         otherUserConversation.remoteIdentifier = UUID.create()
         let connection = ZMConnection.insertNewObject(in: moc)
         connection.to = otherUser
         connection.status = .accepted
-        connection.conversation = otherUserConversation
 
-        connection.add(user: otherUser)
+        otherUser.oneOnOneConversation = otherUserConversation
 
         return otherUserConversation
     }

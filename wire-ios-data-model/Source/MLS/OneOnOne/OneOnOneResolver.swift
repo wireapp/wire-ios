@@ -76,7 +76,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             await context.perform {
                 guard
                     let otherUser = ZMUser.fetch(with: userID, in: context),
-                    let conversation = otherUser.connection?.conversation
+                    let conversation = otherUser.oneOnOneConversation
                 else {
                     return
                 }

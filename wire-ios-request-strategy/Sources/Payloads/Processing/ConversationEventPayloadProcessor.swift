@@ -770,7 +770,7 @@ final class ConversationEventPayloadProcessor {
 
         // The backend can't distinguish between one-to-one and connection conversation
         // types across federated enviroments so check locally if it's a connection.
-        if conversation.connection?.status == .sent {
+        if conversation.oneOnOneUser?.connection?.status == .sent {
             return .connection
         } else {
             return type

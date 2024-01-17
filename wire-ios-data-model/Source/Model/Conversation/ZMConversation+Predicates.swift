@@ -125,8 +125,8 @@ extension ZMConversation {
 
     class func predicateForOneToOneConversation() -> NSPredicate {
         let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
-        let hasConnection = NSPredicate(format: "\(ZMConversationConnectionKey) != NULL")
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [isOneOnOne, hasConnection])
+        let hasOneOnOneUser = NSPredicate(format: "\(ZMConversationOneOnOneUserKey) != NULL")
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [isOneOnOne, hasOneOnOneUser])
     }
 
     class func predicateForTeamOneToOneConversation() -> NSPredicate {

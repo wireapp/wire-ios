@@ -310,9 +310,7 @@ extension ZMConversation {
             appendSystemMessage(type: .participantsAdded, sender: user, users: Set(arrayLiteral: user), clients: nil, timestamp: date)
         case .oneOnOne, .connection:
             if user.connection == nil {
-                user.connection = connection ?? ZMConnection.insertNewObject(in: managedObjectContext!)
-            } else if connection == nil {
-                connection = user.connection
+                user.connection = ZMConnection.insertNewObject(in: managedObjectContext!)
             }
             user.connection?.needsToBeUpdatedFromBackend = true
         default:

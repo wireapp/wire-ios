@@ -365,7 +365,6 @@
 		87E2CE312119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */; };
 		87E9508B2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E9508A2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift */; };
 		87EFA3AC210F52C6004DFA53 /* ZMConversation+LastMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87EFA3AB210F52C6004DFA53 /* ZMConversation+LastMessages.swift */; };
-		A901DE8C23A2A31B00B4DDC6 /* ZMConnection+Role.swift in Sources */ = {isa = PBXBuildFile; fileRef = A901DE8B23A2A31B00B4DDC6 /* ZMConnection+Role.swift */; };
 		A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E6238EAE8B006417AC /* ParticipantRole.swift */; };
 		A90676EA238EB05F006417AC /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E8238EB05E006417AC /* Action.swift */; };
 		A90676EB238EB05F006417AC /* Role.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E9238EB05F006417AC /* Role.swift */; };
@@ -1201,7 +1200,6 @@
 		87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Cleared.swift"; sourceTree = "<group>"; };
 		87E9508A2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+DeleteOlderMessages.swift"; sourceTree = "<group>"; };
 		87EFA3AB210F52C6004DFA53 /* ZMConversation+LastMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+LastMessages.swift"; sourceTree = "<group>"; };
-		A901DE8B23A2A31B00B4DDC6 /* ZMConnection+Role.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConnection+Role.swift"; sourceTree = "<group>"; };
 		A90676E6238EAE8B006417AC /* ParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantRole.swift; sourceTree = "<group>"; };
 		A90676E8238EB05E006417AC /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		A90676E9238EB05F006417AC /* Role.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Role.swift; sourceTree = "<group>"; };
@@ -2506,7 +2504,6 @@
 				F9A705D81CAEE01D00C2F5FE /* ZMConnection.m */,
 				A949418E23E1DB78001B0373 /* ZMConnection+Fetch.swift */,
 				16B5B33026FDC5D2001A3216 /* ZMConnection+Actions.swift */,
-				A901DE8B23A2A31B00B4DDC6 /* ZMConnection+Role.swift */,
 				547E664A1F750E4A008CB1FA /* ZMConnection+Notification.swift */,
 			);
 			path = Connection;
@@ -3721,7 +3718,6 @@
 				63B1335929A503D100009D84 /* MLSGroupID.swift in Sources */,
 				F963E9831D9C0DC400098AD3 /* ZMMessageDestructionTimer.swift in Sources */,
 				63AFE2D6244F49A90003F619 /* GenericMessage+MessageCapable.swift in Sources */,
-				A901DE8C23A2A31B00B4DDC6 /* ZMConnection+Role.swift in Sources */,
 				F9A706C91CAEE01D00C2F5FE /* ZMUpdateEvent+WireDataModel.m in Sources */,
 				E6A5BBA62B0E33DB00ACC236 /* CoreDataMessagingMigrationVersion.swift in Sources */,
 				EE997A16250629DC008336D2 /* ZMMessage+ProcessingError.swift in Sources */,
