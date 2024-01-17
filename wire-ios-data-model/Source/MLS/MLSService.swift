@@ -819,31 +819,31 @@ public final class MLSService: MLSServiceInterface {
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
     /// and sends external commits to join these groups
     public func performPendingJoins() async throws {
-           guard let context = context else {
-               return
-           }
+        guard let context = context else {
+            return
+        }
 
-           let pendingGroups = try await context.perform {
-               try ZMConversation.fetchConversationsWithMLSGroupStatus(
-                   mlsGroupStatus: .pendingJoin,
-                   in: context
-               ).compactMap(\.mlsGroupID)
-           }
+        let pendingGroups = try await context.perform {
+            try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .pendingJoin,
+                in: context
+            ).compactMap(\.mlsGroupID)
+        }
 
-           logger.info("joining \(pendingGroups.count) group(s)")
+        logger.info("joining \(pendingGroups.count) group(s)")
 
-           await withTaskGroup(of: Void.self) { group in
-               for pendingGroup in pendingGroups {
-                   group.addTask {
-                       do {
-                           try await self.joinByExternalCommit(groupID: pendingGroup)
-                       } catch {
-                           WireLogger.mls.error("Failed to join pending group (\(pendingGroup): \(error)")
-                       }
-                   }
-               }
-           }
-       }
+        await withTaskGroup(of: Void.self) { group in
+            for pendingGroup in pendingGroups {
+                group.addTask {
+                    do {
+                        try await self.joinByExternalCommit(groupID: pendingGroup)
+                    } catch {
+                        WireLogger.mls.error("Failed to join pending group (\(pendingGroup): \(error)")
+                    }
+                }
+            }
+        }
+    }
 
     // MARK: - Out-of-sync conversations
 
