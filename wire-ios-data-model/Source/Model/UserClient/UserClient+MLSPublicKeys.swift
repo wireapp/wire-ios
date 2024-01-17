@@ -49,7 +49,7 @@ extension UserClient {
         set {
             guard newValue != mlsPublicKeys else { return }
             willChangeValue(forKey: Self.mlsPublicKeysKey)
-            primitiveMlsPublicKeys = newValue.encodeToJSON()
+            primitiveMlsPublicKeys = encodedMLSPublicKeys(newValue)
             didChangeValue(forKey: Self.mlsPublicKeysKey)
             needsToUploadMLSPublicKeys = true
             setLocallyModifiedKeys(Set([UserClient.needsToUploadMLSPublicKeysKey]))
@@ -63,7 +63,7 @@ extension UserClient {
 
     // MARK: MLSPublicKeys
 
-    private  func decodedMLSPublicKeys(from data: Data?) -> MLSPublicKeys {
+    private func decodedMLSPublicKeys(from data: Data?) -> MLSPublicKeys {
         guard let data else {
             return .init()
         }
@@ -74,6 +74,11 @@ extension UserClient {
             // all errors are ignored
             return .init()
         }
+    }
+
+    private func encodedMLSPublicKeys(_ mlsPublicKeys: MLSPublicKeys) -> Data? {
+        // all errors are ignored
+        try? JSONEncoder().encode(mlsPublicKeys)
     }
 }
 
