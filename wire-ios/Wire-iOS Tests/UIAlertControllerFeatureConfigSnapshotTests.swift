@@ -29,6 +29,13 @@ final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
         return result
     }
 
+    private func createSutWiThActions(for featureChange: FeatureRepository.FeatureChange) -> UIAlertController? {
+        let result = UIAlertController.fromFeatureChangeWithActions(featureChange,
+                                                                    actionsHandler: MockE2eIFeatureChangeActionsHandler())
+        result?.view.backgroundColor = .white
+        return result
+    }
+
     // MARK: - Tests
 
     func testSelfDeletingMessagesIsDisabled() throws {
@@ -49,6 +56,10 @@ final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
 
     func testFileSharingDisabled() throws {
         try verify(matching: createSut(for: .fileSharingDisabled)!)
+    }
+
+    func testE2eIEnabled() throws {
+        try verify(matching: createSutWiThActions(for: .e2eIEnabled)!)
     }
 
 }

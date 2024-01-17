@@ -309,6 +309,10 @@ public class ZMUserSession: NSObject {
             mlsConversationVerificationStatusProvider: mlsConversationVerificationStatusProvider)
     }()
 
+    public lazy var featureChangeActionsHandler: FeatureChangeActions = {
+        return E2eIFeatureChangeActionsHandler(enrollE2eICertificate: enrollE2eICertificate)
+    }()
+
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
