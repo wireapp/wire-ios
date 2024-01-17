@@ -1315,10 +1315,10 @@ public final class MLSService: MLSServiceInterface {
         let conversations = await context.perform { ZMConversation.fetchConversationsWithPendingProposals(in: context) }
 
         for conversation in conversations {
-            let (groupID, timestamp) = await context.perform({
+            let (groupID, timestamp) = await context.perform {
                 (conversation.mlsGroupID,
                 conversation.commitPendingProposalDate)
-            })
+            }
 
             guard let groupID, let timestamp else {
                     continue
