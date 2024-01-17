@@ -856,7 +856,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
 
         // when
-        try! conversation.appendText(content: "Foo")
+        try conversation.appendText(content: "Foo")
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
