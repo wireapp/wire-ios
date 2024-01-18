@@ -336,7 +336,6 @@ public class ZMUserSession: NSObject {
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
-        sharedUserDefaults: UserDefaults
         sharedUserDefaults: UserDefaults,
         getIsE2eIdentityEnabledUseCase: GetIsE2EIdentityEnabledUsecaseProtocol = GetIsE2EIdentityEnabledUsecase(),
         getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUsecaseProtocol = GetE2eIdentityCertificatesUsecase()
