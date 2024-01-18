@@ -97,6 +97,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         viewModel.isE2eIdentityEnabled = isE2eIdentityEnabled
         viewModel.isSelfClient = isSelfClient
         viewModel.e2eIdentityCertificate = mockSession.certificate
+        viewModel.isProteusVerificationEnabled = isProteusVerificationEnabled
         return viewModel
     }
 
