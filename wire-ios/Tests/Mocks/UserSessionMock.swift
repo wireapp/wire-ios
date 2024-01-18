@@ -263,4 +263,8 @@ final class UserSessionMock: UserSession {
     var getE2eIdentityCertificates: WireSyncEngine.GetE2eIdentityCertificatesUsecaseProtocol {
         MockGetE2eIdentityCertificatesUsecaseProtocol()
     }
+
+    var e2eiFeature: WireDataModel.Feature.E2EI = WireDataModel.Feature.E2EI(status: .enabled)
+
+    func fetchAllClients() {}
 }

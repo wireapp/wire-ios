@@ -919,11 +919,6 @@
 		16FF47461F0CD58A0044C491 /* IntegrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegrationTest.m; sourceTree = "<group>"; };
 		16FF47481F0CD6610044C491 /* IntegrationTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrationTest.h; sourceTree = "<group>"; };
 		16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SessionManager+Logs.swift"; sourceTree = "<group>"; };
-		259303092B56E4A20027C68A /* MockValidE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockValidE2eIdentityProvider.swift; sourceTree = "<group>"; };
-		2593030A2B56E4A20027C68A /* MockRevokedE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRevokedE2eIdentityProvider.swift; sourceTree = "<group>"; };
-		2593030B2B56E4A20027C68A /* MockExpiredE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExpiredE2eIdentityProvider.swift; sourceTree = "<group>"; };
-		2593030C2B56E4A20027C68A /* MockNotActivatedE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNotActivatedE2eIdentityProvider.swift; sourceTree = "<group>"; };
-		2593030D2B56E4A20027C68A /* E2eIdentityCertificate+mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "E2eIdentityCertificate+mocks.swift"; sourceTree = "<group>"; };
 		25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUsecase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetE2eIdentityCertificatesUsecase.swift; sourceTree = "<group>"; };
 		25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUsecase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetIsE2EIdentityEnabledUsecase.swift; sourceTree = "<group>"; };
 		2B155969295093360069AE34 /* HotfixPatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotfixPatch.swift; sourceTree = "<group>"; };
@@ -1636,19 +1631,6 @@
 			path = Recorders;
 			sourceTree = "<group>";
 		};
-		2593030E2B56E4A20027C68A /* MockE2eIdentityProviders */ = {
-			isa = PBXGroup;
-			children = (
-				259303092B56E4A20027C68A /* MockValidE2eIdentityProvider.swift */,
-				2593030A2B56E4A20027C68A /* MockRevokedE2eIdentityProvider.swift */,
-				2593030B2B56E4A20027C68A /* MockExpiredE2eIdentityProvider.swift */,
-				2593030C2B56E4A20027C68A /* MockNotActivatedE2eIdentityProvider.swift */,
-				2593030D2B56E4A20027C68A /* E2eIdentityCertificate+mocks.swift */,
-			);
-			name = MockE2eIdentityProviders;
-			path = "../../wire-ios/MockE2eIdentityProviders";
-			sourceTree = "<group>";
-		};
 		3E18605A191A4EF8000FE027 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1878,7 +1860,6 @@
 				3EAD6A08199BB6C800D519DB /* Calling */,
 				EEE46E5528C5EF3B005F48D7 /* Use cases */,
 				3E18605B191A4F28000FE027 /* Public */,
-				2593030E2B56E4A20027C68A /* MockE2eIdentityProviders */,
 				3E18605C191A4F3B000FE027 /* WireSyncEngine-iOS.pch */,
 			);
 			path = Source;

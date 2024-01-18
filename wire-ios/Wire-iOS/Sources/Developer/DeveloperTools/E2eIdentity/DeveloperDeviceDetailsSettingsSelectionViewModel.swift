@@ -122,6 +122,54 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
 
 }
 
+extension E2eIdentityCertificate {
+    static let  dateFormatter = DateFormatter()
+
+    static var mockRevoked: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            certificateDetails: .mockCertificate(),
+            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            notValidBefore: dateFormatter.date(from: "15.10.2023") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
+            certificateStatus: .revoked,
+            serialNumber: .mockSerialNumber
+        )
+    }
+
+    static var mockValid: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            certificateDetails: .mockCertificate(),
+            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
+            certificateStatus: .valid,
+            serialNumber: .mockSerialNumber
+        )
+    }
+
+    static var mockExpired: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            certificateDetails: .mockCertificate(),
+            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
+            certificateStatus: .expired,
+            serialNumber: .mockSerialNumber
+        )
+    }
+
+    static var mockNotActivated: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            certificateDetails: .mockCertificate(),
+            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            notValidBefore: dateFormatter.date(from: "15.09.2024") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
+            certificateStatus: .notActivated,
+            serialNumber: .mockSerialNumber
+        )
+    }
+}
+
 private extension E2EIdentityCertificateStatus {
     static func status(for string: String) -> E2EIdentityCertificateStatus? {
         E2EIdentityCertificateStatus.allCases.filter({

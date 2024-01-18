@@ -1036,13 +1036,8 @@
 		16F7341024F9556600AB93B1 /* ZMConversationTests+DraftMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+DraftMessage.swift"; sourceTree = "<group>"; };
 		16F7341324F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+EncryptionKeys.swift"; sourceTree = "<group>"; };
 		16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-85-0.wiredatabase"; sourceTree = "<group>"; };
-		255176F32B554B04006A4E46 /* E2eIdentityCertificate+mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "E2eIdentityCertificate+mocks.swift"; sourceTree = "<group>"; };
 		25644D922B289E30007DA01F /* String+mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+mocks.swift"; sourceTree = "<group>"; };
 		256C1B782B1654BB0015C89D /* E2eIdentityCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIdentityCertificate.swift; sourceTree = "<group>"; };
-		2577CB6E2B19DA5D007D3443 /* MockValidE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockValidE2eIdentityProvider.swift; sourceTree = "<group>"; };
-		2577CB702B19DA7B007D3443 /* MockRevokedE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRevokedE2eIdentityProvider.swift; sourceTree = "<group>"; };
-		2577CB722B19DAB9007D3443 /* MockExpiredE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExpiredE2eIdentityProvider.swift; sourceTree = "<group>"; };
-		2577CB742B19DAD6007D3443 /* MockNotActivatedE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNotActivatedE2eIdentityProvider.swift; sourceTree = "<group>"; };
 		2B6F6AB429ACC162001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2BB2076D292B781E00FB6468 /* PatchApplicatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchApplicatorTests.swift; sourceTree = "<group>"; };
@@ -1909,19 +1904,6 @@
 			path = Label;
 			sourceTree = "<group>";
 		};
-		2577CB6D2B19DA40007D3443 /* MockE2eIdentityProviders */ = {
-			isa = PBXGroup;
-			children = (
-				2577CB6E2B19DA5D007D3443 /* MockValidE2eIdentityProvider.swift */,
-				2577CB702B19DA7B007D3443 /* MockRevokedE2eIdentityProvider.swift */,
-				2577CB722B19DAB9007D3443 /* MockExpiredE2eIdentityProvider.swift */,
-				2577CB742B19DAD6007D3443 /* MockNotActivatedE2eIdentityProvider.swift */,
-				255176F32B554B04006A4E46 /* E2eIdentityCertificate+mocks.swift */,
-			);
-			name = MockE2eIdentityProviders;
-			path = "../../../../wire-ios-sync-engine/Source/Public/MockE2eIdentityProviders";
-			sourceTree = "<group>";
-		};
 		2B7AB1B529A4E5C500D9A63A /* TestPlans */ = {
 			isa = PBXGroup;
 			children = (
@@ -2731,7 +2713,6 @@
 		F9A706141CAEE01D00C2F5FE /* UserClient */ = {
 			isa = PBXGroup;
 			children = (
-				2577CB6D2B19DA40007D3443 /* MockE2eIdentityProviders */,
 				63E21AE1291E92770084A942 /* FetchUserClientsAction.swift */,
 				F13A89D0210628F600AB40CB /* PushToken.swift */,
 				631A0577240420380062B387 /* UserClient+SafeLogging.swift */,
