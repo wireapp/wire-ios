@@ -357,7 +357,13 @@ class SearchTaskTests: DatabaseTest {
         // given
         setCurrentAPIVersion(.v2)
         mockTransportSession.performRemoteChanges { remoteChanges in
-            remoteChanges.insertUser(withName: "UserX")
+            let userA = remoteChanges.insertUser(withName: "User A")
+            let selfUser = remoteChanges.insertSelfUser(withName: "Self User")
+            let team = remoteChanges.insertTeam(withName: "Team A", isBound: true)
+            team.identifier = self.teamIdentifier.transportString()
+            team.creator = userA
+            remoteChanges.insertMember(with: selfUser, in: team)
+            remoteChanges.insertMember(with: userA, in: team)
         }
         let resultArrived = customExpectation(description: "received result")
         let request = SearchRequest(query: "user", searchOptions: [.contacts, .teamMembers])
@@ -365,8 +371,6 @@ class SearchTaskTests: DatabaseTest {
         var result: SearchResult!
         task.addResultHandler { r, _ in
             result = r
-            print(result)
-            print(result.teamMembers)
             resultArrived.fulfill()
         }
 
