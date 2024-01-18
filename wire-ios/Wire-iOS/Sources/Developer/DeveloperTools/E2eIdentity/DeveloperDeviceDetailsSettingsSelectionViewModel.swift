@@ -128,7 +128,7 @@ extension E2eIdentityCertificate {
     static var mockRevoked: E2eIdentityCertificate {
         E2eIdentityCertificate(
             certificateDetails: .mockCertificate(),
-            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
             notValidBefore: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: .revoked,
@@ -139,7 +139,7 @@ extension E2eIdentityCertificate {
     static var mockValid: E2eIdentityCertificate {
         E2eIdentityCertificate(
             certificateDetails: .mockCertificate(),
-            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
             notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
             certificateStatus: .valid,
@@ -150,7 +150,7 @@ extension E2eIdentityCertificate {
     static var mockExpired: E2eIdentityCertificate {
         E2eIdentityCertificate(
             certificateDetails: .mockCertificate(),
-            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
             notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: .expired,
@@ -161,7 +161,7 @@ extension E2eIdentityCertificate {
     static var mockNotActivated: E2eIdentityCertificate {
         E2eIdentityCertificate(
             certificateDetails: .mockCertificate(),
-            mlsThumbprint: "AB CD EF GH IJ KL MN OP QR ST UV WX",
+            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
             notValidBefore: dateFormatter.date(from: "15.09.2024") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
             certificateStatus: .notActivated,

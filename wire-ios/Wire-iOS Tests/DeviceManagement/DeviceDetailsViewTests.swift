@@ -32,6 +32,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             .splitStringIntoLines(charactersPerLine: 16)
     }()
 
+    let kThumbprint: String = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnop"
+    let kProteusId: String = "abcdefghijklmnopqrstuvwxyzabcdefgh"
     lazy var kFingerPrint: String = { return "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnop"
             .uppercased()
             .splitStringIntoLines(charactersPerLine: 16)
@@ -81,7 +83,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             userClient: client,
             title: "some title",
             addedDate: "Monday 15 Oct, 2023",
-            proteusID: kSerialNumber,
+            proteusID: kProteusId,
             isSelfClient: isSelfClient,
             userSession: mockSession,
             credentials: emailCredentials,

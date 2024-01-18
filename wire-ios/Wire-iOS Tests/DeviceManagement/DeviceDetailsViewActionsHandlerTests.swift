@@ -62,7 +62,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         wait(for: [expectation], timeout: 0.5)
     }
 
-    func testWhenFetchCertificateIsInvokedThenValidCertificateIsReturned() async throws {
+    func testWhenGetCertificateIsInvokedThenValidCertificateIsReturned() async throws {
         let deviceActionHandler = DeviceDetailsViewActionsHandler(
             userClient: client,
             userSession: mockSession,

@@ -24,7 +24,8 @@ import SwiftASN1
 
 // sourcery: AutoMockable
 public protocol GetE2eIdentityCertificatesUsecaseProtocol {
-    func invoke(conversationId: Data, clientIds: [WireDataModel.MLSClientID]) async throws -> [WireDataModel.E2eIdentityCertificate]
+    func invoke(conversationId: Data,
+                clientIds: [WireDataModel.MLSClientID]) async throws -> [WireDataModel.E2eIdentityCertificate]
 }
 
 final public class GetE2eIdentityCertificatesUsecase: GetE2eIdentityCertificatesUsecaseProtocol {
@@ -34,7 +35,8 @@ final public class GetE2eIdentityCertificatesUsecase: GetE2eIdentityCertificates
         self.coreCryptoProvider = coreCryptoProvider
     }
 
-    public func invoke(conversationId: Data, clientIds: [WireDataModel.MLSClientID]) async throws -> [WireDataModel.E2eIdentityCertificate] {
+    public func invoke(conversationId: Data,
+                       clientIds: [WireDataModel.MLSClientID]) async throws -> [WireDataModel.E2eIdentityCertificate] {
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
         let clientIds = clientIds.compactMap({ $0.clientID.data(using: .utf8)})
         let wireIdentities = try await getWireIdentity(coreCrypto: coreCrypto, conversationId: conversationId, clientIDs: clientIds)
@@ -47,7 +49,8 @@ final public class GetE2eIdentityCertificatesUsecase: GetE2eIdentityCertificates
         }
     }
 
-    private func getWireIdentity(coreCrypto: SafeCoreCryptoProtocol, conversationId: Data, clientIDs: [Data]) async throws -> [WireIdentity] {
+    private func getWireIdentity(coreCrypto: SafeCoreCryptoProtocol,
+                                 conversationId: Data, clientIDs: [Data]) async throws -> [WireIdentity] {
         return try await coreCrypto.perform {
             return try await $0.getDeviceIdentities(
                 conversationId: conversationId,
