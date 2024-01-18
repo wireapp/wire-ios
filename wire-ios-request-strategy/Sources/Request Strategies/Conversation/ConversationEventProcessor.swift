@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +25,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     let context: NSManagedObjectContext
     let conversationService: ConversationServiceInterface
-    private let processor = ConversationEventPayloadProcessor()
+    private let processor = ConversationEventPayloadProcessor(
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
     private let eventPayloadDecoder = EventPayloadDecoder()
 
     // MARK: - Life cycle
@@ -132,9 +135,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             from: event.payload
         ) else { return }
 
-        await context.perform {
-            self.processor.processPayload(payload, originalEvent: event, in: self.context)
-        }
+        await processor.processPayload(payload, originalEvent: event, in: context)
     }
 
     private func processConversationMemberJoin(_ event: ZMUpdateEvent) async {
