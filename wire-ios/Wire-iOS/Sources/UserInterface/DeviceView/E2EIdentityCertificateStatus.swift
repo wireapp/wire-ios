@@ -21,7 +21,7 @@ import SwiftUI
 import WireDataModel
 
 extension E2EIdentityCertificateStatus {
-    func titleForStatus() -> String {
+    var title: String {
         switch self {
         case .notActivated:
             return L10n.Localizable.Device.Details.Section.E2ei.Status.notActivated
@@ -34,7 +34,7 @@ extension E2EIdentityCertificateStatus {
         }
     }
 
-    func imageForStatus() -> Image? {
+    var image: Image? {
         switch self {
         case .notActivated:
             return Image(.certificateExpired)

@@ -29,7 +29,7 @@ struct DeviceView: View {
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
             if viewModel.isE2eIdentityEnabled,
                 let certificate = viewModel.e2eIdentityCertificate,
-                let imageForStatus = certificate.status.imageForStatus() {
+                let imageForStatus = certificate.status.image {
                 imageForStatus
             }
             if viewModel.isProteusVerificationEnabled {

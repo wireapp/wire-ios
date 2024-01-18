@@ -25,7 +25,7 @@ import SwiftASN1
 // sourcery: AutoMockable
 public protocol GetE2eIdentityCertificatesUseCaseProtocol {
     func invoke(conversationId: Data,
-                clientIds: [WireDataModel.MLSClientID]) async throws -> [WireDataModel.E2eIdentityCertificate]
+                clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate]
 }
 
 final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol {
@@ -36,11 +36,11 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     }
 
     public func invoke(conversationId: Data,
-                       clientIds: [WireDataModel.MLSClientID]) async throws -> [WireDataModel.E2eIdentityCertificate] {
+                       clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
         let clientIds = clientIds.compactMap({ $0.clientID.data(using: .utf8)})
         let wireIdentities = try await getWireIdentity(coreCrypto: coreCrypto, conversationId: conversationId, clientIDs: clientIds)
-        if wireIdentities.count == 0 {
+        if wireIdentities.isEmpty {
             return Array(repeating: .notActivated, count: clientIds.count)
         } else {
             return try wireIdentities.map({

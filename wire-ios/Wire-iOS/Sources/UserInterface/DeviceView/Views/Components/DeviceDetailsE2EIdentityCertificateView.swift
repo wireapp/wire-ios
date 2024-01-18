@@ -33,31 +33,28 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 switch status {
                 case .notActivated:
                     viewForStatus(
-                        titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
-                        statusText: status.titleForStatus(),
+                        statusText: status.title,
                         textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
-                        image: Image(.certificateExpired)
+                        image: status.image
                     )
                 case .revoked:
                     viewForStatus(
-                        titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
-                        statusText: status.titleForStatus(),
+                        statusText: status.title,
                         textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
-                        image: Image(.certificateRevoked)
+                        image: status.image
                     )
                 case .expired:
                     viewForStatus(
-                        titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
-                        statusText: status.titleForStatus(),
+                        statusText: status.title,
                         textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
-                        image: Image(.certificateExpired)
+                        image: status.image
                     )
                 case .valid:
                     viewForStatus(
                         titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
-                        statusText: status.titleForStatus(),
+                        statusText: status.title,
                         textColor: SemanticColors.Label.textCertificateValid.swiftUIColor,
-                        image: Image(.certificateValid)
+                        image: status.image
                     )
                 }
             }
@@ -81,10 +78,10 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
 
     @ViewBuilder
     func viewForStatus(
-        titleText: String,
+        titleText: String = L10n.Localizable.Device.Details.Section.E2ei.Status.title,
         statusText: String,
         textColor: Color,
-        image: Image
+        image: Image?
     ) -> some View {
         Text(titleText)
             .font(FontSpec.mediumSemiboldFont.swiftUIFont)

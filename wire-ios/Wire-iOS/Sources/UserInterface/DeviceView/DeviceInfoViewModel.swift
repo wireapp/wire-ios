@@ -55,7 +55,7 @@ final class DeviceInfoViewModel: ObservableObject {
         guard let certificate = e2eIdentityCertificate else {
             return nil
         }
-        return certificate.shouldCertificateBeUpdated(with: gracePeriod)
+        return certificate.shouldUpdate(with: gracePeriod)
     }
 
     var mlsThumbprint: String? {
@@ -230,17 +230,12 @@ extension E2eIdentityCertificate {
         return notValidBefore <= Date.now
     }
 
-    var lastUpdatedDate: Date {
+    var lastUpdateDate: Date {
         return notValidBefore + kServerRetainedDays + kRandomInterval
     }
 
-    func shouldCertificateBeUpdated(with gracePeriod: TimeInterval) -> Bool {
-        guard isActivated,
-              isExpired,
-              (lastUpdatedDate + gracePeriod) < Date.now else {
-            return false
-        }
-        return true
+    func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
+        return isActivated && isExpired && (lastUpdateDate + gracePeriod) < Date.now
     }
 
 }

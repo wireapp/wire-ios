@@ -77,15 +77,15 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
             Section(
                 header: "Select E2eIdentity Status",
                 items: E2EIdentityCertificateStatus.allCases.map({
-                    Item(title: $0.titleForStatus(), value: $0.titleForStatus().count == 0 ? "None" : $0.titleForStatus())
+                    Item(title: $0.title, value: $0.title.count == 0 ? "None" : $0.title)
                 })
             )
         ]
         selectedItemID = UUID()
         guard let status = E2EIdentityCertificateStatus.allCases
-                                                        .first(where: {$0.titleForStatus() == Self.selectedE2eIdentiyStatus ?? ""}),
+                                                        .first(where: {$0.title == Self.selectedE2eIdentiyStatus ?? ""}),
               let selectedItem = sections.flatMap(\.items).first(where: {
-            $0.value == status.titleForStatus()
+            $0.value == status.title
         }) else {
             return
         }
@@ -173,7 +173,7 @@ extension E2eIdentityCertificate {
 private extension E2EIdentityCertificateStatus {
     static func status(for string: String) -> E2EIdentityCertificateStatus? {
         E2EIdentityCertificateStatus.allCases.filter({
-            $0.titleForStatus() == string
+            $0.title == string
         }).first
     }
 }

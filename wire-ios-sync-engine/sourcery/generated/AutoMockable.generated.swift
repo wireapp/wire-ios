@@ -63,12 +63,12 @@ public class MockGetE2eIdentityCertificatesUseCaseProtocol: GetE2eIdentityCertif
 
     // MARK: - invoke
 
-    public var invokeConversationIdClientIds_Invocations: [(conversationId: Data, clientIds: [WireDataModel.MLSClientID])] = []
+    public var invokeConversationIdClientIds_Invocations: [(conversationId: Data, clientIds: [MLSClientID])] = []
     public var invokeConversationIdClientIds_MockError: Error?
-    public var invokeConversationIdClientIds_MockMethod: ((Data, [WireDataModel.MLSClientID]) async throws -> [WireDataModel.E2eIdentityCertificate])?
-    public var invokeConversationIdClientIds_MockValue: [WireDataModel.E2eIdentityCertificate]?
+    public var invokeConversationIdClientIds_MockMethod: ((Data, [MLSClientID]) async throws -> [E2eIdentityCertificate])?
+    public var invokeConversationIdClientIds_MockValue: [E2eIdentityCertificate]?
 
-    public func invoke(conversationId: Data, clientIds: [WireDataModel.MLSClientID]) async throws -> [WireDataModel.E2eIdentityCertificate] {
+    public func invoke(conversationId: Data, clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
         invokeConversationIdClientIds_Invocations.append((conversationId: conversationId, clientIds: clientIds))
 
         if let error = invokeConversationIdClientIds_MockError {
