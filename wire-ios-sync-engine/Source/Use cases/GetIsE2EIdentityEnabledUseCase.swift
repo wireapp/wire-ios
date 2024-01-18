@@ -20,11 +20,11 @@ import Foundation
 import WireCoreCrypto
 
 // sourcery: AutoMockable
-public protocol GetIsE2EIdentityEnabledUsecaseProtocol {
+public protocol GetIsE2EIdentityEnabledUseCaseProtocol {
     func invoke() async throws -> Bool
 }
 
-public final class GetIsE2EIdentityEnabledUsecase: GetIsE2EIdentityEnabledUsecaseProtocol {
+public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCaseProtocol {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     public init(coreCryptoProvider: CoreCryptoProviderProtocol) {

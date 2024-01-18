@@ -23,12 +23,12 @@ import X509
 import SwiftASN1
 
 // sourcery: AutoMockable
-public protocol GetE2eIdentityCertificatesUsecaseProtocol {
+public protocol GetE2eIdentityCertificatesUseCaseProtocol {
     func invoke(conversationId: Data,
                 clientIds: [WireDataModel.MLSClientID]) async throws -> [WireDataModel.E2eIdentityCertificate]
 }
 
-final public class GetE2eIdentityCertificatesUsecase: GetE2eIdentityCertificatesUsecaseProtocol {
+final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     public init(coreCryptoProvider: CoreCryptoProviderProtocol) {

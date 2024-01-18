@@ -54,7 +54,7 @@ import AppKit
 
 
 
-public class MockGetE2eIdentityCertificatesUsecaseProtocol: GetE2eIdentityCertificatesUsecaseProtocol {
+public class MockGetE2eIdentityCertificatesUseCaseProtocol: GetE2eIdentityCertificatesUseCaseProtocol {
 
     // MARK: - Life cycle
 
@@ -86,7 +86,7 @@ public class MockGetE2eIdentityCertificatesUsecaseProtocol: GetE2eIdentityCertif
 
 }
 
-public class MockGetIsE2EIdentityEnabledUsecaseProtocol: GetIsE2EIdentityEnabledUsecaseProtocol {
+public class MockGetIsE2EIdentityEnabledUseCaseProtocol: GetIsE2EIdentityEnabledUseCaseProtocol {
 
     // MARK: - Life cycle
 

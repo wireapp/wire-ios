@@ -298,12 +298,12 @@ public class ZMUserSession: NSObject {
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 
-    public lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUsecaseProtocol =  {
-        return GetIsE2EIdentityEnabledUsecase(coreCryptoProvider: coreCryptoProvider)
+    public lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol =  {
+        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
     }()
 
-    public lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol = {
-        return GetE2eIdentityCertificatesUsecase(coreCryptoProvider: coreCryptoProvider)
+    public lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
+        return GetE2eIdentityCertificatesUseCase(coreCryptoProvider: coreCryptoProvider)
     }()
 
     lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface = {

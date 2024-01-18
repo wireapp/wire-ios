@@ -29,8 +29,8 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
 
     let saveFileManager = MockSaveFileManager()
     let mockMLSClientResolver = MockMLSClientResolver()
-    let mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUsecaseProtocol()
-    let mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUsecaseProtocol()
+    let mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUseCaseProtocol()
+    let mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
     let mockGetProteusFingerprint = MockGetUserClientFingerprintUseCaseProtocol()
 
     override func setUp() {

@@ -183,8 +183,8 @@ extension DeviceInfoViewModel {
         credentials: ZMEmailCredentials?,
         gracePeriod: TimeInterval,
         conversationId: Data?,
-        getE2eIdentityEnabled: GetIsE2EIdentityEnabledUsecaseProtocol,
-        getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol,
+        getE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
+        getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(

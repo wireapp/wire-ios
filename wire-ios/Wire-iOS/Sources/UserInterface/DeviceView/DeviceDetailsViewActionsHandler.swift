@@ -28,8 +28,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     private var userSession: UserSession
     private var clientRemovalObserver: ClientRemovalObserver?
     private var credentials: ZMEmailCredentials?
-    private let getE2eIdentityEnabled: GetIsE2EIdentityEnabledUsecaseProtocol
-    private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol
+    private let getE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol
+    private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
     private let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
 
     var isProcessing: ((Bool) -> Void)?
@@ -48,8 +48,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         saveFileManager: SaveFileActions,
         logger: LoggerProtocol = WireLogger.e2ei,
         mlsClientResolver: MLSClientResolving,
-        getE2eIdentityEnabled: GetIsE2EIdentityEnabledUsecaseProtocol,
-        getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol,
+        getE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
+        getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     ) {
         self.userClient = userClient

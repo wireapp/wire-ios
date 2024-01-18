@@ -256,12 +256,12 @@ final class UserSessionMock: UserSession {
         return nil
     }
 
-    var getIsE2eIdentityEnabled: WireSyncEngine.GetIsE2EIdentityEnabledUsecaseProtocol {
-        MockGetIsE2EIdentityEnabledUsecaseProtocol()
+    var getIsE2eIdentityEnabled: WireSyncEngine.GetIsE2EIdentityEnabledUseCaseProtocol {
+        MockGetIsE2EIdentityEnabledUseCaseProtocol()
     }
 
-    var getE2eIdentityCertificates: WireSyncEngine.GetE2eIdentityCertificatesUsecaseProtocol {
-        MockGetE2eIdentityCertificatesUsecaseProtocol()
+    var getE2eIdentityCertificates: WireSyncEngine.GetE2eIdentityCertificatesUseCaseProtocol {
+        MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
     var e2eiFeature: WireDataModel.Feature.E2EI = WireDataModel.Feature.E2EI(status: .enabled)
