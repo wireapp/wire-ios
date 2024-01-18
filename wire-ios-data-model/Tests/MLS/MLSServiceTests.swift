@@ -2663,7 +2663,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.com"
         let mlsGroupID = MLSGroupID.random()
-        let conversation = await uiMOC.perform { [self] in
+        await uiMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
             selfUser.teamIdentifier = .create()
             selfUser.domain = BackendInfo.domain
@@ -2673,7 +2673,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.messageProtocol = .proteus
             conversation.domain = BackendInfo.domain
             conversation.teamRemoteIdentifier = selfUser.teamIdentifier
-            return conversation
         }
 
         mockActionsProvider.updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod = { _, _, _ in }

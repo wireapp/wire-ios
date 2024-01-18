@@ -941,7 +941,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         uiMOC.saveOrRollback()
 
-        let modifier: (ZMConversation, ConversationObserver) -> Void = { [uiMOC, legalHoldClient] _, _ in
+        let modifier: (ZMConversation, ConversationObserver) -> Void = { _, _ in
             self.performPretendingUiMocIsSyncMoc {
                 // Can't call async function inside the synchronous modifier block.
                 // We need an async version of `checkThatItNotifiesTheObserverOfAChange`

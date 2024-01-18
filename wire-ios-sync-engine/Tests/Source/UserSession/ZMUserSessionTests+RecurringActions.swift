@@ -53,16 +53,17 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         XCTAssertFalse(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
     }
 
-    func testThatItUpdatesUsersMissingMetadata() {
+    func testUpdatesUsersMissingMetadataAction() {
         // Given
         let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
         syncMOC.saveOrRollback()
-        let recurringAction = sut.refreshUsersMissingMetadata(interval: 1)
+        let action = sut.refreshUsersMissingMetadataAction
 
         // When
-        recurringAction()
+        action()
 
         // Then
+        XCTAssertEqual(action.interval, 3 * .oneHour)
         XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
     }
 
@@ -70,14 +71,17 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         // Given
         let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
         syncMOC.saveOrRollback()
-        let recurringAction = sut.refreshConversationsMissingMetadata(interval: 1)
+        let action = sut.refreshConversationsMissingMetadataAction
 
         // When
-        recurringAction()
+        action()
 
         // Then
+        XCTAssertEqual(action.interval, 3 * .oneHour)
         XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
     }
+
+    // MARK: - Helpers
 
     private func createUserIsPendingMetadataRefresh(moc: NSManagedObjectContext, domain: String?) -> ZMUser {
         let user = ZMUser(context: moc)

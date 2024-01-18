@@ -279,7 +279,9 @@ final class SearchResultsViewController: UIViewController {
         )
 
         if let task = searchDirectory?.perform(request) {
-            task.onResult({ [weak self] in self?.handleSearchResult(result: $0, isCompleted: $1)})
+            task.addResultHandler { [weak self] result, isCompleted in
+                self?.handleSearchResult(result: result, isCompleted: isCompleted)
+            }
             task.start()
 
             pendingSearchTask = task
@@ -296,15 +298,15 @@ final class SearchResultsViewController: UIViewController {
             options.formUnion(.federated)
         }
 
-        self.performSearch(query: query, options: options)
+        performSearch(query: query, options: options)
     }
 
     func searchForLocalUsers(withQuery query: String) {
-        self.performSearch(query: query, options: [.contacts, .teamMembers, .localResultsOnly])
+        performSearch(query: query, options: [.contacts, .teamMembers, .localResultsOnly])
     }
 
     func searchForServices(withQuery query: String) {
-        self.performSearch(query: query, options: [.services])
+        performSearch(query: query, options: [.services])
     }
 
     func searchContactList() {

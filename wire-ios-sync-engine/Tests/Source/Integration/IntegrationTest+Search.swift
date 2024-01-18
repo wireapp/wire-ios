@@ -33,7 +33,7 @@ extension IntegrationTest {
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
 
-        task?.onResult { (result, completed) in
+        task?.addResultHandler { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
@@ -68,7 +68,7 @@ extension IntegrationTest {
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
 
-        task?.onResult { (result, completed) in
+        task?.addResultHandler { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
@@ -92,7 +92,7 @@ extension IntegrationTest {
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
 
-        task?.onResult { (result, completed) in
+        task?.addResultHandler { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()

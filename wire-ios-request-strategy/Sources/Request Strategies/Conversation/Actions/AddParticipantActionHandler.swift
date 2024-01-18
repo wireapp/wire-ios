@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +40,13 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
     let decoder: JSONDecoder = .defaultDecoder
 
     private let eventProcessor: ConversationEventProcessorProtocol
+
+    convenience override init(context: NSManagedObjectContext) {
+        self.init(
+            context: context,
+            eventProcessor: ConversationEventProcessor(context: context)
+        )
+    }
 
     init(
         context: NSManagedObjectContext,

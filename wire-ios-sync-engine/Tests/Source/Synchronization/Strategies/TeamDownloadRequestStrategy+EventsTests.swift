@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import WireTesting
 @testable import WireSyncEngine
 
-class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
+final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -522,7 +522,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         }
 
         // when
-        await self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+        self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         syncMOC.performGroupedBlock {
             XCTAssert(self.syncMOC.saveOrRollback(), file: file, line: line)
         }
