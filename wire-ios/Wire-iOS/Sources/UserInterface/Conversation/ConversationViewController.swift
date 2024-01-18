@@ -146,6 +146,30 @@ final class ConversationViewController: UIViewController {
         voiceChannelStateObserverToken = addCallStateObserver()
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
         startCallController = ConversationCallController(conversation: conversation, target: self)
+
+        // TODO: Start MLS Migration?
+        resolveConversationIfOneOnOne()
+    }
+
+    private func resolveConversationIfOneOnOne() {
+        guard
+            conversation.participants.count == 2,
+            let otherUserID = conversation.localParticipants.first(where: { !$0.isSelfUser })?.qualifiedID,
+            let context = conversation.managedObjectContext,
+            let service = OneOnOneResolver(syncContext: context.zm_sync)
+        else {
+            debugPrint("Oh...")
+            return
+        }
+
+        Task {
+            do {
+                try await service.resolveOneOnOneConversation(with: otherUserID, in: context)
+            } catch {
+                // TODO: handle error?
+                debugPrint("resolveOneOnOneConversation failed!")
+            }
+        }
     }
 
     override func viewDidLoad() {
