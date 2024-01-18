@@ -91,11 +91,19 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
                 return
             }
 
-            Task { [action] in
+            Task { [action, context] in
                 await processor.updateOrCreateConversation(
                     from: conversationData,
                     in: context
                 )
+                await context.perform {
+                    do {
+                        try context.save()
+                    } catch {
+                        Logging.network.warn("SyncConversationActionHandler: failed to save context: \(error)")
+                        assertionFailure("SyncConversationActionHandler: failed to save context: \(error)")
+                    }
+                }
 
                 var action = action
                 action.succeed()

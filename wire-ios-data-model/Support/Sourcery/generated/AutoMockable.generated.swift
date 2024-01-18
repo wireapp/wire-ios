@@ -658,6 +658,69 @@ class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
+    // MARK: - e2eiRegisterAcmeCa
+
+    var e2eiRegisterAcmeCaTrustAnchorPem_Invocations: [String] = []
+    var e2eiRegisterAcmeCaTrustAnchorPem_MockError: Error?
+    var e2eiRegisterAcmeCaTrustAnchorPem_MockMethod: ((String) async throws -> Void)?
+
+    func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws {
+        e2eiRegisterAcmeCaTrustAnchorPem_Invocations.append(trustAnchorPem)
+
+        if let error = e2eiRegisterAcmeCaTrustAnchorPem_MockError {
+            throw error
+        }
+
+        guard let mock = e2eiRegisterAcmeCaTrustAnchorPem_MockMethod else {
+            fatalError("no mock for `e2eiRegisterAcmeCaTrustAnchorPem`")
+        }
+
+        try await mock(trustAnchorPem)
+    }
+
+    // MARK: - e2eiRegisterCrl
+
+    var e2eiRegisterCrlCrlDpCrlDer_Invocations: [(crlDp: String, crlDer: Data)] = []
+    var e2eiRegisterCrlCrlDpCrlDer_MockError: Error?
+    var e2eiRegisterCrlCrlDpCrlDer_MockMethod: ((String, Data) async throws -> WireCoreCrypto.CrlRegistration)?
+    var e2eiRegisterCrlCrlDpCrlDer_MockValue: WireCoreCrypto.CrlRegistration?
+
+    func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration {
+        e2eiRegisterCrlCrlDpCrlDer_Invocations.append((crlDp: crlDp, crlDer: crlDer))
+
+        if let error = e2eiRegisterCrlCrlDpCrlDer_MockError {
+            throw error
+        }
+
+        if let mock = e2eiRegisterCrlCrlDpCrlDer_MockMethod {
+            return try await mock(crlDp, crlDer)
+        } else if let mock = e2eiRegisterCrlCrlDpCrlDer_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eiRegisterCrlCrlDpCrlDer`")
+        }
+    }
+
+    // MARK: - e2eiRegisterIntermediateCa
+
+    var e2eiRegisterIntermediateCaCertPem_Invocations: [String] = []
+    var e2eiRegisterIntermediateCaCertPem_MockError: Error?
+    var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> Void)?
+
+    func e2eiRegisterIntermediateCa(certPem: String) async throws {
+        e2eiRegisterIntermediateCaCertPem_Invocations.append(certPem)
+
+        if let error = e2eiRegisterIntermediateCaCertPem_MockError {
+            throw error
+        }
+
+        guard let mock = e2eiRegisterIntermediateCaCertPem_MockMethod else {
+            fatalError("no mock for `e2eiRegisterIntermediateCaCertPem`")
+        }
+
+        try await mock(certPem)
+    }
+
     // MARK: - e2eiRotateAll
 
     var e2eiRotateAllEnrollmentCertificateChainNewKeyPackagesCount_Invocations: [(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, newKeyPackagesCount: UInt32)] = []
@@ -2463,6 +2526,39 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(mls)
     }
 
+    // MARK: - fetchMLSMigration
+
+    public var fetchMLSMigration_Invocations: [Void] = []
+    public var fetchMLSMigration_MockMethod: (() -> Feature.MLSMigration)?
+    public var fetchMLSMigration_MockValue: Feature.MLSMigration?
+
+    public func fetchMLSMigration() -> Feature.MLSMigration {
+        fetchMLSMigration_Invocations.append(())
+
+        if let mock = fetchMLSMigration_MockMethod {
+            return mock()
+        } else if let mock = fetchMLSMigration_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLSMigration`")
+        }
+    }
+
+    // MARK: - storeMLSMigration
+
+    public var storeMLSMigration_Invocations: [Feature.MLSMigration] = []
+    public var storeMLSMigration_MockMethod: ((Feature.MLSMigration) -> Void)?
+
+    public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
+        storeMLSMigration_Invocations.append(mlsMigration)
+
+        guard let mock = storeMLSMigration_MockMethod else {
+            fatalError("no mock for `storeMLSMigration`")
+        }
+
+        mock(mlsMigration)
+    }
+
 }
 
 class MockFileManagerInterface: FileManagerInterface {
@@ -2776,6 +2872,46 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
         try await mock(qualifiedID, context)
     }
 
+    // MARK: - updateConversationProtocol
+
+    var updateConversationProtocolQualifiedIDMessageProtocolContext_Invocations: [(qualifiedID: QualifiedID, messageProtocol: MessageProtocol, context: NotificationContext)] = []
+    var updateConversationProtocolQualifiedIDMessageProtocolContext_MockError: Error?
+    var updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod: ((QualifiedID, MessageProtocol, NotificationContext) async throws -> Void)?
+
+    func updateConversationProtocol(qualifiedID: QualifiedID, messageProtocol: MessageProtocol, context: NotificationContext) async throws {
+        updateConversationProtocolQualifiedIDMessageProtocolContext_Invocations.append((qualifiedID: qualifiedID, messageProtocol: messageProtocol, context: context))
+
+        if let error = updateConversationProtocolQualifiedIDMessageProtocolContext_MockError {
+            throw error
+        }
+
+        guard let mock = updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod else {
+            fatalError("no mock for `updateConversationProtocolQualifiedIDMessageProtocolContext`")
+        }
+
+        try await mock(qualifiedID, messageProtocol, context)
+    }
+
+    // MARK: - syncUsers
+
+    var syncUsersQualifiedIDsContext_Invocations: [(qualifiedIDs: [QualifiedID], context: NotificationContext)] = []
+    var syncUsersQualifiedIDsContext_MockError: Error?
+    var syncUsersQualifiedIDsContext_MockMethod: (([QualifiedID], NotificationContext) async throws -> Void)?
+
+    func syncUsers(qualifiedIDs: [QualifiedID], context: NotificationContext) async throws {
+        syncUsersQualifiedIDsContext_Invocations.append((qualifiedIDs: qualifiedIDs, context: context))
+
+        if let error = syncUsersQualifiedIDsContext_MockError {
+            throw error
+        }
+
+        guard let mock = syncUsersQualifiedIDsContext_MockMethod else {
+            fatalError("no mock for `syncUsersQualifiedIDsContext`")
+        }
+
+        try await mock(qualifiedIDs, context)
+    }
+
 }
 
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
@@ -3061,16 +3197,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - wipeGroup
 
     public var wipeGroup_Invocations: [MLSGroupID] = []
-    public var wipeGroup_MockMethod: ((MLSGroupID) async -> Void)?
+    public var wipeGroup_MockError: Error?
+    public var wipeGroup_MockMethod: ((MLSGroupID) async throws -> Void)?
 
-    public func wipeGroup(_ groupID: MLSGroupID) async {
+    public func wipeGroup(_ groupID: MLSGroupID) async throws {
         wipeGroup_Invocations.append(groupID)
+
+        if let error = wipeGroup_MockError {
+            throw error
+        }
 
         guard let mock = wipeGroup_MockMethod else {
             fatalError("no mock for `wipeGroup`")
         }
 
-        await mock(groupID)
+        try await mock(groupID)
     }
 
     // MARK: - commitPendingProposals
@@ -3288,6 +3429,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         await mock(groupID)
+    }
+
+    // MARK: - startProteusToMLSMigration
+
+    public var startProteusToMLSMigration_Invocations: [Void] = []
+    public var startProteusToMLSMigration_MockError: Error?
+    public var startProteusToMLSMigration_MockMethod: (() async throws -> Void)?
+
+    public func startProteusToMLSMigration() async throws {
+        startProteusToMLSMigration_Invocations.append(())
+
+        if let error = startProteusToMLSMigration_MockError {
+            throw error
+        }
+
+        guard let mock = startProteusToMLSMigration_MockMethod else {
+            fatalError("no mock for `startProteusToMLSMigration`")
+        }
+
+        try await mock()
     }
 
     // MARK: - updateKeyMaterialForAllStaleGroupsIfNeeded
@@ -3665,6 +3826,23 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
 }
 
+class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInterface {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - migrationStatus
+
+    var migrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus {
+        get { return underlyingMigrationStatus }
+        set(value) { underlyingMigrationStatus = value }
+    }
+
+    var underlyingMigrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus!
+
+
+}
+
 public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
 
     // MARK: - Life cycle
@@ -3675,29 +3853,29 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
     // MARK: - storeSubconversationGroupID
 
     public var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID?, type: SubgroupType, parentGroupID: MLSGroupID)] = []
-    public var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID?, SubgroupType, MLSGroupID) -> Void)?
+    public var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID?, SubgroupType, MLSGroupID) async -> Void)?
 
-    public func storeSubconversationGroupID(_ groupID: MLSGroupID?, forType type: SubgroupType, parentGroupID: MLSGroupID) {
+    public func storeSubconversationGroupID(_ groupID: MLSGroupID?, forType type: SubgroupType, parentGroupID: MLSGroupID) async {
         storeSubconversationGroupIDForTypeParentGroupID_Invocations.append((groupID: groupID, type: type, parentGroupID: parentGroupID))
 
         guard let mock = storeSubconversationGroupIDForTypeParentGroupID_MockMethod else {
             fatalError("no mock for `storeSubconversationGroupIDForTypeParentGroupID`")
         }
 
-        mock(groupID, type, parentGroupID)
+        await mock(groupID, type, parentGroupID)
     }
 
     // MARK: - fetchSubconversationGroupID
 
     public var fetchSubconversationGroupIDForTypeParentGroupID_Invocations: [(type: SubgroupType, parentGroupID: MLSGroupID)] = []
-    public var fetchSubconversationGroupIDForTypeParentGroupID_MockMethod: ((SubgroupType, MLSGroupID) -> MLSGroupID?)?
+    public var fetchSubconversationGroupIDForTypeParentGroupID_MockMethod: ((SubgroupType, MLSGroupID) async -> MLSGroupID?)?
     public var fetchSubconversationGroupIDForTypeParentGroupID_MockValue: MLSGroupID??
 
-    public func fetchSubconversationGroupID(forType type: SubgroupType, parentGroupID: MLSGroupID) -> MLSGroupID? {
+    public func fetchSubconversationGroupID(forType type: SubgroupType, parentGroupID: MLSGroupID) async -> MLSGroupID? {
         fetchSubconversationGroupIDForTypeParentGroupID_Invocations.append((type: type, parentGroupID: parentGroupID))
 
         if let mock = fetchSubconversationGroupIDForTypeParentGroupID_MockMethod {
-            return mock(type, parentGroupID)
+            return await mock(type, parentGroupID)
         } else if let mock = fetchSubconversationGroupIDForTypeParentGroupID_MockValue {
             return mock
         } else {
@@ -3708,14 +3886,14 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
     // MARK: - findSubgroupTypeAndParentID
 
     public var findSubgroupTypeAndParentIDFor_Invocations: [MLSGroupID] = []
-    public var findSubgroupTypeAndParentIDFor_MockMethod: ((MLSGroupID) -> (parentID: MLSGroupID, type: SubgroupType)?)?
+    public var findSubgroupTypeAndParentIDFor_MockMethod: ((MLSGroupID) async -> (parentID: MLSGroupID, type: SubgroupType)?)?
     public var findSubgroupTypeAndParentIDFor_MockValue: (parentID: MLSGroupID, type: SubgroupType)??
 
-    public func findSubgroupTypeAndParentID(for targetGroupID: MLSGroupID) -> (parentID: MLSGroupID, type: SubgroupType)? {
+    public func findSubgroupTypeAndParentID(for targetGroupID: MLSGroupID) async -> (parentID: MLSGroupID, type: SubgroupType)? {
         findSubgroupTypeAndParentIDFor_Invocations.append(targetGroupID)
 
         if let mock = findSubgroupTypeAndParentIDFor_MockMethod {
-            return mock(targetGroupID)
+            return await mock(targetGroupID)
         } else if let mock = findSubgroupTypeAndParentIDFor_MockValue {
             return mock
         } else {

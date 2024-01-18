@@ -55,10 +55,13 @@ public extension EntityAction {
 
     /// Request the action to be performed
     func send(in context: NotificationContext) {
-        NotificationInContext(name: Self.notificationName,
-                              context: context,
-                              object: nil,
-                              userInfo: [Self.userInfoKey: self]).post()
+        let notification = NotificationInContext(
+            name: Self.notificationName,
+            context: context,
+            object: nil,
+            userInfo: [Self.userInfoKey: self]
+        )
+        notification.post()
     }
 
     /// Called by an `EntityActionHandler` when the action has been performed.
@@ -161,7 +164,7 @@ public extension EntityAction {
     ///   The action's error.
 
     mutating func perform(in context: NotificationContext) async throws -> Result {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             perform(in: context, resultHandler: continuation.resume(with:))
         }
     }
