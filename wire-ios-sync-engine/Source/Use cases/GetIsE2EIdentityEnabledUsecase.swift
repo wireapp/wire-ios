@@ -19,15 +19,19 @@
 import Foundation
 import WireCoreCrypto
 
+// sourcery: AutoMockable
 public protocol GetIsE2EIdentityEnabledUsecaseProtocol {
-    func invoke(coreCryptoProvider: CoreCryptoProviderProtocol) async throws -> Bool
+    func invoke() async throws -> Bool
 }
 
 public final class GetIsE2EIdentityEnabledUsecase: GetIsE2EIdentityEnabledUsecaseProtocol {
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
 
-    public init() { }
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
+        self.coreCryptoProvider = coreCryptoProvider
+    }
 
-    public func invoke(coreCryptoProvider: CoreCryptoProviderProtocol) async throws -> Bool {
+    public func invoke() async throws -> Bool {
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
         return try await coreCrypto.perform {
             try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue)

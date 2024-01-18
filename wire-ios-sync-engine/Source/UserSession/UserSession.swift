@@ -215,9 +215,13 @@ public protocol UserSession: AnyObject {
 
     var selfUserClient: UserClient? { get }
 
-    func getIsE2eIdentityEnabled() async throws -> Bool
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUsecaseProtocol { get }
 
-    func getE2eIdentityCertificates(for clients: [MLSClientID]) async throws -> [E2eIdentityCertificate]
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol { get }
+
+    var e2eiFeature: Feature.E2EI { get }
+
+    func fetchAllClients()
 }
 
 extension ZMUserSession: UserSession {

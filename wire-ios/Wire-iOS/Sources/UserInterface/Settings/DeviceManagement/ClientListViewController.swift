@@ -69,6 +69,8 @@ final class ClientListViewController: UIViewController,
 
     private let clientSorter: (UserClient, UserClient) -> Bool
     private let clientFilter: (UserClient) -> Bool
+    private let userSession: UserSession?
+    private let contextProvider: ContextProvider?
 
     var sortedClients: [UserClient] = []
 
@@ -77,7 +79,7 @@ final class ClientListViewController: UIViewController,
     var credentials: ZMEmailCredentials?
     var clientsObserverToken: Any?
     var userObserverToken: NSObjectProtocol?
-    var userSession: ZMUserSession?
+
     var leftBarButtonItem: UIBarButtonItem? {
         if self.isIPadRegular() {
             return UIBarButtonItem.createNavigationRightBarButtonItem(
@@ -99,9 +101,10 @@ final class ClientListViewController: UIViewController,
 
     required init(
         clientsList: [UserClient]?,
-        userSession: ZMUserSession? = ZMUserSession.shared(),
         selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
+        userSession: UserSession? = ZMUserSession.shared(),
         credentials: ZMEmailCredentials? = .none,
+        contextProvider: ContextProvider? = ZMUserSession.shared(),
         detailedView: Bool = false,
         showTemporary: Bool = true,
         showLegalHold: Bool = true
@@ -110,6 +113,7 @@ final class ClientListViewController: UIViewController,
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
+        self.contextProvider = contextProvider
 
         clientFilter = {
             $0 != selfClient && (showTemporary || $0.type != .temporary) && (showLegalHold || $0.type != .legalHold)
@@ -133,7 +137,7 @@ final class ClientListViewController: UIViewController,
             if clients.isEmpty {
                 (navigationController as? SpinnerCapableViewController ?? self).isLoadingViewVisible = true
             }
-            ZMUserSession.shared()?.fetchAllClients()
+            userSession?.fetchAllClients()
         }
     }
 
@@ -188,10 +192,12 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession = userSession, let navigationController = self.navigationController  else { return }
-
-        let detailsView = DeviceDetailsView(
-            viewModel: DeviceInfoViewModel.map(
+        Task {
+            guard let userSession = userSession,
+                  let navigationController = self.navigationController,
+                  let conversationId = await self.fetchSelfConversation()
+            else { return }
+            let viewModel = DeviceInfoViewModel.map(
                 userClient: client,
                 title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
                 addedDate: client.activationDate?.formattedDate ?? "",
@@ -199,21 +205,30 @@ final class ClientListViewController: UIViewController,
                 isSelfClient: client.isSelfClient(),
                 userSession: userSession,
                 credentials: self.credentials,
-                gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration)
+                gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+                conversationId: conversationId,
+                getE2eIdentityEnabled: userSession.getIsE2eIdentityEnabled,
+                getE2eIdentityCertificates: userSession.getE2eIdentityCertificates
             )
-        ) {
-            self.navigationController?.setNavigationBarHidden(false, animated: false)
+            await MainActor.run {
+                let detailsView = DeviceDetailsView(viewModel: viewModel) {
+                    self.navigationController?.setNavigationBarHidden(false, animated: false)
+                }
+                let hostingViewController = UIHostingController(rootView: detailsView)
+                hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+                navigationController.pushViewController(hostingViewController, animated: true)
+                navigationController.isNavigationBarHidden = true
+            }
         }
-        let hostingViewController = UIHostingController(rootView: detailsView)
-        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationController.pushViewController(hostingViewController, animated: true)
-        navigationController.isNavigationBarHidden = true
     }
 
     @MainActor
-    private func fetchSelfConversation(context: NSManagedObjectContext) async -> Data? {
-       return await context.perform {
-            return ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID?.data
+    private func fetchSelfConversation() async -> Data? {
+        guard let syncContext = contextProvider?.syncContext else {
+            return nil
+        }
+        return await syncContext.perform {
+            return ZMConversation.fetchSelfMLSConversation(in: syncContext)?.mlsGroupID?.data
         }
     }
 

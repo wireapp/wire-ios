@@ -18,16 +18,23 @@
 
 import XCTest
 @testable import Wire
+import WireSyncEngineSupport
 
 final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTestHelper {
+
     var coreDataFixture: CoreDataFixture!
     var client: UserClient!
     var mockSession: UserSessionMock!
     var emailCredentials: ZMEmailCredentials!
+
     let saveFileManager = MockSaveFileManager()
-    let mockMLSClientResolver = MockMLSClentResolver()
+    let mockMLSClientResolver = MockMLSClientResolver()
+    let mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUsecaseProtocol()
+    let mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUsecaseProtocol()
+
     override func setUp() {
         super.setUp()
+        DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled = false
         coreDataFixture = CoreDataFixture()
         client = mockUserClient()
         mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
@@ -43,8 +50,11 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
+            conversationId: Data(),
             saveFileManager: saveFileManager,
-            mlsClientResolver: mockMLSClientResolver
+            mlsClientResolver: mockMLSClientResolver,
+            getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates
         )
         deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
         wait(for: [expectation], timeout: 0.5)
@@ -55,15 +65,20 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
+            conversationId: Data(),
             saveFileManager: MockSaveFileManager(),
-            mlsClientResolver: mockMLSClientResolver
+            mlsClientResolver: mockMLSClientResolver,
+            getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates
         )
+        let returnedCertificate: E2eIdentityCertificate = .mock()
+        mockGetE2eIdentityCertificates.invokeConversationIdClientIds_MockMethod = { _, _ in
+            return [returnedCertificate]
+        }
         let fetchedCertificate = await deviceActionHandler.getCertificate()
-        let suppliedCertificate = try await mockSession.getE2eIdentityCertificates(for: []).first
-        XCTAssertNotNil(fetchedCertificate)
-        XCTAssertNotNil(suppliedCertificate)
-        XCTAssertEqual(fetchedCertificate, suppliedCertificate)
+        XCTAssertEqual(fetchedCertificate, returnedCertificate)
     }
+
 }
 
 extension E2eIdentityCertificate {

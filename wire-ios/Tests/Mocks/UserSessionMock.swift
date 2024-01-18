@@ -248,19 +248,19 @@ final class UserSessionMock: UserSession {
 
     }
 
-    func getIsE2eIdentityEnabled() async throws -> Bool {
-        isE2eIdentityEnabled
-    }
-
-    func getE2eIdentityCertificates(for clients: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
-        [certificate]
-    }
-
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         mockGetUserClientFingerprintUseCaseProtocol
     }
 
     var selfUserClient: UserClient? {
         return nil
+    }
+
+    var getIsE2eIdentityEnabled: WireSyncEngine.GetIsE2EIdentityEnabledUsecaseProtocol {
+        MockGetIsE2EIdentityEnabledUsecaseProtocol()
+    }
+
+    var getE2eIdentityCertificates: WireSyncEngine.GetE2eIdentityCertificatesUsecaseProtocol {
+        MockGetE2eIdentityCertificatesUsecaseProtocol()
     }
 }

@@ -59,7 +59,9 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     var mlsThumbprint: String? {
-        (userClient.mlsPublicKeys.ed25519 ?? e2eIdentityCertificate?.mlsThumbprint)?.uppercased().splitStringIntoLines(charactersPerLine: 16)
+        (userClient.mlsPublicKeys.ed25519 ?? e2eIdentityCertificate?.mlsThumbprint)?
+            .uppercased()
+            .splitStringIntoLines(charactersPerLine: 16)
     }
 
     @Published
@@ -179,7 +181,10 @@ extension DeviceInfoViewModel {
         isSelfClient: Bool,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        gracePeriod: TimeInterval
+        gracePeriod: TimeInterval,
+        conversationId: Data?,
+        getE2eIdentityEnabled: GetIsE2EIdentityEnabledUsecaseProtocol,
+        getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             title: title,
@@ -190,8 +195,11 @@ extension DeviceInfoViewModel {
                 userClient: userClient,
                 userSession: userSession,
                 credentials: credentials,
+                conversationId: conversationId,
                 saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
-                mlsClientResolver: MLSClientResolver()
+                mlsClientResolver: MLSClientResolver(),
+                getE2eIdentityEnabled: getE2eIdentityEnabled,
+                getE2eIdentityCertificates: getE2eIdentityCertificates
             ),
             userClient: userClient,
             isSelfClient: isSelfClient,
