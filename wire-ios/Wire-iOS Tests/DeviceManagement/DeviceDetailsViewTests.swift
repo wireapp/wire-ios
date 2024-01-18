@@ -88,7 +88,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             gracePeriod: 3,
             conversationId: nil,
             getE2eIdentityEnabled: mockSession.getIsE2eIdentityEnabled,
-            getE2eIdentityCertificates: mockSession.getE2eIdentityCertificates
+            getE2eIdentityCertificates: mockSession.getE2eIdentityCertificates,
+            getProteusFingerprint: MockGetUserClientFingerprintUseCaseProtocol()
         )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isE2eIdentityEnabled = isE2eIdentityEnabled

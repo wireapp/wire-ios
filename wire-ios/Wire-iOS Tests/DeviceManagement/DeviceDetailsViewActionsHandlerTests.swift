@@ -31,6 +31,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     let mockMLSClientResolver = MockMLSClientResolver()
     let mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUsecaseProtocol()
     let mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUsecaseProtocol()
+    let mockGetProteusFingerprint = MockGetUserClientFingerprintUseCaseProtocol()
 
     override func setUp() {
         super.setUp()
@@ -54,7 +55,8 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             saveFileManager: saveFileManager,
             mlsClientResolver: mockMLSClientResolver,
             getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
-            getE2eIdentityCertificates: mockGetE2eIdentityCertificates
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            getProteusFingerprint: mockGetProteusFingerprint
         )
         deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
         wait(for: [expectation], timeout: 0.5)
@@ -69,7 +71,8 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             saveFileManager: MockSaveFileManager(),
             mlsClientResolver: mockMLSClientResolver,
             getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
-            getE2eIdentityCertificates: mockGetE2eIdentityCertificates
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            getProteusFingerprint: MockGetUserClientFingerprintUseCaseProtocol()
         )
         let returnedCertificate: E2eIdentityCertificate = .mock()
         mockGetE2eIdentityCertificates.invokeConversationIdClientIds_MockMethod = { _, _ in
@@ -77,6 +80,97 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         }
         let fetchedCertificate = await deviceActionHandler.getCertificate()
         XCTAssertEqual(fetchedCertificate, returnedCertificate)
+    }
+
+    func testThatItReturnsTrue_WhenGetIsE2eIdentityisEnabledIsInvoked() async throws {
+        let deviceActionHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: mockSession,
+            credentials: emailCredentials,
+            conversationId: Data(),
+            saveFileManager: MockSaveFileManager(),
+            mlsClientResolver: mockMLSClientResolver,
+            getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            getProteusFingerprint: mockGetProteusFingerprint
+        )
+        mockGetIsE2eIdentityEnabled.invoke_MockMethod = {
+            return true
+        }
+        let isE2eIdentityEnabled = await deviceActionHandler.isE2eIdentityEnabled()
+        XCTAssertTrue(isE2eIdentityEnabled)
+    }
+
+    func testThatItReturnsFingerPRint_WhenGetFingerPrintIsInvoked() async throws {
+        let deviceActionHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: mockSession,
+            credentials: emailCredentials,
+            conversationId: Data(),
+            saveFileManager: MockSaveFileManager(),
+            mlsClientResolver: mockMLSClientResolver,
+            getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            getProteusFingerprint: mockGetProteusFingerprint
+        )
+        let testFingerPrint = String.random(length: 16)
+        mockGetProteusFingerprint.invokeUserClient_MockMethod = { _ in
+            return testFingerPrint.data(using: .utf8)
+        }
+        let fingerPrint = await deviceActionHandler.getProteusFingerPrint()
+        XCTAssertEqual(fingerPrint, testFingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased())
+    }
+
+    func testThatLoggerHandlesError_WhenFetchCertificateIsInvokedThenErrorIsReturned() async throws {
+        let expectation = self.expectation(description: "Error must be logged")
+        let mockLogger = MockLogger()
+        let deviceActionHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: mockSession,
+            credentials: emailCredentials,
+            conversationId: Data(),
+            saveFileManager: MockSaveFileManager(),
+            logger: mockLogger,
+            mlsClientResolver: mockMLSClientResolver,
+            getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            getProteusFingerprint: mockGetProteusFingerprint
+
+        )
+        let returnedCertificate: E2eIdentityCertificate = .mock()
+        mockGetE2eIdentityCertificates.invokeConversationIdClientIds_MockMethod = { _, _ in
+            throw MockURLSessionError.noNetwork
+        }
+        mockLogger.errorMethod = { _, _ in
+            expectation.fulfill()
+        }
+        _ = await deviceActionHandler.getCertificate()
+        await fulfillment(of: [expectation], timeout: 0.5)
+    }
+
+    func testThatLoggerHandlesError_WhenGetE2EIdeintityIsEnabledIsInvokedThenErrorIsReturned() async throws {
+        let expectation = self.expectation(description: "Error must be logged")
+        let mockLogger = MockLogger()
+        let deviceActionHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: mockSession,
+            credentials: emailCredentials,
+            conversationId: Data(),
+            saveFileManager: MockSaveFileManager(),
+            logger: mockLogger,
+            mlsClientResolver: mockMLSClientResolver,
+            getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            getProteusFingerprint: mockGetProteusFingerprint
+        )
+        mockGetIsE2eIdentityEnabled.invoke_MockMethod = {
+            throw MockURLSessionError.noNetwork
+        }
+        mockLogger.errorMethod = { _, _ in
+            expectation.fulfill()
+        }
+        _ = await deviceActionHandler.isE2eIdentityEnabled()
+        await fulfillment(of: [expectation], timeout: 0.5)
     }
 
 }

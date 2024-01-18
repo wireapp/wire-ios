@@ -184,7 +184,8 @@ extension DeviceInfoViewModel {
         gracePeriod: TimeInterval,
         conversationId: Data?,
         getE2eIdentityEnabled: GetIsE2EIdentityEnabledUsecaseProtocol,
-        getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol
+        getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol,
+        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             title: title,
@@ -199,7 +200,8 @@ extension DeviceInfoViewModel {
                 saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
                 mlsClientResolver: MLSClientResolver(),
                 getE2eIdentityEnabled: getE2eIdentityEnabled,
-                getE2eIdentityCertificates: getE2eIdentityCertificates
+                getE2eIdentityCertificates: getE2eIdentityCertificates,
+                getProteusFingerprint: getProteusFingerprint
             ),
             userClient: userClient,
             isSelfClient: isSelfClient,

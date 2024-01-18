@@ -208,7 +208,8 @@ final class ClientListViewController: UIViewController,
                 gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
                 conversationId: conversationId,
                 getE2eIdentityEnabled: userSession.getIsE2eIdentityEnabled,
-                getE2eIdentityCertificates: userSession.getE2eIdentityCertificates
+                getE2eIdentityCertificates: userSession.getE2eIdentityCertificates,
+                getProteusFingerprint: userSession.getUserClientFingerprint
             )
             await MainActor.run {
                 let detailsView = DeviceDetailsView(viewModel: viewModel) {

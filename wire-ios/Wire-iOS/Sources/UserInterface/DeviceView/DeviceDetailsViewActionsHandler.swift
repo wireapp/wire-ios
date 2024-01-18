@@ -30,6 +30,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     private var credentials: ZMEmailCredentials?
     private let getE2eIdentityEnabled: GetIsE2EIdentityEnabledUsecaseProtocol
     private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol
+    private let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
 
     var isProcessing: ((Bool) -> Void)?
 
@@ -48,7 +49,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         logger: LoggerProtocol = WireLogger.e2ei,
         mlsClientResolver: MLSClientResolving,
         getE2eIdentityEnabled: GetIsE2EIdentityEnabledUsecaseProtocol,
-        getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol
+        getE2eIdentityCertificates: GetE2eIdentityCertificatesUsecaseProtocol,
+        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     ) {
         self.userClient = userClient
         self.credentials = credentials
@@ -59,6 +61,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.getE2eIdentityEnabled = getE2eIdentityEnabled
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.conversationId = conversationId
+        self.getProteusFingerprint = getProteusFingerprint
     }
 
     func updateCertificate() async -> E2eIdentityCertificate? {
@@ -166,7 +169,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func getProteusFingerPrint() async -> String {
-        guard let data = await userSession.getUserClientFingerprint.invoke(userClient: userClient),
+        guard let data = await getProteusFingerprint.invoke(userClient: userClient),
                 let fingerPrint = String(data: data, encoding: .utf8) else {
             return ""
         }
