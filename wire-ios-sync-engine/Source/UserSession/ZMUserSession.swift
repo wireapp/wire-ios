@@ -414,6 +414,8 @@ public class ZMUserSession: NSObject {
                 let service = SupportedProtocolsService(context: context)
                 service.updateSupportedProtocols()
             }
+
+            // TODO: evaluate migrate all 1-1 conversations to mls
         }
 
         recurringActionService.registerAction(recurringAction)
