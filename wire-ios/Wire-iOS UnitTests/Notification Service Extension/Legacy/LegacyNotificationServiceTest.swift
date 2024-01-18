@@ -18,8 +18,11 @@
 
 import XCTest
 import WireNotificationEngine
-import Wire_Notification_Service_Extension
+import WireDataModel
 import WireDataModelSupport
+import WireRequestStrategy
+
+@testable import Wire_Notification_Service_Extension
 
 final class LegacyNotificationServiceTests: XCTestCase {
 
@@ -127,6 +130,11 @@ final class LegacyNotificationServiceTests: XCTestCase {
         var expectedResult: Swift.Result<CoreDataStack, LegacyNotificationServiceError>?
 
         // when
+//        func createCoreDataStack(
+//            applicationGroupIdentifier: String,
+//            accountIdentifier: UUID,
+//            completion: @escaping (Swift.Result<CoreDataStack, LegacyNotificationServiceError>) -> Void
+//        ) {
         sut.createCoreDataStack(applicationGroupIdentifier: appGroupID, accountIdentifier: accountIdentifier) {
             expectedResult = $0
         }

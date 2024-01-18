@@ -19,7 +19,9 @@
 import XCTest
 import WireTransport
 
-class NetworkSessionTests: XCTestCase {
+@testable import Wire_Notification_Service_Extension
+
+final class NetworkSessionTests: XCTestCase {
 
     var mockURLSession: URLSessionMock!
     var mockNetworkRequest: NetworkRequest!

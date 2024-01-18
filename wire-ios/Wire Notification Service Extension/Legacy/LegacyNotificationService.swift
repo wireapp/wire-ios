@@ -21,9 +21,6 @@ import UserNotifications
 import WireRequestStrategy
 import WireNotificationEngine
 import WireCommonComponents
-import WireDataModel
-import WireSyncEngine
-import WireUtilities
 
 final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
 

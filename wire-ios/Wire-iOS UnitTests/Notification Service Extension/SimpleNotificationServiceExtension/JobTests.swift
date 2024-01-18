@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire_Notification_Service_Extension
 
-class JobTests: XCTestCase {
+final class JobTests: XCTestCase {
 
     var mockNetworkSession: MockNetworkSession!
     var mockAccessAPIClient: MockAccessAPIClient!

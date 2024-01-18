@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireTransport
+import class WireTransport.ZMPersistentCookieStorage
 
 protocol CookieProvider {
     var isAuthenticated: Bool { get }
