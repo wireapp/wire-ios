@@ -719,12 +719,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
         networkState = state
     }
-
-    private func fetchSelfConversation(context: NSManagedObjectContext) async -> Data? {
-       return await context.perform {
-            return ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID?.data
-        }
-    }
 }
 
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
