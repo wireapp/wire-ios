@@ -323,6 +323,62 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+    // MARK: Team member search
+
+    func testThatTeamMembersAreNotSearchedLocally() {
+        // given
+        let resultArrived = customExpectation(description: "received result")
+        let team = Team.insertNewObject(in: uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        let member = Member.insertNewObject(in: uiMOC)
+
+        user.name = "Member A"
+
+        member.team = team
+        member.user = user
+
+        uiMOC.saveOrRollback()
+
+        let request = SearchRequest(query: "@member", searchOptions: [.teamMembers], team: team)
+        let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
+
+        // expect
+        task.addResultHandler { (result, _) in
+            resultArrived.fulfill()
+            XCTAssertEqual(result.teamMembers.compactMap(\.user), [])
+        }
+
+        // when
+        task.performLocalSearch()
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatTeamMembersAreSearchedRemotely() {
+        // given
+        setCurrentAPIVersion(.v2)
+        mockTransportSession.performRemoteChanges { remoteChanges in
+            remoteChanges.insertUser(withName: "UserX")
+        }
+        let resultArrived = customExpectation(description: "received result")
+        let request = SearchRequest(query: "user", searchOptions: [.contacts, .teamMembers])
+        let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
+        var result: SearchResult!
+        task.addResultHandler { r, _ in
+            result = r
+            print(result)
+            print(result.teamMembers)
+            resultArrived.fulfill()
+        }
+
+        // when
+        task.performRemoteSearch()
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(result.teamMembers.count, 1)
+        XCTAssertEqual(result.teamMembers.first?.name, "UserX")
+    }
+
     // MARK: Conversation Search
 
     func testThatItFindsASingleConversation() {
