@@ -135,7 +135,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             from: event.payload
         ) else { return }
 
-        await processor.processPayload(payload, originalEvent: event, in: context)
+        await context.perform {
+            self.processor.processPayload(payload, originalEvent: event, in: self.context)
+        }
     }
 
     private func processConversationMemberJoin(_ event: ZMUpdateEvent) async {
