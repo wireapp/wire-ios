@@ -123,25 +123,24 @@ extension SearchTask {
 
         tasksRemaining += 1
 
-        searchContext.performGroupedBlock {
-            let selfUser = ZMUser.selfUser(in: self.searchContext)
+        searchContext.performGroupedBlock { [self] in
+            let selfUser = ZMUser.selfUser(in: searchContext)
 
             var options = SearchOptions()
 
             options.updateForSelfUserTeamRole(selfUser: selfUser)
 
             /// search for the local user with matching user ID and active
-            let activeMembers = self.teamMembers(matchingQuery: "", team: selfUser.team, searchOptions: options)
-            let teamMembers = activeMembers.filter({ $0.remoteIdentifier == userId})
-            let connectedUsers = self.connectedUsers(matchingQuery: "").filter({ $0.remoteIdentifier == userId})
+            let one2oneGroupConversationUsers = oneToOneGroupConversationUsers(selfUser: selfUser)
+            let connectedUsers = connectedUsers(matchingQuery: "").filter({ $0.remoteIdentifier == userId})
 
             self.contextProvider.viewContext.performGroupedBlock {
 
-                let copiedTeamMembers = teamMembers.compactMap(\.user).compactMap { self.contextProvider.viewContext.object(with: $0.objectID) as? Member}
+                let copiedOne2oneConversationUsers = one2oneGroupConversationUsers.compactMap { self.contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
                 let copiedConnectedUsers = connectedUsers.compactMap { self.contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
 
                 let result = SearchResult(contacts: copiedConnectedUsers.map { ZMSearchUser(contextProvider: self.contextProvider, user: $0)},
-                                          teamMembers: copiedTeamMembers.compactMap(\.user).map { ZMSearchUser(contextProvider: self.contextProvider, user: $0)},
+                                          teamMembers: copiedOne2oneConversationUsers.map { ZMSearchUser(contextProvider: self.contextProvider, user: $0)},
                                           addressBook: [],
                                           directory: [],
                                           conversations: [],
@@ -163,7 +162,7 @@ extension SearchTask {
 
             let selfUser = ZMUser.selfUser(in: searchContext)
             let connectedUsers = request.searchOptions.contains(.contacts) ? connectedUsers(matchingQuery: request.normalizedQuery) : []
-            let one2oneConversationUsers = oneToOneConversationUsers(selfUser: selfUser)
+            let one2oneGroupConversationUsers = oneToOneGroupConversationUsers(selfUser: selfUser)
             let conversations = request.searchOptions.contains(.conversations) ? conversations(matchingQuery: request.query, selfUser: selfUser) : []
 
             contextProvider.viewContext.performGroupedBlock { [self] in
@@ -172,7 +171,7 @@ extension SearchTask {
                 let searchConnectedUsers = copiedConnectedUsers
                                            .map { ZMSearchUser(contextProvider: contextProvider, user: $0) }
                                            .filter { !$0.hasEmptyName }
-                let copiedOne2oneConversationUsers = one2oneConversationUsers.compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
+                let copiedOne2oneConversationUsers = one2oneGroupConversationUsers.compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
                 let searchOne2oneConversationUsers = copiedOne2oneConversationUsers
                                            .map { ZMSearchUser(contextProvider: contextProvider, user: $0) }
                                            .filter { !$0.hasEmptyName }
@@ -206,37 +205,12 @@ extension SearchTask {
         })
     }
 
-    func teamMembers(matchingQuery query: String, team: Team?, searchOptions: SearchOptions) -> [Member] {
-        var result =  team?.members(matchingQuery: query) ?? []
-
-        if searchOptions.contains(.excludeNonActiveTeamMembers) {
-            result = filterNonActiveTeamMembers(members: result)
-        }
-
-        if searchOptions.contains(.excludeNonActivePartners) {
-            let query = query.strippingLeadingAtSign()
-            let selfUser = ZMUser.selfUser(in: searchContext)
-            let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
-            let activeContacts = Set(activeConversations.flatMap { $0.localParticipants })
-
-            result = result.filter { membership in
-                if let user = membership.user {
-                    return user.teamRole != .partner || user.handle == query || membership.createdBy == selfUser || activeContacts.contains(user)
-                } else {
-                    return false
-                }
-            }
-        }
-
-        return result
-    }
-
     func connectedUsers(matchingQuery query: String) -> [ZMUser] {
         let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(withSearch: query))
         return searchContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
     }
 
-    func oneToOneConversationUsers(selfUser: ZMUser) -> Set<ZMUser> {
+    func oneToOneGroupConversationUsers(selfUser: ZMUser) -> Set<ZMUser> {
         let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicateForTeamOneToOneConversation())
         let conversations = searchContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
         return conversations
