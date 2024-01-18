@@ -4029,12 +4029,12 @@
 		065A5ADF279B07AC002D4D1E /* Wire Notification Service Extension */ = {
 			isa = PBXGroup;
 			children = (
-				E6A0D63C2B591A20008DC016 /* Legacy */,
 				EE7C919727B40EBD00595977 /* Wire Notification Extension.entitlements */,
 				065A5AE2279B07AC002D4D1E /* Info.plist */,
 				EE7C422628B47CFC00CE018B /* Logger.swift */,
 				065A5AE0279B07AC002D4D1E /* NotificationService.swift */,
 				E6A0D6382B591997008DC016 /* UNNotificationContent+Empty.swift */,
+				E6A0D63C2B591A20008DC016 /* Legacy */,
 				EE3D7B0328AEF22A00D0A37E /* Simple */,
 			);
 			path = "Wire Notification Service Extension";
