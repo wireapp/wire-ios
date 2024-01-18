@@ -382,23 +382,16 @@ struct ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) async {
-        guard
-            let qualifiedID = payload.qualifiedID,
-            let newMessageProtocol = MessageProtocol(rawValue: payload.data.messageProtocol)
-        else {
+        guard let qualifiedID = payload.qualifiedID else {
             Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
             return
         }
 
         do {
-            let updater = ConversationPostProtocolChangeUpdater()
-            try await updater.updateLocalConversation(
-                for: qualifiedID,
-                to: newMessageProtocol,
-                context: context
-            )
+            var action = SyncConversationAction(qualifiedID: qualifiedID)
+            try await action.perform(in: context.notificationContext)
         } catch {
-            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): updating conversation failed with error: \(error)")
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)")
         }
     }
 
@@ -468,6 +461,7 @@ struct ConversationEventPayloadProcessor {
                 in: context,
                 created: &created
             )
+
             conversation.conversationType = .group
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
@@ -728,17 +722,46 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
-        guard let messageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
+        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
             Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
 
-        let previousProtocol = conversation.messageProtocol
-        if previousProtocol == .proteus && messageProtocol == .mls {
-            conversation.appendMLSMigrationPotentialGapSystemMessage(sender: ZMUser.selfUser(in: context), at: conversation.lastModifiedDate ??  Date())
-        }
+        let sender = ZMUser.selfUser(in: context)
 
-        conversation.messageProtocol = messageProtocol
+        switch conversation.messageProtocol {
+        case .proteus:
+            switch newMessageProtocol {
+            case .proteus:
+                break // no update, ignore
+            case .mixed:
+                conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+            case .mls:
+                let date = conversation.lastModifiedDate ?? .now
+                conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
+                conversation.messageProtocol = newMessageProtocol
+            }
+
+        case .mixed:
+            switch newMessageProtocol {
+            case .proteus:
+                WireLogger.updateEvent.warn("update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!")
+            case .mixed:
+                break // no update, ignore
+            case .mls:
+                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+            }
+
+        case .mls:
+            switch newMessageProtocol {
+            case .proteus, .mixed:
+                WireLogger.updateEvent.warn("update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!")
+            case .mls:
+                break // no update, ignore
+            }
+        }
     }
 
     private func updateMLSStatus(
