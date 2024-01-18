@@ -241,7 +241,7 @@ extension SearchTask {
 
     func conversations(matchingQuery query: SearchRequest.Query, selfUser: ZMUser) -> [ZMConversation] {
         /// TODO: use the interface with tean param?
-        let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: query.string, selfUser: ZMUser.selfUser(in: searchContext)))
+        let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: query.string, selfUser: selfUser))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: ZMNormalizedUserDefinedNameKey, ascending: true)]
 
         var conversations = searchContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
