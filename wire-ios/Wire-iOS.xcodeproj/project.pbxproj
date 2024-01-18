@@ -255,6 +255,8 @@
 		2572EC602B148EE50075A7BE /* DeviceDetailsViewActionsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2572EC532B148EE50075A7BE /* DeviceDetailsViewActionsHandler.swift */; };
 		2577CB612B189989007D3443 /* String+FingerprintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB602B189989007D3443 /* String+FingerprintTests.swift */; };
 		2577CB632B18A406007D3443 /* E2EIdentityCertificateStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB622B18A406007D3443 /* E2EIdentityCertificateStatus.swift */; };
+		2577CB682B18DABD007D3443 /* DeveloperDeviceDetailsSettingsSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB672B18DABD007D3443 /* DeveloperDeviceDetailsSettingsSelectionView.swift */; };
+		2577CB6A2B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB692B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift */; };
 		2577CB7B2B1DC787007D3443 /* DeviceMLSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */; };
 		2577CB822B1DFF66007D3443 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB812B1DFF66007D3443 /* ViewConstants.swift */; };
 		259303192B56E6250027C68A /* E2eIdentityCertificate+mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259303132B56E4CF0027C68A /* E2eIdentityCertificate+mocks.swift */; };
@@ -2254,6 +2256,8 @@
 		2572EC532B148EE50075A7BE /* DeviceDetailsViewActionsHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceDetailsViewActionsHandler.swift; sourceTree = "<group>"; };
 		2577CB602B189989007D3443 /* String+FingerprintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FingerprintTests.swift"; sourceTree = "<group>"; };
 		2577CB622B18A406007D3443 /* E2EIdentityCertificateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIdentityCertificateStatus.swift; sourceTree = "<group>"; };
+		2577CB672B18DABD007D3443 /* DeveloperDeviceDetailsSettingsSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDeviceDetailsSettingsSelectionView.swift; sourceTree = "<group>"; };
+		2577CB692B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDeviceDetailsSettingsSelectionViewModel.swift; sourceTree = "<group>"; };
 		2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceMLSView.swift; sourceTree = "<group>"; };
 		2577CB812B1DFF66007D3443 /* ViewConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstants.swift; sourceTree = "<group>"; };
 		259303132B56E4CF0027C68A /* E2eIdentityCertificate+mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "E2eIdentityCertificate+mocks.swift"; sourceTree = "<group>"; };
@@ -4486,6 +4490,15 @@
 				2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		2577CB662B18DAA3007D3443 /* E2eIdentity */ = {
+			isa = PBXGroup;
+			children = (
+				2577CB672B18DABD007D3443 /* DeveloperDeviceDetailsSettingsSelectionView.swift */,
+				2577CB692B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift */,
+			);
+			path = E2eIdentity;
 			sourceTree = "<group>";
 		};
 		259303142B56E4CF0027C68A /* MockE2eIdentityProviders */ = {
@@ -7739,6 +7752,7 @@
 		EE742AB9284DE67300A6B5F3 /* DeveloperTools */ = {
 			isa = PBXGroup;
 			children = (
+				2577CB662B18DAA3007D3443 /* E2eIdentity */,
 				EE742AB5284DE57900A6B5F3 /* DeveloperToolsView.swift */,
 				EE742AB7284DE66400A6B5F3 /* DeveloperToolsViewModel.swift */,
 				E66258852B4D391700C23E79 /* DebugActions */,
@@ -9850,6 +9864,7 @@
 				16A5FDC52154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift in Sources */,
 				87CA886E1DDF0075004101B6 /* UserConnectionViewController.swift in Sources */,
 				87D21AD71D8A98620075AB7A /* AccentColorPickerController.swift in Sources */,
+				2577CB682B18DABD007D3443 /* DeveloperDeviceDetailsSettingsSelectionView.swift in Sources */,
 				EF883F2E215144B800B440CC /* Analytics+OptOut.swift in Sources */,
 				5EF4A6E220F3C4A300A9EF22 /* GiphyCollectionViewCell.swift in Sources */,
 				6372AAA72492719100C5F307 /* GridCell.swift in Sources */,
@@ -10041,6 +10056,7 @@
 				1689FD4B2195C8B800A656E2 /* EphemeralCountdownView.swift in Sources */,
 				162917CE1F8CD327000F3E92 /* NetworkStatusViewController.swift in Sources */,
 				A9C3223F23EB200F00E17311 /* CountryCell.swift in Sources */,
+				2577CB6A2B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift in Sources */,
 				5E62802C222551CF0039A8AB /* IncomingRequestFooterView.swift in Sources */,
 				EF2F161E225748F100C44B88 /* ConnectRequestsCell.swift in Sources */,
 				0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */,
