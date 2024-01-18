@@ -103,12 +103,29 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
         }
     }
 
+    static func mockCertifiateForSelectedStatus() -> E2eIdentityCertificate? {
+        guard let selectedE2eIdentiyStatus = selectedE2eIdentiyStatus,
+              let selectedStatus = E2EIdentityCertificateStatus.status(for: selectedE2eIdentiyStatus) else {
+            return nil
+        }
+        switch selectedStatus {
+        case .notActivated:
+            return .mockNotActivated
+        case .revoked:
+            return .mockRevoked
+        case .expired:
+            return .mockExpired
+        case .valid:
+            return .mockValid
+        }
+    }
+
 }
 
 private extension E2EIdentityCertificateStatus {
-    static func status(for string: String) -> E2EIdentityCertificateStatus {
+    static func status(for string: String) -> E2EIdentityCertificateStatus? {
         E2EIdentityCertificateStatus.allCases.filter({
             $0.titleForStatus() == string
-        }).first ?? .notActivated
+        }).first
     }
 }

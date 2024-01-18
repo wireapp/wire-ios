@@ -63,6 +63,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func getCertificate() async -> E2eIdentityCertificate? {
+        #if DEBUG
+        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
+            return DeveloperDeviceDetailsSettingsSelectionViewModel.mockCertifiateForSelectedStatus()
+        }
+        #endif
         guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient) else {
             return nil
         }
@@ -75,6 +80,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     }
 
     func isE2eIdentityEnabled() async -> Bool {
+        #if DEBUG
+        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
+            return true
+        }
+        #endif
         do {
             return try await userSession.getIsE2eIdentityEnabled()
         } catch {
