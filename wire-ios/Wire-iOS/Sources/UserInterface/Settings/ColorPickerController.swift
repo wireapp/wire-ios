@@ -22,7 +22,6 @@ import WireCommonComponents
 
 protocol ColorPickerControllerDelegate: AnyObject {
     func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor)
-    func colorPickerWantsToDismiss(_ colotPicker: ColorPickerController)
 }
 
 class ColorPickerController: UIViewController {
@@ -46,7 +45,7 @@ class ColorPickerController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        createConstraints()
+        setupConstraints()
     }
 
     private func setupViews() {
@@ -60,7 +59,7 @@ class ColorPickerController: UIViewController {
         self.navigationItem.rightBarButtonItem = navigationController?.closeItem()
     }
 
-    private func createConstraints() {
+    private func setupConstraints() {
         [tableView].prepareForLayout()
 
         NSLayoutConstraint.activate([
@@ -69,11 +68,6 @@ class ColorPickerController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
-    }
-
-    @objc
-    private func didPressDismiss(_ sender: AnyObject?) {
-        delegate?.colorPickerWantsToDismiss(self)
     }
 }
 

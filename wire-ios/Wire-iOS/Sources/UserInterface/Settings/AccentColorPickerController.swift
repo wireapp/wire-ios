@@ -64,7 +64,4 @@ extension AccentColorPickerController: ColorPickerControllerDelegate {
         }
     }
 
-    func colorPickerWantsToDismiss(_ colotPicker: ColorPickerController) {
-        dismiss(animated: true, completion: .none)
-    }
 }
