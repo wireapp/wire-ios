@@ -208,6 +208,10 @@
 		16D4932A203DCCCA008DDFFA /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D49329203DCCCA008DDFFA /* UserCell.swift */; };
 		16D4932C203DD480008DDFFA /* UserCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D4932B203DD480008DDFFA /* UserCellTests.swift */; };
 		16D68E9B1CEF99C7003AB9E0 /* WaveformProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D68E9A1CEF99C7003AB9E0 /* WaveformProgressView.swift */; };
+		16D74BEA2B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BE92B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift */; };
+		16D74BEC2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */; };
+		16D74BEE2B5933D000160298 /* AddUsernameStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BED2B5933D000160298 /* AddUsernameStepDescription.swift */; };
+		16D74BF22B5960F000160298 /* AuthenticationAddUsernameInputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BF12B5960F000160298 /* AuthenticationAddUsernameInputHandler.swift */; };
 		16DD6E95228304B70090A74C /* LegalHoldDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DD6E94228304B70090A74C /* LegalHoldDetailsViewController.swift */; };
 		16DD6E982283102D0090A74C /* LegalHoldParticipantsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DD6E972283102D0090A74C /* LegalHoldParticipantsSectionController.swift */; };
 		16DD6EB8228431030090A74C /* LegalHoldHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DD6EB7228431030090A74C /* LegalHoldHeaderView.swift */; };
@@ -2195,6 +2199,10 @@
 		16D49329203DCCCA008DDFFA /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		16D4932B203DD480008DDFFA /* UserCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCellTests.swift; sourceTree = "<group>"; };
 		16D68E9A1CEF99C7003AB9E0 /* WaveformProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformProgressView.swift; sourceTree = "<group>"; };
+		16D74BE92B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationMissingUsernameErrorHandler.swift; sourceTree = "<group>"; };
+		16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStartMissingUsernameErrorHandler.swift; sourceTree = "<group>"; };
+		16D74BED2B5933D000160298 /* AddUsernameStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUsernameStepDescription.swift; sourceTree = "<group>"; };
+		16D74BF12B5960F000160298 /* AuthenticationAddUsernameInputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationAddUsernameInputHandler.swift; sourceTree = "<group>"; };
 		16DD6E94228304B70090A74C /* LegalHoldDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldDetailsViewController.swift; sourceTree = "<group>"; };
 		16DD6E972283102D0090A74C /* LegalHoldParticipantsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldParticipantsSectionController.swift; sourceTree = "<group>"; };
 		16DD6EB7228431030090A74C /* LegalHoldHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldHeaderView.swift; sourceTree = "<group>"; };
@@ -4509,6 +4517,7 @@
 			isa = PBXGroup;
 			children = (
 				5E21344A21E351D400273D0D /* LogInStepDescription.swift */,
+				16D74BED2B5933D000160298 /* AddUsernameStepDescription.swift */,
 				5E90418A21F61CBF00C3B413 /* ReauthenticateStepDescription.swift */,
 				5E8FFC0921ECE3920052DF03 /* BackupRestoreStepDescription.swift */,
 				5E8FFC1721EF61A80052DF03 /* ClientUnregisterInvitationStepDescription.swift */,
@@ -4791,6 +4800,7 @@
 				5E8DA757211B055100360979 /* AuthenticationClientLimitErrorHandler.swift */,
 				5E8DA759211B075E00360979 /* AuthenticationNoCredentialsErrorHandler.swift */,
 				5E8DA75D211B0E5800360979 /* AuthenticationNeedsReauthenticationErrorHandler.swift */,
+				16D74BE92B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift */,
 				5E1314D02209A2CD000FAFC5 /* ClientRegistrationErrorEventHandler.swift */,
 			);
 			path = "Registration Error";
@@ -4829,6 +4839,7 @@
 				5E8DA76E211B422D00360979 /* AuthenticationStartReauthenticateErrorHandler.swift */,
 				5E1314C022097BEF000FAFC5 /* AuthenticationStartCompanyLoginLinkEventHandler.swift */,
 				5EE73BE52122C6DC0032986D /* AuthenticationStartAddAccountEventHandler.swift */,
+				16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */,
 			);
 			path = "Flow Start";
 			sourceTree = "<group>";
@@ -5027,6 +5038,7 @@
 				010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */,
 				5E8FFC0F21EE0CA60052DF03 /* AuthenticationButtonTapInputHandler.swift */,
 				5E8FFC1F21EF83FF0052DF03 /* AuthenticationAddEmailPasswordInputHandler.swift */,
+				16D74BF12B5960F000160298 /* AuthenticationAddUsernameInputHandler.swift */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -9188,6 +9200,7 @@
 				CE2402811E0A992200665A91 /* AnalyticsConsoleProvider.swift in Sources */,
 				A9A6506224D1857D00B6A68D /* TransparentNavigationBar.swift in Sources */,
 				EEE81E9A23E091DF00A1D035 /* ProfilePresenter+ProfileViewControllerDelegate.swift in Sources */,
+				16D74BF22B5960F000160298 /* AuthenticationAddUsernameInputHandler.swift in Sources */,
 				EEB8CD052410FFCC006FDE0B /* UserSet.swift in Sources */,
 				5E8DA75E211B0E5800360979 /* AuthenticationNeedsReauthenticationErrorHandler.swift in Sources */,
 				D5168F512010F20300F8222A /* ShareViewController+Views.swift in Sources */,
@@ -9875,6 +9888,7 @@
 				EF4018BE205975C100CFBCB0 /* ApplicationProtocol.swift in Sources */,
 				875753D1211DC61C00A80F5E /* EmptySearchResultsView.swift in Sources */,
 				E9F2D6402B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift in Sources */,
+				16D74BEC2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift in Sources */,
 				E9CCCF9729101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift in Sources */,
 				06717E592865179000AF442C /* SemanticColors.swift in Sources */,
 				54AB765C1DB7AB77008D19C8 /* DeveloperOptionsController.swift in Sources */,
@@ -9898,6 +9912,7 @@
 				EF4C5D50233A17680092CA38 /* ConversationListContentController.swift in Sources */,
 				87BEB0441D3E478500DE9575 /* AssetLibrary.swift in Sources */,
 				D30880FE292E521D00DDEAB0 /* CallingActionsInfoViewController.swift in Sources */,
+				16D74BEA2B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift in Sources */,
 				E90B7DB628117DED001831FB /* DynamicFontLabel.swift in Sources */,
 				EECA90AA287449EC0024B301 /* DeveloperFlagsView.swift in Sources */,
 				637C825C267CED69009457CA /* Stream+Video.swift in Sources */,
@@ -9906,6 +9921,7 @@
 				879649002046EE5E00F46B4B /* BarController.swift in Sources */,
 				EEE81E9623E0521300A1D035 /* TopPeopleLineCollectionViewControllerDelegate.swift in Sources */,
 				1639A85D2265FC8800868AB9 /* UIAlertController+Availability.swift in Sources */,
+				16D74BEE2B5933D000160298 /* AddUsernameStepDescription.swift in Sources */,
 				BFE57B4B1D52335A00CB0806 /* ConversationPreviewViewController.swift in Sources */,
 				5E628021221ED0A60039A8AB /* ProfileActionsFactory.swift in Sources */,
 				D5677158202B496700308448 /* CreateGroupSection.swift in Sources */,

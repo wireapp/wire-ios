@@ -4740,6 +4740,26 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.sign_out_button.title", fallback: "Log out")
           }
         }
+        internal enum Username {
+          /// Enter your username. It helps others to find you in Wire and connect with you.
+          internal static let message = L10n.tr("Localizable", "registration.signin.username.message", fallback: "Enter your username. It helps others to find you in Wire and connect with you.")
+          /// username
+          internal static let placeholder = L10n.tr("Localizable", "registration.signin.username.placeholder", fallback: "username")
+          /// Your username
+          internal static let title = L10n.tr("Localizable", "registration.signin.username.title", fallback: "Your username")
+          internal enum AlreadyTakenError {
+            /// The username is already taken, please try another one
+            internal static let message = L10n.tr("Localizable", "registration.signin.username.already_taken_error.message", fallback: "The username is already taken, please try another one")
+            /// Username is already taken
+            internal static let title = L10n.tr("Localizable", "registration.signin.username.already_taken_error.title", fallback: "Username is already taken")
+          }
+          internal enum UnknownError {
+            /// Please try again later.
+            internal static let message = L10n.tr("Localizable", "registration.signin.username.unknown_error.message", fallback: "Please try again later.")
+            /// Couldn't update username
+            internal static let title = L10n.tr("Localizable", "registration.signin.username.unknown_error.title", fallback: "Couldn't update username")
+          }
+        }
       }
       internal enum TermsOfUse {
         /// Accept

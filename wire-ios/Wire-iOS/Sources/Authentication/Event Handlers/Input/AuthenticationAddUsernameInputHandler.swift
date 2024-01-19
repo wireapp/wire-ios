@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,33 +19,24 @@
 import Foundation
 
 /**
- * Handles input during the incremental user creation.
+ * Handles the input of the username after login if the user doesn't have one.
  */
 
-class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEventHandler {
+class AuthenticationAddUsernameInputHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {
-        // Only handle input during the incremental user creation.
-        guard case .incrementalUserCreation(_, let step) = currentStep else {
+        // Only handle input during the add username phase.
+        guard case .addUsername = currentStep else {
             return nil
         }
 
-        // Only handle string values
-        guard let input = context as? String else {
+        guard let handle = context as? String else {
             return nil
         }
 
-        // Only handle input during name and password steps
-        switch step {
-        case .setName:
-            return [.setFullName(input)]
-        case .setPassword:
-            return [.setUserPassword(input)]
-        default:
-            return nil
-        }
+        return [.setUsername(handle)]
     }
 
 }
