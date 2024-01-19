@@ -22,6 +22,8 @@ import WireCommonComponents
 
 class PickerCell: UITableViewCell {
 
+    // MARK: - Constants
+
     private struct Constants {
         static let colorViewSize: CGFloat = 28
         static let colorViewCornerRadius: CGFloat = 14
@@ -29,6 +31,8 @@ class PickerCell: UITableViewCell {
         static let rightPadding: CGFloat = 20
         static let labelLeftPadding: CGFloat = 64
     }
+
+    // MARK: - Properties
 
     private let checkmarkView = UIImageView()
     private let colorView = UIView()
@@ -38,6 +42,16 @@ class PickerCell: UITableViewCell {
         label.textColor = SemanticColors.Label.textDefault
         return label
     }()
+
+    var color: AccentColor? {
+        didSet {
+            if let color = color {
+                colorView.backgroundColor = UIColor(for: color)
+            }
+        }
+    }
+
+    // MARK: - Initializers
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -50,13 +64,13 @@ class PickerCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    var color: AccentColor? {
-        didSet {
-            if let color = color {
-                colorView.backgroundColor = UIColor(for: color)
-            }
-        }
+    // MARK: - Public Methods
+
+    func setColorName(_ name: String) {
+        colorNameLabel.text = name
     }
+
+    // MARK: - Override Methods
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
@@ -70,15 +84,12 @@ class PickerCell: UITableViewCell {
         checkmarkView.isHidden = true
     }
 
-    func setColorName(_ name: String) {
-        colorNameLabel.text = name
-    }
+    // MARK: - Private Setup Methods
 
     private func setupViews() {
         selectionStyle = .none
         backgroundColor = SemanticColors.View.backgroundUserCell
         addBorder(for: .bottom)
-
         setupColorView()
         setupCheckmarkView()
         setupColorNameLabel()
@@ -99,6 +110,8 @@ class PickerCell: UITableViewCell {
     private func setupColorNameLabel() {
         contentView.addSubview(colorNameLabel)
     }
+
+    // MARK: - Constraints
 
     private func createConstraints() {
         [checkmarkView, colorView, colorNameLabel].prepareForLayout()
