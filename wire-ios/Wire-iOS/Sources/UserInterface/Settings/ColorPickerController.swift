@@ -87,24 +87,24 @@ extension ColorPickerController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: PickerCell.reuseIdentifier) as? PickerCell else {
-            fatal("Cannot create cell")
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PickerCell.reuseIdentifier, for: indexPath) as? PickerCell else {
+            fatalError("Cannot create cell")
         }
 
-        cell.color = colors[indexPath.row]
-        let colorName = colors[indexPath.row].name
-        cell.setColorName(colorName)
+        let color = colors[indexPath.row]
+        cell.color = color
+        cell.setColorName(color.name)
 
-        cell.isSelected = cell.color == selectedColor
-        if cell.isSelected {
+        if selectedColor == color {
             tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
         }
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegate?.colorPicker(self, didSelectColor: colors[indexPath.row])
-        selectedColor = colors[indexPath.row]
+        let color = colors[indexPath.row]
+        delegate?.colorPicker(self, didSelectColor: color)
+        selectedColor = color
     }
+
 }
