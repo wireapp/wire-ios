@@ -20,7 +20,7 @@ import Foundation
 
 @testable import WireSyncEngine
 
-class SearchTaskTests: DatabaseTest {
+final class SearchTaskTests: DatabaseTest {
 
     var teamIdentifier: UUID!
     var mockTransportSession: MockTransportSession!
@@ -380,7 +380,7 @@ class SearchTaskTests: DatabaseTest {
 
         // then
         XCTAssertEqual(result.teamMembers.count, 1)
-        XCTAssertEqual(result.teamMembers.first?.name, "UserX")
+        XCTAssertEqual(result.teamMembers.first?.name, "User A")
     }
 
     // MARK: Conversation Search
