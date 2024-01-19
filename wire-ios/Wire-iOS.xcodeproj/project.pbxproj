@@ -1002,8 +1002,6 @@
 		BF7ED2DC1DF1D1CF003A4397 /* IncomingConnectionViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7ED2DB1DF1D1CF003A4397 /* IncomingConnectionViewTests.swift */; };
 		BF808B4D1DE5AD1600718076 /* SettingsCellDescriptorFactory+Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF808B4C1DE5AD1600718076 /* SettingsCellDescriptorFactory+Account.swift */; };
 		BF808B511DE605DF00718076 /* ChangeHandleViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF808B501DE605DF00718076 /* ChangeHandleViewControllerTests.swift */; };
-		BF808B571DE71F3000718076 /* UserNameTakeOverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF808B561DE71F3000718076 /* UserNameTakeOverViewController.swift */; };
-		BF808B591DE72B7100718076 /* UserNameTakeOverViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF808B581DE72B7100718076 /* UserNameTakeOverViewControllerTests.swift */; };
 		BF86E11B1C245BF9001D9430 /* UserClient+Fingerprint.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF86E11A1C245BF9001D9430 /* UserClient+Fingerprint.swift */; };
 		BF8ECC2D1E570A920015177D /* UIActivityViewController+FileSaving.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8ECC2C1E570A920015177D /* UIActivityViewController+FileSaving.swift */; };
 		BF8EE5561D62FBCD00B0D6D7 /* ConversationInputBarViewController+Editing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8EE5551D62FBCD00B0D6D7 /* ConversationInputBarViewController+Editing.swift */; };
@@ -1019,7 +1017,6 @@
 		BFA25DC11D9976B60086DEBD /* LinkInteractionTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA25DC01D9976B60086DEBD /* LinkInteractionTextView.swift */; };
 		BFA25DC91D9A8D0B0086DEBD /* EmojiKeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA25DC81D9A8D0B0086DEBD /* EmojiKeyboardViewController.swift */; };
 		BFA25DCB1D9AB88A0086DEBD /* Emojis.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA25DCA1D9AB88A0086DEBD /* Emojis.swift */; };
-		BFAAB2391DEC6B2800CBC096 /* ConversationListViewController+Handles.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAB2381DEC6B2800CBC096 /* ConversationListViewController+Handles.swift */; };
 		BFAAB23F1DED95B100CBC096 /* UserNameDetailViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAB23E1DED95B100CBC096 /* UserNameDetailViewTests.swift */; };
 		BFAAB2431DEDB21E00CBC096 /* ConversationListViewController+Transitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAB2421DEDB21E00CBC096 /* ConversationListViewController+Transitions.swift */; };
 		BFAC71F920A1CC5C002711C4 /* CallInfoConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAC71F820A1CC5B002711C4 /* CallInfoConfiguration.swift */; };
@@ -1663,7 +1660,6 @@
 		EF4478522090BF8700BD9827 /* FullscreenImageViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4478512090BF8700BD9827 /* FullscreenImageViewControllerTests.swift */; };
 		EF44C6A42215861F007C5CDC /* MockUserClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D553661C86F0450026573C /* MockUserClient.swift */; };
 		EF46ECCD231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF46ECCC231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift */; };
-		EF471BE2232654CE008E11A5 /* ConversationListViewControllerViewModel+Handles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF471BE1232654CE008E11A5 /* ConversationListViewControllerViewModel+Handles.swift */; };
 		EF471BE4232658A9008E11A5 /* ConversationListViewControllerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF471BE3232658A9008E11A5 /* ConversationListViewControllerViewModel.swift */; };
 		EF471BE62326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF471BE52326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift */; };
 		EF4795AD2077847E00334E32 /* ConversationInputBarViewController+UITextViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4795AC2077847E00334E32 /* ConversationInputBarViewController+UITextViewDelegate.swift */; };
@@ -3123,8 +3119,6 @@
 		BF7EF5441D953B3F003E3999 /* Date+Format.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Format.swift"; sourceTree = "<group>"; };
 		BF808B4C1DE5AD1600718076 /* SettingsCellDescriptorFactory+Account.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SettingsCellDescriptorFactory+Account.swift"; sourceTree = "<group>"; };
 		BF808B501DE605DF00718076 /* ChangeHandleViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeHandleViewControllerTests.swift; sourceTree = "<group>"; };
-		BF808B561DE71F3000718076 /* UserNameTakeOverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNameTakeOverViewController.swift; sourceTree = "<group>"; };
-		BF808B581DE72B7100718076 /* UserNameTakeOverViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNameTakeOverViewControllerTests.swift; sourceTree = "<group>"; };
 		BF86E11A1C245BF9001D9430 /* UserClient+Fingerprint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserClient+Fingerprint.swift"; sourceTree = "<group>"; };
 		BF8ECC2C1E570A920015177D /* UIActivityViewController+FileSaving.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController+FileSaving.swift"; sourceTree = "<group>"; };
 		BF8EE5551D62FBCD00B0D6D7 /* ConversationInputBarViewController+Editing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Editing.swift"; sourceTree = "<group>"; };
@@ -3140,7 +3134,6 @@
 		BFA25DC01D9976B60086DEBD /* LinkInteractionTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkInteractionTextView.swift; sourceTree = "<group>"; };
 		BFA25DC81D9A8D0B0086DEBD /* EmojiKeyboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmojiKeyboardViewController.swift; path = Emoji/EmojiKeyboardViewController.swift; sourceTree = "<group>"; };
 		BFA25DCA1D9AB88A0086DEBD /* Emojis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Emojis.swift; path = Emoji/Emojis.swift; sourceTree = "<group>"; };
-		BFAAB2381DEC6B2800CBC096 /* ConversationListViewController+Handles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+Handles.swift"; sourceTree = "<group>"; };
 		BFAAB23E1DED95B100CBC096 /* UserNameDetailViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNameDetailViewTests.swift; sourceTree = "<group>"; };
 		BFAAB2421DEDB21E00CBC096 /* ConversationListViewController+Transitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+Transitions.swift"; sourceTree = "<group>"; };
 		BFAC71F820A1CC5B002711C4 /* CallInfoConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallInfoConfiguration.swift; sourceTree = "<group>"; };
@@ -3699,7 +3692,6 @@
 		EF42658A2333DB9800DDAD0A /* ConversationListViewModelDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListViewModelDelegate.swift; sourceTree = "<group>"; };
 		EF4478512090BF8700BD9827 /* FullscreenImageViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullscreenImageViewControllerTests.swift; sourceTree = "<group>"; };
 		EF46ECCC231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewControllerViewModel+StartUIDelegate.swift"; sourceTree = "<group>"; };
-		EF471BE1232654CE008E11A5 /* ConversationListViewControllerViewModel+Handles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewControllerViewModel+Handles.swift"; sourceTree = "<group>"; };
 		EF471BE3232658A9008E11A5 /* ConversationListViewControllerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListViewControllerViewModel.swift; sourceTree = "<group>"; };
 		EF471BE52326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		EF4795AC2077847E00334E32 /* ConversationInputBarViewController+UITextViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+UITextViewDelegate.swift"; sourceTree = "<group>"; };
@@ -6507,7 +6499,6 @@
 				8F8913E91A9F287E0056AB0C /* ListContent */,
 				8784D4541E817D13007A6867 /* ConversationListTopBarViewController.swift */,
 				063796842963A78A00674AAA /* ConversationListTabBar.swift */,
-				BF808B561DE71F3000718076 /* UserNameTakeOverViewController.swift */,
 				BF52C15A1CAEBDC00037331F /* ArchivedList */,
 				877ABB461E8118E300CBCF2B /* BackgroundViewController.swift */,
 				879325091E83BB5C00190067 /* ZMConversation+Status.swift */,
@@ -6997,7 +6988,6 @@
 				87CA886F1DE30AD0004101B6 /* UserConnectionViewTests.swift */,
 				EF2FEDC7228E9E42000883C8 /* UserImageViewContainerSnapshotTests.swift */,
 				BFAAB23E1DED95B100CBC096 /* UserNameDetailViewTests.swift */,
-				BF808B581DE72B7100718076 /* UserNameTakeOverViewControllerTests.swift */,
 				7C25D75A21494E4B002E22BF /* UserSearchResultsViewControllerTests.swift */,
 				EF2E2F70223BC4A60038D7D9 /* VersionInfoViewControllerSnapshotTests.swift */,
 				D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */,
@@ -7938,7 +7928,6 @@
 				EF6E9FED231D4426000B7785 /* ConversationListViewControllerViewModel+ZMConversationListObserver.swift */,
 				EF29CDC122D3907000EB2380 /* ConversationListViewControllerViewModel+ConversationListContentDelegate.swift */,
 				EF46ECCC231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift */,
-				EF471BE1232654CE008E11A5 /* ConversationListViewControllerViewModel+Handles.swift */,
 				EF471BE52326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift */,
 				EF223F602327EE90004480FA /* ZMConversationList+HasConversation.swift */,
 			);
@@ -8047,7 +8036,6 @@
 				EF6E9FEF231D4CDF000B7785 /* ConversationListViewController+ConversationListTabBarControllerDelegate.swift */,
 				EF6E9FE323193439000B7785 /* ConversationListViewController+State.swift */,
 				EF3CBC092147D81700566295 /* ConversationListViewController+PushPermissions.swift */,
-				BFAAB2381DEC6B2800CBC096 /* ConversationListViewController+Handles.swift */,
 				BFAAB2421DEDB21E00CBC096 /* ConversationListViewController+Transitions.swift */,
 				8784D4561E81832F007A6867 /* ConversationListViewController+NetworkStatusBarDelegate.swift */,
 			);
@@ -9394,7 +9382,6 @@
 				5EE73BF5212419ED0032986D /* AuthenticationCoordinator+Registration.swift in Sources */,
 				EE7E0E762109FE9200787C65 /* ParticipantsStringFormatter.swift in Sources */,
 				068DCC5D29C0C09B00F7E4F1 /* MessageSendFailureView.swift in Sources */,
-				EF471BE2232654CE008E11A5 /* ConversationListViewControllerViewModel+Handles.swift in Sources */,
 				87AC33CD2182064F00069C79 /* ReplyComposingView.swift in Sources */,
 				0685008526B36BBC00721F80 /* VideoMessageRestrictionView.swift in Sources */,
 				F15650DB21DD10A100210504 /* UserImageView.swift in Sources */,
@@ -9459,7 +9446,6 @@
 				E942A38D28A2AC3A00C3092F /* NavigationController.swift in Sources */,
 				16A293DA1F5FFA2E00B4EB16 /* SkeletonViewController.swift in Sources */,
 				87F18BBC1E01577C00C69D9B /* FileMessageViewState.swift in Sources */,
-				BF808B571DE71F3000718076 /* UserNameTakeOverViewController.swift in Sources */,
 				D56A2D44207DFC9E00DB59F5 /* UIAlertController+Restore.swift in Sources */,
 				D51894792050490E00C095C1 /* ActionCell.swift in Sources */,
 				D39210A12A1C9C8700FA616A /* ReactionSectionViewController.swift in Sources */,
@@ -9737,7 +9723,6 @@
 				E95B0A162B559A440088B778 /* ConversationMissingMessagesSystemMessageCellDescription.swift in Sources */,
 				5501FFC922B398B30050D8FC /* UserInputRequest.swift in Sources */,
 				5EBBE96F218783A2008BC1B7 /* ConversationMessageActionController.swift in Sources */,
-				BFAAB2391DEC6B2800CBC096 /* ConversationListViewController+Handles.swift in Sources */,
 				0685008926B3705100721F80 /* ImageMessageRestrictionView.swift in Sources */,
 				BF0BDF801DAB8923003C61DE /* EphemeralKeyboardViewController.swift in Sources */,
 				5E65A7A32130412E008BFCC0 /* UserEmailChangeEventHandler.swift in Sources */,
@@ -10275,7 +10260,6 @@
 				162AE73A219AC4C100581D98 /* ConversationTextMessageTests.swift in Sources */,
 				EF2EA63321F8AFB2000E12CA /* ServiceDetailViewControllerSnapshotTests.swift in Sources */,
 				BFE3FEEC20975D1E003D9AB5 /* CallStatusViewTests.swift in Sources */,
-				BF808B591DE72B7100718076 /* UserNameTakeOverViewControllerTests.swift in Sources */,
 				EF6A33D32192F5BD00970698 /* CoreDataSnapshotTestCase+appendMessage.swift in Sources */,
 				EF2A8DE9214A8B38002C9058 /* MockUser+Service.swift in Sources */,
 				8787BDD91BF374420096B1B5 /* SettingsPropertyTests.swift in Sources */,
