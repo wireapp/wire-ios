@@ -153,7 +153,7 @@ final class ConversationViewController: UIViewController {
 
     private func resolveConversationIfOneOnOne() {
         guard
-            conversation.participants.count == 2,
+            conversation.conversationType == .oneOnOne,
             let otherUserID = conversation.localParticipants.first(where: { !$0.isSelfUser })?.qualifiedID,
             let context = conversation.managedObjectContext,
             let service = OneOnOneResolver(syncContext: context.zm_sync)
