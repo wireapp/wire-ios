@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-final class ConversationEventPayloadProcessor {
+struct ConversationEventPayloadProcessor {
 
     enum Source {
         case slowSync
@@ -28,8 +28,8 @@ final class ConversationEventPayloadProcessor {
 
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
-    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil) {
-        self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
+    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol) {
+        self.removeLocalConversation = removeLocalConversation
     }
 
     // MARK: - Conversation creation
