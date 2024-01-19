@@ -153,7 +153,9 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     private func internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(
         isAPIV5Supported: Bool = true,
         isClientSupportingMLS: Bool = true,
-        isBackendSupportingMLS: Bool = true
+        isBackendSupportingMLS: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) async throws {
         // GIVEN
         await createUserAndGroupConversation()
