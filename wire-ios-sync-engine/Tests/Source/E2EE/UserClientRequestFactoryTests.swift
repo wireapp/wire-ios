@@ -231,7 +231,7 @@ class UserClientRequestFactoryTests: MessagingTest {
             method: .put
         )
 
-        let payload = try XCTUnwrap(payload(from: transportRequest))
+        _ = try XCTUnwrap(payload(from: transportRequest))
     }
 
     func testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys() {
