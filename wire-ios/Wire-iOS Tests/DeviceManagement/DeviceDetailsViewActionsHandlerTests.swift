@@ -32,6 +32,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     let mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUseCaseProtocol()
     let mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
     let mockGetProteusFingerprint = MockGetUserClientFingerprintUseCaseProtocol()
+    let mlsGroupId = MLSGroupID(base64Encoded: "")
 
     override func setUp() {
         super.setUp()
@@ -51,7 +52,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            conversationId: Data(),
+            mlsGroupId: MLSGroupID(base64Encoded: ""),
             saveFileManager: saveFileManager,
             mlsClientResolver: mockMLSClientResolver,
             getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
@@ -67,7 +68,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            conversationId: Data(),
+            mlsGroupId: mlsGroupId,
             saveFileManager: MockSaveFileManager(),
             mlsClientResolver: mockMLSClientResolver,
             getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
@@ -87,7 +88,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            conversationId: Data(),
+            mlsGroupId: mlsGroupId,
             saveFileManager: MockSaveFileManager(),
             mlsClientResolver: mockMLSClientResolver,
             getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
@@ -106,7 +107,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            conversationId: Data(),
+            mlsGroupId: mlsGroupId,
             saveFileManager: MockSaveFileManager(),
             mlsClientResolver: mockMLSClientResolver,
             getE2eIdentityEnabled: mockGetIsE2eIdentityEnabled,
@@ -128,7 +129,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            conversationId: Data(),
+            mlsGroupId: mlsGroupId,
             saveFileManager: MockSaveFileManager(),
             logger: mockLogger,
             mlsClientResolver: mockMLSClientResolver,
@@ -154,7 +155,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            conversationId: Data(),
+            mlsGroupId: mlsGroupId,
             saveFileManager: MockSaveFileManager(),
             logger: mockLogger,
             mlsClientResolver: mockMLSClientResolver,

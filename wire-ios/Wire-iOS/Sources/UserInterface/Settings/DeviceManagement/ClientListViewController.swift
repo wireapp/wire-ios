@@ -195,7 +195,7 @@ final class ClientListViewController: UIViewController,
         Task {
             guard let userSession = userSession,
                   let navigationController = self.navigationController,
-                  let conversationId = await self.fetchSelfConversation()
+                  let mlsGroupId = await self.fetchSelfConversation()
             else { return }
             let mlsThumbprint = userSession.selfUserClient?.mlsPublicKeys.ed25519?.uppercased()
             let viewModel = DeviceInfoViewModel.map(
@@ -207,7 +207,7 @@ final class ClientListViewController: UIViewController,
                 userSession: userSession,
                 credentials: self.credentials,
                 gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-                conversationId: conversationId,
+                mlsGroupId: mlsGroupId,
                 mlsThumbprint: mlsThumbprint?.splitStringIntoLines(charactersPerLine: 16),
                 getE2eIdentityEnabled: userSession.getIsE2eIdentityEnabled,
                 getE2eIdentityCertificates: userSession.getE2eIdentityCertificates,
@@ -226,12 +226,12 @@ final class ClientListViewController: UIViewController,
     }
 
     @MainActor
-    private func fetchSelfConversation() async -> Data? {
+    private func fetchSelfConversation() async -> MLSGroupID? {
         guard let syncContext = contextProvider?.syncContext else {
             return nil
         }
         return await syncContext.perform {
-            return ZMConversation.fetchSelfMLSConversation(in: syncContext)?.mlsGroupID?.data
+            return ZMConversation.fetchSelfMLSConversation(in: syncContext)?.mlsGroupID
         }
     }
 

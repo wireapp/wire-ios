@@ -58,7 +58,7 @@ public struct E2eIdentityCertificate: Equatable {
            self.details = certificateDetails
            self.notValidBefore = certificate.notValidBefore
            self.expiryDate = certificate.notValidAfter
-           self.serialNumber = certificate.serialNumber.description.replacingOccurrences(of: ":", with: "")
+           self.serialNumber = String(describing: certificate.serialNumber).replacingOccurrences(of: ":", with: "")
            self.status = certificateStatus
            self.mlsThumbprint = mlsThumbprint
        }

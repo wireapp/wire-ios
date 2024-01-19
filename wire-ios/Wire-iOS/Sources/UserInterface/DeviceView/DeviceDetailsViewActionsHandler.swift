@@ -23,7 +23,7 @@ import WireSyncEngine
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
     private let logger: LoggerProtocol
     private let mlsClientResolver: MLSClientResolving
-    private let conversationId: Data?
+    private let mlsGroupId: MLSGroupID?
     private var userClient: UserClient
     private var userSession: UserSession
     private var clientRemovalObserver: ClientRemovalObserver?
@@ -44,7 +44,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userClient: UserClient,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        conversationId: Data?,
+        mlsGroupId: MLSGroupID?,
         saveFileManager: SaveFileActions,
         logger: LoggerProtocol = WireLogger.e2ei,
         mlsClientResolver: MLSClientResolving,
@@ -60,7 +60,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.mlsClientResolver = mlsClientResolver
         self.getE2eIdentityEnabled = getE2eIdentityEnabled
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
-        self.conversationId = conversationId
+        self.mlsGroupId = mlsGroupId
         self.getProteusFingerprint = getProteusFingerprint
     }
 
@@ -81,17 +81,18 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             return DeveloperDeviceDetailsSettingsSelectionViewModel.mockCertifiateForSelectedStatus()
         }
         #endif
-        guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient), let conversationId = conversationId else {
+        guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient), let mlsGroupId = mlsGroupId else {
             return nil
         }
         do {
-            return try await getE2eIdentityCertificates.invoke(conversationId: conversationId, clientIds: [mlsClientID]) .first
+            return try await getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId, clientIds: [mlsClientID]) .first
         } catch {
             logger.error(error.localizedDescription, attributes: nil)
             return nil
         }
     }
 
+    @MainActor
     func isE2eIdentityEnabled() async -> Bool {
         #if DEBUG
         if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
@@ -99,7 +100,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         }
         #endif
         do {
-            return try await getE2eIdentityEnabled.invoke()
+            if isSelfClient {
+                return try await getE2eIdentityEnabled.invoke()
+            } else {
+                let certificate = await getCertificate()
+                return certificate != nil
+            }
         } catch {
             logger.error(error.localizedDescription, attributes: nil)
             return false

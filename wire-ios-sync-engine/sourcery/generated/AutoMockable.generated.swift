@@ -63,24 +63,24 @@ public class MockGetE2eIdentityCertificatesUseCaseProtocol: GetE2eIdentityCertif
 
     // MARK: - invoke
 
-    public var invokeConversationIdClientIds_Invocations: [(conversationId: Data, clientIds: [MLSClientID])] = []
-    public var invokeConversationIdClientIds_MockError: Error?
-    public var invokeConversationIdClientIds_MockMethod: ((Data, [MLSClientID]) async throws -> [E2eIdentityCertificate])?
-    public var invokeConversationIdClientIds_MockValue: [E2eIdentityCertificate]?
+    public var invokeMlsGroupIdClientIds_Invocations: [(mlsGroupId: MLSGroupID, clientIds: [MLSClientID])] = []
+    public var invokeMlsGroupIdClientIds_MockError: Error?
+    public var invokeMlsGroupIdClientIds_MockMethod: ((MLSGroupID, [MLSClientID]) async throws -> [E2eIdentityCertificate])?
+    public var invokeMlsGroupIdClientIds_MockValue: [E2eIdentityCertificate]?
 
-    public func invoke(conversationId: Data, clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
-        invokeConversationIdClientIds_Invocations.append((conversationId: conversationId, clientIds: clientIds))
+    public func invoke(mlsGroupId: MLSGroupID, clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
+        invokeMlsGroupIdClientIds_Invocations.append((mlsGroupId: mlsGroupId, clientIds: clientIds))
 
-        if let error = invokeConversationIdClientIds_MockError {
+        if let error = invokeMlsGroupIdClientIds_MockError {
             throw error
         }
 
-        if let mock = invokeConversationIdClientIds_MockMethod {
-            return try await mock(conversationId, clientIds)
-        } else if let mock = invokeConversationIdClientIds_MockValue {
+        if let mock = invokeMlsGroupIdClientIds_MockMethod {
+            return try await mock(mlsGroupId, clientIds)
+        } else if let mock = invokeMlsGroupIdClientIds_MockValue {
             return mock
         } else {
-            fatalError("no mock for `invokeConversationIdClientIds`")
+            fatalError("no mock for `invokeMlsGroupIdClientIds`")
         }
     }
 
