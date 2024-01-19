@@ -763,7 +763,7 @@ extension TokenField: UITextViewDelegate {
         // so don’t do any magic in that case
 
         if !text.isEmpty,
-           let attachmentCharacter = UnicodeScalar.textAttachmentCharacter,
+           let attachmentCharacter = Unicode.Scalar.textAttachmentCharacter,
            let textRange = Range(range, in: textView.text),
            textView.text.suffix(from: textRange.upperBound).unicodeScalars.contains(attachmentCharacter) {
             textView.selectedRange = NSRange(location: textView.text.utf16.count, length: 0)
@@ -774,8 +774,8 @@ extension TokenField: UITextViewDelegate {
     }
 }
 
-extension UnicodeScalar {
-    fileprivate static var textAttachmentCharacter: UnicodeScalar? {
-        return UnicodeScalar(NSTextAttachment.character)
+extension Unicode.Scalar {
+    fileprivate static var textAttachmentCharacter: Self? {
+        .init(NSTextAttachment.character)
     }
 }
