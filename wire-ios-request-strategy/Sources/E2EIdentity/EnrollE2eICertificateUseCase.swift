@@ -55,11 +55,12 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
             throw EnrollE2EICertificateUseCaseFailure.missingOIDCChallenge
         }
 
+        /// pass to  authzResponse.challenges.wireOidcChallenge.url = acmeAudience to authenticate
         guard let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge else {
             throw EnrollE2EICertificateUseCaseFailure.missingDpopChallenge
         }
 
-        guard let identityProvider = URL(string: oidcChallenge.target) else {
+        guard let identityProvider = URL(string: oidcChallenge.target) else { // client will bw here
             throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
         }
 
@@ -68,21 +69,28 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
         let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
                                                                       dpopToken: dpopToken)
+//        guard let refreshToken = try await enrollment.getOAuthRefreshToken() else {
+//            throw EnrollE2EICertificateUseCaseFailure.missingOIDCRefreshToken
+//        }
 
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(accessToken: wireAccessToken.token,
                                                                                prevNonce: authzResponse.nonce,
                                                                                acmeChallenge: wireDpopChallenge)
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(idToken: idToken,
+                                                                               refreshToken: " ",
                                                                                prevNonce: dpopChallengeResponse.nonce,
                                                                                acmeChallenge: oidcChallenge)
 
         let orderResponse = try await enrollment.checkOrderRequest(location: newOrder.location, prevNonce: oidcChallengeResponse.nonce)
         let finalizeResponse = try await enrollment.finalize(location: orderResponse.location, prevNonce: orderResponse.acmeResponse.nonce)
-        let certificateRequest = try await enrollment.certificateRequest(location: finalizeResponse.location, prevNonce: finalizeResponse.acmeResponse.nonce)
+        let certificateRequest = try await enrollment.certificateRequest(location: finalizeResponse.location,
+                                                                         prevNonce: finalizeResponse.acmeResponse.nonce)
 
         do {
-            let certificateChain = try JSONDecoder.defaultDecoder.decode(String.self, from: certificateRequest.response)
+            guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
+                throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
+            }
             try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
             return certificateChain
         } catch is DecodingError {
@@ -99,6 +107,7 @@ enum EnrollE2EICertificateUseCaseFailure: Error {
 
     case failedToSetupEnrollment
     case missingDpopChallenge
+    case missingOIDCRefreshToken
     case missingOIDCChallenge
     case missingIdentityProvider
     case failedToDecodeCertificate

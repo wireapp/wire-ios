@@ -28,15 +28,17 @@ public protocol E2eIServiceInterface {
     func setOrderResponse(order: Data) async throws -> NewAcmeOrder
     func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data
     func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz
+    func getRefreshToken() async throws -> String
     func createDpopToken(nonce: String) async throws -> String
     func getNewDpopChallengeRequest(accessToken: String, nonce: String) async throws -> Data
-    func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data
+    func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data
     func setChallengeResponse(challenge: Data) async throws
     func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data
     func checkOrderResponse(order: Data) async throws -> String
     func finalizeRequest(nonce: String) async throws -> Data
     func finalizeResponse(finalize: Data) async throws -> String
     func certificateRequest(nonce: String) async throws -> Data
+
     var e2eIdentity: E2eiEnrollmentProtocol { get }
 
 }
@@ -81,6 +83,10 @@ public final class E2eIService: E2eIServiceInterface {
         return try await e2eIdentity.newAuthzResponse(authz: authz)
     }
 
+    public func getRefreshToken() async throws -> String {
+        return try await e2eIdentity.getRefreshToken()
+    }
+
     public func createDpopToken(nonce: String) async throws -> String {
         return try await e2eIdentity.createDpopToken(expirySecs: defaultDPoPTokenExpiry, backendNonce: nonce)
     }
@@ -89,9 +95,9 @@ public final class E2eIService: E2eIServiceInterface {
         return try await e2eIdentity.newDpopChallengeRequest(accessToken: accessToken, previousNonce: nonce)
     }
 
-    public func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data {
+    public func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
         return try await e2eIdentity.newOidcChallengeRequest(idToken: idToken,
-                                                             refreshToken: "",
+                                                             refreshToken: refreshToken,
                                                              previousNonce: nonce)
     }
 

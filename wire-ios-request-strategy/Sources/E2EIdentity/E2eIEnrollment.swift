@@ -52,6 +52,7 @@ public protocol E2eIEnrollmentInterface {
 
     /// Validate OIDC challenge.
     func validateOIDCChallenge(idToken: String,
+                               refreshToken: String,
                                prevNonce: String,
                                acmeChallenge: AcmeChallenge) async throws -> ChallengeResponse
 
@@ -71,6 +72,9 @@ public protocol E2eIEnrollmentInterface {
 
     /// Rotate KeyPackages and migrate conversations.
     func rotateKeysAndMigrateConversations(certificateChain: String) async throws
+
+    /// Fetch the OIDC refresh token.
+    func getOAuthRefreshToken()  async throws -> String?
 
 }
 
@@ -143,7 +147,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
             throw E2EIRepositoryFailure.failedToCreateNewOrder(error)
         }
     }
-
+// NewAcmeAuthz will be new keyAuth
     public func createAuthz(prevNonce: String, authzEndpoint: String) async throws -> (challenges: NewAcmeAuthz,
                                                                                        nonce: String,
                                                                                        location: String) {
@@ -231,12 +235,15 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
     }
 
     public func validateOIDCChallenge(idToken: String,
+                                      refreshToken: String,
                                       prevNonce: String,
                                       acmeChallenge: AcmeChallenge) async throws -> ChallengeResponse {
         logger.info("validate OIDC challenge")
 
         do {
-            let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(idToken: idToken, nonce: prevNonce)
+            let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(idToken: idToken,
+                                                                                    refreshToken: refreshToken,
+                                                                                    nonce: prevNonce)
             let apiResponse = try await acmeApi.sendChallengeRequest(path: acmeChallenge.url, requestBody: challengeRequest)
             try await validateChallenge(challengeResponse: apiResponse)
             return apiResponse
@@ -318,6 +325,18 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         }
     }
 
+    public func getOAuthRefreshToken()  async throws -> String? {
+        logger.info("get OAuth refresh token")
+
+        do {
+            return try await e2eiService.getRefreshToken()
+        } catch {
+            logger.error("failed to get OAuth refresh token: \(error.localizedDescription)")
+
+            throw E2EIRepositoryFailure.failedToGetOAuthRefreshToken(error)
+        }
+    }
+
 }
 
 enum E2EIRepositoryFailure: Error {
@@ -336,6 +355,7 @@ enum E2EIRepositoryFailure: Error {
     case failedToFinalize(_ underlyingError: Error)
     case failedToSendCertificateRequest(_ underlyingError: Error)
     case failedToRotateKeys(_ underlyingError: Error)
+    case failedToGetOAuthRefreshToken(_ underlyingError: Error)
 
 }
 
@@ -349,9 +369,18 @@ public struct ChallengeResponse: Codable, Equatable {
 
 }
 
+public struct ChallengeResponse1: Codable, Equatable {
+
+    var type: String
+    var url: String
+    var status: String
+    var token: String
+
+}
+
 public struct AccessTokenResponse: Decodable, Equatable {
 
-    var expiresIn: String
+    var expiresIn: Int
     var token: String
     var type: String
 

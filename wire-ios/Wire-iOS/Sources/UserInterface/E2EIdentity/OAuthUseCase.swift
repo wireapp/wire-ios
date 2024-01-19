@@ -38,17 +38,19 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         self.rootViewController = rootViewController
     }
 
+    /// keyAuth and acmeAudience
     public func invoke(for identityProvider: URL) async throws -> IdToken {
         logger.info("invoke authentication flow")
 
         guard let bundleID = Bundle.main.bundleIdentifier,
-              let redirectURI = URL(string: "\(bundleID):/oauth2redirect"),
-              let clientID = Bundle.idPClientID,
-              let clientSecret = Bundle.idPClientSecret
+              let redirectURI = URL(string: "\(bundleID):/oauth2redirect")// ,
+//              let clientID = Bundle.idPClientID,
+//              let clientSecret = \Bundle.idPClientSecret
         else {
             throw OAuthError.missingRequestParameters
         }
-
+        let clientID = ""
+        let clientSecret = ""
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
             OIDAuthorizationService.discoverConfiguration(forIssuer: identityProvider) { configuration, error in
                 if let error = error {
