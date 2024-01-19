@@ -67,7 +67,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         in context: NSManagedObjectContext
     ) async throws {
 
-        switch protocolSelector.getProtocolForUser(
+        switch await protocolSelector.getProtocolForUser(
             with: userID,
             in: context
         ) {
