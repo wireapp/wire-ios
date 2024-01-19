@@ -48,15 +48,21 @@ extension ZMConversation {
     /// Changes the conversation message destruction timeout
     public func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
-        in userSession: ZMUserSession, _
-        completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        in userSession: ZMUserSession, 
+        _ completion: @escaping (Swift.Result<Void, Error>) -> Void
+    ) {
         // TODO: move this method to a useCase - WPB-5730
 
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
-        let request = MessageDestructionTimeoutRequestFactory.set(timeout: Int(timeout.rawValue), for: self, apiVersion: apiVersion)
+        let request = MessageDestructionTimeoutRequestFactory.set(
+            timeout: Int(timeout.rawValue),
+            for: self,
+            apiVersion: apiVersion
+        )
+        
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
                 // Process `conversation.message-timer-update` event
