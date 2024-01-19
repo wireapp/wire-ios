@@ -88,7 +88,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             userSession: mockSession,
             credentials: emailCredentials,
             gracePeriod: 3,
-            conversationId: nil,
+            mlsGroupId: MLSGroupID(base64Encoded: "sds"),
             mlsThumbprint: mlsThumbprint,
             getE2eIdentityEnabled: mockSession.getIsE2eIdentityEnabled,
             getE2eIdentityCertificates: mockSession.getE2eIdentityCertificates,

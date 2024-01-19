@@ -76,7 +76,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             getProteusFingerprint: MockGetUserClientFingerprintUseCaseProtocol()
         )
         let returnedCertificate: E2eIdentityCertificate = .mock()
-        mockGetE2eIdentityCertificates.invokeConversationIdClientIds_MockMethod = { _, _ in
+        mockGetE2eIdentityCertificates.invokeMlsGroupIdClientIds_MockMethod = { _, _ in
             return [returnedCertificate]
         }
         let fetchedCertificate = await deviceActionHandler.getCertificate()
@@ -138,7 +138,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             getProteusFingerprint: mockGetProteusFingerprint
 
         )
-        mockGetE2eIdentityCertificates.invokeConversationIdClientIds_MockMethod = { _, _ in
+        mockGetE2eIdentityCertificates.invokeMlsGroupIdClientIds_MockMethod = { _, _ in
             throw MockURLSessionError.noNetwork
         }
         mockLogger.errorMethod = { _, _ in
