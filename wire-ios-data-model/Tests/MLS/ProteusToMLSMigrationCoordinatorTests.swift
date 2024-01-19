@@ -139,55 +139,29 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     }
 
     func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfAPIV5NotSupported() async throws {
-        // GIVEN
-        await createUserAndGroupConversation()
-
-        setMockValues(
-            isAPIV5Supported: false,
-            isClientSupportingMLS: true,
-            isBackendSupportingMLS: true,
-            isMLSProtocolSupported: true,
-            isMLSMigrationFeatureEnabled: true,
-            hasStartTimeBeenReached: true
-        )
-        mockStorage.underlyingMigrationStatus = .notStarted
-
-        // WHEN
-        try await sut.updateMigrationStatus()
-
-        // THEN
-        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0)
+        try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isAPIV5Supported: false)
     }
 
     func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfClientNotSupportingMLS() async throws {
-        // GIVEN
-        await createUserAndGroupConversation()
-
-        setMockValues(
-            isAPIV5Supported: true,
-            isClientSupportingMLS: false,
-            isBackendSupportingMLS: true,
-            isMLSProtocolSupported: true,
-            isMLSMigrationFeatureEnabled: true,
-            hasStartTimeBeenReached: true
-        )
-        mockStorage.underlyingMigrationStatus = .notStarted
-
-        // WHEN
-        try await sut.updateMigrationStatus()
-
-        // THEN
-        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0)
+        try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isClientSupportingMLS: false)
     }
 
     func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfBackendNotSupportingMLS() async throws {
+        try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isBackendSupportingMLS: false)
+    }
+
+    private func internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(
+        isAPIV5Supported: Bool = true,
+        isClientSupportingMLS: Bool = true,
+        isBackendSupportingMLS: Bool = true
+    ) async throws {
         // GIVEN
         await createUserAndGroupConversation()
 
         setMockValues(
-            isAPIV5Supported: true,
-            isClientSupportingMLS: true,
-            isBackendSupportingMLS: false,
+            isAPIV5Supported: isAPIV5Supported,
+            isClientSupportingMLS: isClientSupportingMLS,
+            isBackendSupportingMLS: isBackendSupportingMLS,
             isMLSProtocolSupported: true,
             isMLSMigrationFeatureEnabled: true,
             hasStartTimeBeenReached: true
