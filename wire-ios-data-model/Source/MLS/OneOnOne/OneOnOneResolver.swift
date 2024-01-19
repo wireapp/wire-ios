@@ -99,7 +99,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         // the migration state when migrating from proteus to mls.
         case .mixed:
             assertionFailure("users should not have mixed protocol")
-            break
         }
     }
 
