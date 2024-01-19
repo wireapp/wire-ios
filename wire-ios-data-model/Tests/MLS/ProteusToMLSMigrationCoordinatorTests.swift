@@ -138,6 +138,69 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(startedMigration)
     }
 
+    func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfAPIV5NotSupported() async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+
+        setMockValues(
+            isAPIV5Supported: false,
+            isClientSupportingMLS: true,
+            isBackendSupportingMLS: true,
+            isMLSProtocolSupported: true,
+            isMLSMigrationFeatureEnabled: true,
+            hasStartTimeBeenReached: true
+        )
+        mockStorage.underlyingMigrationStatus = .notStarted
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0)
+    }
+
+    func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfClientNotSupportingMLS() async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+
+        setMockValues(
+            isAPIV5Supported: true,
+            isClientSupportingMLS: false,
+            isBackendSupportingMLS: true,
+            isMLSProtocolSupported: true,
+            isMLSMigrationFeatureEnabled: true,
+            hasStartTimeBeenReached: true
+        )
+        mockStorage.underlyingMigrationStatus = .notStarted
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0)
+    }
+
+    func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfBackendNotSupportingMLS() async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+
+        setMockValues(
+            isAPIV5Supported: true,
+            isClientSupportingMLS: true,
+            isBackendSupportingMLS: false,
+            isMLSProtocolSupported: true,
+            isMLSMigrationFeatureEnabled: true,
+            hasStartTimeBeenReached: true
+        )
+        mockStorage.underlyingMigrationStatus = .notStarted
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0)
+    }
+
     // MARK: - Migration finalisation
 
     func test_ItSyncsUsers_IfFinalisationTimeHasNotBeenReached() async throws {
