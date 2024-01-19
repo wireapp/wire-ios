@@ -74,7 +74,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
         isLoadingViewVisible = true
 
         if let task = searchDirectory?.lookup(userId: userId) {
-            task.onResult({ [weak self] in
+            task.addResultHandler({ [weak self] in
                 self?.handleSearchResult(searchResult: $0, isCompleted: $1)
             })
             task.start()
