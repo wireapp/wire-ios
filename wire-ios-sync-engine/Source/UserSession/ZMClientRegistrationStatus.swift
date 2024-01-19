@@ -132,14 +132,18 @@ extension ZMClientRegistrationStatus {
     @objc
     public func didFetchSelfUser() {
         WireLogger.userClient.info("did fetch self user")
+        self.needsRefreshSelfUser = false
 
         if needsToRegisterClient() {
-            if isAddingEmailNecessary() {
-                notifyEmailIsNecessary()
-            }
             prepareForClientRegistration()
-        } else if !needsToVerifySelfClient {
-            emailCredentials = nil
+
+            if isAddingHandleNecessary() {
+                notifyHandleIsNecessary()
+            } else if isAddingEmailNecessary() {
+                notifyEmailIsNecessary()
+            } else if !needsToVerifySelfClient {
+                emailCredentials = nil
+            }
         }
     }
 
@@ -147,6 +151,15 @@ extension ZMClientRegistrationStatus {
         let error = NSError(
             domain: NSError.ZMUserSessionErrorDomain,
             code: Int(ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
+        )
+
+        registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
+    }
+
+    private func notifyHandleIsNecessary() {
+        let error = NSError(
+            domain: NSError.ZMUserSessionErrorDomain,
+            code: Int(ZMUserSessionErrorCode.needsToHandleToRegisterClient.rawValue)
         )
 
         registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
@@ -192,4 +205,20 @@ extension ZMClientRegistrationStatus {
         self.isGeneratingPrekeys = false
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
+}
+
+extension ZMClientRegistrationStatus: UserProfileUpdateObserver {
+
+    public func didSetHandle() {
+        managedObjectContext.perform { [self] in
+            if needsToRegisterClient() {
+                if isAddingEmailNecessary() {
+                    notifyEmailIsNecessary()
+                }
+            } else if !needsToVerifySelfClient {
+                emailCredentials = nil
+            }
+        }
+    }
+
 }
