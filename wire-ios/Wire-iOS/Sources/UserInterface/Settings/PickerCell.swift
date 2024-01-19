@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 class PickerCell: UITableViewCell {
 
@@ -117,14 +117,14 @@ class PickerCell: UITableViewCell {
         [checkmarkView, colorView, colorNameLabel].prepareForLayout()
         NSLayoutConstraint.activate([
             colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            colorView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: Constants.leftPadding),
+            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.leftPadding),
             colorView.heightAnchor.constraint(equalToConstant: Constants.colorViewSize),
             colorView.widthAnchor.constraint(equalToConstant: Constants.colorViewSize),
 
             colorNameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            colorNameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: Constants.labelLeftPadding),
+            colorNameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.labelLeftPadding),
 
-            checkmarkView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -Constants.rightPadding),
+            checkmarkView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.rightPadding),
             checkmarkView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
