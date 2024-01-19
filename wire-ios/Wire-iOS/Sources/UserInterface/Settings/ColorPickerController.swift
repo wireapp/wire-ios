@@ -20,11 +20,16 @@ import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
+// MARK: - ColorPickerControllerDelegate
+
 protocol ColorPickerControllerDelegate: AnyObject {
     func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor)
 }
 
 class ColorPickerController: UIViewController {
+
+    // MARK: - Properties
+
     let tableView = UITableView()
 
     static private let rowHeight: CGFloat = 56
@@ -32,6 +37,8 @@ class ColorPickerController: UIViewController {
     let colors: [AccentColor]
     var selectedColor: AccentColor?
     weak var delegate: ColorPickerControllerDelegate?
+
+    // MARK: - View lifecycle
 
     init(colors: [AccentColor]) {
         self.colors = colors
@@ -47,6 +54,8 @@ class ColorPickerController: UIViewController {
         setupViews()
         setupConstraints()
     }
+
+    // MARK: - Setup Views and constraints
 
     private func setupViews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -71,7 +80,10 @@ class ColorPickerController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDelegate, UITableViewDataSource
+
 extension ColorPickerController: UITableViewDelegate, UITableViewDataSource {
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return colors.count
     }
