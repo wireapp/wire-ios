@@ -12,7 +12,6 @@ disabled_rules:
     - unused_setter_value
     - cyclomatic_complexity
     - inclusive_language
-    - class_delegate_protocol
     - nesting
     - function_parameter_count
     - notification_center_detachment
