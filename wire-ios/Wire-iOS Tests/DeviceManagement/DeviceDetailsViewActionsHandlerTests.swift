@@ -137,7 +137,6 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             getProteusFingerprint: mockGetProteusFingerprint
 
         )
-        let returnedCertificate: E2eIdentityCertificate = .mock()
         mockGetE2eIdentityCertificates.invokeConversationIdClientIds_MockMethod = { _, _ in
             throw MockURLSessionError.noNetwork
         }

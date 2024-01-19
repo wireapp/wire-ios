@@ -197,6 +197,7 @@ final class ClientListViewController: UIViewController,
                   let navigationController = self.navigationController,
                   let conversationId = await self.fetchSelfConversation()
             else { return }
+            let mlsThumbprint = userSession.selfUserClient?.mlsPublicKeys.ed25519?.uppercased()
             let viewModel = DeviceInfoViewModel.map(
                 userClient: client,
                 title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
@@ -207,6 +208,7 @@ final class ClientListViewController: UIViewController,
                 credentials: self.credentials,
                 gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
                 conversationId: conversationId,
+                mlsThumbprint: mlsThumbprint?.splitStringIntoLines(charactersPerLine: 16),
                 getE2eIdentityEnabled: userSession.getIsE2eIdentityEnabled,
                 getE2eIdentityCertificates: userSession.getE2eIdentityCertificates,
                 getProteusFingerprint: userSession.getUserClientFingerprint

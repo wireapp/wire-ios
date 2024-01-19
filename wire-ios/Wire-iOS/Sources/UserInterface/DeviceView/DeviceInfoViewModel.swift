@@ -43,6 +43,7 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     let userClient: UserClient
     let gracePeriod: TimeInterval
+    let mlsThumbprint: String?
 
     var title: String
     var isSelfClient: Bool
@@ -56,12 +57,6 @@ final class DeviceInfoViewModel: ObservableObject {
             return nil
         }
         return certificate.shouldUpdate(with: gracePeriod)
-    }
-
-    var mlsThumbprint: String? {
-        (userClient.mlsPublicKeys.ed25519 ?? e2eIdentityCertificate?.mlsThumbprint)?
-            .uppercased()
-            .splitStringIntoLines(charactersPerLine: 16)
     }
 
     @Published
@@ -78,6 +73,7 @@ final class DeviceInfoViewModel: ObservableObject {
         title: String,
         addedDate: String,
         proteusID: String,
+        mlsThumbprint: String?,
         isProteusVerificationEnabled: Bool,
         actionsHandler: any DeviceDetailsViewActions,
         userClient: UserClient,
@@ -87,6 +83,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
+        self.mlsThumbprint = mlsThumbprint
         self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
         self.userClient = userClient
@@ -183,6 +180,7 @@ extension DeviceInfoViewModel {
         credentials: ZMEmailCredentials?,
         gracePeriod: TimeInterval,
         conversationId: Data?,
+        mlsThumbprint: String?,
         getE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
         getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
@@ -191,6 +189,7 @@ extension DeviceInfoViewModel {
             title: title,
             addedDate: addedDate,
             proteusID: proteusID?.uppercased().fingerprintStringWithSpaces ?? "",
+            mlsThumbprint: mlsThumbprint,
             isProteusVerificationEnabled: userClient.verified,
             actionsHandler: DeviceDetailsViewActionsHandler(
                 userClient: userClient,

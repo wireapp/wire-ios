@@ -26,15 +26,15 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     var sut: UIHostingController<DeviceDetailsView>!
     var client: UserClient!
 
+    let kProteusId: String = "abcdefghijklmnopqrstuvwxyzabcdefgh"
+
     lazy var kSerialNumber: String = {
         return "abcdefghijklmnopqrstuvwxyz"
             .uppercased()
             .splitStringIntoLines(charactersPerLine: 16)
     }()
 
-    let kThumbprint: String = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnop"
-    let kProteusId: String = "abcdefghijklmnopqrstuvwxyzabcdefgh"
-    lazy var kFingerPrint: String = { return "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnop"
+    lazy var kFingerPrint: String = { return "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
             .uppercased()
             .splitStringIntoLines(charactersPerLine: 16)
     }()
@@ -58,6 +58,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func prepareViewModel(
+        mlsThumbprint: String?,
         status: E2EIdentityCertificateStatus,
         isProteusVerificationEnabled: Bool,
         isE2eIdentityEnabled: Bool,
@@ -77,7 +78,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             mockSession.certificate = .mockValid
         }
         let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
-        let dateFormater = DateFormatter()
 
         let viewModel = DeviceInfoViewModel.map(
             userClient: client,
@@ -89,6 +89,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             credentials: emailCredentials,
             gracePeriod: 3,
             conversationId: nil,
+            mlsThumbprint: mlsThumbprint,
             getE2eIdentityEnabled: mockSession.getIsE2eIdentityEnabled,
             getE2eIdentityCertificates: mockSession.getE2eIdentityCertificates,
             getProteusFingerprint: MockGetUserClientFingerprintUseCaseProtocol()
@@ -110,8 +111,23 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         return  sut.wrapInNavigationController()
     }
 
+    func testWhenMLSViewIsDisabled() {
+        let viewModel = prepareViewModel(mlsThumbprint: nil,
+                                         status: .notActivated,
+                                         isProteusVerificationEnabled: true,
+                                         isE2eIdentityEnabled: false,
+                                         proteusKeyFingerPrint: kFingerPrint,
+                                         isSelfClient: false)
+        verify(
+            matching: setupWrappedInNavigationController(
+                viewModel: viewModel
+            )
+        )
+    }
+
     func testWhenE2eidentityViewIsDisabled() {
-        let viewModel = prepareViewModel(status: .notActivated,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -124,7 +140,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testGivenSelfClientWhenE2eidentityViewIsDisabled() {
-        let viewModel = prepareViewModel(status: .notActivated,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -135,7 +152,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValid() {
-        let viewModel = prepareViewModel(status: .valid,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .valid,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -146,7 +164,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidWhenProteusIsNotVerifiedThenBlueShieldIsNotShown() {
-        let viewModel = prepareViewModel(status: .valid,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .valid,
                                          isProteusVerificationEnabled: false,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -157,7 +176,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevoked() {
-        let viewModel = prepareViewModel(status: .revoked,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .revoked,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -168,7 +188,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpired() {
-        let viewModel = prepareViewModel(status: .expired,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .expired,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -180,7 +201,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivated() {
 
-        let viewModel = prepareViewModel(status: .notActivated,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -194,7 +216,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
     func testGivenSelfClientWhenE2eidentityViewIsDisabledInDarkMode() {
 
-        let viewModel = prepareViewModel(status: .notActivated,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -205,7 +228,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsDisabledInDarkMode() {
-        let viewModel = prepareViewModel(status: .notActivated,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -216,7 +240,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidInDarkMode() {
-        let viewModel = prepareViewModel(status: .valid,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .valid,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -227,7 +252,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevokedInDarkMode() {
-        let viewModel = prepareViewModel(status: .revoked,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .revoked,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -238,7 +264,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkMode() {
-        let viewModel = prepareViewModel(status: .expired,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .expired,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: kFingerPrint,
@@ -249,7 +276,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkMode() {
-        let viewModel = prepareViewModel(status: .notActivated,
+        let viewModel = prepareViewModel(mlsThumbprint: kFingerPrint,
+                                         status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: kFingerPrint,
