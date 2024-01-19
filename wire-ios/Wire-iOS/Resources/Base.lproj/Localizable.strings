@@ -1762,7 +1762,7 @@
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
-"feature_config.alert.mls_e2ei.message" = "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\n Enter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.";
+"feature_config.alert.mls_e2ei.message" = "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\nEnter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.";
 "feature_config.alert.mls_e2ei.button.get_certificate" = "Get Certificate";
 "feature_config.alert.mls_e2ei.button.remind_me_later" = "Remind Me Later";
 "feature_config.alert.mls_e2ei.button.learn_more" = "Learn More";
