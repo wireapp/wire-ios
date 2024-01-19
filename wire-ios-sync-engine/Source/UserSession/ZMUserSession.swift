@@ -262,6 +262,10 @@ public class ZMUserSession: NSObject {
                                         proteusProvider: proteusProvider)
     }()
 
+    public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
+        ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
+    }()
+
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
