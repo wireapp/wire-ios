@@ -174,7 +174,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0)
+        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0, file: file, line: line)
     }
 
     // MARK: - Migration finalisation
