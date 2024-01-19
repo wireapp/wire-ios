@@ -154,22 +154,21 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     // MARK: - Helpers (migration start)
 
     private func resolveMigrationStartStatus() async -> MigrationStartStatus {
-        let features = await fetchFeatures()
-
         if (BackendInfo.apiVersion ?? .v0) < .v5 {
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
-
-        if !features.mls.config.supportedProtocols.contains(.mls) {
-            return .cannotStart(reason: .mlsProtocolIsNotSupported)
-        }
-
         if !DeveloperFlag.enableMLSSupport.isOn {
             return .cannotStart(reason: .clientDoesntSupportMLS)
         }
 
         if await !isMLSEnabledOnBackend() {
             return .cannotStart(reason: .backendDoesntSupportMLS)
+        }
+
+        let features = await fetchFeatures()
+
+        if !features.mls.config.supportedProtocols.contains(.mls) {
+            return .cannotStart(reason: .mlsProtocolIsNotSupported)
         }
 
         if features.mlsMigration.status == .disabled {
