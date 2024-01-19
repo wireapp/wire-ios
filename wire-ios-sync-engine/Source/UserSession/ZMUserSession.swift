@@ -560,7 +560,7 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
-        // TODO: [jacob] refactor out
+        // TODO: [jacob] refactor out WPB-6198
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
