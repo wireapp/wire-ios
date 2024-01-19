@@ -287,3 +287,9 @@ class MessageAPIV5: MessageAPIV4 {
         return (payload, response)
     }
 }
+
+class MessageAPIV6: MessageAPIV5 {
+    override var apiVersion: APIVersion {
+        .v6
+    }
+}

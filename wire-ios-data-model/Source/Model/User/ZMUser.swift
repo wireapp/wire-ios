@@ -133,6 +133,9 @@ extension ZMUser: UserType {
         else {
             return false
         }
+        guard (BackendInfo.apiVersion ?? .v0) >= .v5 && DeveloperFlag.enableMLSSupport.isOn  else {
+            return false
+        }
 
         let featureRepository = FeatureRepository(context: context)
         return featureRepository.fetchMLS().config.protocolToggleUsers.contains(id)

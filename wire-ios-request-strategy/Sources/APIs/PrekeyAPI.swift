@@ -128,6 +128,12 @@ class PrekeyAPIV5: PrekeyAPIV4 {
     }
 }
 
+class PrekeyAPIV6: PrekeyAPIV5 {
+    override var apiVersion: APIVersion {
+        return .v6
+    }
+}
+
 extension Collection where Element == QualifiedClientID {
 
     var clientListByUserID: Payload.ClientListByUserID {
