@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,12 +24,11 @@ protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) async
     func process(welcomeMessage: String, in context: NSManagedObjectContext) async
-    func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
     func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async
 
 }
 
-final class MLSEventProcessor: MLSEventProcessing {
+struct MLSEventProcessor: MLSEventProcessing {
 
     private(set) static var shared: MLSEventProcessing = MLSEventProcessor()
 
@@ -70,32 +70,6 @@ final class MLSEventProcessor: MLSEventProcessing {
                 "MLS event processor updated previous mlsStatus (\(String(describing: previousStatus))) with new value (\(String(describing: conversation.mlsStatus))) for conversation (\(String(describing: conversation.qualifiedID)))"
             )
         }
-    }
-
-    // MARK: - Joining new conversations
-
-    /// - Note: must be executed on syncContext
-    func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
-        Logging.mls.info("MLS event processor is adding group to join")
-
-        guard conversation.messageProtocol == .mls else {
-            return logWarn(aborting: .joiningGroup, withReason: .notMLSConversation)
-        }
-
-        guard let groupID = conversation.mlsGroupID else {
-            return logWarn(aborting: .joiningGroup, withReason: .missingGroupID)
-        }
-
-        guard let mlsService = context.mlsService else {
-            return logWarn(aborting: .joiningGroup, withReason: .missingMLSService)
-        }
-
-        guard let status = conversation.mlsStatus, status.isPendingJoin else {
-            return logWarn(aborting: .joiningGroup, withReason: .other(reason: "MLS status is not .pendingJoin"))
-        }
-
-        mlsService.registerPendingJoin(groupID)
-        Logging.mls.info("MLS event processor added group (\(groupID.safeForLoggingDescription)) to be joined")
     }
 
     // MARK: - Process welcome message
@@ -145,7 +119,11 @@ final class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 
-        await mlsService.wipeGroup(mlsGroupID)
+        do {
+            try await mlsService.wipeGroup(mlsGroupID)
+        } catch {
+            WireLogger.mls.error("mlsService.wipeGroup(\(mlsGroupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))")
+        }
     }
 
     // MARK: Log Helpers

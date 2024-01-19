@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,15 +83,16 @@ public final class CreateGroupConversationAction: EntityAction {
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
-    private let processor = ConversationEventPayloadProcessor()
+    private let processor: ConversationEventPayloadProcessor
     private let mlsService: MLSServiceInterface
 
     required init(
         context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface
+        mlsService: MLSServiceInterface,
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
     ) {
         self.mlsService = mlsService
-
+        processor = .init(removeLocalConversation: removeLocalConversationUseCase)
         super.init(context: context)
     }
 
@@ -270,6 +271,9 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 action.fail(with: .proccessingError)
                 return
             }
+        case .mixed:
+            // Conversations should never be created with mixed protocol, that's why we break here
+            break
         }
     }
 }

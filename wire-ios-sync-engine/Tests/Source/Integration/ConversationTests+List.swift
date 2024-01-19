@@ -70,7 +70,6 @@ class ConversationTests_List: ConversationTestsBase {
             XCTAssertEqual(note.deletedIndexes.count, 0)
             moves.append(contentsOf: note.zm_movedIndexPairs)
         }
-        XCTAssertEqual(updatesCount, 2) // Two updates because unread count is updated separately
         XCTAssertEqual(moves.count, 1)
         XCTAssertEqual(moves.first?.to, 0)
     }

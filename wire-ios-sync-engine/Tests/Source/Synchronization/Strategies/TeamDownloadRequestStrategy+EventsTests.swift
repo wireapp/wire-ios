@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import WireTesting
 @testable import WireSyncEngine
 
-class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
+final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -113,7 +113,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "data": NSNull()
         ]
 
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -152,7 +152,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "data": NSNull()
         ]
 
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -308,7 +308,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         }
 
         // expect
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -522,6 +522,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         }
 
         // when
+        self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         syncMOC.performGroupedBlock {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
             XCTAssert(self.syncMOC.saveOrRollback(), file: file, line: line)

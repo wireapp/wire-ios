@@ -29,4 +29,12 @@ extension Date {
         return Calendar.current.dateComponents([.day], from: self, to: now).day!
     }
 
+    /// A computed property that determines whether the date instance is in the past compared to the current date.
+    ///
+    /// - Returns: A Boolean value. `true` if the date instance is earlier than the current date (`Date()`); otherwise, `false`.
+    var isPast: Bool {
+        let now = Date()
+        return self < now
+    }
+
 }

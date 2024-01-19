@@ -128,7 +128,7 @@ class EventProcessorTests: MessagingTest {
         let earService = EARService(
             accountID: userIdentifier,
             databaseContexts: [uiMOC, syncMOC],
-            sharedUserDefaults: UserDefaults.random()!
+            sharedUserDefaults: UserDefaults.temporary()
         )
         earService.setInitialEARFlagValue(true)
         try syncMOC.performAndWait {

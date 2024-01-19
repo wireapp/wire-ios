@@ -204,7 +204,7 @@
     __block ZMUser *syncUser;
     
     // expect
-    [self expectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:nil];
+    [self customExpectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:nil];
     
     // when
     [self.syncMOC performGroupedBlockThenWaitForReasonableTimeout:^{
@@ -221,7 +221,7 @@
     NSString *name = @"very-unique-name_ps9ijsdnmf";
 
     // and expect
-    [self expectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:^BOOL(NSNotification *notification ZM_UNUSED) {
+    [self customExpectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:^BOOL(NSNotification *notification ZM_UNUSED) {
         return uiUser.name != nil;
     }];
     
@@ -402,7 +402,7 @@
 - (void)testThatItNotifiesTheOperationLoopOfNewOperationWhenEnteringBackground
 {
     // expect
-    [self expectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
+    [self customExpectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
 
     // when
     [self goToBackground];
@@ -414,7 +414,7 @@
 - (void)testThatItNotifiesTheOperationLoopOfNewOperationWhenEnteringForeground
 {
     // expect
-    [self expectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
+    [self customExpectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
     
     // when
     [self goToForeground];

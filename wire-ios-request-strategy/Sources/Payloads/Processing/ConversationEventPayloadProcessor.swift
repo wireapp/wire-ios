@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-final class ConversationEventPayloadProcessor {
+struct ConversationEventPayloadProcessor {
 
     enum Source {
         case slowSync
@@ -28,8 +28,8 @@ final class ConversationEventPayloadProcessor {
 
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
-    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil) {
-        self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
+    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol) {
+        self.removeLocalConversation = removeLocalConversation
     }
 
     // MARK: - Conversation creation
@@ -94,10 +94,14 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        await removeLocalConversation.invoke(
-            with: conversation,
-            syncContext: context
-        )
+        do {
+            try await removeLocalConversation.invoke(
+                with: conversation,
+                syncContext: context
+            )
+        } catch {
+            WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+        }
     }
 
     // MARK: - Member leave
@@ -341,6 +345,26 @@ final class ConversationEventPayloadProcessor {
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
     }
 
+    // MARK: - Protocol Change
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationProtocolChange>,
+        originalEvent: ZMUpdateEvent,
+        in context: NSManagedObjectContext
+    ) async {
+        guard let qualifiedID = payload.qualifiedID else {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
+            return
+        }
+
+        do {
+            var action = SyncConversationAction(qualifiedID: qualifiedID)
+            try await action.perform(in: context.notificationContext)
+        } catch {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)")
+        }
+    }
+
     // MARK: - Helpers
 
     @discardableResult
@@ -407,6 +431,7 @@ final class ConversationEventPayloadProcessor {
                 in: context,
                 created: &created
             )
+
             conversation.conversationType = .group
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
@@ -415,7 +440,7 @@ final class ConversationEventPayloadProcessor {
             self.updateMembers(from: payload, for: conversation, context: context)
             self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             self.updateConversationStatus(from: payload, for: conversation)
-            self.updateMessageProtocol(from: payload, for: conversation)
+            self.updateMessageProtocol(from: payload, for: conversation, in: context)
 
             return conversation
         }
@@ -466,7 +491,7 @@ final class ConversationEventPayloadProcessor {
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-            updateMessageProtocol(from: payload, for: conversation)
+            updateMessageProtocol(from: payload, for: conversation, in: context)
 
             return (conversation, conversation.mlsGroupID)
         }
@@ -659,19 +684,54 @@ final class ConversationEventPayloadProcessor {
 
     private func updateMessageProtocol(
         from payload: Payload.Conversation,
-        for conversation: ZMConversation
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
     ) {
         guard let messageProtocolString = payload.messageProtocol else {
             Logging.eventProcessing.warn("message protocol is missing")
             return
         }
 
-        guard let messageProtocol = MessageProtocol(string: messageProtocolString) else {
+        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
             Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
 
-        conversation.messageProtocol = messageProtocol
+        let sender = ZMUser.selfUser(in: context)
+
+        switch conversation.messageProtocol {
+        case .proteus:
+            switch newMessageProtocol {
+            case .proteus:
+                break // no update, ignore
+            case .mixed:
+                conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+            case .mls:
+                let date = conversation.lastModifiedDate ?? .now
+                conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
+                conversation.messageProtocol = newMessageProtocol
+            }
+
+        case .mixed:
+            switch newMessageProtocol {
+            case .proteus:
+                WireLogger.updateEvent.warn("update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!")
+            case .mixed:
+                break // no update, ignore
+            case .mls:
+                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+            }
+
+        case .mls:
+            switch newMessageProtocol {
+            case .proteus, .mixed:
+                WireLogger.updateEvent.warn("update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!")
+            case .mls:
+                break // no update, ignore
+            }
+        }
     }
 
     private func updateMLSStatus(
@@ -687,15 +747,6 @@ final class ConversationEventPayloadProcessor {
             groupID: payload.mlsGroupID,
             context: context
         )
-
-        if source == .slowSync {
-            await context.perform {
-                mlsEventProcessor.joinMLSGroupWhenReady(
-                    forConversation: conversation,
-                    context: context
-                )
-            }
-        }
     }
 
     func fetchCreator(

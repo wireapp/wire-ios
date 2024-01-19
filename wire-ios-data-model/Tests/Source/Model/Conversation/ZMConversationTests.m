@@ -273,14 +273,14 @@
 {
     // given
     NSSet *expected = [NSSet setWithArray:@[
-                          ZMConversationUserDefinedNameKey,
-                          ZMConversationIsForcedReadOnlyKey,
-                          ZMConversationLastReadServerTimeStampKey,
-                          ZMConversationClearedTimeStampKey,
-                          ZMConversationSilencedChangedTimeStampKey,
-                          ZMConversationArchivedChangedTimeStampKey
-                          ]];
-    
+        ZMConversationUserDefinedNameKey,
+        ZMConversationIsForcedReadOnlyKey,
+        ZMConversationLastReadServerTimeStampKey,
+        ZMConversationClearedTimeStampKey,
+        ZMConversationSilencedChangedTimeStampKey,
+        ZMConversationArchivedChangedTimeStampKey
+    ]];
+
     // when
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
 
@@ -1089,7 +1089,7 @@
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
 
     // expect
-    [self keyValueObservingExpectationForObject:conversation keyPath:@"isReadOnly" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:conversation keyPath:@"isReadOnly" expectedValue:nil];
     
     // when
     [conversation removeParticipantAndUpdateConversationStateWithUser:selfUser initiatingUser:selfUser];
@@ -1106,7 +1106,7 @@
     [conversation addParticipantAndUpdateConversationStateWithUser:[ZMUser selfUserInContext:self.uiMOC] role:nil];
     
     // expect
-    [self keyValueObservingExpectationForObject:conversation keyPath:@"isReadOnly" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:conversation keyPath:@"isReadOnly" expectedValue:nil];
     
     // when
     conversation.conversationType = ZMConversationTypeGroup;
@@ -1228,7 +1228,7 @@
     XCTAssertTrue(conversation.isPendingConnectionConversation);
     
     // expect
-    [self keyValueObservingExpectationForObject:conversation keyPath:@"isPendingConnectionConversation" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:conversation keyPath:@"isPendingConnectionConversation" expectedValue:nil];
     
     // when
     connection.status = ZMConnectionStatusAccepted;
@@ -1251,7 +1251,7 @@
     XCTAssertTrue(conversation.isPendingConnectionConversation);
 
     // expect
-    [self keyValueObservingExpectationForObject:conversation keyPath:@"isPendingConnectionConversation" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:conversation keyPath:@"isPendingConnectionConversation" expectedValue:nil];
     
     // when
     ZMConnection *connection2 = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -1947,7 +1947,7 @@
     XCTAssertTrue(conversation.hasDraftMessage);
     
     // expect
-    [self keyValueObservingExpectationForObject:conversation keyPath:@"hasDraftMessage" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:conversation keyPath:@"hasDraftMessage" expectedValue:nil];
     
     // when
     conversation.draftMessage = nil;
@@ -1979,7 +1979,7 @@
     XCTAssertEqualObjects(conversation.firstUnreadMessage, message2);
 
     // expect
-    [self keyValueObservingExpectationForObject:conversation keyPath:@"firstUnreadMessage" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:conversation keyPath:@"firstUnreadMessage" expectedValue:nil];
 
     // when
     conversation.lastReadServerTimeStamp = message2.serverTimestamp;
@@ -2007,7 +2007,7 @@
     XCTAssertNil(conversation.firstUnreadMessage);
 
     // expect
-    [self keyValueObservingExpectationForObject:conversation keyPath:@"firstUnreadMessage" expectedValue:nil];
+    [self customKeyValueObservingExpectationForObject:conversation keyPath:@"firstUnreadMessage" expectedValue:nil];
 
     // when
     [conversation.mutableMessages addObject:message2];
