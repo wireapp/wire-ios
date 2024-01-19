@@ -84,20 +84,21 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 conversation.isForcedReadOnly = true
             }
 
-        case .some(.mls):
+        case .mls:
             try await migrator.migrateToMLS(
                 userID: userID,
                 in: context
             )
 
-        case .some(.proteus):
+        case .proteus:
             break
 
         // This should never happen:
         // Users can only support proteus and mls protocols.
         // Mixed protocol is used by conversations to represent
         // the migration state when migrating from proteus to mls.
-        case .some(.mixed):
+        case .mixed:
+            assertionFailure("users should not have mixed protocol")
             break
         }
     }

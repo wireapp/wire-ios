@@ -156,7 +156,6 @@ public class MLSEventProcessor: MLSEventProcessing {
 
             await resolveOneOnOneConversationIfNeeded(
                 conversation: conversation,
-                mlsService: mlsService,
                 oneOneOneResolver: oneOnOneResolver,
                 in: context
             )
@@ -169,7 +168,6 @@ public class MLSEventProcessor: MLSEventProcessing {
 
     private func resolveOneOnOneConversationIfNeeded(
         conversation: ZMConversation,
-        mlsService: MLSServiceInterface,
         oneOneOneResolver: OneOnOneResolverInterface,
         in context: NSManagedObjectContext
     ) async {
