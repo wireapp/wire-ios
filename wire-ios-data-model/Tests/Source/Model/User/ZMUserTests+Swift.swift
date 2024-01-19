@@ -892,7 +892,7 @@ extension ZMUserTests_Swift {
         conversation.addParticipantAndUpdateConversationState(user: sut, role: nil)
 
         // then
-        XCTAssertEqual(sut.activeConversations, Set(arrayLiteral: conversation))
+        XCTAssertEqual(sut.activeConversations, [conversation])
     }
 
 }
