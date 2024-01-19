@@ -30,7 +30,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     var mockFeatureRepository: MockFeatureRepositoryInterface!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockMLSService: MockMLSServiceInterface!
-    var mockPostProtocolChangeUpdater: MockConversationPostProtocolChangeUpdating!
 
     // MARK: - setUp
 
@@ -41,14 +40,12 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockFeatureRepository = MockFeatureRepositoryInterface()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockMLSService = MockMLSServiceInterface()
-        mockPostProtocolChangeUpdater = MockConversationPostProtocolChangeUpdating()
 
         sut = ProteusToMLSMigrationCoordinator(
             context: syncMOC,
             storage: mockStorage,
             featureRepository: mockFeatureRepository,
-            actionsProvider: mockActionsProvider,
-            postProtocolChangeUpdater: mockPostProtocolChangeUpdater
+            actionsProvider: mockActionsProvider
         )
 
         syncMOC.performAndWait {
@@ -60,7 +57,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockMLSService.conversationExistsGroupID_MockValue = true
         mockMLSService.joinGroupWith_MockMethod = { _ in }
         mockFeatureRepository.fetchMLSMigration_MockValue = .init()
-        mockPostProtocolChangeUpdater.updateLocalConversationQualifiedIDToContext_MockMethod = { _, _, _, _ in }
 
         BackendInfo.storage = .temporary()
         DeveloperFlag.storage = .temporary()
@@ -74,7 +70,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockFeatureRepository = nil
         mockActionsProvider = nil
         mockMLSService = nil
-        mockPostProtocolChangeUpdater = nil
         BackendInfo.storage = .standard
         DeveloperFlag.storage = .standard
         super.tearDown()
@@ -141,6 +136,45 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         // THEN
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)
         XCTAssertFalse(startedMigration)
+    }
+
+    func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfAPIV5NotSupported() async throws {
+        try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isAPIV5Supported: false)
+    }
+
+    func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfClientNotSupportingMLS() async throws {
+        try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isClientSupportingMLS: false)
+    }
+
+    func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfBackendNotSupportingMLS() async throws {
+        try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isBackendSupportingMLS: false)
+    }
+
+    private func internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(
+        isAPIV5Supported: Bool = true,
+        isClientSupportingMLS: Bool = true,
+        isBackendSupportingMLS: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+
+        setMockValues(
+            isAPIV5Supported: isAPIV5Supported,
+            isClientSupportingMLS: isClientSupportingMLS,
+            isBackendSupportingMLS: isBackendSupportingMLS,
+            isMLSProtocolSupported: true,
+            isMLSMigrationFeatureEnabled: true,
+            hasStartTimeBeenReached: true
+        )
+        mockStorage.underlyingMigrationStatus = .notStarted
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0, file: file, line: line)
     }
 
     // MARK: - Migration finalisation

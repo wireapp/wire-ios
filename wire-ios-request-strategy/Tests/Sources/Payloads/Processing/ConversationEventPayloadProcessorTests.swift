@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -535,7 +535,75 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    // MARK: 1:1
+    func testUpdateOrCreateConversation_Group_Updates_MessageProtocol_DoNotRevertToProteus() async {
+        // given
+        let qualifiedID = await syncMOC.perform {
+            self.groupConversation.messageProtocol = .proteus
+            return self.groupConversation.qualifiedID!
+        }
+        let payloadProteus = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mixed.rawValue
+        )
+        let payloadMixed = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mixed.rawValue
+        )
+
+        // when
+        await sut.updateOrCreateConversation(
+            from: payloadMixed,
+            in: syncMOC
+        )
+        // try to reset the protocol to 'proteus'
+        await sut.updateOrCreateConversation(
+            from: payloadProteus,
+            in: syncMOC
+        )
+
+        // then
+        await syncMOC.perform {
+            XCTAssertEqual(self.groupConversation.messageProtocol, .mixed)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Group_Updates_MessageProtocol_DoNotRevertToMixed() async {
+        // given
+        let qualifiedID = await syncMOC.perform {
+            self.groupConversation.messageProtocol = .mixed
+            return self.groupConversation.qualifiedID!
+        }
+        let payloadMixed = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mixed.rawValue
+        )
+        let payloadMLS = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mls.rawValue
+        )
+
+        // when
+        await sut.updateOrCreateConversation(
+            from: payloadMLS,
+            in: syncMOC
+        )
+        // try to reset the protocol to 'mixed'
+        await sut.updateOrCreateConversation(
+            from: payloadMixed,
+            in: syncMOC
+        )
+
+        // then
+        await syncMOC.perform {
+            XCTAssertEqual(self.groupConversation.messageProtocol, .mls)
+        }
+    }
+
+    // MARK: 1:1 / Connection Conversations
 
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
         // given
@@ -1108,47 +1176,4 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-}
-
-extension Payload.Conversation {
-
-    static func stub(
-        qualifiedID: QualifiedID? = nil,
-        id: UUID?  = nil,
-        type: BackendConversationType? = nil,
-        creator: UUID? = nil,
-        access: [String]? = nil,
-        accessRole: String? = nil,
-        accessRoles: [String]? = nil,
-        name: String? = nil,
-        members: Payload.ConversationMembers? = nil,
-        lastEvent: String? = nil,
-        lastEventTime: String? = nil,
-        teamID: UUID? = nil,
-        messageTimer: TimeInterval? = nil,
-        readReceiptMode: Int? = nil,
-        messageProtocol: String? = "proteus",
-        mlsGroupID: String? = "id".data(using: .utf8)?.base64EncodedString()
-    ) -> Self {
-
-        self.init(
-            qualifiedID: qualifiedID,
-            id: id,
-            type: type?.rawValue,
-            creator: creator,
-            access: access,
-            legacyAccessRole: accessRole,
-            accessRoles: accessRoles,
-            name: name,
-            members: members,
-            lastEvent: lastEvent,
-            lastEventTime: lastEventTime,
-            teamID: teamID,
-            messageTimer: messageTimer,
-            readReceiptMode: readReceiptMode,
-            messageProtocol: messageProtocol,
-            mlsGroupID: mlsGroupID
-        )
-
-    }
 }

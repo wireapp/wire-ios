@@ -20,26 +20,6 @@ import Foundation
 import WireSystem
 import WireUtilities
 
-// sourcery: AutoMockable
-protocol RecurringActionServiceInterface {
-
-    func registerAction(_ action: RecurringAction)
-    func performActionsIfNeeded()
-    func forcePerformAction(id: String)
-
-}
-
-struct RecurringAction {
-
-    let id: String
-    let interval: TimeInterval
-    let perform: () -> Void
-
-    func callAsFunction() {
-        perform()
-    }
-}
-
 final class RecurringActionService: RecurringActionServiceInterface {
 
     // MARK: - Properties

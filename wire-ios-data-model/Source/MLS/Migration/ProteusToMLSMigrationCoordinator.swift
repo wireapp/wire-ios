@@ -55,7 +55,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let featureRepository: FeatureRepositoryInterface
     private let actionsProvider: MLSActionsProviderProtocol
     private var storage: ProteusToMLSMigrationStorageInterface
-    private let postProtocolChangeUpdater: ConversationPostProtocolChangeUpdating
 
     private let logger = WireLogger.mls
 
@@ -78,14 +77,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         context: NSManagedObjectContext,
         storage: ProteusToMLSMigrationStorageInterface,
         featureRepository: FeatureRepositoryInterface? = nil,
-        actionsProvider: MLSActionsProviderProtocol? = nil,
-        postProtocolChangeUpdater: ConversationPostProtocolChangeUpdating? = nil
+        actionsProvider: MLSActionsProviderProtocol? = nil
     ) {
         self.context = context
         self.storage = storage
         self.featureRepository = featureRepository ?? FeatureRepository(context: context)
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
-        self.postProtocolChangeUpdater = postProtocolChangeUpdater ?? ConversationPostProtocolChangeUpdater()
     }
 
     // MARK: - Public Interface
@@ -157,22 +154,21 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     // MARK: - Helpers (migration start)
 
     private func resolveMigrationStartStatus() async -> MigrationStartStatus {
-        let features = await fetchFeatures()
-
         if (BackendInfo.apiVersion ?? .v0) < .v5 {
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
-
-        if !features.mls.config.supportedProtocols.contains(.mls) {
-            return .cannotStart(reason: .mlsProtocolIsNotSupported)
-        }
-
         if !DeveloperFlag.enableMLSSupport.isOn {
             return .cannotStart(reason: .clientDoesntSupportMLS)
         }
 
         if await !isMLSEnabledOnBackend() {
             return .cannotStart(reason: .backendDoesntSupportMLS)
+        }
+
+        let features = await fetchFeatures()
+
+        if !features.mls.config.supportedProtocols.contains(.mls) {
+            return .cannotStart(reason: .mlsProtocolIsNotSupported)
         }
 
         if features.mlsMigration.status == .disabled {
@@ -271,18 +267,15 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         let qualifiedID = await context.perform { conversation.qualifiedID }
         guard let qualifiedID else { return }
 
-        let messageProtocol: MessageProtocol = .mls
-
         try await actionsProvider.updateConversationProtocol(
             qualifiedID: qualifiedID,
-            messageProtocol: messageProtocol,
+            messageProtocol: .mls,
             context: context.notificationContext
         )
 
-        try await postProtocolChangeUpdater.updateLocalConversation(
-            for: qualifiedID,
-            to: messageProtocol,
-            context: context
+        try await actionsProvider.syncConversation(
+            qualifiedID: qualifiedID,
+            context: context.notificationContext
         )
     }
 }

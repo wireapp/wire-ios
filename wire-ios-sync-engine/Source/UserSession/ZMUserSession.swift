@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSystem
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -507,9 +508,9 @@ public class ZMUserSession: NSObject {
     }
 
     private func configureRecurringActions() {
-        recurringActionService.registerAction(refreshUsersMissingMetadata())
-        recurringActionService.registerAction(refreshConversationsMissingMetadata())
-        recurringActionService.registerAction(updateProteusToMLSMigrationStatus())
+        recurringActionService.registerAction(refreshUsersMissingMetadataAction)
+        recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
+        recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
     }
 
     func startRequestLoopTracker() {

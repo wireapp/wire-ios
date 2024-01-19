@@ -87,21 +87,6 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
 
 
 
-    // MARK: - registerAction
-
-    var registerAction_Invocations: [RecurringAction] = []
-    var registerAction_MockMethod: ((RecurringAction) -> Void)?
-
-    func registerAction(_ action: RecurringAction) {
-        registerAction_Invocations.append(action)
-
-        guard let mock = registerAction_MockMethod else {
-            fatalError("no mock for `registerAction`")
-        }
-
-        mock(action)
-    }
-
     // MARK: - performActionsIfNeeded
 
     var performActionsIfNeeded_Invocations: [Void] = []
@@ -115,6 +100,21 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
         }
 
         mock()
+    }
+
+    // MARK: - registerAction
+
+    var registerAction_Invocations: [RecurringAction] = []
+    var registerAction_MockMethod: ((RecurringAction) -> Void)?
+
+    func registerAction(_ action: RecurringAction) {
+        registerAction_Invocations.append(action)
+
+        guard let mock = registerAction_MockMethod else {
+            fatalError("no mock for `registerAction`")
+        }
+
+        mock(action)
     }
 
     // MARK: - forcePerformAction
