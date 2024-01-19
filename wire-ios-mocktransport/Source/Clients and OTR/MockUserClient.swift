@@ -172,6 +172,9 @@ extension MockUserClient {
         let mockLastPrekey = MockPreKey.insertNewKey(withPrekey: lastPrekey, for: newClient, in: context)
         mockLastPrekey.identifier = Int(CBOX_LAST_PREKEY_ID)
         newClient.lastPrekey = mockLastPrekey
+
+        try? context.save()
+
         return newClient
     }
 

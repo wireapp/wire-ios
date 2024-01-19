@@ -48,6 +48,7 @@ final class UserClientPayloadProcessor {
             let newClients = Set(clients.filter({ $0.isInserted }))
             selfClient.addNewClientsToIgnored(newClients)
             selfClient.updateSecurityLevelAfterDiscovering(newClients)
+            context.saveOrRollback()
         }
     }
 

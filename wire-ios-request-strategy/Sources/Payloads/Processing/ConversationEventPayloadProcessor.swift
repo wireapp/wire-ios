@@ -305,6 +305,8 @@ struct ConversationEventPayloadProcessor {
             conversation.appendMessageTimerUpdateMessage(fromUser: sender, timer: timeoutValue, timestamp: timestamp)
         }
         conversation.setMessageDestructionTimeoutValue(.init(rawValue: timeoutValue), for: .groupConversation)
+
+        context.saveOrRollback()
     }
 
     // MARK: - Receipt mode update
