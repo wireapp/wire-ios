@@ -22,7 +22,12 @@ import WireCommonComponents
 import WireSyncEngine
 
 final class AccentColorPickerController: ColorPickerController {
+
+    // MARK: - Properties
+
     private let allAccentColors: [AccentColor]
+
+    // MARK: - Lifecycle
 
     init() {
         allAccentColors = AccentColor.allSelectable()
@@ -34,12 +39,8 @@ final class AccentColorPickerController: ColorPickerController {
         if let selfUser = ZMUser.selfUser(), let accentColor = AccentColor(ZMAccentColor: selfUser.accentColorValue), let currentColorIndex = allAccentColors.firstIndex(of: accentColor) {
             selectedColor = colors[currentColorIndex]
         }
-        delegate = self
-    }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.isScrollEnabled = false
+        delegate = self
     }
 
     @available(*, unavailable)
@@ -47,10 +48,19 @@ final class AccentColorPickerController: ColorPickerController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.isScrollEnabled = false
+    }
+
+    // MARK: - Navigation Bar setup
+
     private func setupControllerTitle() {
         navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized)
     }
 }
+
+// MARK: - ColorPickerControllerDelegate
 
 extension AccentColorPickerController: ColorPickerControllerDelegate {
 
