@@ -211,7 +211,7 @@ final class ConversationSystemMessageCellDescription {
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
 
-        case .mlsMigrationMLSNotSupportedSelfUser, .mlsMigrationMLSNotSupportedOtherUser:
+        case .mlsNotSupportedSelfUser, .mlsNotSupportedOtherUser:
             if let user = conversation.connectedUserType {
                 let description = MLSMigrationSupportCellDescription(messageType: systemMessageData.systemMessageType, for: user)
                 return [AnyConversationMessageCellDescription(description)]
