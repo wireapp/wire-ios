@@ -141,8 +141,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         XCTAssertEqual(invocations.count, 1)
         XCTAssertEqual(invocations.first?.welcomeMessage, message)
         XCTAssertEqual(invocations.first?.conversationID, qualifiedID)
-        // ? XCTAssertEqual(message, mockMLSEventProcessor.processWelcomeMessageIn_Invocations.first?.welcomeMessage)
-
     }
 
     // MARK: - MLS conversation member leave
