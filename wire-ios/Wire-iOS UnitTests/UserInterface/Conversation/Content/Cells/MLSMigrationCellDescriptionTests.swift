@@ -39,7 +39,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func testProperties() {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted, for: otherUser)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted)
 
         // WHEN && THEN
         XCTAssertEqual(cellDescription.topMargin, .zero)
@@ -59,7 +59,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationStarted_doesContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted, for: otherUser)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted)
         var expectedValue: Any?
 
         // WHEN
@@ -75,7 +75,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationFinalized_doesContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationFinalized, for: otherUser)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationFinalized)
         var expectedValue: Any?
 
         // WHEN
@@ -91,7 +91,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationOngoingCall_doesNotContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationOngoingCall, for: otherUser)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationOngoingCall)
         var expectedValue: Any?
 
         // WHEN
@@ -107,7 +107,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationUpdateVersion_doesNotContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationUpdateVersion, for: otherUser)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationUpdateVersion)
         var expectedValue: Any?
 
         // WHEN
@@ -123,7 +123,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationJoinAfterwards_doesContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationJoinAfterwards, for: otherUser)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationJoinAfterwards)
         var expectedValue: Any?
 
         // WHEN
@@ -139,7 +139,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
     func test_mlsMigrationPotentialGap_doesContainLinkInAttributedString() throws {
         // GIVEN
-        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationPotentialGap, for: otherUser)
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationPotentialGap)
         var expectedValue: Any?
 
         // WHEN
