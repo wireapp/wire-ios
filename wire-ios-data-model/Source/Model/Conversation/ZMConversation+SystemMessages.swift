@@ -234,7 +234,7 @@ extension ZMConversation {
         guard let context = self.managedObjectContext else { return }
 
         self.appendSystemMessage(
-            type: .mlsMigrationMLSNotSupportedSelfUser,
+            type: .mlsNotSupportedSelfUser,
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),
             clients: nil,
@@ -250,7 +250,7 @@ extension ZMConversation {
         guard let context = self.managedObjectContext else { return }
 
         self.appendSystemMessage(
-            type: .mlsMigrationMLSNotSupportedOtherUser,
+            type: .mlsNotSupportedOtherUser,
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),
             clients: nil,
