@@ -20,58 +20,32 @@ import Foundation
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
+import SwiftUI
 
-final class AccentColorPickerController: ColorPickerController {
-
-    // MARK: - Properties
-
-    private let allAccentColors: [AccentColor]
-
-    // MARK: - Lifecycle
-
-    init() {
-        allAccentColors = AccentColor.allSelectable()
-
-        super.init(colors: allAccentColors)
-
-        setupControllerTitle()
-
-        if let selfUser = ZMUser.selfUser(), let accentColor = AccentColor(ZMAccentColor: selfUser.accentColorValue), let currentColorIndex = allAccentColors.firstIndex(of: accentColor) {
-            selectedColor = colors[currentColorIndex]
-        }
-
-        delegate = self
-    }
-
-    @available(*, unavailable)
+class AccentColorPickerHostingController: UIHostingController<ColorPickerView> {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.isScrollEnabled = false
-    }
+    init(selectedAccentColor: Binding<AccentColor?>) {
+        let allAccentColors = AccentColor.allSelectable()
+        var initialSelectedColor: AccentColor?
 
-    // MARK: - Navigation Bar setup
-
-    private func setupControllerTitle() {
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized)
-    }
-}
-
-// MARK: - ColorPickerControllerDelegate
-
-extension AccentColorPickerController: ColorPickerControllerDelegate {
-
-    func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor) {
-        guard let colorIndex = colors.firstIndex(of: color) else {
-            return
+        if let bindingValue = selectedAccentColor.wrappedValue {
+            // If the binding has an initial value, use it
+            initialSelectedColor = bindingValue
+        } else if let firstColor = allAccentColors.first {
+            // If no initial value, use the first available color as a default
+            initialSelectedColor = firstColor
         }
 
-        ZMUserSession.shared()?.perform {
-            ZMUser.selfUser()?.accentColorValue = self.allAccentColors[colorIndex].zmAccentColor
-        }
+        super.init(rootView: ColorPickerView(colors: allAccentColors, selectedColor: initialSelectedColor, onColorSelect: { selectedColor in
+            selectedAccentColor.wrappedValue = selectedColor
+            if let colorIndex = allAccentColors.firstIndex(of: selectedColor) {
+                ZMUserSession.shared()?.perform {
+                    ZMUser.selfUser()?.accentColorValue = allAccentColors[colorIndex].zmAccentColor
+                }
+            }
+        }))
     }
-
 }
