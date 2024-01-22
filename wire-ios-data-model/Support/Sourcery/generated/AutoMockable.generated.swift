@@ -3543,20 +3543,23 @@ public class MockOneOnOneMigratorInterface: OneOnOneMigratorInterface {
 
     public var migrateToMLSUserIDIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
     public var migrateToMLSUserIDIn_MockError: Error?
-    public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> Void)?
+    public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> MLSGroupID)?
+    public var migrateToMLSUserIDIn_MockValue: MLSGroupID?
 
-    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws {
+    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
         migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
 
         if let error = migrateToMLSUserIDIn_MockError {
             throw error
         }
 
-        guard let mock = migrateToMLSUserIDIn_MockMethod else {
+        if let mock = migrateToMLSUserIDIn_MockMethod {
+            return try await mock(userID, context)
+        } else if let mock = migrateToMLSUserIDIn_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `migrateToMLSUserIDIn`")
         }
-
-        try await mock(userID, context)
     }
 
 }
@@ -3599,20 +3602,24 @@ public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
 
     public var resolveOneOnOneConversationWithIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
     public var resolveOneOnOneConversationWithIn_MockError: Error?
-    public var resolveOneOnOneConversationWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> Void)?
+    public var resolveOneOnOneConversationWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> OneOnOneConversationResolvedState)?
+    public var resolveOneOnOneConversationWithIn_MockValue: OneOnOneConversationResolvedState?
 
-    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext) async throws {
+    @discardableResult
+    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext) async throws -> OneOnOneConversationResolvedState {
         resolveOneOnOneConversationWithIn_Invocations.append((userID: userID, context: context))
 
         if let error = resolveOneOnOneConversationWithIn_MockError {
             throw error
         }
 
-        guard let mock = resolveOneOnOneConversationWithIn_MockMethod else {
+        if let mock = resolveOneOnOneConversationWithIn_MockMethod {
+            return try await mock(userID, context)
+        } else if let mock = resolveOneOnOneConversationWithIn_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `resolveOneOnOneConversationWithIn`")
         }
-
-        try await mock(userID, context)
     }
 
 }
