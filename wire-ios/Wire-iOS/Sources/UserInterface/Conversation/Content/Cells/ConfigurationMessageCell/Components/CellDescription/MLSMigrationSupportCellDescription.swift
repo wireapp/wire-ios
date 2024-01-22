@@ -68,18 +68,23 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     }
 
     private static func makeMLSNotSupportedForSelfUser(username: String) -> NSAttributedString? {
+        let baseMessage = SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username)
 
-        let text = NSMutableAttributedString.markdown(
-            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username),
-            style: .systemMessage
-        )
+        let attributedMessage = NSAttributedString.markdown(from: baseMessage, style: .systemMessage)
 
-        let link = NSMutableAttributedString(
-            string: SystemMessageMLSMigrationLocalizable.Download.Mls.wire,
-            attributes: linkAttributesForDownloadingWire
-        )
+        let linkText = SystemMessageMLSMigrationLocalizable.Download.Mls.wire
 
-        return [text, link].joined(separator: NSAttributedString(" "))
+        if let linkRange = attributedMessage.string.range(of: linkText) {
+            let nsLinkRange = NSRange(linkRange, in: attributedMessage.string)
+
+            let mutableAttributedMessage = NSMutableAttributedString(attributedString: attributedMessage)
+
+            mutableAttributedMessage.addAttributes(linkAttributesForDownloadingWire, range: nsLinkRange)
+
+            return mutableAttributedMessage
+        }
+
+        return attributedMessage
     }
 
     private static func makeMLSNotSupportedForOtherUser(username: String) -> NSAttributedString? {
