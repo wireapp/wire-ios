@@ -123,9 +123,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         super.tearDown()
     }
 
-    private func createAction() -> CreateGroupConversationAction {
+    private func createAction(messageProtocol: MessageProtocol = .proteus) -> CreateGroupConversationAction {
         return CreateGroupConversationAction(
-            messageProtocol: .proteus,
+            messageProtocol: messageProtocol,
             creatorClientID: "creatorClientID",
             qualifiedUserIDs: [user1ID, user2ID],
             unqualifiedUserIDs: [],
@@ -264,7 +264,8 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     func test_HandleResponse_200() throws {
         // Given
-        BackendInfo.apiVersion = .v2
+        let apiVersion = APIVersion.v2
+        BackendInfo.apiVersion = apiVersion
         action = createAction()
         handler = sut
 
@@ -272,7 +273,8 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
         let result = try XCTUnwrap(test_itHandlesSuccess(
             status: 200,
-            payload: payload as ZMTransportData
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion
         ))
 
         // Then
@@ -284,7 +286,8 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     func test_HandleResponse_201() throws {
         // Given
-        BackendInfo.apiVersion = .v2
+        let apiVersion = APIVersion.v2
+        BackendInfo.apiVersion = apiVersion
         action = createAction()
         handler = sut
 
@@ -292,7 +295,8 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
         let result = try XCTUnwrap(test_itHandlesSuccess(
             status: 201,
-            payload: payload as ZMTransportData
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion
         ))
 
         // Then
@@ -316,8 +320,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     func test_ItCreatesMLSGroup() throws {
         // Given
-        BackendInfo.apiVersion = .v2
-        action = createAction()
+        let apiVersion = APIVersion.v5
+        BackendInfo.apiVersion = apiVersion
+        action = createAction(messageProtocol: .mls)
         handler = sut
         mlsService.conversationExistsGroupID_MockMethod = { _ in false }
         mlsService.createGroupForWith_MockMethod = { _, _ in }
@@ -327,7 +332,41 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         // When
         let result = try XCTUnwrap(test_itHandlesSuccess(
             status: 201,
-            payload: payload as ZMTransportData
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion
+        ))
+
+        // Then
+        try syncMOC.performAndWait {
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
+            assertConversationHasCorrectValues(conversation)
+            XCTAssertEqual(conversation.messageProtocol, .mls)
+            XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
+            XCTAssertEqual(conversation.mlsStatus, .ready)
+
+            XCTAssertEqual(mlsService.createGroupForWith_Invocations.count, 1)
+
+            let createGroupCall = mlsService.createGroupForWith_Invocations.element(atIndex: 0)?.groupID
+            XCTAssertEqual(createGroupCall, mlsGroupID)
+        }
+    }
+
+    func test_ItCreatesMLSGroup_withUsersWithNoPackages() throws {
+        // Given
+        let apiVersion = APIVersion.v5
+        BackendInfo.apiVersion = apiVersion
+        action = createAction(messageProtocol: .mls)
+        handler = sut
+        mlsService.createGroupForWith_MockMethod = { _, _ in
+            throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [MLSUser(id: UUID(), domain: .random(length: 5))])
+        }
+        let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
+
+        // When
+        let result = try XCTUnwrap(test_itHandlesSuccess(
+            status: 201,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion
         ))
 
         // Then
