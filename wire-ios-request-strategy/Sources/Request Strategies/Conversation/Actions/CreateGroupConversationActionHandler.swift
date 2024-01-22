@@ -266,6 +266,23 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 await self.context.perform {
                     action.succeed(with: newConversation.objectID)
                 }
+
+             } catch MLSService.MLSAddMembersError.failedToClaimKeyPackages(let failedMLSUsers) {
+
+                 let failedUsers = await context.perform { [context] in
+                     let ids = Set(failedMLSUsers.compactMap({ $0.id }))
+                     return ZMUser.users(withRemoteIDs: ids, in: context)
+                 }
+
+                 await context.perform {
+                     newConversation.appendFailedToAddUsersSystemMessage(
+                         users: failedUsers,
+                         sender: newConversation.creator,
+                         at: newConversation.lastServerTimeStamp ?? Date()
+                     )
+                 }
+
+                 action.succeed(with: newConversation.objectID)
             } catch let error {
                 Logging.mls.error("failed create new mls group: \(String(describing: error))")
                 action.fail(with: .proccessingError)
