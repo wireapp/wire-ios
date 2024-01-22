@@ -79,8 +79,8 @@ extension ZMConversation {
     public class func keyPathsForValuesAffectingDisplayName() -> Set<String> {
         return Set([ZMConversationConversationTypeKey,
                     "participantRoles.user.name",
-                    "connection.to.name",
-                    "connection.to.availability",
+                    #keyPath(ZMConversation.oneOnOneUser.name),
+                    #keyPath(ZMConversation.oneOnOneUser.availability),
                     ZMConversationUserDefinedNameKey] +
                    ZMConversation.participantRolesKeys)
     }

@@ -190,7 +190,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         let connection = ZMConnection.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .oneOnOne
-        conversation.connection = connection
+        user.connection = connection
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
 
         // when
@@ -412,7 +412,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         connection.to = user
 
         // when
-        connection.conversation = conversation
+        user.oneOnOneConversation = conversation
 
         // then
         XCTAssertEqual(conversation.connectedUser, user)
@@ -427,7 +427,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         connection.to = user
 
         // when
-        connection.conversation = conversation
+        user.oneOnOneConversation = conversation
 
         // then
         XCTAssertEqual(conversation.connectedUser, user)

@@ -66,12 +66,9 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
                 let connection = ZMConnection.insertNewObject(in: context)
                 connection.status = .accepted
                 connection.to = user
-                connection.conversation = conversation
+                connection.setValue(conversation, forKey: "conversation")
 
                 try context.save()
-
-                XCTAssertEqual(conversation.connection, connection)
-                XCTAssertEqual(user.connection, connection)
             },
             postMigrationAction: { context in
                 let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: context))

@@ -50,16 +50,23 @@ extension ZMManagedObject {
         let classIdentifier = type(of: object).entityName()
 
         var changes = changedValues()
-        guard !changes.isEmpty || !knownKeys.isEmpty else { return [:] }
-        let allKeys = knownKeys.union(changes.keys)
 
+        guard !changes.isEmpty || !knownKeys.isEmpty else {
+            return [:]
+        }
+
+        let allKeys = knownKeys.union(changes.keys)
         let mappedKeys: [String] = Array(allKeys).map(keyMapping)
+
         let keys = mappedKeys.map {
             keyStore.observableKeysAffectedByValue(classIdentifier, key: $0)
-            }.reduce(Set()) {$0.union($1)}
+        }.reduce(Set()) {
+            $0.union($1)
+        }
 
-        guard !keys.isEmpty ||
-            originalChangeKey != nil else { return [:] }
+        guard !keys.isEmpty || originalChangeKey != nil else {
+            return [:]
+        }
 
         var originalChanges = [String: NSObject?]()
         if let originalChangeKey = originalChangeKey {
@@ -175,15 +182,29 @@ extension ZMMessage: SideEffectSource {
 extension ZMConnection: SideEffectSource {
 
     func affectedObjectsAndKeys(keyStore: DependencyKeyStore, knownKeys: Set<String>) -> ObjectAndChanges {
-        // TODO: fix this
-        return [:]
-//        let conversationChanges = byUpdateAffectedKeys(for: conversation, knownKeys: knownKeys, keyStore: keyStore, keyMapping: {"\(#keyPath(ZMConversation.connection)).\($0)"})
-//        let userChanges = byUpdateAffectedKeys(for: to, knownKeys: knownKeys, keyStore: keyStore, keyMapping: {"\(#keyPath(ZMConversation.connection)).\($0)"})
-//        return conversationChanges.updated(other: userChanges)
+        let conversationChanges = byUpdateAffectedKeys(
+            for: to.oneToOneConversation,
+            knownKeys: knownKeys,
+            keyStore: keyStore,
+            keyMapping: { "\(#keyPath(ZMConversation.oneOnOneUser.connection)).\($0)" }
+        )
+
+        let userChanges = byUpdateAffectedKeys(
+            for: to,
+            knownKeys: knownKeys,
+            keyStore: keyStore,
+            keyMapping: { "\(#keyPath(ZMUser.connection)).\($0)" }
+        )
+
+        return conversationChanges.updated(other: userChanges)
     }
 
     func affectedObjectsForInsertionOrDeletion(keyStore: DependencyKeyStore) -> ObjectAndChanges {
-        return [:]
+        return byInsertOrDeletionAffectedKeys(
+            for: to.oneOnOneConversation,
+            keyStore: keyStore,
+            affectedKey: #keyPath(ZMConversation.oneOnOneUser.connection)
+        )
     }
 }
 

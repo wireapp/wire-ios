@@ -43,11 +43,12 @@
     connection.to = user;
     connection.lastUpdateDate = [NSDate date];
     connection.status = ZMConnectionStatusPending;
-    connection.conversation = [ZMConversation insertNewObjectInManagedObjectContext:user.managedObjectContext];
-    [connection.conversation addParticipantAndUpdateConversationStateWithUser:user role:nil];
-    connection.conversation.creator = [ZMUser selfUserInContext:user.managedObjectContext];
-    connection.conversation.conversationType = ZMConversationTypeConnection;
-    connection.conversation.lastModifiedDate = connection.lastUpdateDate;
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:user.managedObjectContext];
+    [conversation addParticipantAndUpdateConversationStateWithUser:user role:nil];
+    conversation.creator = [ZMUser selfUserInContext:user.managedObjectContext];
+    conversation.conversationType = ZMConversationTypeConnection;
+    conversation.lastModifiedDate = connection.lastUpdateDate;
+    conversation.oneOnOneUser = user;
     return connection;
 }
 
@@ -144,10 +145,12 @@
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.isArchived = YES;
 
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        user.remoteIdentifier = [NSUUID createUUID];
+        user.oneOnOneConversation = conversation;
+
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.to.remoteIdentifier = [NSUUID createUUID];
-        connection.conversation = conversation;
+        connection.to = user;
         connection.status = ZMConnectionStatusPending;
 
         [self.syncMOC saveOrRollback];
@@ -159,8 +162,8 @@
     connection.status = ZMConnectionStatusAccepted;
 
     // then
-    XCTAssertNotNil(connection.conversation);
-    XCTAssertFalse(connection.conversation.isArchived);
+    XCTAssertNotNil(connection.to.oneOnOneConversation);
+    XCTAssertFalse(connection.to.oneOnOneConversation.isArchived);
 }
 
 - (void)testThatCancellingAConnectionDeletesTheUserRelationship;
@@ -169,10 +172,13 @@
     __block NSManagedObjectID *moid;
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        user.remoteIdentifier = [NSUUID createUUID];
+        user.oneOnOneConversation = conversation;
+
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.to.remoteIdentifier = [NSUUID createUUID];
-        connection.conversation = conversation;
+        connection.to = user;
         connection.status = ZMConnectionStatusSent;
 
         [self.syncMOC saveOrRollback];
@@ -249,12 +255,12 @@
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         user.name = @"John";
         user.remoteIdentifier = [NSUUID createUUID];
+        user.oneOnOneConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-        user.connection.conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         XCTAssert([self.syncMOC saveOrRollback]);
         userMOID = user.objectID;
         connectionMOID = user.connection.objectID;
-        conversationMOID = user.connection.conversation.objectID;
+        conversationMOID = user.oneOnOneConversation.objectID;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     ZMUser *user = (id) [self.uiMOC objectWithID:userMOID];
@@ -267,8 +273,8 @@
     XCTAssertFalse(connection.hasChanges);
     XCTAssertNotNil(connection);
     XCTAssertEqualObjects(connection.objectID, connectionMOID);
-    XCTAssertNotNil(connection.conversation);
-    XCTAssertEqualObjects(connection.conversation.objectID, conversationMOID);
+    XCTAssertNotNil(user.oneOnOneConversation);
+    XCTAssertEqualObjects(user.oneOnOneConversation.objectID, conversationMOID);
 }
 
 // MARK: - Helpers
@@ -280,10 +286,11 @@
     __block NSManagedObjectID *moid;
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        user.remoteIdentifier = [NSUUID createUUID];
+        user.oneOnOneConversation = conversation;
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.to.remoteIdentifier = [NSUUID createUUID];
-        connection.conversation = conversation;
+        connection.to = user;
         connection.status = ZMConnectionStatusSent;
 
         [self.syncMOC saveOrRollback];
@@ -295,7 +302,7 @@
     connection.status = status;
 
     // then
-    XCTAssertEqual(connection.conversation.conversationType, conversationType);
+    XCTAssertEqual(connection.to.oneOnOneConversation.conversationType, conversationType);
 }
 
 @end

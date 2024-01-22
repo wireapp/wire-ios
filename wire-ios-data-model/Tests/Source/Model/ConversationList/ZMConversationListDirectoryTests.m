@@ -65,8 +65,38 @@
     Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
     team.remoteIdentifier = [NSUUID createUUID];
 
-    ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    otherUser.remoteIdentifier = [NSUUID createUUID];
+    ZMUser *teamUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    teamUser.remoteIdentifier = [NSUUID createUUID];
+
+    ZMUser *otherUser1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser1.remoteIdentifier = [NSUUID createUUID];
+    otherUser1.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser1.connection.status = ZMConnectionStatusAccepted;
+
+    ZMUser *otherUser2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser2.remoteIdentifier = [NSUUID createUUID];
+    otherUser2.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser2.connection.status = ZMConnectionStatusAccepted;
+
+    ZMUser *otherUser3 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser3.remoteIdentifier = [NSUUID createUUID];
+    otherUser3.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser3.connection.status = ZMConnectionStatusAccepted;
+
+    ZMUser *otherUser4 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser4.remoteIdentifier = [NSUUID createUUID];
+    otherUser4.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser4.connection.status = ZMConnectionStatusAccepted;
+
+    ZMUser *incomingPendingUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    incomingPendingUser.remoteIdentifier = [NSUUID createUUID];
+    incomingPendingUser.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    incomingPendingUser.connection.status = ZMConnectionStatusPending;
+
+    ZMUser *outgoingPendingUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    outgoingPendingUser.remoteIdentifier = [NSUUID createUUID];
+    outgoingPendingUser.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    outgoingPendingUser.connection.status = ZMConnectionStatusSent;
 
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = [NSUUID createUUID];
@@ -86,21 +116,18 @@
 
     self.archivedOneToOneConversation = [self createConversation];
     self.archivedOneToOneConversation.conversationType = ZMConversationTypeOneOnOne;
-    self.archivedOneToOneConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    self.archivedOneToOneConversation.connection.status = ZMConnectionStatusAccepted;
+    self.archivedOneToOneConversation.oneOnOneUser = otherUser1;
     self.archivedOneToOneConversation.isArchived = YES;
     self.archivedOneToOneConversation.userDefinedName = @"archivedOneToOneConversation";
 
     self.incomingPendingConnectionConversation = [self createConversation];
     self.incomingPendingConnectionConversation.conversationType = ZMConversationTypeConnection;
-    self.incomingPendingConnectionConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    self.incomingPendingConnectionConversation.connection.status = ZMConnectionStatusPending;
+    self.incomingPendingConnectionConversation.oneOnOneUser = incomingPendingUser;
     self.incomingPendingConnectionConversation.userDefinedName = @"incomingPendingConnectionConversation";
 
     self.outgoingPendingConnectionConversation = [self createConversation];
     self.outgoingPendingConnectionConversation.conversationType = ZMConversationTypeConnection;
-    self.outgoingPendingConnectionConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    self.outgoingPendingConnectionConversation.connection.status = ZMConnectionStatusSent;
+    self.outgoingPendingConnectionConversation.oneOnOneUser = outgoingPendingUser;
     self.outgoingPendingConnectionConversation.userDefinedName = @"outgoingConnectionConversation";
 
     self.groupConversation = [self createConversation];
@@ -114,14 +141,12 @@
 
     self.oneToOneConversation = [self createConversation];
     self.oneToOneConversation.conversationType = ZMConversationTypeOneOnOne;
-    self.oneToOneConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    self.oneToOneConversation.connection.status = ZMConnectionStatusAccepted;
+    self.oneToOneConversation.oneOnOneUser = otherUser2;
     self.oneToOneConversation.userDefinedName = @"oneToOneConversation";
 
     self.oneToOneConversationInFolder = [self createConversation];
     self.oneToOneConversationInFolder.conversationType = ZMConversationTypeOneOnOne;
-    self.oneToOneConversationInFolder.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    self.oneToOneConversationInFolder.connection.status = ZMConnectionStatusAccepted;
+    self.oneToOneConversationInFolder.oneOnOneUser = otherUser3;
     self.oneToOneConversationInFolder.userDefinedName = @"oneToOneConversationInFolder";
     self.oneToOneConversationInFolder.labels = [NSSet setWithObject:folder];
 
@@ -129,7 +154,7 @@
     self.oneToOneConversationInTeam.conversationType = ZMConversationTypeGroup;
     self.oneToOneConversationInTeam.userDefinedName = nil;
     self.oneToOneConversationInTeam.team = team;
-    [self.oneToOneConversationInTeam addParticipantAndUpdateConversationStateWithUser:otherUser role:nil];
+    [self.oneToOneConversationInTeam addParticipantAndUpdateConversationStateWithUser:teamUser role:nil];
     [self.oneToOneConversationInTeam addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
 
     self.invalidConversation = [self createConversation];
@@ -138,8 +163,7 @@
 
     self.clearedConversation = [self createConversation];
     self.clearedConversation.conversationType = ZMConversationTypeOneOnOne;
-    self.clearedConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    self.clearedConversation.connection.status = ZMConnectionStatusAccepted;
+    self.clearedConversation.oneOnOneUser = otherUser4;
     self.clearedConversation.userDefinedName = @"clearedConversation";
     self.clearedConversation.clearedTimeStamp = self.clearedConversation.lastServerTimeStamp;
     self.clearedConversation.isArchived = YES;

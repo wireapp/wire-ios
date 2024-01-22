@@ -297,7 +297,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingRelatedConnectionState
 {
-    return [NSSet setWithObjects:@"connection.status", @"connection", nil];
+    return [NSSet setWithObjects:@"oneOnOneUser.connection.status", @"oneOnOneUser.connection", nil];
 }
 
 - (NSSet *)ignoredKeys;
@@ -307,6 +307,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     dispatch_once(&onceToken, ^{
         NSSet *keys = [super ignoredKeys];
         NSString * const KeysIgnoredForTrackingModifications[] = {
+            ZMConversationOneOnOneUserKey,
             ZMConversationConversationTypeKey,
             CreatorKey,
             DraftMessageDataKey,
@@ -483,6 +484,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (BOOL)isPendingConnectionConversation;
 {
     return self.oneOnOneUser.connection != nil && self.oneOnOneUser.connection.status == ZMConnectionStatusPending;
+}
+
++ (NSSet *)keyPathsForValuesAffectingIsPendingConnectionConversation
+{
+    return [NSSet setWithObjects:@"oneOnOneUser.connection", @"oneOnOneUser.connection.status", nil];
 }
 
 - (ZMConversationListIndicator)conversationListIndicator;

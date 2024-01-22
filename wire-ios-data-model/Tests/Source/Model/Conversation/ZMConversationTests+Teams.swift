@@ -93,31 +93,14 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         // given
         let oneOnOne = ZMConversation.insertNewObject(in: uiMOC)
         oneOnOne.conversationType = .oneOnOne
-        oneOnOne.connection = .insertNewObject(in: uiMOC)
-        oneOnOne.connection?.status = .accepted
+
         let userOutsideTeam = ZMUser.insertNewObject(in: uiMOC)
-        oneOnOne.connection?.to = userOutsideTeam
+        userOutsideTeam.connection = ZMConnection.insertNewObject(in: uiMOC)
+        userOutsideTeam.connection?.status = .accepted
+        userOutsideTeam.oneOnOneConversation = oneOnOne
 
         // then
         XCTAssertEqual(userOutsideTeam.oneToOneConversation, oneOnOne)
-    }
-
-    func testThatItReturnsTeamConversationForOneOnOneConversationWithTeamMember() {
-        // given
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-        let oneOnOne = ZMConversation.insertNewObject(in: uiMOC)
-        oneOnOne.conversationType = .oneOnOne
-        oneOnOne.connection = .insertNewObject(in: uiMOC)
-        oneOnOne.connection?.status = .accepted
-        oneOnOne.connection?.to = otherUser
-        oneOnOne.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser]), role: nil)
-
-        // when
-        let teamOneOnOne = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
-
-        // then
-        XCTAssertNotEqual(otherUser.oneToOneConversation, oneOnOne)
-        XCTAssertEqual(otherUser.oneToOneConversation, teamOneOnOne)
     }
 
     func testThatItCreatesAConversationWithMultipleParticipantsInATeam() {

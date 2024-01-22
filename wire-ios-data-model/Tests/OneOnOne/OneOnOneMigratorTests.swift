@@ -63,8 +63,8 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
             mlsConversation.messageProtocol = .mls
             mlsConversation.conversationType = .oneOnOne
 
-            XCTAssertEqual(connection.conversation, proteusConversation)
-            XCTAssertNil(mlsConversation.connection)
+            XCTAssertEqual(proteusConversation.oneOnOneUser, user)
+            XCTAssertNil(mlsConversation.oneOnOneUser)
 
             return (
                 connection,
@@ -93,8 +93,8 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.map(\.groupID), [mlsGroupID])
 
         await uiMOC.perform {
-            XCTAssertEqual(connection.conversation, mlsConversation)
-            XCTAssertNil(proteusConversation.connection)
+            XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
+            XCTAssertNil(proteusConversation.oneOnOneUser)
         }
     }
 
@@ -119,8 +119,8 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
             mlsConversation.messageProtocol = .mls
             mlsConversation.conversationType = .oneOnOne
 
-            XCTAssertEqual(connection.conversation, proteusConversation)
-            XCTAssertNil(mlsConversation.connection)
+            XCTAssertEqual(proteusConversation.oneOnOneUser, user)
+            XCTAssertNil(mlsConversation.oneOnOneUser)
 
             return (
                 connection,
@@ -148,8 +148,8 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(mlsService.addMembersToConversationWithFor_Invocations.isEmpty)
 
         await uiMOC.perform {
-            XCTAssertEqual(connection.conversation, mlsConversation)
-            XCTAssertNil(proteusConversation.connection)
+            XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
+            XCTAssertNil(proteusConversation.oneOnOneUser)
         }
     }
 

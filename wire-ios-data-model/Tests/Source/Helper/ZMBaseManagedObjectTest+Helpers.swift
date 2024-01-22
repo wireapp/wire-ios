@@ -103,7 +103,8 @@ extension ZMBaseManagedObjectTest {
         conversation.conversationType = .connection
         conversation.remoteIdentifier = .create()
         conversation.domain = "local@domain.com"
-        conversation.connection = connection
+        
+        user.oneOnOneConversation = conversation
 
         return (connection, conversation)
     }
