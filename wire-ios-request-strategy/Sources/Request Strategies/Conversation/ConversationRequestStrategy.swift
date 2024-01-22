@@ -607,7 +607,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     private lazy var processor = ConversationEventPayloadProcessor(
         mlsEventProcessor: MLSEventProcessor(context: context),
         removeLocalConversation: removeLocalConversation
-    )
+    ) // TODO jacob
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
     init(
