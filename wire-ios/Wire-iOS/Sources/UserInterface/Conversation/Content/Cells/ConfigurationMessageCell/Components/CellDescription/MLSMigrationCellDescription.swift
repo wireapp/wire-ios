@@ -29,11 +29,6 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         .link: URL.wr_mlsLearnMore
     ]
 
-    private static let linkAttributesForDownloadingWire: [NSAttributedString.Key: Any] = [
-        .font: UIFont.mediumSemiboldFont,
-        .link: URL.wr_wireAppOnItunes
-    ]
-
     let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false
