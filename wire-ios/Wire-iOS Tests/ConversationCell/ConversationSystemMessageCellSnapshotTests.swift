@@ -22,20 +22,6 @@ import XCTest
 final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnapshotTestCase {
 
     // MARK: MLS Migration
-    var mockConversation: SwiftMockConversation!
-    var otherUser: MockUserType!
-
-    override func setUp() {
-        super.setUp()
-        otherUser = MockUserType.createDefaultOtherUser()
-        mockConversation = SwiftMockConversation.oneOnOneConversation(otherUser: otherUser)
-    }
-
-    override func tearDown() {
-        otherUser = nil
-        mockConversation = nil
-        super.tearDown()
-    }
 
     func test_mlsMigrationFinalized() {
         let message = makeMessage(messageType: .mlsMigrationFinalized)
@@ -64,13 +50,12 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
 
     func test_mlsMigrationPotentialGap() {
         let message = makeMessage(messageType: .mlsMigrationPotentialGap)
-        message.backingSystemMessageData?.userTypes = Set<AnyHashable>([SwiftMockLoader.mockUsers().last])
         verify(message: message)
     }
 
     // MARK: - Helpers
 
     private func makeMessage(messageType: ZMSystemMessageType) -> MockMessage {
-        MockMessageFactory.systemMessage(with: messageType, conversation: mockConversation)!
+        MockMessageFactory.systemMessage(with: messageType)!
     }
 }
