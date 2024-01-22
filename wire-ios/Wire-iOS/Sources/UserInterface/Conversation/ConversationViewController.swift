@@ -146,28 +146,6 @@ final class ConversationViewController: UIViewController {
         voiceChannelStateObserverToken = addCallStateObserver()
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
         startCallController = ConversationCallController(conversation: conversation, target: self)
-
-        resolveConversationIfOneOnOne()
-    }
-
-    private func resolveConversationIfOneOnOne() {
-        guard
-            conversation.messageProtocol != .mls,
-            conversation.conversationType == .oneOnOne,
-            let otherUserID = conversation.localParticipants.first(where: { !$0.isSelfUser })?.qualifiedID,
-            let context = conversation.managedObjectContext,
-            let service = OneOnOneResolver(syncContext: context.zm_sync)
-        else {
-            return
-        }
-
-        Task {
-            do {
-                try await service.resolveOneOnOneConversation(with: otherUserID, in: context)
-            } catch {
-                WireLogger.conversation.warn("resolve non MLS 1-1 conversation failed: \(error)")
-            }
-        }
     }
 
     override func viewDidLoad() {
@@ -202,6 +180,8 @@ final class ConversationViewController: UIViewController {
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted {
             inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(for: quote))
         }
+
+        resolveConversationIfOneOnOne()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -384,6 +364,54 @@ final class ConversationViewController: UIViewController {
         navigationItem.leftItemsSupplementBackButton = false
 
         updateRightNavigationItemsButtons()
+    }
+
+    // MARK: Resolve 1-1 conversations
+
+    private func resolveConversationIfOneOnOne() {
+        guard
+            conversation.messageProtocol != .mls,
+            conversation.conversationType == .oneOnOne,
+            let otherUser = conversation.localParticipants.first(where: { !$0.isSelfUser }),
+            let otherUserID = otherUser.qualifiedID,
+            let context = conversation.managedObjectContext,
+            let service = OneOnOneResolver(syncContext: context.zm_sync)
+        else {
+            return
+        }
+
+        debugPrint("let's go")
+
+        Task {
+            do {
+                let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: context)
+
+                if case .migratedToMLSGroup(let identifier) = resolvedState {
+                    await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: context)
+                }
+            } catch {
+                WireLogger.conversation.warn("resolve non MLS 1-1 conversation failed: \(error)")
+            }
+        }
+    }
+
+    @MainActor
+    private func navigateToNewMLSConversation(
+        mlsGroupIdentifier: MLSGroupID,
+        in context: NSManagedObjectContext
+    ) async {
+        debugPrint("mlsGroupIdentifier: \(mlsGroupIdentifier)")
+
+        let mlsConversation = await context.perform {
+            ZMConversation.fetch(with: mlsGroupIdentifier, in: context)
+        }
+
+        guard let mlsConversation else {
+            assertionFailure("conversation with MLSGroupID \(mlsGroupIdentifier) is expected to be always available at this point!")
+            return
+        }
+
+        zClientViewController.showConversation(mlsConversation, at: nil)
     }
 
     // MARK: - ParticipantsPopover
