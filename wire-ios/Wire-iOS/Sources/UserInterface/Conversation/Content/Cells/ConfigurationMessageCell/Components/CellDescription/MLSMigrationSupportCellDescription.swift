@@ -57,9 +57,9 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
 
     private static func makeAttributedString(messageType: ZMSystemMessageType, for user: UserType) -> NSAttributedString? {
         switch messageType {
-        case .mlsMigrationMLSNotSupportedSelfUser:
+        case .mlsNotSupportedSelfUser:
             return makeMLSNotSupportedForSelfUser(username: user.name ?? "")
-        case .mlsMigrationMLSNotSupportedOtherUser:
+        case .mlsNotSupportedOtherUser:
             return makeMLSNotSupportedForOtherUser(username: user.name ?? "")
         default:
             assertionFailure("MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!")
