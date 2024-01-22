@@ -176,7 +176,7 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        nameLabel.text = user.name
+        nameLabel.text = (user.name ?? "<nil>") + " TODO status"
         nameLabel.accessibilityValue = nameLabel.text
 
         let remainingTimeString = user.expirationDisplayString
