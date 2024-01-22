@@ -143,6 +143,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard let managedObjectContext = managedObjectContext else {
+            return nil
+        }
+
         guard let clientRegistrationStatus = self.clientRegistrationStatus,
             let clientUpdateStatus = self.clientUpdateStatus else {
                 return nil
@@ -169,24 +173,22 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
         if clientRegistrationStatus.currentPhase == .waitingForPrekeys {
             clientRegistrationStatus.willGeneratePrekeys()
-            let groups = managedObjectContext?.enterAllGroupsExceptSecondary()
-            Task {
+            WaitingGroupTask(context: managedObjectContext) { [self] in
                 do {
                     let prekeys = try await prekeyGenerator.generatePrekeys()
                     let lastResortPrekey = try await prekeyGenerator.generateLastResortPrekey()
-                    await managedObjectContext?.perform {
+                    await managedObjectContext.perform {
                         clientRegistrationStatus.didGeneratePrekeys(prekeys, lastResortPrekey: lastResortPrekey)
                     }
                 } catch {
                     // TODO: [F] check if we need to propagate error
                     WireLogger.proteus.error("prekeys: failed to generatePrekeys: \(error.localizedDescription)")
                 }
-                managedObjectContext?.leaveAllGroups(groups)
             }
         }
 
         if clientRegistrationStatus.currentPhase == .registeringMLSClient {
-            WaitingGroupTask(context: managedObjectContext!) { [self] in
+            WaitingGroupTask(context: managedObjectContext) { [self] in
                 do {
                     // Make sure MLS client exists, mls public keys will be generated upon creation
                     _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
