@@ -1214,14 +1214,14 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     // MARK: - MLS conversation member leave
 
-    func test_UpdateConversationMemberLeave_WipesMLSGroup() {
-        syncMOC.performAndWait {
-            // Given
-            let wipeGroupExpectation = XCTestExpectation(description: "it wipes group")
-            mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in
-                wipeGroupExpectation.fulfill()
-            }
+    func test_UpdateConversationMemberLeave_WipesMLSGroup() async {
+        // Given
+        let wipeGroupExpectation = XCTestExpectation(description: "it wipes group")
+        mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in
+            wipeGroupExpectation.fulfill()
+        }
 
+        let (payload, updateEvent) = await syncMOC.perform { [self] in
             // Create self user
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID.create()
@@ -1233,7 +1233,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             // Create the event
             let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .userDeleted
             )
 
             let payload = self.conversationEventPayload(
@@ -1244,24 +1245,25 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
 
             let updateEvent = self.updateEvent(from: payload.payloadData()!)
-
-            // When
-            self.sut.processPayload(
-                payload,
-                originalEvent: updateEvent,
-                in: syncMOC
-            )
-
-            // Then
-            wait(for: [wipeGroupExpectation], timeout: 0.5)
-            let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations
-            XCTAssertEqual(wipeGroupInvocations.count, 1)
-            XCTAssertEqual(wipeGroupInvocations.first?.conversation, groupConversation)
+            return (payload, updateEvent)
         }
+
+        // When
+        await sut.processPayload(
+            payload,
+            originalEvent: updateEvent,
+            in: syncMOC
+        )
+        await fulfillment(of: [wipeGroupExpectation], timeout: 0.5)
+
+        // Then
+        let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations
+        XCTAssertEqual(wipeGroupInvocations.count, 1)
+        XCTAssertEqual(wipeGroupInvocations.first?.conversation, groupConversation)
     }
 
-    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() {
-        syncMOC.performAndWait {
+    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() async {
+        let (payload, updateEvent) = await syncMOC.perform { [self] in
             // Given
             // create user
             let user = ZMUser.insertNewObject(in: syncMOC)
@@ -1274,7 +1276,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             // create the event
             let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
                 userIDs: [user.remoteIdentifier],
-                qualifiedUserIDs: [user.qualifiedID!]
+                qualifiedUserIDs: [user.qualifiedID!],
+                reason: .userDeleted
             )
 
             let payload = self.conversationEventPayload(
@@ -1285,21 +1288,22 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
 
             let updateEvent = self.updateEvent(from: payload.payloadData()!)
-
-            // When
-            self.sut.processPayload(
-                payload,
-                originalEvent: updateEvent,
-                in: syncMOC
-            )
-
-            // Then
-            XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
+            return (payload, updateEvent)
         }
+
+        // When
+        await sut.processPayload(
+            payload,
+            originalEvent: updateEvent,
+            in: syncMOC
+        )
+
+        // Then
+        XCTAssert(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.isEmpty)
     }
 
-    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenProtocolIsNotMLS() {
-        syncMOC.performAndWait {
+    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenProtocolIsNotMLS() async {
+        let (payload, updateEvent) = await syncMOC.perform { [self] in
             // Given
             // create self user
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -1312,7 +1316,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             // create the event
             let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .userDeleted
             )
 
             let payload = self.conversationEventPayload(
@@ -1323,17 +1328,17 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
 
             let updateEvent = self.updateEvent(from: payload.payloadData()!)
-
-            // When
-            self.sut.processPayload(
-                payload,
-                originalEvent: updateEvent,
-                in: syncMOC
-            )
-
-            // Then
-            XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
+            return (payload, updateEvent)
         }
-    }
 
+        // When
+        await sut.processPayload(
+            payload,
+            originalEvent: updateEvent,
+            in: syncMOC
+        )
+
+        // Then
+        XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
+    }
 }

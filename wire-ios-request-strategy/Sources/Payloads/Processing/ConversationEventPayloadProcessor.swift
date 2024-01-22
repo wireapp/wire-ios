@@ -166,7 +166,7 @@ struct ConversationEventPayloadProcessor {
         }
 
         if isSelfUserRemoved, isMessageProtocolMLS {
-            await MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+            await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
         }
 
         await context.perform {
