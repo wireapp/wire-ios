@@ -19,13 +19,14 @@
 import Foundation
 
 public typealias IdToken = String
-public typealias OAuthBlock = (_ idP: URL) async throws -> IdToken
+public typealias OAuthBlock = (_ idP: URL, _ keyauth: String, _ acmeAud: String) async throws -> IdToken
 
 public protocol EnrollE2eICertificateUseCaseInterface {
 
     func invoke(e2eiClientId: E2eIClientID,
                 userName: String,
                 userHandle: String,
+                team: UUID?,
                 authenticate: OAuthBlock) async throws -> String
 
 }
@@ -42,8 +43,12 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
     public func invoke(e2eiClientId: E2eIClientID,
                        userName: String,
                        userHandle: String,
+                       team: UUID?,
                        authenticate: OAuthBlock) async throws -> String {
-        let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: userHandle)
+        let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId,
+                                                                   userName: userName,
+                                                                   handle: userHandle,
+                                                                   team: team)
 
         let acmeNonce = try await enrollment.getACMENonce()
         let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)
@@ -51,20 +56,18 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let authzResponse = try await enrollment.createAuthz(prevNonce: newOrder.nonce,
                                                              authzEndpoint: newOrder.acmeOrder.authorizations[0])
 
-        guard let oidcChallenge = authzResponse.challenges.wireOidcChallenge else {
-            throw EnrollE2EICertificateUseCaseFailure.missingOIDCChallenge
-        }
+        let oidcChallenge = authzResponse.challenges.wireOidcChallenge
 
-        /// pass to  authzResponse.challenges.wireOidcChallenge.url = acmeAudience to authenticate
-        guard let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge else {
-            throw EnrollE2EICertificateUseCaseFailure.missingDpopChallenge
-        }
+        /// pass authzResponse.challenges.wireOidcChallenge.url = acmeAudience to authenticate
+        let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge
+        let acmeAudience = oidcChallenge.url // pass to authenticate
+        let keyauth = authzResponse.challenges.keyauth // pass to authenticate
 
-        guard let identityProvider = URL(string: oidcChallenge.target) else { // client will bw here
+        guard let identityProvider = URL(string: oidcChallenge.target) else { // client will be here
             throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
         }
 
-        let idToken = try await authenticate(identityProvider)
+        let idToken = try await authenticate(identityProvider, keyauth, acmeAudience)
         let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
         let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
@@ -91,6 +94,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
             guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
                 throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
             }
+            print(certificateChain)
             try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
             return certificateChain
         } catch is DecodingError {
@@ -106,9 +110,6 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
 enum EnrollE2EICertificateUseCaseFailure: Error {
 
     case failedToSetupEnrollment
-    case missingDpopChallenge
-    case missingOIDCRefreshToken
-    case missingOIDCChallenge
     case missingIdentityProvider
     case failedToDecodeCertificate
 

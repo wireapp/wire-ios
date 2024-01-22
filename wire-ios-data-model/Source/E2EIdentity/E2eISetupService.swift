@@ -21,7 +21,7 @@ import WireCoreCrypto
 
 public protocol E2eISetupServiceInterface {
 
-    func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> E2eiEnrollment
+    func setupEnrollment(userName: String, handle: String, team: UUID?) async throws -> E2eiEnrollment
 
 }
 
@@ -40,18 +40,9 @@ public final class E2eISetupService: E2eISetupServiceInterface {
 
     // MARK: - Public interface
 
-    public func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> E2eiEnrollment {
+    public func setupEnrollment(userName: String, handle: String, team: UUID?) async throws -> E2eiEnrollment {
         do {
-            return try await coreCryptoProvider.coreCrypto(requireMLS: true).perform {
-                /// TODO: Use e2eiNewRotateEnrollment or e2eiNewActivationEnrollment from the new CC version
-                try await $0.e2eiNewEnrollment(clientId: e2eiClientId.rawValue,
-                                               displayName: userName,
-                                               handle: handle,
-                                               team: nil,
-                                               expiryDays: UInt32(90),
-                                               ciphersuite: 1) // TODO: Update it
-            }
-
+            return try await test(userName: userName, handle: handle, teamId: team)
         } catch {
             throw Failure.failedToSetupE2eIClient(error)
         }
@@ -61,4 +52,42 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         case failedToSetupE2eIClient(_ underlyingError: Error)
     }
 
+    func test(userName: String, handle: String, teamId: UUID?) async throws -> E2eiEnrollment {
+        let ciphersuite = CiphersuiteName.default.rawValue
+
+        return try await coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
+            if e2eiIsEnabled {
+                return try await $0.e2eiNewRotateEnrollment(displayName: userName,
+                                                            handle: handle,
+                                                            team: teamId!.uuidString.lowercased(),
+                                                            expiryDays: UInt32(90),
+                                                            ciphersuite: ciphersuite)
+            } else {
+                return try await $0.e2eiNewActivationEnrollment(displayName: userName,
+                                                                handle: handle,
+                                                                team: teamId!.uuidString.lowercased(),
+                                                                expiryDays: UInt32(90),
+                                                                ciphersuite: ciphersuite)
+            }
+        }
+
+    }
+
 }
+
+// private func test(e2eiIsEnabled: Bool, userName: String, handle: String, team: UUID?)  async throws -> E2eiEnrollment {
+//    if e2eiIsEnabled {
+//        return try await $0.e2eiNewRotateEnrollment(displayName: userName,
+//                                                    handle: handle,
+//                                                    team: team?.uuidString,
+//                                                    expiryDays: UInt32(90),
+//                                                    ciphersuite: ciphersuite)
+//    } else {
+//        return try await $0.e2eiNewActivationEnrollment(displayName: userName,
+//                                                        handle: handle,
+//                                                        team: team?.uuidString,
+//                                                        expiryDays: UInt32(90),
+//                                                        ciphersuite: ciphersuite)
+//    }
+// }

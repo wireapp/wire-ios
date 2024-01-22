@@ -24,7 +24,7 @@ import WireRequestStrategy
 
 public protocol OAuthUseCaseInterface {
 
-    func invoke(for identityProvider: URL) async throws -> IdToken
+    func invoke(for identityProvider: URL, keyauth: String, acmeAud: String) async throws -> IdToken
 
 }
 
@@ -39,7 +39,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
     }
 
     /// keyAuth and acmeAudience
-    public func invoke(for identityProvider: URL) async throws -> IdToken {
+    public func invoke(for identityProvider: URL, keyauth: String, acmeAud: String) async throws -> IdToken {
         logger.info("invoke authentication flow")
 
         guard let bundleID = Bundle.main.bundleIdentifier,
@@ -61,13 +61,22 @@ public class OAuthUseCase: OAuthUseCaseInterface {
                     return continuation.resume(throwing: OAuthError.missingServiceConfiguration)
                 }
 
+                let claims = """
+                {
+                    "id_token": {
+                        "keyauth": \(keyauth),
+                        "acme_aud": \(acmeAud)
+                    }
+                }
+                """
+
                 let request = OIDAuthorizationRequest(configuration: config,
                                                       clientId: clientID,
                                                       clientSecret: clientSecret,
                                                       scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail],
                                                       redirectURL: redirectURI,
                                                       responseType: OIDResponseTypeCode,
-                                                      additionalParameters: nil)
+                                                      additionalParameters: ["claims": claims])
 
                 return continuation.resume(returning: request)
             }
