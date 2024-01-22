@@ -210,6 +210,14 @@ final class ConversationSystemMessageCellDescription {
         case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
+
+        case .mlsMigrationMLSNotSupportedSelfUser, .mlsMigrationMLSNotSupportedOtherUser:
+            if let user = conversation.connectedUserType {
+                let description = MLSMigrationSupportCellDescription(messageType: systemMessageData.systemMessageType, for: user)
+                return [AnyConversationMessageCellDescription(description)]
+            } else {
+                assertionFailure("connectedUserType should not be nil in this case")
+            }
         }
 
         return []
