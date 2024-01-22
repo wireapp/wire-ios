@@ -124,7 +124,9 @@ extension ZMConversation {
     }
 
     class func predicateForOneToOneConversation() -> NSPredicate {
-        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let hasConnection = NSPredicate(format: "\(ZMConversationConnectionKey) != NULL")
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [isOneOnOne, hasConnection])
     }
 
     public class func predicateForTeamOneToOneConversation() -> NSPredicate {
@@ -164,38 +166,48 @@ extension ZMConversation {
 
     private class func predicateForValidConversations() -> NSPredicate {
         let basePredicate = predicateForFilteringResults()
-        let notAConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.connection.rawValue)")
+        return .all(of: [basePredicate, isProtocolReady(), isValidConversation()])
+    }
 
-        // pending connections should be in other list, ignored and cancelled are not displayed
-        let activeConnection = NSPredicate(format: "NOT \(ZMConversationConnectionKey).status IN %@", [
+    private class func isProtocolReady() -> NSPredicate {
+        // Proteus
+        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
+
+        // Mixed
+        let isMixed = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mixed.int16Value)")
+
+        // MLS
+        let isMLS = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
+        let isMLSStatusReady = NSPredicate(format: "\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)")
+        let isMLSAndReady = NSPredicate.all(of: [isMLS, isMLSStatusReady])
+
+        return .any(of: [isProteus, isMixed, isMLSAndReady])
+    }
+
+    private class func isValidConversation() -> NSPredicate {
+        return .any(of: [isValidConnection(), isValidOneOnOne(), isValidGroup()])
+    }
+
+    private class func isValidConnection() -> NSPredicate {
+        let isConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+
+        let isActive = NSPredicate(format: "NOT \(ZMConversationConnectionKey).status IN %@", [
             NSNumber(value: ZMConnectionStatus.pending.rawValue),
             NSNumber(value: ZMConnectionStatus.ignored.rawValue),
             NSNumber(value: ZMConnectionStatus.cancelled.rawValue)
         ])
 
-        // one-to-one conversations and not pending and not ignored connections
-        let predicate1 = NSCompoundPredicate(orPredicateWithSubpredicates: [notAConnection, activeConnection])
-        let noConnection = NSPredicate(format: "\(ZMConversationConnectionKey) == nil") // group conversations
-        let notBlocked = NSPredicate(format: "\(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blocked.rawValue) && \(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blockedMissingLegalholdConsent.rawValue)")
-        let predicate2 = NSCompoundPredicate(orPredicateWithSubpredicates: [noConnection, notBlocked]) // group conversations and not blocked connections
+        return .all(of: [isConnection, isActive])
+    }
 
-        // protocols
-        let hasProteusProtocol =  NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
-        let hasMixedProtocol =  NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mixed.int16Value)")
-        let hasMLSProtocol =  NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
-        let hasMLSReadyStatus = NSPredicate(format: "\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)")
-        let hasValidProtocols = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            hasProteusProtocol,
-            hasMixedProtocol,
-            NSCompoundPredicate(andPredicateWithSubpredicates: [hasMLSProtocol, hasMLSReadyStatus])
-        ])
+    private class func isValidOneOnOne() -> NSPredicate {
+        let isOneOneOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isConnectionAccepted = NSPredicate(format: "\(ZMConversationConnectionKey).status == \(ZMConnectionStatus.accepted.rawValue)")
+        return .all(of: [isOneOneOne, isConnectionAccepted])
+    }
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [
-            basePredicate,
-            predicate1,
-            predicate2,
-            hasValidProtocols
-        ])
+    private class func isValidGroup() -> NSPredicate {
+        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
     }
 
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {

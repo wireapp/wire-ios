@@ -28,8 +28,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         conversationService = MockConversationServiceInterface()
-        conversationService.syncConversationQualifiedID_MockMethod = { _ in
-        }
+        conversationService.syncConversationQualifiedID_MockMethod = { _ in }
 
         conversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
             completion()
@@ -37,24 +36,23 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         mockMLSEventProcessor = .init()
         mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
-        mockMLSEventProcessor.processWelcomeMessageIn_MockMethod = { _, _ in }
+        mockMLSEventProcessor.processWelcomeMessageConversationIDIn_MockMethod = { _, _, _ in }
         mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in }
 
         sut = ConversationEventProcessor(
             context: syncMOC,
-            conversationService: conversationService
+            conversationService: conversationService,
+            mlsEventProcessor: mockMLSEventProcessor
         )
 
         BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v0
-        MLSEventProcessor.setMock(mockMLSEventProcessor)
     }
 
     override func tearDown() {
         sut = nil
         conversationService = nil
         mockMLSEventProcessor = nil
-        MLSEventProcessor.reset()
         super.tearDown()
     }
 
@@ -135,10 +133,15 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         let unwrappedUpdateEvent = try XCTUnwrap(updateEvent)
 
         // when
-        await self.sut.processConversationEvents([unwrappedUpdateEvent])
+        await sut.processConversationEvents([unwrappedUpdateEvent])
 
         // then
-        XCTAssertEqual(message, mockMLSEventProcessor.processWelcomeMessageIn_Invocations.first?.welcomeMessage)
+        let qualifiedID = await syncMOC.perform { self.groupConversation.qualifiedID }
+        let invocations = mockMLSEventProcessor.processWelcomeMessageConversationIDIn_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        XCTAssertEqual(invocations.first?.welcomeMessage, message)
+        XCTAssertEqual(invocations.first?.conversationID, qualifiedID)
+        // ? XCTAssertEqual(message, mockMLSEventProcessor.processWelcomeMessageIn_Invocations.first?.welcomeMessage)
 
     }
 

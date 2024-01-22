@@ -154,22 +154,21 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     // MARK: - Helpers (migration start)
 
     private func resolveMigrationStartStatus() async -> MigrationStartStatus {
-        let features = await fetchFeatures()
-
         if (BackendInfo.apiVersion ?? .v0) < .v5 {
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
-
-        if !features.mls.config.supportedProtocols.contains(.mls) {
-            return .cannotStart(reason: .mlsProtocolIsNotSupported)
-        }
-
         if !DeveloperFlag.enableMLSSupport.isOn {
             return .cannotStart(reason: .clientDoesntSupportMLS)
         }
 
         if await !isMLSEnabledOnBackend() {
             return .cannotStart(reason: .backendDoesntSupportMLS)
+        }
+
+        let features = await fetchFeatures()
+
+        if !features.mls.config.supportedProtocols.contains(.mls) {
+            return .cannotStart(reason: .mlsProtocolIsNotSupported)
         }
 
         if features.mlsMigration.status == .disabled {
@@ -261,7 +260,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return false
         }
 
-        return finaliseDate.isPast
+        return finaliseDate.isInThePast
     }
 
     private func updateConversationProtocolToMLS(for conversation: ZMConversation) async throws {
@@ -278,14 +277,5 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             qualifiedID: qualifiedID,
             context: context.notificationContext
         )
-    }
-}
-
-// This is temporary until John's work on 1on1 conversations
-// is merged to develop and then we can pull the changes into the migration branch.
-// TODO: [AGIS] Get rid of this extension
-extension ZMUser {
-    var supportedProtocols: [MessageProtocol] {
-        return [.mls, .proteus]
     }
 }
