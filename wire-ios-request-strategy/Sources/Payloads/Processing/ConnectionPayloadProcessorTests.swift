@@ -38,8 +38,8 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     func testThatConversationIsMarkedForDownload() {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let connection = self.oneToOneConversation.connection!
-            let payload = self.createConnectionPayload(connection, status: .blocked)
+            XCTAssertFalse(self.oneToOneConversation.needsToBeUpdatedFromBackend)
+            let payload = self.createConnectionPayload(self.oneToOneConnection, status: .blocked)
 
             // when
             self.sut.updateOrCreateConnection(
@@ -48,7 +48,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
             )
 
             // then
-            XCTAssertTrue(connection.conversation.needsToBeUpdatedFromBackend)
+            XCTAssertTrue(self.oneToOneConversation.needsToBeUpdatedFromBackend)
         }
     }
 
@@ -56,8 +56,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             let modifiedDate = Date()
-            let connection = self.oneToOneConversation.connection!
-            let payload = self.createConnectionPayload(connection, lastUpdate: modifiedDate)
+            let payload = self.createConnectionPayload(self.oneToOneConnection, lastUpdate: modifiedDate)
 
             // when
             self.sut.updateOrCreateConnection(
@@ -66,17 +65,19 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
             )
 
             // then
-            XCTAssertEqual(connection.conversation.lastModifiedDate, modifiedDate)
+            XCTAssertEqual(self.oneToOneConversation.lastModifiedDate, modifiedDate)
         }
     }
 
     func testThatAnExistingConversationIsLinkedToTheConnection() {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let connection = self.oneToOneConversation.connection!
-            connection.conversation = nil
-            let payload = self.createConnectionPayload(to: self.otherUser.qualifiedID!,
-                                                                 conversation: self.oneToOneConversation.qualifiedID!)
+            self.oneToOneConnection.to.oneOnOneConversation = nil
+
+            let payload = self.createConnectionPayload(
+                to: self.otherUser.qualifiedID!,
+                conversation: self.oneToOneConversation.qualifiedID!
+            )
 
             // when
             self.sut.updateOrCreateConnection(
@@ -85,7 +86,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
             )
 
             // then
-            XCTAssertEqual(connection.conversation, self.oneToOneConversation)
+            XCTAssertEqual(self.otherUser.oneOnOneConversation, self.oneToOneConversation)
         }
     }
 
@@ -94,7 +95,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
             // given
             BackendInfo.isFederationEnabled = true
             let conversationID: QualifiedID = .randomID()
-            let connection = self.oneToOneConversation.connection!
+
             let payload = self.createConnectionPayload(
                 to: self.otherUser.qualifiedID!,
                 conversation: conversationID
@@ -107,7 +108,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
             )
 
             // then
-            XCTAssertEqual(connection.conversation.qualifiedID, conversationID)
+            XCTAssertEqual(self.otherUser.oneOnOneConversation?.qualifiedID, conversationID)
         }
     }
 
@@ -123,7 +124,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
             )
 
             // then
-            XCTAssertTrue(self.thirdUser.connection!.conversation.localParticipants.contains(self.thirdUser))
+            XCTAssertTrue(self.thirdUser.oneOnOneConversation!.localParticipants.contains(self.thirdUser))
         }
     }
 
@@ -141,8 +142,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
 
             for status in allCases {
                 // given
-                let connection = self.oneToOneConversation.connection!
-                let payload = self.createConnectionPayload(connection, status: status)
+                let payload = self.createConnectionPayload(self.oneToOneConnection, status: status)
 
                 // when
                 self.sut.updateOrCreateConnection(
@@ -151,7 +151,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
                 )
 
                 // then
-                XCTAssertEqual(connection.status, status)
+                XCTAssertEqual(self.oneToOneConnection.status, status)
             }
         }
     }

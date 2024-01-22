@@ -43,7 +43,10 @@ class FederationTerminationManagerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] _ in
             // GIVEN
             otherUser.domain = defederatedDomain
-            guard let conversation = otherUser.connection?.conversation else { return }
+            guard let conversation = otherUser.oneOnOneConversation else {
+                XCTFail("expected one on one conversation")
+                return
+            }
             XCTAssertFalse(conversation.isForcedReadOnly)
 
             // WHEN

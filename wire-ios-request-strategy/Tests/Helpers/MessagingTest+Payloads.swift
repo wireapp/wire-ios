@@ -34,8 +34,8 @@ extension MessagingTestBase {
             from: nil,
             to: connection.to.remoteIdentifier,
             qualifiedTo: connection.to.qualifiedID,
-            conversationID: connection.conversation.remoteIdentifier,
-            qualifiedConversationID: connection.conversation.qualifiedID,
+            conversationID: connection.to.oneOnOneConversation!.remoteIdentifier,
+            qualifiedConversationID: connection.to.oneOnOneConversation!.qualifiedID,
             lastUpdate: lastUpdate,
             status: Payload.ConnectionStatus(status)!)
     }
