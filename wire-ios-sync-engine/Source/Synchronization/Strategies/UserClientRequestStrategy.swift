@@ -144,6 +144,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let managedObjectContext = managedObjectContext else {
+            assertionFailure("UserClientRequestStrategy has no context")
             return nil
         }
 
