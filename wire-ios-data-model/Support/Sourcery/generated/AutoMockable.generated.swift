@@ -661,11 +661,11 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - e2eiRegisterAcmeCa
 
-    var e2eiRegisterAcmeCaTrustAnchorPem_Invocations: [String] = []
-    var e2eiRegisterAcmeCaTrustAnchorPem_MockError: Error?
-    var e2eiRegisterAcmeCaTrustAnchorPem_MockMethod: ((String) async throws -> Void)?
+    public var e2eiRegisterAcmeCaTrustAnchorPem_Invocations: [String] = []
+    public var e2eiRegisterAcmeCaTrustAnchorPem_MockError: Error?
+    public var e2eiRegisterAcmeCaTrustAnchorPem_MockMethod: ((String) async throws -> Void)?
 
-    func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws {
+    public func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws {
         e2eiRegisterAcmeCaTrustAnchorPem_Invocations.append(trustAnchorPem)
 
         if let error = e2eiRegisterAcmeCaTrustAnchorPem_MockError {
@@ -681,12 +681,12 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - e2eiRegisterCrl
 
-    var e2eiRegisterCrlCrlDpCrlDer_Invocations: [(crlDp: String, crlDer: Data)] = []
-    var e2eiRegisterCrlCrlDpCrlDer_MockError: Error?
-    var e2eiRegisterCrlCrlDpCrlDer_MockMethod: ((String, Data) async throws -> WireCoreCrypto.CrlRegistration)?
-    var e2eiRegisterCrlCrlDpCrlDer_MockValue: WireCoreCrypto.CrlRegistration?
+    public var e2eiRegisterCrlCrlDpCrlDer_Invocations: [(crlDp: String, crlDer: Data)] = []
+    public var e2eiRegisterCrlCrlDpCrlDer_MockError: Error?
+    public var e2eiRegisterCrlCrlDpCrlDer_MockMethod: ((String, Data) async throws -> WireCoreCrypto.CrlRegistration)?
+    public var e2eiRegisterCrlCrlDpCrlDer_MockValue: WireCoreCrypto.CrlRegistration?
 
-    func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration {
+    public func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration {
         e2eiRegisterCrlCrlDpCrlDer_Invocations.append((crlDp: crlDp, crlDer: crlDer))
 
         if let error = e2eiRegisterCrlCrlDpCrlDer_MockError {
@@ -704,11 +704,11 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - e2eiRegisterIntermediateCa
 
-    var e2eiRegisterIntermediateCaCertPem_Invocations: [String] = []
-    var e2eiRegisterIntermediateCaCertPem_MockError: Error?
-    var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> Void)?
+    public var e2eiRegisterIntermediateCaCertPem_Invocations: [String] = []
+    public var e2eiRegisterIntermediateCaCertPem_MockError: Error?
+    public var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> Void)?
 
-    func e2eiRegisterIntermediateCa(certPem: String) async throws {
+    public func e2eiRegisterIntermediateCa(certPem: String) async throws {
         e2eiRegisterIntermediateCaCertPem_Invocations.append(certPem)
 
         if let error = e2eiRegisterIntermediateCaCertPem_MockError {
