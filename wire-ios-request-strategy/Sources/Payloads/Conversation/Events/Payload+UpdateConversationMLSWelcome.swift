@@ -31,9 +31,7 @@ extension Payload {
             case data
         }
 
-        // This is currently the id of the self conversation.
         let id: UUID
-
         let qualifiedID: QualifiedID?
         let from: UUID
         let qualifiedFrom: QualifiedID?

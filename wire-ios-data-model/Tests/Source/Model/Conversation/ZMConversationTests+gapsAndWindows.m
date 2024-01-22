@@ -65,7 +65,7 @@
 {
     // given
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation1.conversationType = ZMConversationTypeOneOnOne;
+    conversation1.conversationType = ZMConversationTypeGroup;
     [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC]; // this is used to make sure it doesn't return all objects
     
     [self.uiMOC processPendingChanges];
@@ -112,7 +112,7 @@
     // given
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation1.userDefinedName = @"Foo++";
-    conversation1.conversationType = ZMConversationTypeOneOnOne;
+    conversation1.conversationType = ZMConversationTypeGroup;
     ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation2.userDefinedName = @"Bar--";
     conversation2.conversationType = ZMConversationTypeGroup;
@@ -134,7 +134,7 @@
     // given
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation1.userDefinedName = @"Foo++";
-    conversation1.conversationType = ZMConversationTypeOneOnOne;
+    conversation1.conversationType = ZMConversationTypeGroup;
     ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation2.userDefinedName = @"Bar--";
     conversation2.conversationType = ZMConversationTypeGroup;

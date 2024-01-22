@@ -78,6 +78,25 @@ final class RecurringActionServiceTests: XCTestCase {
         XCTAssertFalse(actionPerformed)
     }
 
+    func testThatItForcePerformsAction() {
+        // given
+        var actionPerformed = false
+        let actionID = String.random(length: 5)
+
+        sut.persistLastCheckDate(for: actionID)
+        sut.registerAction(.init(id: actionID, interval: 100) {
+            actionPerformed = true
+        })
+
+        XCTAssertFalse(actionPerformed)
+
+        // when
+        sut.forcePerformAction(id: actionID)
+
+        // then
+        XCTAssertTrue(actionPerformed)
+    }
+
     func testThatItPerformsActionAgain() {
         // Given
         var actionPerformed = false

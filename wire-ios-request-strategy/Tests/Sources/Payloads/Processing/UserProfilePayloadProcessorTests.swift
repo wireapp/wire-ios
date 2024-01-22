@@ -587,4 +587,21 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    func testUpdateUserProfile_UpdatesSupportedProtocols() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            XCTAssertEqual(self.otherUser.supportedProtocols, [])
+            let userProfile = Payload.UserProfile(supportedProtocols: [.proteus, .mls])
+
+            // when
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser
+            )
+
+            // then
+            XCTAssertEqual(self.otherUser.supportedProtocols, [.proteus, .mls])
+        }
+    }
+
 }

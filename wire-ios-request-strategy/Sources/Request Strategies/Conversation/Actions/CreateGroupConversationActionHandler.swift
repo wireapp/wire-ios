@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 public final class CreateGroupConversationAction: EntityAction {
 
@@ -83,7 +84,7 @@ public final class CreateGroupConversationAction: EntityAction {
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
-    private let processor: ConversationEventPayloadProcessor
+    private lazy var processor = ConversationEventPayloadProcessor(context: context)
     private let mlsService: MLSServiceInterface
 
     required init(
@@ -92,7 +93,6 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
     ) {
         self.mlsService = mlsService
-        processor = .init(removeLocalConversation: removeLocalConversationUseCase)
         super.init(context: context)
     }
 

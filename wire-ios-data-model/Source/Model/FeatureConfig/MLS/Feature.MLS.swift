@@ -64,14 +64,14 @@ public extension Feature {
 
             /// The list of supported message protocols
 
-            public let supportedProtocols: [MessageProtocol]
+            public let supportedProtocols: Set<MessageProtocol>
 
             public init(
                 protocolToggleUsers: [UUID] = [],
                 defaultProtocol: MessageProtocol = .proteus,
                 allowedCipherSuites: [MLSCipherSuite] = [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519],
                 defaultCipherSuite: MLSCipherSuite = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
-                supportedProtocols: [MessageProtocol] = [.proteus, .mls]
+                supportedProtocols: Set<MessageProtocol> = []
             ) {
                 self.protocolToggleUsers = protocolToggleUsers
                 self.defaultProtocol = defaultProtocol

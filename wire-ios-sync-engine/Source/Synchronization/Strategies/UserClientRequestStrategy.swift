@@ -307,7 +307,12 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             )
     }
 
-    public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
+    public func shouldCreateRequest(
+        toSyncObject managedObject: ZMManagedObject,
+        forKeys keys: Set<String>,
+        withSync sync: Any,
+        apiVersion: APIVersion
+    ) -> Bool {
         if keys.contains(ZMUserClientNumberOfKeysRemainingKey), let userClient = managedObject as? UserClient {
             if userClient.numberOfKeysRemaining >= minNumberOfRemainingKeys {
                 return false

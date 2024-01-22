@@ -238,6 +238,10 @@ mlsService: mlsService,
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus),
+            SelfUserRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory
+            ),
             CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,

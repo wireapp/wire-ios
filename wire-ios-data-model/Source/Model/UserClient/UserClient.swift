@@ -56,6 +56,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var numberOfKeysRemaining: Int32
     @NSManaged public var activationDate: Date?
     @NSManaged public var discoveryDate: Date?
+    @NSManaged public var lastActiveDate: Date?
     @NSManaged public var model: String?
     @NSManaged public var deviceClass: DeviceClass?
     @NSManaged public var needsToNotifyUser: Bool
@@ -404,6 +405,7 @@ public extension UserClient {
         let model = payloadAsDictionary.optionalString(forKey: "model")?.removingExtremeCombiningCharacters
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
+        let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
 
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client

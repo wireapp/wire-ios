@@ -1628,7 +1628,10 @@ extension SessionManagerTests {
         let conversation1CreatedExpectation = self.customExpectation(description: "Conversation 1 created")
 
         self.sessionManager?.withSession(for: account1, perform: { createdSession in
-            createdSession.managedObjectContext.createSelfUserAndSelfConversation()
+            createdSession.syncContext.performAndWait {
+                createdSession.syncContext.createSelfUserAndSelfConversation()
+                createdSession.syncContext.saveOrRollback()
+            }
 
             let conversation1 = createdSession.insertConversationWithUnreadMessage()
             conversations.append(conversation1)
@@ -1640,7 +1643,10 @@ extension SessionManagerTests {
         let conversation2CreatedExpectation = self.customExpectation(description: "Conversation 2 created")
 
         self.sessionManager?.withSession(for: account2, perform: { createdSession in
-            createdSession.managedObjectContext.createSelfUserAndSelfConversation()
+            createdSession.syncContext.performAndWait {
+                createdSession.syncContext.createSelfUserAndSelfConversation()
+                createdSession.syncContext.saveOrRollback()
+            }
 
             let conversation2 = createdSession.insertConversationWithUnreadMessage()
             XCTAssertNotNil(conversation2.firstUnreadMessage)

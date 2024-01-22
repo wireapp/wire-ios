@@ -22,6 +22,7 @@ import WireTesting
 @testable import WireDataModel
 
 public class DiskDatabaseTest: ZMTBaseTest {
+
     var sharedContainerURL: URL!
     var accountId: UUID!
     var moc: NSManagedObjectContext {

@@ -18,10 +18,13 @@
 
 import Foundation
 import WireSystem
+import WireUtilities
 
 final class RecurringActionService: RecurringActionServiceInterface {
 
-    private var actions = [RecurringAction]()
+    // MARK: - Properties
+
+    private(set) var actionsByID = [String: RecurringAction]()
     private let storage: UserDefaults
     private let dateProvider: DateProviding
 
@@ -33,20 +36,30 @@ final class RecurringActionService: RecurringActionServiceInterface {
         self.dateProvider = dateProvider
     }
 
+    // MARK: - Methods
+
+    public func registerAction(_ action: RecurringAction) {
+        actionsByID[action.id] = action
+    }
+
     public func performActionsIfNeeded() {
         let now = dateProvider.now
-        actions.forEach { action in
+
+        for (id, action) in actionsByID {
 
             let lastActionDate = lastCheckDate(for: action.id) ?? .distantPast
+
             if (lastActionDate + action.interval) <= now {
                 action()
-                persistLastCheckDate(for: action.id)
+                persistLastCheckDate(for: id)
             }
         }
     }
 
-    public func registerAction(_ action: RecurringAction) {
-        actions.append(action)
+    public func forcePerformAction(id: String) {
+        guard let action = actionsByID[id] else { return }
+        action()
+        persistLastCheckDate(for: id)
     }
 
     // MARK: - Helpers
@@ -59,7 +72,7 @@ final class RecurringActionService: RecurringActionServiceInterface {
         storage.object(forKey: key(for: actionID)) as? Date
     }
 
-    private func persistLastCheckDate(for actionID: String) {
+    func persistLastCheckDate(for actionID: String) {
         storage.set(dateProvider.now, forKey: key(for: actionID))
     }
 }

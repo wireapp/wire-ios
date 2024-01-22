@@ -133,6 +133,10 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
             authoritative: authoritative
         )
 
+        if let supportedProtocols = payload.supportedProtocols {
+            user.supportedProtocols = Set(supportedProtocols.map(\.dataModelMessageProtocol))
+        }
+
         if authoritative {
             user.needsToBeUpdatedFromBackend = false
         }
@@ -164,6 +168,20 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
         if completeAssetKey != nil || authoritative {
             user.completeProfileAssetIdentifier = completeAssetKey
+        }
+    }
+
+}
+
+private extension Payload.UserProfile.MessageProtocol {
+
+    var dataModelMessageProtocol: WireDataModel.MessageProtocol {
+        switch self {
+        case .proteus:
+            return .proteus
+
+        case .mls:
+            return .mls
         }
     }
 

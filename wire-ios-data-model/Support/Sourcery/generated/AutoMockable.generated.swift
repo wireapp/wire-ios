@@ -3532,6 +3532,91 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
 }
 
+public class MockOneOnOneMigratorInterface: OneOnOneMigratorInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - migrateToMLS
+
+    public var migrateToMLSUserIDIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
+    public var migrateToMLSUserIDIn_MockError: Error?
+    public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> Void)?
+
+    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws {
+        migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
+
+        if let error = migrateToMLSUserIDIn_MockError {
+            throw error
+        }
+
+        guard let mock = migrateToMLSUserIDIn_MockMethod else {
+            fatalError("no mock for `migrateToMLSUserIDIn`")
+        }
+
+        try await mock(userID, context)
+    }
+
+}
+
+public class MockOneOnOneProtocolSelectorInterface: OneOnOneProtocolSelectorInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getProtocolForUser
+
+    public var getProtocolForUserWithIn_Invocations: [(id: QualifiedID, context: NSManagedObjectContext)] = []
+    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) -> MessageProtocol?)?
+    public var getProtocolForUserWithIn_MockValue: MessageProtocol??
+
+    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) -> MessageProtocol? {
+        getProtocolForUserWithIn_Invocations.append((id: id, context: context))
+
+        if let mock = getProtocolForUserWithIn_MockMethod {
+            return mock(id, context)
+        } else if let mock = getProtocolForUserWithIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getProtocolForUserWithIn`")
+        }
+    }
+
+}
+
+public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - resolveOneOnOneConversation
+
+    public var resolveOneOnOneConversationWithIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
+    public var resolveOneOnOneConversationWithIn_MockError: Error?
+    public var resolveOneOnOneConversationWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> Void)?
+
+    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext) async throws {
+        resolveOneOnOneConversationWithIn_Invocations.append((userID: userID, context: context))
+
+        if let error = resolveOneOnOneConversationWithIn_MockError {
+            throw error
+        }
+
+        guard let mock = resolveOneOnOneConversationWithIn_MockMethod else {
+            fatalError("no mock for `resolveOneOnOneConversationWithIn`")
+        }
+
+        try await mock(userID, context)
+    }
+
+}
+
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle
@@ -3898,6 +3983,33 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
             return mock
         } else {
             fatalError("no mock for `findSubgroupTypeAndParentIDFor`")
+        }
+    }
+
+}
+
+public class MockUserRepositoryInterface: UserRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - selfUser
+
+    public var selfUser_Invocations: [Void] = []
+    public var selfUser_MockMethod: (() -> ZMUser)?
+    public var selfUser_MockValue: ZMUser?
+
+    public func selfUser() -> ZMUser {
+        selfUser_Invocations.append(())
+
+        if let mock = selfUser_MockMethod {
+            return mock()
+        } else if let mock = selfUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `selfUser`")
         }
     }
 
