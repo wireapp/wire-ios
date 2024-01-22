@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension Date {
+public extension Date {
 
     /// The number of days from this date til now.
     ///
@@ -29,12 +29,16 @@ extension Date {
         return Calendar.current.dateComponents([.day], from: self, to: now).day!
     }
 
-    /// A computed property that determines whether the date instance is in the past compared to the current date.
-    ///
-    /// - Returns: A Boolean value. `true` if the date instance is earlier than the current date (`Date()`); otherwise, `false`.
-    var isPast: Bool {
-        let now = Date()
-        return self < now
+    /// Whether the date is after the current instant.
+
+    var isInTheFuture: Bool {
+        return !isInThePast
+    }
+
+    /// Whether the date is before the current instant.
+
+    var isInThePast: Bool {
+        return compare(Date()) != .orderedDescending
     }
 
 }
