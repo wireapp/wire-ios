@@ -176,7 +176,12 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        nameLabel.text = (user.name ?? "<nil>") + " TODO status"
+        nameLabel.attributedText = if let userName = user.name {
+            [.init(string: userName), .init(attachment: .init(image: Asset.Images.certificateValid.image))]
+                .joined(separator: .init(string: " "))
+        } else {
+            .init()
+        }
         nameLabel.accessibilityValue = nameLabel.text
 
         let remainingTimeString = user.expirationDisplayString
@@ -198,16 +203,19 @@ final class ProfileHeaderViewController: UIViewController {
 
         addChild(availabilityTitleViewController)
 
-        stackView = CustomSpacingStackView(customSpacedArrangedSubviews: [nameHandleStack,
-                                                                          teamNameLabel,
-                                                                          imageView,
-                                                                          availabilityTitleViewController.view,
-                                                                          guestIndicatorStack,
-                                                                          externalIndicator,
-                                                                          federatedIndicator,
-                                                                          groupRoleIndicator,
-                                                                          warningView
-                                                                         ])
+        stackView = CustomSpacingStackView(
+            customSpacedArrangedSubviews: [
+                nameHandleStack,
+                teamNameLabel,
+                imageView,
+                availabilityTitleViewController.view,
+                guestIndicatorStack,
+                externalIndicator,
+                federatedIndicator,
+                groupRoleIndicator,
+                warningView
+            ]
+        )
 
         stackView.alignment = .center
         stackView.axis = .vertical
