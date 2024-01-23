@@ -213,10 +213,10 @@ class CallKitManagerTest: DatabaseTest {
         let oneToOne = ZMConversation.insertNewObject(in: self.uiMOC)
         oneToOne.conversationType = .oneOnOne
         oneToOne.remoteIdentifier = UUID()
+        oneToOne.oneOnOneUser = user
 
         let connection = ZMConnection.insertNewObject(in: self.uiMOC)
         connection.status = .accepted
-        connection.conversation = oneToOne
         connection.to = user
     }
 
