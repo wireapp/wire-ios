@@ -21,6 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol OneOnOneMigratorInterface {
 
+    @discardableResult
     func migrateToMLS(
         userID: QualifiedID,
         in context: NSManagedObjectContext
@@ -50,6 +51,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
 
     // MARK: - Methods
 
+    @discardableResult
     public func migrateToMLS(
         userID: QualifiedID,
         in context: NSManagedObjectContext
@@ -130,7 +132,45 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
             throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
         }
 
+        if let proteusConversation = connection.conversation {
+            copyMessagesFromProtheusConversation(
+                proteusConversation,
+                to: mlsConversation,
+                in: context
+            )
+        }
+
         connection.conversation = mlsConversation
     }
 
+    // MARK: - Copy Messages
+
+    private func copyMessagesFromProtheusConversation(
+        _ proteusConversation: ZMConversation,
+        to mlsConversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) {
+        guard let messages = try? fetchVisibleMessages(of: proteusConversation, context: context) else {
+            assertionFailure("unable to fetch messages of proteus conversation!")
+            return
+        }
+
+        for message in messages {
+            if let mlsMessage = message.copyEntireObjectGraph(context: context) as? ZMMessage {
+                mlsMessage.nonce = UUID() // keep objects uniquely identifiable
+                mlsMessage.visibleInConversation = mlsConversation
+                mlsMessage.hiddenInConversation = nil
+            } else {
+                // in production: continue for loop
+                assertionFailure("expect cast ZMMessage to be always successful!")
+            }
+        }
+    }
+
+    private func fetchVisibleMessages(of conversation: ZMConversation, context: NSManagedObjectContext) throws -> [ZMMessage] {
+        let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
+        fetchRequest.predicate = conversation.visibleMessagesPredicate
+
+        return try context.fetch(fetchRequest)
+    }
 }
