@@ -380,8 +380,6 @@ final class ConversationViewController: UIViewController {
             return
         }
 
-        debugPrint("let's go")
-
         Task {
             do {
                 let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: context)
@@ -400,8 +398,6 @@ final class ConversationViewController: UIViewController {
         mlsGroupIdentifier: MLSGroupID,
         in context: NSManagedObjectContext
     ) async {
-        debugPrint("mlsGroupIdentifier: \(mlsGroupIdentifier)")
-
         let mlsConversation = await context.perform {
             ZMConversation.fetch(with: mlsGroupIdentifier, in: context)
         }
