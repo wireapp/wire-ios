@@ -46,7 +46,7 @@ struct ColorPickerView: View {
                 // Checkmark view
                 if selectedColor == color {
                     Image(systemName: "checkmark")
-                        .foregroundColor(Color(.label)) // Adjust color as needed
+                        .foregroundColor(Color(.label))
                         .padding(.trailing, rightPadding)
                 }
             }
@@ -58,6 +58,6 @@ struct ColorPickerView: View {
                 }
             }
         }
-        .navigationBarTitle(L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized, displayMode: .inline) // Set your title here
+        .navigationBarTitle(L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized, displayMode: .inline)
     }
 }
