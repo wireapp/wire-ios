@@ -3547,6 +3547,7 @@ public class MockOneOnOneMigratorInterface: OneOnOneMigratorInterface {
     public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> MLSGroupID)?
     public var migrateToMLSUserIDIn_MockValue: MLSGroupID?
 
+    @discardableResult
     public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
         migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
 
