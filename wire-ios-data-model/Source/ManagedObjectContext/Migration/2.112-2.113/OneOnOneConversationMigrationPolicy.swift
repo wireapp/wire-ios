@@ -35,37 +35,86 @@ class OneOnOneConversationMigrationPolicy: NSEntityMigrationPolicy {
             manager: manager
         )
 
-        guard
-            dInstance.entity.name == ZMUser.entityName(),
-            let sInstance = manager.sourceInstances(
-                forEntityMappingName: mapping.name,
-                destinationInstances: [dInstance]
-            ).first,
-            let (conversationID, domain) = conversationID(forSourceUser: sInstance),
-            let dConversation = ZMConversation.fetch(
-                with: conversationID,
-                domain: domain,
-                in: manager.destinationContext
-            )
-        else {
+        guard dInstance.entity.name == ZMUser.entityName() else {
             return
         }
 
-        dInstance.setValue(dConversation, forKey: "oneOnOneConversation")
-    }
-
-    private func conversationID(forSourceUser user: NSManagedObject) -> (UUID, String?)? {
-        guard
-            let connection = user.value(forKey: "connection") as? NSManagedObject,
-            let conversation = connection.value(forKey: "conversation") as? NSManagedObject,
-            let idData = conversation.value(forKey: "remoteIdentifier_data") as? Data,
-            let conversationID = UUID(data: idData),
-            let domain = conversation.value(forKey: "domain") as? String
-        else {
-            return nil
+        guard let sourceUser = manager.sourceInstances(
+            forEntityMappingName: mapping.name,
+            destinationInstances: [dInstance]
+        ).first else {
+            return
         }
 
-        return (conversationID, domain)
+        if let connection = sourceUser.value(forKey: "connection") as? NSManagedObject {
+            print("migrating connection conversation")
+
+            guard
+                let sourceConversation = connection.value(forKey: "conversation") as? NSManagedObject,
+                let destinationConversation = manager.destinationInstances(
+                    forEntityMappingName: "ConversationToConversation",
+                    sourceInstances: [sourceConversation]
+                ).first
+            else {
+                return
+            }
+
+            dInstance.setValue(destinationConversation, forKey: "oneOnOneConversation")
+
+        } else {
+            let sessionRequest = NSFetchRequest<NSManagedObject>()
+            sessionRequest.entity = manager.sourceModel.entitiesByName[ZMSession.entityName()]
+            let result = try? manager.sourceContext.fetch(sessionRequest)
+
+            guard
+                let session = result?.first,
+                let selfUser = session.value(forKey: "selfUser") as? NSManagedObject,
+                let membership = selfUser.value(forKey: "membership") as? NSManagedObject,
+                let selfTeam = membership.value(forKey: "team") as? NSManagedObject
+            else {
+                return
+            }
+
+            guard selfUser != sourceUser else {
+                return
+            }
+
+            // trying to migrate team one on one
+            let request = NSFetchRequest<NSManagedObject>()
+            request.entity = manager.sourceModel.entitiesByName[ZMConversation.entityName()]
+
+            let sameTeam = NSPredicate(format: "team == %@", selfTeam)
+            let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)
+            let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
+            let sameParticipant = NSPredicate(
+                format: "%K.@count == 2 AND ANY %K.user == %@ AND ANY %K.user == %@",
+                ZMConversationParticipantRolesKey,
+                ZMConversationParticipantRolesKey,
+                sourceUser,
+                ZMConversationParticipantRolesKey,
+                selfUser
+            )
+
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                sameTeam,
+                groupConversation,
+                noUserDefinedName,
+                sameParticipant
+            ])
+
+            guard
+                let sourceConversations = try? manager.sourceContext.fetch(request),
+                let sourceConversation = sourceConversations.first,
+                let destinationConversation = manager.destinationInstances(
+                    forEntityMappingName: "ConversationToConversation",
+                    sourceInstances: [sourceConversation]
+                ).first
+            else {
+                return
+            }
+
+            dInstance.setValue(destinationConversation, forKey: "oneOnOneConversation")
+        }
     }
 
 }

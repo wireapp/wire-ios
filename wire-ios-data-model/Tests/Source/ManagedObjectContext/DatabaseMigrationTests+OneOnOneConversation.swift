@@ -26,7 +26,6 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
     typealias MigrationAction = (NSManagedObjectContext) throws -> Void
 
     private let bundle = Bundle(for: ZMManagedObject.self)
-    private let clientID = "abc123"
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
     private let helper = DatabaseMigrationHelper()
 
@@ -48,35 +47,121 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
 
         let mappingModel = try XCTUnwrap(NSMappingModel(contentsOf: mappingModelURL))
 
-        let userID = UUID.create()
-        let conversationID = UUID.create()
+        let selfUserID = UUID.create()
+        let teamID = UUID.create()
+
+        let connectedUserID = UUID.create()
+        let connectedConversationID = UUID.create()
+
+        let teamUserID = UUID.create()
+        let teamConversationID = UUID.create()
 
         try migrateStore(
             sourceVersion: "2.112.0",
             destinationVersion: "2.113.0",
             mappingModel: mappingModel,
             preMigrationAction: { context in
-                let user = ZMUser.insertNewObject(in: context)
-                user.remoteIdentifier = userID
+                let selfUser = ZMUser.selfUser(in: context)
+                selfUser.remoteIdentifier = selfUserID
 
-                let conversation = ZMConversation.insertNewObject(in: context)
-                conversation.remoteIdentifier = conversationID
-                conversation.conversationType = .oneOnOne
+                let teamUser = ZMUser.insertNewObject(in: context)
+                teamUser.remoteIdentifier = teamUserID
 
-                let connection = ZMConnection.insertNewObject(in: context)
-                connection.status = .accepted
-                connection.to = user
-                connection.setValue(conversation, forKey: "conversation")
+                let connectedUser = ZMUser.insertNewObject(in: context)
+                connectedUser.remoteIdentifier = connectedUserID
+
+                let team = Team.insertNewObject(in: context)
+                team.remoteIdentifier = teamID
+                addUser(selfUser, to: team, in: context)
+                addUser(teamUser, to: team, in: context)
+
+                let (connectedConversation, connection) = createConnectedConversation(
+                    id: connectedConversationID,
+                    with: connectedUser,
+                    in: context
+                )
+
+                let teamOneOnOneConversation = createTeamOneOnOneConversation(
+                    id: teamConversationID,
+                    team: team,
+                    with: [selfUser, teamUser],
+                    in: context
+                )
 
                 try context.save()
+
+                XCTAssertEqual(connectedConversation.conversationType, .oneOnOne)
+                XCTAssertEqual(connectedConversation.value(forKey: "connection") as? ZMConnection, connection)
+                XCTAssertEqual(connectedUser.connection, connection)
+
+                XCTAssertEqual(teamOneOnOneConversation.conversationType, .oneOnOne)
             },
             postMigrationAction: { context in
-                let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: context))
-                let conversation = try XCTUnwrap(ZMConversation.fetch(with: conversationID, in: context))
-                XCTAssertEqual(user.oneOnOneConversation, conversation)
-                XCTAssertEqual(conversation.oneOnOneUser, user)
+                let selfUser = try XCTUnwrap(ZMUser.fetch(with: selfUserID, in: context))
+                XCTAssertNil(selfUser.oneOnOneConversation)
+
+                let connectedUser = try XCTUnwrap(ZMUser.fetch(with: connectedUserID, in: context))
+                let connectedConversation = try XCTUnwrap(ZMConversation.fetch(with: connectedConversationID, in: context))
+                XCTAssertEqual(connectedUser.oneOnOneConversation, connectedConversation)
+                XCTAssertEqual(connectedConversation.oneOnOneUser, connectedUser)
+
+                let teamUser = try XCTUnwrap(ZMUser.fetch(with: teamUserID, in: context))
+                let teamConversation = try XCTUnwrap(ZMConversation.fetch(with: teamConversationID, in: context))
+                XCTAssertEqual(teamUser.oneOnOneConversation, teamConversation)
+                XCTAssertEqual(teamConversation.oneOnOneUser, teamUser)
             }
         )
+    }
+
+    private func addUser(
+        _ user: ZMUser,
+        to team: Team,
+        in context: NSManagedObjectContext
+    ) {
+        let member = Member.insertNewObject(in: context)
+        member.team = team
+        member.user = user
+    }
+
+    private func createConnectedConversation(
+        id: UUID,
+        with user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> (ZMConversation, ZMConnection) {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = id
+        conversation.conversationType = .oneOnOne
+
+        let connection = ZMConnection.insertNewObject(in: context)
+        connection.status = .accepted
+        connection.to = user
+
+        // The connection.conversation <-> conversation.connection relationship
+        // was deleted in version 2.113, so we set the value this way.
+        connection.setValue(conversation, forKey: "conversation")
+
+        return (conversation, connection)
+    }
+
+    private func createTeamOneOnOneConversation(
+        id: UUID,
+        team: Team,
+        with users: [ZMUser],
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = id
+        conversation.team = team
+        conversation.teamRemoteIdentifier = team.remoteIdentifier
+        conversation.conversationType = .group
+
+        for user in users {
+            let participation = ParticipantRole.insertNewObject(in: context)
+            participation.conversation = conversation
+            participation.user = user
+        }
+
+        return conversation
     }
 
     // MARK: - Migration Helpers
@@ -135,73 +220,10 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         try postMigrationAction(migratedContainer.viewContext)
     }
 
-    func createStorageStackAndWaitForCompletion(
-        userID: UUID = UUID(),
-        applicationContainer: URL,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) -> CoreDataStack {
-
-        // we use backgroundActivity suring the setup so we need to mock for tests
-        let manager = MockBackgroundActivityManager()
-        BackgroundActivityFactory.shared.activityManager = manager
-
-        let account = Account(
-            userName: "",
-            userIdentifier: userID
-        )
-        let stack = CoreDataStack(
-            account: account,
-            applicationContainer: applicationContainer,
-            inMemoryStore: false
-        )
-
-        let exp = self.expectation(description: "should wait for loadStores to finish")
-        stack.setup(onStartMigration: {
-            // do nothing
-        }, onFailure: { error in
-            XCTAssertNil(error, file: file, line: line)
-            exp.fulfill()
-        }, onCompletion: { _ in
-            exp.fulfill()
-        })
-        waitForExpectations(timeout: 5.0)
-
-        BackgroundActivityFactory.shared.activityManager = nil
-        XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
-
-        return stack
-    }
-
     // MARK: - URL Helpers
 
     private func storeURL(version: String) -> URL {
         return tmpStoreURL.appendingPathComponent("\(version).sqlite")
-    }
-
-    // MARK: - Fetch / Insert Helpers
-
-    private func fetchClients(
-        with identifier: String,
-        in context: NSManagedObjectContext
-    ) throws -> [UserClient] {
-
-        let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
-        fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMUserClientRemoteIdentifierKey, identifier)
-        fetchRequest.fetchLimit = 2
-
-        return try context.fetch(fetchRequest)
-    }
-
-    private func insertDuplicateClients(
-        with identifier: String,
-        in context: NSManagedObjectContext
-    ) {
-        let duplicate1 = UserClient.insertNewObject(in: context)
-        duplicate1.remoteIdentifier = identifier
-
-        let duplicate2 = UserClient.insertNewObject(in: context)
-        duplicate2.remoteIdentifier = identifier
     }
 
 }
