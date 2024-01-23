@@ -56,7 +56,6 @@ NSString *const ZMConversationParticipantRolesKey = @"participantRoles";
 NSString *const ZMConversationNonTeamRolesKey = @"nonTeamRoles";
 NSString *const ZMConversationHasUnreadKnock = @"hasUnreadKnock";
 NSString *const ZMConversationUserDefinedNameKey = @"userDefinedName";
-NSString *const ZMIsDimmedKey = @"zmIsDimmed";
 NSString *const ZMNormalizedUserDefinedNameKey = @"normalizedUserDefinedName";
 NSString *const ZMConversationListIndicatorKey = @"conversationListIndicator";
 NSString *const ZMConversationConversationTypeKey = @"conversationType";
