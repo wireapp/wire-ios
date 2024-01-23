@@ -26,7 +26,6 @@ protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
-    func getCertificate() async -> E2eIdentityCertificate?
     func enrollClient() async -> E2eIdentityCertificate?
     func updateCertificate() async -> E2eIdentityCertificate?
     func removeDevice() async -> Bool
@@ -34,7 +33,6 @@ protocol DeviceDetailsViewActions {
     func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
     func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate)
-    func isE2eIdentityEnabled() async -> Bool
     func getProteusFingerPrint() async -> String
 }
 
@@ -59,17 +57,21 @@ final class DeviceInfoViewModel: ObservableObject {
         return certificate.shouldUpdate(with: gracePeriod)
     }
 
+    var isE2eIdentityEnabled: Bool {
+        return e2eIdentityCertificate != nil
+    }
+
     @Published
     var e2eIdentityCertificate: E2eIdentityCertificate?
     @Published var isRemoved: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
-    @Published var isE2eIdentityEnabled = false
 
     private var actionsHandler: any DeviceDetailsViewActions
 
     init(
+        certificate: E2eIdentityCertificate?,
         title: String,
         addedDate: String,
         proteusID: String,
@@ -80,6 +82,7 @@ final class DeviceInfoViewModel: ObservableObject {
         isSelfClient: Bool,
         gracePeriod: TimeInterval
     ) {
+        self.e2eIdentityCertificate = certificate
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
@@ -94,14 +97,6 @@ final class DeviceInfoViewModel: ObservableObject {
                 self?.isActionInProgress = isProcessing
             }
         }
-    }
-
-    @MainActor
-    func getE2eCertificate() async {
-        self.isActionInProgress = true
-        let certificate = await actionsHandler.getCertificate()
-        self.e2eIdentityCertificate = certificate
-        self.isActionInProgress = false
     }
 
     @MainActor
@@ -149,12 +144,6 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     @MainActor
-    func isE2eIdenityEnabled() async {
-        let result = await actionsHandler.isE2eIdentityEnabled()
-        self.isE2eIdentityEnabled = result
-    }
-
-    @MainActor
     func getProteusFingerPrint() async {
         let result = await actionsHandler.getProteusFingerPrint()
         self.proteusKeyFingerprint = result
@@ -162,8 +151,6 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func onAppear() {
         Task {
-            await isE2eIdenityEnabled()
-            await getE2eCertificate()
             await getProteusFingerPrint()
         }
     }
@@ -171,6 +158,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
 extension DeviceInfoViewModel {
     static func map(
+        certificate: E2eIdentityCertificate?,
         userClient: UserClient,
         title: String,
         addedDate: String,
@@ -181,11 +169,10 @@ extension DeviceInfoViewModel {
         gracePeriod: TimeInterval,
         mlsGroupId: MLSGroupID?,
         mlsThumbprint: String?,
-        getE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
-        getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
+            certificate: certificate,
             title: title,
             addedDate: addedDate,
             proteusID: proteusID?.uppercased().fingerprintStringWithSpaces ?? "",
@@ -198,8 +185,6 @@ extension DeviceInfoViewModel {
                 mlsGroupId: mlsGroupId,
                 saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
                 mlsClientResolver: MLSClientResolver(),
-                getE2eIdentityEnabled: getE2eIdentityEnabled,
-                getE2eIdentityCertificates: getE2eIdentityCertificates,
                 getProteusFingerprint: getProteusFingerprint
             ),
             userClient: userClient,

@@ -197,8 +197,8 @@ final class ClientListViewController: UIViewController,
                   let navigationController = self.navigationController,
                   let mlsGroupId = await self.fetchSelfConversation()
             else { return }
-            let mlsThumbprint = userSession.selfUserClient?.mlsPublicKeys.ed25519?.uppercased()
             let viewModel = DeviceInfoViewModel.map(
+                certificate: client.e2eIdentityCertificate,
                 userClient: client,
                 title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
                 addedDate: client.activationDate?.formattedDate ?? "",
@@ -208,9 +208,7 @@ final class ClientListViewController: UIViewController,
                 credentials: self.credentials,
                 gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
                 mlsGroupId: mlsGroupId,
-                mlsThumbprint: mlsThumbprint?.splitStringIntoLines(charactersPerLine: 16),
-                getE2eIdentityEnabled: userSession.getIsE2eIdentityEnabled,
-                getE2eIdentityCertificates: userSession.getE2eIdentityCertificates,
+                mlsThumbprint: client.mlsPublicKeys.ed25519?.splitStringIntoLines(charactersPerLine: 16),
                 getProteusFingerprint: userSession.getUserClientFingerprint
             )
             await MainActor.run {
@@ -303,9 +301,13 @@ final class ClientListViewController: UIViewController,
     // MARK: - ClientRegistrationObserver
 
     func finishedFetching(_ userClients: [UserClient]) {
-        dismissLoadingView()
-
-        self.clients = userClients.filter { !$0.isSelfClient() }
+        Task {
+            let updatedClients = await updateCertificates(for: userClients)
+            await MainActor.run {
+                dismissLoadingView()
+                clients = updatedClients.filter { !$0.isSelfClient() }
+            }
+        }
     }
 
     func failedToFetchClients(_ error: Error) {
@@ -493,6 +495,58 @@ final class ClientListViewController: UIViewController,
         navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Registration.Devices.title.capitalized)
     }
 
+    private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
+        if let mlsGroupID = await fetchSelfConversation(), let userSession = userSession {
+            var updatedUserClients = [UserClient]()
+            let mlsResolver = MLSClientResolver()
+            let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
+                if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+                    ($0.clientId.hashValue, mlsClientId)
+                } else {
+                    nil
+                }
+            })
+            let mlsClienIds = mlsClients.values.map({$0})
+            do {
+                let isE2eIEnabledForSelfClient = try await userSession.getIsE2eIdentityEnabled.invoke()
+                let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupID,
+                                                                                           clientIds: mlsClienIds)
+                if certificates.isNonEmpty {
+                    for client in userClients {
+                        let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
+                        client.e2eIdentityCertificate = certificates.first(where: {$0.clientId == mlsClientIdRawValue})
+                        if client.e2eIdentityCertificate == nil {
+                            client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                        }
+                        updatedUserClients.append(client)
+                    }
+                    if let selfClient = selfClient {
+                        selfClient.e2eIdentityCertificate = certificates.first(where: {
+                            $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
+                        })
+                        if certificates.isNonEmpty {
+                            selfClient.e2eIdentityCertificate = selfClient.notActivatedE2EIdenityCertificate()
+                        }
+                    }
+                    return updatedUserClients
+                } else if isE2eIEnabledForSelfClient {
+                    for client in clients {
+                        let theClient = client
+                        theClient.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                        updatedUserClients.append(theClient)
+                    }
+                    return updatedUserClients
+                } else {
+                    return userClients
+                }
+            } catch {
+                WireLogger.e2ei.error(error.localizedDescription)
+                return userClients
+            }
+        } else {
+            return userClients
+        }
+    }
 }
 
 // MARK: - ClientRemovalObserverDelegate
@@ -529,4 +583,21 @@ extension ClientListViewController: ZMUserObserver {
         }
     }
 
+}
+
+private extension UserClient {
+    func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
+        guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
+            return nil
+        }
+        return E2eIdentityCertificate(
+            clientId: mlsResolver.rawValue,
+            certificateDetails: "",
+            mlsThumbprint: self.mlsPublicKeys.ed25519 ?? "",
+            notValidBefore: .now,
+            expiryDate: .now,
+            certificateStatus: .notActivated,
+            serialNumber: ""
+        )
+    }
 }

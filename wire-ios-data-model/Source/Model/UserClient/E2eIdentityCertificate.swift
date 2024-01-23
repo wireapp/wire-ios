@@ -26,6 +26,7 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
 }
 
 public struct E2eIdentityCertificate: Equatable {
+    public var clientId: String
     public var details: String
     public var mlsThumbprint: String
     public var notValidBefore: Date
@@ -34,6 +35,7 @@ public struct E2eIdentityCertificate: Equatable {
     public var serialNumber: String
 
     public init(
+        clientId: String,
         certificateDetails: String,
         mlsThumbprint: String,
         notValidBefore: Date,
@@ -41,6 +43,7 @@ public struct E2eIdentityCertificate: Equatable {
         certificateStatus: E2EIdentityCertificateStatus,
         serialNumber: String
     ) {
+        self.clientId = clientId
         self.details = certificateDetails
         self.mlsThumbprint = mlsThumbprint
         self.notValidBefore = notValidBefore
@@ -48,20 +51,6 @@ public struct E2eIdentityCertificate: Equatable {
         self.status = certificateStatus
         self.serialNumber = serialNumber
     }
-
-    public init(
-           certificate: Certificate,
-           certificateDetails: String,
-           certificateStatus: E2EIdentityCertificateStatus,
-           mlsThumbprint: String
-       ) {
-           self.details = certificateDetails
-           self.notValidBefore = certificate.notValidBefore
-           self.expiryDate = certificate.notValidAfter
-           self.serialNumber = String(describing: certificate.serialNumber).replacingOccurrences(of: ":", with: "")
-           self.status = certificateStatus
-           self.mlsThumbprint = mlsThumbprint
-       }
 }
 
 enum E2eIdentityCertificateError: Error {

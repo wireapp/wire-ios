@@ -28,8 +28,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     private var userSession: UserSession
     private var clientRemovalObserver: ClientRemovalObserver?
     private var credentials: ZMEmailCredentials?
-    private let getE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol
-    private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
     private let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
 
     var isProcessing: ((Bool) -> Void)?
@@ -48,8 +46,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         saveFileManager: SaveFileActions,
         logger: LoggerProtocol = WireLogger.e2ei,
         mlsClientResolver: MLSClientResolving,
-        getE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
-        getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     ) {
         self.userClient = userClient
@@ -58,8 +54,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.saveFileManager = saveFileManager
         self.logger = logger
         self.mlsClientResolver = mlsClientResolver
-        self.getE2eIdentityEnabled = getE2eIdentityEnabled
-        self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.mlsGroupId = mlsGroupId
         self.getProteusFingerprint = getProteusFingerprint
     }
@@ -72,44 +66,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     func enrollClient() async -> E2eIdentityCertificate? {
         // TODO: after this task https://wearezeta.atlassian.net/browse/WPB-6039
         return nil
-    }
-
-    @MainActor
-    func getCertificate() async -> E2eIdentityCertificate? {
-        #if DEBUG
-        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
-            return DeveloperDeviceDetailsSettingsSelectionViewModel.mockCertifiateForSelectedStatus()
-        }
-        #endif
-        guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient), let mlsGroupId = mlsGroupId else {
-            return nil
-        }
-        do {
-            return try await getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId, clientIds: [mlsClientID]) .first
-        } catch {
-            logger.error(error.localizedDescription, attributes: nil)
-            return nil
-        }
-    }
-
-    @MainActor
-    func isE2eIdentityEnabled() async -> Bool {
-        #if DEBUG
-        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
-            return true
-        }
-        #endif
-        do {
-            if isSelfClient {
-                return try await getE2eIdentityEnabled.invoke()
-            } else {
-                let certificate = await getCertificate()
-                return certificate != nil
-            }
-        } catch {
-            logger.error(error.localizedDescription, attributes: nil)
-            return false
-        }
     }
 
     @MainActor

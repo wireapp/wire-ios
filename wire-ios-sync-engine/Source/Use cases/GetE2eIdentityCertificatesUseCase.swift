@@ -19,8 +19,7 @@
 import Foundation
 import WireDataModel
 import WireCoreCrypto
-import X509
-import SwiftASN1
+import ASN1Decoder
 
 // sourcery: AutoMockable
 public protocol GetE2eIdentityCertificatesUseCaseProtocol {
@@ -39,19 +38,14 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                        clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
-        let clientIds = clientIds.compactMap({ $0.clientID.data(using: .utf8)})
+        let clientIds = clientIds.compactMap({$0.rawValue.data(using: .utf8)})
         let wireIdentities = try await getWireIdentity(coreCrypto: coreCrypto,
                                                        conversationId: mlsGroupId.data,
                                                        clientIDs: clientIds)
-        if wireIdentities.isEmpty {
-            return Array(repeating: .notActivated, count: clientIds.count)
-        } else {
-            return try wireIdentities.map({
-                try $0.toE2eIdenityCertificate()
-            })
-        }
+        return wireIdentities.isNonEmpty ?  try wireIdentities.compactMap({try $0.toE2eIdenityCertificate()}) : []
     }
 
+    @MainActor
     private func getWireIdentity(coreCrypto: SafeCoreCryptoProtocol,
                                  conversationId: Data, clientIDs: [Data]) async throws -> [WireIdentity] {
         return try await coreCrypto.perform {
@@ -63,16 +57,16 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
 }
 
 extension WireIdentity {
-
-    func toE2eIdenityCertificate() throws -> E2eIdentityCertificate {
-        let pemDocument = try PEMDocument(pemString: self.certificate)
-        let certificate = try Certificate(pemDocument: pemDocument)
-        return E2eIdentityCertificate(
-            certificate: certificate,
-            certificateDetails: self.certificate,
-            certificateStatus: self.status.e2eIdentityStatus,
-            mlsThumbprint: self.thumbprint
-        )
+    func toE2eIdenityCertificate() throws -> E2eIdentityCertificate? {
+        guard let certificateData = certificate.data(using: .utf8) else {
+            return nil
+        }
+        let x509Certificate = try X509Certificate(pem: certificateData)
+        return x509Certificate.toE2eIdenityCertificate(
+            clientId: clientId,
+            certificateDetails: certificate,
+            certificateStatus: status.e2eIdentityStatus,
+            mlsThumbprint: thumbprint)
     }
 }
 
@@ -93,15 +87,32 @@ private extension DeviceStatus {
 
 }
 
-extension E2eIdentityCertificate {
-    static var notActivated: E2eIdentityCertificate {
-        E2eIdentityCertificate(
-            certificateDetails: "",
-            mlsThumbprint: "",
-            notValidBefore: .now,
-            expiryDate: .now,
-            certificateStatus: .notActivated,
-            serialNumber: ""
-        )
+extension X509Certificate {
+    func toE2eIdenityCertificate(
+        clientId: String,
+        certificateDetails: String,
+        certificateStatus: E2EIdentityCertificateStatus,
+        mlsThumbprint: String
+    ) -> E2eIdentityCertificate? {
+        guard let notValidBefore = notBefore,
+              let notValidAfter = notAfter,
+              let theSerialNumber = serialNumber?.bytes.map({String($0, radix: 16).uppercased()}).joined(separator: "")
+        else {
+            return nil
+        }
+        return .init(
+            clientId: clientId,
+            certificateDetails: certificateDetails,
+            mlsThumbprint: mlsThumbprint,
+            notValidBefore: notValidBefore,
+            expiryDate: notValidAfter,
+            certificateStatus: certificateStatus,
+            serialNumber: theSerialNumber)
+    }
+}
+
+extension Data {
+    var bytes: [UInt8] {
+        return [UInt8](self)
     }
 }

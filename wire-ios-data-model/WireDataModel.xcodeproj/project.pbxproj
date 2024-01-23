@@ -195,7 +195,6 @@
 		16F7341224F9567000AB93B1 /* ZMConversationTests+DraftMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F7341024F9556600AB93B1 /* ZMConversationTests+DraftMessage.swift */; };
 		16F7341424F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F7341324F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift */; };
 		16F7341624F95F9D00AB93B1 /* store2-85-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */; };
-		255176CB2B514ACB006A4E46 /* X509 in Frameworks */ = {isa = PBXBuildFile; productRef = 255176CA2B514ACB006A4E46 /* X509 */; };
 		25644D942B289EFA007DA01F /* String+mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25644D922B289E30007DA01F /* String+mocks.swift */; };
 		256C1B792B1654BB0015C89D /* E2eIdentityCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256C1B782B1654BB0015C89D /* E2eIdentityCertificate.swift */; };
 		2BB20770292B787000FB6468 /* PatchApplicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2076F292B787000FB6468 /* PatchApplicator.swift */; };
@@ -1724,7 +1723,6 @@
 				F9C9A66D1CAD778C0039E10C /* Foundation.framework in Frameworks */,
 				EE67F6C3296F05FD001D7C88 /* PINCache.xcframework in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
-				255176CB2B514ACB006A4E46 /* X509 in Frameworks */,
 				017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3473,7 +3471,6 @@
 			);
 			name = WireDataModel;
 			packageProductDependencies = (
-				255176CA2B514ACB006A4E46 /* X509 */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -3557,8 +3554,6 @@
 			);
 			mainGroup = F9C9A4F21CAD5DF10039E10C;
 			packageReferences = (
-				255176C82B5149E7006A4E46 /* XCRemoteSwiftPackageReference "swift-crypto" */,
-				255176C92B514ACB006A4E46 /* XCRemoteSwiftPackageReference "swift-certificates" */,
 			);
 			productRefGroup = F9C9A4FD1CAD5DF10039E10C /* Products */;
 			projectDirPath = "";
@@ -4768,33 +4763,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		255176C82B5149E7006A4E46 /* XCRemoteSwiftPackageReference "swift-crypto" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-crypto.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.2.0;
-			};
-		};
-		255176C92B514ACB006A4E46 /* XCRemoteSwiftPackageReference "swift-certificates" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-certificates.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		255176CA2B514ACB006A4E46 /* X509 */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 255176C92B514ACB006A4E46 /* XCRemoteSwiftPackageReference "swift-certificates" */;
-			productName = X509;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		167BCC182609E92300E9D7E3 /* ZMEventModel.xcdatamodeld */ = {

@@ -11,39 +11,21 @@
         }
       },
       {
+        "package": "ASN1Decoder",
+        "repositoryURL": "https://github.com/wireapp/ASN1Decoder",
+        "state": {
+          "branch": "master",
+          "revision": "d30708c89cbbf8f0f27122a53fbd98d0cda079fd",
+          "version": null
+        }
+      },
+      {
         "package": "DifferenceKit",
         "repositoryURL": "https://github.com/wireapp/DifferenceKit",
         "state": {
           "branch": null,
           "revision": "eaf29c583df322d1d7c4c72c46a59eeb33bb54bf",
           "version": "1.3.0"
-        }
-      },
-      {
-        "package": "swift-asn1",
-        "repositoryURL": "https://github.com/apple/swift-asn1.git",
-        "state": {
-          "branch": null,
-          "revision": "c7e239b5c1492ffc3ebd7fbcc7a92548ce4e78f0",
-          "version": "1.1.0"
-        }
-      },
-      {
-        "package": "swift-certificates",
-        "repositoryURL": "https://github.com/apple/swift-certificates.git",
-        "state": {
-          "branch": null,
-          "revision": "bc566f88842b3b8001717326d935c2d113af5741",
-          "version": "1.2.0"
-        }
-      },
-      {
-        "package": "swift-crypto",
-        "repositoryURL": "https://github.com/apple/swift-crypto.git",
-        "state": {
-          "branch": null,
-          "revision": "cc76b894169a3c86b71bac10c78a4db6beb7a9ad",
-          "version": "3.2.0"
         }
       },
       {

@@ -68,7 +68,6 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 .padding(.bottom, ViewConstants.Padding.small)
             Text(
                 certificate.serialNumber
-                    .uppercased()
                     .splitStringIntoLines(charactersPerLine: 16)
                     .replacingOccurrences(of: " ", with: ":")
             )
