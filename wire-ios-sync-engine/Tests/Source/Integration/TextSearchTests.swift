@@ -97,7 +97,7 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertEqual(editedMessage.textMessageData?.messageText, "This is an edit!!")
 
         // Then
-        verifyThatItCanSearch(for: "edit", in: convo, andFinds: editedMessage as! ZMMessage)
+        verifyThatItCanSearch(for: "edit", in: convo, andFinds: editedMessage as? ZMMessage)
         verifyThatItCanSearch(for: "Hello", in: convo, andFinds: nil)
     }
 

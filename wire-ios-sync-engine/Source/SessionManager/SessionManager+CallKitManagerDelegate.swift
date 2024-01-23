@@ -64,14 +64,9 @@ extension SessionManager: CallKitManagerDelegate {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
-            do {
-                try userSession.processPendingCallEvents { // TODO: fix warning "No calls to throwing functions occur within 'try' expression"
-                    WireLogger.calling.info("did process call events, returning conversation...")
-                    completionHandler(.success(conversation))
-                }
-            } catch {
-                WireLogger.calling.error("failed to process call events: \(error)")
-                completionHandler(.failure(ConversationLookupError.failedToProcessCallEvents))
+            userSession.processPendingCallEvents {
+                WireLogger.calling.info("did process call events, returning conversation...")
+                completionHandler(.success(conversation))
             }
         }
     }
