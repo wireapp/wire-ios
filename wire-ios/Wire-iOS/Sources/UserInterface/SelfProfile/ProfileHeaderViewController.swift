@@ -63,6 +63,8 @@ final class ProfileHeaderViewController: UIViewController {
     /// The user that is displayed.
     let user: UserType
 
+    let userSession: UserSession
+
     /// The user who is viewing this view
     let viewer: UserType
 
@@ -125,6 +127,7 @@ final class ProfileHeaderViewController: UIViewController {
      */
     init(user: UserType, viewer: UserType, conversation: ZMConversation? = nil, options: Options, userSession: UserSession) {
         self.user = user
+        self.userSession = userSession
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
@@ -140,8 +143,6 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        let session = SessionManager.shared?.activeUserSession
-
         imageView.isAccessibilityElement = true
         imageView.accessibilityElementsHidden = false
         imageView.accessibilityIdentifier = "user image"
@@ -149,8 +150,8 @@ final class ProfileHeaderViewController: UIViewController {
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 
-        imageView.initialsFont = UIFont.systemFont(ofSize: 55, weight: .semibold).monospaced()
-        imageView.userSession = session
+        imageView.initialsFont = .systemFont(ofSize: 55, weight: .semibold).monospaced()
+        imageView.userSession = userSession
         imageView.user = user
 
         handleLabel.accessibilityLabel = AccountPageStrings.Handle.description
@@ -168,18 +169,7 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        let isMLSCertified = { true }() // TODO: add business logic
-        let isProteusVerified = { true }() // TODO: add business logic
-        nameLabel.attributedText = if let userName = user.name {
-            [
-                .init(string: userName),
-                !isMLSCertified ? nil : .init(attachment: .init(image: Asset.Images.certificateValid.image)), // MLS verified shield
-                !isProteusVerified ? nil : .init(attachment: .init(image: Asset.Images.verifiedShield.image)) // Proteus verified shield
-            ].compactMap { $0 }.joined(separator: .init(string: " "))
-        } else {
-            .init()
-        }
-        nameLabel.accessibilityValue = nameLabel.text
+        updateNameLabel(user.name ?? "")
 
         let remainingTimeString = user.expirationDisplayString
         remainingTimeLabel.text = remainingTimeString
@@ -290,6 +280,26 @@ final class ProfileHeaderViewController: UIViewController {
         warningView.update(withUser: user)
     }
 
+    private func updateNameLabel(_ name: String) {
+        defer { nameLabel.accessibilityValue = nameLabel.text }
+        guard !name.isEmpty else { return nameLabel.text = "" }
+
+        let isMLSCertified = { true }() // TODO: add business logic
+        let isProteusVerified = { true }() // TODO: add business logic
+
+        nameLabel.attributedText = [
+
+            .init(string: name),
+
+            // MLS verified shield
+            !isMLSCertified ? nil : .init(attachment: .init(image: Asset.Images.certificateValid.image)),
+
+            // Proteus verified shield
+            !isProteusVerified ? nil : .init(attachment: .init(image: Asset.Images.verifiedShield.image))
+
+        ].compactMap { $0 }.joined(separator: .init(string: " "))
+    }
+
     private func updateHandleLabel() {
         if let handle = user.handle, !handle.isEmpty, !options.contains(.hideHandle) {
             handleLabel.text = "@" + handle
@@ -335,7 +345,7 @@ extension ProfileHeaderViewController: ZMUserObserver {
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
         if changeInfo.nameChanged {
-            nameLabel.text = changeInfo.user.name
+            updateNameLabel(changeInfo.user.name ?? "")
         }
         if changeInfo.handleChanged {
             updateHandleLabel()
@@ -346,6 +356,8 @@ extension ProfileHeaderViewController: ZMUserObserver {
         }
     }
 }
+
+// MARK: - TeamObserver
 
 extension ProfileHeaderViewController: TeamObserver {
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
