@@ -25,9 +25,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     let context: NSManagedObjectContext
     let conversationService: ConversationServiceInterface
-    private let processor = ConversationEventPayloadProcessor(
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
+    let mlsEventProcessor: MLSEventProcessing
+
+    private lazy var processor = ConversationEventPayloadProcessor(context: context)
     private let eventPayloadDecoder = EventPayloadDecoder()
 
     // MARK: - Life cycle
@@ -35,16 +35,19 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     public convenience init(context: NSManagedObjectContext) {
         self.init(
             context: context,
-            conversationService: ConversationService(context: context)
+            conversationService: ConversationService(context: context),
+            mlsEventProcessor: MLSEventProcessor(context: context)
         )
     }
 
     public init(
         context: NSManagedObjectContext,
-        conversationService: ConversationServiceInterface
+        conversationService: ConversationServiceInterface,
+        mlsEventProcessor: MLSEventProcessing
     ) {
         self.context = context
         self.conversationService = conversationService
+        self.mlsEventProcessor = mlsEventProcessor
         super.init()
     }
 
@@ -243,13 +246,19 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationMLSWelcome(_ event: ZMUpdateEvent) async {
-        guard let payload = try? eventPayloadDecoder.decode(
-            Payload.UpdateConversationMLSWelcome.self,
-            from: event.payload
-        ) else { return }
+        guard
+            let payload = try? eventPayloadDecoder.decode(
+                Payload.UpdateConversationMLSWelcome.self,
+                from: event.payload
+            ),
+            let qualifiedID = payload.qualifiedID ?? BackendInfo.domain.map({
+                QualifiedID(uuid: payload.id, domain: $0)
+            })
+        else { return }
 
-        await MLSEventProcessor.shared.process(
+        await mlsEventProcessor.process(
             welcomeMessage: payload.data,
+            conversationID: qualifiedID,
             in: context
         )
     }
@@ -308,13 +317,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         }
 
         if let conversation, usersContainedSelfUser {
-            await self.updateMLSStatus(for: conversation, context: self.context)
+            await updateMLSStatus(for: conversation, context: context)
         }
 
     }
 
     private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) async {
-        await MLSEventProcessor.shared.updateConversationIfNeeded(
+        await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             groupID: nil,
             context: context
