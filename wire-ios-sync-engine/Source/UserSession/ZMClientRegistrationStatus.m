@@ -134,7 +134,13 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
                                      --> NO --> ZMClientRegistrationPhaseUnregistered
                                                 [Client is registered]
                                             --> ZMClientRegistrationPhaseRegistered
-     
+
+     [MLS client is required]        --> YES --> ZMClientRegistrationRegisteringMLSClient
+                                                 [MLS Client is registered]
+                                             --> See [NO]
+                                                 [Client is registered]
+                                     --> NO  --> ZMClientRegistrationPhaseRegistered
+
     */
     
     // we only enter this state when the authentication has succeeded
@@ -156,7 +162,12 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     if (self.isWaitingForUserClients) {
         return ZMClientRegistrationPhaseFetchingClients;
     }
-    
+
+    // when MLS is enabled we need to register the MLS client to complete client registration
+    if (self.isWaitingForMLSClientToBeRegistered) {
+        return ZMClientRegistrationPhaseRegisteringMLSClient;
+    }
+
     // when the user
     if (!self.needsToRegisterClient) {
         return ZMClientRegistrationPhaseRegistered;
@@ -225,25 +236,32 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
            !selfUser.usesCompanyLogin;
 }
 
-- (void)didRegisterClient:(UserClient *)client
+- (void)didRegisterProteusClient:(UserClient *)client
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
     [self.managedObjectContext setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];
     [self.managedObjectContext saveOrRollback];
     
     [self fetchExistingSelfClientsAfterClientRegistered:client];
-    [self.registrationStatusDelegate didRegisterSelfUserClient:client];
+
     self.emailCredentials = nil;
     self.needsToCheckCredentials = NO;
     self.prekeys = nil;
     self.lastResortPrekey = nil;
+
+    if (self.needsToRegisterMLSCLient) {
+        self.isWaitingForMLSClientToBeRegistered = YES;
+    } else {
+        [self.registrationStatusDelegate didRegisterSelfUserClient:client];
+    }
 
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
 - (void)didRegisterMLSClient:(UserClient *)client
 {
-    [self.registrationStatusDelegate didRegisterMLSClient:client];
+    self.isWaitingForMLSClientToBeRegistered = NO;
+    [self.registrationStatusDelegate didRegisterSelfUserClient:client];
 }
 
 - (void)fetchExistingSelfClientsAfterClientRegistered:(UserClient *)currentSelfClient

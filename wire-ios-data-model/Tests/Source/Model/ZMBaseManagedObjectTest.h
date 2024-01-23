@@ -62,6 +62,11 @@
 
 @end
 
+@interface ZMBaseManagedObjectTest (ObjectCreation)
+
+- (nonnull ZMConversation *)insertValidOneOnOneConversationInContext:(nonnull NSManagedObjectContext *)context;
+
+@end
 
 
 @interface ZMBaseManagedObjectTest (UserTesting)
