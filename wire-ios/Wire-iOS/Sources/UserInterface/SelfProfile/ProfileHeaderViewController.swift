@@ -168,9 +168,14 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
+        let isMLSCertified = { true }() // TODO: add business logic
+        let isProteusVerified = { true }() // TODO: add business logic
         nameLabel.attributedText = if let userName = user.name {
-            [.init(string: userName), .init(attachment: .init(image: Asset.Images.certificateValid.image))]
-                .joined(separator: .init(string: " "))
+            [
+                .init(string: userName),
+                !isMLSCertified ? nil : .init(attachment: .init(image: Asset.Images.certificateValid.image)), // MLS verified shield
+                !isProteusVerified ? nil : .init(attachment: .init(image: Asset.Images.verifiedShield.image)) // Proteus verified shield
+            ].compactMap { $0 }.joined(separator: .init(string: " "))
         } else {
             .init()
         }
