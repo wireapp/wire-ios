@@ -54,31 +54,37 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
     }
 
     func testUpdatesUsersMissingMetadataAction() {
-        // Given
-        let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
-        syncMOC.saveOrRollback()
-        let action = sut.refreshUsersMissingMetadataAction
+        syncMOC.performAndWait {
+            // Given
+            let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
+            syncMOC.saveOrRollback()
+            let action = sut.refreshUsersMissingMetadataAction
 
-        // When
-        action()
+            // When
+            action()
+            syncMOC.refreshAllObjects()
 
-        // Then
-        XCTAssertEqual(action.interval, 3 * .oneHour)
-        XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
+            // Then
+            XCTAssertEqual(action.interval, 3 * .oneHour)
+            XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
+        }
     }
 
     func testThatItUpdatesConversationsMissingMetadata() {
-        // Given
-        let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
-        syncMOC.saveOrRollback()
-        let action = sut.refreshConversationsMissingMetadataAction
+        syncMOC.performAndWait {
+            // Given
+            let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
+            syncMOC.saveOrRollback()
+            let action = sut.refreshConversationsMissingMetadataAction
 
-        // When
-        action()
+            // When
+            action()
+            syncMOC.refreshAllObjects()
 
-        // Then
-        XCTAssertEqual(action.interval, 3 * .oneHour)
-        XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+            // Then
+            XCTAssertEqual(action.interval, 3 * .oneHour)
+            XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+        }
     }
 
     func testTeamMetadataIsUpdated() {
