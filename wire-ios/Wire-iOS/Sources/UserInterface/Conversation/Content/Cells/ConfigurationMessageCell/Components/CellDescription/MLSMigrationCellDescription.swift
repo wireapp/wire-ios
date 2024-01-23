@@ -22,6 +22,7 @@ import WireDataModel
 final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
+    typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
 
     private static let linkAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.mediumSemiboldFont,
@@ -75,14 +76,13 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
     }
 
     private static func makeFinalizedAttributedString() -> NSAttributedString? {
-        typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let text = NSMutableAttributedString.markdown(
-            from: Localizable.Finalized.done,
+            from: SystemMessageMLSMigrationLocalizable.Finalized.done,
             style: .systemMessage
         )
         let link = NSAttributedString(
-            string: Localizable.learnMore,
+            string: SystemMessageMLSMigrationLocalizable.learnMore,
             attributes: linkAttributes
         )
         return [text, link].joined(separator: NSAttributedString(" "))
@@ -92,11 +92,11 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let text = NSMutableAttributedString.markdown(
-            from: Localizable.Started.description,
+            from: SystemMessageMLSMigrationLocalizable.Started.description,
             style: .systemMessage
         )
         let link = NSAttributedString(
-            string: Localizable.learnMore,
+            string: SystemMessageMLSMigrationLocalizable.learnMore,
             attributes: linkAttributes
         )
         return [text, link].joined(separator: NSAttributedString(" "))
@@ -104,42 +104,40 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     private static func makeOngoingCallAttributedString() -> NSAttributedString? {
         NSAttributedString.markdown(
-            from: L10n.Localizable.Content.System.MlsMigration.ongoingCall,
+            from: SystemMessageMLSMigrationLocalizable.ongoingCall,
             style: .systemMessage
         )
     }
 
     private static func makeUpdateVersionAttributedString() -> NSAttributedString? {
         NSAttributedString.markdown(
-            from: L10n.Localizable.Content.System.MlsMigration.Started.updateLatestVersion,
+            from: SystemMessageMLSMigrationLocalizable.Started.updateLatestVersion,
             style: .systemMessage
         )
     }
 
     private static func makeJoinAfterwardsAttributedString() -> NSAttributedString? {
-        typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let text = NSMutableAttributedString.markdown(
-            from: Localizable.joinAfterwards,
+            from: SystemMessageMLSMigrationLocalizable.joinAfterwards,
             style: .systemMessage
         )
         let link = NSAttributedString(
-            string: Localizable.learnMore,
+            string: SystemMessageMLSMigrationLocalizable.learnMore,
             attributes: linkAttributes
         )
         return [text, link].joined(separator: NSAttributedString(" "))
     }
 
     private static func makePotentialGapAttributedString() -> NSAttributedString? {
-        typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let text = NSMutableAttributedString.markdown(
-            from: Localizable.potentialGap,
+            from: SystemMessageMLSMigrationLocalizable.potentialGap,
             style: .systemMessage
         )
 
         let link = NSAttributedString(
-            string: Localizable.learnMore,
+            string: SystemMessageMLSMigrationLocalizable.learnMore,
             attributes: linkAttributes
         )
 
