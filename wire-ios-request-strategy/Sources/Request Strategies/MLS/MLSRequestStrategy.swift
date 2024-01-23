@@ -43,7 +43,9 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             FetchSubgroupActionHandler(context: managedObjectContext),
             DeleteSubgroupActionHandler(context: managedObjectContext),
             LeaveSubconversationActionHandler(context: managedObjectContext),
-            ReplaceSelfMLSKeyPackagesActionHandler(context: managedObjectContext)
+            ReplaceSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
+            FetchSupportedProtocolsActionHandler(context: managedObjectContext),
+            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext)
         ])
 
         super.init(

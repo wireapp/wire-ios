@@ -37,10 +37,6 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         )
     }
 
-    let successPayload: ZMTransportData = [
-
-    ] as ZMTransportData
-
     // MARK: - Request generation
 
     func test_ItGeneratesARequest() throws {

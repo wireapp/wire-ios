@@ -21,7 +21,7 @@ import WireDataModel
 
 final class SyncConversationActionHandler: ActionHandler<SyncConversationAction> {
 
-    private let processor = ConversationEventPayloadProcessor(removeLocalConversation: RemoveLocalConversationUseCase())
+    private lazy var processor = ConversationEventPayloadProcessor(context: context)
 
     // MARK: - Request generation
 

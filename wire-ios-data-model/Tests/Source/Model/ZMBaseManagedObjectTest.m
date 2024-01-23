@@ -160,6 +160,20 @@
 
 @end
 
+@implementation ZMBaseManagedObjectTest (ObjectCreation)
+
+- (nonnull ZMConversation *)insertValidOneOnOneConversationInContext:(nonnull NSManagedObjectContext *)context
+{
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:context];
+    conversation.conversationType = ZMConversationTypeOneOnOne;
+    ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:context];
+    connection.status = ZMConnectionStatusAccepted;
+    conversation.connection = connection;
+    return conversation;
+}
+
+@end
+
 
 @implementation ZMBaseManagedObjectTest (UserTesting)
 

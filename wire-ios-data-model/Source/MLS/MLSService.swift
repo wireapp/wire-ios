@@ -1811,14 +1811,6 @@ private extension TimeInterval {
 
 }
 
-private extension Date {
-
-    var isInThePast: Bool {
-        return compare(Date()) != .orderedDescending
-    }
-
-}
-
 // sourcery: AutoMockable
 public protocol ConversationEventProcessorProtocol {
 

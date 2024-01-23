@@ -260,12 +260,14 @@
     ZMConversation *conversation1 = [self oneOnOneConversationForConnectedMockUser:mockUser1];
     XCTAssertEqual(conversation1.conversationType, ZMConversationTypeConnection);
     ZMUser *realUser1 = [self userForMockUser:mockUser1];
+    realUser1.domain = @"local@domain.com";
     XCTAssertEqualObjects(realUser1, conversation1.connectedUser);
     
     MockUser *mockUser2 = [self createPendingConnectionFromUserWithName:@"Hannelore Isstgern" uuid:NSUUID.createUUID];
     ZMConversation *conversation2 = [self oneOnOneConversationForConnectedMockUser:mockUser2];
     XCTAssertEqual(conversation2.conversationType, ZMConversationTypeConnection);
     ZMUser *realUser2 = [self userForMockUser:mockUser2];
+    realUser2.domain = @"local@domain.com";
     XCTAssertEqualObjects(realUser2, conversation2.connectedUser);
     
     ZMConversationList *active = [ZMConversationList conversationsInUserSession:self.userSession];

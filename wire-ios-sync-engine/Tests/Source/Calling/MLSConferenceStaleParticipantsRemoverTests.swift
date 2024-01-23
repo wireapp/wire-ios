@@ -59,7 +59,6 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         // create call participants
         let participants = [
             createMLSParticipant(state: .connecting),
-            createMLSParticipant(state: .connecting),
             createMLSParticipant(state: connectedState),
             createMLSParticipant(state: connectedState)
         ]

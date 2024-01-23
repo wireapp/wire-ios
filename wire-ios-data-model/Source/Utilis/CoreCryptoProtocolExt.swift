@@ -23,7 +23,7 @@ import WireCoreCrypto
 // This file is not member of any target!
 
 // sourcery: AutoMockable
-protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
+public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func addClientsToConversation(conversationId: Data, keyPackages: [Data]) async throws -> WireCoreCrypto.MemberAddedMessages
 
