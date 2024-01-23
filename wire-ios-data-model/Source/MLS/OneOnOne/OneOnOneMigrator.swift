@@ -65,16 +65,9 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         )
 
         try await context.perform {
-            guard let mlsConversation = ZMConversation.fetch(
-                with: mlsGroupID,
-                in: context
-            ) else {
-                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
-            }
-
             try self.switchActiveOneOnOneConversation(
                 userID: userID,
-                conversation: mlsConversation,
+                mlsGroupID: mlsGroupID,
                 in: context
             )
 
@@ -120,9 +113,16 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
 
     private func switchActiveOneOnOneConversation(
         userID: QualifiedID,
-        conversation: ZMConversation,
+        mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
     ) throws {
+        guard let mlsConversation = ZMConversation.fetch(
+            with: mlsGroupID,
+            in: context
+        ) else {
+            throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
+        }
+
         guard
             let otherUser = ZMUser.fetch(with: userID, in: context),
             let connection = otherUser.connection
@@ -130,7 +130,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
             throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
         }
 
-        connection.conversation = conversation
+        connection.conversation = mlsConversation
     }
 
 }
