@@ -62,6 +62,8 @@ public extension Feature {
 
             public let defaultCipherSuite: MLSCipherSuite
 
+            /// The list of supported message protocols
+
             public let supportedProtocols: Set<MessageProtocol>
 
             public init(

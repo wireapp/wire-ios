@@ -140,6 +140,9 @@ extension ZMUser: UserType {
         else {
             return false
         }
+        guard (BackendInfo.apiVersion ?? .v0) >= .v5 && DeveloperFlag.enableMLSSupport.isOn  else {
+            return false
+        }
 
         let featureRepository = FeatureRepository(context: context)
         return featureRepository.fetchMLS().config.protocolToggleUsers.contains(id)
@@ -447,13 +450,13 @@ extension ZMUser: UserConnections {
         connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
-                    completion(AcceptConnectionError.unableToResolveConversation)
-                    return
-                }
-
                 Task {
                     do {
+                        guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
+                            completion(AcceptConnectionError.unableToResolveConversation)
+                            return
+                        }
+
                         try await resolver.resolveOneOnOneConversation(
                             with: QualifiedID(uuid: userID, domain: domain),
                             in: context

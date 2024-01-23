@@ -24,8 +24,14 @@ enum BitRateStatus: String {
     case constant
     case variable
 
-    fileprivate var localizedUppercasedText: String {
-        return "call.status.\(rawValue)_bitrate".localized
+    fileprivate var localizedText: String {
+        switch self {
+        case BitRateStatus.constant:
+            return L10n.Localizable.Call.Status.constantBitrate
+        case BitRateStatus.variable:
+            return L10n.Localizable.Call.Status.variableBitrate
+        }
+
     }
 
     fileprivate var accessibilityValue: String {
@@ -45,7 +51,7 @@ class BitRateLabel: DynamicFontLabel {
     }
 
     private func updateLabel() {
-        text = bitRateStatus?.localizedUppercasedText
+        text = bitRateStatus?.localizedText
         accessibilityValue = bitRateStatus?.accessibilityValue
     }
 }

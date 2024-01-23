@@ -110,7 +110,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // expect
-        let completionHandlerCalled = expectation(description: "Completion handler called")
+        let completionHandlerCalled = customExpectation(description: "Completion handler called")
 
         // when
         sut.logout(credentials: credentials, {result in
@@ -138,7 +138,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // expect
-        let completionHandlerCalled = expectation(description: "Completion handler called")
+        let completionHandlerCalled = customExpectation(description: "Completion handler called")
 
         // when
         sut.logout(credentials: credentials, {result in

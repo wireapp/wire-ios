@@ -28,7 +28,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
         mlsService = MockMLSServiceInterface()
-        mlsService.createGroupFor_MockMethod = { _ in }
+        mlsService.createGroupForWith_MockMethod = { _, _ in }
         mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in}
 
         sut = OneOnOneMigrator(mlsService: mlsService)
@@ -88,9 +88,10 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         )
 
         // Then
-        XCTAssertEqual(mlsService.createGroupFor_Invocations, [mlsGroupID])
-        XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.map(\.users), [[MLSUser(userID)]])
-        XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.map(\.groupID), [mlsGroupID])
+        XCTAssertEqual(mlsService.createGroupForWith_Invocations.count, 1)
+        let createGroupInvocation = try XCTUnwrap(mlsService.createGroupForWith_Invocations.first)
+        XCTAssertEqual(createGroupInvocation.groupID, mlsGroupID)
+        XCTAssertEqual(createGroupInvocation.users, [MLSUser(userID)])
 
         await uiMOC.perform {
             XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
@@ -144,7 +145,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         )
 
         // Then
-        XCTAssertTrue(mlsService.createGroupFor_Invocations.isEmpty)
+        XCTAssertTrue(mlsService.createGroupForWith_Invocations.isEmpty)
         XCTAssertTrue(mlsService.addMembersToConversationWithFor_Invocations.isEmpty)
 
         await uiMOC.perform {

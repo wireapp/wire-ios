@@ -105,7 +105,7 @@ class AssetDeletionStatusTests: MessagingTest {
         let identifier = UUID.create().transportString()
 
         // Expect
-        let requestExpectation = expectation(description: "notification should be posted")
+        let requestExpectation = customExpectation(description: "notification should be posted")
         let observer = MockRequestAvailableObserver(requestAvailable: requestExpectation.fulfill)
 
         // When

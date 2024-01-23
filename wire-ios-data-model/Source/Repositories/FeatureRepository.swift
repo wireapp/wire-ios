@@ -58,6 +58,8 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     private let context: NSManagedObjectContext
     private let logger = WireLogger(tag: "FeatureRepository")
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
 
     // MARK: - Life cycle
 
@@ -78,7 +80,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
         var config = Feature.AppLock.Config()
 
         do {
-            config = try JSONDecoder().decode(Feature.AppLock.Config.self, from: featureConfig)
+            config = try decoder.decode(Feature.AppLock.Config.self, from: featureConfig)
         } catch {
             logger.error("failed to decode Feature.AppLock.Config: \(error)")
         }
@@ -88,7 +90,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     public func storeAppLock(_ appLock: Feature.AppLock) {
         do {
-            let config = try JSONEncoder().encode(appLock.config)
+            let config = try encoder.encode(appLock.config)
 
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.status = appLock.status
@@ -162,7 +164,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
         var config = Feature.SelfDeletingMessages.Config()
 
         do {
-            config = try JSONDecoder().decode(Feature.SelfDeletingMessages.Config.self, from: featureConfig)
+            config = try decoder.decode(Feature.SelfDeletingMessages.Config.self, from: featureConfig)
         } catch {
             logger.error("failed to decode Feature.SelfDeletingMessages.Config: \(error)")
         }
@@ -172,7 +174,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     public func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages) {
         do {
-            let config = try JSONEncoder().encode(selfDeletingMessages.config)
+            let config = try encoder.encode(selfDeletingMessages.config)
 
             Feature.updateOrCreate(havingName: .selfDeletingMessages, in: context) {
                 $0.status = selfDeletingMessages.status
@@ -234,7 +236,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
         var config = Feature.ClassifiedDomains.Config()
 
         do {
-            config = try JSONDecoder().decode(Feature.ClassifiedDomains.Config.self, from: featureConfig)
+            config = try decoder.decode(Feature.ClassifiedDomains.Config.self, from: featureConfig)
         } catch {
             logger.error("failed to decode Feature.ClassifiedDomains.Config: \(error)")
         }
@@ -244,7 +246,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     public func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains) {
         do {
-            let config = try JSONEncoder().encode(classifiedDomains.config)
+            let config = try encoder.encode(classifiedDomains.config)
 
             Feature.updateOrCreate(havingName: .classifiedDomains, in: context) {
                 $0.status = classifiedDomains.status
@@ -284,7 +286,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
         var config = Feature.MLS.Config()
 
         do {
-            config = try JSONDecoder().decode(Feature.MLS.Config.self, from: featureConfig)
+            config = try decoder.decode(Feature.MLS.Config.self, from: featureConfig)
         } catch {
             logger.error("failed to decode Feature.MLS.Config: \(error)")
         }
@@ -294,7 +296,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     public func storeMLS(_ mls: Feature.MLS) {
         do {
-            let config = try JSONEncoder().encode(mls.config)
+            let config = try encoder.encode(mls.config)
 
             Feature.updateOrCreate(havingName: .mls, in: context) {
                 $0.status = mls.status
@@ -318,7 +320,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
         var config = Feature.MLSMigration.Config()
 
         do {
-            config = try JSONDecoder().decode(Feature.MLSMigration.Config.self, from: featureConfig)
+            config = try decoder.decode(Feature.MLSMigration.Config.self, from: featureConfig)
         } catch {
             logger.error("failed to decode Feature.MLS.Config: \(error)")
         }
@@ -328,7 +330,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
         do {
-            let config = try JSONEncoder().encode(mlsMigration.config)
+            let config = try encoder.encode(mlsMigration.config)
 
             Feature.updateOrCreate(havingName: .mlsMigration, in: context) {
                 $0.status = mlsMigration.status
