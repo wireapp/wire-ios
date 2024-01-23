@@ -50,7 +50,6 @@ public class OAuthUseCase: OAuthUseCaseInterface {
             throw OAuthError.missingRequestParameters
         }
         let clientID = ""
-        let clientSecret = ""
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
             OIDAuthorizationService.discoverConfiguration(forIssuer: identityProvider) { configuration, error in
                 if let error = error {
@@ -61,18 +60,25 @@ public class OAuthUseCase: OAuthUseCaseInterface {
                     return continuation.resume(throwing: OAuthError.missingServiceConfiguration)
                 }
 
-                let claims = """
-                {
-                    "id_token": {
-                        "keyauth": \(keyauth),
-                        "acme_aud": \(acmeAud)
-                    }
-                }
-                """
+//                let claims = """
+//                {
+//                    "id_token": {
+//                        "keyauth": {"essential": true, "value": "\(keyauth)"},
+//                        "acme_aud": {"essential": true, "value": "\(acmeAud)"}
+//                    }
+//                }
+//                """.trimmingCharacters(in: .whitespacesAndNewlines)
 
+                let keyauth = ["essential": true, "value": "\(keyauth)"]
+                let acme_aud = ["essential": true, "value": "\(acmeAud)"]
+                let temp = ["keyauth": keyauth, "acme_aud": acme_aud]
+                let id_token = ["id_token": temp]
+                var claims: String = id_token.json
+
+                print(claims)
                 let request = OIDAuthorizationRequest(configuration: config,
                                                       clientId: clientID,
-                                                      clientSecret: clientSecret,
+                                                      // clientSecret: clientSecret,
                                                       scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail],
                                                       redirectURL: redirectURI,
                                                       responseType: OIDResponseTypeCode,
@@ -98,17 +104,23 @@ public class OAuthUseCase: OAuthUseCaseInterface {
                     return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
                 }
 
-                authState?.performAction { (_, idToken, error) in
-                    if let error = error {
-                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
-                    }
-
-                    guard let idToken = idToken else {
-                        return continuation.resume(throwing: OAuthError.missingIdToken)
-                    }
-
-                    return continuation.resume(returning: idToken)
+                print(authState?.lastTokenResponse?.idToken)
+                guard let idToken = authState?.lastTokenResponse?.idToken else {
+                    return continuation.resume(throwing: OAuthError.missingIdToken)
                 }
+
+                return continuation.resume(returning: idToken)
+                //                authState?.performAction { (_, idToken, error) in
+//                    if let error = error {
+//                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+//                    }
+//
+//                    guard let idToken = idToken else {
+//                        return continuation.resume(throwing: OAuthError.missingIdToken)
+//                    }
+//
+//                    return continuation.resume(returning: idToken)
+//                }
             })
         }
 
@@ -123,5 +135,19 @@ enum OAuthError: Error {
     case missingServiceConfiguration
     case missingOIDExternalUserAgent
     case missingIdToken
+
+}
+
+extension Dictionary {
+
+    var json: String {
+        let invalidJson = "Not a valid JSON"
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
+            return String(bytes: jsonData, encoding: String.Encoding.utf8) ?? invalidJson
+        } catch {
+            return invalidJson
+        }
+    }
 
 }

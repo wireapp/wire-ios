@@ -57,13 +57,15 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                                                              authzEndpoint: newOrder.acmeOrder.authorizations[0])
 
         let oidcChallenge = authzResponse.challenges.wireOidcChallenge
+        print(oidcChallenge)
 
         /// pass authzResponse.challenges.wireOidcChallenge.url = acmeAudience to authenticate
         let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge
-        let acmeAudience = oidcChallenge.url // pass to authenticate
-        let keyauth = authzResponse.challenges.keyauth // pass to authenticate
 
-        guard let identityProvider = URL(string: oidcChallenge.target) else { // client will be here
+        let keyauth = authzResponse.challenges.keyauth // pass to authenticate
+        let acmeAudience = oidcChallenge.url // pass to authenticate
+
+        guard let identityProvider = URL(string: /*oidcChallenge.target*/"https://idp.hogwash.work:8443/realms/master") else { // client will be here
             throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
         }
 

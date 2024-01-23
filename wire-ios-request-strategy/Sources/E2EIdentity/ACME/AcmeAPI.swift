@@ -96,7 +96,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         else {
             throw NetworkError.errorDecodingResponseNew(response)
         }
-        let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? " "
+        let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
         return ACMEResponse(nonce: replayNonce, location: location, response: data)
 
     }
