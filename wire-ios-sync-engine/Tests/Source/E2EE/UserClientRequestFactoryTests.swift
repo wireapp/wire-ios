@@ -179,21 +179,24 @@ class UserClientRequestFactoryTests: MessagingTest {
         // given
         let emptyPrekeys: [IdPrekeyTuple] = []
         let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
-        let client = UserClient.insertNewObject(in: syncMOC)
         let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
 
-        // when
-        let request = try? sut.registerClientRequest(
-            client,
-            credentials: credentials,
-            cookieLabel: "mycookie",
-            prekeys: emptyPrekeys,
-            lastRestortPrekey: lastRestortPrekey,
-            apiVersion: .v0
-        )
+        syncMOC.performAndWait {
+            let client = UserClient.insertNewObject(in: syncMOC)
 
-        // then
-        XCTAssertNil(request)
+            // when
+            let request = try? sut.registerClientRequest(
+                client,
+                credentials: credentials,
+                cookieLabel: "mycookie",
+                prekeys: emptyPrekeys,
+                lastRestortPrekey: lastRestortPrekey,
+                apiVersion: .v0
+            )
+
+            // then
+            XCTAssertNil(request)
+        }
     }
 
     private enum PrekeyError: Error {
