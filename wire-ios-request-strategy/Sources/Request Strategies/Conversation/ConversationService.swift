@@ -49,6 +49,7 @@ public enum ConversationCreationFailure: Error {
     case missingSelfClientID
     case conversationNotFound
     case networkError(CreateGroupConversationAction.Failure)
+    case underlyingError(Error)
 
 }
 
@@ -57,23 +58,11 @@ public final class ConversationService: ConversationServiceInterface {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let participantsService: ConversationParticipantsServiceInterface
 
     // MARK: - Life cycle
 
-    public convenience init(context: NSManagedObjectContext) {
-        self.init(
-            context: context,
-            participantsService: ConversationParticipantsService(context: context)
-        )
-    }
-
-    init(
-        context: NSManagedObjectContext,
-        participantsService: ConversationParticipantsServiceInterface
-    ) {
+    public init(context: NSManagedObjectContext) {
         self.context = context
-        self.participantsService = participantsService
     }
 
     // MARK: - Create conversation
@@ -267,13 +256,26 @@ public final class ConversationService: ConversationServiceInterface {
         )
 
         action.perform(in: context.notificationContext) { result in
+
             self.context.perform {
                 switch result {
-                case .success(let objectID):
-                    if let conversation = try? self.context.existingObject(with: objectID) as? ZMConversation {
-                        completion(.success(conversation))
-                    } else {
-                        completion(.failure(.conversationNotFound))
+                case .success(let response):
+                    Task {
+                        do {
+                            try await self.handleMLSConversationIfNeeded(for: response.conversationId, participantIds: response.participantIds)
+                        } catch {
+                            await self.context.perform {
+                                completion(.failure(.underlyingError(error)))
+                            }
+                        }
+
+                        await self.context.perform {
+                            if let conversation = try? self.context.existingObject(with: response.conversationId) as? ZMConversation {
+                                completion(.success(conversation))
+                            } else {
+                                completion(.failure(.conversationNotFound))
+                            }
+                        }
                     }
 
                 case .failure(let failure):
@@ -281,6 +283,54 @@ public final class ConversationService: ConversationServiceInterface {
                 }
             }
         }
+    }
+
+    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID, participantIds: Set<QualifiedID>) async throws {
+        guard let syncContext = await context.perform({ self.context.zm_sync }) else {
+            assertionFailure("handleMLSConversationIfNeeded must be done on syncContext")
+            return
+        }
+        guard let syncConversation = await syncContext.perform({
+            let conversation = try? syncContext.existingObject(with: conversationObjectId) as? ZMConversation
+
+            guard conversation?.messageProtocol == .mls else {
+                // proteus: nothing to do for proteus, see action handler
+                // mixed: Conversations should never be created with mixed protocol, that's why we break here
+                return ZMConversation?.none
+            }
+            return conversation
+        }) else {
+            return
+        }
+
+        // If this is an mls conversation, then the initial participants won't have
+        // been added yet on the backend. This means that we must take the list of
+        // participants from the action instead of the local conversation.
+        await syncContext.perform {
+            Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: syncConversation.mlsGroupID)))")
+
+            // Self user is creator, so we don't need to process a welcome message
+            syncConversation.mlsStatus = .ready
+            syncContext.saveOrRollback()
+        }
+
+        let users: [ZMUser] = await syncContext.perform {
+            participantIds.compactMap {
+                ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: syncContext)
+            }
+        }
+        assert(participantIds.count == users.count, "expect all participants to be within db")
+
+        let (mlsGroupID, mlsService) = await syncContext.perform {
+            (syncConversation.mlsGroupID, syncContext.mlsService)
+        }
+
+        guard let mlsGroupID, let mlsService else { return }
+
+        try await mlsService.createGroup(for: mlsGroupID, with: [])
+
+        let participantsService = ConversationParticipantsService(context: syncContext)
+        try await participantsService.addParticipants(users, to: syncConversation)
     }
 
     // MARK: - Sync conversation

@@ -33,7 +33,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     var teamID: UUID!
     var user1ID: QualifiedID!
     var user2ID: QualifiedID!
-    var mlsService: MockMLSServiceInterface!
 
     var expectedRequestPayload: RequestPayload!
     var successResponsePayloadProteus: ResponsePayload!
@@ -41,12 +40,8 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     override func setUp() {
         super.setUp()
-        mlsService = MockMLSServiceInterface()
-        sut = CreateGroupConversationActionHandler(
-            context: syncMOC,
-            mlsService: mlsService,
-            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
-        )
+        sut = CreateGroupConversationActionHandler(context: syncMOC)
+
         conversationID = .randomID()
         mlsGroupID = MLSGroupID([1, 2, 3])
         teamID = .create()
@@ -109,7 +104,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     override func tearDown() {
-        mlsService = nil
         sut = nil
         conversationID = nil
         mlsGroupID = nil
@@ -279,7 +273,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         try syncMOC.performAndWait {
-            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result.conversationId) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
         }
     }
@@ -301,7 +295,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         try syncMOC.performAndWait {
-            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result.conversationId) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
         }
     }
@@ -318,15 +312,12 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         XCTAssertTrue(conversation.hasReadReceiptsEnabled)
     }
 
-    func test_ItCreatesMLSGroup() throws {
+    func test_ItUpdatesMLSConversation() throws {
         // Given
         let apiVersion = APIVersion.v5
         BackendInfo.apiVersion = apiVersion
         action = createAction(messageProtocol: .mls)
         handler = sut
-        mlsService.conversationExistsGroupID_MockMethod = { _ in false }
-        mlsService.createGroupForWith_MockMethod = { _, _ in }
-        mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
         let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
 
         // When
@@ -338,49 +329,10 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         try syncMOC.performAndWait {
-            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result.conversationId) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
             XCTAssertEqual(conversation.messageProtocol, .mls)
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
-            XCTAssertEqual(conversation.mlsStatus, .ready)
-
-            XCTAssertEqual(mlsService.createGroupForWith_Invocations.count, 1)
-
-            let createGroupCall = mlsService.createGroupForWith_Invocations.element(atIndex: 0)?.groupID
-            XCTAssertEqual(createGroupCall, mlsGroupID)
-        }
-    }
-
-    func test_ItCreatesMLSGroup_withUsersWithNoPackages() throws {
-        // Given
-        let apiVersion = APIVersion.v5
-        BackendInfo.apiVersion = apiVersion
-        action = createAction(messageProtocol: .mls)
-        handler = sut
-        mlsService.createGroupForWith_MockMethod = { _, _ in
-            throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [MLSUser(id: UUID(), domain: .random(length: 5))])
-        }
-        let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
-
-        // When
-        let result = try XCTUnwrap(test_itHandlesSuccess(
-            status: 201,
-            payload: payload as ZMTransportData,
-            apiVersion: apiVersion
-        ))
-
-        // Then
-        try syncMOC.performAndWait {
-            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
-            assertConversationHasCorrectValues(conversation)
-            XCTAssertEqual(conversation.messageProtocol, .mls)
-            XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
-            XCTAssertEqual(conversation.mlsStatus, .ready)
-
-            XCTAssertEqual(mlsService.createGroupForWith_Invocations.count, 1)
-
-            let createGroupCall = mlsService.createGroupForWith_Invocations.element(atIndex: 0)?.groupID
-            XCTAssertEqual(createGroupCall, mlsGroupID)
         }
     }
 

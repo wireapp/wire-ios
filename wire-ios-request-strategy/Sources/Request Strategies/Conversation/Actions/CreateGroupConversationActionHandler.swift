@@ -21,7 +21,7 @@ import WireDataModel
 
 public final class CreateGroupConversationAction: EntityAction {
 
-    public typealias Result = NSManagedObjectID
+    public typealias Result = (conversationId: NSManagedObjectID, participantIds: Set<QualifiedID>)
 
     public enum Failure: Error, Equatable {
 
@@ -85,16 +85,6 @@ public final class CreateGroupConversationAction: EntityAction {
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
     private lazy var processor = ConversationEventPayloadProcessor(context: context)
-    private let mlsService: MLSServiceInterface
-
-    required init(
-        context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface,
-        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
-    ) {
-        self.mlsService = mlsService
-        super.init(context: context)
-    }
 
     // MARK: - Request generation
 
@@ -220,77 +210,14 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             return
         }
 
-        let messageProtocol = await context.perform { newConversation.messageProtocol }
-
-        switch messageProtocol {
-        case .proteus:
-            await context.perform {
-                self.context.saveOrRollback()
-                action.succeed(with: newConversation.objectID)
-            }
-
-        case .mls:
-            Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: payload.mlsGroupID)))")
-
-            // Self user is creator, so we don't need to process a welcome message
-            await context.perform {
-                newConversation.mlsStatus = .ready
-            }
-
-            let selfUserID = await context.perform { ZMUser.selfUser(in: self.context).qualifiedID }
-
-            // If this is an mls conversation, then the initial participants won't have
-            // been added yet on the backend. This means that we must take the list of
-            // participants from the action instead of the local conversation.
+        await context.perform {
+            self.context.saveOrRollback()
             let pendingParticipants = Set(action.qualifiedUserIDs).union(action.unqualifiedUserIDs.compactMap {
                 guard let localDomain = BackendInfo.domain else { return nil }
                 return QualifiedID(uuid: $0, domain: localDomain)
             })
 
-            let users = pendingParticipants.map { qualifiedID in
-                if qualifiedID == selfUserID {
-                    return MLSUser(qualifiedID, selfClientID: action.creatorClientID)
-                } else {
-                    return MLSUser(qualifiedID)
-                }
-            }
-
-            guard let groupID = await context.perform({ newConversation.mlsGroupID }) else {
-                Logging.mls.warn("failed to create mls group: conversation is missing group id.")
-                action.fail(with: .proccessingError)
-                return
-            }
-
-            do {
-                try await mlsService.createGroup(for: groupID, with: users)
-                await self.context.perform {
-                    action.succeed(with: newConversation.objectID)
-                }
-
-             } catch MLSService.MLSAddMembersError.failedToClaimKeyPackages(let failedMLSUsers) {
-
-                 let failedUsers = await context.perform { [context] in
-                     let ids = Set(failedMLSUsers.compactMap({ $0.id }))
-                     return ZMUser.users(withRemoteIDs: ids, in: context)
-                 }
-
-                 await context.perform {
-                     newConversation.appendFailedToAddUsersSystemMessage(
-                         users: failedUsers,
-                         sender: newConversation.creator,
-                         at: newConversation.lastServerTimeStamp ?? Date()
-                     )
-                 }
-
-                 action.succeed(with: newConversation.objectID)
-            } catch let error {
-                Logging.mls.error("failed create new mls group: \(String(describing: error))")
-                action.fail(with: .proccessingError)
-                return
-            }
-        case .mixed:
-            // Conversations should never be created with mixed protocol, that's why we break here
-            break
+            action.succeed(with: (conversationId: newConversation.objectID, participantIds: pendingParticipants))
         }
     }
 }
