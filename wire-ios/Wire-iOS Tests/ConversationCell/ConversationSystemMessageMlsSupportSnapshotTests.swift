@@ -22,6 +22,7 @@ import XCTest
 final class ConversationSystemMessageMlsSupportSnapshotTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Properties
+
     var mockConversation: SwiftMockConversation!
     var otherUser: MockUserType!
 
@@ -44,6 +45,11 @@ final class ConversationSystemMessageMlsSupportSnapshotTests: ConversationMessag
     }
 
     // MARK: - Snapshot Tests
+
+    func testMLSNotSupportedForSelfUser() {
+        let message = makeMessage(messageType: .mlsNotSupportedSelfUser)
+        verify(message: message)
+    }
 
     func testMlsNotSupportedForOtherUser() {
         let message = makeMessage(messageType: .mlsNotSupportedOtherUser)

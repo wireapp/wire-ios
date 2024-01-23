@@ -2105,20 +2105,14 @@ internal enum L10n {
           internal static func mlsNotSupportedByOtherUser(_ p1: Any, _ p2: Any) -> String {
             return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_otherUser", String(describing: p1), String(describing: p2), fallback: "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.")
           }
-          /// You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol.
-          internal static func mlsNotSupportedByYou(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_you", String(describing: p1), fallback: "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol.")
+          /// You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [Download the latest MLS Wire version](%@) to call, and send messages and files again.
+          internal static func mlsNotSupportedByYou(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_you", String(describing: p1), String(describing: p2), fallback: "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [Download the latest MLS Wire version](%@) to call, and send messages and files again.")
           }
           /// Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.
           internal static let ongoingCall = L10n.tr("Localizable", "content.system.mls_migration.ongoing_call", fallback: "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.")
           /// You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.
           internal static let potentialGap = L10n.tr("Localizable", "content.system.mls_migration.potentialGap", fallback: "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.")
-          internal enum Download {
-            internal enum Mls {
-              /// Download the latest MLS Wire version to call, and send messages and files again.
-              internal static let wire = L10n.tr("Localizable", "content.system.mls_migration.download.MLS.Wire", fallback: "Download the latest MLS Wire version to call, and send messages and files again.")
-            }
-          }
           internal enum Finalized {
             /// This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.
             internal static let done = L10n.tr("Localizable", "content.system.mls_migration.finalized.done", fallback: "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.")
