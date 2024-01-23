@@ -95,7 +95,6 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
         )
 
         return text
-
     }
 
 }
