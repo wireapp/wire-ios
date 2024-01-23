@@ -33,13 +33,6 @@ struct ConversationEventPayloadProcessor {
 
     // MARK: - Life cycle
 
-    init(context: NSManagedObjectContext) {
-        self.init(
-            mlsEventProcessor: MLSEventProcessor(context: context),
-            removeLocalConversation: RemoveLocalConversationUseCase()
-        )
-    }
-
     init(
         mlsEventProcessor: MLSEventProcessing,
         removeLocalConversation: RemoveLocalConversationUseCaseProtocol

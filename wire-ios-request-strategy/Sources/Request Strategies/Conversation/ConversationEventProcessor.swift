@@ -27,7 +27,10 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     let conversationService: ConversationServiceInterface
     let mlsEventProcessor: MLSEventProcessing
 
-    private lazy var processor = ConversationEventPayloadProcessor(context: context)
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: mlsEventProcessor,
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
     private let eventPayloadDecoder = EventPayloadDecoder()
 
     // MARK: - Life cycle
