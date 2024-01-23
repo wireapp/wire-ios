@@ -58,5 +58,6 @@ struct ColorPickerView: View {
                 }
             }
         }
+        .navigationBarTitle(L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized, displayMode: .inline) // Set your title here
     }
 }
