@@ -58,8 +58,8 @@ final class ConversationSystemMessageMlsSupportSnapshotTests: ConversationMessag
 
     // MARK: - Helpers
 
-       private func makeMessage(messageType: ZMSystemMessageType) -> MockMessage {
-           MockMessageFactory.systemMessage(with: messageType, conversation: mockConversation)!
-       }
+    private func makeMessage(messageType: ZMSystemMessageType) -> MockMessage {
+        MockMessageFactory.systemMessage(with: messageType, conversation: mockConversation)!
+    }
 
 }
