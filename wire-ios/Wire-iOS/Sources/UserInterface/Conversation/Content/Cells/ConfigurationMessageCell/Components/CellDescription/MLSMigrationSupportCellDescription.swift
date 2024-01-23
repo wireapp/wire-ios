@@ -24,11 +24,6 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     typealias View = ConversationSystemMessageCell
     typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
 
-    private static let linkAttributesForDownloadingWire: [NSAttributedString.Key: Any] = [
-        .font: UIFont.mediumSemiboldFont,
-        .link: URL.wr_wireAppOnItunes
-    ]
-
     let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false
@@ -68,6 +63,7 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     }
 
     private static func makeMLSNotSupportedMessageForSelfUser(username: String) -> NSAttributedString? {
+
         let text = NSMutableAttributedString.markdown(
             from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, URL.wr_wireAppOnItunes.absoluteString),
             style: .systemMessage

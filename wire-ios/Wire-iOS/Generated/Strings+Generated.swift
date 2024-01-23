@@ -2105,9 +2105,9 @@ internal enum L10n {
           internal static func mlsNotSupportedByOtherUser(_ p1: Any, _ p2: Any) -> String {
             return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_otherUser", String(describing: p1), String(describing: p2), fallback: "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.")
           }
-          /// You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [Download the latest MLS Wire version](%@) to call, and send messages and files again.
+          /// You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.
           internal static func mlsNotSupportedByYou(_ p1: Any, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_you", String(describing: p1), String(describing: p2), fallback: "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [Download the latest MLS Wire version](%@) to call, and send messages and files again.")
+            return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_you", String(describing: p1), String(describing: p2), fallback: "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.")
           }
           /// Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.
           internal static let ongoingCall = L10n.tr("Localizable", "content.system.mls_migration.ongoing_call", fallback: "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.")
