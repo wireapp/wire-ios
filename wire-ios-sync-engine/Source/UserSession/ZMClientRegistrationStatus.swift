@@ -141,9 +141,9 @@ extension ZMClientRegistrationStatus {
                 notifyHandleIsNecessary()
             } else if isAddingEmailNecessary() {
                 notifyEmailIsNecessary()
-            } else if !needsToVerifySelfClient {
-                emailCredentials = nil
             }
+        } else if !needsToVerifySelfClient {
+            emailCredentials = nil
         }
     }
 
@@ -215,8 +215,6 @@ extension ZMClientRegistrationStatus: UserProfileUpdateObserver {
                 if isAddingEmailNecessary() {
                     notifyEmailIsNecessary()
                 }
-            } else if !needsToVerifySelfClient {
-                emailCredentials = nil
             }
         }
     }
