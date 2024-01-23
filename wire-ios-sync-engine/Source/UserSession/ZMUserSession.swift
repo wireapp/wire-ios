@@ -62,49 +62,49 @@ public class ZMUserSession: NSObject {
     private var tokens: [Any] = []
     private var tornDown: Bool = false
 
-    var isNetworkOnline: Bool = true
-    var isPerformingSync: Bool = true {
+    private(set) var isNetworkOnline: Bool = true
+    private(set) var isPerformingSync: Bool = true {
         willSet {
             notificationDispatcher.operationMode = newValue ? .economical : .normal
         }
     }
     var hasNotifiedThirdPartyServices: Bool = false
 
-    var coreDataStack: CoreDataStack!
+    private(set) var coreDataStack: CoreDataStack!
     let application: ZMApplication
     let flowManager: FlowManagerType
-    var mediaManager: MediaManagerType
-    var analytics: AnalyticsType?
-    var transportSession: TransportSessionType
+    private(set) var mediaManager: MediaManagerType
+    private(set) var analytics: AnalyticsType?
+    private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
-    var updateEventProcessor: UpdateEventProcessor?
-    var strategyDirectory: StrategyDirectoryProtocol?
-    var syncStrategy: ZMSyncStrategy?
-    var operationLoop: ZMOperationLoop?
-    var notificationDispatcher: NotificationDispatcher
-    var localNotificationDispatcher: LocalNotificationDispatcher?
+    private(set) var updateEventProcessor: UpdateEventProcessor?
+    private(set) var strategyDirectory: StrategyDirectoryProtocol?
+    private(set) var syncStrategy: ZMSyncStrategy?
+    private(set) var operationLoop: ZMOperationLoop?
+    private(set) var notificationDispatcher: NotificationDispatcher
+    private(set) var localNotificationDispatcher: LocalNotificationDispatcher?
     let applicationStatusDirectory: ApplicationStatusDirectory
-    var callStateObserver: CallStateObserver?
+    private(set) var callStateObserver: CallStateObserver?
     var messageReplyObserver: ManagedObjectContextChangeObserver?
     var likeMesssageObserver: ManagedObjectContextChangeObserver?
-    var urlActionProcessors: [URLActionProcessor]?
+    private(set) var urlActionProcessors: [URLActionProcessor]?
     let debugCommands: [String: DebugCommand]
     let eventProcessingTracker: EventProcessingTracker = EventProcessingTracker()
     let legacyHotFix: ZMHotFix
     // When we move to the monorepo, uncomment hotFixApplicator
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-    var recurringActionService = RecurringActionService(
+    private(set) var recurringActionService = RecurringActionService(
         storage: .standard,
         dateProvider: .system
     ) as RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
-    var coreCryptoProvider: CoreCryptoProvider
-    lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
-    var mlsService: MLSServiceInterface
-    var proteusProvider: ProteusProviding!
+    public private(set) var coreCryptoProvider: CoreCryptoProvider
+    private(set) lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
+    private(set) var mlsService: MLSServiceInterface
+    private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     public var syncStatus: SyncStatusProtocol {

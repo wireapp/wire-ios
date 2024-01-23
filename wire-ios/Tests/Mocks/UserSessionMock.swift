@@ -251,4 +251,8 @@ final class UserSessionMock: UserSession {
     var selfUserClient: UserClient? {
         return nil
     }
+
+    var coreCryptoProvider: CoreCryptoProvider {
+        fatalError("not implemented yet")
+    }
 }

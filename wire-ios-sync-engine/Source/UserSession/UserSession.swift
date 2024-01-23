@@ -214,6 +214,8 @@ public protocol UserSession: AnyObject {
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
+
+    var coreCryptoProvider: CoreCryptoProvider { get }
 }
 
 extension ZMUserSession: UserSession {
