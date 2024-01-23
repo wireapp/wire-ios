@@ -56,12 +56,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
                 in: uiMOC
             )
 
-            let mlsConversation = ZMConversation.insertNewObject(in: uiMOC)
-            mlsConversation.remoteIdentifier = .create()
-            mlsConversation.domain = "local@domain.com"
-            mlsConversation.mlsGroupID = mlsGroupID
-            mlsConversation.messageProtocol = .mls
-            mlsConversation.conversationType = .oneOnOne
+            let mlsConversation = createMLSConversation(with: mlsGroupID, in: uiMOC)
 
             XCTAssertEqual(connection.conversation, proteusConversation)
             XCTAssertNil(mlsConversation.connection)
@@ -113,12 +108,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
                 in: uiMOC
             )
 
-            let mlsConversation = ZMConversation.insertNewObject(in: uiMOC)
-            mlsConversation.remoteIdentifier = .create()
-            mlsConversation.domain = "local@domain.com"
-            mlsConversation.mlsGroupID = mlsGroupID
-            mlsConversation.messageProtocol = .mls
-            mlsConversation.conversationType = .oneOnOne
+            let mlsConversation = createMLSConversation(with: mlsGroupID, in: uiMOC)
 
             XCTAssertEqual(connection.conversation, proteusConversation)
             XCTAssertNil(mlsConversation.connection)
@@ -154,4 +144,67 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         }
     }
 
+    func test_MigrateToMLS_CopyMessages() async throws {
+        // Given
+        let userID: QualifiedID = .random()
+        let mlsGroupID: MLSGroupID = .random()
+
+        let (connection, proteusConversation, mlsConversation) = await uiMOC.perform { [self] in
+            let user = createUser(id: userID, in: uiMOC)
+
+            let (connection, proteusConversation) = createConnection(
+                status: .accepted,
+                to: user,
+                in: uiMOC
+            )
+            // TODO: insert proteus message
+
+            let mlsConversation = createMLSConversation(with: mlsGroupID, in: uiMOC)
+
+            XCTAssertEqual(connection.conversation, proteusConversation)
+            XCTAssertNil(mlsConversation.connection)
+
+            return (
+                connection,
+                proteusConversation,
+                mlsConversation
+            )
+        }
+
+        // Mock
+        _ = MockActionHandler<SyncMLSOneToOneConversationAction>(
+            result: .success(mlsGroupID),
+            context: uiMOC.notificationContext
+        )
+
+        mlsService.conversationExistsGroupID_MockValue = true
+
+        // When
+        try await sut.migrateToMLS(
+            userID: userID,
+            in: uiMOC
+        )
+
+        // Then
+        XCTAssertTrue(mlsService.createGroupForWith_Invocations.isEmpty)
+        XCTAssertTrue(mlsService.addMembersToConversationWithFor_Invocations.isEmpty)
+
+        await uiMOC.perform {
+            XCTAssertEqual(connection.conversation, mlsConversation)
+            XCTAssertNil(proteusConversation.connection)
+        }
+    }
+
+    // MARK: Helpers
+
+    func createMLSConversation(with identifier: MLSGroupID, in context: NSManagedObjectContext) -> ZMConversation {
+        let mlsConversation = ZMConversation.insertNewObject(in: uiMOC)
+        mlsConversation.remoteIdentifier = .create()
+        mlsConversation.domain = "local@domain.com"
+        mlsConversation.mlsGroupID = identifier
+        mlsConversation.messageProtocol = .mls
+        mlsConversation.conversationType = .oneOnOne
+
+        return mlsConversation
+    }
 }
