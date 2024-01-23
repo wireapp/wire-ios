@@ -117,11 +117,6 @@ struct stringAndStatus {
         }
     }
 
-    if ([newStatus isEqual:@(ZMConnectionStatusCancelled)]) {
-        self.to.connection = nil;
-        self.to = nil;
-    }
-
     if (![oldStatus isEqual:newStatus]) {
         [self invalidateTopConversationCache];
     }

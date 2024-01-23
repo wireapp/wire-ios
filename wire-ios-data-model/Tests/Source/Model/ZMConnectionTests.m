@@ -166,33 +166,6 @@
     XCTAssertFalse(connection.to.oneOnOneConversation.isArchived);
 }
 
-- (void)testThatCancellingAConnectionDeletesTheUserRelationship;
-{
-    // given
-    __block NSManagedObjectID *moid;
-    [self.syncMOC performGroupedBlockAndWait:^{
-        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-
-        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        user.remoteIdentifier = [NSUUID createUUID];
-        user.oneOnOneConversation = conversation;
-
-        ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.to = user;
-        connection.status = ZMConnectionStatusSent;
-
-        [self.syncMOC saveOrRollback];
-        moid = connection.objectID;
-    }];
-
-    // when
-    ZMConnection *connection = (id) [self.uiMOC objectWithID:moid];
-    connection.status = ZMConnectionStatusCancelled;
-
-    // then
-    XCTAssertNil(connection.to);
-}
-
 - (void)testThatChangingTheStatusUpdatesTheConversationType
 {
     [self assertConversationType:ZMConversationTypeOneOnOne afterUpdatingConnectionStatus:ZMConnectionStatusAccepted];
