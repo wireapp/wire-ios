@@ -87,8 +87,10 @@ final class SelfProfileViewController: UIViewController {
         profileHeaderViewController = ProfileHeaderViewController(
             user: selfUser,
             viewer: selfUser,
+            conversation: .none,
             options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability],
-            userSession: userSession
+            userSession: userSession,
+            getSelfUserVerificationStatusUseCase: userSession.getSelfUserVerificationStatusUseCase
         )
 
         self.userRightInterfaceType = userRightInterfaceType

@@ -212,10 +212,9 @@ public protocol UserSession: AnyObject {
     var networkState: ZMNetworkState { get }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
+    var getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
-
-    var coreCryptoProvider: CoreCryptoProvider { get }
 }
 
 extension ZMUserSession: UserSession {

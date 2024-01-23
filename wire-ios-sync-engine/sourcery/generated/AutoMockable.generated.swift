@@ -54,6 +54,38 @@ import AppKit
 
 
 
+public class MockGetSelfUserVerificationStatusUseCaseProtocol: GetSelfUserVerificationStatusUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool))?
+    public var invoke_MockValue: (isMLSCertified: Bool, isProteusVerified: Bool)?
+
+    public func invoke() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerprintUseCaseProtocol {
 
     // MARK: - Life cycle

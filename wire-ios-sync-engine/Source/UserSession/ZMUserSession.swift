@@ -101,7 +101,7 @@ public class ZMUserSession: NSObject {
     ) as RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
-    public private(set) var coreCryptoProvider: CoreCryptoProvider
+    private(set) var coreCryptoProvider: CoreCryptoProvider
     private(set) lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     private(set) var mlsService: MLSServiceInterface
     private(set) var proteusProvider: ProteusProviding!
@@ -261,11 +261,20 @@ public class ZMUserSession: NSObject {
     }
 
     /// - Note: this is safe if coredataStack and proteus are ready
-    public lazy var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol = {
-        GetUserClientFingerprintUseCase(syncContext: coreDataStack.syncContext,
-                                        transportSession: transportSession,
-                                        proteusProvider: proteusProvider)
-    }()
+    public var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
+        GetUserClientFingerprintUseCase(
+            syncContext: coreDataStack.syncContext,
+            transportSession: transportSession,
+            proteusProvider: proteusProvider
+        )
+    }
+
+    public var getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol {
+        GetSelfUserVerificationStatusUseCase(
+            context: syncContext,
+            coreCryptoProvider: coreCryptoProvider
+        )
+    }
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl

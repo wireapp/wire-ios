@@ -63,7 +63,8 @@ final class ProfileHeaderViewController: UIViewController {
     /// The user that is displayed.
     let user: UserType
 
-    let userSession: UserSession
+    private let userSession: UserSession
+    private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
 
     /// The user who is viewing this view
     let viewer: UserType
@@ -74,6 +75,9 @@ final class ProfileHeaderViewController: UIViewController {
             groupRoleIndicator.isHidden = !self.isAdminRole
         }
     }
+
+    private var isMLSCertified = false
+    private var isProteusVerified = false
 
     var stackView: CustomSpacingStackView!
 
@@ -120,17 +124,25 @@ final class ProfileHeaderViewController: UIViewController {
     private var userObserver: NSObjectProtocol?
     private var teamObserver: NSObjectProtocol?
 
-    /**
-     * Creates a profile view for the specified user and options.
-     * - parameter user: The user to display the profile of.
-     * - parameter conversation: The conversation.
-     * - parameter options: The options for the appearance and behavior of the view.
-     * - parameter userSession: The user session.
-     * - note: You can change the options later through the `options` property.
-     */
-    init(user: UserType, viewer: UserType, conversation: ZMConversation? = nil, options: Options, userSession: UserSession) {
+    ///
+    /// Creates a profile view for the specified user and options.
+    /// - parameter user: The user to display the profile of.
+    /// - parameter conversation: The conversation.
+    /// - parameter options: The options for the appearance and behavior of the view.
+    /// - parameter userSession: The user session.
+    /// - parameter getSelfUserVerificationStatusUseCase: Use case for getting the MLS certificate and Proteus verification statuses.
+    /// Note: You can change the options later through the `options` property.
+    init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation?,
+        options: Options,
+        userSession: UserSession,
+        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    ) {
         self.user = user
         self.userSession = userSession
+        self.getSelfUserVerificationStatusUseCase = getSelfUserVerificationStatusUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
@@ -237,6 +249,21 @@ final class ProfileHeaderViewController: UIViewController {
         view.backgroundColor = UIColor.clear
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        Task {
+            do {
+                let verificationStatuses = try await getSelfUserVerificationStatusUseCase.invoke()
+                isMLSCertified = verificationStatuses.isMLSCertified
+                isProteusVerified = verificationStatuses.isProteusVerified
+            } catch {
+                #warning("TODO: log instead")
+                fatalError(String(reflecting: error))
+            }
+        }
+    }
+
     private func configureConstraints() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -294,15 +321,6 @@ final class ProfileHeaderViewController: UIViewController {
         defer { nameLabel.accessibilityValue = nameLabel.text }
         guard !name.isEmpty else { return nameLabel.text = "" }
 
-        Task {
-            do {
-                let todo = try await userSession.coreCryptoProvider.coreCrypto().perform { coreCrypto in
-                    try await coreCrypto.getUserIdentities(conversationId: .init(), userIds: [])
-                }
-            } catch {
-                fatalError(String(reflecting: error))
-            }
-        }
         let isMLSCertified = { true }() // TODO: add business logic
         let isProteusVerified = { true }() // TODO: add business logic
 

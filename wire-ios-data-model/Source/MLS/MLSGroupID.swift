@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ public struct MLSGroupID: Equatable, Hashable {
 
     // MARK: - Properties
 
-    let data: Data
+    public let data: Data
 
     // MARK: - Life cycle
 
@@ -40,28 +40,12 @@ public struct MLSGroupID: Equatable, Hashable {
     public init(_ data: Data) {
         self.data = data
     }
-
-    // MARK: - API
-
-    /// Base 64 encoded representation, used when sending the
-    /// id over the network.
-
-    public var base64EncodedString: String {
-        return data.base64EncodedString()
-    }
-
-    /// The byte array representing the id.
-
-    public var bytes: [Byte] {
-        return data.bytes
-    }
-
 }
 
 extension MLSGroupID: CustomStringConvertible {
 
     public var description: String {
-        return base64EncodedString
+        data.base64EncodedString()
     }
 
 }
@@ -77,7 +61,7 @@ extension MLSGroupID: SafeForLoggingStringConvertible {
 public extension MLSGroupID {
 
     static func random() -> MLSGroupID {
-        return MLSGroupID(Data.random(byteCount: 32))
+        .init(Data.random(byteCount: 32))
     }
 
 }
