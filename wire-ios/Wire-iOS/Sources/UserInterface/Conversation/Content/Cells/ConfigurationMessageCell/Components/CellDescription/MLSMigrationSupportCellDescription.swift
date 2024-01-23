@@ -58,36 +58,36 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     private static func makeAttributedString(messageType: ZMSystemMessageType, for user: UserType) -> NSAttributedString? {
         switch messageType {
         case .mlsNotSupportedSelfUser:
-            return makeMLSNotSupportedForSelfUser(username: user.name ?? "")
+            return makeMLSNotSupportedMessageForSelfUser(username: user.name ?? "")
         case .mlsNotSupportedOtherUser:
-            return makeMLSNotSupportedForOtherUser(username: user.name ?? "")
+            return makeMLSNotSupportedMessageForOtherUser(username: user.name ?? "")
         default:
             assertionFailure("MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!")
             return nil
         }
     }
 
-    private static func makeMLSNotSupportedForSelfUser(username: String) -> NSAttributedString? {
-        let baseMessage = SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username)
+    private static func makeMLSNotSupportedMessageForSelfUser(username: String) -> NSAttributedString? {
+        let messageTemplate = SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username)
 
-        let attributedMessage = NSAttributedString.markdown(from: baseMessage, style: .systemMessage)
+        let formattedMessage = NSAttributedString.markdown(from: messageTemplate, style: .systemMessage)
 
-        let linkText = SystemMessageMLSMigrationLocalizable.Download.Mls.wire
+        let downloadLinkText = SystemMessageMLSMigrationLocalizable.Download.Mls.wire
 
-        if let linkRange = attributedMessage.string.range(of: linkText) {
-            let nsLinkRange = NSRange(linkRange, in: attributedMessage.string)
+        if let downloadLinkRange = formattedMessage.string.range(of: downloadLinkText) {
+            let nsDownloadLinkRange = NSRange(downloadLinkRange, in: formattedMessage.string)
 
-            let mutableAttributedMessage = NSMutableAttributedString(attributedString: attributedMessage)
+            let interactiveMessage = NSMutableAttributedString(attributedString: formattedMessage)
 
-            mutableAttributedMessage.addAttributes(linkAttributesForDownloadingWire, range: nsLinkRange)
+            interactiveMessage.addAttributes(linkAttributesForDownloadingWire, range: nsDownloadLinkRange)
 
-            return mutableAttributedMessage
+            return interactiveMessage
         }
 
-        return attributedMessage
+        return formattedMessage
     }
 
-    private static func makeMLSNotSupportedForOtherUser(username: String) -> NSAttributedString? {
+    private static func makeMLSNotSupportedMessageForOtherUser(username: String) -> NSAttributedString? {
 
         let text = NSMutableAttributedString.markdown(
             from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByOtherUser(username, username),
