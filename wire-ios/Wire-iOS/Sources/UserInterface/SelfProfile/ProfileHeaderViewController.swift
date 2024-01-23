@@ -117,6 +117,9 @@ final class ProfileHeaderViewController: UIViewController {
     let federatedIndicator = LabelIndicator(context: .federated)
     let warningView = WarningLabelView()
 
+    private var userObserver: NSObjectProtocol?
+    private var teamObserver: NSObjectProtocol?
+
     /**
      * Creates a profile view for the specified user and options.
      * - parameter user: The user to display the profile of.
@@ -153,6 +156,10 @@ final class ProfileHeaderViewController: UIViewController {
         imageView.initialsFont = .systemFont(ofSize: 55, weight: .semibold).monospaced()
         imageView.userSession = userSession
         imageView.user = user
+
+        if !ProcessInfo.processInfo.isRunningTests, let session = userSession as? ZMUserSession {
+            userObserver = UserChangeInfo.add(observer: self, for: user, in: session)
+        }
 
         handleLabel.accessibilityLabel = AccountPageStrings.Handle.description
         handleLabel.accessibilityIdentifier = "username"
@@ -224,6 +231,9 @@ final class ProfileHeaderViewController: UIViewController {
 
         availabilityTitleViewController.didMove(toParent: self)
 
+        if let team = user.membership?.team {
+            teamObserver = TeamChangeInfo.add(observer: self, for: team)
+        }
         view.backgroundColor = UIColor.clear
     }
 
