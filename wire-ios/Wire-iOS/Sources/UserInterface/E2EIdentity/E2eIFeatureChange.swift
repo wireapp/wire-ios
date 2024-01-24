@@ -20,33 +20,7 @@ import Foundation
 import WireSyncEngine
 
 enum E2eIChangeAction: CaseIterable {
-
     case getCertificate, remindLater
-
-    var title: String {
-        typealias Button = L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button
-
-        switch self {
-        case .getCertificate:
-            return Button.getCertificate
-        case .remindLater:
-            return Button.remindMeLater
-        }
-    }
-
-    var style: UIAlertAction.Style {
-        switch self {
-        case .getCertificate:
-            return .default
-        case .remindLater:
-            return .destructive
-        }
-    }
-
-    func action(_ handler: @escaping (E2eIChangeAction) -> Void) -> UIAlertAction {
-        return .init(title: title, style: style) { _ in handler(self) }
-    }
-
 }
 
 extension UIAlertController {
@@ -62,10 +36,22 @@ extension UIAlertController {
         )
 
         let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: true)
-        controller.addAction(.link(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
-                                   url: URL.wr_e2eiLearnMore,
-                                   presenter: topViewController))
-        E2eIChangeAction.allCases.map { $0.action(handler) }.forEach(controller.addAction)
+
+        let learnMoreAction = UIAlertAction.link(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
+                                                 url: URL.wr_e2eiLearnMore,
+                                                 presenter: topViewController)
+        let getCertificateAction = UIAlertAction(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.getCertificate,
+                                                 style: .default) {_ in
+            handler(.getCertificate)
+        }
+        let remindLaterAction = UIAlertAction(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.remindMeLater,
+                                              style: .destructive) {_ in
+            handler(.remindLater)
+        }
+
+        controller.addAction(learnMoreAction)
+        controller.addAction(getCertificateAction)
+        controller.addAction(remindLaterAction)
 
         return controller
     }
