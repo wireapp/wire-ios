@@ -84,8 +84,13 @@ public final class CreateGroupConversationAction: EntityAction {
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(context: context)
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: MLSEventProcessor(context: context),
+        removeLocalConversation: removeLocalConversationUseCase
+    )
+
     private let mlsService: MLSServiceInterface
+    private let removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
 
     required init(
         context: NSManagedObjectContext,
@@ -93,6 +98,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
     ) {
         self.mlsService = mlsService
+        self.removeLocalConversationUseCase = removeLocalConversationUseCase
         super.init(context: context)
     }
 
