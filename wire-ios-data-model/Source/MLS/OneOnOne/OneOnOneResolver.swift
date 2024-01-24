@@ -25,7 +25,7 @@ public protocol OneOnOneResolverInterface {
     func resolveOneOnOneConversation(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws -> OneOnOneConversationResolvedState
+    ) async throws -> OneOnOneConversationResolution
 
 }
 
@@ -68,7 +68,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     public func resolveOneOnOneConversation(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws -> OneOnOneConversationResolvedState {
+    ) async throws -> OneOnOneConversationResolution {
 
         let messageProtocol = await protocolSelector.getProtocolForUser(
             with: userID,

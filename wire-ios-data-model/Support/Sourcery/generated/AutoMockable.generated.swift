@@ -3603,11 +3603,11 @@ public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
 
     public var resolveOneOnOneConversationWithIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
     public var resolveOneOnOneConversationWithIn_MockError: Error?
-    public var resolveOneOnOneConversationWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> OneOnOneConversationResolvedState)?
-    public var resolveOneOnOneConversationWithIn_MockValue: OneOnOneConversationResolvedState?
+    public var resolveOneOnOneConversationWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> OneOnOneConversationResolution)?
+    public var resolveOneOnOneConversationWithIn_MockValue: OneOnOneConversationResolution?
 
     @discardableResult
-    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext) async throws -> OneOnOneConversationResolvedState {
+    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext) async throws -> OneOnOneConversationResolution {
         resolveOneOnOneConversationWithIn_Invocations.append((userID: userID, context: context))
 
         if let error = resolveOneOnOneConversationWithIn_MockError {
