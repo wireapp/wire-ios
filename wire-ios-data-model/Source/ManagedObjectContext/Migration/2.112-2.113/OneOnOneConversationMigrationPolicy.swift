@@ -46,9 +46,8 @@ class OneOnOneConversationMigrationPolicy: NSEntityMigrationPolicy {
             return
         }
 
+        // There is an existing connection for this user.
         if let connection = sourceUser.value(forKey: "connection") as? NSManagedObject {
-            print("migrating connection conversation")
-
             guard
                 let sourceConversation = connection.value(forKey: "conversation") as? NSManagedObject,
                 let destinationConversation = manager.destinationInstances(
@@ -79,10 +78,15 @@ class OneOnOneConversationMigrationPolicy: NSEntityMigrationPolicy {
                 return
             }
 
-            // trying to migrate team one on one
+            // Look for an existing "fake" one on one team conversation,
+            // a special group conversation pretending to be a one on one.
             let request = NSFetchRequest<NSManagedObject>()
             request.entity = manager.sourceModel.entitiesByName[ZMConversation.entityName()]
 
+            // We consider a conversation being an existing 1:1 team conversation in case the following points are true:
+            //  1. It is a conversation inside the team
+            //  2. The only participants are the current user and the selected user
+            //  3. It does not have a custom display name
             let sameTeam = NSPredicate(format: "team == %@", selfTeam)
             let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)
             let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
