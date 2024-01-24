@@ -1308,6 +1308,8 @@
 		E92A07A02817E553006BA73B /* DynamicFontButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92A079F2817E553006BA73B /* DynamicFontButton.swift */; };
 		E92D1B95285B773B00366AFC /* LabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D1B94285B773B00366AFC /* LabelStyle.swift */; };
 		E92D31752B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */; };
+		E9398D312B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9398D302B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift */; };
+		E9398D332B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9398D322B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift */; };
 		E93DA61A2913F38A00A0F17C /* LinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93DA6192913F38A00A0F17C /* LinkButton.swift */; };
 		E942A38D28A2AC3A00C3092F /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E942A38C28A2AC3A00C3092F /* NavigationController.swift */; };
 		E94784E9278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */; };
@@ -1326,6 +1328,8 @@
 		E986CAA8287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
 		E986CAA9287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
 		E989695728EC430B0088F0CE /* SecondaryButtonDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */; };
+		E98B61102B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
+		E98B61112B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
 		E9A60C7329716A70001D0E14 /* UITextField+DoneBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */; };
 		E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
 		E9B439322B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
@@ -3371,6 +3375,8 @@
 		E92A079F2817E553006BA73B /* DynamicFontButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFontButton.swift; sourceTree = "<group>"; };
 		E92D1B94285B773B00366AFC /* LabelStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelStyle.swift; sourceTree = "<group>"; };
 		E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontBookSnapshotTests.swift; sourceTree = "<group>"; };
+		E9398D302B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationSupportCellDescription.swift; sourceTree = "<group>"; };
+		E9398D322B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageMlsSupportSnapshotTests.swift; sourceTree = "<group>"; };
 		E93DA6192913F38A00A0F17C /* LinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkButton.swift; sourceTree = "<group>"; };
 		E942A38C28A2AC3A00C3092F /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesSectionController.swift; sourceTree = "<group>"; };
@@ -3389,6 +3395,7 @@
 		E96C8830281706640003245E /* UIViewController+DynamicType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DynamicType.swift"; sourceTree = "<group>"; };
 		E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+KeyWindow.swift"; sourceTree = "<group>"; };
 		E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonDescription.swift; sourceTree = "<group>"; };
+		E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftMockConversation+ConversationCreation.swift"; sourceTree = "<group>"; };
 		E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+DoneBarButtonItem.swift"; sourceTree = "<group>"; };
 		E9B439302B0783BD0069DA63 /* SelfProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfProvider.swift; sourceTree = "<group>"; };
 		E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationOptionsServicesViewControllerTests.swift; sourceTree = "<group>"; };
@@ -5924,6 +5931,7 @@
 				EE876CAC23F2FCA900040D75 /* SwiftMockLoader.swift */,
 				EE7F467525B1D5FF001B3EE4 /* AppLock */,
 				5EC0870E20EF5908000366B7 /* MockURLSession */,
+				E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -7567,6 +7575,7 @@
 			isa = PBXGroup;
 			children = (
 				E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */,
+				E9398D302B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift */,
 			);
 			path = CellDescription;
 			sourceTree = "<group>";
@@ -8026,6 +8035,7 @@
 				BF4D99CF1E79AF8100A7B08F /* StartedConversationCellTests.swift */,
 				872C823B214A9B8500236A76 /* TextMessageMentionsTests.swift */,
 				160C31201E4C7E770012E4BC /* UnknownMessageCellTests.swift */,
+				E9398D322B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift */,
 			);
 			path = ConversationCell;
 			sourceTree = "<group>";
@@ -9149,6 +9159,7 @@
 				A949418923E09489001B0373 /* SplitViewController.swift in Sources */,
 				A936A37F23D202F600136469 /* InvisibleInputAccessoryView.swift in Sources */,
 				EFC57A0E21BAAF9A0008DBE6 /* TextView.swift in Sources */,
+				E9398D312B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift in Sources */,
 				639290A2252633E600046171 /* UIAlertController+DegradedCall.swift in Sources */,
 				87A15FCE1E07EAB400AED79B /* AssetCollectionWrapper.swift in Sources */,
 				D5168F2C200CBBF300F8222A /* Analytics+TeamInvites.swift in Sources */,
@@ -10192,6 +10203,7 @@
 				EFAFCA822133FB59002B31A6 /* ArchivedNavigationBarTests.swift in Sources */,
 				EFE0439B2149D9CA00BC3079 /* ShareContactsViewControllerSnapshotTests.swift in Sources */,
 				BFC9149B1D181BE7001F068B /* LocationMessageCellTests.swift in Sources */,
+				E9398D332B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift in Sources */,
 				5EC7C87C21907D94004662AC /* ConversationReplyCellDescriptionTests.swift in Sources */,
 				2521832C2B4C1B8B000C4325 /* SaveFileManagerTests.swift in Sources */,
 				EF6E3C7C208A02FE003F6752 /* GiphySearchViewControllerSnapshotTests.swift in Sources */,
@@ -10205,6 +10217,7 @@
 				EE118C012031D1C300BC68D6 /* MarkdownTextViewTests.swift in Sources */,
 				5E39FC65225CDA7800C682B8 /* ChangeEmailViewControllerTests.swift in Sources */,
 				BFFE943E1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift in Sources */,
+				E98B61102B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */,
 				EF6EB1CE20A5C296002F720D /* AppStateCalculatorTests.swift in Sources */,
 				BFA13E161D4A5F7100F0A91B /* ConfirmAssetViewControllerTests.swift in Sources */,
 				EF24477D2343656A00C747F5 /* ConnectRequestsCellTests.swift in Sources */,
@@ -10539,6 +10552,7 @@
 				E6579E6F2AFFA030004E7FD8 /* MockDataTask.swift in Sources */,
 				E6C25FCB2AFFABE000406A1C /* UITraitEnvironmentTests.swift in Sources */,
 				E6579E552AFFA024004E7FD8 /* MockCallPermissions.swift in Sources */,
+				E98B61112B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */,
 				E6579E512AFFA024004E7FD8 /* MockConversation+TimedMessage.swift in Sources */,
 				E6579E592AFFA024004E7FD8 /* MockConversation+factory.swift in Sources */,
 				2577CB612B189989007D3443 /* String+FingerprintTests.swift in Sources */,
