@@ -46,8 +46,9 @@ public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatu
             return (false, false)
         }
 
-        let selfConversation = ZMConversation.selfConversation(in: context)
-        guard let conversationID = await context.perform({ selfConversation.mlsGroupID?.data }) else {
+        guard let conversationID = await context.perform({
+            ZMConversation.selfConversation(in: context).mlsGroupID?.data
+        }) else {
             assertionFailure("selfConversation.mlsGroupID is nil")
             return (false, false)
         }
@@ -59,6 +60,9 @@ public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatu
                 userIds: [userID.clientID]
             )
         }
+
+        print(result)
+        debugPrint(result)
 
         fatalError()
     }
