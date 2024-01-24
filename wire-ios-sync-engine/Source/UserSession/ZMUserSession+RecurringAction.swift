@@ -69,4 +69,15 @@ extension ZMUserSession {
         }
     }
 
+    var refreshTeamMetadataAction: RecurringAction {
+        .init(id: #function, interval: .oneDay) { [weak self] in
+
+            guard let context = self?.managedObjectContext else { return }
+            context.performGroupedAndWait { context in
+
+                guard let team = ZMUser.selfUser(in: context).team else { return }
+                team.refreshMetadata()
+            }
+        }
+    }
 }

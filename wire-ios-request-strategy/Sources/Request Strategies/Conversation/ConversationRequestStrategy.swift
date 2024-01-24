@@ -736,7 +736,10 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private lazy var processor = ConversationEventPayloadProcessor(context: context)
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: MLSEventProcessor(context: context),
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
 
     init(context: NSManagedObjectContext) {
         self.context = context

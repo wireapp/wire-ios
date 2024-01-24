@@ -70,7 +70,6 @@ final class SyncStatusTests: MessagingTest {
     private var syncPhases: [SyncPhase] {
         return [.fetchingLastUpdateEventID,
                 .fetchingTeams,
-                .fetchingTeamMembers,
                 .fetchingTeamRoles,
                 .fetchingConnections,
                 .fetchingConversations,
@@ -110,8 +109,6 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
-        // when
-        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
         // when
@@ -163,10 +160,6 @@ final class SyncStatusTests: MessagingTest {
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
-        XCTAssertEqual(sut.currentSyncPhase, .fetchingTeamMembers)
-        // when
-        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
-        // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeamRoles)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingTeamRoles)
@@ -205,8 +198,6 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishQuickSync)
-        // when
-        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishQuickSync)
         // when
@@ -470,8 +461,6 @@ extension SyncStatusTests {
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertNotEqual(lastEventIDRepository.fetchLastEventID(), newID)
-        // when
-        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertNotEqual(lastEventIDRepository.fetchLastEventID(), newID)
         // when

@@ -302,7 +302,7 @@ final class SearchResultsViewController: UIViewController {
     }
 
     func searchForLocalUsers(withQuery query: String) {
-        performSearch(query: query, options: [.contacts, .teamMembers, .localResultsOnly])
+        performSearch(query: query, options: [.contacts, .teamMembers])
     }
 
     func searchForServices(withQuery query: String) {
