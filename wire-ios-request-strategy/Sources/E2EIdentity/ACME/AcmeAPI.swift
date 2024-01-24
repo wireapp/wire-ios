@@ -33,7 +33,6 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     private let acmeDiscoveryPath: String
     private let httpClient: HttpClientCustom
-    // private let contentType = "Content-Type"
 
     // MARK: - Life cycle
 
@@ -46,7 +45,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     public func getACMEDirectory() async throws -> Data {
 
-        guard let acmeDirectory = URL(string: "\(acmeDiscoveryPath)/\(Constant.directory)") else {
+        guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
             throw NetworkError.errorEncodingRequest
         }
 
@@ -87,12 +86,10 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         request.httpBody = requestBody
 
         let (data, response) = try await httpClient.send(request)
-        print(response)
 
         guard
             let httpResponse = response as? HTTPURLResponse,
-            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)// ,
-           // let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location)
+            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)
         else {
             throw NetworkError.errorDecodingResponseNew(response)
         }
@@ -147,7 +144,6 @@ private enum HTTPMethod {
 
 private enum Constant {
     static let contentType = "Content-Type"
-    static let directory = "directory"
 }
 
 public protocol HttpClientCustom {

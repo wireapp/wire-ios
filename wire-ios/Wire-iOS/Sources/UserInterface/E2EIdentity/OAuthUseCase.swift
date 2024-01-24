@@ -24,7 +24,10 @@ import WireRequestStrategy
 
 public protocol OAuthUseCaseInterface {
 
-    func invoke(for identityProvider: URL, keyauth: String, acmeAud: String) async throws -> IdToken
+    func invoke(for identityProvider: URL,
+                clientID: String,
+                keyauth: String,
+                acmeAudience: String) async throws -> (idToken: String, refreshToken: String?)
 
 }
 
@@ -38,18 +41,17 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         self.rootViewController = rootViewController
     }
 
-    /// keyAuth and acmeAudience
-    public func invoke(for identityProvider: URL, keyauth: String, acmeAud: String) async throws -> IdToken {
+    public func invoke(for identityProvider: URL,
+                       clientID: String,
+                       keyauth: String,
+                       acmeAudience: String) async throws -> (idToken: String, refreshToken: String?) {
         logger.info("invoke authentication flow")
 
         guard let bundleID = Bundle.main.bundleIdentifier,
-              let redirectURI = URL(string: "\(bundleID):/oauth2redirect")// ,
-//              let clientID = Bundle.idPClientID,
-//              let clientSecret = \Bundle.idPClientSecret
+              let redirectURI = URL(string: "\(bundleID):/oauth2redirect")
         else {
             throw OAuthError.missingRequestParameters
         }
-        let clientID = ""
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
             OIDAuthorizationService.discoverConfiguration(forIssuer: identityProvider) { configuration, error in
                 if let error = error {
@@ -60,29 +62,14 @@ public class OAuthUseCase: OAuthUseCaseInterface {
                     return continuation.resume(throwing: OAuthError.missingServiceConfiguration)
                 }
 
-//                let claims = """
-//                {
-//                    "id_token": {
-//                        "keyauth": {"essential": true, "value": "\(keyauth)"},
-//                        "acme_aud": {"essential": true, "value": "\(acmeAud)"}
-//                    }
-//                }
-//                """.trimmingCharacters(in: .whitespacesAndNewlines)
+                let claims = self.createAdditionalParameters(with: keyauth, acmeAudience: acmeAudience)
 
-                let keyauth = ["essential": true, "value": "\(keyauth)"]
-                let acme_aud = ["essential": true, "value": "\(acmeAud)"]
-                let temp = ["keyauth": keyauth, "acme_aud": acme_aud]
-                let id_token = ["id_token": temp]
-                var claims: String = id_token.json
-
-                print(claims)
                 let request = OIDAuthorizationRequest(configuration: config,
                                                       clientId: clientID,
-                                                      // clientSecret: clientSecret,
                                                       scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail],
                                                       redirectURL: redirectURI,
                                                       responseType: OIDResponseTypeCode,
-                                                      additionalParameters: ["claims": claims])
+                                                      additionalParameters: claims)
 
                 return continuation.resume(returning: request)
             }
@@ -91,7 +78,32 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         return try await execute(authorizationRequest: request)
     }
 
-    private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> IdToken {
+    private func createAdditionalParameters(with keyauth: String, acmeAudience: String) -> [String: String]? {
+        enum CodingKeys: String {
+            case claims = "claims"
+            case idToken = "id_token"
+            case keyauth = "keyauth"
+            case acmeAud = "acme_aud"
+            case essential = "essential"
+            case value = "value"
+        }
+
+        let keyauth: [String: Any] = [CodingKeys.essential.rawValue: true,
+                                      CodingKeys.value.rawValue: "\(keyauth)"]
+        let acmeAud: [String: Any] = [CodingKeys.essential.rawValue: true,
+                                       CodingKeys.value.rawValue: "\(acmeAudience)"]
+        let idToken = [CodingKeys.idToken.rawValue: [CodingKeys.keyauth.rawValue: keyauth,
+                                                       CodingKeys.acmeAud.rawValue: acmeAud]
+        ]
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: idToken, options: .prettyPrinted),
+              let idTokenString = String(bytes: jsonData, encoding: String.Encoding.utf8) else {
+            return nil
+        }
+
+        return [CodingKeys.claims.rawValue: idTokenString]
+    }
+
+    private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> (idToken: String, refreshToken: String?) {
         guard let userAgent = OIDExternalUserAgentIOS(presenting: rootViewController) else {
             throw OAuthError.missingOIDExternalUserAgent
         }
@@ -104,23 +116,12 @@ public class OAuthUseCase: OAuthUseCaseInterface {
                     return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
                 }
 
-                print(authState?.lastTokenResponse?.idToken)
                 guard let idToken = authState?.lastTokenResponse?.idToken else {
                     return continuation.resume(throwing: OAuthError.missingIdToken)
                 }
+                let refreshToken = authState?.lastTokenResponse?.refreshToken
 
-                return continuation.resume(returning: idToken)
-                //                authState?.performAction { (_, idToken, error) in
-//                    if let error = error {
-//                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
-//                    }
-//
-//                    guard let idToken = idToken else {
-//                        return continuation.resume(throwing: OAuthError.missingIdToken)
-//                    }
-//
-//                    return continuation.resume(returning: idToken)
-//                }
+                return continuation.resume(returning: (idToken, refreshToken))
             })
         }
 
@@ -135,19 +136,5 @@ enum OAuthError: Error {
     case missingServiceConfiguration
     case missingOIDExternalUserAgent
     case missingIdToken
-
-}
-
-extension Dictionary {
-
-    var json: String {
-        let invalidJson = "Not a valid JSON"
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
-            return String(bytes: jsonData, encoding: String.Encoding.utf8) ?? invalidJson
-        } catch {
-            return invalidJson
-        }
-    }
 
 }

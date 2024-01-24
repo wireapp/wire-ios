@@ -18,8 +18,10 @@
 
 import Foundation
 
-public typealias IdToken = String
-public typealias OAuthBlock = (_ idP: URL, _ keyauth: String, _ acmeAud: String) async throws -> IdToken
+public typealias OAuthBlock = (_ idP: URL,
+                               _ clientID: String,
+                               _ keyauth: String,
+                               _ acmeAud: String) async throws -> (String, String?)
 
 public protocol EnrollE2eICertificateUseCaseInterface {
 
@@ -57,19 +59,21 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                                                              authzEndpoint: newOrder.acmeOrder.authorizations[0])
 
         let oidcChallenge = authzResponse.challenges.wireOidcChallenge
-        print(oidcChallenge)
-
-        /// pass authzResponse.challenges.wireOidcChallenge.url = acmeAudience to authenticate
         let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge
 
-        let keyauth = authzResponse.challenges.keyauth // pass to authenticate
-        let acmeAudience = oidcChallenge.url // pass to authenticate
+        let keyauth = authzResponse.challenges.keyauth
+        let acmeAudience = oidcChallenge.url
 
-        guard let identityProvider = URL(string: /*oidcChallenge.target*/"https://idp.hogwash.work:8443/realms/master") else { // client will be here
+        guard let urlComponents = URLComponents(string: oidcChallenge.target),
+              let identityProvider = urlComponents.url else {
             throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
         }
 
-        let idToken = try await authenticate(identityProvider, keyauth, acmeAudience)
+        guard let clientId = urlComponents.queryItems?.first(where: { $0.name == "client_id" })?.value else {
+            throw EnrollE2EICertificateUseCaseFailure.missingClientId
+        }
+
+        let (idToken, refreshToken) = try await authenticate(identityProvider, clientId, keyauth, acmeAudience)
         let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
         let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
@@ -83,7 +87,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                                                                                acmeChallenge: wireDpopChallenge)
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(idToken: idToken,
-                                                                               refreshToken: " ",
+                                                                               refreshToken: refreshToken ?? " ",
                                                                                prevNonce: dpopChallengeResponse.nonce,
                                                                                acmeChallenge: oidcChallenge)
 
@@ -113,6 +117,7 @@ enum EnrollE2EICertificateUseCaseFailure: Error {
 
     case failedToSetupEnrollment
     case missingIdentityProvider
+    case missingClientId
     case failedToDecodeCertificate
 
 }
