@@ -243,11 +243,10 @@ class ConversationListSnapshot: NSObject {
                 conversationChanges.append(changes)
             }
             needsToRecalculate = true
-        }
-        else if list.predicateMatchesConversation(conversation) {
+        } else if list.predicateMatchesConversation(conversation) {
             // list did not contain conversation and now it should
             zmLog.debug("Inserted conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) into list \(list.identifier)")
-            list.insertConversations(Set(arrayLiteral: conversation))
+            list.insertConversations([conversation])
             needsToRecalculate = true
         }
 
@@ -256,7 +255,7 @@ class ConversationListSnapshot: NSObject {
 
     private func updateDidRemoveConversation(list: ZMConversationList, changes: ConversationChangeInfo) -> Bool {
         if !list.predicateMatchesConversation(changes.conversation) {
-            list.removeConversations(Set(arrayLiteral: changes.conversation))
+            list.removeConversations([changes.conversation])
             zmLog.debug("Removed conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) from list \(list.identifier)")
             return true
         }

@@ -37,8 +37,8 @@ class IndexSet_HelperTests: XCTestCase {
         let sut = IndexSet(integersIn: range, excluding: excluded)
 
         // then
-        XCTAssertTrue(sut.contains(integersIn: IndexSet(arrayLiteral: 5, 6, 7, 8, 9)))
-        XCTAssertFalse(sut.contains(integersIn: IndexSet(arrayLiteral: 0, 10)))
+        XCTAssertTrue(sut.contains(integersIn: IndexSet([ 5, 6, 7, 8, 9])))
+        XCTAssertFalse(sut.contains(integersIn: IndexSet([0, 10])))
     }
 
     func testThatItExcludesMultipleRanges() {
@@ -50,7 +50,7 @@ class IndexSet_HelperTests: XCTestCase {
         let sut = IndexSet(integersIn: range, excluding: excluded)
 
         // then
-        XCTAssertTrue(sut.contains(integersIn: IndexSet(arrayLiteral: 5)))
+        XCTAssertTrue(sut.contains(integersIn: IndexSet([5])))
     }
 
     func testThatItDiscardsRangesOutsideMainRange() {
@@ -64,10 +64,10 @@ class IndexSet_HelperTests: XCTestCase {
         // then
         XCTAssert(sut.count == 6)
 
-        XCTAssert(sut.contains(integersIn: IndexSet(arrayLiteral: 0, 1, 2, 3, 4, 5)))
+        XCTAssert(sut.contains(integersIn: IndexSet([0, 1, 2, 3, 4, 5])))
 
-        XCTAssertFalse(sut.contains(integersIn: IndexSet(arrayLiteral: 9)))
-        XCTAssertFalse(sut.contains(integersIn: IndexSet(arrayLiteral: 10)))
+        XCTAssertFalse(sut.contains(integersIn: IndexSet([9])))
+        XCTAssertFalse(sut.contains(integersIn: IndexSet([10])))
     }
 
 }
