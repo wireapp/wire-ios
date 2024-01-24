@@ -67,10 +67,11 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         in context: NSManagedObjectContext
     ) async throws {
 
-        switch protocolSelector.getProtocolForUser(
+        let messagingProtocol = await context.perform({ self.protocolSelector.getProtocolForUser(
             with: userID,
             in: context
-        ) {
+        ) })
+        switch messagingProtocol {
 
         case .none:
             await context.perform {
