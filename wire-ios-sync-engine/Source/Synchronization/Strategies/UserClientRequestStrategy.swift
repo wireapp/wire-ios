@@ -199,14 +199,22 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             }
         }
 
+        if clientRegistrationStatus.currentPhase == .waitingForE2EIStatus {
+            // TODO: [jacob] check feature config
+            let isE2EIRequired = true
+            clientRegistrationStatus.didCheckIfEndToEndIdentityIsRequired(isE2EIRequired)
+        }
+
         if clientRegistrationStatus.currentPhase == .unregistered {
             if let request = insertSync.nextRequest(for: apiVersion) {
                 return request
             }
         }
 
-        if let request = modifiedSync.nextRequest(for: apiVersion) {
-            return request
+        if clientRegistrationStatus.currentPhase == .registered || clientRegistrationStatus.currentPhase == .registeringMLSClient {
+            if let request = modifiedSync.nextRequest(for: apiVersion) {
+                return request
+            }
         }
 
         return nil

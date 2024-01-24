@@ -157,7 +157,15 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     if (self.needsToCheckCredentials && self.emailCredentials == nil) {
         return ZMClientRegistrationPhaseWaitingForLogin;
     }
-    
+
+    if (self.needsToCheckE2EIStatus) {
+        return ZMClientRegistrationPhaseWaitingForE2EIStatus;
+    }
+
+    if (self.isWaitingForE2EIEnrollment) {
+        return ZMClientRegistrationPhaseWaitingForE2EIEnrollment;
+    }
+
     // when the client registration fails because there are too many clients already registered we need to fetch clients from the backend
     if (self.isWaitingForUserClients) {
         return ZMClientRegistrationPhaseFetchingClients;
@@ -250,7 +258,7 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     self.lastResortPrekey = nil;
 
     if (self.needsToRegisterMLSCLient) {
-        self.isWaitingForMLSClientToBeRegistered = YES;
+        self.needsToCheckE2EIStatus = YES;
     } else {
         [self.registrationStatusDelegate didRegisterSelfUserClient:client];
     }
