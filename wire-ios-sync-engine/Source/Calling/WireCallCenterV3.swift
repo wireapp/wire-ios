@@ -732,6 +732,7 @@ extension WireCallCenterV3 {
             snapshot?.updateConferenceInfoTask?.cancel()
             snapshot?.updateConferenceInfoTask = nil
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
+            snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing = true
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
