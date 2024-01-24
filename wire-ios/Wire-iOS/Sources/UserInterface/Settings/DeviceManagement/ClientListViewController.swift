@@ -192,34 +192,32 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        Task {
-            guard let userSession = userSession,
-                  let navigationController = self.navigationController,
-                  let mlsGroupId = await self.fetchSelfConversation()
-            else { return }
-            let viewModel = DeviceInfoViewModel.map(
-                certificate: client.e2eIdentityCertificate,
-                userClient: client,
-                title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
-                addedDate: client.activationDate?.formattedDate ?? "",
-                proteusID: client.proteusSessionID?.clientID,
-                isSelfClient: client.isSelfClient(),
-                userSession: userSession,
-                credentials: self.credentials,
-                gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-                mlsThumbprint: client.mlsPublicKeys.ed25519?.splitStringIntoLines(charactersPerLine: 16),
-                getProteusFingerprint: userSession.getUserClientFingerprint
-            )
-            await MainActor.run {
-                let detailsView = DeviceDetailsView(viewModel: viewModel) {
-                    self.navigationController?.setNavigationBarHidden(false, animated: false)
-                }
-                let hostingViewController = UIHostingController(rootView: detailsView)
-                hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-                navigationController.pushViewController(hostingViewController, animated: true)
-                navigationController.isNavigationBarHidden = true
-            }
+        guard let userSession = userSession,
+              let navigationController = self.navigationController
+        else {
+            assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
+            return
         }
+        let viewModel = DeviceInfoViewModel.map(
+            certificate: client.e2eIdentityCertificate,
+            userClient: client,
+            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
+            addedDate: client.activationDate?.formattedDate ?? "",
+            proteusID: client.proteusSessionID?.clientID,
+            isSelfClient: client.isSelfClient(),
+            userSession: userSession,
+            credentials: self.credentials,
+            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsThumbprint: client.mlsPublicKeys.ed25519?.splitStringIntoLines(charactersPerLine: 16),
+            getProteusFingerprint: userSession.getUserClientFingerprint
+        )
+        let detailsView = DeviceDetailsView(viewModel: viewModel) {
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
+        }
+        let hostingViewController = UIHostingController(rootView: detailsView)
+        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.pushViewController(hostingViewController, animated: true)
+        navigationController.isNavigationBarHidden = true
     }
 
     @MainActor
@@ -495,7 +493,8 @@ final class ClientListViewController: UIViewController,
     }
 
     private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
-        if let mlsGroupID = await fetchSelfConversation(), let userSession = userSession {
+        let mlsGroupID = await fetchSelfConversation()
+        if let mlsGroupID = mlsGroupID, let userSession = userSession {
             var updatedUserClients = [UserClient]()
             let mlsResolver = MLSClientResolver()
             let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
