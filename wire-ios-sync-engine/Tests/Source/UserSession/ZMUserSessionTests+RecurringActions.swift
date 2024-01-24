@@ -87,6 +87,22 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         }
     }
 
+    func testTeamMetadataIsUpdated() {
+        // Given
+        let membership = Member.insertNewObject(in: uiMOC)
+        membership.user = .selfUser(in: uiMOC)
+        membership.team = .init(context: uiMOC)
+        membership.user?.teamIdentifier = membership.team?.remoteIdentifier
+        let action = sut.refreshTeamMetadataAction
+
+        // When
+        action()
+
+        // Then
+        XCTAssertEqual(action.interval, .oneDay)
+        XCTAssertEqual(membership.team?.needsToBeUpdatedFromBackend, true)
+    }
+
     // MARK: - Helpers
 
     private func createUserIsPendingMetadataRefresh(moc: NSManagedObjectContext, domain: String?) -> ZMUser {
