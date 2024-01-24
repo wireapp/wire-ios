@@ -39,6 +39,70 @@ public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatu
 
     public func invoke() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
         var isMLSCertified = false
+
+        let (selfUserID, isProteusVerified) = await context.perform { () -> (MLSClientID?, Bool) in
+            guard let selfClient = ZMUser.selfUser(in: context).selfClient() else { return (.none, false) }
+            return (MLSClientID(userClient: selfClient), selfClient.verified)
+        }
+        guard let selfUserID else {
+            assertionFailure("MLSClientID(selfUser.selfClient()) is nil")
+            return (isMLSCertified, isProteusVerified)
+        }
+
+        guard let conversationID = await context.perform({
+            ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID?.data
+        }) else {
+            assertionFailure("selfConversation?.mlsGroupID is nil")
+            return (isMLSCertified, isProteusVerified)
+        }
+
+        let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        let result = try await coreCrypto.perform { coreCrypto in
+            try await coreCrypto.getUserIdentities(
+                conversationId: conversationID,
+                userIds: [selfUserID.clientID]
+            )
+        }
+        guard let identities = result[selfUserID.clientID] else { return (isMLSCertified, isProteusVerified) }
+
+        isMLSCertified = identities.allSatisfy { $0.status == .valid }
+
+        return (isMLSCertified, isProteusVerified)
+    }
+}
+
+/*
+
+// sourcery: AutoMockable
+public protocol GetUserVerificationStatusUseCaseProtocol {
+    func invoke(
+        conversation: ZMConversation,
+        users: [UserType]
+    ) async throws -> [(isMLSCertified: Bool, isProteusVerified: Bool)]
+}
+
+public struct GetUserVerificationStatusUseCase: GetUserVerificationStatusUseCaseProtocol {
+
+    private let context: NSManagedObjectContext
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+
+    public init(
+        context: NSManagedObjectContext,
+        coreCryptoProvider: CoreCryptoProviderProtocol
+    ) {
+        self.context = context
+        self.coreCryptoProvider = coreCryptoProvider
+    }
+
+    public func invoke(
+        conversation: ZMConversation,
+        users: [UserType]
+    ) async throws -> [(isMLSCertified: Bool, isProteusVerified: Bool)] {
+        fatalError()
+    }
+    /*
+    public func invoke() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
+        var isMLSCertified = false
         var isProteusVerified = false
 
         let (selfClient, selfUserID) = await context.perform { () -> (UserClient?, MLSClientID?) in
@@ -78,4 +142,6 @@ public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatu
 
         return (isMLSCertified, isProteusVerified)
     }
+     */
 }
+*/

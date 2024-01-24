@@ -62,8 +62,8 @@ public class ZMUserSession: NSObject {
     private var tokens: [Any] = []
     private var tornDown: Bool = false
 
-    private(set) var isNetworkOnline: Bool = true
-    private(set) var isPerformingSync: Bool = true {
+    private(set) var isNetworkOnline = true
+    private(set) var isPerformingSync = true {
         willSet {
             notificationDispatcher.operationMode = newValue ? .economical : .normal
         }
