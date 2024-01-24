@@ -515,7 +515,8 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
                 protocolToggleUsers: [.create()],
                 defaultProtocol: .mls,
                 allowedCipherSuites: [.MLS_128_DHKEMP256_AES128GCM_SHA256_P256],
-                defaultCipherSuite: .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448
+                defaultCipherSuite: .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448,
+                supportedProtocols: [.mls, .proteus]
             )
 
             Feature.updateOrCreate(havingName: .mls, in: self.syncMOC) { feature in
@@ -581,7 +582,8 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
                 protocolToggleUsers: [.create()],
                 defaultProtocol: .mls,
                 allowedCipherSuites: [.MLS_128_DHKEMP256_AES128GCM_SHA256_P256],
-                defaultCipherSuite: .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448
+                defaultCipherSuite: .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448,
+                supportedProtocols: [.mls, .proteus]
             )
 
             let mls = Feature.MLS(
