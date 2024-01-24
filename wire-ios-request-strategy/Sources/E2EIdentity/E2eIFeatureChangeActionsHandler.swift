@@ -26,7 +26,6 @@ public protocol FeatureChangeActions {
 
 }
 
-/// TODO: Add tests https://wearezeta.atlassian.net/browse/WPB-6039
 public class E2eIFeatureChangeActionsHandler: NSObject, FeatureChangeActions {
 
     // MARK: - Properties
@@ -40,11 +39,11 @@ public class E2eIFeatureChangeActionsHandler: NSObject, FeatureChangeActions {
     }
 
     public func enrollCertificate() {
-    /// TODO: https://wearezeta.atlassian.net/browse/WPB-6039
+    /// TODO: https://wearezeta.atlassian.net/browse/WPB-6060
     }
 
     public func postponeReminder() {
-
+    /// TODO: https://wearezeta.atlassian.net/browse/WPB-6060
     }
 
 }
