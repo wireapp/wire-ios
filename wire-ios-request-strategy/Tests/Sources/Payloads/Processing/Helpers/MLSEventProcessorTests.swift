@@ -191,7 +191,25 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
     }
 
-    func test_itDoesntUpdate_MlsStatus_WhenProtocolIsNotMLS() async {
+    func test_itUpdates_MlsStatus_WhenProtocolIsMixed_AndWelcomeMessageWasProcessed() async {
+        await assert_mlsStatus(
+            originalValue: .pendingJoin,
+            expectedValue: .ready,
+            mockMessageProtocol: .mixed,
+            mockHasWelcomeMessageBeenProcessed: true
+        )
+    }
+
+    func test_itUpdates_MlsStatus_WhenProtocolIsMixed_AndWelcomeMessageWasNotProcessed() async {
+        await assert_mlsStatus(
+            originalValue: .ready,
+            expectedValue: .pendingJoin,
+            mockMessageProtocol: .mixed,
+            mockHasWelcomeMessageBeenProcessed: false
+        )
+    }
+
+    func test_itDoesntUpdate_MlsStatus_WhenProtocolIsProteus() async {
         await assert_mlsStatus(
             originalValue: .pendingJoin,
             expectedValue: .pendingJoin,
@@ -201,12 +219,29 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     // MARK: - Wiping group
 
-    func test_itWipesGroup() async {
+    func test_itWipesGroup_WhenProtocolIsMLS() async {
+        await internalTest_wipeMLSGroupWithProtocol(.mls, shouldWipe: true)
+    }
+
+    func test_itWipesGroup_WhenProtocolIsMixed() async {
+        await internalTest_wipeMLSGroupWithProtocol(.mixed, shouldWipe: true)
+    }
+
+    func test_itDoesntWipeGroup_WhenProtocolIsProteus() async {
+        await internalTest_wipeMLSGroupWithProtocol(.proteus, shouldWipe: false)
+    }
+
+    func internalTest_wipeMLSGroupWithProtocol(
+        _ messageProtocol: MessageProtocol,
+        shouldWipe: Bool,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) async {
         // Given
         let groupID = MLSGroupID.random()
 
         await syncMOC.perform { [self] in
-            conversation.messageProtocol = .mls
+            conversation.messageProtocol = messageProtocol
             conversation.mlsGroupID = groupID
         }
 
@@ -217,25 +252,12 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
 
         // Then
-        XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.count, 1)
-        XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.first, groupID)
-    }
-
-    func test_itDoesntWipeGroup_WhenProtocolIsNotMLS() async {
-        // Given
-        await syncMOC.perform { [self] in
-            conversation.messageProtocol = .proteus
-            conversation.mlsGroupID = MLSGroupID.random()
+        if shouldWipe {
+            XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.count, 1, file: file, line: line)
+            XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.first, groupID, file: file, line: line)
+        } else {
+            XCTAssertTrue(mlsServiceMock.wipeGroup_Invocations.isEmpty, file: file, line: line)
         }
-
-        // When
-        await sut.wipeMLSGroup(
-            forConversation: conversation,
-            context: syncMOC
-        )
-
-        // Then
-        XCTAssertTrue(mlsServiceMock.wipeGroup_Invocations.isEmpty)
     }
 
     // MARK: - Helpers
