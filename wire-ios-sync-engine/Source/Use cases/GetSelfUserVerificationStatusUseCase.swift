@@ -47,7 +47,7 @@ public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatu
         }
 
         guard let conversationID = await context.perform({
-            ZMConversation.selfConversation(in: context).mlsGroupID?.data
+            ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID?.data
         }) else {
             assertionFailure("selfConversation.mlsGroupID is nil")
             return (false, false)
@@ -60,10 +60,17 @@ public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatu
                 userIds: [userID.clientID]
             )
         }
+        guard let identities = result[userID.clientID] else {
+            return (false, false)
+        }
 
-        print(result)
-        debugPrint(result)
+        let isMLSCertified = identities.allSatisfy { $0.status == .valid }
 
-        fatalError()
+        // TODO: process result
+//        print(result)
+//        debugPrint(result)
+//        fatalError()
+
+        return (isMLSCertified, true)
     }
 }

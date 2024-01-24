@@ -321,9 +321,6 @@ final class ProfileHeaderViewController: UIViewController {
         defer { nameLabel.accessibilityValue = nameLabel.text }
         guard !name.isEmpty else { return nameLabel.text = "" }
 
-        let isMLSCertified = { true }() // TODO: add business logic
-        let isProteusVerified = { true }() // TODO: add business logic
-
         nameLabel.attributedText = [
 
             .init(string: name),
