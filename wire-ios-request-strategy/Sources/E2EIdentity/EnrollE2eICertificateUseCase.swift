@@ -29,7 +29,7 @@ public protocol EnrollE2eICertificateUseCaseInterface {
                 userName: String,
                 userHandle: String,
                 team: UUID,
-                authenticate: OAuthBlock) async throws -> String
+                authenticate: OAuthBlock) async throws -> Swift.Result<String, Error>
 
 }
 
@@ -46,7 +46,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                        userName: String,
                        userHandle: String,
                        team: UUID,
-                       authenticate: OAuthBlock) async throws -> String {
+                       authenticate: OAuthBlock) async throws -> Swift.Result<String, Error> {
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId,
                                                                    userName: userName,
                                                                    handle: userHandle,
@@ -64,12 +64,11 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let keyauth = authzResponse.challenges.keyauth
         let acmeAudience = oidcChallenge.url
 
-        guard let urlComponents = URLComponents(string: oidcChallenge.target),
-              let identityProvider = urlComponents.url else {
+        guard let identityProvider = URL(string: oidcChallenge.target) else {
             throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
         }
 
-        guard let clientId = urlComponents.queryItems?.first(where: { $0.name == "client_id" })?.value else {
+        guard let clientId = getClientId(from: oidcChallenge.target) else {
             throw EnrollE2EICertificateUseCaseFailure.missingClientId
         }
 
@@ -102,13 +101,19 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
             }
             print(certificateChain)
             try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
-            return certificateChain
+            return .success(certificateChain)
         } catch is DecodingError {
             throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
         }
 
-        // TODO: verify enrollment flow after CC bump
-        // https://wearezeta.atlassian.net/browse/WPB-6039
+    }
+
+    private func getClientId(from path: String) -> String? {
+        guard let urlComponents = URLComponents(string: path),
+              let clientId = urlComponents.queryItems?.first(where: { $0.name == "client_id" })?.value else {
+            return nil
+        }
+        return clientId
     }
 
 }
