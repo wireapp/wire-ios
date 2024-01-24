@@ -201,7 +201,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         // Then
         let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations
-      
+
         if shouldWipeMLSGroup {
             XCTAssertEqual(wipeGroupInvocations.count, 1, file: file, line: line)
 
