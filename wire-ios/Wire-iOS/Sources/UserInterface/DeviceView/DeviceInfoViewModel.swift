@@ -68,7 +68,7 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
 
-    private var actionsHandler: any DeviceDetailsViewActions
+    private var actionsHandler: DeviceDetailsViewActions
 
     init(
         certificate: E2eIdentityCertificate?,
@@ -77,7 +77,7 @@ final class DeviceInfoViewModel: ObservableObject {
         proteusID: String,
         mlsThumbprint: String?,
         isProteusVerificationEnabled: Bool,
-        actionsHandler: any DeviceDetailsViewActions,
+        actionsHandler: DeviceDetailsViewActions,
         userClient: UserClient,
         isSelfClient: Bool,
         gracePeriod: TimeInterval
