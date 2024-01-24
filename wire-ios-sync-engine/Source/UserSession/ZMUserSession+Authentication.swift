@@ -32,6 +32,13 @@ extension ZMUserSession {
         applicationStatusDirectory.clientRegistrationStatus.emailCredentials = emailCredentials
     }
 
+    public func reportEndToEndIdentityEnrollmentSuccess() {
+        syncManagedObjectContext.performAndWait {
+            applicationStatusDirectory.clientRegistrationStatus.didEnrollIntoEndToEndIdentity()
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        }
+    }
+
     /// `True` if the session is ready to be used.
     ///
     /// NOTE: This property should only be called on the main queue.

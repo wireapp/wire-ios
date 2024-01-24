@@ -152,6 +152,15 @@ extension ZMClientRegistrationStatus {
         registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
     }
 
+    private func notifyE2EIEnrollmentNecessary() {
+        let error = NSError(
+            domain: NSError.ZMUserSessionErrorDomain,
+            code: Int(ZMUserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue)
+        )
+
+        registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
+    }
+
     @objc(needsToRegisterMLSClientInContext:)
     public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
         guard !self.needsToRegisterClient(in: context) else {
@@ -190,6 +199,23 @@ extension ZMClientRegistrationStatus {
         self.prekeys = prekeys.map { [NSNumber(value: Int($0.id)): $0.prekey]}
         self.lastResortPrekey = lastResortPrekey.prekey
         self.isGeneratingPrekeys = false
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
+    }
+
+    public func didCheckIfEndToEndIdentityIsRequired(_ isRequired: Bool) {
+        needsToCheckE2EIStatus = false
+        if isRequired {
+            isWaitingForE2EIEnrollment = true
+            notifyE2EIEnrollmentNecessary()
+        } else {
+            isWaitingForMLSClientToBeRegistered = true
+        }
+    }
+
+    public func didEnrollIntoEndToEndIdentity() {
+        WireLogger.userClient.info("user client did enroll into end-2-end idenity")
+        isWaitingForE2EIEnrollment = false
+        isWaitingForMLSClientToBeRegistered = true
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 }
