@@ -172,14 +172,3 @@ private let longStyleFormatter: DateComponentsFormatter = {
     formatter.zeroFormattingBehavior = .dropAll
     return formatter
 }()
-
-extension TimeInterval {
-
-    // Calculate the interval to account for leap years.
-    static var oneYearFromNow: Self {
-        let now = Date()
-        let oneYearFromNow = Calendar.current.date(byAdding: .year, value: 1, to: now)!
-        return oneYearFromNow.timeIntervalSince(now)
-    }
-
-}

@@ -54,7 +54,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let oidcChallenge = authzResponse.challenges.wireOidcChallenge
         let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge
 
-        guard let identityProvider = URL(string: oidcChallenge!.target) else {
+        guard let identityProvider = URL(string: oidcChallenge.target) else {
             throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
         }
 
@@ -66,11 +66,11 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
 
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(accessToken: wireAccessToken.token,
                                                                                prevNonce: authzResponse.nonce,
-                                                                               acmeChallenge: wireDpopChallenge!)
+                                                                               acmeChallenge: wireDpopChallenge)
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(idToken: idToken,
                                                                                prevNonce: dpopChallengeResponse.nonce,
-                                                                               acmeChallenge: oidcChallenge!)
+                                                                               acmeChallenge: oidcChallenge)
 
         let orderResponse = try await enrollment.checkOrderRequest(location: newOrder.location, prevNonce: oidcChallengeResponse.nonce)
         let finalizeResponse = try await enrollment.finalize(location: orderResponse.location, prevNonce: orderResponse.acmeResponse.nonce)
