@@ -73,7 +73,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
         }
     }
 
-    func testThatItRemovesSentConnectionRequest() throws {
+    func testThatItCancelsSentConnectionRequest() throws {
         syncMOC.performGroupedAndWait { [self] _ in
             // GIVEN
             otherUser.domain = defederatedDomain
@@ -83,7 +83,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
             sut.handleFederationTerminationWith(defederatedDomain)
 
             // THEN
-            XCTAssertEqual(otherUser.connection, nil)
+            XCTAssertEqual(otherUser.connection?.status, .cancelled)
         }
     }
 
