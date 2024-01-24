@@ -111,7 +111,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     private func setupNavigationTitle() {
-        guard let deviceClass = userClient.deviceClass?.localizedDescription.localized else { return }
+        guard let deviceClass = userClient.deviceClass?.localizedDescription else { return }
         navigationItem.setupNavigationBarTitle(title: deviceClass.capitalized)
     }
 
@@ -246,7 +246,7 @@ final class SettingsClientViewController: UIViewController,
                 }
             } else {
                 if let cell = tableView.dequeueReusableCell(withIdentifier: type(of: self).verifiedCellReuseIdentifier, for: indexPath) as? SettingsToggleCell {
-                    cell.titleText = NSLocalizedString("device.verified", comment: "")
+                    cell.titleText = L10n.Localizable.Device.verified
                     cell.cellNameLabel.accessibilityIdentifier = "device verified label"
                     cell.switchView.addTarget(self, action: #selector(SettingsClientViewController.onVerifiedChanged(_:)), for: .touchUpInside)
                     cell.switchView.accessibilityIdentifier = "device verified"
@@ -258,14 +258,14 @@ final class SettingsClientViewController: UIViewController,
 
         case .resetSession:
             if let cell = tableView.dequeueReusableCell(withIdentifier: type(of: self).resetCellReuseIdentifier, for: indexPath) as? SettingsTableCell {
-                cell.titleText = NSLocalizedString("profile.devices.detail.reset_session.title", comment: "")
+                cell.titleText = L10n.Localizable.Profile.Devices.Detail.ResetSession.title
                 cell.accessibilityIdentifier = "reset session"
                 return cell
             }
 
         case .removeDevice:
             if let cell = tableView.dequeueReusableCell(withIdentifier: type(of: self).deleteCellReuseIdentifier, for: indexPath) as? SettingsTableCell {
-                cell.titleText = NSLocalizedString("self.settings.account_details.remove_device.title", comment: "")
+                cell.titleText = L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title
                 cell.accessibilityIdentifier = "remove device"
                 return cell
             }
@@ -310,11 +310,11 @@ final class SettingsClientViewController: UIViewController,
         switch clientSection {
 
         case .fingerprintAndVerify:
-            return NSLocalizedString("self.settings.device_details.fingerprint.subtitle", comment: "")
+            return L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle
         case .resetSession:
-            return NSLocalizedString("self.settings.device_details.reset_session.subtitle", comment: "")
+            return L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle
         case .removeDevice:
-            return NSLocalizedString("self.settings.device_details.remove_device.subtitle", comment: "")
+            return L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle
 
         default:
             return .none
@@ -371,8 +371,8 @@ final class SettingsClientViewController: UIViewController,
 
         if changeInfo.sessionHasBeenReset {
             isLoadingViewVisible = false
-            let alert = UIAlertController(title: "", message: NSLocalizedString("self.settings.device_details.reset_session.success", comment: ""), preferredStyle: .alert)
-            let okAction = UIAlertAction(title: NSLocalizedString("general.ok", comment: ""), style: .default, handler: { [unowned alert] (_) -> Void in
+            let alert = UIAlertController(title: "", message: L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { [unowned alert] (_) -> Void in
                 alert.dismiss(animated: true, completion: .none)
             })
             alert.addAction(okAction)

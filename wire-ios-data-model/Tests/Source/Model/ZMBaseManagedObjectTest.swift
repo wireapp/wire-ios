@@ -27,13 +27,13 @@ extension ZMBaseManagedObjectTest {
                                  in: .userDomainMask).first!
     }
 
-    func createClientTextMessage() -> ZMClientMessage? {
-        return createClientTextMessage(withText: self.name)
+    func createClientTextMessage(in context: NSManagedObjectContext? = nil) -> ZMClientMessage? {
+        return createClientTextMessage(withText: self.name, in: context)
     }
 
-    func createClientTextMessage(withText text: String) -> ZMClientMessage? {
+    func createClientTextMessage(withText text: String, in context: NSManagedObjectContext? = nil) -> ZMClientMessage? {
         let nonce = UUID.create()
-        let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
+        let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: context ?? self.uiMOC)
         let textMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         do {
             try message.setUnderlyingMessage(textMessage)
@@ -43,17 +43,46 @@ extension ZMBaseManagedObjectTest {
         return message
     }
 
+    @objc( createClientForUser:createSessionWithSelfUser:onMOC:)
+    func createClient(for user: ZMUser, createSessionWithSelfUser: Bool, onMOC moc: NSManagedObjectContext) -> UserClient {
+        if user.remoteIdentifier == nil {
+            user.remoteIdentifier = UUID.create()
+        }
+        let userClient = UserClient.insertNewObject(in: moc)
+        userClient.remoteIdentifier = NSString.createAlphanumerical()
+        userClient.user = user
+
+        if createSessionWithSelfUser {
+            let selfClient = ZMUser.selfUser(in: moc).selfClient()
+            performPretendingUiMocIsSyncMoc {
+                do {
+                    let prekey = try moc.zm_cryptKeyStore.lastPreKey()
+                    let selfClient = try XCTUnwrap(selfClient)
+                    _ = selfClient.establishSession(through: moc.zm_cryptKeyStore, sessionId: userClient.sessionIdentifier!, preKey: prekey)
+                } catch {
+                    XCTFail("unexpected error: \(String(reflecting: error))")
+                }
+            }
+        }
+        return userClient
+    }
+
     @objc
     func createCoreDataStack() -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: storageDirectory,
-                                  inMemoryStore: shouldUseInMemoryStore,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: storageDirectory,
+            inMemoryStore: shouldUseInMemoryStore,
+            dispatchGroup: dispatchGroup
+        )
 
-        stack.loadStores(completionHandler: { error in
+        let expectation = XCTestExpectation()
+        stack.loadStores { error in
             XCTAssertNil(error)
-        })
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 5)
 
         return stack
     }

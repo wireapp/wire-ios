@@ -367,6 +367,8 @@ extension ZMSLog {
 
         if !manager.fileExists(atPath: currentLogPath) {
             manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
+            // if there was no file, force to recreate the fileHandle
+            updatingHandle = nil
         }
 
         if updatingHandle == nil {
@@ -376,7 +378,7 @@ extension ZMSLog {
 
         do {
             let data = Data(string.utf8)
-            try updatingHandle?.wr_write(data)
+            try updatingHandle?.write(contentsOf: data)
         } catch {
             updatingHandle = nil
         }

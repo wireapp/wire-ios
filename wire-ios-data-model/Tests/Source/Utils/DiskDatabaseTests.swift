@@ -22,6 +22,7 @@ import WireTesting
 @testable import WireDataModel
 
 public class DiskDatabaseTest: ZMTBaseTest {
+
     var sharedContainerURL: URL!
     var accountId: UUID!
     var moc: NSManagedObjectContext {
@@ -54,10 +55,10 @@ public class DiskDatabaseTest: ZMTBaseTest {
             try! self.moc.persistentStoreCoordinator!.remove($0)
         }
 
-        cleanUp()
         coreDataStack = nil
-        sharedContainerURL = nil
         accountId = nil
+        cleanUp()
+        sharedContainerURL = nil
         super.tearDown()
     }
 

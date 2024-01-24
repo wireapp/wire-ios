@@ -35,26 +35,28 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
         DeveloperFlag.storage = UserDefaults.standard
     }
 
-    func testThatItSetsNativePushToFalseWhenSendingAConfirmationMessage() {
+    func testThatItSetsNativePushToFalseWhenSendingAConfirmationMessage() async {
         let confirmation = Confirmation.with {
             $0.firstMessageID = UUID.create().transportString()
         }
         let message = GenericMessage(content: confirmation)
-        assertThatItSetsNativePush(to: false, for: message)
+        await assertThatItSetsNativePush(to: false, for: message)
     }
 
-    func testThatItSetsNativePushToTrueWhenSendingATextMessage() {
+    func testThatItSetsNativePushToTrueWhenSendingATextMessage() async {
         let message = GenericMessage(content: Text(content: "Text"))
-        assertThatItSetsNativePush(to: true, for: message)
+        await assertThatItSetsNativePush(to: true, for: message)
     }
 
-    func assertThatItSetsNativePush(to nativePush: Bool, for message: GenericMessage, line: UInt = #line) {
-        createSelfClient()
+    func assertThatItSetsNativePush(to nativePush: Bool, for message: GenericMessage, line: UInt = #line) async {
+        await uiMOC.perform { [self] in
+            _ = createSelfClient()
+        }
 
-        syncMOC.performGroupedBlock {
-            // given
+        let conversation = await syncMOC.perform { [self] in
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = .create()
+
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = user
 
@@ -62,16 +64,17 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
             conversation.connection = connection
             conversation.conversationType = .oneOnOne
 
-            // when
-            let (data, _) = message.encryptForTransport(for: conversation)!
-            let otrMessage = Proteus_NewOtrMessage.with {
-               try? $0.merge(serializedData: data)
-            }
-
-            // then
-            XCTAssertTrue(otrMessage.hasNativePush, line: line)
-            XCTAssertEqual(otrMessage.nativePush, nativePush, "Wrong value for nativePush", line: line)
+            return conversation
         }
+        // when
+        let (data, _) = await message.encryptForTransport(for: conversation, in: self.syncMOC)!
+        let otrMessage = Proteus_NewOtrMessage.with {
+            try? $0.merge(serializedData: data)
+        }
+
+        // then
+        XCTAssertTrue(otrMessage.hasNativePush, line: line)
+        XCTAssertEqual(otrMessage.nativePush, nativePush, "Wrong value for nativePush", line: line)
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), line: line)
     }

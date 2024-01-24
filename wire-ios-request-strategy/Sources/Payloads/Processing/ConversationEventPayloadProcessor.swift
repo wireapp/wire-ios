@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,17 +19,33 @@
 import Foundation
 import WireDataModel
 
-final class ConversationEventPayloadProcessor {
+struct ConversationEventPayloadProcessor {
 
     enum Source {
         case slowSync
         case eventStream
     }
 
+    // MARK: - Properties
+
+    private let mlsEventProcessor: MLSEventProcessing
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
-    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil) {
-        self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
+    // MARK: - Life cycle
+
+    init(context: NSManagedObjectContext) {
+        self.init(
+            mlsEventProcessor: MLSEventProcessor(context: context),
+            removeLocalConversation: RemoveLocalConversationUseCase()
+        )
+    }
+
+    init(
+        mlsEventProcessor: MLSEventProcessing,
+        removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+    ) {
+        self.mlsEventProcessor = mlsEventProcessor
+        self.removeLocalConversation = removeLocalConversation
     }
 
     // MARK: - Conversation creation
@@ -37,9 +53,9 @@ final class ConversationEventPayloadProcessor {
     func updateOrCreateConversations(
         from payload: Payload.ConversationList,
         in context: NSManagedObjectContext
-    ) {
+    ) async {
         for payload in payload.conversations {
-            updateOrCreateConversation(
+            await updateOrCreateConversation(
                 from: payload,
                 source: .slowSync,
                 in: context
@@ -50,9 +66,9 @@ final class ConversationEventPayloadProcessor {
     func updateOrCreateConverations(
         from payload: Payload.QualifiedConversationList,
         in context: NSManagedObjectContext
-    ) {
+    ) async {
         for payload in payload.found {
-            updateOrCreateConversation(
+            await updateOrCreateConversation(
                 from: payload,
                 source: .slowSync,
                 in: context
@@ -63,13 +79,13 @@ final class ConversationEventPayloadProcessor {
     func processPayload(
         _ payload: Payload.ConversationEvent<Payload.Conversation>,
         in context: NSManagedObjectContext
-    ) {
+    ) async {
         guard let timestamp = payload.timestamp else {
             Logging.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
             return
         }
 
-        updateOrCreateConversation(
+        await updateOrCreateConversation(
             from: payload.data,
             serverTimestamp: timestamp,
             source: .eventStream,
@@ -82,19 +98,26 @@ final class ConversationEventPayloadProcessor {
     func processPayload(
         _ payload: Payload.ConversationEvent<Payload.UpdateConversationDeleted>,
         in context: NSManagedObjectContext
-    ) {
-        guard let conversation = fetchOrCreateConversation(
-            from: payload,
-            in: context
-        ) else {
+    ) async {
+        let conversation = await context.perform {
+            self.fetchOrCreateConversation(
+                from: payload,
+                in: context
+            )
+        }
+        guard let conversation else {
             Logging.eventProcessing.error("Conversation deletion missing conversation in event, aborting...")
             return
         }
 
-        removeLocalConversation.invoke(
-            with: conversation,
-            syncContext: context
-        )
+        do {
+            try await removeLocalConversation.invoke(
+                with: conversation,
+                syncContext: context
+            )
+        } catch {
+            WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+        }
     }
 
     // MARK: - Member leave
@@ -136,7 +159,9 @@ final class ConversationEventPayloadProcessor {
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
 
         if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
-            MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+            WaitingGroupTask(context: context) { [mlsEventProcessor] in
+                await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
+            }
         }
     }
 
@@ -166,7 +191,7 @@ final class ConversationEventPayloadProcessor {
             let users = Set(usersAndRoles.map { $0.0 })
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if users.contains(selfUser) || newUsers {
+            if (users.contains(selfUser) || newUsers) && conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
@@ -178,7 +203,7 @@ final class ConversationEventPayloadProcessor {
             let users = Set(users)
             let selfUser = ZMUser.selfUser(in: context)
 
-            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
+            if (!users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser)) && conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
@@ -336,6 +361,26 @@ final class ConversationEventPayloadProcessor {
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
     }
 
+    // MARK: - Protocol Change
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationProtocolChange>,
+        originalEvent: ZMUpdateEvent,
+        in context: NSManagedObjectContext
+    ) async {
+        guard let qualifiedID = payload.qualifiedID else {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
+            return
+        }
+
+        do {
+            var action = SyncConversationAction(qualifiedID: qualifiedID)
+            try await action.perform(in: context.notificationContext)
+        } catch {
+            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)")
+        }
+    }
+
     // MARK: - Helpers
 
     @discardableResult
@@ -344,14 +389,14 @@ final class ConversationEventPayloadProcessor {
         serverTimestamp: Date = Date(),
         source: Source = .eventStream,
         in context: NSManagedObjectContext
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard let conversationType = payload.type.map(BackendConversationType.clientConversationType) else {
             return nil
         }
 
         switch conversationType {
         case .group:
-            return updateOrCreateGroupConversation(
+            return await updateOrCreateGroupConversation(
                 from: payload,
                 in: context,
                 serverTimestamp: serverTimestamp,
@@ -359,20 +404,36 @@ final class ConversationEventPayloadProcessor {
             )
 
         case .`self`:
-            return updateOrCreateSelfConversation(
+            return await updateOrCreateSelfConversation(
                 from: payload,
                 in: context,
                 serverTimestamp: serverTimestamp,
                 source: source
             )
 
-        case .connection, .oneOnOne:
-            return updateOrCreateOneToOneConversation(
-                from: payload,
-                in: context,
-                serverTimestamp: serverTimestamp,
-                source: source
-            )
+        case .connection:
+            // Conversations are of type `connection` while the connection
+            // is pending.
+            return await context.perform {
+                self.updateOrCreateConnectionConversation(
+                    from: payload,
+                    in: context,
+                    serverTimestamp: serverTimestamp,
+                    source: source
+                )
+            }
+
+        case .oneOnOne:
+            // Conversations are of type `oneOnOne` when the connection
+            // is accepted.
+            return await context.perform {
+                self.updateOrCreateOneToOneConversation(
+                    from: payload,
+                    in: context,
+                    serverTimestamp: serverTimestamp,
+                    source: source
+                )
+            }
 
         default:
             return nil
@@ -385,39 +446,48 @@ final class ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
             return nil
         }
 
         var created = false
-        let conversation = ZMConversation.fetchOrCreate(
-            with: conversationID,
-            domain: payload.qualifiedID?.domain,
-            in: context,
-            created: &created
-        )
+        let conversation = await context.perform {
 
-        conversation.conversationType = .group
-        conversation.remoteIdentifier = conversationID
-        conversation.isPendingMetadataRefresh = false
-        updateAttributes(from: payload, for: conversation, context: context)
-        updateMetadata(from: payload, for: conversation, context: context)
-        updateMembers(from: payload, for: conversation, context: context)
-        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-        updateConversationStatus(from: payload, for: conversation)
-        updateMessageProtocol(from: payload, for: conversation)
-        updateMLSStatus(from: payload, for: conversation, context: context, source: source)
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: payload.qualifiedID?.domain,
+                in: context,
+                created: &created
+            )
 
-        if created {
-            // we just got a new conversation, we display new conversation header
-            conversation.appendNewConversationSystemMessage(at: serverTimestamp,
-                                                            users: conversation.localParticipants)
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = conversationID
+            conversation.isPendingMetadataRefresh = false
+            self.updateAttributes(from: payload, for: conversation, context: context)
+            self.updateMetadata(from: payload, for: conversation, context: context)
+            self.updateMembers(from: payload, for: conversation, context: context)
+            self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            self.updateConversationStatus(from: payload, for: conversation)
+            self.updateMessageProtocol(from: payload, for: conversation, in: context)
 
-            if source == .slowSync {
-                // Slow synced conversations should be considered read from the start
-                conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
+            return conversation
+        }
+        await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
+        await context.perform {
+
+            if created {
+                // we just got a new conversation, we display new conversation header
+                conversation.appendNewConversationSystemMessage(
+                    at: serverTimestamp,
+                    users: conversation.localParticipants
+                )
+
+                if source == .slowSync {
+                    // Slow synced conversations should be considered read from the start
+                    conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
+                }
             }
         }
 
@@ -430,53 +500,87 @@ final class ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversationID in self conversation payload, aborting...")
             return nil
         }
 
         var created = false
-        let conversation = ZMConversation.fetchOrCreate(
-            with: conversationID,
-            domain: payload.qualifiedID?.domain,
-            in: context,
-            created: &created
-        )
+        let (conversation, mlsGroupID) = await context.perform { [self] in
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: payload.qualifiedID?.domain,
+                in: context,
+                created: &created
+            )
 
-        conversation.conversationType = .`self`
-        conversation.isPendingMetadataRefresh = false
-        updateAttributes(from: payload, for: conversation, context: context)
-        updateMetadata(from: payload, for: conversation, context: context)
-        updateMembers(from: payload, for: conversation, context: context)
-        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-        updateMessageProtocol(from: payload, for: conversation)
+            conversation.conversationType = .`self`
+            conversation.isPendingMetadataRefresh = false
+            updateAttributes(from: payload, for: conversation, context: context)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateMessageProtocol(from: payload, for: conversation, in: context)
 
-        if conversation.mlsGroupID != nil {
-            createOrJoinSelfConversation(from: conversation)
+            return (conversation, conversation.mlsGroupID)
+        }
+
+        if mlsGroupID != nil {
+            do {
+                try await createOrJoinSelfConversation(from: conversation)
+            } catch {
+                WireLogger.mls.error("createOrJoinSelfConversation threw error: \(String(reflecting: error))")
+            }
         }
 
         return conversation
     }
 
-    func createOrJoinSelfConversation(from conversation: ZMConversation) {
-        guard
-            let groupId = conversation.mlsGroupID,
-            let mlsService = conversation.managedObjectContext?.mlsService
-        else {
+    func createOrJoinSelfConversation(from conversation: ZMConversation) async throws {
+        guard let context = conversation.managedObjectContext else {
+            return WireLogger.mls.warn("conversation.managedObjectContext is nil")
+        }
+        let (groupID, mlsService) = await context.perform {
+            (conversation.mlsGroupID, conversation.managedObjectContext?.mlsService)
+        }
+
+        guard let groupID, let mlsService else {
             WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
             return
         }
 
-        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId.safeForLoggingDescription); conv payload: \(String(describing: self))")
+        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))")
 
-        if conversation.epoch <= 0 {
-            mlsService.createSelfGroup(for: groupId)
-        } else if !mlsService.conversationExists(groupID: groupId) {
-            Task {
-                try await mlsService.joinGroup(with: groupId)
-            }
+        if await context.perform({ conversation.epoch <= 0 }) {
+            await mlsService.createSelfGroup(for: groupID)
+        } else if await !mlsService.conversationExists(groupID: groupID) {
+            try await mlsService.joinGroup(with: groupID)
         }
+    }
+
+    @discardableResult
+    func updateOrCreateConnectionConversation(
+        from payload: Payload.Conversation,
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date,
+        source: Source
+    ) -> ZMConversation? {
+        guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
+            Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+            return nil
+        }
+
+        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
+        conversation.conversationType = .connection
+        updateAttributes(from: payload, for: conversation, context: context)
+        updateMessageProtocol(from: payload, for: conversation, in: context)
+        updateMetadata(from: payload, for: conversation, context: context)
+        updateMembers(from: payload, for: conversation, context: context)
+        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+        updateConversationStatus(from: payload, for: conversation)
+        conversation.needsToBeUpdatedFromBackend = false
+        return conversation
     }
 
     @discardableResult
@@ -488,46 +592,30 @@ final class ConversationEventPayloadProcessor {
     ) -> ZMConversation? {
         guard
             let conversationID = payload.id ?? payload.qualifiedID?.uuid,
-            let rawConversationType = payload.type
+            let conversationType = payload.type.map(BackendConversationType.clientConversationType)
         else {
             Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
 
-        let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: payload.qualifiedID?.domain,
+            in: context
+        )
 
-        guard
-            let otherMember = payload.members?.others.first,
-            let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid
-        else {
-            let conversation = ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-            conversation?.conversationType = self.conversationType(for: conversation, from: conversationType)
-            conversation?.needsToBeUpdatedFromBackend = false
-            return conversation
-        }
-
-        let otherUser = ZMUser.fetchOrCreate(with: otherUserID, domain: otherMember.qualifiedID?.domain, in: context)
-
-        var conversation: ZMConversation
-        if let existingConversation = otherUser.connection?.conversation {
-            existingConversation.mergeWithExistingConversation(withRemoteID: conversationID)
-            conversation = existingConversation
-        } else {
-            conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-            otherUser.connection?.conversation = conversation
-        }
-
-        conversation.remoteIdentifier = conversationID
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
-
+        updateAttributes(from: payload, for: conversation, context: context)
+        updateMessageProtocol(from: payload, for: conversation, in: context)
         updateMetadata(from: payload, for: conversation, context: context)
         updateMembers(from: payload, for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(from: payload, for: conversation)
-
         conversation.needsToBeUpdatedFromBackend = false
-        conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+
+        if let otherUser = conversation.localParticipantsExcludingSelf.first {
+            conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+        }
 
         return conversation
     }
@@ -539,8 +627,17 @@ final class ConversationEventPayloadProcessor {
     ) {
         conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
-        conversation.epoch = UInt64(payload.epoch ?? 0)
-        conversation.mlsGroupID = payload.mlsGroupID.flatMap { MLSGroupID(base64Encoded: $0) }
+
+        if let epoch = payload.epoch {
+            conversation.epoch = UInt64(epoch)
+        }
+
+        if
+            let base64String = payload.mlsGroupID,
+            let mlsGroupID = MLSGroupID(base64Encoded: base64String)
+        {
+            conversation.mlsGroupID = mlsGroupID
+        }
     }
 
     func updateMetadata(
@@ -634,19 +731,54 @@ final class ConversationEventPayloadProcessor {
 
     private func updateMessageProtocol(
         from payload: Payload.Conversation,
-        for conversation: ZMConversation
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
     ) {
         guard let messageProtocolString = payload.messageProtocol else {
             Logging.eventProcessing.warn("message protocol is missing")
             return
         }
 
-        guard let messageProtocol = MessageProtocol(string: messageProtocolString) else {
+        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
             Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
 
-        conversation.messageProtocol = messageProtocol
+        let sender = ZMUser.selfUser(in: context)
+
+        switch conversation.messageProtocol {
+        case .proteus:
+            switch newMessageProtocol {
+            case .proteus:
+                break // no update, ignore
+            case .mixed:
+                conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+            case .mls:
+                let date = conversation.lastModifiedDate ?? .now
+                conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
+                conversation.messageProtocol = newMessageProtocol
+            }
+
+        case .mixed:
+            switch newMessageProtocol {
+            case .proteus:
+                WireLogger.updateEvent.warn("update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!")
+            case .mixed:
+                break // no update, ignore
+            case .mls:
+                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+            }
+
+        case .mls:
+            switch newMessageProtocol {
+            case .proteus, .mixed:
+                WireLogger.updateEvent.warn("update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!")
+            case .mls:
+                break // no update, ignore
+            }
+        }
     }
 
     private func updateMLSStatus(
@@ -654,21 +786,14 @@ final class ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         context: NSManagedObjectContext,
         source: Source
-    ) {
-        let mlsEventProcessor = MLSEventProcessor.shared
+    ) async {
 
-        mlsEventProcessor.updateConversationIfNeeded(
+        await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             groupID: payload.mlsGroupID,
             context: context
         )
 
-        if source == .slowSync {
-            mlsEventProcessor.joinMLSGroupWhenReady(
-                forConversation: conversation,
-                context: context
-            )
-        }
     }
 
     func fetchCreator(

@@ -154,8 +154,42 @@ extension ZMClientRegistrationStatus {
 
     @objc(needsToRegisterMLSClientInContext:)
     public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
+        guard !self.needsToRegisterClient(in: context) else {
+            return false
+        }
         let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
         let isAllowedToRegisterMLSCLient = DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
         return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
+    }
+
+    var idPrekeysTuple: [IdPrekeyTuple]? {
+        prekeys.compactMap {
+            guard
+                let id = $0.keys.first?.uint16Value,
+                let prekey = $0.values.first
+            else {
+                return nil
+            }
+
+            return IdPrekeyTuple(id: id, prekey: prekey)
+        }
+    }
+
+    var lastResortIdPrekeyTuple: IdPrekeyTuple? {
+        guard let lastResortPrekey = lastResortPrekey else {
+            return nil
+        }
+        return IdPrekeyTuple(id: UInt16.max, prekey: lastResortPrekey)
+    }
+
+    public func willGeneratePrekeys() {
+        isGeneratingPrekeys = true
+    }
+
+    public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple], lastResortPrekey: IdPrekeyTuple) {
+        self.prekeys = prekeys.map { [NSNumber(integerLiteral: Int($0.id)): $0.prekey]}
+        self.lastResortPrekey = lastResortPrekey.prekey
+        self.isGeneratingPrekeys = false
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 }

@@ -142,15 +142,20 @@ extension WireCallCenterV3 {
         syncContext.perform {
             guard let mlsService = syncContext.mlsService else {
                 WireLogger.calling.error("failed to leave subconversation: mlsService is missing")
+                assertionFailure("mlsService is nil")
                 return
             }
 
             Task {
-                try await mlsService.leaveSubconversation(
-                    parentQualifiedID: parentQualifiedID,
-                    parentGroupID: parentGroupID,
-                    subconversationType: .conference
-                )
+                do {
+                    try await mlsService.leaveSubconversation(
+                        parentQualifiedID: parentQualifiedID,
+                        parentGroupID: parentGroupID,
+                        subconversationType: .conference
+                    )
+                } catch {
+                    WireLogger.calling.error("failed to leave subconversation: \(String(reflecting: error))")
+                }
             }
         }
     }

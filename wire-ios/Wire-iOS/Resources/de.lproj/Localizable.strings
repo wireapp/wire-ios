@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Zum Senden tippen";
 "conversation.input_bar.audio_message.too_long.title" = "Die Aufnahme wurde beendet";
 "conversation.input_bar.audio_message.too_long.message" = "Audionachrichten sind auf %@ beschränkt.";
+"conversation.ping.many_participants_confirmation.title" = "Sind Sie sicher, dass Sie %d Personen anpingen möchten?";
+"conversation.ping.action.title" = "Anpingen";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "Die Dateigröße für Audionachrichten ist auf %@ begrenzt.";
 
@@ -560,7 +562,7 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "Diese Unterhaltung unterliegt der gesetzlichen Aufbewahrung";
+"content.system.message_legal_hold.enabled" = "Diese Unterhaltung unterliegt der gesetzlichen Aufbewahrung [MEHR ERFAHREN](%@)";
 "content.system.message_legal_hold.disabled" = "Die gesetzliche Aufbewahrung wurde für diese Unterhaltung deaktiviert";
 
 "content.system.message_legal_hold.learn_more" = "Mehr erfahren";
@@ -990,7 +992,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Personen, die der gesetzlichen Aufbewahrung unterliegen";
+"legalhold.participants.section.title" = "Personen, die der gesetzlichen Aufbewahrung unterliegen %@";
 "legalhold.header.title" = "Gesetzliche Aufbewahrung";
 "legalhold.header.other_description" = "Die gesetzlichen Aufbewahrung wurde für mindestens eine Person dieser Unterhaltung aktiviert.\nAlle Nachrichten werden für den künftigen Zugriff aufbewahrt, einschließlich gelöschter, bearbeiteter und selbstlöschender Nachrichten.";
 "legalhold.header.self_description" = "Die gesetzliche Aufbewahrung wurde für dieses Konto aktiviert. \nAlle Nachrichten werden für den künftigen Zugriff aufbewahrt, einschließlich gelöschter, bearbeiteter und selbstlöschender Nachrichten.\nAlle Gesprächspartner werden über die Aufnahme in Kenntnis gesetzt.\n    ";
@@ -1247,7 +1249,7 @@
 "self.settings.developer_options.title" = "Entwickleroptionen";
 "self.settings.developer_options.loggin.title" = "Optionen";
 "self.settings.developer_options.database_statistics.title" = "Datenbank-Statistiken";
-"self.settings.apns_logging.title" = "APNS Protokollierung";
+"self.settings.apns_logging.title" = "APNS-Protokollierung";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Optionen";
@@ -1298,8 +1300,8 @@
 "self.settings.technical_report.send_report" = "Bericht an Wire senden";
 "self.settings.technical_report.mail.subject" = "Fehlerbericht";
 "self.settings.technical_report.include_log" = "Detaillierten Verlauf hinzufügen";
-"self.settings.technical_report.privacy_warning" = "Detaillierte Logs können personenbezogene Daten enthalten.";
-"self.settings.technical_report.no_mail_alert" = "Kein Mail-Client erkannt. Tippen Sie auf \"OK\" und senden Sie die Protokolle manuell an: ";
+"self.settings.technical_report.privacy_warning" = "Detaillierte Protokolle können personenbezogene Daten enthalten.";
+"self.settings.technical_report.no_mail_alert" = "Kein Mail-Client erkannt. Wählen Sie \"OK\" und senden Sie die Protokolle manuell an: ";
 
 // Password reset
 "self.settings.password_reset_menu.title" = "Passwort zurücksetzen";
@@ -1461,8 +1463,8 @@
 "registration.no_history.restore_backup" = "Backup wiederherstellen";
 
 "registration.alert.account_exists.title" = "Konto Vorhanden";
-"registration.alert.account_exists.message_phone" = "Die für die Registrierung verwendete Telefonnummer ist bereits mit einem Konto verknüpft.\n\nBitte andere Telefonnummer nutzen oder versuchen, sich mit dieser Telefonnummer einzuloggen.";
-"registration.alert.account_exists.message_email" = "Die für die Registrierung verwendete E-Mail-Adresse ist bereits mit einem Konto verknüpft.\n\nBitte andere E-Mail-Adresse nutzen oder versuchen, sich mit dieser E-Mail-Adresse einzuloggen.";
+"registration.alert.account_exists.message_phone" = "Die für die Registrierung verwendete Telefonnummer ist bereits mit einem Konto verknüpft.\n\nBitte andere Telefonnummer nutzen oder versuchen, sich mit dieser Telefonnummer anzumelden.";
+"registration.alert.account_exists.message_email" = "Die für die Registrierung verwendete E-Mail-Adresse ist bereits mit einem Konto verknüpft.\n\nBitte andere E-Mail-Adresse nutzen oder versuchen, sich mit dieser E-Mail-Adresse anzumelden.";
 "registration.alert.change_email_action" = "Mit einer andern E-Mail registrieren";
 "registration.alert.change_phone_action" = "Bitte mit anderer Nummer registrieren";
 "registration.alert.change_signin_action" = "Anmelden";
@@ -1589,10 +1591,10 @@
 "signin.confirm" = "Anmelden";
 "signin.company_idp.button.title" = "Für Unternehmen";
 
-"signin_logout.subheadline" = "Die Session ist abgelaufen. Zum Fortfahren bitte erneut einloggen.";
+"signin_logout.subheadline" = "Ihre Session ist abgelaufen. Zum Fortfahren bitte erneut anmelden.";
 "signin_logout.email.subheadline" = "Die Session ist abgelaufen. Zum Fortfahren bitte E-Mail-Adresse und Passwort eingeben.";
 "signin_logout.phone.subheadline" = "Die Session ist abgelaufen. Zum Fortfahren bitte Telefonnummer eingeben.";
-"signin_logout.sso.subheadline" = "Die Session ist abgelaufen. Zum Fortfahren bitte mit dem Konto des Unternehmens anmelden.";
+"signin_logout.sso.subheadline" = "Ihre Session ist abgelaufen. Melden Sie sich mit Ihrem Unternehmenskonto an, um fortzufahren.";
 "signin_logout.sso.buton" = "Anmeldung für Unternehmen";
 
 "signin.email.missing_password.subtitle" = "Um fortzufahren, bitte E-Mail-Adresse und Passwort eingeben.";
@@ -1742,10 +1744,10 @@
 "jailbrokendevice.alert.message" = "Aus Sicherheitsgründen kann Wire auf diesem Gerät nicht verwendet werden. Alle vorhandenen Wire-Daten wurden gelöscht.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Nicht genügend Speicherplatz";
-"databaseloadingfailure.alert.message" = "Die Datenbank konnte nicht geladen werden, da der Speicherplatz nicht ausreicht. Überprüfen Sie die Nutzung Ihres Geräts und versuchen Sie es erneut.";
-"databaseloadingfailure.alert.settings" = "Einstellungen öffnen";
-"databaseloadingfailure.alert.delete_database" = "Datenbank löschen";
+"databaseloadingfailure.alert.title" = "Datenspeicher aktualisieren";
+"databaseloadingfailure.alert.message" = "Die Datenbank konnte nicht geladen werden.\n Fehler: %@";
+"databaseloadingfailure.alert.save-backup" = "Meine Daten speichern";
+"databaseloadingfailure.alert.delete_database" = "Meine Daten löschen und weiter";
 "databaseloadingfailure.alert.delete_database.message" = "Durch das Löschen der Datenbank werden alle lokalen Daten und Nachrichten für dieses Konto dauerhaft gelöscht.";
 "databaseloadingfailure.alert.delete_database.continue" = "Weiter";
 "databaseloadingfailure.alert.retry" = "Wiederholen";
@@ -1841,7 +1843,7 @@
 "url_action.switch_backend.message" = "Diese Konfiguration verbindet die App mit dem Server eines Drittanbieters:\n%@";
 
 "url_action.switch_backend.error.logged_in.title" = "Serverwechsel nicht möglich";
-"url_action.switch_backend.error.logged_in" = "Bereits eingeloggt: Um auf diesen Server zu wechseln, bitte aus allen Konten ausloggen und erneut versuchen.";
+"url_action.switch_backend.error.logged_in" = "Sie sind bereits angemeldet. Um auf diesen Server zu wechseln, melden Sie sich von allen Konten ab und versuchen Sie es erneut.";
 
 "url_action.switch_backend.error.invalid_backend.title" = "Der Server antwortet nicht";
 "url_action.switch_backend.error.invalid_backend" = "Bitte Internetverbindung überprüfen, den Link bestätigen und nochmal versuchen.";
@@ -1863,7 +1865,7 @@
 "url_action.invalid_conversation.message" = "Entweder fehlt die Berechtigung für dieses Konto oder die Person nutzt Wire nicht.";
 
 "url_action.authorization_required.title" = "Berechtigung erforderlich.";
-"url_action.authorization_required.message" = "Bitte einloggen, um diesen Inhalt zu sehen.";
+"url_action.authorization_required.message" = "Bitte anmelden, um diesen Inhalt zu sehen.";
 
 "url_action.invalid_link.title" = "Ungültiger Link.";
 "url_action.invalid_link.message" = "Der geöffnete Link ist ungültig.";

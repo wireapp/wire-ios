@@ -43,10 +43,10 @@ public protocol ProteusProviding {
 public class ProteusProvider: ProteusProviding {
 
     private let proteusService: ProteusServiceInterface?
-    private let keyStore: UserClientKeysStore
+    private let keyStore: UserClientKeysStore?
     private let proteusViaCoreCrypto: Bool
 
-    public convenience init(
+    convenience init(
         context: NSManagedObjectContext,
         proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
     ) {
@@ -55,7 +55,11 @@ public class ProteusProvider: ProteusProviding {
                   proteusViaCoreCrypto: proteusViaCoreCrypto)
     }
 
-    internal init(proteusService: ProteusServiceInterface?, keyStore: UserClientKeysStore, proteusViaCoreCrypto: Bool) {
+    public init(
+        proteusService: ProteusServiceInterface?,
+        keyStore: UserClientKeysStore?,
+        proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
+    ) {
         self.proteusService = proteusService
         self.keyStore = keyStore
         self.proteusViaCoreCrypto = proteusViaCoreCrypto
@@ -68,12 +72,16 @@ public class ProteusProvider: ProteusProviding {
 
         if let proteusService = proteusService, proteusViaCoreCrypto {
 
-            return try proteusServiceBlock(proteusService)
+          return try proteusServiceBlock(proteusService)
 
-        } else {
+        } else if let keyStore = keyStore, !proteusViaCoreCrypto {
 
             // remove comment once implementation of proteus via core crypto is done
             return try keyStoreBlock(keyStore)
+        } else {
+
+            WireLogger.coreCrypto.error("can't access any proteus cryptography service")
+            fatal("can't access any proteus cryptography service")
         }
     }
 
@@ -86,10 +94,14 @@ public class ProteusProvider: ProteusProviding {
 
             return try await proteusServiceBlock(proteusService)
 
-        } else {
+        } else if let keyStore = keyStore, !proteusViaCoreCrypto {
 
             // remove comment once implementation of proteus via core crypto is done
             return try await keyStoreBlock(keyStore)
+        } else {
+
+            WireLogger.coreCrypto.error("can't access any proteus cryptography service")
+            fatal("can't access any proteus cryptography service")
         }
     }
 

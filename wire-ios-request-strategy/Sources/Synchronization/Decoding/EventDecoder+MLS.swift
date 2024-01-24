@@ -23,7 +23,7 @@ extension EventDecoder {
     func decryptMlsMessage(
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext
-    ) async -> ZMUpdateEvent? {
+    ) async -> [ZMUpdateEvent] {
         Logging.mls.info("decrypting mls message")
 
         guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
@@ -31,9 +31,10 @@ extension EventDecoder {
             fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
-        guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
+        let decoder = EventPayloadDecoder()
+        guard let payload = try? decoder.decode(Payload.UpdateConversationMLSMessageAdd.self, from: updateEvent.payload) else {
             WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
-            return nil
+            return []
         }
 
         var conversation: ZMConversation?
@@ -55,48 +56,49 @@ extension EventDecoder {
 
         guard let groupID else {
             WireLogger.mls.error("failed to decrypt mls message: missing MLS group ID")
-            return nil
+            return []
         }
 
         do {
-            guard
-                let result = try decryptionService.decrypt(
-                    message: payload.data,
-                    for: groupID,
-                    subconversationType: payload.subconversationType
-                )
-            else {
+            let results = try await decryptionService.decrypt(
+                message: payload.data,
+                for: groupID,
+                subconversationType: payload.subconversationType
+            )
+
+            if results.isEmpty {
                 WireLogger.mls.info("successfully decrypted mls message but no result was returned")
-                return nil
+                return []
             }
 
-            switch result {
-            case .message(let decryptedData, let senderClientID):
-                return updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID)
+            return await results.asyncCompactMap { result in
+                switch result {
+                case .message(let decryptedData, let senderClientID):
+                    return updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID)
 
-            case .proposal(let commitDelay):
-                let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
-                var mlsService: MLSServiceInterface?
-                await context.perform {
-                    conversation?.commitPendingProposalDate = scheduledDate
-                    mlsService = context.mlsService
-                }
-
-                if let mlsService, updateEvent.source == .webSocket {
-                    do {
-                        try await mlsService.commitPendingProposals()
-                    } catch {
-                        WireLogger.mls.error("failed to commit pending proposals: \(String(describing: error))")
+                case .proposal(let commitDelay):
+                    let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
+                    let mlsService = await context.perform {
+                        conversation?.commitPendingProposalDate = scheduledDate
+                        return context.mlsService
                     }
 
-                }
+                    if let mlsService, updateEvent.source == .webSocket {
+                        do {
+                            try await mlsService.commitPendingProposals()
+                        } catch {
+                            WireLogger.mls.error("failed to commit pending proposals: \(String(describing: error))")
+                        }
 
-                return nil
+                    }
+
+                    return nil
+                }
             }
 
         } catch {
             Logging.mls.warn("failed to decrypt mls message: \(String(describing: error))")
-            return nil
+            return []
         }
     }
 

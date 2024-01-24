@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,13 +42,17 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             FetchMLSConversationGroupInfoActionHandler(context: managedObjectContext),
             FetchSubgroupActionHandler(context: managedObjectContext),
             DeleteSubgroupActionHandler(context: managedObjectContext),
-            LeaveSubconversationActionHandler(context: managedObjectContext)
+            LeaveSubconversationActionHandler(context: managedObjectContext),
+            FetchSupportedProtocolsActionHandler(context: managedObjectContext),
+            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext)
         ])
 
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
         )
+
+        configuration = [.allowsRequestsDuringSlowSync, .allowsRequestsWhileOnline]
     }
 
     // MARK: - Requests

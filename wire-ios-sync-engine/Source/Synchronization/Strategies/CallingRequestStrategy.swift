@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireRequestStrategy
 import WireDataModel
@@ -43,6 +44,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private let ephemeralURLSession = URLSession(configuration: .ephemeral)
     private let fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol
+
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Internal Properties
 
@@ -84,6 +87,23 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                                                             analytics: managedObjectContext.analytics,
                                                             transport: self)
         }
+
+        setupEventProcessingNotifications()
+    }
+
+    private func setupEventProcessingNotifications() {
+
+        NotificationCenter.default
+            .publisher(for: .eventProcessorDidStartProcessingEventsNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: true) }
+            .store(in: &cancellables)
+
+        NotificationCenter.default
+            .publisher(for: .eventProcessorDidFinishProcessingEventsNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: false) }
+            .store(in: &cancellables)
     }
 
     // MARK: - Methods
@@ -246,7 +266,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             self.zmLog.debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
 
             guard !callEventContent.isRemoteMute else {
-                callCenter?.muted = true
+                callCenter?.isMuted = true
                 zmLog.debug("muted remotely from calling message")
                 return
             }
@@ -369,7 +389,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 )
             }
 
-            Task {
+            WaitingGroupTask(context: self.managedObjectContext) {
                 do {
                     try await self.messageSender.sendMessage(message: message)
                     completionHandler(200)
@@ -436,7 +456,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             }
 
             switch conversation.messageProtocol {
-            case .proteus:
+            case .proteus, .mixed:
                 // With proteus, we discover clients by posting an otr message to no-one,
                 // then parse the error response that contains the list of all clients.
                 self.clientDiscoveryRequest = ClientDiscoveryRequest(
@@ -588,7 +608,7 @@ extension CallingRequestStrategy {
             case .v0:
                 // `nestedContainer` contains all the user ids with no notion of domain, we can extract clients directly
                allClients = try extractClientsFromContainer(nestedContainer, nil)
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 // `nestedContainer` has further nested containers each dynamically keyed by a domain name.
                 // we need to loop over each container to extract the clients.
                 try nestedContainer.allKeys.forEach { domainKey in

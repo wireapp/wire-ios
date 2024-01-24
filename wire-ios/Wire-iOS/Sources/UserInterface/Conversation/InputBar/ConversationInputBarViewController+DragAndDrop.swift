@@ -60,7 +60,7 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                         )
 
                         let confirmImageViewController = ConfirmAssetViewController(context: context)
-                        confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback.localized
+                        confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback
                         self.present(confirmImageViewController, animated: true) {
                         }
                     }

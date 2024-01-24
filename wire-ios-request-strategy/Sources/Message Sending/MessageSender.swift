@@ -134,7 +134,7 @@ public class MessageSender: MessageSenderInterface {
 
         do {
             return switch messageProtocol {
-            case .proteus:
+            case .proteus, .mixed:
                 try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
             case .mls:
                 try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
@@ -149,13 +149,9 @@ public class MessageSender: MessageSenderInterface {
     private func attemptToBroadcastWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async throws {
         do {
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: message)
-            await context.perform { [self] in
-                handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
-            }
+            await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
-            let missingClients = try await context.perform { [self] in
-                try handleProteusFailure(message: message, networkError)
-            }
+            let missingClients = try await handleProteusFailure(message: message, networkError)
             try await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
             try await broadcastMessage(message: message)
         }
@@ -175,44 +171,43 @@ public class MessageSender: MessageSenderInterface {
                 message: message,
                 conversationID: conversationID
             )
-            await context.perform { [self] in
-                handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
-            }
+            await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
-            let missingClients = try await context.perform { [self] in
-                try handleProteusFailure(message: message, networkError)
-            }
+            let missingClients = try await handleProteusFailure(message: message, networkError)
             try await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
             try await sendMessage(message: message)
         }
     }
 
-    private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) {
-        message.delivered(with: response) // FIXME: jacob refactor to not use raw response
-
-        proteusPayloadProcessor.updateClientsChanges(
+    private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) async {
+        await context.perform {
+            message.delivered(with: response) // FIXME: jacob refactor to not use raw response
+        }
+        await proteusPayloadProcessor.updateClientsChanges(
             from: messageSendingStatus,
             for: message
         )
     }
 
-    private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) throws -> Set<QualifiedClientID> {
+    private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) async throws -> Set<QualifiedClientID> {
         switch failure {
         case .missingClients(let messageSendingStatus, _):
-            proteusPayloadProcessor.updateClientsChanges(
+            await proteusPayloadProcessor.updateClientsChanges(
                 from: messageSendingStatus,
                 for: message
             )
-            context.enqueueDelayedSave()
+            await context.perform {
+                self.context.enqueueDelayedSave()
+            }
 
-            if message.isExpired {
+            if await context.perform({ message.isExpired }) {
                 throw MessageSendError.messageExpired
             } else {
                 return Set(messageSendingStatus.missing.qualifiedClientIDs)
             }
         default:
             if case .tryAgainLater = failure.response?.result {
-                if message.isExpired {
+                if await context.perform({ message.isExpired }) {
                     throw MessageSendError.messageExpired
                 } else {
                     return Set() // FIXME: [jacob] it's dangerous to retry indefinitely like this WPB-5454
@@ -266,18 +261,16 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func encryptMlsMessage(_ message: any MLSMessage, groupID: MLSGroupID) async throws -> Data {
-        return try await context.perform {
-            guard let mlsService = self.context.mlsService else {
-                throw MessageSendError.missingMlsService
-            }
+        guard let mlsService = await context.perform({ self.context.mlsService }) else {
+            throw MessageSendError.missingMlsService
+        }
 
-            return try message.encryptForTransport { messageData in
-                let encryptedBytes = try mlsService.encrypt(
-                    message: messageData.bytes,
-                    for: groupID
-                )
-                return encryptedBytes.data
-            }
+        return try await message.encryptForTransport { messageData in
+            let encryptedData = try await mlsService.encrypt(
+                message: messageData,
+                for: groupID
+            )
+            return encryptedData
         }
     }
 }

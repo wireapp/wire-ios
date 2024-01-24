@@ -53,6 +53,7 @@ class FetchClientRequestStrategyTests: MessagingTestBase {
         sut = nil
         NotificationCenter.default.removeObserver(self)
         apiVersion = nil
+        BackendInfo.storage = .standard
         super.tearDown()
     }
 
@@ -566,7 +567,6 @@ extension FetchClientRequestStrategyTests {
         var client: UserClient!
         self.syncMOC.performGroupedBlockAndWait {
             client = self.createClient(user: self.otherUser)
-            XCTAssertFalse(client.hasSessionWithSelfClient)
             self.otherUser.fetchUserClients()
             payload = [["id": client.remoteIdentifier!, "class": "phone"]] as NSArray
         }

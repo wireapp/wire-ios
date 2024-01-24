@@ -1,20 +1,20 @@
-/*
- * Wire
- * Copyright (C) 2021 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
 
 import Foundation
 import avs
@@ -75,13 +75,9 @@ public class WireCallCenterV3: NSObject {
 
     var usePackagingFeatureConfig: Bool = false
 
-    var muted: Bool {
-        get {
-            return avsWrapper.muted
-        }
-        set {
-            avsWrapper.muted = newValue
-        }
+    var isMuted: Bool {
+        get { avsWrapper.isMuted }
+        set { avsWrapper.isMuted = newValue }
     }
 
     /// The snaphot of the call state for each non-idle conversation.
@@ -524,7 +520,7 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             break
 
         case .mls:
@@ -605,9 +601,8 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             break
-
         case .mls:
             try setUpMLSConference(in: conversation)
         }
@@ -652,16 +647,17 @@ extension WireCallCenterV3 {
                         parentID: parentGroupID
                     )
 
-                    let updateConferenceInfoTask = Task {
-                        let initialConferenceInfo = try await mlsService.generateConferenceInfo(
-                            parentGroupID: parentGroupID,
-                            subconversationGroupID: subgroupID
-                        )
+                    let initialConferenceInfo = try await mlsService.generateConferenceInfo(
+                        parentGroupID: parentGroupID,
+                        subconversationGroupID: subgroupID
+                    )
 
-                        self.avsWrapper.setMLSConferenceInfo(
-                            conversationId: conversationID,
-                            info: initialConferenceInfo
-                        )
+                    self.avsWrapper.setMLSConferenceInfo(
+                        conversationId: conversationID,
+                        info: initialConferenceInfo
+                    )
+
+                    let updateConferenceInfoTask = Task {
 
                         let onConferenceInfoChange = mlsService.onConferenceInfoChange(
                             parentGroupID: parentGroupID,
@@ -670,6 +666,7 @@ extension WireCallCenterV3 {
 
                         do {
                             for try await conferenceInfo in onConferenceInfoChange {
+                                try Task.checkCancellation()
                                 self.avsWrapper.setMLSConferenceInfo(
                                     conversationId: conversationID,
                                     info: conferenceInfo
@@ -731,8 +728,9 @@ extension WireCallCenterV3 {
         }
 
         if let mlsParentIDs = mlsParentIDS(for: conversationId) {
-            let snapshot = callSnapshots[conversationId]
+            var snapshot = callSnapshots[conversationId]
             snapshot?.updateConferenceInfoTask?.cancel()
+            snapshot?.updateConferenceInfoTask = nil
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
@@ -962,7 +960,7 @@ extension WireCallCenterV3 {
         }
 
         if case .incoming = callState, isGroup(conversationId: conversationId), activeCalls.isEmpty {
-            muted = true
+            isMuted = true
         }
 
         let callerId = initiatorForCall(conversationId: conversationId) ?? userId

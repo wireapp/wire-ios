@@ -59,7 +59,7 @@ extension ZMUser: UserType {
     }
 
     public var activeConversations: Set<ZMConversation> {
-        return Set(self.participantRoles.compactMap {$0.conversation})
+        return Set(self.participantRoles.compactMap(\.conversation))
     }
 
     public var isVerified: Bool {
@@ -131,6 +131,9 @@ extension ZMUser: UserType {
             let id = remoteIdentifier,
             let context = managedObjectContext
         else {
+            return false
+        }
+        guard (BackendInfo.apiVersion ?? .v0) >= .v5 && DeveloperFlag.enableMLSSupport.isOn  else {
             return false
         }
 
@@ -352,9 +355,10 @@ extension ZMUser {
     /// Remove user from all group conversations he is a participant of
     fileprivate func removeFromAllConversations(at timestamp: Date) {
         let allGroupConversations: [ZMConversation] = participantRoles.compactMap {
-            guard let convo = $0.conversation,
-                convo.conversationType == .group else { return nil}
-            return convo
+            guard $0.conversation?.conversationType == .group else {
+                return nil
+            }
+            return $0.conversation
         }
 
         allGroupConversations.forEach { conversation in
@@ -373,7 +377,7 @@ extension ZMUser {
 
     @objc
     public var conversations: Set<ZMConversation> {
-        return Set(participantRoles.compactMap { return $0.conversation })
+        Set(participantRoles.compactMap(\.conversation))
     }
 }
 
@@ -406,15 +410,65 @@ extension ZMUser: UserConnections {
         }
     }
 
+    public enum AcceptConnectionError: Error {
+
+        case invalidState
+        case unableToResolveConversation
+        case unableToSwitchToMLS
+
+    }
+
     public func accept(completion: @escaping (Error?) -> Void) {
-        connection?.updateStatus(.accepted, completion: { result in
+        accept(
+            oneOnOneResolver: nil,
+            completion: completion
+        )
+    }
+
+    func accept(
+        oneOnOneResolver: OneOnOneResolverInterface?,
+        completion: @escaping (Error?) -> Void
+    ) {
+        guard
+            let context = managedObjectContext,
+            let syncContext = context.zm_sync,
+            let connection,
+            let userID = remoteIdentifier,
+            let domain = domain ?? BackendInfo.domain
+        else {
+            completion(AcceptConnectionError.invalidState)
+            return
+        }
+
+        connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                completion(nil)
+                Task {
+                    do {
+                        guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
+                            completion(AcceptConnectionError.unableToResolveConversation)
+                            return
+                        }
+
+                        try await resolver.resolveOneOnOneConversation(
+                            with: QualifiedID(uuid: userID, domain: domain),
+                            in: context
+                        )
+                        await MainActor.run {
+                            completion(nil)
+                        }
+                    } catch {
+                        await MainActor.run {
+                            completion(error)
+                        }
+                    }
+
+                }
+
             case .failure(let error):
                 completion(error)
             }
-        })
+        }
     }
 
     public func ignore(completion: @escaping (Error?) -> Void) {

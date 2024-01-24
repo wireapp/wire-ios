@@ -17,9 +17,21 @@
 //
 
 import XCTest
-import WireDataModel
+@testable import WireDataModel
 
 class ZMUserLegalHoldTests: ModelObjectsTests {
+
+    override func setUp() {
+        DeveloperFlag.storage = .temporary()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+        super.setUp()
+    }
+
+    override func tearDown() {
+        DeveloperFlag.storage = .standard
+        super.tearDown()
+    }
 
     func testThatLegalHoldStatusIsDisabled_ByDefault() {
         // GIVEN
@@ -70,28 +82,34 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
     }
 
-    func testThatLegalHoldStatusIsEnabled_AfterAcceptingRequest() {
+    func testThatLegalHoldStatusIsEnabled_AfterAcceptingRequest() async {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-        createSelfClient(onMOC: uiMOC)
+        var legalHoldRequest: LegalHoldRequest!
+        var selfUser: ZMUser!
+        var conversation: ZMConversation!
 
-        let conversation = createConversation(in: uiMOC)
-        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        await syncMOC.perform { [self] in
+            selfUser = ZMUser.selfUser(in: syncMOC)
+            createSelfClient(onMOC: syncMOC)
 
-        // WHEN
-        let request = LegalHoldRequest.mockRequest(for: selfUser)
-        selfUser.userDidReceiveLegalHoldRequest(request)
+            conversation = createConversation(in: syncMOC)
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
 
-        performPretendingUiMocIsSyncMoc {
-            _ = selfUser.addLegalHoldClient(from: request)
-            selfUser.userDidAcceptLegalHoldRequest(request)
+            legalHoldRequest = LegalHoldRequest.mockRequest(for: selfUser)
+            selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
         }
 
+        // WHEN
+        _ = await selfUser.addLegalHoldClient(from: legalHoldRequest)
+        await syncMOC.perform { selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest) }
+
         // THEN
-        XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
-        XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
-        XCTAssertTrue(conversation.allMessages.contains(where: { ($0 as? ZMSystemMessage)?.systemMessageType == .legalHoldEnabled }))
-        XCTAssertTrue(conversation.isUnderLegalHold)
+        await syncMOC.perform {
+            XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
+            XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
+            XCTAssertTrue(conversation.allMessages.contains { ($0 as? ZMSystemMessage)?.systemMessageType == .legalHoldEnabled })
+            XCTAssertTrue(conversation.isUnderLegalHold)
+        }
     }
 
     func testThatLegalHoldStatusIsEnabled_AfterAddingClient() {
@@ -119,42 +137,50 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
     }
 
-    func testThatLegalHoldStatusIsDisabled_AfterRemovingClient() {
+    func testThatLegalHoldStatusIsDisabled_AfterRemovingClient() async {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: uiMOC)
+        var selfUser: ZMUser!
+        var legalHoldClient: UserClient!
 
-        let legalHoldClient = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
-        XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
+        await syncMOC.perform { [syncMOC] in
+            selfUser = ZMUser.selfUser(in: syncMOC)
+            legalHoldClient = UserClient.createMockLegalHoldSelfUserClient(in: syncMOC)
+            XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
 
-        selfUser.acknowledgeLegalHoldStatus()
-        XCTAssertFalse(selfUser.needsToAcknowledgeLegalHoldStatus)
-
-        // WHEN
-        performPretendingUiMocIsSyncMoc {
-            legalHoldClient.deleteClientAndEndSession()
+            selfUser.acknowledgeLegalHoldStatus()
+            XCTAssertFalse(selfUser.needsToAcknowledgeLegalHoldStatus)
         }
 
+        // WHEN
+        await legalHoldClient.deleteClientAndEndSession()
+
         // THEN
-        XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
-        XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
+        await syncMOC.perform {
+            XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
+            XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
+        }
     }
 
-    func testThatItDoesntClearNotificationFlag_AfterRemovingNormalClient() {
+    func testThatItDoesntClearNotificationFlag_AfterRemovingNormalClient() async {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: uiMOC)
+        var selfUser: ZMUser!
+        var normalClient: UserClient!
 
-        let normalClient = UserClient.createMockPhoneUserClient(in: uiMOC)
-        UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
-        XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
-
-        // WHEN
-        performPretendingUiMocIsSyncMoc {
-            normalClient.deleteClientAndEndSession()
+        await syncMOC.perform { [syncMOC] in
+            selfUser = ZMUser.selfUser(in: syncMOC)
+            normalClient = UserClient.createMockPhoneUserClient(in: syncMOC)
+            UserClient.createMockLegalHoldSelfUserClient(in: syncMOC)
+            XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
         }
 
+        // WHEN
+        await normalClient.deleteClientAndEndSession()
+
         // THEN
-        XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
-        XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
+        await syncMOC.perform {
+            XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
+            XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
+        }
     }
 
 }

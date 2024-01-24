@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 @testable import WireSyncEngine
 
-class TestTeamObserver: NSObject, TeamObserver {
+final class TestTeamObserver: NSObject, TeamObserver {
 
     var token: NSObjectProtocol!
     var observedTeam: Team?
@@ -152,5 +152,4 @@ extension TeamTests {
         }
         XCTAssertTrue(change.membersChanged)
     }
-
 }

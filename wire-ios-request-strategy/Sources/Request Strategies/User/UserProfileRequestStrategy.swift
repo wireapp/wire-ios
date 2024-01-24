@@ -34,6 +34,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     let userProfileByIDTranscoder: UserProfileByIDTranscoder
     let userProfileByQualifiedIDTranscoder: UserProfileByQualifiedIDTranscoder
 
+    let actionSync: EntityActionSync
+
     public init(managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 syncProgress: SyncProgress) {
@@ -47,6 +49,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         self.userProfileByQualifiedID = IdentifierObjectSync(managedObjectContext: managedObjectContext,
                                                              transcoder: userProfileByQualifiedIDTranscoder)
 
+        self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext)])
+
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [.allowsRequestsWhileOnline,
@@ -58,12 +62,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fetchAllConnectedUsers(for: apiVersion)
-        switch apiVersion {
-        case .v0:
-            return userProfileByID.nextRequest(for: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5:
-            return userProfileByQualifiedID.nextRequest(for: apiVersion)
-        }
+
+        return [userProfileByID, userProfileByQualifiedID, actionSync].nextRequest(for: apiVersion)
     }
 
     func fetchAllConnectedUsers(for apiVersion: APIVersion) {
@@ -98,7 +98,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         case .v0:
             userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             } else if let domain = BackendInfo.domain {
@@ -240,12 +240,14 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard apiVersion == .v0 else { return nil }
         // GET /users?ids=?
         let userIDs = identifiers.map({ $0.transportString() }).joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
 
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
             if case .notFound = responseFailure.label {
@@ -311,7 +313,9 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
+
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
             guard case .notFound = responseFailure.label else { return }
             markUserProfilesAsFetched(identifiers)
@@ -345,7 +349,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.qualifiedID))
             markUserProfilesAsFetched(missingIdentifiers)
 
-        case .v4, .v5:
+        case .v4, .v5, .v6:
             guard
                 let rawData = response.rawData,
                 let payload = Payload.UserProfilesV4(rawData, decoder: decoder)

@@ -113,12 +113,9 @@ extension ZMConversation {
     }
 
     /// Should be called if we need to verify the legal hold status after fetching the clients in a conversation.
-    public func updateSecurityLevelIfNeededAfterFetchingClients(changes: ZMConversationRemoteClientChangeSet) {
+    public func updateSecurityLevelIfNeededAfterFetchingClients() {
         needsToVerifyLegalHold = false
-
-        if changes.isEmpty {
-            applySecurityChanges(cause: .verifyLegalHold)
-        }
+        applySecurityChanges(cause: .verifyLegalHold)
     }
 
     /// Should be called when client is trusted.
@@ -436,7 +433,7 @@ extension ZMConversation {
                 // Delivery receipt: just expire it
                 message.expire()
             } else {
-                WireLogger.messaging.warn("expiring message due to security degradation \(message.nonce?.transportString().readableHash)")
+                WireLogger.messaging.warn("expiring message due to security degradation " + String(describing: message.nonce?.transportString().readableHash))
                 // All other messages: expire and mark that it caused security degradation
                 message.expire()
                 message.causedSecurityLevelDegradation = true
@@ -586,18 +583,26 @@ extension ZMConversation {
     }
 
     @discardableResult
-    func appendSystemMessage(type: ZMSystemMessageType,
-                             sender: ZMUser,
-                             users: Set<ZMUser>?,
-                             addedUsers: Set<ZMUser> = Set(),
-                             clients: Set<UserClient>?,
-                             timestamp: Date,
-                             duration: TimeInterval? = nil,
-                             messageTimer: Double? = nil,
-                             relevantForStatus: Bool = true,
-                             removedReason: ZMParticipantsRemovedReason = .none,
-                             domains: [String]? = nil) -> ZMSystemMessage {
-        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
+    func appendSystemMessage(
+        type: ZMSystemMessageType,
+        sender: ZMUser,
+        users: Set<ZMUser>?,
+        addedUsers: Set<ZMUser> = Set(),
+        clients: Set<UserClient>?,
+        timestamp: Date,
+        duration: TimeInterval? = nil,
+        messageTimer: Double? = nil,
+        relevantForStatus: Bool = true,
+        removedReason: ZMParticipantsRemovedReason = .none,
+        domains: [String]? = nil
+    ) -> ZMSystemMessage {
+        guard let context = managedObjectContext else {
+            let message = "can not append system message without managedObjectContext!"
+            WireLogger.updateEvent.critical(message)
+            zmLog.safePublic(SanitizedString(stringLiteral: message))
+            fatalError("can not append system message without managedObjectContext!")
+        }
+        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
         systemMessage.users = users ?? Set()

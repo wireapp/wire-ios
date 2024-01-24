@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     var teamID: UUID!
     var user1ID: QualifiedID!
     var user2ID: QualifiedID!
+    var mlsService: MockMLSServiceInterface!
 
     var expectedRequestPayload: RequestPayload!
     var successResponsePayloadProteus: ResponsePayload!
@@ -40,7 +41,12 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     override func setUp() {
         super.setUp()
-        sut = CreateGroupConversationActionHandler(context: syncMOC)
+        mlsService = MockMLSServiceInterface()
+        sut = CreateGroupConversationActionHandler(
+            context: syncMOC,
+            mlsService: mlsService,
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
+        )
         conversationID = .randomID()
         mlsGroupID = MLSGroupID([1, 2, 3])
         teamID = .create()
@@ -98,11 +104,12 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.base64EncodedString
         successResponsePayloadMLS.epoch = 0
 
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.com"
     }
 
     override func tearDown() {
+        mlsService = nil
         sut = nil
         conversationID = nil
         mlsGroupID = nil
@@ -112,6 +119,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         expectedRequestPayload = nil
         successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
+        BackendInfo.storage = .standard
         super.tearDown()
     }
 
@@ -255,38 +263,40 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     // MARK: - Response handling
 
     func test_HandleResponse_200() throws {
+        // Given
+        BackendInfo.apiVersion = .v2
+        action = createAction()
+        handler = sut
+
+        // When
+        let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
+        let result = try XCTUnwrap(test_itHandlesSuccess(
+            status: 200,
+            payload: payload as ZMTransportData
+        ))
+
+        // Then
         try syncMOC.performAndWait {
-            // Given
-            BackendInfo.apiVersion = .v2
-            action = createAction()
-            let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
-
-            // When
-            let result = try XCTUnwrap(test_itHandlesSuccess(
-                status: 200,
-                payload: payload as ZMTransportData
-            ))
-
-            // Then
             let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
         }
     }
 
     func test_HandleResponse_201() throws {
+        // Given
+        BackendInfo.apiVersion = .v2
+        action = createAction()
+        handler = sut
+
+        // When
+        let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
+        let result = try XCTUnwrap(test_itHandlesSuccess(
+            status: 201,
+            payload: payload as ZMTransportData
+        ))
+
+        // Then
         try syncMOC.performAndWait {
-            // Given
-            BackendInfo.apiVersion = .v2
-            action = createAction()
-            let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
-
-            // When
-            let result = try XCTUnwrap(test_itHandlesSuccess(
-                status: 201,
-                payload: payload as ZMTransportData
-            ))
-
-            // Then
             let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
         }
@@ -305,33 +315,32 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     func test_ItCreatesMLSGroup() throws {
+        // Given
+        BackendInfo.apiVersion = .v2
+        action = createAction()
+        handler = sut
+        mlsService.conversationExistsGroupID_MockMethod = { _ in false }
+        mlsService.createGroupForWith_MockMethod = { _, _ in }
+        mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
+        let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
+
+        // When
+        let result = try XCTUnwrap(test_itHandlesSuccess(
+            status: 201,
+            payload: payload as ZMTransportData
+        ))
+
+        // Then
         try syncMOC.performAndWait {
-            // Given
-            BackendInfo.apiVersion = .v2
-            action = createAction()
-            let mlsService = MockMLSServiceInterface()
-            mlsService.conversationExistsGroupID_MockMethod = { _ in false }
-            mlsService.createGroupFor_MockMethod = { _ in }
-            mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
-            self.syncMOC.mlsService = mlsService
-            let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
-
-            // When
-            let result = try XCTUnwrap(test_itHandlesSuccess(
-                status: 201,
-                payload: payload as ZMTransportData
-            ))
-
-            // Then
             let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
             XCTAssertEqual(conversation.messageProtocol, .mls)
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
             XCTAssertEqual(conversation.mlsStatus, .ready)
 
-            XCTAssertEqual(mlsService.createGroupFor_Invocations.count, 1)
+            XCTAssertEqual(mlsService.createGroupForWith_Invocations.count, 1)
 
-            let createGroupCall = mlsService.createGroupFor_Invocations.element(atIndex: 0)
+            let createGroupCall = mlsService.createGroupForWith_Invocations.element(atIndex: 0)?.groupID
             XCTAssertEqual(createGroupCall, mlsGroupID)
         }
     }
@@ -339,6 +348,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     func test_HandleResponse_Failures() throws {
         // Given
         action = createAction()
+        handler = sut
 
         // Then
         test_itHandlesFailures([
@@ -374,8 +384,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
                 teamID: teamID,
                 isReadReceiptsEnabled: true
             )
+            handler = sut
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -428,8 +439,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
                 teamID: teamID,
                 isReadReceiptsEnabled: true
             )
+            handler = sut
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {

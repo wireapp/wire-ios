@@ -3,7 +3,7 @@
 
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ import UIKit
 import AppKit
 #endif
 
-import WireSyncEngine
 
+@testable import WireSyncEngine
 
 
 
@@ -77,6 +77,59 @@ public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerpri
         } else {
             fatalError("no mock for `invokeUserClient`")
         }
+    }
+
+}
+
+class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - performActionsIfNeeded
+
+    var performActionsIfNeeded_Invocations: [Void] = []
+    var performActionsIfNeeded_MockMethod: (() -> Void)?
+
+    func performActionsIfNeeded() {
+        performActionsIfNeeded_Invocations.append(())
+
+        guard let mock = performActionsIfNeeded_MockMethod else {
+            fatalError("no mock for `performActionsIfNeeded`")
+        }
+
+        mock()
+    }
+
+    // MARK: - registerAction
+
+    var registerAction_Invocations: [RecurringAction] = []
+    var registerAction_MockMethod: ((RecurringAction) -> Void)?
+
+    func registerAction(_ action: RecurringAction) {
+        registerAction_Invocations.append(action)
+
+        guard let mock = registerAction_MockMethod else {
+            fatalError("no mock for `registerAction`")
+        }
+
+        mock(action)
+    }
+
+    // MARK: - forcePerformAction
+
+    var forcePerformActionId_Invocations: [String] = []
+    var forcePerformActionId_MockMethod: ((String) -> Void)?
+
+    func forcePerformAction(id: String) {
+        forcePerformActionId_Invocations.append(id)
+
+        guard let mock = forcePerformActionId_MockMethod else {
+            fatalError("no mock for `forcePerformActionId`")
+        }
+
+        mock(id)
     }
 
 }

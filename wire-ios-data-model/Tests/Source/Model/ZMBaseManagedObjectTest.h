@@ -62,6 +62,11 @@
 
 @end
 
+@interface ZMBaseManagedObjectTest (ObjectCreation)
+
+- (nonnull ZMConversation *)insertValidOneOnOneConversationInContext:(nonnull NSManagedObjectContext *)context;
+
+@end
 
 
 @interface ZMBaseManagedObjectTest (UserTesting)
@@ -90,7 +95,6 @@
 - (nonnull UserClient *)createSelfClientOnMOC:(nonnull NSManagedObjectContext *)moc;
 
 - (nonnull UserClient *)createClientForUser:(nonnull ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser;
-- (nonnull UserClient *)createClientForUser:(nonnull ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(nonnull NSManagedObjectContext *)moc;
 
 @end
 

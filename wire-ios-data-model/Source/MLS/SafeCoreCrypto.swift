@@ -22,62 +22,69 @@ import WireCoreCrypto
 // MARK: - Protocols
 
 public protocol SafeCoreCryptoProtocol {
-    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
+    func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
-    func mlsInit(clientID: String) throws
+    func mlsInit(clientID: String) async throws
     func tearDown() throws
 }
 
-let defaultCipherSuite = CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519
+extension CiphersuiteName {
+    var rawValue: UInt16 {
+        switch self {
+        case .mls128Dhkemx25519Aes128gcmSha256Ed25519:
+            return 1
+        case .mls128Dhkemp256Aes128gcmSha256P256:
+            return 2
+        case .mls128Dhkemx25519Chacha20poly1305Sha256Ed25519:
+            return 3
+        case .mls256Dhkemx448Aes256gcmSha512Ed448:
+            return 4
+        case .mls256Dhkemp521Aes256gcmSha512P521:
+            return 5
+        case .mls256Dhkemx448Chacha20poly1305Sha512Ed448:
+            return 6
+        case .mls256Dhkemp384Aes256gcmSha384P384:
+            return 7
+        case .mls128X25519kyber768draft00Aes128gcmSha256Ed25519:
+            return 8
+        @unknown default:
+            fatalError("unsupported value of 'CiphersuiteName'!")
+        }
+    }
+
+    static var `default` = CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519
+}
 
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
+
     public enum CoreCryptoSetupFailure: Error, Equatable {
         case failedToGetClientIDBytes
     }
 
     private let coreCrypto: CoreCryptoProtocol
     private let safeContext: SafeFileContext
-    private var didInitializeMLS = false
     private let databasePath: String
 
-    public convenience init(coreCryptoConfiguration config: CoreCryptoConfiguration) throws {
-        guard let clientID = config.clientIDBytes else {
-            throw CoreCryptoSetupFailure.failedToGetClientIDBytes
-        }
-
-        let coreCrypto = try CoreCrypto(
-            path: config.path,
-            key: config.key,
-            clientId: clientID,
-            ciphersuites: [defaultCipherSuite.rawValue]
-        )
-
-        self.init(coreCrypto: coreCrypto, databasePath: config.path)
-        didInitializeMLS = true
-    }
-
-    public convenience init(path: String, key: String) throws {
-        let coreCrypto = try CoreCrypto.deferredInit(
+    public convenience init(path: String, key: String) async throws {
+        // NOTE: the ciphersuites argument is not used here and will eventually be removed.
+        let coreCrypto = try await coreCryptoDeferredInit(
             path: path,
             key: key,
-            ciphersuites: [defaultCipherSuite.rawValue]
+            ciphersuites: [CiphersuiteName.default.rawValue], nbKeyPackage: nil
         )
 
-        try coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
+        try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
 
         self.init(coreCrypto: coreCrypto, databasePath: path)
     }
 
-    public func mlsInit(clientID: String) throws {
-        guard !didInitializeMLS else { return }
-
+    public func mlsInit(clientID: String) async throws {
         guard let clientIdBytes = ClientId(from: clientID) else {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
-
-        try coreCrypto.mlsInit(clientId: clientIdBytes,
-                               ciphersuites: [defaultCipherSuite.rawValue])
-        didInitializeMLS = true
+        try await coreCrypto.mlsInit(clientId: clientIdBytes,
+                                     ciphersuites: [CiphersuiteName.default.rawValue],
+                                     nbKeyPackage: nil)
     }
 
     init(coreCrypto: CoreCryptoProtocol, databasePath: String) {
@@ -91,12 +98,12 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         _ = try FileManager.default.removeItem(atPath: databasePath)
     }
 
-    public func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
+    public func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
         var result: T
         WireLogger.coreCrypto.info("acquiring directory lock")
         safeContext.acquireDirectoryLock()
         WireLogger.coreCrypto.info("acquired lock. performing restoreFromDisk()")
-        restoreFromDisk()
+        await restoreFromDisk()
 
         defer {
             WireLogger.coreCrypto.info("releasing directory lock")
@@ -105,7 +112,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         }
 
         do {
-            result = try block(coreCrypto)
+            result = try await block(coreCrypto)
         } catch {
             WireLogger.coreCrypto.error("failed to perform block on core crypto")
             throw error
@@ -118,9 +125,9 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         return try block(coreCrypto)
     }
 
-    private func restoreFromDisk() {
+    private func restoreFromDisk() async {
         do {
-            try coreCrypto.restoreFromDisk()
+            try await coreCrypto.restoreFromDisk()
         } catch {
             WireLogger.coreCrypto.error(error.localizedDescription)
         }

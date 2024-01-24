@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -134,8 +134,8 @@ final class ProfileViewControllerViewModel: NSObject {
         if let conversation = user.oneToOneConversation {
             transition(to: conversation)
         } else {
-            user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
-                guard let conversation = conversation else { return }
+            user.createTeamOneToOneConversation(in: userSession.viewContext) { result in
+                guard case .success(let conversation) = result else { return }
 
                 self.transition(to: conversation)
             }
@@ -238,7 +238,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func acceptConnectionRequest() {
         user.accept { [weak self] error in
-            if let error = error as? ConnectToUserError {
+            if let error = error as? LocalizedError {
                 self?.viewModelDelegate?.presentError(error)
             } else {
                 self?.user.refreshData()

@@ -154,7 +154,7 @@
 		D504CD392090CCE400A78DAA /* CurryingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD382090CCE400A78DAA /* CurryingTests.swift */; };
 		D504CD3B2090D00500A78DAA /* FlipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD3A2090D00500A78DAA /* FlipTests.swift */; };
 		D504CD3D2090D12900A78DAA /* PapplyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD3C2090D12900A78DAA /* PapplyTests.swift */; };
-		D53DB99F203ED59C00655CB4 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB99E203ED59C00655CB4 /* Result.swift */; };
+		D53DB99F203ED59C00655CB4 /* Result+success.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB99E203ED59C00655CB4 /* Result+success.swift */; };
 		D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */; };
 		D56A2D4A207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */; };
 		D5D65A13207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */; };
@@ -403,7 +403,7 @@
 		D504CD382090CCE400A78DAA /* CurryingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurryingTests.swift; sourceTree = "<group>"; };
 		D504CD3A2090D00500A78DAA /* FlipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipTests.swift; sourceTree = "<group>"; };
 		D504CD3C2090D12900A78DAA /* PapplyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PapplyTests.swift; sourceTree = "<group>"; };
-		D53DB99E203ED59C00655CB4 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		D53DB99E203ED59C00655CB4 /* Result+success.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+success.swift"; sourceTree = "<group>"; };
 		D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SwiftTests.swift"; sourceTree = "<group>"; };
 		D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+PerformGrouped.swift"; sourceTree = "<group>"; };
@@ -545,6 +545,8 @@
 			indentWidth = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		3E88BD391B1F3EA300232589 /* Products */ = {
 			isa = PBXGroup;
@@ -567,7 +569,7 @@
 				1623F8F42AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift */,
 				D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */,
 				163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */,
-				D53DB99E203ED59C00655CB4 /* Result.swift */,
+				D53DB99E203ED59C00655CB4 /* Result+success.swift */,
 				546B178124192FB70091F4B3 /* ZMObjectValidationError.m */,
 				F9C9A7931CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m */,
 				3E88BF661B1F693F00232589 /* NSData+ZMAdditions.m */,
@@ -1149,7 +1151,7 @@
 				54181A561F594FD800155ABC /* FileManager+FileProtectionLock.swift in Sources */,
 				16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */,
 				870FFA821D82B73B007E9806 /* Data+ZMSCrypto.swift in Sources */,
-				D53DB99F203ED59C00655CB4 /* Result.swift in Sources */,
+				D53DB99F203ED59C00655CB4 /* Result+success.swift in Sources */,
 				E9C337542ABC91DE0084ABCF /* Array+Cardinality.swift in Sources */,
 				A9CDCDC2237D9928008A9BC6 /* UIColor+Hex.swift in Sources */,
 				8735AE6F2035E3BC00DCE66E /* StringLengthValidator.swift in Sources */,

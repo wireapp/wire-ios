@@ -22,6 +22,18 @@ import WireSystem
 
 enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
+    case noDatabaseActivity
+}
+extension CoreDataStackError: LocalizedError {
+
+    var errorDescription: String? {
+        switch self {
+        case .simulateDatabaseLoadingFailure:
+            return "simulateDatabaseLoadingFailure"
+        case .noDatabaseActivity:
+            return "Could not create a background activity for database setup"
+        }
+    }
 }
 
 @objc
@@ -193,9 +205,9 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     func closeStores(in container: PersistentContainer) throws {
-        try container.persistentStoreCoordinator.persistentStores.forEach({
+        try container.persistentStoreCoordinator.persistentStores.forEach {
             try container.persistentStoreCoordinator.remove($0)
-        })
+        }
     }
 
     public func setup(
@@ -206,7 +218,6 @@ public class CoreDataStack: NSObject, ContextProvider {
         if needsMigration {
             onStartMigration()
         }
-
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
                 log.safePublic("[setup] start migration of core data messaging store!")
@@ -217,8 +228,10 @@ public class CoreDataStack: NSObject, ContextProvider {
                     log.safePublic("[setup] finished migration of core data messaging store!")
                     WireLogger.localStorage.info("finished migration of core data messaging store!")
                 } catch {
-                    log.safePublic("[setup] failed migration of core data messaging store: \(SanitizedString(stringLiteral: error.localizedDescription))")
-                    WireLogger.localStorage.error("failed migration of core data messaging store! \(error.localizedDescription)")
+                    let logMessage = "failed migration of core data messaging store: \(error.localizedDescription)."
+                    log.safePublic("[setup] \(SanitizedString(stringLiteral: logMessage))", level: .error)
+                    WireLogger.localStorage.error(logMessage)
+
                     DispatchQueue.main.async {
                         onFailure(error)
                     }

@@ -33,7 +33,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
     let fingerprint = "1234"
 
     override func setUp() {
-        DeveloperFlag.storage = .random()!
+        DeveloperFlag.storage = .temporary()
         mockProteusService = MockProteusServiceInterface()
         mockSessionEstablisher = MockSessionEstablisherInterface()
         super.setUp()
@@ -69,8 +69,9 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
 
         mockProteusService.sessionExistsId_MockValue = sessionEstablished
         var userClient: UserClient!
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             userClient = self.createSelfClient()
+            userClient.user?.domain = "example.com"
         }
 
         let expectation = XCTestExpectation(description: "should call establishSession")
@@ -93,7 +94,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         sut = createSut(proteusEnabled: false)
 
         var userClient: UserClient!
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             userClient = self.createSelfClient()
         }
 
@@ -109,7 +110,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         sut = createSut(proteusEnabled: true)
 
         var userClient: UserClient!
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             userClient = self.createSelfClient()
         }
 
@@ -128,7 +129,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         // GIVEN
         sut = createSut(proteusEnabled: true)
 
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             _ = self.createSelfClient()
         }
 

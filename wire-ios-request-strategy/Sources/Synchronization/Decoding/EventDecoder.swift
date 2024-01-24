@@ -63,7 +63,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
     /// Guarantee to get proteusProvider from correct context
     /// - Note: to be replaced when proteusProvider is not attached to context 🤞
     private var proteusProvider: ProteusProviding {
-        return syncMOC.performAndWait {
+        syncMOC.performAndWait {
             syncMOC.proteusProvider
         }
     }
@@ -163,26 +163,27 @@ extension EventDecoder {
     ) async -> [ZMUpdateEvent] {
         var decryptedEvents = [ZMUpdateEvent]()
 
-        decryptedEvents = await events.asyncCompactMap { event -> ZMUpdateEvent? in
+        decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
             switch event.type {
             case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                return await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                     try await proteusService.decrypt(
                         data: encryptedData,
                         forSession: sessionID
                     )
                 }
+                return proteusEvent.map { [$0] } ?? []
             case .conversationMLSMessageAdd:
                 return await self.decryptMlsMessage(from: event, context: self.syncMOC)
 
             default:
-                return event
+                return [event]
             }
-        }
+        }.joined())
 
         // This call has to be synchronous to ensure that we close the
         // encryption context only if we stored all events in the database.
-        eventMOC.performAndWait {
+        await eventMOC.perform {
             self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
         }
 
@@ -200,27 +201,28 @@ extension EventDecoder {
         await keyStore.encryptionContext.performAsync { [weak self] sessionsDirectory in
             guard let self else { return }
 
-            decryptedEvents = await events.asyncCompactMap { event -> ZMUpdateEvent? in
+            decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    return await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                         try sessionsDirectory.decryptData(
                             encryptedData,
                             for: sessionID.mapToEncryptionSessionID()
                         )
                     }
+                    return proteusEvent.map { [$0] } ?? []
 
                 case .conversationMLSMessageAdd:
                     return await self.decryptMlsMessage(from: event, context: self.syncMOC)
 
                 default:
-                    return event
+                    return [event]
                 }
-            }
+            }.joined())
 
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
-            eventMOC.performAndWait {
+            await eventMOC.perform {
                 self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
             }
 

@@ -39,6 +39,8 @@
 		54AFD7E51CB6986A0090E33A /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DF1CB698690090E33A /* not_animated.gif */; };
 		54AFD7E61CB6986A0090E33A /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7E01CB698690090E33A /* tiny.jpg */; };
 		54AFD7E81CB699710090E33A /* ZMTTestBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AFD7E71CB699710090E33A /* ZMTTestBaseTests.swift */; };
+		59059B912B4DA4EF0087D1F1 /* MockStaticDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B902B4DA4EF0087D1F1 /* MockStaticDateProvider.swift */; };
+		59059B952B4DA7200087D1F1 /* MockDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B942B4DA7200087D1F1 /* MockDateProvider.swift */; };
 		87B0EF5C2139687500CE1931 /* ManagedObjectContextChangesMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */; };
 		A94B2335266F9C1200D89927 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */; };
 		A971FAE123D7477200AB25B4 /* ZMTBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A971FAE023D7477200AB25B4 /* ZMTBaseTest.swift */; };
@@ -122,6 +124,8 @@
 		54AFD7E01CB698690090E33A /* tiny.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tiny.jpg; sourceTree = "<group>"; };
 		54AFD7E71CB699710090E33A /* ZMTTestBaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMTTestBaseTests.swift; sourceTree = "<group>"; };
 		54BD49F11D41FA56006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		59059B902B4DA4EF0087D1F1 /* MockStaticDateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStaticDateProvider.swift; sourceTree = "<group>"; };
+		59059B942B4DA7200087D1F1 /* MockDateProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockDateProvider.swift; sourceTree = "<group>"; };
 		87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectContextChangesMerger.swift; sourceTree = "<group>"; };
 		A971FAE023D7477200AB25B4 /* ZMTBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMTBaseTest.swift; sourceTree = "<group>"; };
 		CE6B7B2B1C11ED5F00FC4C2E /* ZMMockEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockEntity.h; sourceTree = "<group>"; };
@@ -166,7 +170,11 @@
 				096AD7EC1B68D8DF00E007A8 /* Frameworks */,
 				096AD7BC1B68D41D00E007A8 /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		096AD7BC1B68D41D00E007A8 /* Products */ = {
 			isa = PBXGroup;
@@ -243,6 +251,7 @@
 		09A217E61B78DFAF0076547A /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				59059B932B4DA70D0087D1F1 /* DateProviders */,
 				CE6B7B2A1C11ECC000FC4C2E /* Mock Data Model */,
 				09A217F01B78DFAF0076547A /* WireTesting.h */,
 				09A217E71B78DFAF0076547A /* ZMTImageComparator.h */,
@@ -294,6 +303,15 @@
 				54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
+			sourceTree = "<group>";
+		};
+		59059B932B4DA70D0087D1F1 /* DateProviders */ = {
+			isa = PBXGroup;
+			children = (
+				59059B942B4DA7200087D1F1 /* MockDateProvider.swift */,
+				59059B902B4DA4EF0087D1F1 /* MockStaticDateProvider.swift */,
+			);
+			path = DateProviders;
 			sourceTree = "<group>";
 		};
 		CE6B7B2A1C11ECC000FC4C2E /* Mock Data Model */ = {
@@ -464,12 +482,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				87B0EF5C2139687500CE1931 /* ManagedObjectContextChangesMerger.swift in Sources */,
+				59059B912B4DA4EF0087D1F1 /* MockStaticDateProvider.swift in Sources */,
 				09A218021B78DFAF0076547A /* ZMTSwiftHelpers.swift in Sources */,
 				09A217FE1B78DFAF0076547A /* ZMTBaseTest.m in Sources */,
 				09A218041B78E01A0076547A /* FakeGroupContext.swift in Sources */,
 				091799591B7DFBD100E60DD9 /* NSUUID+WireTesting.m in Sources */,
 				09A217F51B78DFAF0076547A /* ZMTExpectation.m in Sources */,
 				CE6B7B321C11ED5F00FC4C2E /* ZMMockEntity2.m in Sources */,
+				59059B952B4DA7200087D1F1 /* MockDateProvider.swift in Sources */,
 				09A217F71B78DFAF0076547A /* ZMTImageComparator.m in Sources */,
 				09A217FB1B78DFAF0076547A /* NSOperationQueue+WireTesting.m in Sources */,
 				098CFBC51B7BAA2D000B02B1 /* XCTestCase+Helpers.m in Sources */,
