@@ -175,8 +175,8 @@ extension GetFeatureConfigsActionHandler {
         let digitalSignatures: FeatureStatus?
         let fileSharing: FeatureStatus?
         let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
-        let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
         let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
+        let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
 
     }
 
