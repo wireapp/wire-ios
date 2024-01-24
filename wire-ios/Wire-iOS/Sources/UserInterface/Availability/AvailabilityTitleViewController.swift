@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
 
 final class AvailabilityTitleViewController: UIViewController {
 
-    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    private lazy var feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+
     private let options: AvailabilityTitleView.Options
     private let user: UserType
-    let userSession: UserSession
-
-    var availabilityTitleView: AvailabilityTitleView? {
-        return view as? AvailabilityTitleView
-    }
+    private let userSession: UserSession
 
     init(user: UserType, options: AvailabilityTitleView.Options, userSession: UserSession) {
         self.user = user
@@ -45,38 +41,31 @@ final class AvailabilityTitleViewController: UIViewController {
     }
 
     override func loadView() {
-        view = AvailabilityTitleView(user: user, options: options, userSession: userSession)
-    }
-
-    override func viewDidLoad() {
-        availabilityTitleView?.tapHandler = { [weak self] _ in
-            guard let `self` = self else { return }
-            self.presentAvailabilityPicker()
-        }
+        let view = AvailabilityTitleView(user: user, options: options, userSession: userSession)
+        view.tapHandler = { [weak self] _ in self?.presentAvailabilityPicker() }
+        self.view = view
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            availabilityTitleView?.updateConfiguration()
+
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            (view as! AvailabilityTitleView).updateConfiguration()
         }
     }
 
-    func presentAvailabilityPicker() {
-        let alertViewController = UIAlertController.availabilityPicker { [weak self] (availability) in
-            guard let `self` = self else { return }
-            self.didSelectAvailability(availability)
+    private func presentAvailabilityPicker() {
+        let alertViewController = UIAlertController.availabilityPicker { [weak self] availability in
+            self?.didSelectAvailability(availability)
         }
-
         alertViewController.configPopover(pointToView: view)
-
         present(alertViewController, animated: true)
     }
 
     private func didSelectAvailability(_ availability: AvailabilityKind) {
         let changes = { [weak self] in
             self?.user.availability = availability
-            self?.provideHapticFeedback()
+            self?.feedbackGenerator.impactOccurred()
         }
 
         userSession.perform(changes)
@@ -85,10 +74,4 @@ final class AvailabilityTitleViewController: UIViewController {
             present(UIAlertController.availabilityExplanation(availability), animated: true)
         }
     }
-
-    private func provideHapticFeedback() {
-        feedbackGenerator.prepare()
-        feedbackGenerator.impactOccurred()
-    }
-
 }
