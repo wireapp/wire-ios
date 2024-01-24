@@ -49,6 +49,8 @@ typedef NS_ENUM(NSUInteger, ZMClientRegistrationPhase) {
 
     ZMClientRegistrationPhaseGeneratingPrekeys,
 
+    ZMClientRegistrationPhaseRegisteringMLSClient,
+
     /// The client is registered
     ZMClientRegistrationPhaseRegistered
 };
@@ -66,7 +68,7 @@ extern NSString *const ZMPersistedClientIdKey;
 - (BOOL)needsToRegisterClient;
 + (BOOL)needsToRegisterClientInContext:(NSManagedObjectContext *)moc;
 
-- (void)didRegisterClient:(UserClient *)client;
+- (void)didRegisterProteusClient:(UserClient *)client;
 - (void)didRegisterMLSClient:(UserClient *)client;
 
 - (void)didDetectCurrentClientDeletion;
@@ -90,5 +92,6 @@ extern NSString *const ZMPersistedClientIdKey;
 @property (nonatomic) BOOL isWaitingForUserClients;
 @property (nonatomic) BOOL isWaitingForClientsToBeDeleted;
 @property (nonatomic) BOOL isGeneratingPrekeys;
+@property (nonatomic) BOOL isWaitingForMLSClientToBeRegistered;
 
 @end

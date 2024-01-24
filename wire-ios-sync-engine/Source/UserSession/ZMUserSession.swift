@@ -461,6 +461,26 @@ public class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+        updateSupportedProtocolsIfNeeded()
+    }
+
+    private func updateSupportedProtocolsIfNeeded() {
+        let recurringAction = RecurringAction(
+            id: "\(account.userIdentifier).updateSupportedProtocols",
+            interval: .oneDay
+        ) { [weak self] in
+            guard let context = self?.syncContext else { return }
+
+            context.perform {
+                let service = SupportedProtocolsService(context: context)
+                service.updateSupportedProtocols()
+            }
+        }
+
+        recurringActionService.registerAction(recurringAction)
+
+        // The action should run once on every launch, then each 24 hours thereafter.
+        recurringActionService.forcePerformAction(id: recurringAction.id)
     }
 
     private func configureTransportSession() {
@@ -505,7 +525,8 @@ public class ZMUserSession: NSObject {
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: self.proteusProvider,
-            mlsService: mlsService
+            mlsService: mlsService,
+            coreCryptoProvider: coreCryptoProvider
         )
     }
 
@@ -600,6 +621,7 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
+        // TODO: [jacob] refactor out WPB-6198
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
@@ -879,15 +901,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         action.send(in: syncContext.notificationContext)
     }
 
-    public func didRegisterMLSClient(_ userClient: UserClient) {
-        Task {
-            await mlsService.uploadKeyPackagesIfNeeded()
-        }
-    }
-
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
-        createMLSClientIfNeeded()
-
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier

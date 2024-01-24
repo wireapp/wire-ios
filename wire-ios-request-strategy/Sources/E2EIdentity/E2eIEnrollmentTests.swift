@@ -369,8 +369,8 @@ class MockAcmeApi: AcmeAPIInterface {
 
 class MockE2eIService: E2eIServiceInterface {
     var mockAcmeOrder: NewAcmeOrder?
-    var wireDpopChallenge: AcmeChallenge?
-    var wireOidcChallenge: AcmeChallenge?
+    var wireDpopChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "wire server")
+    var wireOidcChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "google")
     var mockDpopToken: String?
     var mockSetChallengeResponse: Int = 0
     var mockOrderResponse: String?
@@ -401,6 +401,7 @@ class MockE2eIService: E2eIServiceInterface {
 
     func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz {
         return NewAcmeAuthz(identifier: "111",
+                            keyauth: "keyauth",
                             wireDpopChallenge: wireDpopChallenge,
                             wireOidcChallenge: wireOidcChallenge)
     }

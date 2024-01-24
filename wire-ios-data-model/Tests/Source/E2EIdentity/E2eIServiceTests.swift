@@ -177,7 +177,12 @@ class E2eIServiceTests: ZMConversationTestsBase {
 
     func testThatItSetsAuthzResponse() async throws {
         // Expectation
-        let expectedAcmeOrder = NewAcmeAuthz(identifier: "", wireDpopChallenge: nil, wireOidcChallenge: nil)
+        let wireDpopChallenge = AcmeChallenge(delegate: Data(), url: "", target: "")
+        let wireOidcChallenge = AcmeChallenge(delegate: Data(), url: "", target: "")
+        let expectedAcmeOrder = NewAcmeAuthz(identifier: "",
+                                             keyauth: "",
+                                             wireDpopChallenge: wireDpopChallenge,
+                                             wireOidcChallenge: wireOidcChallenge)
 
         // Given
         var mockSetAuthzResponse = 0

@@ -181,6 +181,21 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
         mock(action)
     }
 
+    // MARK: - forcePerformAction
+
+    var forcePerformActionId_Invocations: [String] = []
+    var forcePerformActionId_MockMethod: ((String) -> Void)?
+
+    func forcePerformAction(id: String) {
+        forcePerformActionId_Invocations.append(id)
+
+        guard let mock = forcePerformActionId_MockMethod else {
+            fatalError("no mock for `forcePerformActionId`")
+        }
+
+        mock(id)
+    }
+
 }
 
 // swiftlint:enable variable_name

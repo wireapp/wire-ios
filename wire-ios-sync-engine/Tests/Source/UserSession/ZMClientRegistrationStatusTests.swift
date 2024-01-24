@@ -21,128 +21,185 @@ import XCTest
 
 extension ZMClientRegistrationStatusTests {
     func testThatItReturns_FetchingClients_WhenReceivingAnErrorWithTooManyClients() {
-        // given
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.remoteIdentifier = UUID()
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
 
-        // when
-        sut.didFail(toRegisterClient: tooManyClientsError()! as NSError)
+            // when
+            sut.didFail(toRegisterClient: tooManyClientsError()! as NSError)
 
-        // then
-        XCTAssertEqual(sut.currentPhase, ZMClientRegistrationPhase.fetchingClients)
+            // then
+            XCTAssertEqual(sut.currentPhase, ZMClientRegistrationPhase.fetchingClients)
+        }
     }
 
     func testThatItDoesNotNeedToRegisterMLSClient_WhenNoClientIsAlreadyRegisteredAndAllowed() {
-        // given
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.remoteIdentifier = UUID()
-        DeveloperFlag.storage = .temporary()
-        DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .temporary()
-        BackendInfo.apiVersion = .v5
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            DeveloperFlag.storage = .temporary()
+            DeveloperFlag.enableMLSSupport.enable(true)
+            BackendInfo.storage = .temporary()
+            BackendInfo.apiVersion = .v5
 
-        // then
-        XCTAssertFalse(sut.needsToRegisterMLSCLient)
+            // then
+            XCTAssertFalse(sut.needsToRegisterMLSCLient)
+        }
     }
 
     func testThatItNeeddToRegisterMLSClient_WhenClientIsRegisteredAndAllowed() {
-        // given
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.remoteIdentifier = UUID()
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
 
-        let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
-        selfClient.remoteIdentifier = UUID.create().transportString()
-        sut.didRegister(selfClient)
+            let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
+            selfClient.remoteIdentifier = UUID.create().transportString()
+            sut.didRegisterProteusClient(selfClient)
 
-        DeveloperFlag.storage = .temporary()
-        DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .temporary()
-        BackendInfo.apiVersion = .v5
+            DeveloperFlag.storage = .temporary()
+            DeveloperFlag.enableMLSSupport.enable(true)
+            BackendInfo.storage = .temporary()
+            BackendInfo.apiVersion = .v5
 
-        // then
-        XCTAssertTrue(sut.needsToRegisterMLSCLient)
+            // then
+            XCTAssertTrue(sut.needsToRegisterMLSCLient)
+        }
     }
 
     func testThatItDoesntNeedsToRegisterMLSClient_WhenClientIsAlreadyRegistered() {
-        // given
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.remoteIdentifier = UUID()
-        let selfClient = createSelfClient()
-        selfClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "someKey")
-        selfClient.needsToUploadMLSPublicKeys = false
-        DeveloperFlag.storage = .temporary()
-        DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .temporary()
-        BackendInfo.apiVersion = .v5
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            let selfClient = createSelfClient()
+            selfClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "someKey")
+            selfClient.needsToUploadMLSPublicKeys = false
+            DeveloperFlag.storage = .temporary()
+            DeveloperFlag.enableMLSSupport.enable(true)
+            BackendInfo.storage = .temporary()
+            BackendInfo.apiVersion = .v5
 
-        // then
-        XCTAssertFalse(sut.needsToRegisterMLSCLient)
+            // then
+            XCTAssertFalse(sut.needsToRegisterMLSCLient)
+        }
     }
 
     func testThatItDoesntNeedsToRegisterMLSClient_WhenNotAllowed() {
-        // given
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.remoteIdentifier = UUID()
-        DeveloperFlag.enableMLSSupport.enable(false)
-        BackendInfo.apiVersion = .v5
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            DeveloperFlag.enableMLSSupport.enable(false)
+            BackendInfo.apiVersion = .v5
 
-        // then
-        XCTAssertFalse(sut.needsToRegisterMLSCLient)
+            // then
+            XCTAssertFalse(sut.needsToRegisterMLSCLient)
+        }
     }
 
     func testThatItReturnsWaitsForPrekeys_WhenItNeedsToRegisterAClient() {
-        // given
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.remoteIdentifier = UUID()
-        selfUser.emailAddress = "email@domain.com"
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
 
-        // then
-        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
+        }
     }
 
     func testThatItReturnsGeneratesPrekeys_AfterPrekeyGenerationAsBegun() {
-        // given
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.remoteIdentifier = UUID()
-        selfUser.emailAddress = "email@domain.com"
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
 
-        // when
-        sut.willGeneratePrekeys()
+            // when
+            sut.willGeneratePrekeys()
 
-        // then
-        XCTAssertEqual(self.sut.currentPhase, .generatingPrekeys)
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .generatingPrekeys)
+        }
+    }
+
+    func testThatItReturnsRegisteringMLSClient_IfIfMLSIsEnabledAfterRegisteringProteusClient() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
+            let selfUserClient = createSelfClient()
+            selfUserClient.remoteIdentifier = "clientID"
+
+            DeveloperFlag.storage = .temporary()
+            DeveloperFlag.enableMLSSupport.enable(true)
+            BackendInfo.storage = .temporary()
+            BackendInfo.apiVersion = .v5
+
+            // when
+            sut.didRegisterProteusClient(selfUserClient)
+
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .registeringMLSClient)
+        }
+    }
+
+    func testThatItReturnsRegistered_IfMLSIsDisabledAfterRegisteringProteusClient() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
+            let selfUserClient = createSelfClient()
+            selfUserClient.remoteIdentifier = "clientID"
+
+            // when
+            sut.didRegisterProteusClient(selfUserClient)
+
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .registered)
+        }
     }
 
     func testThatItReturnsUnregistered_AfterPrekeyGenerationIsCompleted() {
-        // given
-        let prekey = IdPrekeyTuple(id: 1, prekey: "prekey1")
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.remoteIdentifier = UUID()
-        selfUser.emailAddress = "email@domain.com"
-        sut.willGeneratePrekeys()
+        syncMOC.performAndWait {
+            // given
+            let prekey = IdPrekeyTuple(id: 1, prekey: "prekey1")
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
+            sut.willGeneratePrekeys()
 
-        // when
-        sut.didGeneratePrekeys([prekey], lastResortPrekey: prekey)
+            // when
+            sut.didGeneratePrekeys([prekey], lastResortPrekey: prekey)
 
-        // then
-        XCTAssertEqual(self.sut.currentPhase, .unregistered)
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .unregistered)
+        }
     }
 
     func testThatItReturnsRegistered_AfterClientHasBeenCreated() {
-        // given
-        let prekey = IdPrekeyTuple(id: 1, prekey: "prekey1")
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.remoteIdentifier = UUID()
-        selfUser.emailAddress = "email@domain.com"
-        sut.willGeneratePrekeys()
-        sut.didGeneratePrekeys([prekey], lastResortPrekey: prekey)
+        syncMOC.performAndWait {
+            // given
+            let prekey = IdPrekeyTuple(id: 1, prekey: "prekey1")
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
+            sut.willGeneratePrekeys()
+            sut.didGeneratePrekeys([prekey], lastResortPrekey: prekey)
 
-        // when
-        let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
-        selfClient.remoteIdentifier = UUID.create().transportString()
-        sut.didRegister(selfClient)
+            // when
+            let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
+            selfClient.remoteIdentifier = UUID.create().transportString()
+            sut.didRegisterProteusClient(selfClient)
 
-        // then
-        XCTAssertEqual(self.sut.currentPhase, .registered)
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .registered)
+        }
     }
 }
