@@ -38,39 +38,44 @@ public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatu
     }
 
     public func invoke() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
-        guard let userID = await context.perform({
-            let selfUser = ZMUser.selfUser(in: context)
-            return MLSClientID(user: selfUser)
-        }) else {
+        var isMLSCertified = false
+        var isProteusVerified = false
+
+        let (selfClient, selfUserID) = await context.perform { () -> (UserClient?, MLSClientID?) in
+            guard let selfClient = ZMUser.selfUser(in: context).selfClient() else { return (.none, .none) }
+            return (selfClient, MLSClientID(userClient: selfClient))
+        }
+
+        guard let selfClient else {
+            assertionFailure("ZMUser.selfUser(in: context).selfClient() is nil")
+            return (isMLSCertified, isProteusVerified)
+        }
+
+        isProteusVerified = selfClient.verified
+
+        guard let selfUserID else {
             assertionFailure("MLSClientID(selfUser) is nil")
-            return (false, false)
+            return (isMLSCertified, isProteusVerified)
         }
 
         guard let conversationID = await context.perform({
             ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID?.data
         }) else {
             assertionFailure("selfConversation.mlsGroupID is nil")
-            return (false, false)
+            return (isMLSCertified, isProteusVerified)
         }
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
         let result = try await coreCrypto.perform { coreCrypto in
             try await coreCrypto.getUserIdentities(
                 conversationId: conversationID,
-                userIds: [userID.clientID]
+                userIds: [selfUserID.clientID]
             )
         }
-        guard let identities = result[userID.clientID] else {
-            return (false, false)
-        }
+        guard let identities = result[selfUserID.clientID] else { return (isMLSCertified, isProteusVerified) }
 
-        let isMLSCertified = identities.allSatisfy { $0.status == .valid }
+        isMLSCertified = identities.allSatisfy { $0.status == .valid }
 
-        // TODO: process result
-//        print(result)
-//        debugPrint(result)
-//        fatalError()
-
-        return (isMLSCertified, true)
+        return (isMLSCertified, isProteusVerified)
     }
 }
