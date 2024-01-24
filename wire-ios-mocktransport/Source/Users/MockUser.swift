@@ -278,8 +278,8 @@ extension MockUser {
 
     fileprivate var userPayloadForChangedValues: [String: Any]? {
         var payload = [String: Any]()
-        let regularProperties = Set(arrayLiteral: #keyPath(MockUser.name), #keyPath(MockUser.email), #keyPath(MockUser.phone))
-        let assetIds = Set(arrayLiteral: #keyPath(MockUser.previewProfileAssetIdentifier), #keyPath(MockUser.completeProfileAssetIdentifier))
+        let regularProperties: Set = [#keyPath(MockUser.name), #keyPath(MockUser.email), #keyPath(MockUser.phone)]
+        let assetIds: Set = [#keyPath(MockUser.previewProfileAssetIdentifier), #keyPath(MockUser.completeProfileAssetIdentifier)]
         for (changedKey, value) in changedValues() {
             if regularProperties.contains(changedKey) {
                 payload[changedKey] = value
