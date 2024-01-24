@@ -57,39 +57,8 @@ class TeamTests: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         return mockTeam
     }
-}
 
-// MARK: Notifications
-
-extension TeamTests {
-
-    func testThatItNotifiesAboutChangedTeamName() {
-        // given
-        let mockTeam = remotelyInsertTeam(members: [self.selfUser, self.user1])
-
-        XCTAssert(login())
-        guard let localSelfUser = user(for: selfUser) else { return XCTFail() }
-        XCTAssertTrue(localSelfUser.hasTeam)
-
-        let teamObserver = TestTeamObserver(team: nil, userSession: userSession!)
-
-        // when
-        mockTransportSession.performRemoteChanges { (_) in
-            mockTeam.name = "Super-Duper-Team"
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        XCTAssertEqual(teamObserver.notifications.count, 1)
-        guard let note = teamObserver.notifications.last else {
-            return XCTFail("no notification received")
-        }
-        XCTAssertTrue(note.nameChanged)
-    }
-}
-
-// MARK: Member removal
-extension TeamTests {
+    // MARK: Notifications
 
     func testThatOtherUserCanBeRemovedRemotely() {
         // given

@@ -21,14 +21,15 @@ import WireDataModel
 
 final class SyncConversationActionHandler: ActionHandler<SyncConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(context: context)
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: MLSEventProcessor(context: context),
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
 
     // MARK: - Request generation
 
     struct RequestPayload: Codable, Equatable {
-
         let qualified_ids: [QualifiedID]
-
     }
 
     override func request(
@@ -64,11 +65,9 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
     // MARK: - Response handling
 
     struct ResponsePayload: Codable {
-
         let found: [Payload.Conversation]
         let failed: [QualifiedID]
         let not_found: [QualifiedID]
-
     }
 
     override func handleResponse(
@@ -118,5 +117,4 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
             action.fail(with: .unknownError(code: error.status, label: error.label, message: error.message))
         }
     }
-
 }
