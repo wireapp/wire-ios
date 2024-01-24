@@ -369,19 +369,29 @@ final class ConversationViewController: UIViewController {
     // MARK: Resolve 1-1 conversations
 
     private func resolveConversationIfOneOnOne() {
+        let isOneOnOneConversation = conversation.conversationType == .oneOnOne
+            || conversation.conversationType == .group && (conversation.localParticipants.count == 2)
+
+        guard isOneOnOneConversation && conversation.messageProtocol == .proteus else {
+            return
+        }
+
         guard
-            conversation.messageProtocol != .mls,
-            conversation.conversationType == .oneOnOne,
             let otherUser = conversation.localParticipants.first(where: { !$0.isSelfUser }),
             let otherUserID = otherUser.qualifiedID,
             let context = conversation.managedObjectContext,
-            let service = OneOnOneResolver(syncContext: context.zm_sync)
+            let mlsService = context.mlsService
         else {
+            assertionFailure("missing expected value to resolve conversation!")
             return
         }
 
         Task {
             do {
+                let service = OneOnOneResolver(
+                    protocolSelector: OneOnOneProtocolSelector(),
+                    migrator: OneOnOneMigrator(mlsService: mlsService)
+                )
                 let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: context)
 
                 if case .migratedToMLSGroup(let identifier) = resolvedState {

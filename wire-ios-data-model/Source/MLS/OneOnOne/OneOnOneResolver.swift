@@ -47,14 +47,15 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return nil
         }
 
-        self.init(
-            protocolSelector: OneOnOneProtocolSelector(),
-            migrator: OneOnOneMigrator(mlsService: mlsService)
-        )
+        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
+    }
+
+    public convenience init?(mlsService: MLSService) {
+        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
     }
 
     public init(
-        protocolSelector: OneOnOneProtocolSelectorInterface,
+        protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface
     ) {
         self.protocolSelector = protocolSelector
