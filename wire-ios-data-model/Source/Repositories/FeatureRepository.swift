@@ -59,6 +59,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let logger = WireLogger(tag: "FeatureRepository")
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
@@ -71,20 +72,34 @@ public class FeatureRepository: FeatureRepositoryInterface {
     // MARK: - App lock
 
     public func fetchAppLock() -> Feature.AppLock {
-        guard let feature = Feature.fetch(name: .appLock, context: context),
-              let featureConfig = feature.config else {
-                  return .init()
-              }
-        let config = try! decoder.decode(Feature.AppLock.Config.self, from: featureConfig)
-        return.init(status: feature.status, config: config)
+        guard
+            let feature = Feature.fetch(name: .appLock, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        var config = Feature.AppLock.Config()
+
+        do {
+            config = try decoder.decode(Feature.AppLock.Config.self, from: featureConfig)
+        } catch {
+            logger.error("failed to decode Feature.AppLock.Config: \(error)")
+        }
+
+        return .init(status: feature.status, config: config)
     }
 
     public func storeAppLock(_ appLock: Feature.AppLock) {
-        let config = try! encoder.encode(appLock.config)
+        do {
+            let config = try encoder.encode(appLock.config)
 
-        Feature.updateOrCreate(havingName: .appLock, in: context) {
-            $0.status = appLock.status
-            $0.config = config
+            Feature.updateOrCreate(havingName: .appLock, in: context) {
+                $0.status = appLock.status
+                $0.config = config
+            }
+        } catch {
+            logger.error("failed to encode Feautre.AppLock.Config: \(error)")
         }
     }
 
@@ -141,33 +156,47 @@ public class FeatureRepository: FeatureRepositoryInterface {
     // MARK: - Self deleting messages
 
     public func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages {
-        guard let feature = Feature.fetch(name: .selfDeletingMessages, context: context),
-              let featureConfig = feature.config else {
-                  return .init()
-              }
-        let config = try! decoder.decode(Feature.SelfDeletingMessages.Config.self, from: featureConfig)
+        guard
+            let feature = Feature.fetch(name: .selfDeletingMessages, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        var config = Feature.SelfDeletingMessages.Config()
+
+        do {
+            config = try decoder.decode(Feature.SelfDeletingMessages.Config.self, from: featureConfig)
+        } catch {
+            logger.error("failed to decode Feature.SelfDeletingMessages.Config: \(error)")
+        }
+
         return .init(status: feature.status, config: config)
     }
 
     public func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages) {
-        let config = try! encoder.encode(selfDeletingMessages.config)
+        do {
+            let config = try encoder.encode(selfDeletingMessages.config)
 
-        Feature.updateOrCreate(havingName: .selfDeletingMessages, in: context) {
-            $0.status = selfDeletingMessages.status
-            $0.config = config
-        }
+            Feature.updateOrCreate(havingName: .selfDeletingMessages, in: context) {
+                $0.status = selfDeletingMessages.status
+                $0.config = config
+            }
 
-        guard needsToNotifyUser(for: .selfDeletingMessages) else { return }
+            guard needsToNotifyUser(for: .selfDeletingMessages) else { return }
 
-        switch (selfDeletingMessages.status, selfDeletingMessages.config.enforcedTimeoutSeconds) {
-        case (.disabled, _):
-            notifyChange(.selfDeletingMessagesIsDisabled)
+            switch (selfDeletingMessages.status, selfDeletingMessages.config.enforcedTimeoutSeconds) {
+            case (.disabled, _):
+                notifyChange(.selfDeletingMessagesIsDisabled)
 
-        case (.enabled, let enforcedTimeout) where enforcedTimeout > 0:
-            notifyChange(.selfDeletingMessagesIsEnabled(enforcedTimeout: enforcedTimeout))
+            case (.enabled, let enforcedTimeout) where enforcedTimeout > 0:
+                notifyChange(.selfDeletingMessagesIsEnabled(enforcedTimeout: enforcedTimeout))
 
-        case (.enabled, _):
-            notifyChange(.selfDeletingMessagesIsEnabled(enforcedTimeout: nil))
+            case (.enabled, _):
+                notifyChange(.selfDeletingMessagesIsEnabled(enforcedTimeout: nil))
+            }
+        } catch {
+            logger.error("failed to encode Feature.SelfDeletingMessages.Config: \(error)")
         }
     }
 
@@ -206,16 +235,27 @@ public class FeatureRepository: FeatureRepositoryInterface {
             return .init()
         }
 
-        let config = try! decoder.decode(Feature.ClassifiedDomains.Config.self, from: featureConfig)
+        var config = Feature.ClassifiedDomains.Config()
+
+        do {
+            config = try decoder.decode(Feature.ClassifiedDomains.Config.self, from: featureConfig)
+        } catch {
+            logger.error("failed to decode Feature.ClassifiedDomains.Config: \(error)")
+        }
+
         return .init(status: feature.status, config: config)
     }
 
     public func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains) {
-        let config = try! encoder.encode(classifiedDomains.config)
+        do {
+            let config = try encoder.encode(classifiedDomains.config)
 
-        Feature.updateOrCreate(havingName: .classifiedDomains, in: context) {
-            $0.status = classifiedDomains.status
-            $0.config = config
+            Feature.updateOrCreate(havingName: .classifiedDomains, in: context) {
+                $0.status = classifiedDomains.status
+                $0.config = config
+            }
+        } catch {
+            logger.error("failed to encode Feature.ClassifiedDomains.Config: \(error)")
         }
     }
 
@@ -245,16 +285,27 @@ public class FeatureRepository: FeatureRepositoryInterface {
             return .init()
         }
 
-        let config = try! decoder.decode(Feature.MLS.Config.self, from: featureConfig)
+        var config = Feature.MLS.Config()
+
+        do {
+            config = try decoder.decode(Feature.MLS.Config.self, from: featureConfig)
+        } catch {
+            logger.error("failed to decode Feature.MLS.Config: \(error)")
+        }
+
         return .init(status: feature.status, config: config)
     }
 
     public func storeMLS(_ mls: Feature.MLS) {
-        let config = try! encoder.encode(mls.config)
+        do {
+            let config = try encoder.encode(mls.config)
 
-        Feature.updateOrCreate(havingName: .mls, in: context) {
-            $0.status = mls.status
-            $0.config = config
+            Feature.updateOrCreate(havingName: .mls, in: context) {
+                $0.status = mls.status
+                $0.config = config
+            }
+        } catch {
+            logger.error("failed to encode Feature.MLS.Config: \(error)")
         }
     }
 
@@ -291,16 +342,27 @@ public class FeatureRepository: FeatureRepositoryInterface {
             return .init()
         }
 
-        let config = try! decoder.decode(Feature.MLSMigration.Config.self, from: featureConfig)
+        var config = Feature.MLSMigration.Config()
+
+        do {
+            config = try decoder.decode(Feature.MLSMigration.Config.self, from: featureConfig)
+        } catch {
+            logger.error("failed to decode Feature.MLS.Config: \(error)")
+        }
+
         return .init(status: feature.status, config: config)
     }
 
     public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
-        let config = try! encoder.encode(mlsMigration.config)
+        do {
+            let config = try encoder.encode(mlsMigration.config)
 
-        Feature.updateOrCreate(havingName: .mlsMigration, in: context) {
-            $0.status = mlsMigration.status
-            $0.config = config
+            Feature.updateOrCreate(havingName: .mlsMigration, in: context) {
+                $0.status = mlsMigration.status
+                $0.config = config
+            }
+        } catch {
+            logger.error("failed to encode Feature.MLS.Config: \(error)")
         }
     }
 

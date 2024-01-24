@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             return TeamDownloadRequestFactory.getTeamsRequest(apiVersion: apiVersion)
-        case .v4, .v5:
+        case .v4, .v5, .v6:
             guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
                 syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
                 return nil
@@ -235,7 +235,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
             syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
 
-        case .v4, .v5:
+        case .v4, .v5, .v6:
             guard
                 let rawData = response.rawData,
                 let teamPayload = TeamPayload(rawData)

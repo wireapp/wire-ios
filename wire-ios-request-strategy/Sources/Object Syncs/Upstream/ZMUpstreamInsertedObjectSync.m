@@ -209,8 +209,8 @@ static NSString* ZMLogTag = @"Network";
     }
     
     id<ZMUpstreamTranscoder> transcoder = [self transcoder];
-    if ([transcoder respondsToSelector:@selector(shouldCreateRequestToSyncObject:forKeys:withSync:)]) {
-        if (![transcoder shouldCreateRequestToSyncObject:nextObject forKeys:[NSSet set] withSync:self]) {
+    if ([transcoder respondsToSelector:@selector(shouldCreateRequestToSyncObject:forKeys:withSync:apiVersion:)]) {
+        if (![transcoder shouldCreateRequestToSyncObject:nextObject forKeys:[NSSet set] withSync:self apiVersion:apiVersion]) {
             return nil;
         }
     }

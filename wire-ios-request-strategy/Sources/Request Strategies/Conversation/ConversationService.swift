@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +38,8 @@ public protocol ConversationServiceInterface {
     )
 
     func syncConversation(
-        qualifiedID: QualifiedID) async
+        qualifiedID: QualifiedID
+    ) async
 
 }
 
@@ -285,7 +287,7 @@ public final class ConversationService: ConversationServiceInterface {
 
     public func syncConversation(
         qualifiedID: QualifiedID,
-        completion: @escaping () -> Void
+        completion: @escaping () -> Void = {}
     ) {
         var action = SyncConversationAction(qualifiedID: qualifiedID)
         action.perform(in: context.notificationContext) { _ in

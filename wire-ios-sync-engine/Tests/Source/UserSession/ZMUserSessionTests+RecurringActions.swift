@@ -53,31 +53,41 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         XCTAssertFalse(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
     }
 
-    func testThatItUpdatesUsersMissingMetadata() {
-        // Given
-        let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
-        syncMOC.saveOrRollback()
-        let recurringAction = sut.refreshUsersMissingMetadata(interval: 1)
+    func testUpdatesUsersMissingMetadataAction() {
+        syncMOC.performAndWait {
+            // Given
+            let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
+            syncMOC.saveOrRollback()
+            let action = sut.refreshUsersMissingMetadataAction
 
-        // When
-        recurringAction()
+            // When
+            action()
+            syncMOC.refreshAllObjects()
 
-        // Then
-        XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
+            // Then
+            XCTAssertEqual(action.interval, 3 * .oneHour)
+            XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
+        }
     }
 
     func testThatItUpdatesConversationsMissingMetadata() {
-        // Given
-        let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
-        syncMOC.saveOrRollback()
-        let recurringAction = sut.refreshConversationsMissingMetadata(interval: 1)
+        syncMOC.performAndWait {
+            // Given
+            let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
+            syncMOC.saveOrRollback()
+            let action = sut.refreshConversationsMissingMetadataAction
 
-        // When
-        recurringAction()
+            // When
+            action()
+            syncMOC.refreshAllObjects()
 
-        // Then
-        XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+            // Then
+            XCTAssertEqual(action.interval, 3 * .oneHour)
+            XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+        }
     }
+
+    // MARK: - Helpers
 
     private func createUserIsPendingMetadataRefresh(moc: NSManagedObjectContext, domain: String?) -> ZMUser {
         let user = ZMUser(context: moc)
