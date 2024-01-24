@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// Test CI: modify this line to run ci tests, sometimes it's the easiest way.
+
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
