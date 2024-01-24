@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,11 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     override func setUp() {
         super.setUp()
         mlsService = MockMLSServiceInterface()
-        sut = CreateGroupConversationActionHandler(context: syncMOC, mlsService: mlsService)
+        sut = CreateGroupConversationActionHandler(
+            context: syncMOC,
+            mlsService: mlsService,
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
+        )
         conversationID = .randomID()
         mlsGroupID = MLSGroupID([1, 2, 3])
         teamID = .create()
@@ -100,7 +104,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.base64EncodedString
         successResponsePayloadMLS.epoch = 0
 
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.com"
     }
 
@@ -115,6 +119,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         expectedRequestPayload = nil
         successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
+        BackendInfo.storage = .standard
         super.tearDown()
     }
 
@@ -381,7 +386,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             )
             handler = sut
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -436,7 +441,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             )
             handler = sut
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {

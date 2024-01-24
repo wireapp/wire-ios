@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@ import WireDataModel
 
 final class SyncConversationActionHandler: ActionHandler<SyncConversationAction> {
 
-    private let processor = ConversationEventPayloadProcessor()
+    private lazy var processor = ConversationEventPayloadProcessor(context: context)
 
     // MARK: - Request generation
 
@@ -50,7 +51,7 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
                 apiVersion: apiVersion.rawValue
             )
 
-        case .v2, .v3, .v4, .v5:
+        case .v2, .v3, .v4, .v5, .v6:
             return ZMTransportRequest(
                 path: "/conversations/list",
                 method: .post,
@@ -91,11 +92,19 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
                 return
             }
 
-            Task { [action] in
+            Task { [action, context] in
                 await processor.updateOrCreateConversation(
                     from: conversationData,
                     in: context
                 )
+                await context.perform {
+                    do {
+                        try context.save()
+                    } catch {
+                        Logging.network.warn("SyncConversationActionHandler: failed to save context: \(error)")
+                        assertionFailure("SyncConversationActionHandler: failed to save context: \(error)")
+                    }
+                }
 
                 var action = action
                 action.succeed()

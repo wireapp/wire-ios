@@ -96,7 +96,7 @@ class TeamInvitationStatusTests: ZMTBaseTest {
 
     func testThatCompletionHandlerIsCalledWhenProcessingResponse() {
         // given
-        let expectaction = expectation(description: "Completion handler was called")
+        let expectaction = customExpectation(description: "Completion handler was called")
         sut.invite(exampleEmailAddress1, completionHandler: { _ in
             expectaction.fulfill()
         })

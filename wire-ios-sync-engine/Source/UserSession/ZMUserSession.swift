@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSystem
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -104,6 +105,7 @@ public class ZMUserSession: NSObject {
     lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     var mlsService: MLSServiceInterface
     var proteusProvider: ProteusProviding!
+    let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     public var syncStatus: SyncStatusProtocol {
         return applicationStatusDirectory.syncStatus
@@ -280,6 +282,7 @@ public class ZMUserSession: NSObject {
         earService: EARServiceInterface? = nil,
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
         sharedUserDefaults: UserDefaults
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
@@ -341,6 +344,11 @@ public class ZMUserSession: NSObject {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
+        self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
+            context: coreDataStack.syncContext,
+            userID: userId
+        )
+
         super.init()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
@@ -392,6 +400,26 @@ public class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+        updateSupportedProtocolsIfNeeded()
+    }
+
+    private func updateSupportedProtocolsIfNeeded() {
+        let recurringAction = RecurringAction(
+            id: "\(account.userIdentifier).updateSupportedProtocols",
+            interval: .oneDay
+        ) { [weak self] in
+            guard let context = self?.syncContext else { return }
+
+            context.perform {
+                let service = SupportedProtocolsService(context: context)
+                service.updateSupportedProtocols()
+            }
+        }
+
+        recurringActionService.registerAction(recurringAction)
+
+        // The action should run once on every launch, then each 24 hours thereafter.
+        recurringActionService.forcePerformAction(id: recurringAction.id)
     }
 
     private func configureTransportSession() {
@@ -436,7 +464,8 @@ public class ZMUserSession: NSObject {
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: self.proteusProvider,
-            mlsService: mlsService
+            mlsService: mlsService,
+            coreCryptoProvider: coreCryptoProvider
         )
     }
 
@@ -480,8 +509,9 @@ public class ZMUserSession: NSObject {
     }
 
     private func configureRecurringActions() {
-        recurringActionService.registerAction(refreshUsersMissingMetadata())
-        recurringActionService.registerAction(refreshConversationsMissingMetadata())
+        recurringActionService.registerAction(refreshUsersMissingMetadataAction)
+        recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
+        recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
     }
 
     func startRequestLoopTracker() {
@@ -530,6 +560,7 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
+        // TODO: [jacob] refactor out WPB-6198
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
@@ -810,15 +841,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         action.send(in: syncContext.notificationContext)
     }
 
-    public func didRegisterMLSClient(_ userClient: UserClient) {
-        Task {
-            await mlsService.uploadKeyPackagesIfNeeded()
-        }
-    }
-
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
-        createMLSClientIfNeeded()
-
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier

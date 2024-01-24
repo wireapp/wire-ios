@@ -97,7 +97,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                         self.userClientsByUserID.sync(identifiers: userIdSet)
                     }
 
-                case .v2, .v3, .v4, .v5:
+                case .v2, .v3, .v4, .v5, .v6:
                     if let domain = user.domain.nonEmptyValue ?? BackendInfo.domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                         self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
@@ -167,7 +167,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
                     // Fallback.
                     result.1.append(userClientID)
                 }
-            case .v2, .v3, .v4, .v5:
+            case .v2, .v3, .v4, .v5, .v6:
                 if let qualifiedID = qualifiedIDWithFallback(from: userClient) {
                     result.0.append(qualifiedID)
                 }
@@ -253,9 +253,9 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
         }
 
         if response.result == .permanentError {
-            WaitingGroupTask(context: managedObjectContext) { [self] in
+            WaitingGroupTask(context: managedObjectContext) {
                 await client.deleteClientAndEndSession()
-                await managedObjectContext.perform { completionHandler() }
+                completionHandler()
             }
         } else if let rawData = response.rawData,
                   let payload = Payload.UserClient(rawData, decoder: decoder) {
@@ -312,7 +312,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v1:
             return v1Request(for: identifiers)
 
-        case .v2, .v3, .v4, .v5:
+        case .v2, .v3, .v4, .v5, .v6:
             return v2Request(for: identifiers, apiVersion: apiVersion)
         }
     }
@@ -368,10 +368,10 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
             completionHandler()
             return
 
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             WaitingGroupTask(context: managedObjectContext) { [self] in
                 await commonResponseHandling(response: response, for: identifiers)
-                await managedObjectContext.perform { completionHandler() }
+                completionHandler()
             }
         }
     }
@@ -480,7 +480,8 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
                 for: user,
                 selfClient: selfClient
             )
-            await managedObjectContext.perform { completionHandler() }
+            managedObjectContext.enqueueDelayedSave()
+            completionHandler()
         }
     }
 }

@@ -281,7 +281,7 @@ final class CallViewController: UIViewController {
     private lazy var establishingCallStatusView = EstablishingCallStatusView()
 
     private func acceptDegradedCall() {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
 
         userSession.enqueue({
             self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession)
@@ -330,7 +330,7 @@ final class CallViewController: UIViewController {
         NSLayoutConstraint.activate(
             NSLayoutConstraint.forView(view: establishingCallStatusView, inContainer: view, withInsets: .zero)
         )
-        guard let user = voiceChannel.getSecondParticipant(), let session = ZMUserSession.shared() else { return }
+        guard let user = voiceChannel.getSecondParticipant(), let session = userSession as? ZMUserSession else { return }
         user.fetchProfileImage(session: session,
                                imageCache: UIImage.defaultUserImageCache,
                                sizeLimit: UserImageView.Size.normal.rawValue,
@@ -479,7 +479,7 @@ extension CallViewController {
 
         permissions.requestOrWarnAboutAudioPermission { audioGranted in
             guard audioGranted else {
-                guard let userSession = ZMUserSession.shared() else { return }
+                guard let userSession = self.userSession as? ZMUserSession else { return }
                 return self.voiceChannel.leave(userSession: userSession, completion: nil)
             }
 
@@ -540,7 +540,7 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
 
     func callingActionsViewPerformAction(_ action: CallAction) {
         Log.calling.debug("request to perform call action: \(action)")
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
 
         switch action {
         case .continueDegradedCall: userSession.enqueue { self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession) }

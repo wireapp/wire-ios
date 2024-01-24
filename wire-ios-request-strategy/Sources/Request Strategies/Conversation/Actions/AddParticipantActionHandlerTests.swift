@@ -25,6 +25,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     var sut: AddParticipantActionHandler!
     var user: ZMUser!
     var conversation: ZMConversation!
+    var mockConversationService: MockConversationServiceInterface!
 
     override func setUp() {
         super.setUp()
@@ -44,23 +45,26 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             self.conversation = conversation
         }
 
-        let mockConversationService = MockConversationServiceInterface()
-        mockConversationService.syncConversationQualifiedID_MockMethod = { _ in
+        mockConversationService = MockConversationServiceInterface()
 
+        mockConversationService.syncConversationQualifiedID_MockMethod = { _ in }
+        mockConversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
+            completion()
         }
 
         sut = AddParticipantActionHandler(
             context: syncMOC,
             eventProcessor: ConversationEventProcessor(
                 context: syncMOC,
-                conversationService: mockConversationService
+                conversationService: mockConversationService,
+                mlsEventProcessor: MockMLSEventProcessing()
             )
         )
     }
 
     override func tearDown() {
         sut = nil
-
+        mockConversationService = nil
         super.tearDown()
     }
 
@@ -168,7 +172,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             )
         }
 
-        let waitForHandler = self.expectation(description: "wait for Handler to be called")
+        let waitForHandler = self.customExpectation(description: "wait for Handler to be called")
 
         action.resultHandler = { _ in
             waitForHandler.fulfill()
@@ -225,7 +229,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             action = AddParticipantAction(users: [user], conversation: conversation)
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
@@ -269,7 +273,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
@@ -293,7 +297,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .failure = result {
                     expectation.fulfill()
@@ -332,7 +336,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 conversation: conversation
             )
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -376,7 +380,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 conversation: conversation
             )
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
