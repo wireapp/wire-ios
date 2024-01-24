@@ -40,9 +40,9 @@ extension ConversationContentViewController: UIScrollViewDelegate {
             } else {
                 UIView.animate(withDuration: 0.25, animations: {
                     self.scrollToBottomButton.alpha = shouldHideButton ? 0 : 1
-                }) { _ in
+                }, completion: { _ in
                     self.scrollToBottomButton.isHidden = shouldHideButton
-                }
+                })
             }
         }
     }

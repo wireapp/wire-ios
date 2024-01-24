@@ -135,7 +135,7 @@ extension FileManagerProtectionTests {
     }
 
     func existingLocalURLIsExcludedFromBackup(_ folder: URL) throws -> Bool {
-        let values = try folder.resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey))
+        let values = try folder.resourceValues(forKeys: [.isExcludedFromBackupKey])
         return values.isExcludedFromBackup == true
     }
 }

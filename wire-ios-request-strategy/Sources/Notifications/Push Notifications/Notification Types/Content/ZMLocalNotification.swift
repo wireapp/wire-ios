@@ -166,7 +166,7 @@ extension ZMLocalNotification {
 
         if type.shouldIncreaseUnreadCount {
             conversation?.internalEstimatedUnreadCount += 1
-            WireLogger.badgeCount.info("increase internalEstimatedUnreadCount: \(conversation?.internalEstimatedUnreadCount) in \(conversation?.remoteIdentifier?.uuidString) timestamp: \(Date())")
+            WireLogger.badgeCount.info("increase internalEstimatedUnreadCount: \(String(describing: conversation?.internalEstimatedUnreadCount)) in \(String(describing: conversation?.remoteIdentifier?.uuidString)) timestamp: \(Date())")
         }
 
         if type.shouldDecreaseUnreadCount {

@@ -162,8 +162,7 @@ open class UserClientKeysStore: NSObject {
                     if newPreKeys.count == 0 {
                         error = UserClientKeyStoreError.canNotGeneratePreKeys
                     }
-                }
-                catch let anError as NSError {
+                } catch let anError as NSError {
                     error = anError
                 }
             })

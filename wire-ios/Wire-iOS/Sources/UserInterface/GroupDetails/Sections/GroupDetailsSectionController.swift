@@ -24,7 +24,7 @@ protocol GroupDetailsUserDetailPresenter: AnyObject {
     func presentDetails(for user: UserType)
 }
 
-protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter {
+protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter, AnyObject {
     func presentFullParticipantsList(for users: [UserType], in conversation: GroupDetailsConversationType)
 }
 
