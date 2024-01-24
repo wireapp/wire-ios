@@ -128,7 +128,7 @@ struct DeviceDetailsView: View {
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
-                    certificateDetails: certificate.details.uppercased(),
+                    certificateDetails: certificate.details,
                     isDownloadAndCopyEnabled: viewModel.isCopyEnabled,
                     isMenuPresented: false,
                     performDownload: viewModel.downloadE2EIdentityCertificate,

@@ -22,8 +22,6 @@ import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
     private let logger: LoggerProtocol
-    private let mlsClientResolver: MLSClientResolving
-    private let mlsGroupId: MLSGroupID?
     private var userClient: UserClient
     private var userSession: UserSession
     private var clientRemovalObserver: ClientRemovalObserver?
@@ -42,10 +40,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userClient: UserClient,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        mlsGroupId: MLSGroupID?,
         saveFileManager: SaveFileActions,
         logger: LoggerProtocol = WireLogger.e2ei,
-        mlsClientResolver: MLSClientResolving,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     ) {
         self.userClient = userClient
@@ -53,8 +49,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.userSession = userSession
         self.saveFileManager = saveFileManager
         self.logger = logger
-        self.mlsClientResolver = mlsClientResolver
-        self.mlsGroupId = mlsGroupId
         self.getProteusFingerprint = getProteusFingerprint
     }
 

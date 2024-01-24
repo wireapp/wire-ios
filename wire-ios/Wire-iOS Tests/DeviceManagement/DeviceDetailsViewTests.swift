@@ -67,19 +67,21 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     ) -> DeviceInfoViewModel {
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         mockSession.isE2eIdentityEnabled = isE2eIdentityEnabled
+        var certificate: E2eIdentityCertificate
         switch status {
         case .notActivated:
-            mockSession.certificate = .mockNotActivated
+            certificate = .mockNotActivated
         case .revoked:
-            mockSession.certificate = .mockRevoked
+            certificate = .mockRevoked
         case .expired:
-            mockSession.certificate = .mockExpired
+            certificate = .mockExpired
         case .valid:
-            mockSession.certificate = .mockValid
+            certificate = .mockValid
         }
         let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
 
         let viewModel = DeviceInfoViewModel.map(
+            certificate: isE2eIdentityEnabled ? certificate : nil,
             userClient: client,
             title: "some title",
             addedDate: "Monday 15 Oct, 2023",
@@ -88,16 +90,11 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             userSession: mockSession,
             credentials: emailCredentials,
             gracePeriod: 3,
-            mlsGroupId: MLSGroupID(base64Encoded: "sds"),
             mlsThumbprint: mlsThumbprint,
-            getE2eIdentityEnabled: mockSession.getIsE2eIdentityEnabled,
-            getE2eIdentityCertificates: mockSession.getE2eIdentityCertificates,
-            getProteusFingerprint: MockGetUserClientFingerprintUseCaseProtocol()
+            getProteusFingerprint: mockSession.mockGetUserClientFingerprintUseCaseProtocol
         )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
-        viewModel.isE2eIdentityEnabled = isE2eIdentityEnabled
         viewModel.isSelfClient = isSelfClient
-        viewModel.e2eIdentityCertificate = mockSession.certificate
         viewModel.isProteusVerificationEnabled = isProteusVerificationEnabled
         return viewModel
     }

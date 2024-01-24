@@ -167,9 +167,9 @@ extension DeviceInfoViewModel {
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         gracePeriod: TimeInterval,
-        mlsGroupId: MLSGroupID?,
         mlsThumbprint: String?,
-        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
+        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
+        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             certificate: certificate,
@@ -182,9 +182,7 @@ extension DeviceInfoViewModel {
                 userClient: userClient,
                 userSession: userSession,
                 credentials: credentials,
-                mlsGroupId: mlsGroupId,
-                saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
-                mlsClientResolver: MLSClientResolver(),
+                saveFileManager: saveFileManager,
                 getProteusFingerprint: getProteusFingerprint
             ),
             userClient: userClient,

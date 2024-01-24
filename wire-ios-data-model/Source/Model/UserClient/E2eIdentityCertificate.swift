@@ -17,8 +17,6 @@
 //
 
 import Foundation
-import X509
-import SwiftASN1
 import WireCoreCrypto
 
 public enum E2EIdentityCertificateStatus: CaseIterable {
@@ -51,8 +49,4 @@ public struct E2eIdentityCertificate: Equatable {
         self.status = certificateStatus
         self.serialNumber = serialNumber
     }
-}
-
-enum E2eIdentityCertificateError: Error {
-    case badCertificate
 }

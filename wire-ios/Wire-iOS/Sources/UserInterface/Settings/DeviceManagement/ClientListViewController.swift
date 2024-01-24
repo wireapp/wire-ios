@@ -207,7 +207,6 @@ final class ClientListViewController: UIViewController,
                 userSession: userSession,
                 credentials: self.credentials,
                 gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-                mlsGroupId: mlsGroupId,
                 mlsThumbprint: client.mlsPublicKeys.ed25519?.splitStringIntoLines(charactersPerLine: 16),
                 getProteusFingerprint: userSession.getUserClientFingerprint
             )
