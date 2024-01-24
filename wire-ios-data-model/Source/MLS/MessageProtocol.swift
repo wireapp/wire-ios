@@ -56,17 +56,4 @@ extension MessageProtocol {
         guard Self.allCases.indices.contains(.init(int16Value)) else { return nil }
         self = Self.allCases[.init(int16Value)]
     }
-
-    public var stringValue: String {
-        switch self {
-        case .proteus:
-            return "proteus"
-
-        case .mls:
-            return "mls"
-
-        case .mixed:
-            return "mixed"
-        }
-    }
 }
