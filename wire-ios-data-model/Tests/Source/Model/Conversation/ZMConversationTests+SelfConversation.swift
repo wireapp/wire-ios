@@ -150,7 +150,7 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         uiMOC.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(conversation.lastReadServerTimeStamp, Date(timeIntervalSince1970: Double(integerLiteral: timeinterval) / 1000))
+        XCTAssertEqual(conversation.lastReadServerTimeStamp, Date(timeIntervalSince1970: Double(timeinterval) / 1000))
     }
 
     // MARK: - Process cleared
@@ -178,6 +178,6 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         uiMOC.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(conversation.clearedTimeStamp, Date(timeIntervalSince1970: Double(integerLiteral: timeinterval) / 1000))
+        XCTAssertEqual(conversation.clearedTimeStamp, Date(timeIntervalSince1970: Double(timeinterval) / 1000))
     }
 }
