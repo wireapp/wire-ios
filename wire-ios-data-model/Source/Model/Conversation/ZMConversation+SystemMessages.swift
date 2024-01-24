@@ -244,4 +244,36 @@ extension ZMConversation {
 
     }
 
+    public func appendMLSMigrationMLSNotSupportedForSelfUser(
+        user: ZMUser,
+        at timestamp: Date
+    ) {
+
+        guard let context = self.managedObjectContext else { return }
+
+        self.appendSystemMessage(
+            type: .mlsNotSupportedSelfUser,
+            sender: ZMUser.selfUser(in: context),
+            users: Set([user]),
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationMLSNotSupportedForOtherUser(
+        user: ZMUser,
+        at timestamp: Date
+    ) {
+
+        guard let context = self.managedObjectContext else { return }
+
+        self.appendSystemMessage(
+            type: .mlsNotSupportedOtherUser,
+            sender: ZMUser.selfUser(in: context),
+            users: Set([user]),
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
 }

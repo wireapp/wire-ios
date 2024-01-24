@@ -24,9 +24,17 @@ import enum WireCommonComponents.FontScheme
 
 final class MLSMigrationCellDescriptionTests: XCTestCase {
 
+    var otherUser: MockUserType!
+
     override func setUp() {
         super.setUp()
+        otherUser = MockUserType.createUser(name: "Bruno")
         FontScheme.configure(with: .large)
+    }
+
+    override func tearDown() {
+        otherUser = nil
+        super.tearDown()
     }
 
     func testProperties() {
