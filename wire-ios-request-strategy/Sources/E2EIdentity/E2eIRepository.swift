@@ -21,7 +21,7 @@ import WireCoreCrypto
 
 public protocol E2eIRepositoryInterface {
 
-    func createEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String, team: UUID?) async throws -> E2eIEnrollmentInterface
+    func createEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String, team: UUID) async throws -> E2eIEnrollmentInterface
 }
 
 public final class E2eIRepository: E2eIRepositoryInterface {
@@ -47,11 +47,10 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         e2eiClientId: E2eIClientID,
         userName: String,
         handle: String,
-        team: UUID?
+        team: UUID
     ) async throws -> E2eIEnrollmentInterface {
 
         let e2eIdentity = try await e2eiSetupService.setupEnrollment(
-            // e2eiClientId: e2eiClientId,
             userName: userName,
             handle: handle,
             team: team

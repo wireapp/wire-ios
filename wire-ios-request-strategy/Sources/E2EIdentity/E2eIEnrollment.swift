@@ -147,7 +147,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
             throw E2EIRepositoryFailure.failedToCreateNewOrder(error)
         }
     }
-// NewAcmeAuthz will be new keyAuth
+
     public func createAuthz(prevNonce: String, authzEndpoint: String) async throws -> (challenges: NewAcmeAuthz,
                                                                                        nonce: String,
                                                                                        location: String) {

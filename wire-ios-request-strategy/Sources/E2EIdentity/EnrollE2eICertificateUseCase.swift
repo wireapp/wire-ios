@@ -28,7 +28,7 @@ public protocol EnrollE2eICertificateUseCaseInterface {
     func invoke(e2eiClientId: E2eIClientID,
                 userName: String,
                 userHandle: String,
-                team: UUID?,
+                team: UUID,
                 authenticate: OAuthBlock) async throws -> String
 
 }
@@ -45,7 +45,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
     public func invoke(e2eiClientId: E2eIClientID,
                        userName: String,
                        userHandle: String,
-                       team: UUID?,
+                       team: UUID,
                        authenticate: OAuthBlock) async throws -> String {
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId,
                                                                    userName: userName,

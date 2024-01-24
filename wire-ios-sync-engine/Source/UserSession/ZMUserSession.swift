@@ -268,7 +268,7 @@ public class ZMUserSession: NSObject {
     }()
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
-        let acmeDiscoveryPath = "https://acme.elna.wire.link/acme/keycloakteams/directory" // e2eiFeature.config.acmeDiscoveryUrl
+        let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
