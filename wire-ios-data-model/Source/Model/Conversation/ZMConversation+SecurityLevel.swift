@@ -313,6 +313,7 @@ extension ZMConversation {
                 user.connection = ZMConnection.insertNewObject(in: managedObjectContext!)
             }
             user.connection?.needsToBeUpdatedFromBackend = true
+            user.oneOnOneConversation = self
         default:
             break
         }
