@@ -175,6 +175,10 @@ class AuthenticationInterfaceBuilder {
             let viewController = PreBackendSwitchViewController()
             viewController.backendURL = url
             return viewController
+
+        case .enrollE2EIdentity:
+            let viewController = EnrollE2EIdentityStepDescription()
+            return makeViewController(for: viewController)
         default:
             return nil
         }
