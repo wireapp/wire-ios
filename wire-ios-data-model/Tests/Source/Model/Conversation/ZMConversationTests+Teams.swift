@@ -53,42 +53,6 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         super.tearDown()
     }
 
-    func testThatItReturnsAnExistingOneOnOneConversationIfThereAlreadyIsOneInATeam() {
-        // given
-        let conversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
-
-        // when
-        let newConversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
-
-        // then
-        XCTAssertEqual(conversation, newConversation)
-    }
-
-    func testThatItDoesNotReturnAnExistingConversationFromTheSameTeamWithNoParticipants() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .group
-        conversation.team = team
-
-        // when
-        let newConversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
-
-        // then
-        XCTAssertNotEqual(conversation, newConversation)
-    }
-
-    func testThatItDoesNotReturnAConversationIfAnExistingOneHasAUserDefinedName() {
-        // given
-        let conversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
-        conversation?.userDefinedName = "Best Conversation"
-
-        // when
-        let existingConversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
-
-        // then
-        XCTAssertNil(existingConversation)
-    }
-
     func testThatItReturnsNotNilWhenAskedForOneOnOneConversationWithoutTeam() {
         // given
         let oneOnOne = ZMConversation.insertNewObject(in: uiMOC)

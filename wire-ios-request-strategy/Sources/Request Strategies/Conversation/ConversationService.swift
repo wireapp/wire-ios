@@ -121,9 +121,17 @@ public final class ConversationService: ConversationServiceInterface {
                 allowServices: true
             ),
             enableReceipts: false,
-            messageProtocol: .proteus,
-            completion: completion
-        )
+            messageProtocol: .proteus
+        ) { result in
+            switch result {
+            case .success(let conversation):
+                user.oneOnOneConversation = conversation
+                completion(.success(conversation))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 
     private func internalCreateTeamGroupConversation(

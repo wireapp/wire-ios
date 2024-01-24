@@ -73,15 +73,11 @@ extension ZMUser {
             return nil
         }
 
-        guard !isSelfUser else {
+        if isSelfUser {
             return ZMConversation.selfConversation(in: moc)
+        } else {
+            return oneOnOneConversation
         }
-
-        return oneOnOneConversation ?? ZMConversation.fetchOneToOneTeamConversation(
-            moc: moc,
-            participant: self,
-            team: team
-        )
     }
 
 }
