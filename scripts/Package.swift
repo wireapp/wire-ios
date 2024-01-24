@@ -3,6 +3,14 @@
 
 import PackageDescription
 
+// How to update packages?
+// 
+// 1. Go to GitHub repository, the latest release.
+// 2. Copy url of <*.artifactbundle.zip> and enter here as 'url'.
+// 3. Download <*.artifactbundle.zip>, open terminal, go to the folder like '~/Downloads'.
+// 4. Run 'swift package compute-checksum <*.artifactbundle.zip>', copy the checksum and enter here as 'checksum'.
+// 5. Save this file.
+
 let package = Package(
     name: "Scripts",
     targets: [
