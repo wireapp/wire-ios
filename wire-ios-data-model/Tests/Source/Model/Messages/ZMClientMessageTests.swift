@@ -768,7 +768,7 @@ extension ClientMessageTests {
         XCTAssertNotNil(event)
 
         let prefetch = ZMFetchRequestBatch()
-        prefetch.addNonces(toPrefetchMessages: Set(arrayLiteral: existingMessage.nonce!))
+        prefetch.addNonces(toPrefetchMessages: [existingMessage.nonce!])
         let prefetchResult = prefetch.execute(in: self.uiMOC)
         XCTAssertEqual(prefetchResult?.messagesByNonce[existingMessage.nonce!]?.count, 1)
         XCTAssertEqual(prefetchResult?.messagesByNonce[existingMessage.nonce!]?.first, existingMessage)

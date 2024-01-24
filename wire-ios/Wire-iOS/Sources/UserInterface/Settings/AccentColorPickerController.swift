@@ -21,7 +21,7 @@ import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
-protocol ColorPickerControllerDelegate {
+protocol ColorPickerControllerDelegate: AnyObject {
     func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor)
     func colorPickerWantsToDismiss(_ colotPicker: ColorPickerController)
 }
@@ -33,7 +33,7 @@ class ColorPickerController: UIViewController {
 
     fileprivate let colors: [AccentColor]
     fileprivate var selectedColor: AccentColor?
-    fileprivate var delegate: ColorPickerControllerDelegate?
+    fileprivate weak var delegate: ColorPickerControllerDelegate?
 
     init(colors: [AccentColor]) {
         self.colors = colors

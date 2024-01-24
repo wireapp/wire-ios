@@ -285,7 +285,7 @@ extension ZMConversation {
     /// status, etc.
     @objc
     public func removeParticipantAndUpdateConversationState(user: ZMUser, initiatingUser: ZMUser? = nil) {
-        self.removeParticipantsAndUpdateConversationState(users: Set(arrayLiteral: user), initiatingUser: initiatingUser)
+        self.removeParticipantsAndUpdateConversationState(users: [user], initiatingUser: initiatingUser)
     }
 
     private func checkIfArchivedStatusChanged(removedSelfUser: Bool, initiatingUser: ZMUser?) {

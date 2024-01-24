@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-protocol PreBackendSwitchViewControllerDelegate {
+protocol PreBackendSwitchViewControllerDelegate: AnyObject {
     func preBackendSwitchViewControllerDidComplete(_ url: URL)
 }
 

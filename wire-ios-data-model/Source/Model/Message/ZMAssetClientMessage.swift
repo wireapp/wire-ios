@@ -53,7 +53,7 @@ import Foundation
     }
 
     public static func keyPathsForValuesAffectingAssetID() -> Set<String> {
-        return Set(arrayLiteral: #keyPath(ZMAssetClientMessage.assetID_data))
+        return [#keyPath(ZMAssetClientMessage.assetID_data)]
     }
 
     /// Preprocessed size of image
@@ -63,7 +63,7 @@ import Foundation
     }
 
     public static func keyPathsForValuesPreprocessedSize() -> Set<String> {
-        return Set(arrayLiteral: #keyPath(ZMAssetClientMessage.assetID_data))
+        return [#keyPath(ZMAssetClientMessage.assetID_data)]
     }
 
     /// Original file size
@@ -158,7 +158,7 @@ import Foundation
     }
 
     static func keyPathsForValuesAffectingAssociatedTaskIdentifier() -> Set<String> {
-        return Set(arrayLiteral: #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data))
+        return [#keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)]
     }
 
     var v2Asset: V2Asset? {
@@ -213,7 +213,7 @@ import Foundation
         }
 
         self.progress = 0
-        setLocallyModifiedKeys(Set(arrayLiteral: #keyPath(ZMAssetClientMessage.transferState)))
+        setLocallyModifiedKeys([#keyPath(ZMAssetClientMessage.transferState)])
 
         super.resend()
     }

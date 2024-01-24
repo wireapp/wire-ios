@@ -481,7 +481,7 @@ public extension UserClient {
             fatal("Attempt to delete the self client. This should never happen!")
         }
         self.markedToDelete = true
-        self.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMarkedToDeleteKey))
+        self.setLocallyModifiedKeys([ZMUserClientMarkedToDeleteKey])
     }
 }
 
@@ -515,7 +515,7 @@ public extension UserClient {
     }
 
     @objc func missesClient(_ client: UserClient) {
-        missesClients(Set(arrayLiteral: client))
+        missesClients([client])
     }
 
     @objc func missesClients(_ clients: Set<UserClient>) {
@@ -524,7 +524,7 @@ public extension UserClient {
 
         self.mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
         if !hasLocalModifications(forKey: ZMUserClientMissingKey) {
-            setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+            setLocallyModifiedKeys([ZMUserClientMissingKey])
         }
     }
 
@@ -658,7 +658,7 @@ public extension UserClient {
             numberOfKeysRemaining = 0
         }
         if numberOfKeysRemaining == 0 {
-            self.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientNumberOfKeysRemainingKey))
+            self.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
         }
     }
 }
@@ -684,7 +684,7 @@ enum SecurityChangeType {
 extension UserClient {
 
     @objc public func trustClient(_ client: UserClient) {
-        trustClients(Set(arrayLiteral: client))
+        trustClients([client])
     }
 
     /// Will change conversations security level as side effect
@@ -702,7 +702,7 @@ extension UserClient {
 
     /// Ignore a know client
     @objc public func ignoreClient(_ client: UserClient) {
-        ignoreClients(Set(arrayLiteral: client))
+        ignoreClients([client])
     }
 
     /// Adds to ignored clients, remove from trusted clients, returns the set with the self client excluded
@@ -728,7 +728,7 @@ extension UserClient {
 
     /// Adds a new client that was just discovered to the ignored ones
     @objc public func addNewClientToIgnored(_ client: UserClient) {
-        addNewClientsToIgnored(Set(arrayLiteral: client))
+        addNewClientsToIgnored([client])
     }
 
     /// Add new clients that were just discovered to the ignored ones
@@ -779,7 +779,7 @@ extension UserClient {
         selfClient.apsDecryptionKey = nil
         selfClient.apsVerificationKey = nil
         selfClient.needsToUploadSignalingKeys = true
-        selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientNeedsToUpdateSignalingKeysKey))
+        selfClient.setLocallyModifiedKeys([ZMUserClientNeedsToUpdateSignalingKeysKey])
 
         context.enqueueDelayedSave()
     }
@@ -793,7 +793,7 @@ extension UserClient {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient() else { return }
 
         selfClient.needsToUpdateCapabilities = true
-        selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientNeedsToUpdateCapabilitiesKey))
+        selfClient.setLocallyModifiedKeys([ZMUserClientNeedsToUpdateCapabilitiesKey])
 
         context.enqueueDelayedSave()
     }

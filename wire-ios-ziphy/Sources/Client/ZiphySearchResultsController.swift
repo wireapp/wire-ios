@@ -80,16 +80,13 @@ public final class ZiphySearchResultsController {
         paginationController = ZiphyPaginationController()
 
         self.paginationController?.fetchBlock = { [weak self] offset in
-
             guard let `self` = self else {
                 return nil
             }
 
-            return self.client.fetchTrending(resultsLimit: self.pageSize, offset: offset) {
-                [weak self] result in
+            return self.client.fetchTrending(resultsLimit: self.pageSize, offset: offset) { [weak self] result in
                 self?.updatePagination(result)
             }
-
         }
 
         return fetchMoreResults(completion)

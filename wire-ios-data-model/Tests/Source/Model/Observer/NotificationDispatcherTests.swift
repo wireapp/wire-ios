@@ -311,7 +311,7 @@ class NotificationDispatcherTests: NotificationDispatcherTestBase {
             XCTAssertEqual(observer.notifications.count, 0)
 
             // and when
-            sut.didMergeChanges(Set(arrayLiteral: user.objectID))
+            sut.didMergeChanges([user.objectID])
 
             // then
             XCTAssertEqual(observer.notifications.count, 1)
@@ -555,7 +555,7 @@ class NotificationDispatcherTests: NotificationDispatcherTestBase {
             XCTAssertEqual(conversationObserver.notifications.count, 0)
 
             // when
-            sut.didMergeChanges(Set(arrayLiteral: conv.objectID))
+            sut.didMergeChanges([conv.objectID])
 
             // then
             XCTAssertEqual(conversationObserver.notifications.count, 1)
