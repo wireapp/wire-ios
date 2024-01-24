@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import WireTesting
 @testable import WireSyncEngine
 
-class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
+final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -166,90 +166,6 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    // MARK: - Team Update
-
-    func testThatItUpdatesATeamsNameWhenReceivingATeamUpdateUpdateEvent() async {
-        // given
-        let dataPayload = ["name": "Wire GmbH"]
-
-        // when
-        guard let team = await assertThatItUpdatesTeamsProperties(with: dataPayload) else { return XCTFail("No Team") }
-
-        // then
-        XCTAssertEqual(team.name, "Wire GmbH")
-    }
-
-    func testThatItUpdatesATeamsIconWhenReceivingATeamUpdateUpdateEvent() async {
-        // given
-        let newAssetId = UUID.create().transportString()
-        let dataPayload = ["icon": newAssetId]
-
-        // when
-        guard let team = await assertThatItUpdatesTeamsProperties(with: dataPayload) else { return XCTFail("No Team") }
-
-        // then
-        XCTAssertEqual(team.pictureAssetId, newAssetId)
-    }
-
-    func testThatItUpdatesATeamsIconKeyWhenReceivingATeamUpdateUpdateEvent() async {
-        // given
-        let newAssetKey = UUID.create().transportString()
-        let dataPayload = ["icon_key": newAssetKey]
-
-        // when
-        guard let team = await assertThatItUpdatesTeamsProperties(with: dataPayload) else { return XCTFail("No Team") }
-
-        // then
-        XCTAssertEqual(team.pictureAssetKey, newAssetKey)
-    }
-
-    func assertThatItUpdatesTeamsProperties(
-        with dataPayload: [String: Any]?,
-        preExistingTeam: Bool = true,
-        file: StaticString = #file,
-        line: UInt = #line) async -> Team? {
-
-            // given
-            let teamId = UUID.create()
-
-            if preExistingTeam {
-                syncMOC.performGroupedBlock {
-                    let team = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)!
-                    team.name = "Some Team"
-                    team.remoteIdentifier = teamId
-                    team.pictureAssetId = UUID.create().transportString()
-                    team.pictureAssetKey = UUID.create().transportString()
-                    XCTAssert(self.syncMOC.saveOrRollback())
-                }
-
-                XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1), file: file, line: line)
-                XCTAssertNotNil(Team.fetchOrCreate(with: teamId, create: false, in: uiMOC, created: nil))
-            }
-
-            let payload: [String: Any] = [
-                "type": "team.update",
-                "team": teamId.transportString(),
-                "time": Date().transportString(),
-                "data": dataPayload ?? NSNull()
-            ]
-
-            // when
-            await processEvent(fromPayload: payload)
-
-            // then
-
-            return uiMOC.performGroupedAndWait { context in Team.fetchOrCreate(with: teamId, create: false, in: context, created: nil) }
-        }
-
-    func testThatItDoesNotCreateATeamIfItDoesNotAlreadyExistWhenReceivingATeamUpdateUpdateEvent() async {
-        // given
-        let dataPayload = ["name": "Wire GmbH"]
-
-        // then
-        let result = await assertThatItUpdatesTeamsProperties(with: dataPayload, preExistingTeam: false)
-        XCTAssertNil(result)
     }
 
     // MARK: - Team Member-Leave
@@ -522,7 +438,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         }
 
         // when
-        await self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+        self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         syncMOC.performGroupedBlock {
             XCTAssert(self.syncMOC.saveOrRollback(), file: file, line: line)
         }

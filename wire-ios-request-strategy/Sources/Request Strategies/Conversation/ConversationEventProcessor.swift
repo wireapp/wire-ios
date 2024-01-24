@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +25,12 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     let context: NSManagedObjectContext
     let conversationService: ConversationServiceInterface
-    private let processor = ConversationEventPayloadProcessor()
+    let mlsEventProcessor: MLSEventProcessing
+
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: mlsEventProcessor,
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
     private let eventPayloadDecoder = EventPayloadDecoder()
 
     // MARK: - Life cycle
@@ -32,16 +38,19 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     public convenience init(context: NSManagedObjectContext) {
         self.init(
             context: context,
-            conversationService: ConversationService(context: context)
+            conversationService: ConversationService(context: context),
+            mlsEventProcessor: MLSEventProcessor(context: context)
         )
     }
 
     public init(
         context: NSManagedObjectContext,
-        conversationService: ConversationServiceInterface
+        conversationService: ConversationServiceInterface,
+        mlsEventProcessor: MLSEventProcessing
     ) {
         self.context = context
         self.conversationService = conversationService
+        self.mlsEventProcessor = mlsEventProcessor
         super.init()
     }
 
@@ -132,9 +141,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             from: event.payload
         ) else { return }
 
-        await context.perform {
-            self.processor.processPayload(payload, originalEvent: event, in: self.context)
-        }
+        await processor.processPayload(payload, originalEvent: event, in: context)
     }
 
     private func processConversationMemberJoin(_ event: ZMUpdateEvent) async {
@@ -240,13 +247,19 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func processConversationMLSWelcome(_ event: ZMUpdateEvent) async {
-        guard let payload = try? eventPayloadDecoder.decode(
-            Payload.UpdateConversationMLSWelcome.self,
-            from: event.payload
-        ) else { return }
+        guard
+            let payload = try? eventPayloadDecoder.decode(
+                Payload.UpdateConversationMLSWelcome.self,
+                from: event.payload
+            ),
+            let qualifiedID = payload.qualifiedID ?? BackendInfo.domain.map({
+                QualifiedID(uuid: payload.id, domain: $0)
+            })
+        else { return }
 
-        await MLSEventProcessor.shared.process(
+        await mlsEventProcessor.process(
             welcomeMessage: payload.data,
+            conversationID: qualifiedID,
             in: context
         )
     }
@@ -305,13 +318,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         }
 
         if let conversation, usersContainedSelfUser {
-            await self.updateMLSStatus(for: conversation, context: self.context)
+            await updateMLSStatus(for: conversation, context: context)
         }
 
     }
 
     private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) async {
-        await MLSEventProcessor.shared.updateConversationIfNeeded(
+        await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             groupID: nil,
             context: context

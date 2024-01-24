@@ -118,7 +118,6 @@ public final class MLSService: MLSServiceInterface {
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let syncStatus: SyncStatusProtocol
-    private let conversationPostProtocolChangeUpdater: ConversationPostProtocolChangeUpdating
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -199,8 +198,7 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
         userID: UUID,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository(),
-        conversationPostProtocolChangeUpdater: ConversationPostProtocolChangeUpdating = ConversationPostProtocolChangeUpdater()
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
         self.context = context
         self.coreCryptoProvider = coreCryptoProvider
@@ -218,7 +216,6 @@ public final class MLSService: MLSServiceInterface {
         self.delegate = delegate
         self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
-        self.conversationPostProtocolChangeUpdater = conversationPostProtocolChangeUpdater
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(coreCryptoProvider: coreCryptoProvider)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
@@ -355,13 +352,18 @@ public final class MLSService: MLSServiceInterface {
         ) { [weak self] _ in
             guard
                 let self,
-                let context = context,
-                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true else {
-                self?.logger.info("Skip periodic key material check since MLS is not enabled")
+                let context = context else {
                 return
             }
 
-            Task {
+            Task { [context] in
+                let hasRegisteredMLSClient = await context.perform { ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true }
+
+                guard hasRegisteredMLSClient else {
+                    self.logger.info("Skip periodic key material check since MLS is not enabled")
+                    return
+                }
+
                 await self.updateKeyMaterialForAllStaleGroupsIfNeeded()
             }
         }
@@ -376,11 +378,11 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func updateKeyMaterialForAllStaleGroups() async {
-        Logging.mls.info("beginning to update key material for all stale groups")
+        WireLogger.mls.info("beginning to update key material for all stale groups")
 
         let staleGroups = staleKeyMaterialDetector.groupsWithStaleKeyingMaterial
 
-        Logging.mls.info("found \(staleGroups.count) groups with stale key material")
+        WireLogger.mls.info("found \(staleGroups.count) groups with stale key material")
 
         for staleGroup in staleGroups {
             try? await updateKeyMaterial(for: staleGroup)
@@ -396,12 +398,12 @@ public final class MLSService: MLSServiceInterface {
 
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
-            Logging.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
             let events = try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             await conversationEventProcessor.processConversationEvents(events)
         } catch {
-            Logging.mls.warn("failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            WireLogger.mls.warn("failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
         }
     }
@@ -876,7 +878,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
-        if let subgroupInfo = subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
+        if let subgroupInfo = await subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
             await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
         } else {
             await fetchAndRepairParentGroup(with: groupID)
@@ -1284,7 +1286,7 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("committing any scheduled pending proposals")
 
-        let groupsWithPendingCommits = self.sortedGroupsWithPendingCommits()
+        let groupsWithPendingCommits = await self.sortedGroupsWithPendingCommits()
 
         logger.info("\(groupsWithPendingCommits.count) groups with scheduled pending proposals")
 
@@ -1302,34 +1304,34 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func sortedGroupsWithPendingCommits() -> [(MLSGroupID, Date)] {
+    private func sortedGroupsWithPendingCommits() async -> [(MLSGroupID, Date)] {
         guard let context = context else {
             return []
         }
 
         var result: [(MLSGroupID, Date)] = []
 
-        context.performAndWait {
-            let conversations = ZMConversation.fetchConversationsWithPendingProposals(in: context)
+        let conversations = await context.perform { ZMConversation.fetchConversationsWithPendingProposals(in: context) }
 
-            for conversation in conversations {
-                guard
-                    let groupID = conversation.mlsGroupID,
-                    let timestamp = conversation.commitPendingProposalDate
-                else {
+        for conversation in conversations {
+            let (groupID, timestamp) = await context.perform {
+                (conversation.mlsGroupID,
+                conversation.commitPendingProposalDate)
+            }
+
+            guard let groupID, let timestamp else {
                     continue
-                }
+            }
 
-                result.append((groupID, timestamp))
+            result.append((groupID, timestamp))
 
-                // The pending proposal might be for the subconversation,
-                // so include it just in case.
-                if let subgroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
-                    forType: .conference,
-                    parentGroupID: groupID
-                ) {
-                    result.append((subgroupID, timestamp))
-                }
+            // The pending proposal might be for the subconversation,
+            // so include it just in case.
+            if let subgroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
+                forType: .conference,
+                parentGroupID: groupID
+            ) {
+                result.append((subgroupID, timestamp))
             }
         }
 
@@ -1484,7 +1486,7 @@ public final class MLSService: MLSServiceInterface {
                 )
             }
 
-            subconversationGroupIDRepository.storeSubconversationGroupID(
+            await subconversationGroupIDRepository.storeSubconversationGroupID(
                 subgroup.groupID,
                 forType: .conference,
                 parentGroupID: parentID
@@ -1577,7 +1579,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         if
-            let subConversationGroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
+            let subConversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
@@ -1602,7 +1604,7 @@ public final class MLSService: MLSServiceInterface {
         parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
     ) async throws {
-        guard let subconversationGroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
+        guard let subconversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
             forType: subconversationType,
             parentGroupID: parentGroupID
         ) else {
@@ -1637,7 +1639,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
 
-            subconversationGroupIDRepository.storeSubconversationGroupID(
+            await subconversationGroupIDRepository.storeSubconversationGroupID(
                 nil,
                 forType: subconversationType,
                 parentGroupID: parentGroupID
@@ -1692,20 +1694,15 @@ public final class MLSService: MLSServiceInterface {
 
             do {
                 // update message protocol to `mixed`
-                let messageProtocol: MessageProtocol = .mixed
-
                 try await actionsProvider.updateConversationProtocol(
                     qualifiedID: qualifiedID,
-                    messageProtocol: messageProtocol,
+                    messageProtocol: .mixed,
                     context: context.notificationContext
                 )
 
-                // update and sync the local group conversation
-                try await conversationPostProtocolChangeUpdater.updateLocalConversation(
-                    conversation,
+                try await actionsProvider.syncConversation(
                     qualifiedID: qualifiedID,
-                    to: messageProtocol,
-                    context: context
+                    context: context.notificationContext
                 )
 
                 // create MLS group and update keying material
@@ -1797,14 +1794,6 @@ private extension TimeInterval {
 
     var nanoseconds: UInt64 {
         UInt64(self * 1_000_000_000)
-    }
-
-}
-
-private extension Date {
-
-    var isInThePast: Bool {
-        return compare(Date()) != .orderedDescending
     }
 
 }

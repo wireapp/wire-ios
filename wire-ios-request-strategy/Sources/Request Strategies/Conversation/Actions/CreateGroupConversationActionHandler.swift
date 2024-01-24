@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 public final class CreateGroupConversationAction: EntityAction {
 
@@ -83,15 +84,21 @@ public final class CreateGroupConversationAction: EntityAction {
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
-    private let processor = ConversationEventPayloadProcessor()
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: MLSEventProcessor(context: context),
+        removeLocalConversation: removeLocalConversationUseCase
+    )
+
     private let mlsService: MLSServiceInterface
+    private let removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
 
     required init(
         context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface
+        mlsService: MLSServiceInterface,
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
     ) {
         self.mlsService = mlsService
-
+        self.removeLocalConversationUseCase = removeLocalConversationUseCase
         super.init(context: context)
     }
 

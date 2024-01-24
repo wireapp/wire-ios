@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +28,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         conversationService = MockConversationServiceInterface()
-        conversationService.syncConversationQualifiedID_MockMethod = { _ in
-        }
+        conversationService.syncConversationQualifiedID_MockMethod = { _ in }
 
         conversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
             completion()
@@ -36,24 +36,23 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         mockMLSEventProcessor = .init()
         mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
-        mockMLSEventProcessor.processWelcomeMessageIn_MockMethod = { _, _ in }
+        mockMLSEventProcessor.processWelcomeMessageConversationIDIn_MockMethod = { _, _, _ in }
         mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in }
 
         sut = ConversationEventProcessor(
             context: syncMOC,
-            conversationService: conversationService
+            conversationService: conversationService,
+            mlsEventProcessor: mockMLSEventProcessor
         )
 
         BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v0
-        MLSEventProcessor.setMock(mockMLSEventProcessor)
     }
 
     override func tearDown() {
         sut = nil
         conversationService = nil
         mockMLSEventProcessor = nil
-        MLSEventProcessor.reset()
         super.tearDown()
     }
 
@@ -134,11 +133,14 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         let unwrappedUpdateEvent = try XCTUnwrap(updateEvent)
 
         // when
-        await self.sut.processConversationEvents([unwrappedUpdateEvent])
+        await sut.processConversationEvents([unwrappedUpdateEvent])
 
         // then
-        XCTAssertEqual(message, mockMLSEventProcessor.processWelcomeMessageIn_Invocations.first?.welcomeMessage)
-
+        let qualifiedID = await syncMOC.perform { self.groupConversation.qualifiedID }
+        let invocations = mockMLSEventProcessor.processWelcomeMessageConversationIDIn_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        XCTAssertEqual(invocations.first?.welcomeMessage, message)
+        XCTAssertEqual(invocations.first?.conversationID, qualifiedID)
     }
 
     // MARK: - MLS conversation member leave
@@ -159,7 +161,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             // Create the event
             let payload = Payload.UpdateConverationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .userDeleted
             )
             updateEvent = self.updateEvent(from: payload)
         }
@@ -167,13 +170,15 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         let event = try XCTUnwrap(updateEvent)
 
         // When
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations
-        XCTAssertEqual(wipeGroupInvocations.count, 1)
-        XCTAssertEqual(wipeGroupInvocations.first?.conversation, groupConversation)
+        await syncMOC.perform {
+            XCTAssertEqual(wipeGroupInvocations.count, 1)
+            XCTAssertEqual(wipeGroupInvocations.first?.conversation, self.groupConversation)
+        }
     }
 
     func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() async throws {
@@ -193,7 +198,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             // create the event
             let payload = Payload.UpdateConverationMemberLeave(
                 userIDs: [user.remoteIdentifier],
-                qualifiedUserIDs: [user.qualifiedID!]
+                qualifiedUserIDs: [user.qualifiedID!],
+                reason: .userDeleted
             )
             updateEvent = self.updateEvent(from: payload)
         }
@@ -203,7 +209,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
+        XCTAssertTrue(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.isEmpty)
     }
 
     func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenProtocolIsNotMLS() async throws {
@@ -224,7 +230,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             // create the event
             let payload = Payload.UpdateConverationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .userDeleted
             )
             updateEvent = self.updateEvent(from: payload)
         }
@@ -235,7 +242,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
+        XCTAssertTrue(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.isEmpty)
     }
 
     // MARK: Conversation Creation
