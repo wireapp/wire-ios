@@ -200,24 +200,31 @@ extension E2eIdentityCertificate {
     // Randomising time so that not all clients update certificate at the same time
     private var kRandomInterval: Double { Double(Int.random(in: 0..<86400)) }
 
-    var isExpired: Bool {
-        return expiryDate > Date.now
+    private var isExpired: Bool {
+        return expiryDate > comparedDate
     }
 
-    var isValid: Bool {
+    private var isValid: Bool {
         status == .valid
     }
 
-    var isActivated: Bool {
-        return notValidBefore <= Date.now
+    private var isActivated: Bool {
+        return notValidBefore <= comparedDate
     }
 
-    var lastUpdateDate: Date {
+    private var lastUpdateDate: Date {
         return notValidBefore + kServerRetainedDays + kRandomInterval
     }
 
-    func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
-        return isActivated && isExpired && (lastUpdateDate + gracePeriod) < Date.now
+    private var comparedDate: Date {
+        return E2eIdentityCertificateDateProvider(now: .now).now
     }
 
+    func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
+        return isActivated && isExpired && (lastUpdateDate + gracePeriod) < comparedDate
+    }
+
+    struct E2eIdentityCertificateDateProvider: DateProviding {
+        let now: Date
+    }
 }
