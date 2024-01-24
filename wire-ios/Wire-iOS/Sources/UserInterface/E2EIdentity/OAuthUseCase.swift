@@ -27,7 +27,7 @@ public protocol OAuthUseCaseInterface {
     func invoke(for identityProvider: URL,
                 clientID: String,
                 keyauth: String,
-                acmeAudience: String) async throws -> (idToken: String, refreshToken: String?)
+                acmeAudience: String) async throws -> (idToken: String, refreshToken: String)
 
 }
 
@@ -44,7 +44,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
     public func invoke(for identityProvider: URL,
                        clientID: String,
                        keyauth: String,
-                       acmeAudience: String) async throws -> (idToken: String, refreshToken: String?) {
+                       acmeAudience: String) async throws -> (idToken: String, refreshToken: String) {
         logger.info("invoke authentication flow")
 
         guard let bundleID = Bundle.main.bundleIdentifier,
@@ -103,7 +103,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         return [CodingKeys.claims.rawValue: idTokenString]
     }
 
-    private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> (idToken: String, refreshToken: String?) {
+    private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> (idToken: String, refreshToken: String) {
         guard let userAgent = OIDExternalUserAgentIOS(presenting: rootViewController) else {
             throw OAuthError.missingOIDExternalUserAgent
         }
@@ -119,7 +119,10 @@ public class OAuthUseCase: OAuthUseCaseInterface {
                 guard let idToken = authState?.lastTokenResponse?.idToken else {
                     return continuation.resume(throwing: OAuthError.missingIdToken)
                 }
-                let refreshToken = authState?.lastTokenResponse?.refreshToken
+
+                guard let refreshToken = authState?.lastTokenResponse?.refreshToken else {
+                    return continuation.resume(throwing: OAuthError.missingRefreshToken)
+                }
 
                 return continuation.resume(returning: (idToken, refreshToken))
             })
@@ -136,5 +139,6 @@ enum OAuthError: Error {
     case missingServiceConfiguration
     case missingOIDExternalUserAgent
     case missingIdToken
+    case missingRefreshToken
 
 }

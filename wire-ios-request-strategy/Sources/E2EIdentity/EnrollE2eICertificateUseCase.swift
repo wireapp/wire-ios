@@ -21,7 +21,7 @@ import Foundation
 public typealias OAuthBlock = (_ idP: URL,
                                _ clientID: String,
                                _ keyauth: String,
-                               _ acmeAud: String) async throws -> (String, String?)
+                               _ acmeAud: String) async throws -> (String, String)
 
 public protocol EnrollE2eICertificateUseCaseInterface {
 
@@ -29,7 +29,7 @@ public protocol EnrollE2eICertificateUseCaseInterface {
                 userName: String,
                 userHandle: String,
                 team: UUID,
-                authenticate: OAuthBlock) async throws -> Swift.Result<String, Error>
+                authenticate: OAuthBlock) async throws
 
 }
 
@@ -46,7 +46,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                        userName: String,
                        userHandle: String,
                        team: UUID,
-                       authenticate: OAuthBlock) async throws -> Swift.Result<String, Error> {
+                       authenticate: OAuthBlock) async throws {
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId,
                                                                    userName: userName,
                                                                    handle: userHandle,
@@ -77,16 +77,15 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
         let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
                                                                       dpopToken: dpopToken)
-//        guard let refreshToken = try await enrollment.getOAuthRefreshToken() else {
-//            throw EnrollE2EICertificateUseCaseFailure.missingOIDCRefreshToken
-//        }
+
+        let refreshTokenFromCC = try? await enrollment.getOAuthRefreshToken()
 
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(accessToken: wireAccessToken.token,
                                                                                prevNonce: authzResponse.nonce,
                                                                                acmeChallenge: wireDpopChallenge)
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(idToken: idToken,
-                                                                               refreshToken: refreshToken ?? " ",
+                                                                               refreshToken: refreshTokenFromCC ?? refreshToken,
                                                                                prevNonce: dpopChallengeResponse.nonce,
                                                                                acmeChallenge: oidcChallenge)
 
@@ -99,9 +98,8 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
             guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
                 throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
             }
-            print(certificateChain)
+
             try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
-            return .success(certificateChain)
         } catch is DecodingError {
             throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
         }

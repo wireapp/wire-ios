@@ -25,15 +25,26 @@ class E2eIServiceTests: ZMConversationTestsBase {
 
     var sut: E2eIService!
     var mockE2eIdentity: MockE2eiEnrollment!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
+    var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     override func setUp() {
         super.setUp()
 
         mockE2eIdentity = MockE2eiEnrollment()
-        sut = E2eIService(e2eIdentity: mockE2eIdentity)
+        mockCoreCrypto = MockCoreCryptoProtocol()
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        sut = E2eIService(e2eIdentity: mockE2eIdentity,
+                          coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
+        mockCoreCrypto = nil
+        mockSafeCoreCrypto = nil
+        mockCoreCryptoProvider = nil
         mockE2eIdentity = nil
         sut = nil
 
@@ -133,26 +144,26 @@ class E2eIServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(orderRequest, expectedOrderRequest)
     }
 
-//    func testThatItSetsOrderResponse() async throws {
-//        // Expectation
-//        let expectedAcmeOrder = NewAcmeOrder(delegate: [], authorizations: ["example.com"])
-//
-//        // Given
-//        var mockSetOrderResponse = 0
-//
-//        // Mock
-//        mockE2eIdentity.mockNewOrderResponse = { _ in
-//            mockSetOrderResponse += 1
-//            return expectedAcmeOrder
-//        }
-//
-//        // When
-//        let acmeOrder = try await sut.setOrderResponse(order: Data())
-//
-//        // Then
-//        XCTAssertEqual(mockSetOrderResponse, 1)
-//        XCTAssertEqual(acmeOrder, expectedAcmeOrder)
-//    }
+    func testThatItSetsOrderResponse() async throws {
+        // Expectation
+        let expectedAcmeOrder = NewAcmeOrder(delegate: Data(), authorizations: ["example.com"])
+
+        // Given
+        var mockSetOrderResponse = 0
+
+        // Mock
+        mockE2eIdentity.mockNewOrderResponse = { _ in
+            mockSetOrderResponse += 1
+            return expectedAcmeOrder
+        }
+
+        // When
+        let acmeOrder = try await sut.setOrderResponse(order: Data())
+
+        // Then
+        XCTAssertEqual(mockSetOrderResponse, 1)
+        XCTAssertEqual(acmeOrder, expectedAcmeOrder)
+    }
 
     func testThatItGetsNewAuthzRequest() async throws {
         // Expectation
@@ -243,42 +254,44 @@ class E2eIServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(dpopChallenge, expectedDpopChallenge)
     }
 
-//    func testThatItGetsNewOidcChallengeRequest() async throws {
-//        // Expectation
-//        let expectedOidcChallenge = Data()
-//
-//        // Given
-//        var mockGetsNewOidcChallengeRequest = 0
-//
-//        // Mock
-//        mockE2eIdentity.mockNewOidcChallengeRequest = { _, _ in
-//            mockGetsNewOidcChallengeRequest += 1
-//            return expectedOidcChallenge
-//        }
-//
-//        // When
-//        let oidcChallenge = try await sut.getNewOidcChallengeRequest(idToken: "idToken", nonce: "nonce")
-//
-//        // Then
-//        XCTAssertEqual(mockGetsNewOidcChallengeRequest, 1)
-//        XCTAssertEqual(oidcChallenge, expectedOidcChallenge)
-//    }
+    func testThatItGetsNewOidcChallengeRequest() async throws {
+        // Expectation
+        let expectedOidcChallenge = Data()
 
-//    func testThatItSetsChallengeResponse() async throws {
-//        // Given
-//        var mockSetsChallengeResponse = 0
-//
-//        // Mock
-//        mockE2eIdentity.mockNewChallengeResponse = { _ in
-//            mockSetsChallengeResponse += 1
-//        }
-//
-//        // When
-//        try await sut.setChallengeResponse(challenge: Data())
-//
-//        // Then
-//        XCTAssertEqual(mockSetsChallengeResponse, 1)
-//    }
+        // Given
+        var mockGetsNewOidcChallengeRequest = 0
+
+        // Mock
+        mockE2eIdentity.mockNewOidcChallengeRequest = { _, _, _ in
+            mockGetsNewOidcChallengeRequest += 1
+            return expectedOidcChallenge
+        }
+
+        // When
+        let oidcChallenge = try await sut.getNewOidcChallengeRequest(idToken: "idToken",
+                                                                     refreshToken: "refreshToken",
+                                                                     nonce: "nonce")
+
+        // Then
+        XCTAssertEqual(mockGetsNewOidcChallengeRequest, 1)
+        XCTAssertEqual(oidcChallenge, expectedOidcChallenge)
+    }
+
+    func testThatItSetsDPoPChallengeResponse() async throws {
+        // Given
+        var mockSetsChallengeResponse = 0
+
+        // Mock
+        mockE2eIdentity.mockNewDpopChallengeResponse = { _ in
+            mockSetsChallengeResponse += 1
+        }
+
+        // When
+        try await sut.setDPoPChallengeResponse(challenge: Data())
+
+        // Then
+        XCTAssertEqual(mockSetsChallengeResponse, 1)
+    }
 
     func testThatItChecksOrderRequest() async throws {
         // Expectation

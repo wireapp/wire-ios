@@ -169,7 +169,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
 
     func testThatItGetsWireAccessToken() async throws {
         // expectation
-        let expectedAccessToken = AccessTokenResponse(expiresIn: "", token: "", type: "")
+        let expectedAccessToken = AccessTokenResponse(expiresIn: 1, token: "", type: "")
 
         // given
         BackendInfo.apiVersion = .v5
@@ -220,6 +220,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
 
         // when
         let result = try await sut.validateOIDCChallenge(idToken: "idToken",
+                                                         refreshToken: "refreshToken",
                                                          prevNonce: "Nonce",
                                                          acmeChallenge: AcmeChallenge(delegate: Data(),
                                                                                       url: "",
@@ -229,7 +230,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         XCTAssertEqual(result, expectedChallengeResponse)
     }
 
-    func testThatItValidatesChallenge() async throws {
+    func testThatItSetDPoPChallenge() async throws {
         // given
         let challengeResponse = ChallengeResponse(type: "JWD",
                                                   url: "url",
@@ -238,7 +239,22 @@ class E2eIEnrollmentTests: ZMTBaseTest {
                                                   nonce: "nonce")
 
         // when
-        try await sut.validateChallenge(challengeResponse: challengeResponse)
+        try await sut.setDPoPChallengeResponse(challengeResponse: challengeResponse)
+
+        // then
+        XCTAssertEqual(mockE2eiService.mockSetChallengeResponse, 1)
+    }
+
+    func testThatItSetOIDCChallenge() async throws {
+        // given
+        let challengeResponse = ChallengeResponse(type: "JWD",
+                                                  url: "url",
+                                                  status: "valid",
+                                                  token: "token",
+                                                  nonce: "nonce")
+
+        // when
+        try await sut.setOIDCChallengeResponse(challengeResponse: challengeResponse)
 
         // then
         XCTAssertEqual(mockE2eiService.mockSetChallengeResponse, 1)
@@ -418,7 +434,19 @@ class MockE2eIService: E2eIServiceInterface {
         return Data()
     }
 
-    func setChallengeResponse(challenge: Data) async throws {
+    func getOAuthRefreshToken() async throws -> String {
+        return "RefreshToken"
+    }
+
+    func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
+        return Data()
+    }
+
+    func setDPoPChallengeResponse(challenge: Data) async throws {
+        mockSetChallengeResponse += 1
+    }
+
+    func setOIDCChallengeResponse(challenge: Data) async throws {
         mockSetChallengeResponse += 1
     }
 

@@ -289,7 +289,8 @@ public class ZMUserSession: NSObject {
             acmeApi: acmeApi,
             apiProvider: apiProvider,
             e2eiSetupService: e2eiSetupService,
-            keyRotator: keyRotator
+            keyRotator: keyRotator,
+            coreCryptoProvider: coreCryptoProvider
         )
 
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)

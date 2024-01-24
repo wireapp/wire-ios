@@ -28,19 +28,22 @@ public final class E2eIRepository: E2eIRepositoryInterface {
 
     private let acmeApi: AcmeAPIInterface
     private let apiProvider: APIProviderInterface
-    private var e2eiSetupService: E2eISetupServiceInterface
+    private let e2eiSetupService: E2eISetupServiceInterface
     private let keyRotator: E2eIKeyPackageRotating
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     public init(
         acmeApi: AcmeAPIInterface,
         apiProvider: APIProviderInterface,
         e2eiSetupService: E2eISetupServiceInterface,
-        keyRotator: E2eIKeyPackageRotating
+        keyRotator: E2eIKeyPackageRotating,
+        coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
         self.e2eiSetupService = e2eiSetupService
         self.keyRotator = keyRotator
+        self.coreCryptoProvider = coreCryptoProvider
     }
 
     public func createEnrollment(
@@ -56,7 +59,7 @@ public final class E2eIRepository: E2eIRepositoryInterface {
             team: team
         )
 
-        let e2eiService = E2eIService(e2eIdentity: e2eIdentity)
+        let e2eiService = E2eIService(e2eIdentity: e2eIdentity, coreCryptoProvider: coreCryptoProvider)
         let acmeDirectory = try await loadACMEDirectory(e2eiService: e2eiService)
 
         return E2eIEnrollment(
