@@ -11,7 +11,8 @@
   "defaultOptions" : {
     "commandLineArgumentEntries" : [
       {
-        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1",
+        "enabled" : false
       }
     ],
     "testTimeoutsEnabled" : true
