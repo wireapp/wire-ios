@@ -20,7 +20,24 @@ import XCTest
 import Foundation
 @testable import WireDataModel
 
-class DatabaseMigrationTests_OneOnOneConversation: DatabaseMigrationTestBase {
+// TODO: deduplicate
+class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
+
+    typealias MigrationAction = (NSManagedObjectContext) throws -> Void
+
+    private let bundle = Bundle(for: ZMManagedObject.self)
+    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
+    private let helper = DatabaseMigrationHelper()
+
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        try FileManager.default.createDirectory(at: tmpStoreURL, withIntermediateDirectories: true)
+    }
+
+    override func tearDownWithError() throws {
+        try FileManager.default.removeItem(at: tmpStoreURL)
+        try super.tearDownWithError()
+    }
 
     func testMigratingToMessagingStore_2_113_UpdatesRelationships() throws {
         let mappingModelURL = bundle.url(
@@ -169,6 +186,68 @@ class DatabaseMigrationTests_OneOnOneConversation: DatabaseMigrationTestBase {
         }
 
         return conversation
+    }
+
+    // MARK: - Migration Helpers
+
+    private func migrateStore(
+        sourceVersion: String,
+        destinationVersion: String,
+        mappingModel: NSMappingModel,
+        preMigrationAction: MigrationAction,
+        postMigrationAction: MigrationAction
+    ) throws {
+        // GIVEN
+
+        // create versions models
+        let sourceModel = try helper.createObjectModel(version: sourceVersion)
+        let destinationModel = try helper.createObjectModel(version: destinationVersion)
+
+        let sourceStoreURL = storeURL(version: sourceVersion)
+        let destinationStoreURL = storeURL(version: destinationVersion)
+
+        // create container for initial version
+        let container = try helper.createStore(model: sourceModel, at: sourceStoreURL)
+
+        // perform pre-migration action
+        try preMigrationAction(container.viewContext)
+
+        // create migration manager and mapping model
+        let migrationManager = NSMigrationManager(
+            sourceModel: sourceModel,
+            destinationModel: destinationModel
+        )
+
+        // WHEN
+
+        // perform migration
+        do {
+            try migrationManager.migrateStore(
+                from: sourceStoreURL,
+                sourceType: NSSQLiteStoreType,
+                options: nil,
+                with: mappingModel,
+                toDestinationURL: destinationStoreURL,
+                destinationType: NSSQLiteStoreType,
+                destinationOptions: nil
+            )
+        } catch {
+            XCTFail("Migration failed: \(error)")
+        }
+
+        // THEN
+
+        // create store
+        let migratedContainer = try helper.createStore(model: destinationModel, at: destinationStoreURL)
+
+        // perform post migration action
+        try postMigrationAction(migratedContainer.viewContext)
+    }
+
+    // MARK: - URL Helpers
+
+    private func storeURL(version: String) -> URL {
+        return tmpStoreURL.appendingPathComponent("\(version).sqlite")
     }
 
 }
