@@ -18,8 +18,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "sourcery",
-            url: "https://github.com/krzysztofzablocki/Sourcery/releases/download/2.1.2/sourcery-2.1.2.artifactbundle.zip",
-            checksum: "550c5a6a63b321bcd2ac595595cf6943efd09ce23d1ebba640b2598a4a1106a3"
+            url: "https://github.com/krzysztofzablocki/Sourcery/releases/download/2.1.7/sourcery-2.1.7.artifactbundle.zip",
+            checksum: "b54ff217c78cada3f70d3c11301da03a199bec87426615b8144fc9abd13ac93b"
         )
     ]
 )
