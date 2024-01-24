@@ -1979,6 +1979,16 @@ extension WireCallCenterV3Tests {
         groupConversation.mlsGroupID = .random()
         groupConversation.mlsVerificationStatus = .degraded
 
+        let mlsService = MockMLSServiceInterface()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
+        mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { _, _, _ in
+            didLeaveSubconversation.fulfill()
+        }
+
         let changeInfo = ConversationChangeInfo(object: groupConversation)
         changeInfo.changedKeys = ["mlsVerificationStatus"]
         let clients = [
