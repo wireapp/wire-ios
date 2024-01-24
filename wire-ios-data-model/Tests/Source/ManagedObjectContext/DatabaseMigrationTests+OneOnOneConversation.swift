@@ -53,8 +53,11 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         let connectedUserID = UUID.create()
         let connectedConversationID = UUID.create()
 
-        let teamUserID = UUID.create()
-        let teamConversationID = UUID.create()
+        let teamUser1ID = UUID.create()
+        let teamConversation1ID = UUID.create()
+
+        let teamUser2ID = UUID.create()
+        let teamConversation2ID = UUID.create()
 
         try migrateStore(
             sourceVersion: "2.112.0",
@@ -64,16 +67,19 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
                 let selfUser = ZMUser.selfUser(in: context)
                 selfUser.remoteIdentifier = selfUserID
 
-                let teamUser = ZMUser.insertNewObject(in: context)
-                teamUser.remoteIdentifier = teamUserID
-
                 let connectedUser = ZMUser.insertNewObject(in: context)
                 connectedUser.remoteIdentifier = connectedUserID
+
+                let teamUser1 = ZMUser.insertNewObject(in: context)
+                teamUser1.remoteIdentifier = teamUser1ID
+
+                let teamUser2 = ZMUser.insertNewObject(in: context)
+                teamUser2.remoteIdentifier = teamUser2ID
 
                 let team = Team.insertNewObject(in: context)
                 team.remoteIdentifier = teamID
                 addUser(selfUser, to: team, in: context)
-                addUser(teamUser, to: team, in: context)
+                addUser(teamUser1, to: team, in: context)
 
                 let (connectedConversation, connection) = createConnectedConversation(
                     id: connectedConversationID,
@@ -81,10 +87,18 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
                     in: context
                 )
 
-                let teamOneOnOneConversation = createTeamOneOnOneConversation(
-                    id: teamConversationID,
+                let teamOneOnOneConversation = createTeamConversation(
+                    id: teamConversation1ID,
                     team: team,
-                    with: [selfUser, teamUser],
+                    with: [selfUser, teamUser1],
+                    in: context
+                )
+
+                let teamGroupConversation = createTeamConversation(
+                    id: teamConversation2ID,
+                    team: team,
+                    with: [selfUser, teamUser2],
+                    name: "Not a one on one!",
                     in: context
                 )
 
@@ -93,22 +107,30 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
                 XCTAssertEqual(connectedConversation.conversationType, .oneOnOne)
                 XCTAssertEqual(connectedConversation.value(forKey: "connection") as? ZMConnection, connection)
                 XCTAssertEqual(connectedUser.connection, connection)
-
                 XCTAssertEqual(teamOneOnOneConversation.conversationType, .oneOnOne)
+                XCTAssertEqual(teamGroupConversation.conversationType, .group)
             },
             postMigrationAction: { context in
                 let selfUser = try XCTUnwrap(ZMUser.fetch(with: selfUserID, in: context))
                 XCTAssertNil(selfUser.oneOnOneConversation)
 
+                // Connected conversation was migrated.
                 let connectedUser = try XCTUnwrap(ZMUser.fetch(with: connectedUserID, in: context))
                 let connectedConversation = try XCTUnwrap(ZMConversation.fetch(with: connectedConversationID, in: context))
                 XCTAssertEqual(connectedUser.oneOnOneConversation, connectedConversation)
                 XCTAssertEqual(connectedConversation.oneOnOneUser, connectedUser)
 
-                let teamUser = try XCTUnwrap(ZMUser.fetch(with: teamUserID, in: context))
-                let teamConversation = try XCTUnwrap(ZMConversation.fetch(with: teamConversationID, in: context))
-                XCTAssertEqual(teamUser.oneOnOneConversation, teamConversation)
-                XCTAssertEqual(teamConversation.oneOnOneUser, teamUser)
+                // Team one on one was migrated.
+                let teamUser1 = try XCTUnwrap(ZMUser.fetch(with: teamUser1ID, in: context))
+                let teamConversation1 = try XCTUnwrap(ZMConversation.fetch(with: teamConversation1ID, in: context))
+                XCTAssertEqual(teamUser1.oneOnOneConversation, teamConversation1)
+                XCTAssertEqual(teamConversation1.oneOnOneUser, teamUser1)
+
+                // Team group was not migrated.
+                let teamUser2 = try XCTUnwrap(ZMUser.fetch(with: teamUser2ID, in: context))
+                let teamConversation2 = try XCTUnwrap(ZMConversation.fetch(with: teamConversation2ID, in: context))
+                XCTAssertNil(teamUser2.oneOnOneConversation)
+                XCTAssertNil(teamConversation2.oneOnOneUser)
             }
         )
     }
@@ -143,10 +165,11 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         return (conversation, connection)
     }
 
-    private func createTeamOneOnOneConversation(
+    private func createTeamConversation(
         id: UUID,
         team: Team,
         with users: [ZMUser],
+        name: String? = nil,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: context)
@@ -154,6 +177,7 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         conversation.team = team
         conversation.teamRemoteIdentifier = team.remoteIdentifier
         conversation.conversationType = .group
+        conversation.userDefinedName = name
 
         for user in users {
             let participation = ParticipantRole.insertNewObject(in: context)
