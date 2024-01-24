@@ -3348,7 +3348,6 @@
 				54DE9BEF1DE760A900EFFB9C /* RandomHandleGeneratorTests.swift in Sources */,
 				F9C598AD1A0947B300B1F760 /* ZMBlacklistDownloaderTest.m in Sources */,
 				1672A653234784B500380537 /* LabelDownstreamRequestStrategyTests.swift in Sources */,
-				EE2E95E92A8B474200325A0C /* MockFeatureRepositoryInterface.swift in Sources */,
 				874A16942052C64B001C6760 /* UserExpirationObserverTests.swift in Sources */,
 				16A702D01E92998100B8410D /* ApplicationStatusDirectoryTests.swift in Sources */,
 				093694451BA9633300F36B3A /* UserClientRequestFactoryTests.swift in Sources */,
