@@ -398,7 +398,7 @@ final class ConversationViewController: UIViewController {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: context)
                 }
             } catch {
-                WireLogger.conversation.warn("resolve non MLS 1-1 conversation failed: \(error)")
+                WireLogger.conversation.warn("resolution of proteus 1-1 conversation failed: \(error)")
             }
         }
     }

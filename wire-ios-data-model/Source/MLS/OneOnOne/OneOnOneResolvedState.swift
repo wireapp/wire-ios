@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum OneOnOneConversationResolvedState {
+public enum OneOnOneConversationResolution {
     case noAction
     case archivedAsReadOnly
     case migratedToMLSGroup(identifier: MLSGroupID)
