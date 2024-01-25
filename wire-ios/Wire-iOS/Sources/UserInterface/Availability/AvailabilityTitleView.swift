@@ -48,8 +48,8 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
     // MARK: - Properties
 
     private let user: UserType
-    private var observerToken: Any?
-    private var options: Options
+    private var observerToken: NSObjectProtocol?
+    private let options: Options
     private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
 
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
@@ -126,7 +126,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
         if options.contains(.displayUserName) {
             title = user.name ?? ""
             do {
-                let verificationStatuses = try await getSelfUserVerificationStatusUseCase()
+                let verificationStatuses = try await getSelfUserVerificationStatusUseCase.invoke()
                 if verificationStatuses.isProteusVerified {
                     let attachment = NSTextAttachment(image: Asset.Images.verifiedShield.image)
                     attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)

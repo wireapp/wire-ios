@@ -65,7 +65,6 @@ final class ConversationTitleView: TitleView {
         setupAccessibility()
     }
 
-    //
     private var verifiedShield: NSTextAttachment {
         switch conversation.messageProtocol {
         case .proteus:
@@ -140,7 +139,7 @@ extension NSTextAttachment {
 
 extension ConversationLike {
 
-    /*fileprivate*/ var displayNameWithFallback: String {
+    var displayNameWithFallback: String {
         displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
     }
 

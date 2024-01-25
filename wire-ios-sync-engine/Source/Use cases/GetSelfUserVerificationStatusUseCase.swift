@@ -22,7 +22,6 @@ import WireCoreCrypto
 // sourcery: AutoMockable
 public protocol GetSelfUserVerificationStatusUseCaseProtocol {
     func invoke() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool)
-    func callAsFunction() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool)
 }
 
 public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol {
@@ -69,12 +68,5 @@ public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatu
         isMLSCertified = identities.allSatisfy { $0.status == .valid }
 
         return (isMLSCertified, isProteusVerified)
-    }
-}
-
-extension GetSelfUserVerificationStatusUseCaseProtocol {
-
-    public func callAsFunction() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
-        try await invoke()
     }
 }

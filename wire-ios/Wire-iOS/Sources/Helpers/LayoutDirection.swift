@@ -54,7 +54,6 @@ extension UIEdgeInsets {
 
 extension String {
 
-    // 
     func addingTrailingAttachment(_ attachment: NSTextAttachment, verticalOffset: CGFloat = 0) -> NSAttributedString {
         if let attachmentSize = attachment.image?.size {
             attachment.bounds = CGRect(x: 0, y: verticalOffset, width: attachmentSize.width, height: attachmentSize.height)

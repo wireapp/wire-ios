@@ -84,29 +84,6 @@ public class MockGetSelfUserVerificationStatusUseCaseProtocol: GetSelfUserVerifi
         }
     }
 
-    // MARK: - callAsFunction
-
-    public var callAsFunction_Invocations: [Void] = []
-    public var callAsFunction_MockError: Error?
-    public var callAsFunction_MockMethod: (() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool))?
-    public var callAsFunction_MockValue: (isMLSCertified: Bool, isProteusVerified: Bool)?
-
-    public func callAsFunction() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
-        callAsFunction_Invocations.append(())
-
-        if let error = callAsFunction_MockError {
-            throw error
-        }
-
-        if let mock = callAsFunction_MockMethod {
-            return try await mock()
-        } else if let mock = callAsFunction_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `callAsFunction`")
-        }
-    }
-
 }
 
 public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerprintUseCaseProtocol {

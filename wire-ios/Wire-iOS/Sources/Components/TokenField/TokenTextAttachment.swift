@@ -18,7 +18,6 @@
 
 import UIKit
 
-//
 final class TokenTextAttachment: NSTextAttachment, TokenContainer {
     let token: Token<NSObjectProtocol>
 
