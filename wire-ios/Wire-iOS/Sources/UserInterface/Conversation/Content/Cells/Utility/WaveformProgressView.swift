@@ -161,7 +161,9 @@ final class WaveformProgressView: UIView {
     private func createConstraints() {
         guard let superview = backgroundWaveform.superview else { return }
 
-        [backgroundWaveform, foregroundWaveform].prepareForLayout()
+        [backgroundWaveform, foregroundWaveform].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
           backgroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
           backgroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),

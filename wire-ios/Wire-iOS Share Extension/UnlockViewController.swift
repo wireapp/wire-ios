@@ -137,18 +137,22 @@ extension UnlockViewController {
         stackView.distribution = .fill
         contentView.addSubview(stackView)
 
-        [titleLabel,
-         hintLabel,
-         passcodeTextField,
-         errorLabel,
-         unlockButton].forEach(stackView.addArrangedSubview)
+        [
+            titleLabel,
+            hintLabel,
+            passcodeTextField,
+            errorLabel,
+            unlockButton
+        ].forEach(stackView.addArrangedSubview)
 
         createConstraints()
     }
 
     private func createConstraints() {
-        [contentView,
-         stackView].forEach { (view) in
+        [
+            contentView,
+            stackView
+        ].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
         }
 

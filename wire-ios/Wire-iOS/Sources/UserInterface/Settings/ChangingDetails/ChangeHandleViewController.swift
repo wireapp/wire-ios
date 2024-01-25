@@ -97,7 +97,7 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
 
     private func createConstraints() {
-        [prefixLabel, handleTextField, domainLabel].prepareForLayout()
+        [prefixLabel, handleTextField, domainLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             prefixLabel.topAnchor.constraint(equalTo: topAnchor),

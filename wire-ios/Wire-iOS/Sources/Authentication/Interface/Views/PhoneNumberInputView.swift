@@ -154,7 +154,9 @@ class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDele
     }
 
     private func configureConstraints() {
-        [inputStack, countryPickerButton, loginButton].prepareForLayout()
+        [inputStack, countryPickerButton, loginButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             // countryPickerStack

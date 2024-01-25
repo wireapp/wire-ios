@@ -54,7 +54,9 @@ final class ServiceDetailView: UIView {
     }
 
     private func createConstraints() {
-        [self, serviceView, descriptionTextView].prepareForLayout()
+        [self, serviceView, descriptionTextView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             serviceView.leadingAnchor.constraint(equalTo: leadingAnchor),

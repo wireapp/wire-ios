@@ -61,7 +61,7 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
         contentView.addSubview(fingerprintLabel)
         contentView.addSubview(spinner)
 
-        [titleLabel, fingerprintLabel, spinner].prepareForLayout()
+        [titleLabel, fingerprintLabel, spinner].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
           titleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),

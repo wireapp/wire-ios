@@ -20,7 +20,7 @@ import XCTest
 @testable import Wire
 
 class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
-    var bottomMargin: CGFloat = CGFloat.NetworkStatusBar.bottomMargin
+    var bottomMargin = CGFloat.NetworkStatusBar.bottomMargin
 
     func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool {
         return true

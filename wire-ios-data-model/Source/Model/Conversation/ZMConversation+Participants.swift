@@ -64,12 +64,13 @@ extension ZMConversation {
 
     @objc
     public class func keyPathsForValuesAffectingDisplayName() -> Set<String> {
-        return Set([ZMConversationConversationTypeKey,
-                    "participantRoles.user.name",
-                    "connection.to.name",
-                    "connection.to.availability",
-                    ZMConversationUserDefinedNameKey] +
-                   ZMConversation.participantRolesKeys)
+        .init([
+            ZMConversationConversationTypeKey,
+            "participantRoles.user.name",
+            "connection.to.name",
+            "connection.to.availability",
+            ZMConversationUserDefinedNameKey
+        ] + ZMConversation.participantRolesKeys)
     }
 
     @objc

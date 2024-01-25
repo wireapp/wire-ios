@@ -93,7 +93,7 @@ final class ImageResourceView: FLAnimatedImageView {
 
         addSubview(loadingView)
 
-        [self, loadingView].prepareForLayout()
+        [self, loadingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
             centerYAnchor.constraint(equalTo: loadingView.centerYAnchor)])
