@@ -24,7 +24,7 @@ public protocol OneOnOneMigratorInterface {
     func migrateToMLS(
         userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws
+    ) async throws -> MLSGroupID
 
 }
 
@@ -53,7 +53,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
     public func migrateToMLS(
         userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws {
+    ) async throws -> MLSGroupID {
         let mlsGroupID = try await fetchMLSOneOnOneConversation(
             userID: userID,
             in: context
@@ -80,6 +80,8 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
 
             context.saveOrRollback()
         }
+
+        return mlsGroupID
     }
 
     private func fetchMLSOneOnOneConversation(
