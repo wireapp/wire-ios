@@ -382,7 +382,7 @@ final class ConversationViewController: UIViewController {
             let context = conversation.managedObjectContext,
             let mlsService = context.mlsService
         else {
-            assertionFailure("missing expected value to resolve conversation!")
+            WireLogger.conversation.warn("missing expected value to resolve 1-1 conversation!")
             return
         }
 
