@@ -51,7 +51,6 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     deinit {
         stopSubscribing()
     }
-    
     private var subscription: Subscription? 
     
     // MARK: - Subscriber implementation
