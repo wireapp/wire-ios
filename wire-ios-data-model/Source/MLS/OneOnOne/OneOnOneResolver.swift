@@ -21,10 +21,11 @@ import Foundation
 // sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
 
+    @discardableResult
     func resolveOneOnOneConversation(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws
+    ) async throws -> OneOnOneConversationResolution
 
 }
 
@@ -46,14 +47,15 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return nil
         }
 
-        self.init(
-            protocolSelector: OneOnOneProtocolSelector(),
-            migrator: OneOnOneMigrator(mlsService: mlsService)
-        )
+        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
+    }
+
+    public convenience init?(mlsService: MLSService) {
+        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
     }
 
     public init(
-        protocolSelector: OneOnOneProtocolSelectorInterface,
+        protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface
     ) {
         self.protocolSelector = protocolSelector
@@ -62,17 +64,18 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Methods
 
+    @discardableResult
     public func resolveOneOnOneConversation(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws {
+    ) async throws -> OneOnOneConversationResolution {
 
-        let messagingProtocol = await context.perform({ self.protocolSelector.getProtocolForUser(
+        let messageProtocol = await protocolSelector.getProtocolForUser(
             with: userID,
             in: context
-        ) })
-        switch messagingProtocol {
+        )
 
+        switch messageProtocol {
         case .none:
             await context.perform {
                 guard
@@ -84,15 +87,17 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
                 conversation.isForcedReadOnly = true
             }
+            return .archivedAsReadOnly
 
         case .mls:
-            try await migrator.migrateToMLS(
+            let mlsGroupIdentifier = try await migrator.migrateToMLS(
                 userID: userID,
                 in: context
             )
+            return .migratedToMLSGroup(identifier: mlsGroupIdentifier)
 
         case .proteus:
-            break
+            return .noAction
 
         // This should never happen:
         // Users can only support proteus and mls protocols.
@@ -100,6 +105,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         // the migration state when migrating from proteus to mls.
         case .mixed:
             assertionFailure("users should not have mixed protocol")
+            return .noAction
         }
     }
 
