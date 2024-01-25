@@ -129,7 +129,7 @@ final class IncomingConnectionView: UIView {
          securityLevelView,
          federatedIndicator,
          userImageView,
-         verticalStackView].prepareForLayout()
+         verticalStackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             ignoreButton.leftAnchor.constraint(equalTo: incomingConnectionFooter.leftAnchor, constant: 16),

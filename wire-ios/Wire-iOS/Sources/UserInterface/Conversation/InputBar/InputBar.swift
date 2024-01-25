@@ -272,7 +272,7 @@ final class InputBar: UIView {
          rightAccessoryStackView,
          secondaryButtonsView,
          buttonsView,
-         buttonInnerContainer].prepareForLayout()
+         buttonInnerContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let rightAccessoryViewWidthConstraint =  rightAccessoryStackView.widthAnchor.constraint(equalToConstant: 0)
         rightAccessoryViewWidthConstraint.priority = .defaultHigh

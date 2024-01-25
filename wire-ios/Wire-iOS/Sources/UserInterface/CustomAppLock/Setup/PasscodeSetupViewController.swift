@@ -180,8 +180,7 @@ final class PasscodeSetupViewController: UIViewController {
 
     private func createConstraints() {
 
-        [contentView,
-         stackView].prepareForLayout()
+        [contentView, stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
 

@@ -113,7 +113,7 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
         [containerView,
          descriptionLabel,
          settingsButton,
-         cameraIcon].prepareForLayout()
+         cameraIcon].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
             descriptionLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),

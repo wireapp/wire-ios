@@ -96,7 +96,7 @@ final class WireLogoInfoView: UIView {
          progressContainerView,
          wireLogo,
          titleLabel,
-         subtitleLabel].prepareForLayout()
+         subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             // header view

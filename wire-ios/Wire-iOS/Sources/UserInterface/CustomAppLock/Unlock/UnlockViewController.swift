@@ -169,7 +169,7 @@ final class UnlockViewController: UIViewController {
          nameLabel,
          contentView,
          upperStackView,
-         stackView].prepareForLayout()
+         stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
 

@@ -276,7 +276,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         [searchHeaderView,
          searchResultsView,
          confirmButton,
-         searchGroupSelector].prepareForLayout()
+         searchGroupSelector].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
             searchHeaderView.topAnchor.constraint(equalTo: view.topAnchor),

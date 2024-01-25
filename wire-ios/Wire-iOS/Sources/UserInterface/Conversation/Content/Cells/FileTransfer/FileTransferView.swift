@@ -96,7 +96,7 @@ final class FileTransferView: UIView, TransferView {
          fileTypeIconView,
          progressView,
          bottomLabel,
-         loadingView].prepareForLayout()
+         loadingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             topLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),

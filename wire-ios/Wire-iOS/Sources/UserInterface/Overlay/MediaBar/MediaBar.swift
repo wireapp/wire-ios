@@ -96,7 +96,7 @@ final class MediaBar: UIView {
          titleLabel,
          playPauseButton,
          closeButton,
-         bottomSeparatorLine].prepareForLayout()
+         bottomSeparatorLine].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         contentView.fitIn(view: self)
 

@@ -97,7 +97,7 @@ final class VideoMessageView: UIView, TransferView {
          playButton,
          bottomGradientView,
          timeLabel,
-         loadingView].prepareForLayout()
+         loadingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let sizeConstraint = widthAnchor.constraint(equalTo: heightAnchor, constant: 4/3)
 

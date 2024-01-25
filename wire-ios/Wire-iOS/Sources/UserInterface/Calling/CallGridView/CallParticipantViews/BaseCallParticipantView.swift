@@ -158,7 +158,7 @@ class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
     }
 
     func createConstraints() {
-        [avatarView, userDetailsView].prepareForLayout()
+        [avatarView, userDetailsView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         detailsConstraints = UserDetailsConstraints(
             view: userDetailsView,

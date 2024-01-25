@@ -72,7 +72,7 @@ final class ListSkeletonCellView: UIView {
     }
 
     private func createConstraints() {
-        [avatarView, lineView].prepareForLayout()
+        [avatarView, lineView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
           avatarView.widthAnchor.constraint(equalToConstant: 28),
@@ -226,7 +226,7 @@ final class ListSkeletonView: UIView {
     private func createConstraints() {
         [topBar,
          buttonRowView,
-         listContentView].prepareForLayout()
+         listContentView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
           topBar.topAnchor.constraint(equalTo: safeTopAnchor),
@@ -296,7 +296,7 @@ final class SkeletonViewController: UIViewController {
     private func createConstraints() {
         guard let splitViewControllerView = customSplitViewController.view else { return }
 
-        [splitViewControllerView].prepareForLayout()
+        splitViewControllerView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
           splitViewControllerView.topAnchor.constraint(equalTo: view.topAnchor),

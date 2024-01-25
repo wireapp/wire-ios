@@ -129,7 +129,9 @@ final class TabBar: UIView {
         let oneOverItemsCount: CGFloat = 1 / CGFloat(items.count)
         let widthInset = tabInset * 2 * oneOverItemsCount
 
-        [self, lineView, selectionLineView, stackView].prepareForLayout()
+        [self, lineView, selectionLineView, stackView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
             lineLeadingConstraint,
             lineView.heightAnchor.constraint(equalTo: selectionLineView.heightAnchor),

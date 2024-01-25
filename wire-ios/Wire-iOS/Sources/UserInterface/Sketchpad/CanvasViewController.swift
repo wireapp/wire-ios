@@ -199,7 +199,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
          toolbar,
          separatorLine,
          hintImageView,
-         hintLabel].prepareForLayout()
+         hintLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             colorPicker.topAnchor.constraint(equalTo: view.topAnchor),

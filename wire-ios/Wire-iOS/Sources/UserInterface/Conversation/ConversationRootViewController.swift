@@ -149,7 +149,7 @@ final class ConversationRootViewController: UIViewController {
         [contentView,
          conversationViewController.view,
          networkStatusViewController.view
-        ].prepareForLayout()
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             networkStatusViewController.view.topAnchor.constraint(equalTo: self.safeTopAnchor),

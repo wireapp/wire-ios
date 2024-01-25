@@ -198,7 +198,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
     private func createConstraints() {
         [collectionView,
          goBackButton,
-         cameraRollButton].prepareForLayout()
+         cameraRollButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

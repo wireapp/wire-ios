@@ -108,7 +108,9 @@ final class SendingProgressViewController: UIViewController {
     private func createConstraints() {
         [circularShadow,
          circularProgress,
-         connectionStatusLabel].prepareForLayout()
+         connectionStatusLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             circularShadow.widthAnchor.constraint(equalToConstant: 48),

@@ -133,7 +133,7 @@ final class AudioMessageView: UIView, TransferView {
          downloadProgressView,
          playerProgressView,
          waveformProgressView,
-         loadingView].prepareForLayout()
+         loadingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),

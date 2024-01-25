@@ -104,7 +104,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
          toggle,
          iconImageView,
          imageContainer,
-         subtitleLabel].prepareForLayout()
+         subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             imageContainerWidthConstraint,

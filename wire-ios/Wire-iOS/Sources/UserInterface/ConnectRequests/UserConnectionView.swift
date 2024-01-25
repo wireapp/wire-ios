@@ -121,7 +121,7 @@ final class UserConnectionView: UIView, Copyable {
         [userImageView,
          labelContainer,
          guestIndicator,
-         guestWarningView].prepareForLayout()
+         guestWarningView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             labelContainer.centerXAnchor.constraint(equalTo: centerXAnchor),

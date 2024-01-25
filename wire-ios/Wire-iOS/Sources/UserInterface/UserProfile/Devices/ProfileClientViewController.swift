@@ -310,7 +310,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
          resetButton,
          backButton,
          spinner,
-         IDLabel].prepareForLayout()
+         IDLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
@@ -354,7 +354,9 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
         ])
 
         if let debugMenuButton = debugMenuButton {
-            [contentView, descriptionTextView, debugMenuButton].prepareForLayout()
+            [contentView, descriptionTextView, debugMenuButton].forEach {
+                $0.translatesAutoresizingMaskIntoConstraints = false
+            }
             NSLayoutConstraint.activate([
                 debugMenuButton.rightAnchor.constraint(equalTo: contentView.rightAnchor),
                 debugMenuButton.leftAnchor.constraint(equalTo: contentView.leftAnchor),
