@@ -607,7 +607,7 @@ extension PHAsset {
         options.deliveryMode = .highQualityFormat
         options.isNetworkAccessAllowed = true
 
-        PHImageManager.default().requestAVAsset(forVideo: self, options: options, resultHandler: {(asset: AVAsset?, _: AVAudioMix?, _: [AnyHashable: Any]?) -> Void in
+        PHImageManager.default().requestAVAsset(forVideo: self, options: options, resultHandler: { (asset: AVAsset?, _: AVAudioMix?, _: [AnyHashable: Any]?) in
             if let urlAsset = asset as? AVURLAsset {
                 let localVideoUrl: URL = urlAsset.url as URL
                 completionHandler(localVideoUrl)

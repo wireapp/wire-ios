@@ -347,7 +347,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
     func testThatIncreasesSecurityLevelOfCreatedGroupConversationWithAllParticipantsAlreadyTrusted() {
 
-        self.syncMOC.performGroupedAndWait { _ -> Void in
+        self.syncMOC.performGroupedAndWait { _ in
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let clients = users.first!.clients.union(users.last!.clients)
@@ -370,7 +370,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItDoesNotIncreaseSecurityLevelOfCreatedGroupConversationWithAllParticipantsIfNotAlreadyTrusted() {
-        self.syncMOC.performGroupedAndWait { _ -> Void in
+        self.syncMOC.performGroupedAndWait { _ in
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
