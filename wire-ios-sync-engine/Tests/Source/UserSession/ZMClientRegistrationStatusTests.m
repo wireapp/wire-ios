@@ -412,12 +412,20 @@
     selfUser.phoneNumber = nil;
     [self.uiMOC saveOrRollback];
 
+    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+    client.remoteIdentifier = @"yay";
+
+    [self.syncMOC performBlockAndWait:^{
+        [self enableMLS];
+        [self enableE2EI];
+    }];
+
     NSError *error = [self needToToEnrollE2EIToRegisterClientError];
     [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: error];
 
     // when
     [self.syncMOC performBlockAndWait:^{
-        [self.sut didCheckIfEndToEndIdentityIsRequired:YES];
+        [self.sut didRegisterProteusClient:client];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
