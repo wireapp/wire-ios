@@ -58,11 +58,16 @@ public final class ConversationService: ConversationServiceInterface {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let participantsServiceBuilder: (NSManagedObjectContext) -> ConversationParticipantsServiceInterface
 
     // MARK: - Life cycle
 
-    public init(context: NSManagedObjectContext) {
+    public init(context: NSManagedObjectContext,
+                participantsServiceBuilder: ((NSManagedObjectContext) -> ConversationParticipantsServiceInterface)? = nil) {
         self.context = context
+        self.participantsServiceBuilder = participantsServiceBuilder ?? { syncContext in
+            ConversationParticipantsService(context: syncContext)
+        }
     }
 
     // MARK: - Create conversation
@@ -264,8 +269,14 @@ public final class ConversationService: ConversationServiceInterface {
                         do {
                             try await self.handleMLSConversationIfNeeded(for: response.conversationId, participantIds: response.participantIds)
                         } catch {
-                            await self.context.perform {
-                                completion(.failure(.underlyingError(error)))
+                            if error.isFailedToAddSomeUsersError {
+                                // we ignore the error a system message is inserted
+                                // and focus on group creation successful
+                            } else {
+                                await self.context.perform {
+                                    completion(.failure(.underlyingError(error)))
+                                }
+                                return
                             }
                         }
 
@@ -329,8 +340,10 @@ public final class ConversationService: ConversationServiceInterface {
 
         try await mlsService.createGroup(for: mlsGroupID, with: [])
 
-        let participantsService = ConversationParticipantsService(context: syncContext)
-        try await participantsService.addParticipants(users, to: syncConversation)
+        let participantsService = participantsServiceBuilder(syncContext)
+        if !users.isEmpty {
+            try await participantsService.addParticipants(users, to: syncConversation)
+        }
     }
 
     // MARK: - Sync conversation
