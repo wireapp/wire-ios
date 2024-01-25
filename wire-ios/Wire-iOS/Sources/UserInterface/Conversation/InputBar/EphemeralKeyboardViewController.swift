@@ -172,7 +172,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [picker, titleLabel].prepareForLayout()
+        [picker, titleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),

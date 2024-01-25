@@ -149,7 +149,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     private func createConstraints() {
-        [tableView, topSeparator].prepareForLayout()
+        [tableView, topSeparator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           tableView.topAnchor.constraint(equalTo: view.topAnchor),
           tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
