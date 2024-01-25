@@ -397,7 +397,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         } else if item is ConversationListConnectRequestsItem {
             ZClientViewController.shared?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
         } else {
-            assert(false, "Invalid item in conversation list view model!!")
+            assertionFailure("Invalid item in conversation list view model!!")
         }
         // Make sure the correct item is selected in the list, without triggering a collection view
         // callback

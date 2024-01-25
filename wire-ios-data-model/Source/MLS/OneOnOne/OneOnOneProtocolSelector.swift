@@ -24,7 +24,7 @@ public protocol OneOnOneProtocolSelectorInterface {
     func getProtocolForUser(
         with id: QualifiedID,
         in context: NSManagedObjectContext
-    ) -> MessageProtocol?
+    ) async -> MessageProtocol?
 
 }
 
@@ -35,13 +35,17 @@ public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
     public func getProtocolForUser(
         with id: QualifiedID,
         in context: NSManagedObjectContext
-    ) -> MessageProtocol? {
-        let selfUser = ZMUser.selfUser(in: context)
-        let otherUser = ZMUser.fetch(with: id, in: context)
+    ) async -> MessageProtocol? {
 
-        let selfProtocols = selfUser.supportedProtocols
-        let otherProtocols = otherUser?.supportedProtocols ?? []
-        let commonProtocols = selfProtocols.intersection(otherProtocols)
+        let commonProtocols = await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            let otherUser = ZMUser.fetch(with: id, in: context)
+
+            let selfProtocols = selfUser.supportedProtocols
+            let otherProtocols = otherUser?.supportedProtocols ?? []
+
+            return selfProtocols.intersection(otherProtocols)
+        }
 
         if commonProtocols.contains(.mls) {
             return .mls

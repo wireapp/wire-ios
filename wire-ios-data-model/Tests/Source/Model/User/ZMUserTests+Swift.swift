@@ -1078,7 +1078,7 @@ extension ZMUserTests_Swift {
         )
 
         let oneOneOneResolver = MockOneOnOneResolverInterface()
-        oneOneOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in }
+        oneOneOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in .noAction }
 
         // Expect
         let didSucceed = XCTestExpectation(description: "didSucceed")
