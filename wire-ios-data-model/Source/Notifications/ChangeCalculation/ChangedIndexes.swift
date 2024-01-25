@@ -186,8 +186,7 @@ public struct ChangedIndexes<T: Hashable> {
                     }
                 }
             }
-        }
-        else if moveType == .uiTableView {
+        } else if moveType == .uiTableView {
             // Moved `from` indexes are referring to the index in the intermediate state
             // Moves must be calculated comparing the endState the immediately updated intermediate state
 

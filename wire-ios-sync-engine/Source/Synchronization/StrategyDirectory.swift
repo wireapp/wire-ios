@@ -51,7 +51,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
-        mlsService: MLSServiceInterface
+        mlsService: MLSServiceInterface,
+        coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -66,7 +67,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: proteusProvider,
-            mlsService: mlsService
+            mlsService: mlsService,
+            coreCryptoProvider: coreCryptoProvider
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
@@ -103,7 +105,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
-        mlsService: MLSServiceInterface
+        mlsService: MLSServiceInterface,
+        coreCryptoProvider: CoreCryptoProviderProtocol
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -131,7 +134,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: proteusProvider
+                proteusProvider: proteusProvider,
+                coreCryptoProvider: coreCryptoProvider
             ),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,
@@ -258,10 +262,6 @@ mlsService: mlsService,
                 applicationStatus: applicationStatusDirectory,
                 syncStatus: applicationStatusDirectory.syncStatus),
             TeamRolesDownloadRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
-            TeamMembersDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncStatus: applicationStatusDirectory.syncStatus),

@@ -54,31 +54,53 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
     }
 
     func testUpdatesUsersMissingMetadataAction() {
-        // Given
-        let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
-        syncMOC.saveOrRollback()
-        let action = sut.refreshUsersMissingMetadataAction
+        syncMOC.performAndWait {
+            // Given
+            let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
+            syncMOC.saveOrRollback()
+            let action = sut.refreshUsersMissingMetadataAction
 
-        // When
-        action()
+            // When
+            action()
+            syncMOC.refreshAllObjects()
 
-        // Then
-        XCTAssertEqual(action.interval, 3 * .oneHour)
-        XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
+            // Then
+            XCTAssertEqual(action.interval, 3 * .oneHour)
+            XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
+        }
     }
 
     func testThatItUpdatesConversationsMissingMetadata() {
+        syncMOC.performAndWait {
+            // Given
+            let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
+            syncMOC.saveOrRollback()
+            let action = sut.refreshConversationsMissingMetadataAction
+
+            // When
+            action()
+            syncMOC.refreshAllObjects()
+
+            // Then
+            XCTAssertEqual(action.interval, 3 * .oneHour)
+            XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+        }
+    }
+
+    func testTeamMetadataIsUpdated() {
         // Given
-        let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
-        syncMOC.saveOrRollback()
-        let action = sut.refreshConversationsMissingMetadataAction
+        let membership = Member.insertNewObject(in: uiMOC)
+        membership.user = .selfUser(in: uiMOC)
+        membership.team = .init(context: uiMOC)
+        membership.user?.teamIdentifier = membership.team?.remoteIdentifier
+        let action = sut.refreshTeamMetadataAction
 
         // When
         action()
 
         // Then
-        XCTAssertEqual(action.interval, 3 * .oneHour)
-        XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+        XCTAssertEqual(action.interval, .oneDay)
+        XCTAssertEqual(membership.team?.needsToBeUpdatedFromBackend, true)
     }
 
     // MARK: - Helpers

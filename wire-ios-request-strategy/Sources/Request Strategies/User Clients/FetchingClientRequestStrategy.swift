@@ -480,6 +480,7 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
                 for: user,
                 selfClient: selfClient
             )
+            managedObjectContext.enqueueDelayedSave()
             completionHandler()
         }
     }
