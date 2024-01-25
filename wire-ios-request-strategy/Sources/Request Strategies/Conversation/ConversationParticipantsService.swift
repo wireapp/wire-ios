@@ -45,6 +45,18 @@ enum ConversationParticipantsError: Error, Equatable {
     case failedToAddSomeUsers(users: Set<ZMUser>)
 }
 
+extension Error {
+    var isFailedToAddSomeUsersError: Bool {
+        if case ConversationParticipantsError.failedToAddSomeUsers(_)? = (self as? ConversationParticipantsError) {
+            return true
+        }
+        if case ConversationAddParticipantsError.failedToAddMLSMembers? = (self as? ConversationAddParticipantsError) {
+            return true
+        }
+        return false
+    }
+}
+
 public class ConversationParticipantsService: ConversationParticipantsServiceInterface {
 
     // MARK: - Properties
