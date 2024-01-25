@@ -55,7 +55,6 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private var subscription: Subscription? 
     
     // MARK: - Subscriber implementation
-    
     func stopSubscribing() {
         subscription?.cancel()
         subscription = nil
