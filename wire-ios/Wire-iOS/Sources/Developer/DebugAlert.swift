@@ -132,6 +132,12 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
+            var logs = ZMSLog.pathsForExistingLogs
+            if let crashLog = ZMLastAssertionFile(),
+               FileManager.default.fileExists(atPath: crashLog.path) {
+                logs.append(crashLog)
+            }
+
             DebugAlert.displayFallbackActivityController(logPaths: ZMSLog.pathsForExistingLogs, email: mail, from: controller)
             return
         }
