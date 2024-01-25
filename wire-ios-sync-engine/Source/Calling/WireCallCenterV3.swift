@@ -1003,7 +1003,7 @@ private extension ZMConversation {
         case (.oneOnOne, _):
             return .oneToOne
 
-        case (.group, .proteus):
+        case (.group, .proteus), (.group, .mixed):
             return .conference
 
         case (.group, .mls), (.`self`, .mls):
