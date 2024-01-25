@@ -32,7 +32,7 @@ extension ZMBaseManagedObjectTest {
     @discardableResult
     func createMLSGroup(in moc: NSManagedObjectContext) -> MLSGroup {
         let group = MLSGroup.insertNewObject(in: moc)
-        group.id = MLSGroupID(.random(length: 32))
+        group.id = MLSGroupID(.init([UInt8].random(length: 32)))
         return group
     }
 
