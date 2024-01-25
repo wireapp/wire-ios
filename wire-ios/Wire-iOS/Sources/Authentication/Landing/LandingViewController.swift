@@ -22,7 +22,7 @@ import WireTransport
 import WireSyncEngine
 import WireCommonComponents
 
-protocol LandingViewControllerDelegate {
+protocol LandingViewControllerDelegate: AnyObject {
     func landingViewControllerDidChooseCreateAccount()
     func landingViewControllerDidChooseLogin()
     func landingViewControllerDidChooseEnterpriseLogin()

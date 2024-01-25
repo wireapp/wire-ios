@@ -34,7 +34,7 @@ final public class ManagedObjectContextChangesMerger: NSObject {
 
     @objc func contextDidSave(_ notification: Notification) {
         let mocThatSaved = notification.object as! NSManagedObjectContext
-        managedObjectContexts.subtracting(Set(arrayLiteral: mocThatSaved)).forEach { moc in
+        managedObjectContexts.subtracting([mocThatSaved]).forEach { moc in
             moc.perform {
                 moc.mergeChanges(fromContextDidSave: notification)
             }

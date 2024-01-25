@@ -53,7 +53,7 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage.systemMessageType = .participantsAdded
         systemMessage.sender = selfUser
-        systemMessage.users = Set(arrayLiteral: user1)
+        systemMessage.users = [user1]
 
         // then
         XCTAssertFalse(systemMessage.shouldGenerateUnreadCount())
@@ -64,7 +64,7 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage.systemMessageType = .participantsAdded
         systemMessage.sender = user1
-        systemMessage.users = Set(arrayLiteral: user2)
+        systemMessage.users = [user2]
 
         // then
         XCTAssertFalse(systemMessage.shouldGenerateUnreadCount())
@@ -75,7 +75,7 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage.systemMessageType = .participantsAdded
         systemMessage.sender = user1
-        systemMessage.users = Set(arrayLiteral: selfUser)
+        systemMessage.users = [selfUser]
 
         // then
         XCTAssertTrue(systemMessage.shouldGenerateUnreadCount())
@@ -88,7 +88,7 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage.systemMessageType = .participantsRemoved
         systemMessage.sender = selfUser
-        systemMessage.users = Set(arrayLiteral: user1)
+        systemMessage.users = [user1]
 
         // then
         XCTAssertFalse(systemMessage.shouldGenerateUnreadCount())
@@ -99,7 +99,7 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage.systemMessageType = .participantsRemoved
         systemMessage.sender = user1
-        systemMessage.users = Set(arrayLiteral: user2)
+        systemMessage.users = [user2]
 
         // then
         XCTAssertFalse(systemMessage.shouldGenerateUnreadCount())
@@ -110,7 +110,7 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage.systemMessageType = .participantsRemoved
         systemMessage.sender = user1
-        systemMessage.users = Set(arrayLiteral: selfUser)
+        systemMessage.users = [selfUser]
 
         // then
         XCTAssertTrue(systemMessage.shouldGenerateUnreadCount())
