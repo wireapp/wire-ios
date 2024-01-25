@@ -61,6 +61,7 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)determineInitialRegistrationStatus
 {
     self.needsToVerifySelfClient = !self.needsToRegisterClient;
+    self.needsToFetchFeatureConfigs = self.needsToRegisterClient;
 }
 
 - (void)observeClientUpdates
@@ -158,8 +159,8 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
         return ZMClientRegistrationPhaseWaitingForLogin;
     }
 
-    if (self.needsToCheckE2EIStatus) {
-        return ZMClientRegistrationPhaseWaitingForE2EIStatus;
+    if (self.needsToFetchFeatureConfigs) {
+        return ZMClientRegistrationPhaseWaitingForFetchConfigs;
     }
 
     if (self.isWaitingForE2EIEnrollment) {
@@ -258,7 +259,12 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     self.lastResortPrekey = nil;
 
     if (self.needsToRegisterMLSCLient) {
-        self.needsToCheckE2EIStatus = YES;
+        if (self.needsToEnrollE2EI) {
+            self.isWaitingForE2EIEnrollment = YES;
+            [self notifyE2EIEnrollmentNecessary];
+        } else{
+            self.isWaitingForMLSClientToBeRegistered = YES;
+        }
     } else {
         [self.registrationStatusDelegate didRegisterSelfUserClient:client];
     }
