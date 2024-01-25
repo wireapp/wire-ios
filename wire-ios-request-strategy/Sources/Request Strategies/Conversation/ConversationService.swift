@@ -296,7 +296,7 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
-    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID, participantIds: Set<QualifiedID>) async throws {
+    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID, participants: Set<ZMUser>) async throws {
         guard let syncContext = await context.perform({ self.context.zm_sync }) else {
             assertionFailure("handleMLSConversationIfNeeded must be done on syncContext")
             return
@@ -314,9 +314,6 @@ public final class ConversationService: ConversationServiceInterface {
             return
         }
 
-        // If this is an mls conversation, then the initial participants won't have
-        // been added yet on the backend. This means that we must take the list of
-        // participants from the action instead of the local conversation.
         await syncContext.perform {
             Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: syncConversation.mlsGroupID)))")
 
@@ -324,13 +321,6 @@ public final class ConversationService: ConversationServiceInterface {
             syncConversation.mlsStatus = .ready
             syncContext.saveOrRollback()
         }
-
-        let users: [ZMUser] = await syncContext.perform {
-            participantIds.compactMap {
-                ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: syncContext)
-            }
-        }
-        assert(participantIds.count == users.count, "expect all participants to be within db")
 
         let (mlsGroupID, mlsService) = await syncContext.perform {
             (syncConversation.mlsGroupID, syncContext.mlsService)
@@ -341,8 +331,8 @@ public final class ConversationService: ConversationServiceInterface {
         try await mlsService.createGroup(for: mlsGroupID, with: [])
 
         let participantsService = participantsServiceBuilder(syncContext)
-        if !users.isEmpty {
-            try await participantsService.addParticipants(users, to: syncConversation)
+        if !participants.isEmpty {
+            try await participantsService.addParticipants(Array(participants), to: syncConversation)
         }
     }
 
