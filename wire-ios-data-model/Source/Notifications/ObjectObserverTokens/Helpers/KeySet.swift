@@ -146,11 +146,10 @@ extension KeySet {
 extension KeySet: CustomDebugStringConvertible {
     public var description: String {
         let a = [StringKeyPath](backing)
-        let ss = a.map { $0.rawValue }.sorted {
-            (lhs, rhs) in lhs < rhs
-        }
+        let ss = a.map { $0.rawValue }.sorted { (lhs, rhs) in lhs < rhs }
         return "KeySet {" + ss.joined(separator: " ") + "}"
     }
+
     public var debugDescription: String {
         return description
     }
