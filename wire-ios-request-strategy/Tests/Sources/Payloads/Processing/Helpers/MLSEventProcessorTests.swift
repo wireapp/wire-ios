@@ -42,7 +42,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = { }
 
         oneOnOneResolverMock = .init()
-        oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in }
+        oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in .noAction }
 
         conversationServiceMock = .init()
         conversationServiceMock.syncConversationQualifiedID_MockMethod = { _ in }
@@ -127,7 +127,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         }
 
         // Mock
-        oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in }
+        oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in .noAction }
 
         // When
         await sut.process(
