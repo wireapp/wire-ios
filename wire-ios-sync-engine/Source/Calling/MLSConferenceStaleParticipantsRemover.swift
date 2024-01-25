@@ -49,24 +49,16 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     }
 
     deinit {
+        stopSubscribing()
+    }
+
+    private var subscription: Subscription? 
+    
+    // MARK: - Subscriber implementation
+    
+    func stopSubscribing() {
         subscription?.cancel()
         subscription = nil
-    }
-
-    private var subscription: Subscription? {
-        didSet {
-            stopSubscribing = false
-        }
-    }
-    // MARK: - Subscriber implementation
-
-    var stopSubscribing: Bool = false {
-        didSet {
-            if stopSubscribing {
-                subscription?.cancel()
-                subscription = nil
-            }
-        }
     }
 
     func receive(subscription: Subscription) {
