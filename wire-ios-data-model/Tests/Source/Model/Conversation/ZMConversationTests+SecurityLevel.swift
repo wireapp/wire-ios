@@ -792,7 +792,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         let selfClient = selfUser.selfClient()
-        let systemMessageClients = Set(arrayLiteral: selfClient)
+        let systemMessageClients: Set = [selfClient]
         XCTAssertNotNil(selfClient)
 
         let conv = ZMConversation.insertNewObject(in: self.uiMOC)

@@ -334,7 +334,7 @@ extension ZMMessageCategorizationTests {
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: MessageCategory.text))
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text])
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -366,7 +366,7 @@ extension ZMMessageCategorizationTests {
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: MessageCategory.text, MessageCategory.knock))
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text, MessageCategory.knock])
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -398,7 +398,7 @@ extension ZMMessageCategorizationTests {
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: [MessageCategory.text, MessageCategory.reacted]))
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [[MessageCategory.text, MessageCategory.reacted]])
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -430,7 +430,7 @@ extension ZMMessageCategorizationTests {
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: [MessageCategory.text, MessageCategory.reacted], MessageCategory.knock))
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [[MessageCategory.text, MessageCategory.reacted], MessageCategory.knock])
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -462,7 +462,7 @@ extension ZMMessageCategorizationTests {
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: MessageCategory.text), excluding: [MessageCategory.link, MessageCategory.reacted])
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text], excluding: [MessageCategory.link, MessageCategory.reacted])
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -492,7 +492,7 @@ extension ZMMessageCategorizationTests {
         textMessage2.serverTimestamp = Date(timeIntervalSince1970: 300)
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: MessageCategory.text))
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text])
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -520,7 +520,7 @@ extension ZMMessageCategorizationTests {
         textMessage2.serverTimestamp = Date(timeIntervalSince1970: 300)
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: MessageCategory.text), conversation: otherConversation)
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text], conversation: otherConversation)
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN

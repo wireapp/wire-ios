@@ -44,8 +44,7 @@ public extension ZMUser {
 
         if expiresAt.timeIntervalSinceNow < 0 {
             return 0
-        }
-        else {
+        } else {
             return expiresAt.timeIntervalSinceNow
         }
     }
