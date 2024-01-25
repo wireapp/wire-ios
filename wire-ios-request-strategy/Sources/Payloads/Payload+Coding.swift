@@ -141,7 +141,7 @@ extension Encodable {
     func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {
         let data = try encodeToJSON(encoder: encoder)
 
-        guard let string =  String(data: data, encoding: .utf8) else {
+        guard let string = String(data: data, encoding: .utf8) else {
             throw JSONEncodingFailure.failedToConvertToString
         }
 

@@ -48,7 +48,7 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
 
         // Mock
         protocolSelector.getProtocolForUserWithIn_MockValue = .mls
-        migrator.migrateToMLSUserIDIn_MockMethod = { _, _ in }
+        migrator.migrateToMLSUserIDIn_MockMethod = { _, _ in .random() }
 
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
