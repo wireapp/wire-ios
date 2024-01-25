@@ -50,6 +50,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
     private let user: UserType
     private var observerToken: Any?
     private var options: Options
+    private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
 
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
@@ -69,6 +70,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
     ) {
         self.options = options
         self.user = user
+        self.getSelfUserVerificationStatusUseCase = getSelfUserVerificationStatusUseCase
 
         super.init()
 
@@ -111,7 +113,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
 
         let availability = user.availability
         let fontStyle: FontSize = options.contains(.useLargeFont) ? .normal : .small
-        let icons = [
+        var icons = [
             AvailabilityStringBuilder.icon(
                 for: availability,
                 with: AvailabilityStringBuilder.color(for: availability),
@@ -123,6 +125,21 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
 
         if options.contains(.displayUserName) {
             title = user.name ?? ""
+            do {
+                let verificationStatuses = try await getSelfUserVerificationStatusUseCase()
+                if verificationStatuses.isProteusVerified {
+                    let attachment = NSTextAttachment(image: Asset.Images.verifiedShield.image)
+                    attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
+                    icons.insert(attachment, at: 0)
+                }
+                if verificationStatuses.isMLSCertified {
+                    let attachment = NSTextAttachment(image: Asset.Images.certificateValid.image)
+                    attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
+                    icons.insert(attachment, at: 0)
+                }
+            } catch {
+                fatalError("TODO: log")
+            }
             accessibilityLabel = title
         } else if availability == .none && options.contains(.allowSettingStatus) {
             title = L10n.Localizable.Availability.Message.setStatus
@@ -133,7 +150,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
         }
 
         let showInteractiveIcon = isInteractive && !options.contains(.hideActionHint)
-        super.configure(icons: icons.compactMap { $0 }, title: title, interactive: isInteractive, showInteractiveIcon: showInteractiveIcon)
+        configure(icons: icons.compactMap { $0 }, title: title, interactive: isInteractive, showInteractiveIcon: showInteractiveIcon)
 
         accessibilityValue = availability != .none ? availability.localizedName : ""
         if options.contains(.allowSettingStatus) {

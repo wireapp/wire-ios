@@ -22,6 +22,7 @@ import WireCoreCrypto
 // sourcery: AutoMockable
 public protocol GetSelfUserVerificationStatusUseCaseProtocol {
     func invoke() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool)
+    func callAsFunction() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool)
 }
 
 public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol {
@@ -71,77 +72,9 @@ public struct GetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatu
     }
 }
 
-/*
+extension GetSelfUserVerificationStatusUseCaseProtocol {
 
-// sourcery: AutoMockable
-public protocol GetUserVerificationStatusUseCaseProtocol {
-    func invoke(
-        conversation: ZMConversation,
-        users: [UserType]
-    ) async throws -> [(isMLSCertified: Bool, isProteusVerified: Bool)]
+    public func callAsFunction() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
+        try await invoke()
+    }
 }
-
-public struct GetUserVerificationStatusUseCase: GetUserVerificationStatusUseCaseProtocol {
-
-    private let context: NSManagedObjectContext
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-
-    public init(
-        context: NSManagedObjectContext,
-        coreCryptoProvider: CoreCryptoProviderProtocol
-    ) {
-        self.context = context
-        self.coreCryptoProvider = coreCryptoProvider
-    }
-
-    public func invoke(
-        conversation: ZMConversation,
-        users: [UserType]
-    ) async throws -> [(isMLSCertified: Bool, isProteusVerified: Bool)] {
-        fatalError()
-    }
-    /*
-    public func invoke() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
-        var isMLSCertified = false
-        var isProteusVerified = false
-
-        let (selfClient, selfUserID) = await context.perform { () -> (UserClient?, MLSClientID?) in
-            guard let selfClient = ZMUser.selfUser(in: context).selfClient() else { return (.none, .none) }
-            return (selfClient, MLSClientID(userClient: selfClient))
-        }
-
-        guard let selfClient else {
-            assertionFailure("ZMUser.selfUser(in: context).selfClient() is nil")
-            return (isMLSCertified, isProteusVerified)
-        }
-
-        isProteusVerified = selfClient.verified
-
-        guard let selfUserID else {
-            assertionFailure("MLSClientID(selfUser) is nil")
-            return (isMLSCertified, isProteusVerified)
-        }
-
-        guard let conversationID = await context.perform({
-            ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID?.data
-        }) else {
-            assertionFailure("selfConversation.mlsGroupID is nil")
-            return (isMLSCertified, isProteusVerified)
-        }
-
-        let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
-        let result = try await coreCrypto.perform { coreCrypto in
-            try await coreCrypto.getUserIdentities(
-                conversationId: conversationID,
-                userIds: [selfUserID.clientID]
-            )
-        }
-        guard let identities = result[selfUserID.clientID] else { return (isMLSCertified, isProteusVerified) }
-
-        isMLSCertified = identities.allSatisfy { $0.status == .valid }
-
-        return (isMLSCertified, isProteusVerified)
-    }
-     */
-}
-*/
