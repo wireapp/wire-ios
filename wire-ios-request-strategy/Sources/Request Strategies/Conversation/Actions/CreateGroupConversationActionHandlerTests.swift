@@ -273,7 +273,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         try syncMOC.performAndWait {
-            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result.conversationId) as? ZMConversation)
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
         }
     }
@@ -295,7 +295,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         try syncMOC.performAndWait {
-            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result.conversationId) as? ZMConversation)
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
         }
     }
@@ -329,7 +329,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         try syncMOC.performAndWait {
-            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result.conversationId) as? ZMConversation)
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
             XCTAssertEqual(conversation.messageProtocol, .mls)
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)

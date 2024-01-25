@@ -60,7 +60,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         // Mock
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            result: .success((groupConversation.objectID, Set())),
+            result: .success(groupConversation.objectID),
             context: uiMOC.notificationContext
         )
 
@@ -114,7 +114,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         // Mock
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            result: .success((groupConversation.objectID, Set())),
+            result: .success(groupConversation.objectID),
             context: uiMOC.notificationContext
         )
 
@@ -168,7 +168,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         // Mock
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            result: .success((oneToOneConversation.objectID, Set())),
+            result: .success(oneToOneConversation.objectID),
             context: uiMOC.notificationContext
         )
 
@@ -237,7 +237,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let didFinish = customExpectation(description: "didFinish")
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            result: .success((randomObjectID, Set())),
+            result: .success(randomObjectID),
             context: uiMOC.notificationContext
         )
 
@@ -279,7 +279,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let didFinish = customExpectation(description: "didFinish")
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            result: .success((objectID, Set())),
+            result: .success(objectID),
             context: uiMOC.notificationContext
         )
 
@@ -329,7 +329,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let didFinish = customExpectation(description: "didFinish")
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            result: .success((objectID, user1.qualifiedID.flatMap { Set(arrayLiteral: $0) } ?? Set<QualifiedID>())),
+            result: .success(objectID),
             context: uiMOC.notificationContext
         )
 
@@ -426,7 +426,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
             results: [.failure(.unreachableDomains([unreachableDomain])),
-                      .success((groupConversation.objectID, Set()))],
+                      .success(groupConversation.objectID)],
             context: uiMOC.notificationContext
         )
 

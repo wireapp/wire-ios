@@ -21,7 +21,7 @@ import WireDataModel
 
 public final class CreateGroupConversationAction: EntityAction {
 
-    public typealias Result = (conversationId: NSManagedObjectID, participantIds: Set<QualifiedID>)
+    public typealias Result = NSManagedObjectID
 
     public enum Failure: Error, Equatable {
 
@@ -212,12 +212,8 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 
         await context.perform {
             self.context.saveOrRollback()
-            let pendingParticipants = Set(action.qualifiedUserIDs).union(action.unqualifiedUserIDs.compactMap {
-                guard let localDomain = BackendInfo.domain else { return nil }
-                return QualifiedID(uuid: $0, domain: localDomain)
-            })
 
-            action.succeed(with: (conversationId: newConversation.objectID, participantIds: pendingParticipants))
+            action.succeed(with: newConversation.objectID)
         }
     }
 }
