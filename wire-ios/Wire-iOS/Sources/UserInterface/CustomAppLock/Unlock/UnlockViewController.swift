@@ -141,12 +141,14 @@ final class UnlockViewController: UIViewController {
 
         contentView.addSubview(stackView)
 
-        [accountIndicator,
-         titleLabel,
-         UILabel.createHintLabel(),
-         validatedTextField,
-         errorLabel,
-         wipeButton].forEach(upperStackView.addArrangedSubview)
+        [
+            accountIndicator,
+            titleLabel,
+            UILabel.createHintLabel(),
+            validatedTextField,
+            errorLabel,
+            wipeButton
+        ].forEach(upperStackView.addArrangedSubview)
 
         [upperStackView, unlockButton].forEach(stackView.addArrangedSubview)
 
@@ -165,11 +167,13 @@ final class UnlockViewController: UIViewController {
 
     private func createConstraints() {
 
-        [userImageView,
-         nameLabel,
-         contentView,
-         upperStackView,
-         stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            userImageView,
+            nameLabel,
+            contentView,
+            upperStackView,
+            stackView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
 

@@ -106,9 +106,11 @@ final class SendingProgressViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [circularShadow,
-         circularProgress,
-         connectionStatusLabel].forEach {
+        [
+            circularShadow,
+            circularProgress,
+            connectionStatusLabel
+        ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 

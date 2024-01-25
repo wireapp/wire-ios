@@ -194,17 +194,19 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         let button = buttonOverlay.audioButton
         let margin: CGFloat = (conversationHorizontalMargins.left / 2) - (StyleKitIcon.Size.tiny.rawValue / 2)
 
-        [bottomContainerView,
-         topContainerView,
-         button,
-         topTooltipLabel,
-         buttonOverlay,
-         topSeparator,
-         timeLabel,
-         recordingDotView,
-         audioPreviewView,
-         cancelButton,
-         rightSeparator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            bottomContainerView,
+            topContainerView,
+            button,
+            topTooltipLabel,
+            buttonOverlay,
+            topSeparator,
+            timeLabel,
+            recordingDotView,
+            audioPreviewView,
+            cancelButton,
+            rightSeparator
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = []
 

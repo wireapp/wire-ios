@@ -164,10 +164,12 @@ final class TypingIndicatorView: UIView {
     }
 
     private func setupConstraints() {
-        [nameLabel,
-         container,
-         animatedPen,
-         expandingLine].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            nameLabel,
+            container,
+            animatedPen,
+            expandingLine
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         // Lower the priority to prevent this breaks when container's height = 0
         let nameLabelBottomConstraint = container.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4)

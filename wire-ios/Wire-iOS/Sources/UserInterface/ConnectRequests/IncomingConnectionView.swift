@@ -121,15 +121,17 @@ final class IncomingConnectionView: UIView {
     }
 
     private func createConstraints() {
-        [incomingConnectionFooter,
-         acceptButton,
-         ignoreButton,
-         usernameLabel,
-         userDetailView,
-         securityLevelView,
-         federatedIndicator,
-         userImageView,
-         verticalStackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            incomingConnectionFooter,
+            acceptButton,
+            ignoreButton,
+            usernameLabel,
+            userDetailView,
+            securityLevelView,
+            federatedIndicator,
+            userImageView,
+            verticalStackView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             ignoreButton.leftAnchor.constraint(equalTo: incomingConnectionFooter.leftAnchor, constant: 16),

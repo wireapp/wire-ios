@@ -303,14 +303,18 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     private func activateRightConstraint() {
-        [contentViewLeadingConstraint,
-         contentViewTrailingConstraint,
-         createAccountButtomBottomConstraint].forEach {
+        [
+            contentViewLeadingConstraint,
+            contentViewTrailingConstraint,
+            createAccountButtomBottomConstraint
+        ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass == .compact
         }
 
-        [contentViewWidthConstraint,
-         createAccountInfoLabelTopConstraint].forEach {
+        [
+            contentViewWidthConstraint,
+            createAccountInfoLabelTopConstraint
+        ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass != .compact
         }
     }

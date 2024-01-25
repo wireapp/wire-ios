@@ -265,14 +265,16 @@ final class InputBar: UIView {
     }
 
     fileprivate func createConstraints() {
-        [buttonContainer,
-         textView,
-         buttonRowSeparator,
-         leftAccessoryView,
-         rightAccessoryStackView,
-         secondaryButtonsView,
-         buttonsView,
-         buttonInnerContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            buttonContainer,
+            textView,
+            buttonRowSeparator,
+            leftAccessoryView,
+            rightAccessoryStackView,
+            secondaryButtonsView,
+            buttonsView,
+            buttonInnerContainer
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let rightAccessoryViewWidthConstraint =  rightAccessoryStackView.widthAnchor.constraint(equalToConstant: 0)
         rightAccessoryViewWidthConstraint.priority = .defaultHigh

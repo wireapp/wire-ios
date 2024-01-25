@@ -300,17 +300,19 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     private func createConstraints() {
         let topMargin = UIScreen.safeArea.top > 0 ? UIScreen.safeArea.top : 26.0
 
-        [contentView,
-         descriptionTextView,
-         separatorLineView,
-         typeLabel,
-         fullIDLabel,
-         verifiedToggle,
-         verifiedToggleLabel,
-         resetButton,
-         backButton,
-         spinner,
-         IDLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            contentView,
+            descriptionTextView,
+            separatorLineView,
+            typeLabel,
+            fullIDLabel,
+            verifiedToggle,
+            verifiedToggleLabel,
+            resetButton,
+            backButton,
+            spinner,
+            IDLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),

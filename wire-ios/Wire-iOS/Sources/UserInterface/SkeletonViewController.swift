@@ -199,8 +199,11 @@ final class ListSkeletonView: UIView {
 
         buttonRowView.distribution = .equalCentering
 
-        [topBar,
-         listContentView, buttonRowView].forEach(addSubview)
+        [
+            topBar,
+            listContentView,
+            buttonRowView
+        ].forEach(addSubview)
 
         topBar.leftView = accountView.wrapInAvatarSizeContainer()
 
@@ -224,9 +227,11 @@ final class ListSkeletonView: UIView {
     }
 
     private func createConstraints() {
-        [topBar,
-         buttonRowView,
-         listContentView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            topBar,
+            buttonRowView,
+            listContentView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
           topBar.topAnchor.constraint(equalTo: safeTopAnchor),

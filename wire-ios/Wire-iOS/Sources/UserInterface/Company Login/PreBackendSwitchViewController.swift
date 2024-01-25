@@ -92,9 +92,11 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     }
 
     private func createConstraints() {
-        [wireLogoInfoView,
-         progressView,
-         informationLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            wireLogoInfoView,
+            progressView,
+            informationLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             wireLogoInfoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

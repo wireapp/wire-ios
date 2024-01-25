@@ -91,12 +91,14 @@ final class FileTransferView: UIView, TransferView {
     }
 
     private func createConstraints() {
-        [topLabel,
-         actionButton,
-         fileTypeIconView,
-         progressView,
-         bottomLabel,
-         loadingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            topLabel,
+            actionButton,
+            fileTypeIconView,
+            progressView,
+            bottomLabel,
+            loadingView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             topLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),

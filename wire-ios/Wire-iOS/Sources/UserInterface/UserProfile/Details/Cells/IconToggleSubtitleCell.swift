@@ -99,12 +99,14 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
     }
 
     private func createConstraints() {
-        [topContainer,
-         titleLabel,
-         toggle,
-         iconImageView,
-         imageContainer,
-         subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            topContainer,
+            titleLabel,
+            toggle,
+            iconImageView,
+            imageContainer,
+            subtitleLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             imageContainerWidthConstraint,

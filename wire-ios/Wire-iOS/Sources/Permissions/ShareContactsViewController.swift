@@ -146,10 +146,12 @@ final class ShareContactsViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [shareContactsContainerView,
-         addressBookAccessDeniedViewController.view,
-         heroLabel,
-         shareContactsButton].forEach {
+        [
+            shareContactsContainerView,
+            addressBookAccessDeniedViewController.view,
+            heroLabel,
+            shareContactsButton
+        ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 

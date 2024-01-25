@@ -194,12 +194,14 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     private func createConstraints() {
         guard let colorPicker = colorPickerController.view else { return }
 
-        [canvas,
-         colorPicker,
-         toolbar,
-         separatorLine,
-         hintImageView,
-         hintLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            canvas,
+            colorPicker,
+            toolbar,
+            separatorLine,
+            hintImageView,
+            hintLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             colorPicker.topAnchor.constraint(equalTo: view.topAnchor),

@@ -229,17 +229,18 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 
     private func createConstraints() {
-        [audioPreviewView,
-         timeLabel,
-         tipLabel,
-         recordButton,
-         stopRecordButton,
-         confirmButton,
-         redoButton,
-         cancelButton,
-         bottomToolbar,
-         topContainer,
-         topSeparator
+        [
+            audioPreviewView,
+            timeLabel,
+            tipLabel,
+            recordButton,
+            stopRecordButton,
+            confirmButton,
+            redoButton,
+            cancelButton,
+            bottomToolbar,
+            topContainer,
+            topSeparator
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
