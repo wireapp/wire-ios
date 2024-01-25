@@ -67,9 +67,10 @@ public class MLSEventProcessor: MLSEventProcessing {
         WireLogger.mls.debug("MLS event processor updating conversation if needed")
 
         let (messageProtocol, mlsGroupID, mlsService) = await context.perform {
+            let xxx = groupID.map { MLSGroupID(from: $0) }
             return (
                 conversation.messageProtocol,
-                conversation.mlsGroupID,
+                conversation.mlsGroupID ?? xxx,
                 context.mlsService
             )
         }
@@ -78,7 +79,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationUpdate, withReason: .conversationNotMLSCapable)
         }
 
-        guard let mlsGroupID = mlsGroupID ?? MLSGroupID(from: groupID) else {
+        guard let mlsGroupID else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
 
@@ -284,21 +285,16 @@ public class MLSEventProcessor: MLSEventProcessing {
 }
 
 extension MLSGroupStatus {
+
     var isPendingJoin: Bool {
-        return self == .pendingJoin
+        self == .pendingJoin
     }
 }
 
 extension MLSGroupID {
-    init?(from groupIdString: String?) {
-        guard
-            let groupID = groupIdString,
-            !groupID.isEmpty,
-            let bytes = groupID.base64DecodedBytes
-        else {
-            return nil
-        }
 
-        self.init(bytes)
+    init?(from groupIDString: String) {
+        guard let data = Data(base64Encoded: groupIDString), !data.isEmpty else { return nil }
+        self.init(data)
     }
 }

@@ -16,42 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-/// Represents the identifer for an MLS group.
+extension MLSGroupID {
 
-public struct MLSGroupID: Equatable, Hashable {
-
-    // MARK: - Properties
-
-    public let data: Data
-
-    // MARK: - Life cycle
-
-    public init?(base64Encoded string: String) {
-        guard let data = Data(base64Encoded: string) else { return nil }
-        self.init(data)
-    }
-
-    public init(_ data: Data) {
-        self.data = data
-    }
-}
-
-// MARK: -
-
-extension MLSGroupID: CustomStringConvertible {
-
-    public var description: String {
-        data.base64EncodedString()
-    }
-}
-
-// MARK: -
-
-extension MLSGroupID: SafeForLoggingStringConvertible {
-
-    public var safeForLoggingDescription: String {
-        data.readableHash
+    public static func random() -> MLSGroupID {
+        .init(Data.random(byteCount: 32))
     }
 }
