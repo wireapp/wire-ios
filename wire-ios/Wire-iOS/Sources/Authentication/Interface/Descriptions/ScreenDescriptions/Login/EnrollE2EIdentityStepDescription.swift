@@ -28,7 +28,7 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription? = nil
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: NSAttributedString?
+    let subtext: String?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription? = nil
 
@@ -39,7 +39,7 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
         )
         secondaryView = nil
         headline = E2ei.title
-        subtext = NSAttributedString.markdown(from: E2ei.subtitle(URL.wr_support), style: .normal)
+        subtext = E2ei.subtitle
     }
 
 }
