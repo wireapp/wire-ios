@@ -264,10 +264,10 @@ public final class ConversationService: ConversationServiceInterface {
 
             self.context.perform {
                 switch result {
-                case .success(let response):
+                case .success(let objectID):
                     Task {
                         do {
-                            try await self.handleMLSConversationIfNeeded(for: response.conversationId, participantIds: response.participantIds)
+                            try await self.handleMLSConversationIfNeeded(for: objectID, participants: usersExcludingSelfUser)
                         } catch {
                             if error.isFailedToAddSomeUsersError {
                                 // we ignore the error a system message is inserted
@@ -281,7 +281,7 @@ public final class ConversationService: ConversationServiceInterface {
                         }
 
                         await self.context.perform {
-                            if let conversation = try? self.context.existingObject(with: response.conversationId) as? ZMConversation {
+                            if let conversation = try? self.context.existingObject(with: objectID) as? ZMConversation {
                                 completion(.success(conversation))
                             } else {
                                 completion(.failure(.conversationNotFound))

@@ -283,6 +283,13 @@ final class ConversationServiceTests: MessagingTestBase {
             context: uiMOC.notificationContext
         )
 
+        mockConversationParticipantsService.addParticipantsTo_MockMethod = { users, conversation in
+            self.syncMOC.performAndWait {
+                XCTAssertEqual(conversation.remoteIdentifier, self.groupConversation.remoteIdentifier)
+            }
+            XCTAssertEqual(self.user1.objectID, users.first?.objectID)
+        }
+
         let mlsService = MockMLSServiceInterface()
         mlsService.createGroupForWith_MockMethod = { groupId, users in
             XCTAssertTrue(users.isEmpty)
