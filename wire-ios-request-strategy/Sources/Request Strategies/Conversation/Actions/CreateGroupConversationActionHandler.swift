@@ -89,6 +89,8 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         removeLocalConversation: removeLocalConversationUseCase
     )
 
+    // This is only needed for the processor to be created but processor needs it only for
+    // Conversation deletion
     private let removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
 
     required init(

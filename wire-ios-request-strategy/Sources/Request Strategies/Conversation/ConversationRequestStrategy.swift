@@ -142,7 +142,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             updateRoleActionHandler,
             SyncConversationActionHandler(context: managedObjectContext),
             CreateGroupConversationActionHandler(
-                context: managedObjectContext
+                context: managedObjectContext,
+                removeLocalConversationUseCase: removeLocalConversation
             )
         ])
 
