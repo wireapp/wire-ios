@@ -27,11 +27,18 @@ final class AvailabilityTitleViewController: UIViewController {
     private let options: AvailabilityTitleView.Options
     private let user: UserType
     private let userSession: UserSession
+    private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
 
-    init(user: UserType, options: AvailabilityTitleView.Options, userSession: UserSession) {
+    init(
+        user: UserType,
+        options: AvailabilityTitleView.Options,
+        userSession: UserSession,
+        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    ) {
         self.user = user
         self.options = options
         self.userSession = userSession
+        self.getSelfUserVerificationStatusUseCase = getSelfUserVerificationStatusUseCase
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -41,7 +48,12 @@ final class AvailabilityTitleViewController: UIViewController {
     }
 
     override func loadView() {
-        let view = AvailabilityTitleView(user: user, options: options, userSession: userSession)
+        let view = AvailabilityTitleView(
+            user: user,
+            options: options,
+            userSession: userSession,
+            getSelfUserVerificationStatusUseCase: getSelfUserVerificationStatusUseCase
+        )
         view.tapHandler = { [weak self] _ in self?.presentAvailabilityPicker() }
         self.view = view
     }

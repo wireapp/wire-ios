@@ -70,7 +70,7 @@ class TitleView: UIView, DynamicTypeCapable {
     /// - parameter interactive: Whether the view should react to user interaction events
     /// - return: Whether the view contains any `NSTextAttachments`
     func configure(icon: NSTextAttachment?, title: String, subtitle: String? = nil, interactive: Bool, showInteractiveIcon: Bool = true) {
-        configure(icons: icon == nil ? [] : [icon!], title: title, subtitle: subtitle, interactive: interactive, showInteractiveIcon: showInteractiveIcon)
+        configure(icons: [icon].compactMap { $0 }, title: title, subtitle: subtitle, interactive: interactive, showInteractiveIcon: showInteractiveIcon)
     }
 
     func configure(icons: [NSTextAttachment], title: String, subtitle: String? = nil, interactive: Bool, showInteractiveIcon: Bool = true) {

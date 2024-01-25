@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,10 +21,7 @@ import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
 
-/**
- * A title view subclass that displays the availability of the user.
- */
-
+/// A title view subclass that displays the availability of the user.
 final class AvailabilityTitleView: TitleView, ZMUserObserver {
 
     /// The available options for this view.
@@ -64,7 +61,12 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
      * - parameter options: The options to display the availability.
      */
 
-    init(user: UserType, options: Options, userSession: UserSession) {
+    init(
+        user: UserType,
+        options: Options,
+        userSession: UserSession,
+        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    ) {
         self.options = options
         self.user = user
 
@@ -98,19 +100,24 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
     /// Refreshes the content and appearance of the view.
     func updateConfiguration() {
         updateAppearance()
-        updateContent()
+        Task {
+            await updateContent()
+        }
     }
 
     /// Refreshes the content of the view, based on the user data and the options.
-    private func updateContent() {
+    private func updateContent() async {
         typealias AvailabilityStatusStrings = L10n.Accessibility.AccountPage.AvailabilityStatus
 
         let availability = user.availability
         let fontStyle: FontSize = options.contains(.useLargeFont) ? .normal : .small
-        let icon = AvailabilityStringBuilder.icon(
-            for: availability,
-               with: AvailabilityStringBuilder.color(for: availability),
-               and: fontStyle)
+        let icons = [
+            AvailabilityStringBuilder.icon(
+                for: availability,
+                with: AvailabilityStringBuilder.color(for: availability),
+                and: fontStyle
+            )
+        ]
         let isInteractive = options.contains(.allowSettingStatus)
         var title = ""
 
@@ -126,7 +133,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
         }
 
         let showInteractiveIcon = isInteractive && !options.contains(.hideActionHint)
-        super.configure(icon: icon, title: title, interactive: isInteractive, showInteractiveIcon: showInteractiveIcon)
+        super.configure(icons: icons.compactMap { $0 }, title: title, interactive: isInteractive, showInteractiveIcon: showInteractiveIcon)
 
         accessibilityValue = availability != .none ? availability.localizedName : ""
         if options.contains(.allowSettingStatus) {
@@ -156,5 +163,4 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
         guard changeInfo.availabilityChanged || changeInfo.nameChanged else { return }
         updateConfiguration()
     }
-
 }

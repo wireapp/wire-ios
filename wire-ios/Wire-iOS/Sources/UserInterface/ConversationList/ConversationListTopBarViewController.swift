@@ -30,6 +30,7 @@ final class ConversationListTopBarViewController: UIViewController {
     private var account: Account
     private let selfUser: SelfUserType
     private var userSession: UserSession
+    private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
 
     var topBar: TopBar? {
         return view as? TopBar
@@ -40,12 +41,16 @@ final class ConversationListTopBarViewController: UIViewController {
     /// - Parameters:
     ///   - account: the Account of the user
     ///   - selfUser: the self user object. Allow to inject a mock self user for testing
-    init(account: Account,
-         selfUser: SelfUserType,
-         userSession: UserSession) {
+    init(
+        account: Account,
+        selfUser: SelfUserType,
+        userSession: UserSession,
+        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
+        self.getSelfUserVerificationStatusUseCase = getSelfUserVerificationStatusUseCase
         super.init(nibName: nil, bundle: nil)
 
         observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
@@ -82,7 +87,12 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private func createTitleView() -> UIView {
         if selfUser.isTeamMember {
-            let availabilityViewController = AvailabilityTitleViewController(user: selfUser, options: .header, userSession: userSession)
+            let availabilityViewController = AvailabilityTitleViewController(
+                user: selfUser,
+                options: .header,
+                userSession: userSession,
+                getSelfUserVerificationStatusUseCase: getSelfUserVerificationStatusUseCase
+            )
             addChild(availabilityViewController)
             self.availabilityViewController = availabilityViewController
 

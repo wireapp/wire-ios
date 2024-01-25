@@ -31,6 +31,8 @@ final class ConversationListViewController: UIViewController {
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
+    private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+
     /// internal View Model
     var state: ConversationListState = .conversationList
 
@@ -82,10 +84,18 @@ final class ConversationListViewController: UIViewController {
         return conversationListOnboardingHint
     }()
 
-    convenience init(account: Account, selfUser: SelfUserType, userSession: UserSession) {
+    convenience init(
+        account: Account,
+        selfUser: SelfUserType,
+        userSession: UserSession,
+        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    ) {
         let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
 
-        self.init(viewModel: viewModel)
+        self.init(
+            viewModel: viewModel,
+            getSelfUserVerificationStatusUseCase: getSelfUserVerificationStatusUseCase
+        )
 
         viewModel.viewController = self
 
@@ -94,13 +104,19 @@ final class ConversationListViewController: UIViewController {
         onboardingHint.arrowPointToView = tabBar
     }
 
-    required init(viewModel: ViewModel) {
-
+    required init(
+        viewModel: ViewModel,
+        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    ) {
         self.viewModel = viewModel
+        self.getSelfUserVerificationStatusUseCase = getSelfUserVerificationStatusUseCase
 
-        topBarViewController = ConversationListTopBarViewController(account: viewModel.account,
-                                                                    selfUser: viewModel.selfUser,
-                                                                    userSession: viewModel.userSession)
+        topBarViewController = ConversationListTopBarViewController(
+            account: viewModel.account,
+            selfUser: viewModel.selfUser,
+            userSession: viewModel.userSession,
+            getSelfUserVerificationStatusUseCase: getSelfUserVerificationStatusUseCase
+        )
 
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
         listContentController.collectionView.contentInset = UIEdgeInsets(
