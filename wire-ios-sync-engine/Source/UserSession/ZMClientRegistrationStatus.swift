@@ -202,6 +202,7 @@ extension ZMClientRegistrationStatus {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
+    @objc
     public func didCheckIfEndToEndIdentityIsRequired(_ isRequired: Bool) {
         needsToCheckE2EIStatus = false
         if isRequired {

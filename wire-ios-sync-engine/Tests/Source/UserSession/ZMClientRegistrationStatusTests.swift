@@ -127,7 +127,7 @@ extension ZMClientRegistrationStatusTests {
         }
     }
 
-    func testThatItReturnsRegisteringMLSClient_IfIfMLSIsEnabledAfterRegisteringProteusClient() {
+    func testThatItReturnsWaitingForE2EIStatus_IfMLSIsEnabledAfterRegisteringProteusClient() {
         syncMOC.performAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -145,7 +145,51 @@ extension ZMClientRegistrationStatusTests {
             sut.didRegisterProteusClient(selfUserClient)
 
             // then
+            XCTAssertEqual(self.sut.currentPhase, .waitingForE2EIStatus)
+        }
+    }
+
+    func testThatItReturnsWaitingRegisteringMLSClient_IfE2EIdentityIsNotRequired() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
+            let selfUserClient = createSelfClient()
+            selfUserClient.remoteIdentifier = "clientID"
+
+            DeveloperFlag.storage = .temporary()
+            DeveloperFlag.enableMLSSupport.enable(true)
+            BackendInfo.storage = .temporary()
+            BackendInfo.apiVersion = .v5
+
+            // when
+            sut.didCheckIfEndToEndIdentityIsRequired(false)
+
+            // then
             XCTAssertEqual(self.sut.currentPhase, .registeringMLSClient)
+        }
+    }
+
+    func testThatItReturnsWaitingForE2EIEnrollment_IfE2EIdentityIsRequired() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
+            let selfUserClient = createSelfClient()
+            selfUserClient.remoteIdentifier = "clientID"
+
+            DeveloperFlag.storage = .temporary()
+            DeveloperFlag.enableMLSSupport.enable(true)
+            BackendInfo.storage = .temporary()
+            BackendInfo.apiVersion = .v5
+
+            // when
+            sut.didCheckIfEndToEndIdentityIsRequired(true)
+
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .waitingForE2EIEnrollment)
         }
     }
 
