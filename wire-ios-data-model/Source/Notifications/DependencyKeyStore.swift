@@ -179,7 +179,7 @@ class DependencyKeyStore {
         var allEffectedKeys = [String: Set<String>]()
         affectingKeys.forEach { key, values in
             values.forEach {
-                allEffectedKeys[$0] = (allEffectedKeys[$0] ?? Set()).union(Set(arrayLiteral: key))
+                allEffectedKeys[$0] = (allEffectedKeys[$0] ?? Set()).union([key])
             }
         }
         return allEffectedKeys
