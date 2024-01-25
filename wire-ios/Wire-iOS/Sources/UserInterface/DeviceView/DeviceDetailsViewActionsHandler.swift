@@ -92,8 +92,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
                 userClientToDelete: userClient,
                 delegate: self,
                 credentials: credentials,
-                completion: {
-                    error in
+                completion: { error in
                     defer {
                         optionalContinuation = nil
                     }
