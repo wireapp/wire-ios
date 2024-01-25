@@ -1590,7 +1590,7 @@
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
 
 "registration.signin.e2ei.title" = "End-to-end identity certificate";
-"registration.signin.e2ei.subtitle" = "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device. [Learn more](%@)";
+"registration.signin.e2ei.subtitle" = "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.";
 "registration.signin.e2ei.get_certificate_button.title" = "Get Certificate";
 "registration.signin.e2ei.error.alert.title" = "Something went wrong";
 "registration.signin.e2ei.error.alert.message" = "Failed to retrieve certificate";
