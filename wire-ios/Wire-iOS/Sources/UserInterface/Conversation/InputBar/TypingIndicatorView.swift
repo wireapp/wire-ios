@@ -207,12 +207,12 @@ final class TypingIndicatorView: UIView {
 
     func setHidden(_ hidden: Bool, animated: Bool, completion: Completion? = nil) {
 
-        let collapseLine = { () -> Void in
+        let collapseLine = {
             self.expandingLineWidth.constant = 0
             self.layoutIfNeeded()
         }
 
-        let expandLine = { () -> Void in
+        let expandLine = {
             self.expandingLineWidth.constant = self.bounds.width
             self.layoutIfNeeded()
         }

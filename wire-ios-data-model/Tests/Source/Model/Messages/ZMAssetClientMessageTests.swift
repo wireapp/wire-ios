@@ -512,7 +512,7 @@ extension ZMAssetClientMessageTests {
             sut.fileMessageData?.cancelTransfer()
 
             // then
-            withExtendedLifetime(token) { () -> Void in
+            withExtendedLifetime(token) {
                 XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
             }
         }
@@ -957,7 +957,7 @@ extension ZMAssetClientMessageTests {
         message.imageMessageData?.requestFileDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -1356,7 +1356,7 @@ extension ZMAssetClientMessageTests {
         sut.fileMessageData?.requestImagePreviewDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -1386,7 +1386,7 @@ extension ZMAssetClientMessageTests {
         sut.imageMessageData?.requestFileDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }

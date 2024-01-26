@@ -106,7 +106,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItAssignsRoles_WhenNotInTeam() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -136,7 +136,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItAssignsRoles_WhenInTeam() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let team = Team.insertNewObject(in: self.syncMOC)
@@ -172,7 +172,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItUpdatesRoles_WhenInTeam() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -198,7 +198,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItAssignsSelfRole_WhenInTeam() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -219,7 +219,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItAssignsSelfRole_WhenNotInTeam() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -238,7 +238,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItRefetchesRoles_WhenSelfUserIsAssignedARole() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

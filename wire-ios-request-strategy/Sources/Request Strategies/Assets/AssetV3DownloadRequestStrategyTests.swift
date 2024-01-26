@@ -523,7 +523,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
 
         // THEN
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
