@@ -43,7 +43,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         sut = CreateGroupConversationActionHandler(context: syncMOC, removeLocalConversationUseCase: MockLocalConversationRemovalUseCase())
 
         conversationID = .randomID()
-        mlsGroupID = MLSGroupID([1, 2, 3])
+        mlsGroupID = MLSGroupID(.init([1, 2, 3]))
         teamID = .create()
         user1ID = .randomID()
         user2ID = .randomID()

@@ -31,22 +31,21 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     // MARK: - Properties
 
-    private let acmeDirectory: URL
+    private let acmeDiscoveryPath: String
     private let httpClient: HttpClientCustom
-    private let contentType = "Content-Type"
 
     // MARK: - Life cycle
 
     /// TODO: it would be nice to use HttpClient
-    public init(acmeDirectory: URL,
+    public init(acmeDiscoveryPath: String,
                 httpClient: HttpClientCustom = HttpClientE2EI()) {
-        self.acmeDirectory = acmeDirectory
+        self.acmeDiscoveryPath = acmeDiscoveryPath
         self.httpClient = httpClient
     }
 
     public func getACMEDirectory() async throws -> Data {
 
-        guard let domain = BackendInfo.domain else {
+        guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
             throw NetworkError.errorEncodingRequest
         }
 
@@ -83,19 +82,18 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         }
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post
-        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: contentType)
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: Constant.contentType)
         request.httpBody = requestBody
 
         let (data, response) = try await httpClient.send(request)
 
         guard
             let httpResponse = response as? HTTPURLResponse,
-            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce),
-            let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location)
+            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)
         else {
             throw NetworkError.errorDecodingResponseNew(response)
         }
-
+        let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
         return ACMEResponse(nonce: replayNonce, location: location, response: data)
 
     }
@@ -106,7 +104,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         }
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post
-        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: contentType)
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: Constant.contentType)
         request.httpBody = requestBody
 
         let (data, response) = try await httpClient.send(request)
@@ -114,7 +112,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         guard
             let httpResponse = response as? HTTPURLResponse,
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce),
-            let challengeResponse = ChallengeResponse(data)
+            let challengeResponse = Challenge(data)
         else {
             throw NetworkError.errorDecodingResponseNew(response)
         }
@@ -126,12 +124,15 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
                                  nonce: replayNonce)
     }
 
-}
+    private struct Challenge: Codable, Equatable {
 
-enum HTTPMethod {
-    static let get = "GET"
-    static let post = "POST"
-    static let head = "HEAD"
+        var type: String
+        var url: String
+        var status: String
+        var token: String
+
+    }
+
 }
 
 enum HeaderKey {
@@ -142,6 +143,16 @@ enum HeaderKey {
 enum ContentType {
     static let json = "application/json"
     static let joseAndJson = "application/jose+json"
+}
+
+private enum HTTPMethod {
+    static let get = "GET"
+    static let post = "POST"
+    static let head = "HEAD"
+}
+
+private enum Constant {
+    static let contentType = "Content-Type"
 }
 
 public protocol HttpClientCustom {

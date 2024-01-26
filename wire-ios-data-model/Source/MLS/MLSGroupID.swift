@@ -29,12 +29,8 @@ public struct MLSGroupID: Equatable, Hashable {
     // MARK: - Life cycle
 
     public init?(base64Encoded string: String) {
-        guard let data = Data(base64Encoded: string) else { return nil }
+        guard !string.isEmpty, let data = Data(base64Encoded: string) else { return nil }
         self.init(data)
-    }
-
-    public init(_ bytes: [Byte]) {
-        self.init(bytes.data)
     }
 
     public init(_ data: Data) {
@@ -42,26 +38,20 @@ public struct MLSGroupID: Equatable, Hashable {
     }
 }
 
+// MARK: -
+
 extension MLSGroupID: CustomStringConvertible {
 
     public var description: String {
         data.base64EncodedString()
     }
-
 }
+
+// MARK: -
 
 extension MLSGroupID: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
         data.readableHash
     }
-
-}
-
-public extension MLSGroupID {
-
-    static func random() -> MLSGroupID {
-        .init(Data.random(byteCount: 32))
-    }
-
 }

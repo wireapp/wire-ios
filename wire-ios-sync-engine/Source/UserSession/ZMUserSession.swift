@@ -278,10 +278,7 @@ public class ZMUserSession: NSObject {
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl
-        guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
-            return nil
-        }
-        let acmeApi = AcmeAPI(acmeDirectory: acmeDirectory)
+        let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext
@@ -301,7 +298,8 @@ public class ZMUserSession: NSObject {
             acmeApi: acmeApi,
             apiProvider: apiProvider,
             e2eiSetupService: e2eiSetupService,
-            keyRotator: keyRotator
+            keyRotator: keyRotator,
+            coreCryptoProvider: coreCryptoProvider
         )
 
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)

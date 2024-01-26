@@ -242,6 +242,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             let selfUser = selfUser,
             let userName = selfUser.name,
             let handle = selfUser.handle,
+            let teamId = selfUser.team?.remoteIdentifier,
             let e2eiClientId = E2eIClientID(user: selfUser)
         else {
             return
@@ -251,6 +252,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             _ = try await e2eiCertificateUseCase?.invoke(e2eiClientId: e2eiClientId,
                                                          userName: userName,
                                                          userHandle: handle,
+                                                         team: teamId,
                                                          authenticate: oauthUseCase.invoke)
         }
     }
