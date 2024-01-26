@@ -788,7 +788,7 @@ public final class MLSService: MLSServiceInterface {
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
                 )
             }
-            let groupID = MLSGroupID(groupIDData)
+            let groupID = MLSGroupID(groupIDData.id)
             await uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             return groupID

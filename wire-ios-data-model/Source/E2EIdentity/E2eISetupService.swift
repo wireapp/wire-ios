@@ -53,7 +53,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         handle: String,
         teamId: UUID) async throws -> E2eiEnrollment {
             let ciphersuite = CiphersuiteName.default.rawValue
-            let expiryDays = UInt32(90)
+            let expirySec = UInt32(TimeInterval.oneDay * 90)
 
             return try await coreCryptoProvider.coreCrypto(requireMLS: true).perform {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
@@ -61,13 +61,13 @@ public final class E2eISetupService: E2eISetupServiceInterface {
                     return try await $0.e2eiNewRotateEnrollment(displayName: userName,
                                                                 handle: handle,
                                                                 team: teamId.uuidString.lowercased(),
-                                                                expiryDays: expiryDays,
+                                                                expirySec: expirySec,
                                                                 ciphersuite: ciphersuite)
                 } else {
                     return try await $0.e2eiNewActivationEnrollment(displayName: userName,
                                                                     handle: handle,
                                                                     team: teamId.uuidString.lowercased(),
-                                                                    expiryDays: expiryDays,
+                                                                    expirySec: expirySec,
                                                                     ciphersuite: ciphersuite)
                 }
             }
