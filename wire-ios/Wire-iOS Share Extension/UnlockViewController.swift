@@ -101,7 +101,7 @@ final class UnlockViewController: UIViewController {
         let label = UILabel()
         label.text = " "
         label.font = UIFont.systemFont(ofSize: 10)
-        label.textColor = UIColor.PasscodeUnlock.error
+        label.textColor = SemanticColors.Label.textErrorDefault
 
         return label
     }()
@@ -204,7 +204,7 @@ extension UnlockViewController {
     }
 
     func showWrongPasscodeMessage() {
-        let textAttachment = NSTextAttachment.textAttachment(for: .exclamationMarkCircle, with: UIColor.PasscodeUnlock.error, iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize, verticalCorrection: -1, insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4))
+        let textAttachment = NSTextAttachment.textAttachment(for: .exclamationMarkCircle, with: SemanticColors.Label.textErrorDefault, iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize, verticalCorrection: -1, insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4))
 
         let attributedString = NSAttributedString(string: "share_extension.unlock.error_label".localized) && hintFont
 
