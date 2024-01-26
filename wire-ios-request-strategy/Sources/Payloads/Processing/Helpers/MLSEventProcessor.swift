@@ -24,7 +24,7 @@ public protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(
         conversation: ZMConversation,
-        groupID: String?,
+        fallbackGroupID: MLSGroupID?,
         context: NSManagedObjectContext
     ) async
 
@@ -38,7 +38,6 @@ public protocol MLSEventProcessing {
         forConversation conversation: ZMConversation,
         context: NSManagedObjectContext
     ) async
-
 }
 
 public class MLSEventProcessor: MLSEventProcessing {
@@ -61,7 +60,7 @@ public class MLSEventProcessor: MLSEventProcessing {
 
     public func updateConversationIfNeeded(
         conversation: ZMConversation,
-        groupID: String?,
+        fallbackGroupID: MLSGroupID?,
         context: NSManagedObjectContext
     ) async {
         WireLogger.mls.debug("MLS event processor updating conversation if needed")
@@ -78,7 +77,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationUpdate, withReason: .conversationNotMLSCapable)
         }
 
-        guard let mlsGroupID = mlsGroupID ?? groupID.map({ MLSGroupID(base64Encoded: $0) }) ?? .none else {
+        guard let mlsGroupID = mlsGroupID ?? fallbackGroupID else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
 
