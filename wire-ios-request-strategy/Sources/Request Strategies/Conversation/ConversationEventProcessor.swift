@@ -320,15 +320,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         if let conversation, usersContainedSelfUser {
             await updateMLSStatus(for: conversation, context: context)
         }
-
     }
 
     private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) async {
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
-            groupID: nil,
+            fallbackGroupID: nil,
             context: context
         )
     }
-
 }

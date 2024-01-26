@@ -51,7 +51,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.remoteIdentifier = self.qualifiedID.uuid
-            self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64DecodedBytes!)
+            self.conversation.mlsGroupID = .init(base64Encoded: self.groupIdString)
             self.conversation.domain = self.qualifiedID.domain
             self.conversation.messageProtocol = .mls
         }
@@ -162,14 +162,14 @@ class MLSEventProcessorTests: MessagingTestBase {
 
         // When
         await sut.updateConversationIfNeeded(
-            conversation: self.conversation,
-            groupID: self.groupIdString,
-            context: self.syncMOC
+            conversation: conversation,
+            fallbackGroupID: .init(base64Encoded: groupIdString),
+            context: syncMOC
         )
 
         await syncMOC.perform {
             // Then
-            XCTAssertEqual(self.conversation.mlsGroupID?.bytes, self.groupIdString.base64DecodedBytes)
+            XCTAssertEqual(self.conversation.mlsGroupID?.data, self.groupIdString.base64DecodedData)
         }
     }
 
@@ -280,7 +280,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         // When
         await sut.updateConversationIfNeeded(
             conversation: self.conversation,
-            groupID: self.groupIdString,
+            fallbackGroupID: .init(base64Encoded: groupIdString),
             context: self.syncMOC
         )
 
