@@ -387,15 +387,6 @@ public struct ChallengeResponse: Codable, Equatable {
 
 }
 
-public struct ChallengeResponse1: Codable, Equatable {
-
-    var type: String
-    var url: String
-    var status: String
-    var token: String
-
-}
-
 public struct AccessTokenResponse: Decodable, Equatable {
 
     var expiresIn: Int

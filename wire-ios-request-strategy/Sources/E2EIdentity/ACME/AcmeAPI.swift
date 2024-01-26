@@ -112,7 +112,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         guard
             let httpResponse = response as? HTTPURLResponse,
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce),
-            let challengeResponse = ChallengeResponse1(data)
+            let challengeResponse = Challenge(data)
         else {
             throw NetworkError.errorDecodingResponseNew(response)
         }
@@ -122,6 +122,15 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
                                  status: challengeResponse.status,
                                  token: challengeResponse.token,
                                  nonce: replayNonce)
+    }
+
+    private struct Challenge: Codable, Equatable {
+
+        var type: String
+        var url: String
+        var status: String
+        var token: String
+
     }
 
 }
