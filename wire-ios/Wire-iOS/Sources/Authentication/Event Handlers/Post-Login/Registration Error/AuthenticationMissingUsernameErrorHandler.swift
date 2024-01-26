@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,33 +19,27 @@
 import Foundation
 
 /**
- * Handles input during the incremental user creation.
+ * Handles client registration errors related to the lack of a username
  */
 
-class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEventHandler {
+class AuthenticationMissingUsernameErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {
-        // Only handle input during the incremental user creation.
-        guard case .incrementalUserCreation(_, let step) = currentStep else {
+    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {
+        let (error, _) = context
+
+        // Only handle needsToHandleToRegisterClient errors
+        guard error.userSessionErrorCode == .needsToHandleToRegisterClient else {
             return nil
         }
 
-        // Only handle string values
-        guard let input = context as? String else {
+        // Verify the state and ask the user to add a username
+        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
             return nil
         }
 
-        // Only handle input during name and password steps
-        switch step {
-        case .setName:
-            return [.setFullName(input)]
-        case .setPassword:
-            return [.setUserPassword(input)]
-        default:
-            return nil
-        }
+        return [.hideLoadingView, .startPostLoginFlow, .transition(.addUsername, mode: .reset)]
     }
 
 }

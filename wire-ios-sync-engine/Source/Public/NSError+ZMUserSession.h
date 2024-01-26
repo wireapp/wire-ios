@@ -55,6 +55,8 @@ typedef NS_ENUM(NSUInteger, ZMUserSessionErrorCode) {
     /// is needed to register a new client
     /// Not supported by the backend any more. The error is generated locally.
     ZMUserSessionNeedsToRegisterEmailToRegisterClient,
+    /// The user account does not have a handle, and a handle is needed to register a new client.
+    ZMUserSessionNeedsToHandleToRegisterClient,
     /// Too many clients have been registered for this user,
     /// one needs to be deleted before registering a new one
     ZMUserSessionCanNotRegisterMoreClients,
