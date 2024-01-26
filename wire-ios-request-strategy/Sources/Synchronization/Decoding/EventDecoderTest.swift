@@ -486,15 +486,15 @@ extension EventDecoderTest {
 extension EventDecoderTest {
     func test_DecryptMLSMessage_ReturnsDecryptedEvent() async {
         // Given
-        let messageData = randomData
+        let messageData = Data.random()
         let senderClientID = "clientID"
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
                 [.message(messageData, senderClientID)]
         }
         let event: ZMUpdateEvent = await syncMOC.perform { [self] in
             self.mlsMessageAddEvent(
-                data: randomData.base64EncodedString(),
-                groupID: randomGroupID
+                data: Data.random().base64EncodedString(),
+                groupID: .random()
             )
         }
         // When
@@ -514,11 +514,11 @@ extension EventDecoderTest {
     func test_DecryptMLSMessage_SchedulesCommit_WhenMessageContainsProposal() async throws {
         // Given
         let commitDelay: UInt64 = 10
-        let mlsGroupID = randomGroupID
+        let mlsGroupID = MLSGroupID.random()
 
         let event: ZMUpdateEvent = await syncMOC.perform { [self] in
             self.mlsMessageAddEvent(
-                data: randomData.base64EncodedString(),
+                data: Data.random().base64EncodedString(),
                 groupID: mlsGroupID
             )
         }
@@ -549,8 +549,8 @@ extension EventDecoderTest {
         let commitDelay: UInt64 = 5
         let event: ZMUpdateEvent = await syncMOC.perform { [self] in
             self.mlsMessageAddEvent(
-                data: randomData.base64EncodedString(),
-                groupID: randomGroupID
+                data: Data.random().base64EncodedString(),
+                groupID: .random()
             )
         }
         event.source = .webSocket
@@ -573,10 +573,10 @@ extension EventDecoderTest {
     func test_DecryptMLSMessage_CommitsPendingsProposalsIsNotCalled_WhenReceivingProposalViaDownload() async {
         // Given
         let commitDelay: UInt64 = 5
-        let mlsGroupID = randomGroupID
+        let mlsGroupID = MLSGroupID.random()
         let event = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
-                data: randomData.base64EncodedString(),
+                data: Data.random().base64EncodedString(),
                 groupID: mlsGroupID
             )
         }
@@ -611,7 +611,7 @@ extension EventDecoderTest {
         // Given
         let event = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
-            data: randomData.base64EncodedString(),
+            data: Data.random().base64EncodedString(),
             groupID: nil)
         }
 
@@ -630,8 +630,8 @@ extension EventDecoderTest {
 
         let event = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
-                data: randomData.base64EncodedString(),
-                groupID: randomGroupID
+                data: Data.random().base64EncodedString(),
+                groupID: .random()
             )
         }
 
@@ -650,8 +650,8 @@ extension EventDecoderTest {
 
         let event = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
-                data: randomData.base64EncodedString(),
-                groupID: randomGroupID
+                data: Data.random().base64EncodedString(),
+                groupID: .random()
             )
         }
 
@@ -660,14 +660,6 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
-    }
-
-    var randomData: Data {
-        return .random()
-    }
-
-    var randomGroupID: MLSGroupID {
-        return MLSGroupID(randomData.bytes)
     }
 }
 
