@@ -44,7 +44,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     let groupID = MLSGroupID([1, 2, 3])
 
     override func setUp() {
+        BackendInfo.storage = .temporary()
+        BackendInfo.domain = "example.com"
+
         super.setUp()
+
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
@@ -104,6 +108,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         privateUserDefaults = nil
         userDefaultsTestSuite = nil
         super.tearDown()
+        BackendInfo.storage = .standard
     }
 
     // MARK: - Helpers
@@ -428,9 +433,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 KeyPackage(client: .random(length: 4), domain: $0.domain, keyPackage: .random(length: 3), keyPackageRef: .random(length: 6), userID: $0.id)
             }
         }
-        var called = false
+        var mockAddMembersCalled = false
         mockMLSActionExecutor.mockAddMembers = { (_, _) in
-            called = true
+            mockAddMembersCalled = true
             return [ZMUpdateEvent(), ZMUpdateEvent()]
         }
 
@@ -454,7 +459,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockCreateConversationCount, 1)
         XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
         XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 0)
-        XCTAssertTrue(called)
+        XCTAssertTrue(mockAddMembersCalled)
     }
 
     func test_CreateGroup_ThrowsError() async throws {
