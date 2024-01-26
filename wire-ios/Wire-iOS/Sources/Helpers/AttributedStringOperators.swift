@@ -117,7 +117,7 @@ func && (left: NSAttributedString, right: [NSAttributedString.Key: Any]) -> NSAt
 extension String {
 
     var attributedString: NSAttributedString {
-        return NSAttributedString(string: self)
+        .init(string: self)
     }
 }
 

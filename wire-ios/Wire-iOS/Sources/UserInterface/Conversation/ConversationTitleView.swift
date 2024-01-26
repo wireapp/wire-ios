@@ -57,10 +57,14 @@ final class ConversationTitleView: TitleView {
             subtitle = user.handleDisplayString(withDomain: true)
         }
 
-        super.configure(icons: attachments,
-                        title: conversation.displayNameWithFallback,
-                        subtitle: subtitle,
-                        interactive: self.interactive && conversation.relatedConnectionState != .sent)
+        super.configure(
+            leadingIcons: attachments,
+            title: conversation.displayNameWithFallback,
+            trailingIcons: [],
+            subtitle: subtitle,
+            interactive: interactive && conversation.relatedConnectionState != .sent,
+            showInteractiveIcon: true
+        )
 
         setupAccessibility()
     }

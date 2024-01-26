@@ -150,7 +150,14 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
         }
 
         let showInteractiveIcon = isInteractive && !options.contains(.hideActionHint)
-        configure(icons: icons.compactMap { $0 }, title: title, interactive: isInteractive, showInteractiveIcon: showInteractiveIcon)
+        configure(
+            leadingIcons: icons.compactMap { $0 },
+            title: title,
+            trailingIcons: [],
+            subtitle: nil,
+            interactive: isInteractive,
+            showInteractiveIcon: showInteractiveIcon
+        )
 
         accessibilityValue = availability != .none ? availability.localizedName : ""
         if options.contains(.allowSettingStatus) {

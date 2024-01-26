@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,27 +19,22 @@
 import UIKit
 import WireCommonComponents
 
-public class IconStringsBuilder {
+public enum IconStringsBuilder {
 
-    // Logic for composing attributed strings with:
-    // - an icon (optional)
-    // - a title
-    // - an down arrow for tappable strings (optional)
-    // - and, obviously, a color
+    static func iconString(
+        leadingIcons: [NSTextAttachment],
+        title: String,
+        trailingIcons: [NSTextAttachment],
+        interactive: Bool,
+        color: UIColor,
+        titleFont: UIFont?
+    ) -> NSAttributedString {
 
-    static func iconString(with icon: NSTextAttachment?, title: String, interactive: Bool, color: UIColor) -> NSAttributedString {
-        return iconString(with: icon == nil ? [] : [icon!], title: title, interactive: interactive, color: color)
-    }
-
-    static func iconString(with icons: [NSTextAttachment], title: String, interactive: Bool, color: UIColor, titleFont: UIFont? = nil) -> NSAttributedString {
-
-        var components: [NSAttributedString] = []
-
-        // Adds the title
-        components.append(title.attributedString)
-
-        // Adds shield/legalhold/availability/etc. icons
-        icons.forEach { components.append(NSAttributedString(attachment: $0)) }
+        var components: [NSAttributedString] = [
+            leadingIcons.map { .init(attachment: $0) },
+            [.init(string: title)],
+            trailingIcons.map { .init(attachment: $0) }
+        ].flatMap(\.self)
 
         // Adds the down arrow if the view is interactive
         if interactive {
@@ -69,7 +64,7 @@ public class IconStringsBuilder {
         }
 
         // Add a padding and combine the final attributed string
-        let attributedTitle = components.joined(separator: "  ".attributedString)
+        let attributedTitle = NSMutableAttributedString(attributedString: components.joined(separator: .init(string: "  ")))
 
         return attributedTitle && color
     }
