@@ -112,8 +112,17 @@ final class UserNameTakeOverViewController: UIViewController {
     }
 
     private func createConstraints() {
-
-        [displayNameLabel, suggestedHandleLabel, topContainer, subtitleTextView, chooseOwnButton, keepSuggestedButton, contentView].prepareForLayout()
+        [
+            displayNameLabel,
+            suggestedHandleLabel,
+            topContainer,
+            subtitleTextView,
+            chooseOwnButton,
+            keepSuggestedButton,
+            contentView
+        ].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             displayNameLabel.leadingAnchor.constraint(equalTo: topContainer.leadingAnchor),

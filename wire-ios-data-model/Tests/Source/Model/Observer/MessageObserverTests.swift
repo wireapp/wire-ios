@@ -51,7 +51,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         ) {
 
         // given
-        withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) { () -> Void in
+        withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) {
 
             self.uiMOC.saveOrRollback()
 
