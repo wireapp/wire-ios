@@ -16,17 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// The status of the user session, consisting of the current user's name and availability.
-public struct UserSessionStatus {
+import WireDataModel
 
+/// The status of the user, consisting of its name and availability.
+public struct UserStatus {
+
+    /// The name of the users.
     var name: String
 
     var availability: Availability
-}
 
-extension UserSessionStatus {
+    /// `true` if the user has a valid certificate (MLS), `false` otherwise.
+    var isCertified: Bool
 
-    struct User {
-        var name: String
-    }
+    /// `true` if the user has been verified (Proteus), `false` otherwise.
+    var isVerified: Bool
 }

@@ -25,10 +25,6 @@ import LocalAuthentication
 
 public protocol UserSession: AnyObject {
 
-    // The status of the user session, consisting of the current user's name and availability.
-
-    // var status: UserSessionStatus { get async throws }
-
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }
