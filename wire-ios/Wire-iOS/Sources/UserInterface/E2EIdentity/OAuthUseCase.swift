@@ -24,10 +24,12 @@ import WireRequestStrategy
 
 public protocol OAuthUseCaseInterface {
 
-    func invoke(for identityProvider: URL,
-                clientID: String,
-                keyauth: String,
-                acmeAudience: String) async throws -> (idToken: String, refreshToken: String)
+    func invoke(
+        for identityProvider: URL,
+        clientID: String,
+        keyauth: String,
+        acmeAudience: String
+    ) async throws -> (idToken: String, refreshToken: String)
 
 }
 
