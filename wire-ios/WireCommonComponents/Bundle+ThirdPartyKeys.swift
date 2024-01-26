@@ -33,13 +33,4 @@ public extension Bundle {
     static var countlyAppKey: String? {
         return appMainBundle.infoForKey("CountlyAppKey")
     }
-
-    // MARK: - Identity provider
-    static var idPClientID: String? {
-        return Bundle.main.infoForKey("IdentityProviderClientID")
-    }
-
-    static var idPClientSecret: String? {
-        return Bundle.main.infoForKey("IdentityProviderClientSecret")
-    }
 }
