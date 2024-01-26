@@ -22,7 +22,7 @@ import WireTransport
 import WireSyncEngine
 import WireCommonComponents
 
-protocol LandingViewControllerDelegate {
+protocol LandingViewControllerDelegate: AnyObject {
     func landingViewControllerDidChooseCreateAccount()
     func landingViewControllerDidChooseLogin()
     func landingViewControllerDidChooseEnterpriseLogin()
@@ -303,14 +303,18 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     private func activateRightConstraint() {
-        [contentViewLeadingConstraint,
-         contentViewTrailingConstraint,
-         createAccountButtomBottomConstraint].forEach {
+        [
+            contentViewLeadingConstraint,
+            contentViewTrailingConstraint,
+            createAccountButtomBottomConstraint
+        ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass == .compact
         }
 
-        [contentViewWidthConstraint,
-         createAccountInfoLabelTopConstraint].forEach {
+        [
+            contentViewWidthConstraint,
+            createAccountInfoLabelTopConstraint
+        ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass != .compact
         }
     }
@@ -332,7 +336,7 @@ final class LandingViewController: AuthenticationStepViewController {
             messageLabel,
             subMessageLabel,
             createAccountInfoLabel
-        ].prepareForLayout()
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
 
     private func createAndAddConstraints() {

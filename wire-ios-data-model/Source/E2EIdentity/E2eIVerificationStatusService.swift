@@ -31,6 +31,11 @@ public final class E2eIVerificationStatusService: E2eIVerificationStatusServiceI
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
+    }
 
     // MARK: - Life cycle
 
@@ -61,20 +66,18 @@ public final class E2eIVerificationStatusService: E2eIVerificationStatusServiceI
     /// - `MLSVerificationStatus`
 
     public func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus {
-        /// TODO: should use try coreCryptoProvider.coreCrypto.e2eiConversationState(groupID) -> E2EIConversationState from the new CC version
-        return E2EIConversationState.notVerified.toMLSVerificationStatus()
+        do {
+            return try await coreCrypto.perform {
+                try await $0.e2eiConversationState(conversationId: groupID.data).toMLSVerificationStatus()
+            }
+        } catch {
+            throw E2eIVerificationStatusError.failedToFetchVerificationStatus
+        }
     }
 
 }
 
-// TODO: Remove it. It's a mock for an old CC version
-public enum E2EIConversationState {
-    case verified
-    case notVerified
-    case notEnabled
-}
-
-private extension E2EIConversationState {
+private extension WireCoreCrypto.E2eiConversationState {
 
     func toMLSVerificationStatus() -> MLSVerificationStatus {
         switch self {
@@ -82,6 +85,8 @@ private extension E2EIConversationState {
             return .verified
         case .notVerified, .notEnabled:
             return .notVerified
+        @unknown default:
+            fatalError("unsupported value of 'E2eiConversationState'!")
         }
     }
 

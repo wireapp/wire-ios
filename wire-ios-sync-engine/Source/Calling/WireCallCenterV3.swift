@@ -737,6 +737,8 @@ extension WireCallCenterV3 {
             snapshot?.updateConferenceInfoTask?.cancel()
             snapshot?.updateConferenceInfoTask = nil
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
+            snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
+            snapshot?.mlsConferenceStaleParticipantsRemover = nil
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
@@ -1006,7 +1008,7 @@ private extension ZMConversation {
         case (.oneOnOne, _):
             return .oneToOne
 
-        case (.group, .proteus):
+        case (.group, .proteus), (.group, .mixed):
             return .conference
 
         case (.group, .mls), (.`self`, .mls):

@@ -180,6 +180,8 @@ final class ConversationViewController: UIViewController {
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted {
             inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(for: quote))
         }
+
+        resolveConversationIfOneOnOne()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -362,6 +364,66 @@ final class ConversationViewController: UIViewController {
         navigationItem.leftItemsSupplementBackButton = false
 
         updateRightNavigationItemsButtons()
+    }
+
+    // MARK: Resolve 1-1 conversations
+
+    private func resolveConversationIfOneOnOne() {
+        let isOneOnOneConversation = conversation.conversationType == .oneOnOne
+            || conversation.conversationType == .group && (conversation.localParticipants.count == 2)
+
+        guard isOneOnOneConversation && conversation.messageProtocol == .proteus else {
+            return
+        }
+
+        guard
+            let otherUser = conversation.localParticipants.first(where: { !$0.isSelfUser }),
+            let otherUserID = otherUser.qualifiedID,
+            let viewContext = conversation.managedObjectContext,
+            let syncContext = viewContext.zm_sync
+        else {
+            WireLogger.conversation.warn("missing expected value to resolve 1-1 conversation!")
+            return
+        }
+
+        Task {
+
+            do {
+                guard let mlsService = await syncContext.perform({ syncContext.mlsService }) else {
+                    assertionFailure("mlsService is missing")
+                    return
+                }
+
+                let service = OneOnOneResolver(
+                    protocolSelector: OneOnOneProtocolSelector(),
+                    migrator: OneOnOneMigrator(mlsService: mlsService)
+                )
+                let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
+
+                if case .migratedToMLSGroup(let identifier) = resolvedState {
+                    await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
+                }
+            } catch {
+                WireLogger.conversation.warn("resolution of proteus 1-1 conversation failed: \(error)")
+            }
+        }
+    }
+
+    @MainActor
+    private func navigateToNewMLSConversation(
+        mlsGroupIdentifier: MLSGroupID,
+        in context: NSManagedObjectContext
+    ) async {
+        let mlsConversation = await context.perform {
+            ZMConversation.fetch(with: mlsGroupIdentifier, in: context)
+        }
+
+        guard let mlsConversation else {
+            assertionFailure("conversation with MLSGroupID \(mlsGroupIdentifier) is expected to be always available at this point!")
+            return
+        }
+
+        zClientViewController.showConversation(mlsConversation, at: nil)
     }
 
     // MARK: - ParticipantsPopover

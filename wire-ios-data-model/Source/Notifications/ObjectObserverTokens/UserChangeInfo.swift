@@ -183,8 +183,7 @@ extension UserChangeInfo {
     public static func add(observer: ZMUserObserver, for user: UserType, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol? {
         if let user = user as? ZMSearchUser {
             return add(searchUserObserver: observer, for: user, in: managedObjectContext)
-        }
-        else if let user = user as? ZMUser {
+        } else if let user = user as? ZMUser {
             return add(userObserver: observer, for: user, in: managedObjectContext)
         }
 

@@ -161,7 +161,7 @@ final class MessageSenderTests: MessagingTestBase {
         try await messageSender.broadcastMessage(message: message)
 
         // then
-        XCTAssertEqual(Set(arrayLiteral: Arrangement.Scaffolding.clientID), arrangement.sessionEstablisher.establishSessionWithApiVersion_Invocations[0].clients)
+        XCTAssertEqual([Arrangement.Scaffolding.clientID], arrangement.sessionEstablisher.establishSessionWithApiVersion_Invocations[0].clients)
     }
 
     func testThatWhenBroadcastingMessageProteusFailsWithTemporaryError_thenTryAgain() async throws {
@@ -242,7 +242,7 @@ final class MessageSenderTests: MessagingTestBase {
         try await messageSender.sendMessage(message: message)
 
         // then
-        XCTAssertEqual(Set(arrayLiteral: Arrangement.Scaffolding.clientID), arrangement.sessionEstablisher.establishSessionWithApiVersion_Invocations[0].clients)
+        XCTAssertEqual([Arrangement.Scaffolding.clientID], arrangement.sessionEstablisher.establishSessionWithApiVersion_Invocations[0].clients)
     }
 
     func testThatWhenSendingMessageProteusFailsWithTemporaryError_thenTryAgain() async throws {
@@ -547,7 +547,7 @@ final class MessageSenderTests: MessagingTestBase {
     struct Arrangement {
 
         struct Scaffolding {
-            static let groupID = MLSGroupID([1, 2, 3])
+            static let groupID = MLSGroupID(.init([1, 2, 3]))
             static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
             static let responseSuccess = ZMTransportResponse(payload: nil, httpStatus: 201, transportSessionError: nil, apiVersion: 0)
             static let messageSendingStatusSuccess = Payload.MessageSendingStatus(
