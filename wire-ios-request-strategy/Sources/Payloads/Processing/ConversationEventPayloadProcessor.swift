@@ -135,7 +135,7 @@ struct ConversationEventPayloadProcessor {
             return Logging.eventProcessing.error("Member leave update missing conversation or users, aborting...")
         }
 
-        let (isSelfUserRemoved, isMessageProtocolMLS) = await context.perform {
+        let (isSelfUserRemoved, messageProtocol) = await context.perform {
             if !conversation.localParticipants.isDisjoint(with: removedUsers) {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(
@@ -154,11 +154,10 @@ struct ConversationEventPayloadProcessor {
             conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: initiatingUser)
 
             let isSelfUserRemoved = removedUsers.contains(where: \.isSelfUser)
-            let isMessageProtocolMLS = conversation.messageProtocol == .mls
-            return (isSelfUserRemoved, isMessageProtocolMLS)
+            return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        if isSelfUserRemoved, isMessageProtocolMLS {
+        if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
             await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
         }
 
@@ -810,13 +809,11 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
-
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
-            groupID: payload.mlsGroupID,
+            fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,
             context: context
         )
-
     }
 
     func fetchCreator(

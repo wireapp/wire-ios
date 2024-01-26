@@ -129,8 +129,7 @@ extension ZMMessage {
                         self.knockCategory,
                         self.systemMessageCategory
         ]
-            .reduce(MessageCategory.none) {
-                (current: MessageCategory, other: MessageCategory) in
+            .reduce(MessageCategory.none) { (current: MessageCategory, other: MessageCategory) in
                 return current.union(other)
             }
         return category
@@ -159,8 +158,7 @@ extension ZMMessage {
         if textData.linkPreview != nil {
             category.update(with: .link)
             category.update(with: .linkPreview)
-        }
-        else {
+        } else {
             // does the text itself includes a link?
             let matches = linkParser.matches(in: text, range: NSRange(location: 0, length: text.count))
             if matches.count > 0 {
@@ -181,8 +179,7 @@ extension ZMMessage {
         }
         if fileData.isAudio {
             category.update(with: .audio)
-        }
-        else if fileData.isVideo {
+        } else if fileData.isVideo {
             category.update(with: .video)
         }
         return category

@@ -58,7 +58,7 @@ final class ProfileTitleView: UIView {
     }
 
     private func createConstraints() {
-        [titleLabel, verifiedImageView].prepareForLayout()
+        [titleLabel, verifiedImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           titleLabel.topAnchor.constraint(equalTo: topAnchor),
           titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
