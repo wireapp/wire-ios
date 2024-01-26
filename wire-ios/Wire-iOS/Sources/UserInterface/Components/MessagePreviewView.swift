@@ -111,8 +111,10 @@ final class MessageThumbnailPreviewView: UIView {
         imagePreview.layer.cornerRadius = 4
         imagePreview.isAccessibilityElement = true
         imagePreview.accessibilityIdentifier = "ThumbnailImage_ReplyPreview"
-        allViews.prepareForLayout()
-        allViews.forEach(addSubview)
+        allViews.forEach { view in
+            view.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(view)
+        }
     }
 
     private func setupConstraints() {
@@ -255,8 +257,10 @@ final class MessagePreviewView: UIView {
             senderLabel.isAccessibilityElement = true
             senderLabel.accessibilityIdentifier = "SenderLabel_ReplyPreview"
         }
-        allViews.prepareForLayout()
-        allViews.forEach(self.addSubview)
+        allViews.forEach { view in
+            view.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(view)
+        }
     }
 
     private func setupConstraints() {

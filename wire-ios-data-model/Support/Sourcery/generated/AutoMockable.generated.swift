@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -592,70 +592,70 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - e2eiNewActivationEnrollment
 
-    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations: [(displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
-    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockError: Error?
-    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod: ((String, String, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
-    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
+    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_Invocations: [(displayName: String, handle: String, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
+    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockError: Error?
+    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockMethod: ((String, String, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
+    public var e2eiNewActivationEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
 
-    public func e2eiNewActivationEnrollment(displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
-        e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations.append((displayName: displayName, handle: handle, team: team, expiryDays: expiryDays, ciphersuite: ciphersuite))
+    public func e2eiNewActivationEnrollment(displayName: String, handle: String, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
+        e2eiNewActivationEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_Invocations.append((displayName: displayName, handle: handle, team: team, expirySec: expirySec, ciphersuite: ciphersuite))
 
-        if let error = e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockError {
+        if let error = e2eiNewActivationEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockError {
             throw error
         }
 
-        if let mock = e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod {
-            return try await mock(displayName, handle, team, expiryDays, ciphersuite)
-        } else if let mock = e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue {
+        if let mock = e2eiNewActivationEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockMethod {
+            return try await mock(displayName, handle, team, expirySec, ciphersuite)
+        } else if let mock = e2eiNewActivationEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockValue {
             return mock
         } else {
-            fatalError("no mock for `e2eiNewActivationEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite`")
+            fatalError("no mock for `e2eiNewActivationEnrollmentDisplayNameHandleTeamExpirySecCiphersuite`")
         }
     }
 
     // MARK: - e2eiNewEnrollment
 
-    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations: [(clientId: String, displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
-    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockError: Error?
-    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod: ((String, String, String, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
-    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
+    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpirySecCiphersuite_Invocations: [(clientId: String, displayName: String, handle: String, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
+    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpirySecCiphersuite_MockError: Error?
+    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpirySecCiphersuite_MockMethod: ((String, String, String, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
+    public var e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpirySecCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
 
-    public func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
-        e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations.append((clientId: clientId, displayName: displayName, handle: handle, team: team, expiryDays: expiryDays, ciphersuite: ciphersuite))
+    public func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
+        e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpirySecCiphersuite_Invocations.append((clientId: clientId, displayName: displayName, handle: handle, team: team, expirySec: expirySec, ciphersuite: ciphersuite))
 
-        if let error = e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockError {
+        if let error = e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpirySecCiphersuite_MockError {
             throw error
         }
 
-        if let mock = e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod {
-            return try await mock(clientId, displayName, handle, team, expiryDays, ciphersuite)
-        } else if let mock = e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue {
+        if let mock = e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpirySecCiphersuite_MockMethod {
+            return try await mock(clientId, displayName, handle, team, expirySec, ciphersuite)
+        } else if let mock = e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpirySecCiphersuite_MockValue {
             return mock
         } else {
-            fatalError("no mock for `e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpiryDaysCiphersuite`")
+            fatalError("no mock for `e2eiNewEnrollmentClientIdDisplayNameHandleTeamExpirySecCiphersuite`")
         }
     }
 
     // MARK: - e2eiNewRotateEnrollment
 
-    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations: [(displayName: String?, handle: String?, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
-    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockError: Error?
-    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod: ((String?, String?, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
-    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
+    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_Invocations: [(displayName: String?, handle: String?, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite)] = []
+    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockError: Error?
+    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockMethod: ((String?, String?, String?, UInt32, WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment)?
+    public var e2eiNewRotateEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockValue: WireCoreCrypto.E2eiEnrollment?
 
-    public func e2eiNewRotateEnrollment(displayName: String?, handle: String?, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
-        e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_Invocations.append((displayName: displayName, handle: handle, team: team, expiryDays: expiryDays, ciphersuite: ciphersuite))
+    public func e2eiNewRotateEnrollment(displayName: String?, handle: String?, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment {
+        e2eiNewRotateEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_Invocations.append((displayName: displayName, handle: handle, team: team, expirySec: expirySec, ciphersuite: ciphersuite))
 
-        if let error = e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockError {
+        if let error = e2eiNewRotateEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockError {
             throw error
         }
 
-        if let mock = e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockMethod {
-            return try await mock(displayName, handle, team, expiryDays, ciphersuite)
-        } else if let mock = e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite_MockValue {
+        if let mock = e2eiNewRotateEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockMethod {
+            return try await mock(displayName, handle, team, expirySec, ciphersuite)
+        } else if let mock = e2eiNewRotateEnrollmentDisplayNameHandleTeamExpirySecCiphersuite_MockValue {
             return mock
         } else {
-            fatalError("no mock for `e2eiNewRotateEnrollmentDisplayNameHandleTeamExpiryDaysCiphersuite`")
+            fatalError("no mock for `e2eiNewRotateEnrollmentDisplayNameHandleTeamExpirySecCiphersuite`")
         }
     }
 
@@ -1108,10 +1108,10 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     public var processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations: [(welcomeMessage: Data, customConfiguration: WireCoreCrypto.CustomConfiguration)] = []
     public var processWelcomeMessageWelcomeMessageCustomConfiguration_MockError: Error?
-    public var processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod: ((Data, WireCoreCrypto.CustomConfiguration) async throws -> Data)?
-    public var processWelcomeMessageWelcomeMessageCustomConfiguration_MockValue: Data?
+    public var processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod: ((Data, WireCoreCrypto.CustomConfiguration) async throws -> WireCoreCrypto.WelcomeBundle)?
+    public var processWelcomeMessageWelcomeMessageCustomConfiguration_MockValue: WireCoreCrypto.WelcomeBundle?
 
-    public func processWelcomeMessage(welcomeMessage: Data, customConfiguration: WireCoreCrypto.CustomConfiguration) async throws -> Data {
+    public func processWelcomeMessage(welcomeMessage: Data, customConfiguration: WireCoreCrypto.CustomConfiguration) async throws -> WireCoreCrypto.WelcomeBundle {
         processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations.append((welcomeMessage: welcomeMessage, customConfiguration: customConfiguration))
 
         if let error = processWelcomeMessageWelcomeMessageCustomConfiguration_MockError {

@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -285,17 +285,17 @@ public class MockMLSEventProcessing: MLSEventProcessing {
 
     // MARK: - updateConversationIfNeeded
 
-    public var updateConversationIfNeededConversationGroupIDContext_Invocations: [(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)] = []
-    public var updateConversationIfNeededConversationGroupIDContext_MockMethod: ((ZMConversation, String?, NSManagedObjectContext) async -> Void)?
+    public var updateConversationIfNeededConversationFallbackGroupIDContext_Invocations: [(conversation: ZMConversation, fallbackGroupID: MLSGroupID?, context: NSManagedObjectContext)] = []
+    public var updateConversationIfNeededConversationFallbackGroupIDContext_MockMethod: ((ZMConversation, MLSGroupID?, NSManagedObjectContext) async -> Void)?
 
-    public func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) async {
-        updateConversationIfNeededConversationGroupIDContext_Invocations.append((conversation: conversation, groupID: groupID, context: context))
+    public func updateConversationIfNeeded(conversation: ZMConversation, fallbackGroupID: MLSGroupID?, context: NSManagedObjectContext) async {
+        updateConversationIfNeededConversationFallbackGroupIDContext_Invocations.append((conversation: conversation, fallbackGroupID: fallbackGroupID, context: context))
 
-        guard let mock = updateConversationIfNeededConversationGroupIDContext_MockMethod else {
-            fatalError("no mock for `updateConversationIfNeededConversationGroupIDContext`")
+        guard let mock = updateConversationIfNeededConversationFallbackGroupIDContext_MockMethod else {
+            fatalError("no mock for `updateConversationIfNeededConversationFallbackGroupIDContext`")
         }
 
-        await mock(conversation, groupID, context)
+        await mock(conversation, fallbackGroupID, context)
     }
 
     // MARK: - process

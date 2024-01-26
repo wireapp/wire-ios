@@ -41,7 +41,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var privateUserDefaults: PrivateUserDefaults<MLSService.Keys>!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
 
-    let groupID = MLSGroupID([1, 2, 3])
+    let groupID = MLSGroupID(.init([1, 2, 3]))
 
     override func setUp() {
         BackendInfo.storage = .temporary()
@@ -905,7 +905,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_CommitPendingProposals_OneFutureCommit() async throws {
         // Given
         let futureCommitDate = Date().addingTimeInterval(2)
-        let groupID = MLSGroupID([1, 2, 3])
+        let groupID = MLSGroupID(.init([1, 2, 3]))
         var conversation: ZMConversation!
 
         await uiMOC.perform { [self] in
@@ -950,9 +950,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let futureCommitDate1 = Date().addingTimeInterval(2)
         let futureCommitDate2 = Date().addingTimeInterval(5)
 
-        let conversation1MLSGroupID = MLSGroupID([1, 2, 3])
-        let conversation2MLSGroupID = MLSGroupID([4, 5, 6])
-        let conversation3MLSGroupID = MLSGroupID([7, 8, 9])
+        let conversation1MLSGroupID = MLSGroupID(.init([1, 2, 3]))
+        let conversation2MLSGroupID = MLSGroupID(.init([4, 5, 6]))
+        let conversation3MLSGroupID = MLSGroupID(.init([7, 8, 9]))
 
         var conversation1: ZMConversation!
         var conversation2: ZMConversation!
@@ -1733,10 +1733,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID.random()
         let message = Data.random().base64EncodedString()
+        let welcomeBundle = WelcomeBundle(id: groupID.data, crlNewDistributionPoints: nil)
 
         // Mock
         mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
-            groupID.data
+            welcomeBundle
         }
 
         var mockClientValidKeypackagesCountCount = 0
