@@ -63,7 +63,7 @@ final class AvailabilityTitleViewController: UIViewController {
     }
 
     func presentAvailabilityPicker() {
-        let alertViewController = UIAlertController.availabilityPicker { [weak self] (availability) in
+        let alertViewController = UIAlertController.availabilityPicker { [weak self] availability in
             guard let `self` = self else { return }
             self.didSelectAvailability(availability)
         }

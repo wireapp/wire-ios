@@ -29,26 +29,26 @@ extension AvailabilityKind {
     var localizedName: String {
         switch self {
         case .none:
-            return L10n.Localizable.Availability.none
+            L10n.Localizable.Availability.none
         case .available:
-            return L10n.Localizable.Availability.available
+            L10n.Localizable.Availability.available
         case .away:
-            return L10n.Localizable.Availability.away
+            L10n.Localizable.Availability.away
         case .busy:
-            return L10n.Localizable.Availability.busy
+            L10n.Localizable.Availability.busy
         }
     }
 
     var iconType: StyleKitIcon? {
         switch self {
         case .none:
-            return nil
+            nil
         case .available:
-            return .statusAvailable
+            .statusAvailable
         case .away:
-            return .statusAway
+            .statusAway
         case .busy:
-            return .statusBusy
+            .statusBusy
         }
     }
 }

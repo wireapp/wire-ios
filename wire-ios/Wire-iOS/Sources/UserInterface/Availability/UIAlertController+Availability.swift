@@ -24,8 +24,8 @@ extension UIAlertController {
 
     static func availabilityExplanation(_ availability: AvailabilityKind) -> UIAlertController {
         typealias AvailabilityReminderLocale = L10n.Localizable.Availability.Reminder
-        var title: String = ""
-        var message: String = ""
+        let title: String
+        let message: String
 
         switch availability {
         case .none:

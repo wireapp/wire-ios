@@ -54,8 +54,6 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
     private var observerToken: Any?
     private var options: Options
 
-    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-
     // MARK: - Initialization
 
     /**
