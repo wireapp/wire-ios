@@ -42,7 +42,7 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
         let wireIdentities = try await getWireIdentity(coreCrypto: coreCrypto,
                                                        conversationId: mlsGroupId.data,
                                                        clientIDs: clientIds)
-        return wireIdentities.isNonEmpty ?  try wireIdentities.compactMap({try $0.toE2eIdenityCertificate()}) : []
+        return try wireIdentities.compactMap({try $0.toE2eIdenityCertificate()})
     }
 
     @MainActor
