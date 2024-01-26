@@ -94,7 +94,7 @@ final class AssetCell: UICollectionViewCell {
                                                    targetSize: CGSize(width: maxDimensionRetina, height: maxDimensionRetina),
                                                    contentMode: .aspectFill,
                                                    options: type(of: self).imageFetchOptions,
-                                                   resultHandler: { [weak self] result, _ -> Void in
+                                                   resultHandler: { [weak self] result, _ in
                                                     guard let `self` = self,
                                                         self.representedAssetIdentifier == asset.localIdentifier
                                                         else { return }
