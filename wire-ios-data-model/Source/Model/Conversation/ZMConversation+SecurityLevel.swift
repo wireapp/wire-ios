@@ -371,9 +371,9 @@ extension ZMConversation {
 
     public var isDegraded: Bool {
         switch messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             return securityLevel == .secureWithIgnored
-        case .mls, .mixed:
+        case .mls:
             return mlsVerificationStatus == .degraded
         }
     }
@@ -384,7 +384,7 @@ extension ZMConversation {
         // Downgrade the conversation to be unverified
         if isDegraded {
             switch messageProtocol {
-            case .proteus,  .mixed:
+            case .proteus, .mixed:
                 securityLevel = .notSecure
             case .mls:
                 mlsVerificationStatus = .notVerified
