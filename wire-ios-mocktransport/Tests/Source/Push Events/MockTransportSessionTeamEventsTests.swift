@@ -140,7 +140,7 @@ extension MockTransportSessionTeamEventsTests {
 
         let updateData = [
             "user": selfUser.identifier
-            ]
+        ]
         check(event: events.first, hasType: .teamMemberLeave, team: team, data: updateData)
     }
 }

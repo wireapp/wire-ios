@@ -197,7 +197,7 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
 
     private func createConstraints() {
         if let childViewControllerView = viewController.view {
-            [childViewControllerView, dimView].prepareForLayout()
+            [childViewControllerView, dimView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             NSLayoutConstraint.activate([
                 childViewControllerView.topAnchor.constraint(equalTo: view.topAnchor),
                 childViewControllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),

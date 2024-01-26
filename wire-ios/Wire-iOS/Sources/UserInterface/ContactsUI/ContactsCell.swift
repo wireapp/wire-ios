@@ -187,7 +187,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -buttonMargin)
         ])
 
-        [actionButton, buttonSpacer].prepareForLayout()
+        [actionButton, buttonSpacer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             buttonSpacer.topAnchor.constraint(equalTo: actionButton.topAnchor),
             buttonSpacer.bottomAnchor.constraint(equalTo: actionButton.bottomAnchor),

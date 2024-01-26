@@ -69,7 +69,7 @@ final class GuestsBarController: UIViewController {
     }
 
     private func createConstraints() {
-        [container, label].prepareForLayout()
+        [container, label].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomLabelConstraint,
