@@ -639,7 +639,6 @@ public final class MLSService: MLSServiceInterface {
             let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
-
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
                 logger.info("no need to upload new key packages yet")
                 return

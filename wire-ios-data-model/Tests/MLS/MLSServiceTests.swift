@@ -57,7 +57,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockConversationEventProcessor = MockConversationEventProcessorProtocol()
         mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in }
         mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
-        userDefaultsTestSuite = UserDefaults(suiteName: "com.wire.mls-test-suite")!
+        userDefaultsTestSuite = UserDefaults.temporary()
         privateUserDefaults = PrivateUserDefaults(userID: userIdentifier, storage: userDefaultsTestSuite)
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
 
@@ -101,6 +101,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider = nil
         mockStaleMLSKeyDetector = nil
         mockSubconversationGroupIDRepository = nil
+        privateUserDefaults = nil
+        userDefaultsTestSuite = nil
         super.tearDown()
     }
 
@@ -1533,7 +1535,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Key Packages
 
-    func test_UploadKeyPackages_IsSuccessfull() async {
+    func test_UploadKeyPackages_IsSuccessful() async {
         // Given
         guard let clientID = await uiMOC.perform({ self.createSelfClient(onMOC: self.uiMOC).remoteIdentifier }) else {
             XCTFail("failed to get client id")
@@ -1621,6 +1623,61 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         await fulfillment(of: [countUnclaimedKeyPackages], timeout: 0.5)
+    }
+
+    enum TestError: Error {
+        case failedToUploadKeyPackages
+    }
+
+    func test_UploadKeyPackages_DoesNotSetKeyPackageQueriedTime_IfItFails() async {
+        // Given
+        await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
+
+        // mock that there are enough kp locally
+        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
+            UInt64(self.sut.targetUnclaimedKeyPackageCount)
+        }
+
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+            return 0
+        }
+
+        mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in
+            throw TestError.failedToUploadKeyPackages
+
+        }
+        mockCoreCrypto.clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod = { _, _, _ in
+            [Data.random()]
+        }
+        // When
+        await sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        XCTAssertNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
+    }
+
+    func test_UploadKeyPackages_SetsKeyPackageQueriedTime_IfItSucceed() async {
+        // Given
+        await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
+
+        // mock that there are enough kp locally
+        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
+            UInt64(self.sut.targetUnclaimedKeyPackageCount)
+        }
+
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+            return 0
+        }
+
+        mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in }
+        mockCoreCrypto.clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod = { _, _, _ in
+            [Data.random()]
+        }
+        // When
+        await sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        XCTAssertNotNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
     func test_UploadKeyPackages_DoesntUploadKeyPackages_WhenNotNeeded() async {
