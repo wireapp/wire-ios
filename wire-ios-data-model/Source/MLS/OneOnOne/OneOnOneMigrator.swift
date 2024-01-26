@@ -56,30 +56,26 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
-        let mlsGroupID = try await fetchMLSOneOnOneConversation(
+        let mlsGroupID = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
         )
 
-        try await establishMLSGroupIfNeeded(
+        try await establishLocalMLSGroupIfNeeded(
             userID: userID,
             mlsGroupID: mlsGroupID
         )
 
-        try await context.perform {
-            try self.switchActiveOneOnOneConversation(
-                userID: userID,
-                mlsGroupID: mlsGroupID,
-                in: context
-            )
-
-            context.saveOrRollback()
-        }
+        try await switchLocalConversationToMLS(
+            userID: userID,
+            mlsGroupID: mlsGroupID,
+            in: context
+        )
 
         return mlsGroupID
     }
 
-    private func fetchMLSOneOnOneConversation(
+    private func syncMLSConversationFromBackend(
         userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
@@ -95,7 +91,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
-    private func establishMLSGroupIfNeeded(
+    private func establishLocalMLSGroupIfNeeded(
         userID: QualifiedID,
         mlsGroupID: MLSGroupID
     ) async throws {
@@ -113,64 +109,37 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
-    private func switchActiveOneOnOneConversation(
+    private func switchLocalConversationToMLS(
         userID: QualifiedID,
         mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
-    ) throws {
-        guard let mlsConversation = ZMConversation.fetch(
-            with: mlsGroupID,
-            in: context
-        ) else {
-            throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
-        }
-
-        guard
-            let otherUser = ZMUser.fetch(with: userID, in: context),
-            let connection = otherUser.connection
-        else {
-            throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
-        }
-
-        if let proteusConversation = connection.conversation {
-            copyMessagesFromProtheusConversation(
-                proteusConversation,
-                to: mlsConversation,
+    ) async throws {
+        try await context.perform {
+            guard let mlsConversation = ZMConversation.fetch(
+                with: mlsGroupID,
                 in: context
-            )
-        }
-
-        connection.conversation = mlsConversation
-    }
-
-    // MARK: - Copy Messages
-
-    private func copyMessagesFromProtheusConversation(
-        _ proteusConversation: ZMConversation,
-        to mlsConversation: ZMConversation,
-        in context: NSManagedObjectContext
-    ) {
-        guard let messages = try? fetchVisibleMessages(of: proteusConversation, context: context) else {
-            assertionFailure("unable to fetch messages of proteus conversation!")
-            return
-        }
-
-        for message in messages {
-            if let mlsMessage = message.copyEntireObjectGraph(context: context) as? ZMMessage {
-                mlsMessage.nonce = UUID() // keep objects uniquely identifiable
-                mlsMessage.visibleInConversation = mlsConversation
-                mlsMessage.hiddenInConversation = nil
-            } else {
-                // in production: continue for loop
-                assertionFailure("expect cast ZMMessage to be always successful!")
+            ) else {
+                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
+
+            guard
+                let otherUser = ZMUser.fetch(with: userID, in: context),
+                let connection = otherUser.connection
+            else {
+                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
+            }
+
+            // copy local messages
+            if let proteusConversation = connection.conversation {
+                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+                // update just to be sure
+                mlsConversation.needsToBeUpdatedFromBackend = true
+            }
+
+            // switch active conversation
+            connection.conversation = mlsConversation
+
+            context.saveOrRollback()
         }
-    }
-
-    private func fetchVisibleMessages(of conversation: ZMConversation, context: NSManagedObjectContext) throws -> [ZMMessage] {
-        let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
-        fetchRequest.predicate = conversation.visibleMessagesPredicate
-
-        return try context.fetch(fetchRequest)
     }
 }
