@@ -57,17 +57,19 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
                     XCTAssertEqual(clients.count, 2)
                 },
                 postMigrationAction: { context in
-                    // verify it deleted duplicates
-                    var clients = try fetchClients(with: clientID, in: context)
-                    XCTAssertEqual(clients.count, 1)
-
-                    // verify we can't insert duplicates
-                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                    insertDuplicateClients(with: clientID, in: context)
-                    try context.save()
-
-                    clients = try fetchClients(with: clientID, in: context)
-                    XCTAssertEqual(clients.count, 1)
+                    try context.performGroupedAndWait { [self] context in
+                        // verify it deleted duplicates
+                        var clients = try fetchClients(with: clientID, in: context)
+                        XCTAssertEqual(clients.count, 1)
+                        
+                        // verify we can't insert duplicates
+                        context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                        insertDuplicateClients(with: clientID, in: context)
+                        try context.save()
+                        
+                        clients = try fetchClients(with: clientID, in: context)
+                        XCTAssertEqual(clients.count, 1)
+                    }
                 },
                 for: self
             )
@@ -93,17 +95,18 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
                 XCTAssertEqual(clients.count, 2)
             },
             postMigrationAction: { context in
-                // verify it deleted duplicates
-                var clients = try fetchClients(with: clientID, in: context)
-                XCTAssertEqual(clients.count, 1)
+                try context.performGroupedAndWait { [self] context in                // verify it deleted duplicates
+                    var clients = try fetchClients(with: clientID, in: context)
+                    XCTAssertEqual(clients.count, 1)
 
-                // verify we can't insert duplicates
-                context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                insertDuplicateClients(with: clientID, in: context)
-                try context.save()
+                    // verify we can't insert duplicates
+                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                    insertDuplicateClients(with: clientID, in: context)
+                    try context.save()
 
-                clients = try fetchClients(with: clientID, in: context)
-                XCTAssertEqual(clients.count, 1)
+                    clients = try fetchClients(with: clientID, in: context)
+                    XCTAssertEqual(clients.count, 1)
+                }
             }
         )
     }

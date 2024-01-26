@@ -87,6 +87,7 @@
         <attribute name="needsToDownloadRoles" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="needsToVerifyLegalHold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="normalizedUserDefinedName" optional="YES" attributeType="String"/>
+        <attribute name="primaryKey" optional="YES" attributeType="String"/>
         <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="securityLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
@@ -115,6 +116,11 @@
             <fetchIndexElement property="internalIsArchived" type="Binary" order="ascending"/>
             <fetchIndexElement property="lastModifiedDate" type="Binary" order="ascending"/>
         </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="primaryKey"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="Feature" representedClassName=".Feature" syncable="YES">
         <attribute name="configData" optional="YES" attributeType="Binary"/>
@@ -229,7 +235,7 @@
     </entity>
     <entity name="ParticipantRole" representedClassName=".ParticipantRole" syncable="YES">
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
-        <relationship name="conversation" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation"/>
+        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation"/>
         <relationship name="role" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Role" inverseName="participantRoles" inverseEntity="Role"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User"/>
     </entity>

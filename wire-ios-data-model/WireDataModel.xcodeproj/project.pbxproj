@@ -9,9 +9,12 @@
 /* Begin PBXBuildFile section */
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
+		014DD8B82B692DE3007ECFD1 /* DuplicateConversationsMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8B72B692DE3007ECFD1 /* DuplicateConversationsMigrationPolicy.swift */; };
+		014DD8BA2B6930B4007ECFD1 /* DuplicateTeamsMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8B92B6930B4007ECFD1 /* DuplicateTeamsMigrationPolicy.swift */; };
 		014DD8BC2B699429007ECFD1 /* DatabaseMigrationTests+UserUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8BB2B699429007ECFD1 /* DatabaseMigrationTests+UserUniqueness.swift */; };
-		014DD8C22B6BCF3B007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8C12B6BCF3B007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel */; };
 		014DD8C52B6BF30F007ECFD1 /* store2-111-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 014DD8C32B6BF2E5007ECFD1 /* store2-111-0.wiredatabase */; };
+		014DD8C72B6C3F01007ECFD1 /* DatabaseMigrationTests+ConversationUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8C62B6C3F01007ECFD1 /* DatabaseMigrationTests+ConversationUniqueness.swift */; };
+		014DD8CB2B6C4E0F007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8CA2B6C4E0F007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
 		018964252A6FE72700BCEE0E /* EARStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018964242A6FE72700BCEE0E /* EARStorage.swift */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
@@ -789,9 +792,12 @@
 /* Begin PBXFileReference section */
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
+		014DD8B72B692DE3007ECFD1 /* DuplicateConversationsMigrationPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DuplicateConversationsMigrationPolicy.swift; sourceTree = "<group>"; };
+		014DD8B92B6930B4007ECFD1 /* DuplicateTeamsMigrationPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DuplicateTeamsMigrationPolicy.swift; sourceTree = "<group>"; };
 		014DD8BB2B699429007ECFD1 /* DatabaseMigrationTests+UserUniqueness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+UserUniqueness.swift"; sourceTree = "<group>"; };
-		014DD8C12B6BCF3B007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = "MappingModel_2.110-2.111.xcmappingmodel"; sourceTree = "<group>"; };
 		014DD8C32B6BF2E5007ECFD1 /* store2-111-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-111-0.wiredatabase"; sourceTree = "<group>"; };
+		014DD8C62B6C3F01007ECFD1 /* DatabaseMigrationTests+ConversationUniqueness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+ConversationUniqueness.swift"; sourceTree = "<group>"; };
+		014DD8CA2B6C4E0F007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; name = "MappingModel_2.110-2.111.xcmappingmodel"; path = "Source/ManagedObjectContext/Migration/2.110-2.111/MappingModel_2.110-2.111.xcmappingmodel"; sourceTree = SOURCE_ROOT; };
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		018964242A6FE72700BCEE0E /* EARStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARStorage.swift; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
@@ -1643,7 +1649,8 @@
 			isa = PBXGroup;
 			children = (
 				01D017AA2B6313420065CCD6 /* DuplicateUsersMigrationPolicy.swift */,
-				014DD8C12B6BCF3B007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel */,
+				014DD8B92B6930B4007ECFD1 /* DuplicateTeamsMigrationPolicy.swift */,
+				014DD8B72B692DE3007ECFD1 /* DuplicateConversationsMigrationPolicy.swift */,
 			);
 			path = "2.110-2.111";
 			sourceTree = "<group>";
@@ -2362,6 +2369,7 @@
 				70E77B7C273188150021EE70 /* ZMConversation+Role.swift */,
 				6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */,
 				63DA3372286CA43300818C3C /* ZMConversation+MLS.swift */,
+				014DD8CA2B6C4E0F007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel */,
 			);
 			path = Conversation;
 			sourceTree = "<group>";
@@ -2639,6 +2647,7 @@
 				E6BFE8392B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift */,
 				6391A7FB2A6FD7C900832665 /* DatabaseMigrationTests+UserClientUniqueness.swift */,
 				014DD8BB2B699429007ECFD1 /* DatabaseMigrationTests+UserUniqueness.swift */,
+				014DD8C62B6C3F01007ECFD1 /* DatabaseMigrationTests+ConversationUniqueness.swift */,
 				D5FA30CA2063ECD400716618 /* BackupMetadataTests.swift */,
 				D5FA30D02063FD3A00716618 /* VersionTests.swift */,
 				63F376D92834FF7200FE1F05 /* NSManagedObjectContextTests+Federation.swift */,
@@ -3447,6 +3456,7 @@
 				1670D0172317F92B003A143B /* ZMConversation+Team.swift in Sources */,
 				EE28991E26B4422800E7BAF0 /* Feature.ConferenceCalling.swift in Sources */,
 				63B1336A29A503D100009D84 /* ClaimMLSKeyPackageAction.swift in Sources */,
+				014DD8B82B692DE3007ECFD1 /* DuplicateConversationsMigrationPolicy.swift in Sources */,
 				63B1335929A503D100009D84 /* MLSGroupID.swift in Sources */,
 				F963E9831D9C0DC400098AD3 /* ZMMessageDestructionTimer.swift in Sources */,
 				63AFE2D6244F49A90003F619 /* GenericMessage+MessageCapable.swift in Sources */,
@@ -3612,6 +3622,7 @@
 				068DCC5729BB816300F7E4F1 /* ZMOTRMessage+FailedToSendReason.swift in Sources */,
 				F963E9811D9C09E700098AD3 /* ZMMessageTimer.m in Sources */,
 				EE79699629D4684C00075E38 /* CryptoboxMigrationManager.swift in Sources */,
+				014DD8BA2B6930B4007ECFD1 /* DuplicateTeamsMigrationPolicy.swift in Sources */,
 				4058AAA22AA76BFA0013DE71 /* ReactionData.swift in Sources */,
 				0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */,
 				63370CC4242CFA860072C37F /* ZMAssetClientMessage+UpdateEvent.swift in Sources */,
@@ -3706,7 +3717,7 @@
 				1672A6282344F10700380537 /* FolderList.swift in Sources */,
 				54E3EE3F1F6169A800A261E3 /* ZMAssetClientMessage+FileMessageData.swift in Sources */,
 				EF1F4F542301634500E4872C /* ZMSystemMessage+ChildMessages.swift in Sources */,
-				014DD8C22B6BCF3B007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel in Sources */,
+				014DD8CB2B6C4E0F007ECFD1 /* MappingModel_2.110-2.111.xcmappingmodel in Sources */,
 				F943BC2D1E88FEC80048A768 /* ChangedIndexes.swift in Sources */,
 				7A2778C6285223D90044A73F /* KeychainManager.swift in Sources */,
 				63B1336D29A503D100009D84 /* Bytes.swift in Sources */,
@@ -4020,6 +4031,7 @@
 				F9C348861E2CC27D0015D69D /* NewUnreadMessageObserverTests.swift in Sources */,
 				63F376DA2834FF7200FE1F05 /* NSManagedObjectContextTests+Federation.swift in Sources */,
 				87A7FA25203DD1CC00AA066C /* ZMConversationTests+AccessMode.swift in Sources */,
+				014DD8C72B6C3F01007ECFD1 /* DatabaseMigrationTests+ConversationUniqueness.swift in Sources */,
 				EE79699829D469A800075E38 /* CryptoboxMigrationManagerTests.swift in Sources */,
 				F9A708601CAEEF4700C2F5FE /* MessagingTest+EventFactory.m in Sources */,
 				F9DBA5291E29162A00BE23C0 /* MessageObserverTests.swift in Sources */,

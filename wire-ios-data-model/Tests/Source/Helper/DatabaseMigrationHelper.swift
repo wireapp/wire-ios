@@ -158,7 +158,8 @@ struct DatabaseMigrationHelper {
 
         // THEN
         // perform post migration action
-        try postMigrationAction(stack.viewContext)
+        try postMigrationAction(stack.syncContext)
+
 
         try? FileManager.default.removeItem(at: applicationContainer)
     }

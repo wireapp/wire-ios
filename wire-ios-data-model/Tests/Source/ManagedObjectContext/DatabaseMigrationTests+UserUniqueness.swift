@@ -70,26 +70,28 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
                 XCTAssertEqual(clients.count, 2)
             },
             postMigrationAction: { context in
-                // verify it deleted duplicates
-                var clients = try fetchUsers(with: userId, domain: domain, in: context)
-                XCTAssertEqual(clients.count, 1)
+                try context.performGroupedAndWait { [self] context in
+                    // verify it deleted duplicates
+                    var clients = try fetchUsers(with: userId, domain: domain, in: context)
+                    XCTAssertEqual(clients.count, 1)
 
-                clients = try fetchUsers(with: uniqueUser1.0, domain: uniqueUser1.1, in: context)
-                XCTAssertEqual(clients.count, 1)
+                    clients = try fetchUsers(with: uniqueUser1.0, domain: uniqueUser1.1, in: context)
+                    XCTAssertEqual(clients.count, 1)
 
-                clients = try fetchUsers(with: uniqueUser2.0, domain: uniqueUser2.1, in: context)
-                XCTAssertEqual(clients.count, 1)
+                    clients = try fetchUsers(with: uniqueUser2.0, domain: uniqueUser2.1, in: context)
+                    XCTAssertEqual(clients.count, 1)
 
-                clients = try fetchUsers(with: otherDuplicateUsers.0, domain: otherDuplicateUsers.1, in: context)
-                XCTAssertEqual(clients.count, 1)
+                    clients = try fetchUsers(with: otherDuplicateUsers.0, domain: otherDuplicateUsers.1, in: context)
+                    XCTAssertEqual(clients.count, 1)
 
-                // verify we can't insert duplicates
-                context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                insertDuplicateUsers(with: userId, domain: domain, in: context)
-                try context.save()
+                    // verify we can't insert duplicates
+                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                    insertDuplicateUsers(with: userId, domain: domain, in: context)
+                    try context.save()
 
-                clients = try fetchUsers(with: userId, domain: domain, in: context)
-                XCTAssertEqual(clients.count, 1)
+                    clients = try fetchUsers(with: userId, domain: domain, in: context)
+                    XCTAssertEqual(clients.count, 1)
+                }
             },
             for: self
         )
@@ -110,18 +112,20 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
                 XCTAssertEqual(clients.count, 2)
             },
             postMigrationAction: { context in
-                // verify it deleted duplicates
-                var clients = try fetchUsers(with: userId, domain: domain, in: context)
-
-                XCTAssertEqual(clients.count, 1)
-
-                // verify we can't insert duplicates
-                context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                insertDuplicateUsers(with: userId, domain: domain, in: context)
-                try context.save()
-
-                clients = try fetchUsers(with: userId, domain: domain, in: context)
-                XCTAssertEqual(clients.count, 1)
+                try context.performGroupedAndWait { [self] context in
+                    // verify it deleted duplicates
+                    var clients = try fetchUsers(with: userId, domain: domain, in: context)
+                    
+                    XCTAssertEqual(clients.count, 1)
+                    
+                    // verify we can't insert duplicates
+                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                    insertDuplicateUsers(with: userId, domain: domain, in: context)
+                    try context.save()
+                    
+                    clients = try fetchUsers(with: userId, domain: domain, in: context)
+                    XCTAssertEqual(clients.count, 1)
+                }
             },
             for: self
         )
