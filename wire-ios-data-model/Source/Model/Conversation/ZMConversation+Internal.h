@@ -47,12 +47,10 @@ extern NSString *const ZMConversationMutedStatusKey;
 extern NSString *const ZMConversationAllMessagesKey;
 extern NSString *const ZMConversationHiddenMessagesKey;
 extern NSString *const ZMConversationParticipantRolesKey;
-extern NSString *const ZMConversationHasUnreadKnock;
 extern NSString *const ZMConversationUserDefinedNameKey;
 extern NSString *const ZMNormalizedUserDefinedNameKey;
 extern NSString *const ZMConversationListIndicatorKey;
 extern NSString *const ZMConversationConversationTypeKey;
-extern NSString *const ZMConversationExternalParticipantsStateKey;
 extern NSString *const ZMConversationNeedsToDownloadRolesKey;
 extern NSString *const ZMConversationIsForcedReadOnlyKey;
 
