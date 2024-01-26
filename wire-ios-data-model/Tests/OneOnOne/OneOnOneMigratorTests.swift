@@ -47,25 +47,15 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
 
-        let (connection, proteusConversation, mlsConversation) = await uiMOC.perform { [self] in
-            let user = createUser(id: userID, in: uiMOC)
+        let (connection, proteusConversation, mlsConversation) = await createConversations(
+            userID: userID,
+            mlsGroupID: mlsGroupID,
+            in: uiMOC
+        )
 
-            let (connection, proteusConversation) = createConnection(
-                status: .accepted,
-                to: user,
-                in: uiMOC
-            )
-
-            let mlsConversation = createMLSConversation(with: mlsGroupID, in: uiMOC)
-
+        await uiMOC.perform {
             XCTAssertEqual(connection.conversation, proteusConversation)
             XCTAssertNil(mlsConversation.connection)
-
-            return (
-                connection,
-                proteusConversation,
-                mlsConversation
-            )
         }
 
         // Mock
@@ -99,25 +89,15 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
 
-        let (connection, proteusConversation, mlsConversation) = await uiMOC.perform { [self] in
-            let user = createUser(id: userID, in: uiMOC)
+        let (connection, proteusConversation, mlsConversation) = await createConversations(
+            userID: userID,
+            mlsGroupID: mlsGroupID,
+            in: uiMOC
+        )
 
-            let (connection, proteusConversation) = createConnection(
-                status: .accepted,
-                to: user,
-                in: uiMOC
-            )
-
-            let mlsConversation = createMLSConversation(with: mlsGroupID, in: uiMOC)
-
+        await uiMOC.perform {
             XCTAssertEqual(connection.conversation, proteusConversation)
             XCTAssertNil(mlsConversation.connection)
-
-            return (
-                connection,
-                proteusConversation,
-                mlsConversation
-            )
         }
 
         // Mock
@@ -149,26 +129,14 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         let userID: QualifiedID = .random()
         let mlsGroupID: MLSGroupID = .random()
 
-        let (connection, proteusConversation, mlsConversation) = await uiMOC.perform { [self] in
-            let user = createUser(id: userID, in: uiMOC)
+        let (connection, proteusConversation, mlsConversation) = await createConversations(
+            userID: userID,
+            mlsGroupID: mlsGroupID,
+            in: uiMOC
+        )
 
-            let (connection, proteusConversation) = createConnection(
-                status: .accepted,
-                to: user,
-                in: uiMOC
-            )
-            // TODO: insert proteus message
-
-            let mlsConversation = createMLSConversation(with: mlsGroupID, in: uiMOC)
-
-            XCTAssertEqual(connection.conversation, proteusConversation)
-            XCTAssertNil(mlsConversation.connection)
-
-            return (
-                connection,
-                proteusConversation,
-                mlsConversation
-            )
+        try await uiMOC.perform {
+            _ = try proteusConversation.appendText(content: "Hello World!")
         }
 
         // Mock
@@ -186,19 +154,64 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         )
 
         // Then
-        XCTAssertTrue(mlsService.createGroupForWith_Invocations.isEmpty)
-        XCTAssertTrue(mlsService.addMembersToConversationWithFor_Invocations.isEmpty)
-
         await uiMOC.perform {
-            XCTAssertEqual(connection.conversation, mlsConversation)
-            XCTAssertNil(proteusConversation.connection)
+            let lastMLSMessage = mlsConversation.lastMessage?.textMessageData?.messageText
+            XCTAssertEqual(lastMLSMessage, "Hello World!")
         }
     }
 
     // MARK: Helpers
 
-    func createMLSConversation(with identifier: MLSGroupID, in context: NSManagedObjectContext) -> ZMConversation {
-        let mlsConversation = ZMConversation.insertNewObject(in: uiMOC)
+    private func createConversations(
+        userID: QualifiedID,
+        mlsGroupID: MLSGroupID,
+        in context: NSManagedObjectContext
+    ) async -> (
+        connection: ZMConnection,
+        proteusConversation: ZMConversation,
+        mlsConversation: ZMConversation
+    ) {
+        await context.perform { [self] in
+            let user = createUser(id: userID, in: context)
+
+            let (connection, proteusConversation) = createProtheusConnection(
+                status: .accepted,
+                to: user,
+                in: context
+            )
+
+            let mlsConversation = createMLSConversation(with: mlsGroupID, in: context)
+
+            return (
+                connection,
+                proteusConversation,
+                mlsConversation
+            )
+        }
+    }
+
+    func createProtheusConnection(
+        status: ZMConnectionStatus,
+        to user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> (ZMConnection, ZMConversation) {
+        let connection = ZMConnection.insertNewObject(in: context)
+        connection.to = user
+        connection.status = status
+        connection.message = "Connect to me"
+        connection.lastUpdateDate = .now
+
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .connection
+        conversation.remoteIdentifier = .create()
+        conversation.domain = "local@domain.com"
+        conversation.connection = connection
+
+        return (connection, conversation)
+    }
+
+    private func createMLSConversation(with identifier: MLSGroupID, in context: NSManagedObjectContext) -> ZMConversation {
+        let mlsConversation = ZMConversation.insertNewObject(in: context)
         mlsConversation.remoteIdentifier = .create()
         mlsConversation.domain = "local@domain.com"
         mlsConversation.mlsGroupID = identifier
