@@ -769,13 +769,13 @@ public final class MLSService: MLSServiceInterface {
         }
 
         do {
-            let groupIDData = try await coreCrypto.perform {
+            let welcomeBundle = try await coreCrypto.perform {
                 try await $0.processWelcomeMessage(
                     welcomeMessage: messageData,
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
                 )
             }
-            let groupID = MLSGroupID(groupIDData.id)
+            let groupID = MLSGroupID(welcomeBundle.id)
             await uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             return groupID
