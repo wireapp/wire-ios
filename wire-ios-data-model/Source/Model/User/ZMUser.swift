@@ -243,8 +243,58 @@ extension ZMUser {
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
     @NSManaged public var needsToRefetchLabels: Bool
 
-    @NSManaged public var domain: String?
+    static let domainKey: String = "domain"
+    @NSManaged private var primitiveDomain: String?
+    public var domain: String? {
+        get {
+            willAccessValue(forKey: Self.domainKey)
+            let value = primitiveDomain
+            didAccessValue(forKey: Self.domainKey)
+            return value
+        }
 
+        set {
+            willChangeValue(forKey: Self.domainKey)
+            primitiveDomain = newValue
+            didChangeValue(forKey: Self.domainKey)
+            updatePrimaryKey(remoteIdentifier: remoteIdentifier, domain: newValue)
+        }
+    }
+
+    static let remoteIdentifierKey: String = "remoteIdentifier"
+    @NSManaged private var primitiveRemoteIdentifier: String?
+    // keep the same as objc non_specified for now
+    public var remoteIdentifier: UUID! {
+        get {
+            willAccessValue(forKey: Self.remoteIdentifierKey)
+            let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
+            didAccessValue(forKey: "remoteIdentifier")
+            return value
+        }
+
+        set {
+            willChangeValue(forKey: Self.remoteIdentifierKey)
+            self.setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
+            didChangeValue(forKey: Self.remoteIdentifierKey)
+            updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
+        }
+    }
+
+    /// combination of domain and remoteIdentifier
+    @NSManaged private var primaryKey: String
+
+    private func updatePrimaryKey(remoteIdentifier: UUID?, domain: String?) {
+        guard entity.attributesByName["primaryKey"] != nil else {
+            // trying to access primaryKey property from older model - tests
+            return
+        }
+        primaryKey = Self.primaryKey(from: remoteIdentifier, domain: domain)
+    }
+
+    static func primaryKey(from remoteIdentifier: UUID?, domain: String?) -> String {
+        return "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
+    }
+    
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
         guard let imageData = data else {

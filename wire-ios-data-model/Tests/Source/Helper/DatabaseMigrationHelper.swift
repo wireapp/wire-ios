@@ -21,6 +21,8 @@ import XCTest
 
 struct DatabaseMigrationHelper {
 
+    typealias MigrationAction = (NSManagedObjectContext) throws -> Void
+
     private let bundle = WireDataModelBundle.bundle
     private let dataModelName = "zmessaging"
 
@@ -108,8 +110,105 @@ struct DatabaseMigrationHelper {
         return name
     }
 
+
+    // MARK: - Migration Helpers
+
+    func migrateStoreToCurrentVersion(
+        sourceVersion: String,
+        preMigrationAction: MigrationAction,
+        postMigrationAction: MigrationAction,
+        for testCase: XCTestCase
+    ) throws {
+        // GIVEN
+        let accountIdentifier = UUID()
+        let applicationContainer = DatabaseBaseTest.applicationContainer
+
+        // copy given database as source
+        let storeFile = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: applicationContainer
+        ).appendingPersistentStoreLocation()
+
+        try createFixtureDatabase(
+            storeFile: storeFile,
+            versionName: sourceVersion
+        )
+
+        let sourceModel = try createObjectModel(version: sourceVersion)
+        var sourceContainer: NSPersistentContainer? = try createStore(model: sourceModel, at: storeFile)
+
+        // perform pre-migration action
+        if let sourceContainer {
+            try preMigrationAction(sourceContainer.viewContext)
+        }
+
+        // release store before actual test
+        guard let store = sourceContainer?.persistentStoreCoordinator.persistentStores.first else {
+            XCTFail("missing expected store")
+            return
+        }
+        try sourceContainer?.persistentStoreCoordinator.remove(store)
+        sourceContainer = nil
+
+        // WHEN
+        let stack = try testCase.createStorageStackAndWaitForCompletion(
+            userID: accountIdentifier,
+            applicationContainer: applicationContainer
+        )
+
+        // THEN
+        // perform post migration action
+        try postMigrationAction(stack.viewContext)
+
+        try? FileManager.default.removeItem(at: applicationContainer)
+    }
 }
 
 private final class WireDataModelTestsBundle {
     static let bundle = Bundle(for: WireDataModelTestsBundle.self)
+}
+
+extension XCTestCase {
+    func createStorageStackAndWaitForCompletion(
+        userID: UUID,
+        applicationContainer: URL,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> CoreDataStack {
+
+        // we use backgroundActivity suring the setup so we need to mock for tests
+        let manager = MockBackgroundActivityManager()
+        BackgroundActivityFactory.shared.activityManager = manager
+
+        let account = Account(
+            userName: "",
+            userIdentifier: userID
+        )
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: applicationContainer,
+            inMemoryStore: false
+        )
+
+        let exp = self.expectation(description: "should wait for loadStores to finish")
+        var setupError: Error?
+        stack.setup(onStartMigration: {
+            // do nothing
+        }, onFailure: { error in
+            setupError = error
+            exp.fulfill()
+        }, onCompletion: { _ in
+            exp.fulfill()
+        })
+        waitForExpectations(timeout: 5.0)
+
+        if let setupError {
+            throw setupError
+        }
+
+        BackgroundActivityFactory.shared.activityManager = nil
+        XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
+
+        return stack
+    }
 }
