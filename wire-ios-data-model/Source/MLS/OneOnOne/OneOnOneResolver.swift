@@ -76,7 +76,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         )
 
         switch messageProtocol {
-
         case .none:
             await context.perform {
                 guard
