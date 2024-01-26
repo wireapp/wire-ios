@@ -2796,14 +2796,6 @@ internal enum L10n {
           /// Certificate Details
           internal static let title = L10n.tr("Localizable", "device.details.certificate_details.title", fallback: "Certificate Details")
         }
-        internal enum Secion {
-          internal enum Mls {
-            /// MLS with Ed25519 Signature
-            internal static let signature = L10n.tr("Localizable", "device.details.secion.mls.signature", fallback: "MLS with Ed25519 Signature")
-            /// MLS Thumbprint
-            internal static let title = L10n.tr("Localizable", "device.details.secion.mls.title", fallback: "MLS Thumbprint")
-          }
-        }
         internal enum Section {
           internal enum E2ei {
             /// Get Certificate
@@ -2828,6 +2820,12 @@ internal enum L10n {
               /// Valid
               internal static let valid = L10n.tr("Localizable", "device.details.section.e2ei.status.valid", fallback: "Valid")
             }
+          }
+          internal enum Mls {
+            /// MLS with Ed25519 Signature
+            internal static let signature = L10n.tr("Localizable", "device.details.section.mls.signature", fallback: "MLS with Ed25519 Signature")
+            /// MLS Thumbprint
+            internal static let title = L10n.tr("Localizable", "device.details.section.mls.title", fallback: "MLS Thumbprint")
           }
           internal enum Proteus {
             /// Activated

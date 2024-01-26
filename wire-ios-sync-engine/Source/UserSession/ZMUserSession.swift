@@ -296,6 +296,14 @@ public class ZMUserSession: NSObject {
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 
+    public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol =  {
+        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
+    }()
+
+    public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
+        return GetE2eIdentityCertificatesUseCase(coreCryptoProvider: coreCryptoProvider)
+    }()
+
     lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface = {
         let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         return MLSConversationVerificationStatusProvider(
@@ -732,7 +740,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
         networkState = state
     }
-
 }
 
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder

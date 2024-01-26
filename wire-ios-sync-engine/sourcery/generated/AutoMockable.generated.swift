@@ -54,6 +54,70 @@ import AppKit
 
 
 
+public class MockGetE2eIdentityCertificatesUseCaseProtocol: GetE2eIdentityCertificatesUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeMlsGroupIdClientIds_Invocations: [(mlsGroupId: MLSGroupID, clientIds: [MLSClientID])] = []
+    public var invokeMlsGroupIdClientIds_MockError: Error?
+    public var invokeMlsGroupIdClientIds_MockMethod: ((MLSGroupID, [MLSClientID]) async throws -> [E2eIdentityCertificate])?
+    public var invokeMlsGroupIdClientIds_MockValue: [E2eIdentityCertificate]?
+
+    public func invoke(mlsGroupId: MLSGroupID, clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
+        invokeMlsGroupIdClientIds_Invocations.append((mlsGroupId: mlsGroupId, clientIds: clientIds))
+
+        if let error = invokeMlsGroupIdClientIds_MockError {
+            throw error
+        }
+
+        if let mock = invokeMlsGroupIdClientIds_MockMethod {
+            return try await mock(mlsGroupId, clientIds)
+        } else if let mock = invokeMlsGroupIdClientIds_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeMlsGroupIdClientIds`")
+        }
+    }
+
+}
+
+public class MockGetIsE2EIdentityEnabledUseCaseProtocol: GetIsE2EIdentityEnabledUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> Bool)?
+    public var invoke_MockValue: Bool?
+
+    public func invoke() async throws -> Bool {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerprintUseCaseProtocol {
 
     // MARK: - Life cycle

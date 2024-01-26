@@ -214,6 +214,14 @@ public protocol UserSession: AnyObject {
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
+
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
+
+    var e2eiFeature: Feature.E2EI { get }
+
+    func fetchAllClients()
 }
 
 extension ZMUserSession: UserSession {

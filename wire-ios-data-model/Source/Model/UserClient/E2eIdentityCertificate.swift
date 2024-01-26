@@ -17,45 +17,36 @@
 //
 
 import Foundation
+import WireCoreCrypto
 
-public struct E2eIdentityCertificate {
-    public var certificateDetails: String
+public enum E2EIdentityCertificateStatus: CaseIterable {
+    case notActivated, revoked, expired, valid
+}
+
+public struct E2eIdentityCertificate: Equatable {
+    public var clientId: String
+    public var details: String
+    public var mlsThumbprint: String
+    public var notValidBefore: Date
     public var expiryDate: Date
-    // TODO: Change this to Type Safety
-    public var certificateStatus: String
+    public var status: E2EIdentityCertificateStatus
     public var serialNumber: String
 
     public init(
+        clientId: String,
         certificateDetails: String,
+        mlsThumbprint: String,
+        notValidBefore: Date,
         expiryDate: Date,
-        certificateStatus: String,
+        certificateStatus: E2EIdentityCertificateStatus,
         serialNumber: String
     ) {
-        self.certificateDetails = certificateDetails
+        self.clientId = clientId
+        self.details = certificateDetails
+        self.mlsThumbprint = mlsThumbprint
+        self.notValidBefore = notValidBefore
         self.expiryDate = expiryDate
-        self.certificateStatus = certificateStatus
+        self.status = certificateStatus
         self.serialNumber = serialNumber
-    }
-}
-
-public protocol E2eIdentityProviding {
-    var isE2EIdentityEnabled: Bool { get }
-    func fetchCertificate() async throws -> E2eIdentityCertificate
-}
-
-enum E2eIdentityCertificateError: Error {
-    case badCertificate
-}
-
-public final class E2eIdentityProvider: E2eIdentityProviding {
-    public var isE2EIdentityEnabled: Bool
-
-    // TODO: Change this upon implementing business logic
-    public init(isE2EIdentityEnabled: Bool = false) {
-        self.isE2EIdentityEnabled = isE2EIdentityEnabled
-    }
-
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        throw E2eIdentityCertificateError.badCertificate
     }
 }
