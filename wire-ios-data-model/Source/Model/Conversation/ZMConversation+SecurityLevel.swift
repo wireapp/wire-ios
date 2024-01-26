@@ -384,9 +384,9 @@ extension ZMConversation {
         // Downgrade the conversation to be unverified
         if isDegraded {
             switch messageProtocol {
-            case .proteus:
+            case .proteus,  .mixed:
                 securityLevel = .notSecure
-            case .mls, .mixed:
+            case .mls:
                 mlsVerificationStatus = .notVerified
             }
         }
