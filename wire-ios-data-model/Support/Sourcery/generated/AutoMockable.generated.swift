@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -3544,20 +3544,23 @@ public class MockOneOnOneMigratorInterface: OneOnOneMigratorInterface {
 
     public var migrateToMLSUserIDIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
     public var migrateToMLSUserIDIn_MockError: Error?
-    public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> Void)?
+    public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> MLSGroupID)?
+    public var migrateToMLSUserIDIn_MockValue: MLSGroupID?
 
-    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws {
+    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
         migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
 
         if let error = migrateToMLSUserIDIn_MockError {
             throw error
         }
 
-        guard let mock = migrateToMLSUserIDIn_MockMethod else {
+        if let mock = migrateToMLSUserIDIn_MockMethod {
+            return try await mock(userID, context)
+        } else if let mock = migrateToMLSUserIDIn_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `migrateToMLSUserIDIn`")
         }
-
-        try await mock(userID, context)
     }
 
 }
@@ -3572,14 +3575,14 @@ public class MockOneOnOneProtocolSelectorInterface: OneOnOneProtocolSelectorInte
     // MARK: - getProtocolForUser
 
     public var getProtocolForUserWithIn_Invocations: [(id: QualifiedID, context: NSManagedObjectContext)] = []
-    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) -> MessageProtocol?)?
+    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async -> MessageProtocol?)?
     public var getProtocolForUserWithIn_MockValue: MessageProtocol??
 
-    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) -> MessageProtocol? {
+    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) async -> MessageProtocol? {
         getProtocolForUserWithIn_Invocations.append((id: id, context: context))
 
         if let mock = getProtocolForUserWithIn_MockMethod {
-            return mock(id, context)
+            return await mock(id, context)
         } else if let mock = getProtocolForUserWithIn_MockValue {
             return mock
         } else {
@@ -3600,20 +3603,24 @@ public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
 
     public var resolveOneOnOneConversationWithIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
     public var resolveOneOnOneConversationWithIn_MockError: Error?
-    public var resolveOneOnOneConversationWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> Void)?
+    public var resolveOneOnOneConversationWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> OneOnOneConversationResolution)?
+    public var resolveOneOnOneConversationWithIn_MockValue: OneOnOneConversationResolution?
 
-    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext) async throws {
+    @discardableResult
+    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext) async throws -> OneOnOneConversationResolution {
         resolveOneOnOneConversationWithIn_Invocations.append((userID: userID, context: context))
 
         if let error = resolveOneOnOneConversationWithIn_MockError {
             throw error
         }
 
-        guard let mock = resolveOneOnOneConversationWithIn_MockMethod else {
+        if let mock = resolveOneOnOneConversationWithIn_MockMethod {
+            return try await mock(userID, context)
+        } else if let mock = resolveOneOnOneConversationWithIn_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `resolveOneOnOneConversationWithIn`")
         }
-
-        try await mock(userID, context)
     }
 
 }

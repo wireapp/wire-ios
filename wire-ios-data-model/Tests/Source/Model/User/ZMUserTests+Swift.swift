@@ -290,7 +290,7 @@ extension ZMUserTests_Swift {
         userObjectId = user.objectID
         user.requestPreviewProfileImage()
 
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
@@ -313,7 +313,7 @@ extension ZMUserTests_Swift {
         userObjectId = user.objectID
         user.requestCompleteProfileImage()
 
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
@@ -1078,7 +1078,7 @@ extension ZMUserTests_Swift {
         )
 
         let oneOneOneResolver = MockOneOnOneResolverInterface()
-        oneOneOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in }
+        oneOneOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in .noAction }
 
         // Expect
         let didSucceed = XCTestExpectation(description: "didSucceed")
