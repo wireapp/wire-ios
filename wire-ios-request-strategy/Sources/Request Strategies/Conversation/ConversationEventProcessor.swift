@@ -326,7 +326,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) async {
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
-            groupID: .none,
+            groupID: nil,
             context: context
         )
     }
