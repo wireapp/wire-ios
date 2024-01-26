@@ -103,10 +103,12 @@ final class AppLockChangeWarningViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [contentView,
-         titleLabel,
-         confirmButton,
-         messageLabel].prepareForLayout()
+        [
+            contentView,
+            titleLabel,
+            confirmButton,
+            messageLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let contentPadding: CGFloat = 24
 

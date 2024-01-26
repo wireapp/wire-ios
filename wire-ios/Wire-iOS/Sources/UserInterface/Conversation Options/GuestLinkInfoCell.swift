@@ -49,7 +49,7 @@ final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
     }
 
     private func createConstraints() {
-        [label, imageContainer, iconImageView].prepareForLayout()
+        [label, imageContainer, iconImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             imageContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
             imageContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),

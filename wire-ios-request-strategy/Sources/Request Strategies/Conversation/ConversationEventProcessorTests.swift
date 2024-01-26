@@ -35,7 +35,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
 
         mockMLSEventProcessor = .init()
-        mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
+        mockMLSEventProcessor.updateConversationIfNeededConversationFallbackGroupIDContext_MockMethod = { _, _, _ in }
         mockMLSEventProcessor.processWelcomeMessageConversationIDIn_MockMethod = { _, _, _ in }
         mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in }
 
@@ -102,7 +102,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await sut.processConversationEvents([event])
 
         // Then
-        let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_Invocations
+        let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationFallbackGroupIDContext_Invocations
         XCTAssertEqual(updateConversationCalls.count, 1)
         XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
 

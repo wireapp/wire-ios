@@ -32,7 +32,7 @@ final class TextCell: UITableViewCell, CellConfigurationConfigurable {
         label.font = FontSpec(.normal, .light).font
         label.lineBreakMode = .byClipping
         label.numberOfLines = 0
-        [container, label].prepareForLayout()
+        [container, label].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           container.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
           container.topAnchor.constraint(equalTo: contentView.topAnchor),

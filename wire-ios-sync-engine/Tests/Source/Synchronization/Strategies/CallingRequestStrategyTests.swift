@@ -326,7 +326,7 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_MLS() throws {
-        try syncMOC.performAndWait {
+        try syncMOC.performAndWait { [self] in
             // Given
             let selfClient = createSelfClient()
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -349,7 +349,7 @@ class CallingRequestStrategyTests: MessagingTest {
             // An mls conversation with both users and self.
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = .create()
-            conversation.mlsGroupID = MLSGroupID([1, 2, 3])
+            conversation.mlsGroupID = MLSGroupID(.init([1, 2, 3]))
             conversation.messageProtocol = .mls
             conversation.addParticipantsAndUpdateConversationState(
                 users: [selfUser, user1, user2],

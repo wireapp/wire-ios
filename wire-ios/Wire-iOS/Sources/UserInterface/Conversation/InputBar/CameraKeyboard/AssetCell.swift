@@ -45,7 +45,7 @@ final class AssetCell: UICollectionViewCell {
         durationView.font = FontSpec(.small, .light).font!
         contentView.addSubview(durationView)
 
-        [imageView, durationView].prepareForLayout()
+        [imageView, durationView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
           imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -94,7 +94,7 @@ final class AssetCell: UICollectionViewCell {
                                                    targetSize: CGSize(width: maxDimensionRetina, height: maxDimensionRetina),
                                                    contentMode: .aspectFill,
                                                    options: type(of: self).imageFetchOptions,
-                                                   resultHandler: { [weak self] result, _ -> Void in
+                                                   resultHandler: { [weak self] result, _ in
                                                     guard let `self` = self,
                                                         self.representedAssetIdentifier == asset.localIdentifier
                                                         else { return }

@@ -101,7 +101,9 @@ final class LocationSelectionViewController: UIViewController {
     fileprivate func createConstraints() {
         guard let sendController = sendViewController.view else { return }
 
-        [mapView, sendController, annotationView, toolBar, locationButton].prepareForLayout()
+        [mapView, sendController, annotationView, toolBar, locationButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),

@@ -54,7 +54,7 @@ extension UILabel {
         label.font = FontSpec.smallRegularFont.font!
         label.textColor = SemanticColors.Label.textDefault
 
-        let leadingMargin: CGFloat = CGFloat.AccessoryTextField.horizonalInset
+        let leadingMargin = CGFloat.AccessoryTextField.horizonalInset
 
         let style = NSMutableParagraphStyle()
         style.firstLineHeadIndent = leadingMargin

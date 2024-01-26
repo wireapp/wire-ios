@@ -146,12 +146,14 @@ final class PasscodeSetupViewController: UIViewController {
 
         contentView.addSubview(stackView)
 
-        [titleLabel,
-         SpacingView(useCompactLayout ? 1 : 10),
-         infoLabel,
-         UILabel.createHintLabel(),
-         passcodeTextField,
-         SpacingView(useCompactLayout ? 2 : 16)].forEach {
+        [
+            titleLabel,
+            SpacingView(useCompactLayout ? 1 : 10),
+            infoLabel,
+            UILabel.createHintLabel(),
+            passcodeTextField,
+            SpacingView(useCompactLayout ? 2 : 16)
+        ].forEach {
             stackView.addArrangedSubview($0)
         }
 
@@ -180,8 +182,7 @@ final class PasscodeSetupViewController: UIViewController {
 
     private func createConstraints() {
 
-        [contentView,
-         stackView].prepareForLayout()
+        [contentView, stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
 

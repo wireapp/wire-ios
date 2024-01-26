@@ -196,9 +196,11 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
     }
 
     private func createConstraints() {
-        [collectionView,
-         goBackButton,
-         cameraRollButton].prepareForLayout()
+        [
+            collectionView,
+            goBackButton,
+            cameraRollButton
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -607,7 +609,7 @@ extension PHAsset {
         options.deliveryMode = .highQualityFormat
         options.isNetworkAccessAllowed = true
 
-        PHImageManager.default().requestAVAsset(forVideo: self, options: options, resultHandler: {(asset: AVAsset?, _: AVAudioMix?, _: [AnyHashable: Any]?) -> Void in
+        PHImageManager.default().requestAVAsset(forVideo: self, options: options, resultHandler: { (asset: AVAsset?, _: AVAudioMix?, _: [AnyHashable: Any]?) in
             if let urlAsset = asset as? AVURLAsset {
                 let localVideoUrl: URL = urlAsset.url as URL
                 completionHandler(localVideoUrl)

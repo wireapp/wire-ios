@@ -63,7 +63,7 @@ class ColorPickerController: UIViewController {
     }
 
     private func createConstraints() {
-        [tableView].prepareForLayout()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -130,7 +130,7 @@ class ColorPickerController: UIViewController {
         }
 
         private func createConstraints() {
-            [checkmarkView, colorView, colorNameLabel].prepareForLayout()
+            [checkmarkView, colorView, colorNameLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             NSLayoutConstraint.activate([
                 colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
                 colorView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),

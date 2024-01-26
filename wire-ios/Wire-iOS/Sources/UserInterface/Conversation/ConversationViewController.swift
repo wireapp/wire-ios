@@ -379,23 +379,29 @@ final class ConversationViewController: UIViewController {
         guard
             let otherUser = conversation.localParticipants.first(where: { !$0.isSelfUser }),
             let otherUserID = otherUser.qualifiedID,
-            let context = conversation.managedObjectContext,
-            let mlsService = context.mlsService
+            let viewContext = conversation.managedObjectContext,
+            let syncContext = viewContext.zm_sync
         else {
             WireLogger.conversation.warn("missing expected value to resolve 1-1 conversation!")
             return
         }
 
         Task {
+
             do {
+                guard let mlsService = await syncContext.perform({ syncContext.mlsService }) else {
+                    assertionFailure("mlsService is missing")
+                    return
+                }
+
                 let service = OneOnOneResolver(
                     protocolSelector: OneOnOneProtocolSelector(),
                     migrator: OneOnOneMigrator(mlsService: mlsService)
                 )
-                let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: context)
+                let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
                 if case .migratedToMLSGroup(let identifier) = resolvedState {
-                    await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: context)
+                    await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
                 }
             } catch {
                 WireLogger.conversation.warn("resolution of proteus 1-1 conversation failed: \(error)")

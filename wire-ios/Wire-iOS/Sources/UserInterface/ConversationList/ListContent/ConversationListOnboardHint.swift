@@ -57,7 +57,7 @@ final class ConversationListOnboardingHint: UIView {
     }
 
     private func createConstraints() {
-        [arrowView, messageLabel].prepareForLayout()
+        [arrowView, messageLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let margin: CGFloat = 24
 

@@ -114,13 +114,14 @@ final class UserClientTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItTracksCorrectKeys() {
-        let expectedKeys = Set([ZMUserClientMarkedToDeleteKey,
-                                ZMUserClientNumberOfKeysRemainingKey,
-                                ZMUserClientMissingKey,
-                                ZMUserClientNeedsToUpdateSignalingKeysKey,
-                                ZMUserClientNeedsToUpdateCapabilitiesKey,
-                                UserClient.needsToUploadMLSPublicKeysKey
-                               ])
+        let expectedKeys = Set([
+            ZMUserClientMarkedToDeleteKey,
+            ZMUserClientNumberOfKeysRemainingKey,
+            ZMUserClientMissingKey,
+            ZMUserClientNeedsToUpdateSignalingKeysKey,
+            ZMUserClientNeedsToUpdateCapabilitiesKey,
+            UserClient.needsToUploadMLSPublicKeysKey
+        ])
 
         let client = UserClient.insertNewObject(in: self.uiMOC)
         XCTAssertEqual(client.keysTrackedForLocalModifications(), expectedKeys)

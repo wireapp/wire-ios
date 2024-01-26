@@ -52,7 +52,7 @@ final class CollectionLinkCell: CollectionCell {
 
         contentView.layoutMargins = UIEdgeInsets(top: 16, left: 4, bottom: 4, right: 4)
 
-        [articleView, headerView].prepareForLayout()
+        [articleView, headerView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             headerView.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor, constant: 12),

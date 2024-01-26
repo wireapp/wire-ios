@@ -349,7 +349,7 @@ extension FileTransferTests_Swift {
         var observer: MessageChangeObserver?
         var conversation: ZMConversation?
 
-        let insertBlock = { (data: Data, mockConversation: MockConversation, from: MockUserClient, to: MockUserClient) -> Void in
+        let insertBlock = { (data: Data, mockConversation: MockConversation, from: MockUserClient, to: MockUserClient) in
             mockConversation.insertOTRMessage(from: from, to: to, data: data)
             conversation = self.conversation(for: mockConversation)
             observer = MessageChangeObserver.init(message: conversation?.lastMessage as? ZMMessage)
@@ -418,7 +418,7 @@ extension FileTransferTests_Swift {
         var observer: MessageChangeObserver?
         var conversation: ZMConversation?
 
-        let insertBlock = { (data: Data, mockConversation: MockConversation, from: MockUserClient, to: MockUserClient) -> Void in
+        let insertBlock = { (data: Data, mockConversation: MockConversation, from: MockUserClient, to: MockUserClient) in
             mockConversation.insertOTRMessage(from: from, to: to, data: data)
             conversation = self.conversation(for: mockConversation)
             observer = MessageChangeObserver.init(message: conversation?.lastMessage as? ZMMessage)

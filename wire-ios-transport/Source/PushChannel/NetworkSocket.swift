@@ -180,7 +180,7 @@ import Foundation
 
     @objc(writeData:)
     public func write(data dataToWrite: Data) {
-        dataToWrite.withUnsafeBytes { (unsafeBufferPointer: UnsafeRawBufferPointer) -> Void in
+        dataToWrite.withUnsafeBytes { (unsafeBufferPointer: UnsafeRawBufferPointer) in
             self.write(dispatchData: DispatchData(bytes: unsafeBufferPointer))
         }
     }

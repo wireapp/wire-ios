@@ -164,7 +164,7 @@ extension ClientMessageRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }

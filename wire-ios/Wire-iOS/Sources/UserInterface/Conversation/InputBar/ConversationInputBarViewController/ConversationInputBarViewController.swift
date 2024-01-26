@@ -995,7 +995,9 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func createConstraints() {
-        [securityLevelView, inputBar, markdownButton, typingIndicatorView].prepareForLayout()
+        [securityLevelView, inputBar, markdownButton, typingIndicatorView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         let bottomConstraint = inputBar.bottomAnchor.constraint(equalTo: inputBar.superview!.bottomAnchor)
         bottomConstraint.priority = .defaultLow

@@ -310,7 +310,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
         // Menu view attachs to content view after reaching max offset
         maxMenuViewToSwipeViewLeftConstraint = menuView.leftAnchor.constraint(equalTo: leftAnchor, constant: maxVisualDrawerOffset)
 
-        [swipeView, separatorLine, menuView].prepareForLayout()
+        [swipeView, separatorLine, menuView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let constraints: [NSLayoutConstraint] = [
             swipeViewHorizontalConstraint!,
