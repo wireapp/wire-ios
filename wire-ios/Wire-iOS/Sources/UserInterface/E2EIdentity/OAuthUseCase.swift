@@ -43,10 +43,12 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         self.rootViewController = rootViewController
     }
 
-    public func invoke(for identityProvider: URL,
-                       clientID: String,
-                       keyauth: String,
-                       acmeAudience: String) async throws -> (idToken: String, refreshToken: String) {
+    public func invoke(
+        for identityProvider: URL,
+        clientID: String,
+        keyauth: String,
+        acmeAudience: String
+    ) async throws -> (idToken: String, refreshToken: String) {
         logger.info("invoke authentication flow")
 
         guard let bundleID = Bundle.main.bundleIdentifier,
