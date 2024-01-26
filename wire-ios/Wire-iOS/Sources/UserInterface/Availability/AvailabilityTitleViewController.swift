@@ -73,7 +73,7 @@ final class AvailabilityTitleViewController: UIViewController {
         present(alertViewController, animated: true)
     }
 
-    private func didSelectAvailability(_ availability: AvailabilityKind) {
+    private func didSelectAvailability(_ availability: Availability) {
         let changes = { [weak self] in
             self?.user.availability = availability
             self?.provideHapticFeedback()

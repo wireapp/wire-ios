@@ -99,7 +99,7 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
     private func createTest(
         for options: AvailabilityTitleView.Options,
-        with availability: AvailabilityKind,
+        with availability: Availability,
         on user: ZMUser,
         hasDarkMode: Bool = true,
         file: StaticString = #file,
@@ -115,7 +115,7 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
         verify(matching: sut, file: file, testName: testName, line: line)
     }
 
-    func updateAvailability(for user: ZMUser, newValue: AvailabilityKind) {
+    func updateAvailability(for user: ZMUser, newValue: Availability) {
         if user == ZMUser.selfUser() {
             user.availability = newValue
         } else {
