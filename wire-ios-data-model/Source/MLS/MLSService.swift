@@ -514,6 +514,9 @@ public final class MLSService: MLSServiceInterface {
             let keyPackages = try await claimKeyPackages(for: users)
 
             let events = if keyPackages.isEmpty {
+                // CC does not accept empty keypackages in addMembers, but
+                // when creating a group we still need to send a commit to backend
+                // to inform we are in the group
                 try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             } else {
                 try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
