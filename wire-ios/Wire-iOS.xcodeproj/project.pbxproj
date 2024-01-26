@@ -1602,7 +1602,6 @@
 		EF282B92228AF9790042D6C5 /* RequestPasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF282B91228AF9790042D6C5 /* RequestPasswordController.swift */; };
 		EF282B94228AFA970042D6C5 /* RequestPasswordViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF282B93228AFA970042D6C5 /* RequestPasswordViewControllerSnapshotTests.swift */; };
 		EF2971582099AD8700EFE6A4 /* SelfProfileViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2971552099AD3000EFE6A4 /* SelfProfileViewControllerTests.swift */; };
-		EF297DD82131FABE0002983A /* LocationPreviewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF297DD72131FABE0002983A /* LocationPreviewControllerTests.swift */; };
 		EF298BD1228D942A0078BE68 /* ImageManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF298BD0228D942A0078BE68 /* ImageManagerProtocol.swift */; };
 		EF298BD3228D9BB20078BE68 /* StartUIViewController+AddressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF298BD2228D9BB20078BE68 /* StartUIViewController+AddressBook.swift */; };
 		EF29CDC222D3907000EB2380 /* ConversationListViewControllerViewModel+ConversationListContentDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF29CDC122D3907000EB2380 /* ConversationListViewControllerViewModel+ConversationListContentDelegate.swift */; };
@@ -3641,7 +3640,6 @@
 		EF282B91228AF9790042D6C5 /* RequestPasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestPasswordController.swift; sourceTree = "<group>"; };
 		EF282B93228AFA970042D6C5 /* RequestPasswordViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestPasswordViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		EF2971552099AD3000EFE6A4 /* SelfProfileViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerTests.swift; sourceTree = "<group>"; };
-		EF297DD72131FABE0002983A /* LocationPreviewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPreviewControllerTests.swift; sourceTree = "<group>"; };
 		EF298BD0228D942A0078BE68 /* ImageManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManagerProtocol.swift; sourceTree = "<group>"; };
 		EF298BD2228D9BB20078BE68 /* StartUIViewController+AddressBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StartUIViewController+AddressBook.swift"; sourceTree = "<group>"; };
 		EF29CDC122D3907000EB2380 /* ConversationListViewControllerViewModel+ConversationListContentDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewControllerViewModel+ConversationListContentDelegate.swift"; sourceTree = "<group>"; };
@@ -6933,7 +6931,6 @@
 				16DF3B632289B89E00D09365 /* LegalHoldDetailsViewControllerSnapshotTests.swift */,
 				5EDD25452141571600C0E254 /* LicensesLoaderTests.swift */,
 				BF78687D1D86B36D0063762F /* LocationDataTests.swift */,
-				EF297DD72131FABE0002983A /* LocationPreviewControllerTests.swift */,
 				BF58ABEC1D23F00000D5FF14 /* LocationSendViewControllerTests.swift */,
 				160D40F82410EC41002924A0 /* LoggingTest.swift */,
 				EE75B773203C6F5300855099 /* MarkdownTextStorageTests.swift */,
@@ -10200,7 +10197,6 @@
 				540C8AA8255ABD7600AA6992 /* SwitchingAccountRouterTests.swift in Sources */,
 				5EBBE96B21872060008BC1B7 /* MockCell.swift in Sources */,
 				EF2B74CA2141699100FD2574 /* LandingViewControllerSnapshotTests.swift in Sources */,
-				EF297DD82131FABE0002983A /* LocationPreviewControllerTests.swift in Sources */,
 				EF2172EA21DF982400DA1671 /* URL+EncodeTests.swift in Sources */,
 				EF27CD9E20C161500077FE55 /* ProfileViewControllerTests.swift in Sources */,
 				D35EEDCB28C7E95F00949F02 /* CookieProvider.swift in Sources */,
