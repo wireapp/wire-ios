@@ -463,7 +463,6 @@
 		E6BDA1152B1642A400488D92 /* store2-110-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */; };
 		E6BFE8382B3320C7000F0FBE /* DatabaseMigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */; };
 		E6BFE83A2B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8392B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift */; };
-		E6E49F4A2B5FF9CE0089427D /* NSManagedObject+Clone.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E49F492B5FF9CE0089427D /* NSManagedObject+Clone.swift */; };
 		E6F443232B16294400D2B08A /* zmessaging.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E6F443042B16294000D2B08A /* zmessaging.xcdatamodeld */; };
 		E90AAE34279719D8003C7DB0 /* store2-98-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E90AAE33279719D8003C7DB0 /* store2-98-0.wiredatabase */; };
 		E97A542827B122D80009DCCF /* AccessRoleMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97A542727B122D80009DCCF /* AccessRoleMigrationTests.swift */; };
@@ -1303,7 +1302,6 @@
 		E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-110-0.wiredatabase"; sourceTree = "<group>"; };
 		E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationHelper.swift; sourceTree = "<group>"; };
 		E6BFE8392B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+ParticipantRole.swift"; sourceTree = "<group>"; };
-		E6E49F492B5FF9CE0089427D /* NSManagedObject+Clone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Clone.swift"; sourceTree = "<group>"; };
 		E6E68B2A2B18D7B4003C29D2 /* ZMMessage+ServerTimestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessage+ServerTimestamp.swift"; sourceTree = "<group>"; };
 		E6F443052B16294000D2B08A /* zmessaging2.98.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.98.0.xcdatamodel; sourceTree = "<group>"; };
 		E6F443062B16294000D2B08A /* zmessaging2.102.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.102.0.xcdatamodel; sourceTree = "<group>"; };
@@ -2817,7 +2815,6 @@
 				0614E96C2A863EED007BB1F6 /* NSPredicate+BaseCompounds.swift */,
 				E6A5BBAD2B0E564200ACC236 /* WireDataModelBundle.swift */,
 				5972D9792B480E790089D1D3 /* CoreCryptoProtocolExt.swift */,
-				E6E49F492B5FF9CE0089427D /* NSManagedObject+Clone.swift */,
 			);
 			name = Utilis;
 			path = Source/Utilis;
@@ -3848,7 +3845,6 @@
 				BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */,
 				168D7BFD26F365ED00789960 /* EntityAction.swift in Sources */,
 				F1FDF30021B1580400E037A1 /* GenericMessage+Utils.swift in Sources */,
-				E6E49F4A2B5FF9CE0089427D /* NSManagedObject+Clone.swift in Sources */,
 				F12BD0B01E4DCEC40012ADBA /* ZMMessage+Insert.swift in Sources */,
 				16127CF3220058160020E65C /* InvalidConversationRemoval.swift in Sources */,
 				7CBC3FC120177C3C008D06E4 /* RasterImages+Protobuf.swift in Sources */,
