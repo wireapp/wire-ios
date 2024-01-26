@@ -149,7 +149,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     private func createConstraints() {
-        [tableView, topSeparator].prepareForLayout()
+        [tableView, topSeparator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           tableView.topAnchor.constraint(equalTo: view.topAnchor),
           tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -372,7 +372,7 @@ final class SettingsClientViewController: UIViewController,
         if changeInfo.sessionHasBeenReset {
             isLoadingViewVisible = false
             let alert = UIAlertController(title: "", message: L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success, preferredStyle: .alert)
-            let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { [unowned alert] (_) -> Void in
+            let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { [unowned alert] _ in
                 alert.dismiss(animated: true, completion: .none)
             })
             alert.addAction(okAction)

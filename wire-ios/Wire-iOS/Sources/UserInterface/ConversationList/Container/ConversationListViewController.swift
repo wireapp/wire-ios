@@ -251,13 +251,15 @@ final class ConversationListViewController: UIViewController {
             return
         }
 
-        [contentContainer,
-        topBarView,
-        conversationList,
-        tabBar,
-        noConversationLabel,
-        onboardingHint,
-        networkStatusViewController.view].forEach {
+        [
+            contentContainer,
+            topBarView,
+            conversationList,
+            tabBar,
+            noConversationLabel,
+            onboardingHint,
+            networkStatusViewController.view
+        ].forEach {
             $0?.translatesAutoresizingMaskIntoConstraints = false
         }
 

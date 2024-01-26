@@ -110,10 +110,12 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
     private func createConstraints(deniedAuthorization: DeniedAuthorizationType) {
 
-        [containerView,
-         descriptionLabel,
-         settingsButton,
-         cameraIcon].prepareForLayout()
+        [
+            containerView,
+            descriptionLabel,
+            settingsButton,
+            cameraIcon
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
             descriptionLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),

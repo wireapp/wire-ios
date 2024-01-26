@@ -24,7 +24,7 @@ public protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(
         conversation: ZMConversation,
-        groupID: String?,
+        fallbackGroupID: MLSGroupID?,
         context: NSManagedObjectContext
     ) async
 
@@ -38,7 +38,6 @@ public protocol MLSEventProcessing {
         forConversation conversation: ZMConversation,
         context: NSManagedObjectContext
     ) async
-
 }
 
 public class MLSEventProcessor: MLSEventProcessing {
@@ -61,16 +60,24 @@ public class MLSEventProcessor: MLSEventProcessing {
 
     public func updateConversationIfNeeded(
         conversation: ZMConversation,
-        groupID: String?,
+        fallbackGroupID: MLSGroupID?,
         context: NSManagedObjectContext
     ) async {
         WireLogger.mls.debug("MLS event processor updating conversation if needed")
 
-        guard await context.perform({ conversation.messageProtocol }) == .mls else {
-            return logWarn(aborting: .conversationUpdate, withReason: .notMLSConversation)
+        let (messageProtocol, mlsGroupID, mlsService) = await context.perform {
+            return (
+                conversation.messageProtocol,
+                conversation.mlsGroupID,
+                context.mlsService
+            )
         }
 
-        guard let mlsGroupID = await context.perform({ conversation.mlsGroupID }) ?? MLSGroupID(from: groupID) else {
+        guard messageProtocol.isOne(of: .mls, .mixed) else {
+            return logWarn(aborting: .conversationUpdate, withReason: .conversationNotMLSCapable)
+        }
+
+        guard let mlsGroupID = mlsGroupID ?? fallbackGroupID else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
 
@@ -81,7 +88,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             }
         }
 
-        guard let mlsService = await context.perform({ context.mlsService }) else {
+        guard let mlsService else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
@@ -219,8 +226,8 @@ public class MLSEventProcessor: MLSEventProcessing {
             )
         }
 
-        guard messageProtocol == .mls else {
-            return logWarn(aborting: .conversationWipe, withReason: .notMLSConversation)
+        guard messageProtocol.isOne(of: .mls, .mixed) else {
+            return logWarn(aborting: .conversationWipe, withReason: .conversationNotMLSCapable)
         }
 
         guard let groupID else {
@@ -255,15 +262,15 @@ public class MLSEventProcessor: MLSEventProcessing {
     }
 
     private enum AbortReason {
-        case notMLSConversation
+        case conversationNotMLSCapable
         case missingGroupID
         case missingMLSService
         case other(reason: String)
 
         var stringValue: String {
             switch self {
-            case .notMLSConversation:
-                return "not an MLS conversation"
+            case .conversationNotMLSCapable:
+                return "conversation is not MLS capable"
             case .missingGroupID:
                 return "missing group ID"
             case .missingMLSService:
@@ -272,25 +279,5 @@ public class MLSEventProcessor: MLSEventProcessing {
                 return reason
             }
         }
-    }
-}
-
-extension MLSGroupStatus {
-    var isPendingJoin: Bool {
-        return self == .pendingJoin
-    }
-}
-
-extension MLSGroupID {
-    init?(from groupIdString: String?) {
-        guard
-            let groupID = groupIdString,
-            !groupID.isEmpty,
-            let bytes = groupID.base64DecodedBytes
-        else {
-            return nil
-        }
-
-        self.init(bytes)
     }
 }
