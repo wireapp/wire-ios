@@ -52,11 +52,15 @@ public protocol E2eIEnrollmentInterface {
 
     /// Validate OIDC challenge.
     func validateOIDCChallenge(idToken: String,
+                               refreshToken: String,
                                prevNonce: String,
                                acmeChallenge: AcmeChallenge) async throws -> ChallengeResponse
 
-    /// Validate challenge.
-    func validateChallenge(challengeResponse: ChallengeResponse) async throws
+    /// Set DPoP challenge response.
+    func setDPoPChallengeResponse(challengeResponse: ChallengeResponse) async throws
+
+    /// Set OIDC challenge response.
+    func setOIDCChallengeResponse(challengeResponse: ChallengeResponse) async throws
 
     /// Verify the status of the order.
     func checkOrderRequest(location: String, prevNonce: String) async throws -> (acmeResponse: ACMEResponse,
@@ -71,6 +75,9 @@ public protocol E2eIEnrollmentInterface {
 
     /// Rotate KeyPackages and migrate conversations.
     func rotateKeysAndMigrateConversations(certificateChain: String) async throws
+
+    /// Fetch the OIDC refresh token.
+    func getOAuthRefreshToken()  async throws -> String?
 
 }
 
@@ -220,7 +227,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         do {
             let challengeRequest = try await e2eiService.getNewDpopChallengeRequest(accessToken: accessToken, nonce: prevNonce)
             let apiResponse = try await acmeApi.sendChallengeRequest(path: acmeChallenge.url, requestBody: challengeRequest)
-            try await validateChallenge(challengeResponse: apiResponse)
+            try await setDPoPChallengeResponse(challengeResponse: apiResponse)
             return apiResponse
 
         } catch {
@@ -231,14 +238,17 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
     }
 
     public func validateOIDCChallenge(idToken: String,
+                                      refreshToken: String,
                                       prevNonce: String,
                                       acmeChallenge: AcmeChallenge) async throws -> ChallengeResponse {
         logger.info("validate OIDC challenge")
 
         do {
-            let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(idToken: idToken, nonce: prevNonce)
+            let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(idToken: idToken,
+                                                                                    refreshToken: refreshToken,
+                                                                                    nonce: prevNonce)
             let apiResponse = try await acmeApi.sendChallengeRequest(path: acmeChallenge.url, requestBody: challengeRequest)
-            try await validateChallenge(challengeResponse: apiResponse)
+            try await setOIDCChallengeResponse(challengeResponse: apiResponse)
             return apiResponse
         } catch {
             logger.error("failed to validate OIDC challenge: \(error.localizedDescription)")
@@ -247,17 +257,31 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         }
     }
 
-    public func validateChallenge(challengeResponse: ChallengeResponse) async throws {
-        logger.info("validate challenge")
+    public func setDPoPChallengeResponse(challengeResponse: ChallengeResponse) async throws {
+        logger.info("set DPoP challenge response")
 
         let encoder: JSONEncoder = .defaultEncoder
         do {
             let data = try encoder.encode(challengeResponse)
-            try await e2eiService.setChallengeResponse(challenge: data)
+            try await e2eiService.setDPoPChallengeResponse(challenge: data)
         } catch {
-            logger.error("failed to validate challenge: \(error.localizedDescription)")
+            logger.error("failed to set DPoP challenge response: \(error.localizedDescription)")
 
-            throw E2EIRepositoryFailure.failedToValidateChallenge(error)
+            throw E2EIRepositoryFailure.failedToSetDPoPChallengeResponse(error)
+        }
+    }
+
+    public func setOIDCChallengeResponse(challengeResponse: ChallengeResponse) async throws {
+        logger.info("set OIDC challenge response")
+
+        let encoder: JSONEncoder = .defaultEncoder
+        do {
+            let data = try encoder.encode(challengeResponse)
+            try await e2eiService.setOIDCChallengeResponse(challenge: data)
+        } catch {
+            logger.error("failed to set OIDC challenge response: \(error.localizedDescription)")
+
+            throw E2EIRepositoryFailure.failedToSetOIDCChallengeResponse(error)
         }
     }
 
@@ -318,6 +342,18 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         }
     }
 
+    public func getOAuthRefreshToken()  async throws -> String? {
+        logger.info("get OAuth refresh token")
+
+        do {
+            return try await e2eiService.getOAuthRefreshToken()
+        } catch {
+            logger.error("failed to get OAuth refresh token: \(error.localizedDescription)")
+
+            throw E2EIRepositoryFailure.failedToGetOAuthRefreshToken(error)
+        }
+    }
+
 }
 
 enum E2EIRepositoryFailure: Error {
@@ -331,11 +367,13 @@ enum E2EIRepositoryFailure: Error {
     case failedToGetAccessToken(_ underlyingError: Error)
     case failedToValidateDPoPChallenge(_ underlyingError: Error)
     case failedToValidateOIDCChallenge(_ underlyingError: Error)
-    case failedToValidateChallenge(_ underlyingError: Error)
+    case failedToSetDPoPChallengeResponse(_ underlyingError: Error)
+    case failedToSetOIDCChallengeResponse(_ underlyingError: Error)
     case failedToCheckOrderRequest(_ underlyingError: Error)
     case failedToFinalize(_ underlyingError: Error)
     case failedToSendCertificateRequest(_ underlyingError: Error)
     case failedToRotateKeys(_ underlyingError: Error)
+    case failedToGetOAuthRefreshToken(_ underlyingError: Error)
 
 }
 
@@ -351,7 +389,7 @@ public struct ChallengeResponse: Codable, Equatable {
 
 public struct AccessTokenResponse: Decodable, Equatable {
 
-    var expiresIn: String
+    var expiresIn: Int
     var token: String
     var type: String
 

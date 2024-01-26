@@ -28,15 +28,18 @@ public protocol E2eIServiceInterface {
     func setOrderResponse(order: Data) async throws -> NewAcmeOrder
     func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data
     func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz
+    func getOAuthRefreshToken() async throws -> String
     func createDpopToken(nonce: String) async throws -> String
     func getNewDpopChallengeRequest(accessToken: String, nonce: String) async throws -> Data
-    func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data
-    func setChallengeResponse(challenge: Data) async throws
+    func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data
+    func setDPoPChallengeResponse(challenge: Data) async throws
+    func setOIDCChallengeResponse(challenge: Data) async throws
     func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data
     func checkOrderResponse(order: Data) async throws -> String
     func finalizeRequest(nonce: String) async throws -> Data
     func finalizeResponse(finalize: Data) async throws -> String
     func certificateRequest(nonce: String) async throws -> Data
+
     var e2eIdentity: E2eiEnrollmentProtocol { get }
 
 }
@@ -44,12 +47,24 @@ public protocol E2eIServiceInterface {
 /// This class provides an interface for WireE2eIdentityProtocol (CoreCrypto) methods.
 public final class E2eIService: E2eIServiceInterface {
 
-    public let e2eIdentity: E2eiEnrollmentProtocol
-    public init(e2eIdentity: E2eiEnrollmentProtocol) {
-        self.e2eIdentity = e2eIdentity
-    }
+    // MARK: - Properties
 
     private let defaultDPoPTokenExpiry: UInt32 = 30
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
+    }
+
+    public let e2eIdentity: E2eiEnrollmentProtocol
+
+    // MARK: - Life cycle
+
+    public init(e2eIdentity: E2eiEnrollmentProtocol, coreCryptoProvider: CoreCryptoProviderProtocol) {
+        self.e2eIdentity = e2eIdentity
+        self.coreCryptoProvider = coreCryptoProvider
+    }
 
     // MARK: - Methods
 
@@ -81,6 +96,10 @@ public final class E2eIService: E2eIServiceInterface {
         return try await e2eIdentity.newAuthzResponse(authz: authz)
     }
 
+    public func getOAuthRefreshToken() async throws -> String {
+        return try await e2eIdentity.getRefreshToken()
+    }
+
     public func createDpopToken(nonce: String) async throws -> String {
         return try await e2eIdentity.createDpopToken(expirySecs: defaultDPoPTokenExpiry, backendNonce: nonce)
     }
@@ -89,15 +108,24 @@ public final class E2eIService: E2eIServiceInterface {
         return try await e2eIdentity.newDpopChallengeRequest(accessToken: accessToken, previousNonce: nonce)
     }
 
-    public func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data {
+    public func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
         return try await e2eIdentity.newOidcChallengeRequest(idToken: idToken,
-                                                             refreshToken: "",
+                                                             refreshToken: refreshToken,
                                                              previousNonce: nonce)
     }
 
-    public func setChallengeResponse(challenge: Data) async throws {
-        // TODO: Update method with a new parameters
-        // return try e2eIdentity.newOidcChallengeResponse(challenge: challenge)
+    public func setDPoPChallengeResponse(challenge: Data) async throws {
+        return try await e2eIdentity.newDpopChallengeResponse(challenge: challenge)
+    }
+
+    public func setOIDCChallengeResponse(challenge: Data) async throws {
+        try await coreCrypto.perform {
+            guard let coreCrypto = $0 as? CoreCrypto else {
+                throw E2eIServiceFailure.missingCoreCrypto
+            }
+
+            return try await e2eIdentity.newOidcChallengeResponse(cc: coreCrypto, challenge: challenge)
+        }
     }
 
     public func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data {
@@ -118,6 +146,10 @@ public final class E2eIService: E2eIServiceInterface {
 
     public func certificateRequest(nonce: String) async throws -> Data {
         return try await e2eIdentity.certificateRequest(previousNonce: nonce)
+    }
+
+    enum E2eIServiceFailure: Error {
+        case missingCoreCrypto
     }
 
 }

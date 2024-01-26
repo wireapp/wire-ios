@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>IdentityProviderClientSecret</key>
-	<string>${IDENTITY_PROVIDER_CLIENT_SECRET}</string>
-	<key>IdentityProviderClientID</key>
-	<string>${IDENTITY_PROVIDER_CLIENT_ID}</string>
 	<key>MinTLSVersion</key>
 	<string>$(MIN_TLS_VERSION)</string>
 	<key>BackupEnabled</key>
