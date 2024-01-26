@@ -639,7 +639,6 @@ public final class MLSService: MLSServiceInterface {
             let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
-            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
 
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
                 logger.info("no need to upload new key packages yet")
@@ -649,6 +648,7 @@ public final class MLSService: MLSServiceInterface {
             let amount = UInt32(targetUnclaimedKeyPackageCount)
             let keyPackages = try await generateKeyPackages(amountRequested: amount)
             try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
+            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
             logger.info("success: uploaded key packages for client \(clientID)")
         } catch let error {
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
