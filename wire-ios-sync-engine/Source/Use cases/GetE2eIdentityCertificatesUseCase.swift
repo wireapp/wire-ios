@@ -110,9 +110,3 @@ extension X509Certificate {
             serialNumber: theSerialNumber)
     }
 }
-
-extension Data {
-    var bytes: [UInt8] {
-        return [UInt8](self)
-    }
-}
