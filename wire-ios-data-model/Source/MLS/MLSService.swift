@@ -513,12 +513,13 @@ public final class MLSService: MLSServiceInterface {
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
             let keyPackages = try await claimKeyPackages(for: users)
 
-            guard keyPackages.count > 0 else {
-                throw MLSAddMembersError.noInviteesToAdd
+            let events = if keyPackages.isEmpty {
+                try await mlsActionExecutor.updateKeyMaterial(for: groupID)
+            } else {
+                try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
             }
-
-            let events = try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
             await conversationEventProcessor.processConversationEvents(events)
+
         } catch {
             logger.warn("failed to add members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
