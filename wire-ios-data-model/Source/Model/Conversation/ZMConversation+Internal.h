@@ -60,13 +60,11 @@ extern NSString *const ZMConversationClearedTimeStampKey;
 extern NSString *const ZMConversationArchivedChangedTimeStampKey;
 extern NSString *const ZMConversationSilencedChangedTimeStampKey;
 
-extern NSString *const ZMNotificationConversationKey;
 extern NSString *const ZMConversationRemoteIdentifierDataKey;
 extern NSString *const TeamRemoteIdentifierDataKey;
 
 extern const NSUInteger ZMConversationMaxTextMessageLength;
 extern NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay;
-extern NSString *const ZMConversationEstimatedUnreadCountKey;
 
 extern NSString *const ZMConversationInternalEstimatedUnreadSelfMentionCountKey;
 extern NSString *const ZMConversationInternalEstimatedUnreadSelfReplyCountKey;
