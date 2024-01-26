@@ -91,7 +91,7 @@ extension NSManagedObjectContext {
     ///   - keyPath: valid keyPath that can be fetched from the disk store (computed properties are not permitted).
     /// - Returns: dictionary containing the pairs of value and array of objects containing the value for `keyPath`.
 
-    public func findDuplicated<T: NSManagedObject, ValueForKey>(entityName: String, by keyPath: String) -> [ValueForKey: [T]] {
+    public func findDuplicated<T: NSManagedObject, ValueForKey>(entityName: String, by keyPath1: String, and keyPath2: String? = nil) -> [ValueForKey: [T]] {
         if let storeURL = self.persistentStoreCoordinator?.persistentStores.first?.url,
            !storeURL.isFileURL {
             zmLog.error("findDuplicated<T> does not support in-memory store")
@@ -99,12 +99,21 @@ extension NSManagedObjectContext {
         }
 
         guard let entity = NSEntityDescription.entity(forEntityName: entityName, in: self),
-              let attribute = entity.attributesByName[keyPath] else {
+              let attribute1 = entity.attributesByName[keyPath1] else {
             fatal("Cannot preapare the fetch")
         }
 
-        let keyPathExpression = NSExpression(forKeyPath: keyPath)
-        let countExpression = NSExpression(forFunction: "count:", arguments: [keyPathExpression])
+        let keyPathExpression = NSExpression(forKeyPath: keyPath1)
+        var keyPathExpressions = [keyPathExpression]
+
+        var propertiesToFetch:
+
+        if let keyPath2, let attribute2 = entity.attributesByName[keyPath2] {
+            let keyPathExpression2 = NSExpression(forKeyPath: keyPath2)
+            keyPathExpressions.append(keyPathExpression2)
+        }
+
+        let countExpression = NSExpression(forFunction: "count:", arguments: keyPathExpressions)
 
         let countExpressionDescription = NSExpressionDescription()
         countExpressionDescription.name = "count"
@@ -113,8 +122,9 @@ extension NSManagedObjectContext {
 
         let request = NSFetchRequest<NSNumber>()
         request.entity = entity
-        request.propertiesToFetch = [attribute, countExpressionDescription]
-        request.propertiesToGroupBy = [attribute]
+        request.propertiesToFetch = [attribute1, countExpressionDescription]
+        request.propertiesToFetch += attribute2
+        request.propertiesToGroupBy = [attribute1]
         request.resultType = .dictionaryResultType
 
         do {
@@ -124,17 +134,25 @@ extension NSManagedObjectContext {
                 return [:]
             }
 
-            let ids = finalResult.filter {
+            let compoundKeys: [(ValueForKey, ValueForKey?)] = finalResult.filter {
                 ($0["count"] as? Int ?? 0) > 1
             }.compactMap {
-                $0[keyPath]
+                if let keyPath2 = keyPath2 {
+                    return ($0[keyPath1] as? ValueForKey, $0[keyPath2] as? ValueForKey)
+                } else {
+                    return ($0[keyPath1] as? ValueForKey, nil)
+                }
             }
 
             let fetchAllDuplicatesRequest = NSFetchRequest<T>()
             fetchAllDuplicatesRequest.entity = entity
-            fetchAllDuplicatesRequest.predicate = NSPredicate(format: "%K IN %@", argumentArray: [keyPath, ids])
+            if let keyPath2 = keyPath2 {
+                fetchAllDuplicatesRequest.predicate = NSPredicate(format: "%K = %@ AND %K = %@", argumentArray: [keyPath1, compoundKeys.map { $0.0 }, keyPath2, compoundKeys.compactMap { $0.1 }])
+            } else {
+                fetchAllDuplicatesRequest.predicate = NSPredicate(format: "%K IN %@", argumentArray: [keyPath1, compoundKeys.map { $0.0 }])
+            }
 
-            return self.fetchOrAssert(request: fetchAllDuplicatesRequest).group(by: keyPath)
+            return self.fetchOrAssert(request: fetchAllDuplicatesRequest).group(by: keyPath1)
 
         } catch let error {
             fatal("Cannot perform the fetch: \(error)")
