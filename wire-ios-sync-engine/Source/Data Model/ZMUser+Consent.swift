@@ -71,7 +71,7 @@ extension ZMUser {
 
         let request = ConsentRequestFactory.fetchConsentRequest(apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: context ) { response in
+        request.add(ZMCompletionHandler(on: context) { response in
 
             guard 200 ... 299 ~= response.httpStatus,
                   let payload = response.payload
