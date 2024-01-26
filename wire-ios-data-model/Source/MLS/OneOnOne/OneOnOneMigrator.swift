@@ -61,7 +61,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
             in: context
         )
 
-        try await establishLocalMLSGroupIfNeeded(
+        try await establishLocalMLSConversationIfNeeded(
             userID: userID,
             mlsGroupID: mlsGroupID
         )
@@ -91,7 +91,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
-    private func establishLocalMLSGroupIfNeeded(
+    private func establishLocalMLSConversationIfNeeded(
         userID: QualifiedID,
         mlsGroupID: MLSGroupID
     ) async throws {

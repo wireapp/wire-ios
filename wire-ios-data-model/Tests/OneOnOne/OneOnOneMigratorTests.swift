@@ -135,8 +135,9 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
             in: uiMOC
         )
 
+        let mockMessage = "Hello World!"
         try await uiMOC.perform {
-            _ = try proteusConversation.appendText(content: "Hello World!")
+            _ = try proteusConversation.appendText(content: mockMessage)
         }
 
         // Mock
@@ -156,7 +157,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         // Then
         await uiMOC.perform {
             let lastMLSMessage = mlsConversation.lastMessage?.textMessageData?.messageText
-            XCTAssertEqual(lastMLSMessage, "Hello World!")
+            XCTAssertEqual(lastMLSMessage, mockMessage)
         }
     }
 
