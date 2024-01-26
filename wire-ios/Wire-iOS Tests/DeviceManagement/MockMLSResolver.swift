@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,25 +17,11 @@
 //
 
 import Foundation
+@testable import Wire
 
-public final class MockRevokedE2eIdentityProvider: E2eIdentityProviding {
+final class MockMLSClientResolver: MLSClientResolving {
 
-    lazy var dateFormatter = DateFormatter()
-
-    public var isE2EIdentityEnabled: Bool = true
-
-    public var certificate: E2eIdentityCertificate {
-        E2eIdentityCertificate(
-            certificateDetails: .mockCertificate(),
-            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
-            certificateStatus: "Revoked",
-            serialNumber: .mockSerialNumber()
-        )
-    }
-
-    public init() {}
-
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        certificate
+    func mlsClientId(for userClient: UserClient) -> MLSClientID? {
+        return MLSClientID(userID: .random(length: 5), clientID: .random(length: 5), domain: .random(length: 6))
     }
 }

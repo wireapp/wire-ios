@@ -18,16 +18,23 @@
 
 import XCTest
 @testable import Wire
+import WireSyncEngineSupport
 
 final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTestHelper {
+
     var coreDataFixture: CoreDataFixture!
     var client: UserClient!
     var mockSession: UserSessionMock!
     var emailCredentials: ZMEmailCredentials!
+
     let saveFileManager = MockSaveFileManager()
+    let mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUseCaseProtocol()
+    let mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
+    let mockGetProteusFingerprint = MockGetUserClientFingerprintUseCaseProtocol()
 
     override func setUp() {
         super.setUp()
+        DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled = false
         coreDataFixture = CoreDataFixture()
         client = mockUserClient()
         mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
@@ -43,40 +50,45 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            e2eIdentityProvider: MockE2eIdentityProvider(),
-            mlsProvider: MockMLSProvider(isMLSEnbaled: false),
-            saveFileManager: saveFileManager
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: mockGetProteusFingerprint
         )
         deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
         wait(for: [expectation], timeout: 0.5)
     }
 
-    func testWhenFetchCertificateIsInvokedThenValidCertificateIsReturned() async {
-        let e2eIdentityProvider = MockE2eIdentityProvider()
+    func testThatItReturnsFingerPrint_WhenGetFingerPrintIsInvoked() async throws {
         let deviceActionHandler = DeviceDetailsViewActionsHandler(
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            e2eIdentityProvider: e2eIdentityProvider,
-            mlsProvider: MockMLSProvider(isMLSEnbaled: false),
-            saveFileManager: MockSaveFileManager()
+            saveFileManager: MockSaveFileManager(),
+            getProteusFingerprint: mockGetProteusFingerprint
         )
-        let fetchedCertificate = await deviceActionHandler.fetchCertificate()
-        XCTAssertNotNil(fetchedCertificate)
-        XCTAssertEqual(fetchedCertificate!.certificateDetails, e2eIdentityProvider.certificate.certificateDetails)
+        let testFingerPrint = String.random(length: 16)
+        mockGetProteusFingerprint.invokeUserClient_MockMethod = { _ in
+            return testFingerPrint.data(using: .utf8)
+        }
+        let fingerPrint = await deviceActionHandler.getProteusFingerPrint()
+        XCTAssertEqual(fingerPrint, testFingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased())
     }
+
 }
 
-private extension E2eIdentityCertificate {
+extension E2eIdentityCertificate {
 
     static func mock(
-        with certificateDetails: String = .random(length: 100),
-        status: String = "valid",
+        with certificateDetails: String = .mockCertificate(),
+        status: E2EIdentityCertificateStatus = .valid,
+        notValidBefore: Date = .now - .oneDay,
         expiryDate: Date = .now,
-        sertialNumber: String = .random(length: 16)
+        sertialNumber: String = .mockSerialNumber
     ) -> E2eIdentityCertificate {
         return .init(
+            clientId: "sdjksksd",
             certificateDetails: certificateDetails,
+            mlsThumbprint: .mockMlsThumbprint,
+            notValidBefore: notValidBefore,
             expiryDate: expiryDate,
             certificateStatus: status,
             serialNumber: sertialNumber

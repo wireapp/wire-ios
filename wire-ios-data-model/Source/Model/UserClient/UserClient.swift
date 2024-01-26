@@ -126,6 +126,8 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
+    public var e2eIdentityCertificate: E2eIdentityCertificate?
+
     public var isLegalHoldDevice: Bool {
         return deviceClass == .legalHold || type == .legalHold
     }
@@ -408,6 +410,8 @@ public extension UserClient {
         let activationDate = payloadAsDictionary.date(for: "time")
         let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
 
+        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
+        let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
         let isNewClient = result.isNewClient
@@ -418,7 +422,9 @@ public extension UserClient {
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
         client.remoteIdentifier = id
-
+        if let mlsEd25519 = mlsEd25519 {
+            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519)
+        }
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
 

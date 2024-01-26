@@ -23,99 +23,75 @@ import WireDataModel
 import WireSyncEngine
 
 protocol DeviceDetailsViewActions {
-    var isMLSEnabled: Bool { get }
-    var isE2eIdentityEnabled: Bool { get }
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
-    func fetchCertificate() async -> E2eIdentityCertificate?
-    func fetchMLSThumbprint() async -> String?
+    func enrollClient() async -> E2eIdentityCertificate?
+    func updateCertificate() async -> E2eIdentityCertificate?
     func removeDevice() async -> Bool
     func resetSession()
     func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
     func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate)
+    func getProteusFingerPrint() async -> String
 }
 
 final class DeviceInfoViewModel: ObservableObject {
-    let userSession: UserSession
     let addedDate: String
     let proteusID: String
-    let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
     let userClient: UserClient
-    var title: String
+    let gracePeriod: TimeInterval
+    let mlsThumbprint: String?
 
+    var title: String
     var isSelfClient: Bool
 
-    var isE2EIdentityEnabled: Bool {
-        actionsHandler.isE2eIdentityEnabled
+    var isCopyEnabled: Bool {
+        return Settings.isClipboardEnabled
     }
 
-    var isMLSEnablled: Bool {
-        actionsHandler.isMLSEnabled
-    }
-
-    var isValidCerificate: Bool {
-        guard let certificate = e2eIdentityCertificate,
-           E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .none,
-              E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .notActivated else {
-            return false
-        }
-        return true
-    }
-
-    var certificateStatus: E2EIdentityCertificateStatus {
-        guard let certificate = e2eIdentityCertificate,
-              let status = E2EIdentityCertificateStatus.allCases.filter({
-                        $0.titleForStatus() == certificate.certificateStatus
-                    }
-                ).first
-        else {
-            return isE2EIdentityEnabled ? .notActivated : .none
-        }
-        return status
-    }
-
-    var isCertificateExpiringSoon: Bool {
+    var isCertificateExpiringSoon: Bool? {
         guard let certificate = e2eIdentityCertificate else {
-            return false
+            return nil
         }
-        return certificate.expiryDate < Date.now + .oneDay + .oneDay
+        return certificate.shouldUpdate(with: gracePeriod)
+    }
+
+    var isE2eIdentityEnabled: Bool {
+        return e2eIdentityCertificate != nil
     }
 
     @Published
     var e2eIdentityCertificate: E2eIdentityCertificate?
-    @Published
-    var mlsThumbprint: String?
-    private var actionsHandler: any DeviceDetailsViewActions
-    var isCopyEnabled: Bool {
-        return Settings.isClipboardEnabled
-    }
     @Published var isRemoved: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
 
+    private var actionsHandler: DeviceDetailsViewActions
+
     init(
+        certificate: E2eIdentityCertificate?,
         title: String,
         addedDate: String,
         proteusID: String,
+        mlsThumbprint: String?,
         isProteusVerificationEnabled: Bool,
-        actionsHandler: any DeviceDetailsViewActions,
-        userSession: UserSession,
-        getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol,
+        actionsHandler: DeviceDetailsViewActions,
         userClient: UserClient,
-        isSelfClient: Bool
+        isSelfClient: Bool,
+        gracePeriod: TimeInterval
     ) {
+        self.e2eIdentityCertificate = certificate
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
+        self.mlsThumbprint = mlsThumbprint
         self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
-        self.userSession = userSession
-        self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
         self.isSelfClient = isSelfClient
+        self.gracePeriod = gracePeriod
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
@@ -123,29 +99,20 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
-    func fetchFingerPrintForProteus() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
-        guard let data = await getUserClientFingerprint.invoke(userClient: userClient),
-                let fingerPrint = String(data: data, encoding: .utf8) else {
-            return
-        }
-        DispatchQueue.main.async {
-            self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
-            self.isActionInProgress = false
-        }
+    @MainActor
+    func updateCertificate() async {
+        self.isActionInProgress = true
+        let certificate = await actionsHandler.updateCertificate()
+        self.e2eIdentityCertificate = certificate
+        self.isActionInProgress = false
     }
 
-    func fetchE2eCertificate() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
-        let certificate = await actionsHandler.fetchCertificate()
-        DispatchQueue.main.async {
-            self.e2eIdentityCertificate = certificate
-            self.isActionInProgress = false
-        }
+    @MainActor
+    func enrollClient() async {
+        self.isActionInProgress = true
+        let certificate = await actionsHandler.enrollClient()
+        self.e2eIdentityCertificate = certificate
+        self.isActionInProgress = false
     }
 
     @MainActor
@@ -169,52 +136,95 @@ final class DeviceInfoViewModel: ObservableObject {
         actionsHandler.copyToClipboard(value)
     }
 
-    func fetchMLSFingerPrint() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
-        let result = await actionsHandler.fetchMLSThumbprint()?.uppercased().splitStringIntoLines(charactersPerLine: 16)
-        DispatchQueue.main.async {
-            self.mlsThumbprint = result
-            self.isActionInProgress = false
-        }
-    }
-
     func downloadE2EIdentityCertificate() {
         guard let certificate = e2eIdentityCertificate else {
             return
         }
         actionsHandler.downloadE2EIdentityCertificate(certificate: certificate)
     }
+
+    @MainActor
+    func getProteusFingerPrint() async {
+        let result = await actionsHandler.getProteusFingerPrint()
+        self.proteusKeyFingerprint = result
+    }
+
+    func onAppear() {
+        Task {
+            await getProteusFingerPrint()
+        }
+    }
 }
 
 extension DeviceInfoViewModel {
     static func map(
+        certificate: E2eIdentityCertificate?,
         userClient: UserClient,
+        title: String,
+        addedDate: String,
+        proteusID: String?,
         isSelfClient: Bool,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol,
-        e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding
+        gracePeriod: TimeInterval,
+        mlsThumbprint: String?,
+        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
+        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
-            title: userClient.model ?? "",
-            addedDate: userClient.activationDate?.formattedDate ?? "",
-            proteusID: userClient.proteusSessionID?.clientID.fingerprintStringWithSpaces.uppercased() ?? "",
+            certificate: certificate,
+            title: title,
+            addedDate: addedDate,
+            proteusID: proteusID?.uppercased().fingerprintStringWithSpaces ?? "",
+            mlsThumbprint: mlsThumbprint,
             isProteusVerificationEnabled: userClient.verified,
             actionsHandler: DeviceDetailsViewActionsHandler(
                 userClient: userClient,
                 userSession: userSession,
                 credentials: credentials,
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider,
-                saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+                saveFileManager: saveFileManager,
+                getProteusFingerprint: getProteusFingerprint
             ),
-            userSession: userSession,
-            getUserClientFingerprint: getUserClientFingerprintUseCase,
             userClient: userClient,
-            isSelfClient: isSelfClient
+            isSelfClient: isSelfClient,
+            gracePeriod: gracePeriod
         )
+    }
+}
+
+extension E2eIdentityCertificate {
+
+    // current default days the certificate is retained on server
+    private var kServerRetainedDays: Double { 28 * 24 * 60 * 60 }
+
+    // Randomising time so that not all clients update certificate at the same time
+    private var kRandomInterval: Double { Double(Int.random(in: 0..<86400)) }
+
+    private var isExpired: Bool {
+        return expiryDate > comparedDate
+    }
+
+    private var isValid: Bool {
+        status == .valid
+    }
+
+    private var isActivated: Bool {
+        return notValidBefore <= comparedDate
+    }
+
+    private var lastUpdateDate: Date {
+        return notValidBefore + kServerRetainedDays + kRandomInterval
+    }
+
+    private var comparedDate: Date {
+        return E2eIdentityCertificateDateProvider(now: .now).now
+    }
+
+    func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
+        return isActivated && isExpired && (lastUpdateDate + gracePeriod) < comparedDate
+    }
+
+    struct E2eIdentityCertificateDateProvider: DateProviding {
+        let now: Date
     }
 }

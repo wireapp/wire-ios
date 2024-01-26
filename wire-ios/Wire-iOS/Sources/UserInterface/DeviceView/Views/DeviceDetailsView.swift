@@ -64,7 +64,7 @@ struct DeviceDetailsView: View {
 
     var mlsView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Secion.Mls.signature.uppercased())
+            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
@@ -73,11 +73,11 @@ struct DeviceDetailsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if viewModel.isMLSEnablled {
+                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
                     mlsView
-                }
-                if viewModel.isE2EIdentityEnabled {
-                    e2eIdentityCertificateView
+                    if viewModel.isE2eIdentityEnabled {
+                        e2eIdentityCertificateView
+                    }
                 }
                 proteusView
             }
@@ -115,10 +115,7 @@ struct DeviceDetailsView: View {
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            Task {
-                await viewModel.fetchFingerPrintForProteus()
-                await viewModel.fetchE2eCertificate()
-            }
+            viewModel.onAppear()
         }
         .onDisappear {
             dismissedView?()
@@ -131,7 +128,7 @@ struct DeviceDetailsView: View {
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
-                    certificateDetails: certificate.certificateDetails.uppercased(),
+                    certificateDetails: certificate.details,
                     isDownloadAndCopyEnabled: viewModel.isCopyEnabled,
                     isMenuPresented: false,
                     performDownload: viewModel.downloadE2EIdentityCertificate,

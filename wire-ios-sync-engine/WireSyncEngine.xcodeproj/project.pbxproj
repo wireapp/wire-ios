@@ -277,6 +277,10 @@
 		16F7343C250F588100AB93B1 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		16FF474C1F0D54B20044C491 /* SessionManager+Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */; };
 		1836188BC0E48C1AC1671FC2 /* ZMSyncStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6B0837E10BD4D5E88805E3 /* ZMSyncStrategyTests.swift */; };
+		25A9B7BA2B5EA36D00FD43FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25A9B7B92B5EA36D00FD43FB /* Security.framework */; };
+		25A9B7C02B5EB57300FD43FB /* ASN1Decoder in Frameworks */ = {isa = PBXBuildFile; productRef = 25A9B7BF2B5EB57300FD43FB /* ASN1Decoder */; };
+		25E11B0B2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift */; };
+		25E11B0D2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */; };
 		2B15596A295093360069AE34 /* HotfixPatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B155969295093360069AE34 /* HotfixPatch.swift */; };
 		3E05F252192A4FBD00F22D80 /* UserSessionErrorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E05F250192A4FBD00F22D80 /* UserSessionErrorTests.m */; };
 		3E1858BC1951D6DA005FE78F /* MemoryLeaksObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E1858B31951D69B005FE78F /* MemoryLeaksObserver.m */; };
@@ -915,6 +919,9 @@
 		16FF47461F0CD58A0044C491 /* IntegrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegrationTest.m; sourceTree = "<group>"; };
 		16FF47481F0CD6610044C491 /* IntegrationTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrationTest.h; sourceTree = "<group>"; };
 		16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SessionManager+Logs.swift"; sourceTree = "<group>"; };
+		25A9B7B92B5EA36D00FD43FB /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetE2eIdentityCertificatesUseCase.swift; sourceTree = "<group>"; };
+		25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetIsE2EIdentityEnabledUseCase.swift; sourceTree = "<group>"; };
 		2B155969295093360069AE34 /* HotfixPatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotfixPatch.swift; sourceTree = "<group>"; };
 		2B56189B29A5074000D8CCCA /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		3D6B0837E10BD4D5E88805E3 /* ZMSyncStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMSyncStrategyTests.swift; sourceTree = "<group>"; };
@@ -1472,6 +1479,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE67F6CC296F0622001D7C88 /* avs.xcframework in Frameworks */,
+				25A9B7BA2B5EA36D00FD43FB /* Security.framework in Frameworks */,
+				25A9B7C02B5EB57300FD43FB /* ASN1Decoder in Frameworks */,
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
 				EE67F6C8296F0622001D7C88 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EE67F6CA296F0622001D7C88 /* ZipArchive.xcframework in Frameworks */,
@@ -1829,6 +1838,7 @@
 		540029B61918CA8500578793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				25A9B7B92B5EA36D00FD43FB /* Security.framework */,
 				0140A0C62B30F941004D8B40 /* WireDataModelSupport.framework */,
 				59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */,
 				EE67F6C7296F0622001D7C88 /* avs.xcframework */,
@@ -2594,6 +2604,8 @@
 			children = (
 				EEE46E5628C5EF56005F48D7 /* FetchUserClientsUseCase.swift */,
 				018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */,
+				25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift */,
+				25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -2883,6 +2895,7 @@
 			);
 			name = "WireSyncEngine-ios";
 			packageProductDependencies = (
+				25A9B7BF2B5EB57300FD43FB /* ASN1Decoder */,
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -2961,6 +2974,7 @@
 			);
 			mainGroup = 540029AA1918CA8500578793;
 			packageReferences = (
+				25A9B7BE2B5EB57300FD43FB /* XCRemoteSwiftPackageReference "ASN1Decoder" */,
 			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
 			projectDirPath = "";
@@ -3609,6 +3623,7 @@
 				6349770A268A250E00824A05 /* Encodable+JSONString.swift in Sources */,
 				1658C2371F503CF800889F22 /* FlowManager.swift in Sources */,
 				7CD279882338E52000E638CD /* ProcessInfo+SystemBootTime.swift in Sources */,
+				25E11B0D2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift in Sources */,
 				549710081F6FF5C100026EDD /* NotificationInContext+UserSession.swift in Sources */,
 				16D0A11D234C8CD700A83F87 /* LabelUpstreamRequestStrategy.swift in Sources */,
 				63FE4B9E25C1D2EC002878E5 /* VideoGridPresentationMode.swift in Sources */,
@@ -3634,6 +3649,7 @@
 				8717DFA71F6EF44E0087EFE4 /* SessionManager+Push.swift in Sources */,
 				D52257232062637500562561 /* DeletableAssetIdentifierProvider.swift in Sources */,
 				70355A7327AAE62E00F02C76 /* ZMUserSession+SecurityClassification.swift in Sources */,
+				25E11B0B2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift in Sources */,
 				D5225720206261AA00562561 /* AssetDeletionStatus.swift in Sources */,
 				5E8BB8A02147F5BC00EEA64B /* CallSnapshot.swift in Sources */,
 				63B1FADB2763A636000766F8 /* ZMUser+AVSIdentifier.swift in Sources */,
@@ -4229,6 +4245,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		25A9B7BE2B5EB57300FD43FB /* XCRemoteSwiftPackageReference "ASN1Decoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wireapp/ASN1Decoder";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		25A9B7BF2B5EB57300FD43FB /* ASN1Decoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 25A9B7BE2B5EB57300FD43FB /* XCRemoteSwiftPackageReference "ASN1Decoder" */;
+			productName = ASN1Decoder;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 540029AB1918CA8500578793 /* Project object */;
 }
