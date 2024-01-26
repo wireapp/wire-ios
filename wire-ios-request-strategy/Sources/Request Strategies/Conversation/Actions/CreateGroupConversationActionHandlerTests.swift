@@ -43,7 +43,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         sut = CreateGroupConversationActionHandler(context: syncMOC, removeLocalConversationUseCase: MockLocalConversationRemovalUseCase())
 
         conversationID = .randomID()
-        mlsGroupID = MLSGroupID([1, 2, 3])
+        mlsGroupID = MLSGroupID(.init([1, 2, 3]))
         teamID = .create()
         user1ID = .randomID()
         user2ID = .randomID()
@@ -96,7 +96,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         successResponsePayloadMLS = successResponsePayloadProteus
         successResponsePayloadMLS.messageProtocol = "mls"
-        successResponsePayloadMLS.mlsGroupID = mlsGroupID.base64EncodedString
+        successResponsePayloadMLS.mlsGroupID = mlsGroupID.data.base64EncodedString()
         successResponsePayloadMLS.epoch = 0
 
         BackendInfo.storage = .temporary()
