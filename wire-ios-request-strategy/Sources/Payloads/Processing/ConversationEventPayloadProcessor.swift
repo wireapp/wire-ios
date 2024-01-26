@@ -810,13 +810,11 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
-
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
-            groupID: payload.mlsGroupID,
+            fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,
             context: context
         )
-
     }
 
     func fetchCreator(

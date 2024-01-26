@@ -932,12 +932,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             self?.delegate?.sessionManagerDidReportLockChange(forSession: session)
         }
 
-        accountTokens[account.userIdentifier] = [teamObserver,
-                                                 selfObserver!,
-                                                 conversationListObserver,
-                                                 connectionRequestObserver,
-                                                 unreadCountObserver,
-                                                 databaseEncryptionObserverToken
+        accountTokens[account.userIdentifier] = [
+            teamObserver,
+            selfObserver!,
+            conversationListObserver,
+            connectionRequestObserver,
+            unreadCountObserver,
+            databaseEncryptionObserverToken
         ]
     }
 
