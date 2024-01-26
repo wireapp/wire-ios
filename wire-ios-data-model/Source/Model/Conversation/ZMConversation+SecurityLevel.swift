@@ -298,22 +298,42 @@ extension ZMConversation {
     /// - Parameters:
     ///   - user: the participant to add
     ///   - dateOptional: if provide a nil, current date will be used
-    public func addParticipantAndSystemMessageIfMissing(_ user: ZMUser, date dateOptional: Date?) {
-        let date = dateOptional ?? Date()
-
-        guard !user.isSelfUser, !localParticipants.contains(user) else { return }
+    ///
+    public func addParticipantAndSystemMessageIfMissing(
+        _ user: ZMUser,
+        date: Date = .now
+    ) {
+        guard 
+            !user.isSelfUser, 
+            !localParticipants.contains(user)
+        else {
+            return
+        }
 
         zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier})")
 
         switch conversationType {
         case .group:
-            appendSystemMessage(type: .participantsAdded, sender: user, users: Set(arrayLiteral: user), clients: nil, timestamp: date)
+            appendSystemMessage(
+                type: .participantsAdded,
+                sender: user,
+                users: Set(arrayLiteral: user),
+                clients: nil,
+                timestamp: date
+            )
+
         case .oneOnOne, .connection:
-            if user.connection == nil {
+            if 
+                user.connection == nil,
+                let context = managedObjectContext,
+                !user.isOnSameTeam(otherUser: ZMUser.selfUser(in: context))
+            {
                 user.connection = ZMConnection.insertNewObject(in: managedObjectContext!)
             }
+
             user.connection?.needsToBeUpdatedFromBackend = true
             user.oneOnOneConversation = self
+
         default:
             break
         }

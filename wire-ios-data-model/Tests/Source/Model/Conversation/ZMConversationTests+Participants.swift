@@ -183,6 +183,57 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         XCTAssertNotEqual(selfUser.connection, connection)
     }
 
+    func testThatItCreatesAConnectionIfUserIsNotATeamMember() {
+        // given
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = .create()
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+
+        XCTAssertNil(otherUser.connection)
+        XCTAssertFalse(otherUser.isOnSameTeam(otherUser: selfUser))
+
+        // when
+        conversation.addParticipantAndSystemMessageIfMissing(otherUser, date: Date())
+
+        // then
+        XCTAssertNotNil(otherUser.connection)
+    }
+
+    func testThatItDoesntCreateAConnectionIfUserIsTeamMember() {
+        // given
+        let team = Team.insertNewObject(in: uiMOC)
+        team.remoteIdentifier = .create()
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfUserMembership = Member.insertNewObject(in: uiMOC)
+        selfUserMembership.team = team
+        selfUserMembership.user = selfUser
+
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = .create()
+        let otherUserMembership = Member.insertNewObject(in: uiMOC)
+        otherUserMembership.team = team
+        otherUserMembership.user = otherUser
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+
+        XCTAssertNil(otherUser.connection)
+        XCTAssertTrue(otherUser.isOnSameTeam(otherUser: selfUser))
+
+        // when
+        conversation.addParticipantAndSystemMessageIfMissing(otherUser, date: Date())
+
+        // then
+        XCTAssertNil(otherUser.connection)
+    }
+
     func testThatItAddsParticipants() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
