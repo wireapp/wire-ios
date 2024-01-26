@@ -1582,10 +1582,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID.random()
         let message = Data.random().base64EncodedString()
+        let welcomeBundle = WelcomeBundle(id: groupID.data, crlNewDistributionPoints: nil)
 
         // Mock
         mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
-            groupID.data
+            welcomeBundle
         }
 
         var mockClientValidKeypackagesCountCount = 0
