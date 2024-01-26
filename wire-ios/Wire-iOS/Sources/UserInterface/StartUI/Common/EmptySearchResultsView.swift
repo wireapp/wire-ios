@@ -101,7 +101,13 @@ final class EmptySearchResultsView: UIView {
 
         super.init(frame: .zero)
 
-        [scrollView, stackView, iconView, statusLabel, actionButton].prepareForLayout()
+        [
+            scrollView,
+            stackView,
+            iconView,
+            statusLabel,
+            actionButton
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         [iconView, statusLabel, actionButton].forEach(stackView.addArrangedSubview)
 
         addSubview(scrollView)
