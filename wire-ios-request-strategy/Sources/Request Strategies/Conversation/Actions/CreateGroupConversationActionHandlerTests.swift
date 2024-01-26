@@ -96,7 +96,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         successResponsePayloadMLS = successResponsePayloadProteus
         successResponsePayloadMLS.messageProtocol = "mls"
-        successResponsePayloadMLS.mlsGroupID = mlsGroupID.base64EncodedString
+        successResponsePayloadMLS.mlsGroupID = mlsGroupID.data.base64EncodedString()
         successResponsePayloadMLS.epoch = 0
 
         BackendInfo.storage = .temporary()

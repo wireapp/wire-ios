@@ -169,7 +169,7 @@ class MLSEventProcessorTests: MessagingTestBase {
 
         await syncMOC.perform {
             // Then
-            XCTAssertEqual(self.conversation.mlsGroupID?.bytes, self.groupIdString.base64DecodedBytes)
+            XCTAssertEqual(self.conversation.mlsGroupID?.data, self.groupIdString.base64DecodedData)
         }
     }
 
