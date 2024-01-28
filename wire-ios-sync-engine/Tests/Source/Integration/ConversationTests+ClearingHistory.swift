@@ -99,7 +99,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         let messagesCount: UInt = 5
         loginAndFillConversationWithMessages(mockConversation: self.groupConversation, messagesCount: messagesCount)
 
-        var conversation = conversation(for: self.groupConversation!)
+        var conversation = conversation(for: try XCTUnwrap(self.groupConversation))
         XCTAssertEqual(conversation!.allMessages.count, 5)
 
         let conversationDirectory = self.userSession?.managedObjectContext.conversationListDirectory()
