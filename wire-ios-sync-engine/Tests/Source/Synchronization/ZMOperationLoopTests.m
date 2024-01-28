@@ -523,7 +523,9 @@
 - (void)testThatItForwardsEventsFromEncryptedPushesToThePushNotificationStatus
 {
     // given
-    self.sut.apsSignalKeyStore = [self prepareSelfClientForAPSSignalingStore];
+    [self.syncMOC performBlockAndWait:^{
+        self.sut.apsSignalKeyStore = [self prepareSelfClientForAPSSignalingStore];
+    }];
     NSDictionary *pushPayload = [self encryptedPushPayload];
     
     // when

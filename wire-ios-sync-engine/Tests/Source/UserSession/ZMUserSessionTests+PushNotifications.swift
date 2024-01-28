@@ -121,8 +121,10 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItCallsShowConversationAndAcceptsCall_ForPushNotificationCategoryIncomingCallWithAcceptAction() {
         // given
-        simulateLoggedInUser()
-        createSelfClient()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            self.createSelfClient()
+        }
 
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
@@ -141,8 +143,10 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItDoesNotCallsShowConversationAndRejectsCall_ForPushNotificationCategoryIncomingCallWithIgnoreAction() {
         // given
-        simulateLoggedInUser()
-        createSelfClient()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            self.createSelfClient()
+        }
 
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
@@ -160,8 +164,10 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItCallsShowConversationButDoesNotCallBack_ForPushNotificationCategoryMissedCallWithCallBackAction() {
         // given
-        simulateLoggedInUser()
-        createSelfClient()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            self.createSelfClient()
+        }
 
         let userInfo = userInfoWithConversation()
         let callCenter = createCallCenter()
@@ -177,7 +183,9 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItDoesNotCallShowConversationAndAppendsAMessage_ForPushNotificationCategoryConversationWithDirectReplyAction() {
         // given
-        simulateLoggedInUser()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+        }
         sut.applicationStatusDirectory.operationStatus.isInBackground = true
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
@@ -192,7 +200,9 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithDirectReplyAction() async throws {
         // given
-        self.simulateLoggedInUser()
+        syncMOC.performAndWait {
+            self.simulateLoggedInUser()
+        }
         self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
@@ -219,7 +229,9 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithLikeAction() throws {
         // given
-        self.simulateLoggedInUser()
+        syncMOC.performAndWait {
+            self.simulateLoggedInUser()
+        }
         self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
@@ -246,8 +258,9 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatOnLaunchItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {
         // given
-        simulateLoggedInUser()
-
+        syncMOC.performAndWait {
+            self.simulateLoggedInUser()
+        }
         // when
         handle(conversationAction: nil, category: .conversation, userInfo: NotificationUserInfo())
 
@@ -257,7 +270,9 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatOnLaunchItCallsShowConversationConversation_ForPushNotificationCategoryConversation() {
         // given
-        simulateLoggedInUser()
+        syncMOC.performAndWait {
+            self.simulateLoggedInUser()
+        }
 
         let userInfo = userInfoWithConversation()
 

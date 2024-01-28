@@ -90,7 +90,9 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatItNotfiesTheTransportSessionWhenSelfUserClientIsRegistered() {
         // given
-        let userClient = createSelfClient()
+        let userClient = syncMOC.performAndWait {
+            self.createSelfClient()
+        }
 
         // when
         sut.didRegisterSelfUserClient(userClient)
