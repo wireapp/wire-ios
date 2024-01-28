@@ -540,7 +540,9 @@
 - (void)testThatItForwardsNoticeNotificationsToThePushNotificationStatus
 {
     // given
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
 
     NSUUID *notificationID = NSUUID.timeBasedUUID;
@@ -557,7 +559,9 @@
 - (void)testThatItCallsCompletionHandlerWhenEventsAreDownloaded
 {
     // given
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSUUID *notificationID = NSUUID.timeBasedUUID;
@@ -579,7 +583,9 @@
 - (void)testThatItCallsCompletionHandlerAfterCallEventsHaveBeenProcessed
 {
     // given
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSUUID *notificationID = NSUUID.timeBasedUUID;
