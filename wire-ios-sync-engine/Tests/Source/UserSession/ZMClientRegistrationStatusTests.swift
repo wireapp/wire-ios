@@ -106,6 +106,7 @@ extension ZMClientRegistrationStatusTests {
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.emailAddress = "email@domain.com"
+            selfUser.handle = "handle"
 
             // then
             XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
@@ -118,6 +119,7 @@ extension ZMClientRegistrationStatusTests {
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.emailAddress = "email@domain.com"
+            selfUser.handle = "handle"
 
             // when
             sut.willGeneratePrekeys()
@@ -133,6 +135,7 @@ extension ZMClientRegistrationStatusTests {
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.emailAddress = "email@domain.com"
+            selfUser.handle = "handle"
             let selfUserClient = createSelfClient()
             selfUserClient.remoteIdentifier = "clientID"
 
@@ -173,6 +176,7 @@ extension ZMClientRegistrationStatusTests {
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.emailAddress = "email@domain.com"
+            selfUser.handle = "handle"
             sut.willGeneratePrekeys()
 
             // when

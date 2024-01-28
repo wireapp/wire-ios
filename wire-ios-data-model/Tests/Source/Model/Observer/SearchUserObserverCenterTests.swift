@@ -266,7 +266,7 @@ class SearchUserObserverCenterTests: ModelObjectsTests {
             expectation.fulfill()
         }
 
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             // when
             user.name = "Horst"
             let changeInfo = UserChangeInfo(object: user)
@@ -295,7 +295,7 @@ class SearchUserObserverCenterTests: ModelObjectsTests {
             expectation.fulfill()
         }
 
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             // when
             searchUser.updateImageData(for: .complete, imageData: verySmallJPEGData())
 

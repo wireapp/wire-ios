@@ -555,7 +555,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItRefetchesRolesIfNoRoles() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -575,7 +575,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItRefetchesRolesIfRolesAreEmpty() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -596,7 +596,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItDoesNotRefetchRolesIfRolesAreNotEmpty() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()

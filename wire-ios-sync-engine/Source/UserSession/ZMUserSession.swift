@@ -262,6 +262,10 @@ public class ZMUserSession: NSObject {
                                         proteusProvider: proteusProvider)
     }()
 
+    public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
+        ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
+    }()
+
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
@@ -512,6 +516,7 @@ public class ZMUserSession: NSObject {
         recurringActionService.registerAction(refreshUsersMissingMetadataAction)
         recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
+        recurringActionService.registerAction(refreshTeamMetadataAction)
     }
 
     func startRequestLoopTracker() {

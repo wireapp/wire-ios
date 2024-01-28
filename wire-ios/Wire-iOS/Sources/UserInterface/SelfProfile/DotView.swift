@@ -70,7 +70,7 @@ final class DotView: UIView {
     }
 
     private func createConstraints() {
-        [self, circleView, centerView].prepareForLayout()
+        [self, circleView, centerView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let centerViewConstraints = centerView.fitInConstraints(view: self, inset: 1)
 

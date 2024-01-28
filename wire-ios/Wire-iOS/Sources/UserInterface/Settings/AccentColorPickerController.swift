@@ -21,7 +21,7 @@ import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
-protocol ColorPickerControllerDelegate {
+protocol ColorPickerControllerDelegate: AnyObject {
     func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor)
     func colorPickerWantsToDismiss(_ colotPicker: ColorPickerController)
 }
@@ -33,7 +33,7 @@ class ColorPickerController: UIViewController {
 
     fileprivate let colors: [AccentColor]
     fileprivate var selectedColor: AccentColor?
-    fileprivate var delegate: ColorPickerControllerDelegate?
+    fileprivate weak var delegate: ColorPickerControllerDelegate?
 
     init(colors: [AccentColor]) {
         self.colors = colors
@@ -63,7 +63,7 @@ class ColorPickerController: UIViewController {
     }
 
     private func createConstraints() {
-        [tableView].prepareForLayout()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -130,7 +130,7 @@ class ColorPickerController: UIViewController {
         }
 
         private func createConstraints() {
-            [checkmarkView, colorView, colorNameLabel].prepareForLayout()
+            [checkmarkView, colorView, colorNameLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             NSLayoutConstraint.activate([
                 colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
                 colorView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
