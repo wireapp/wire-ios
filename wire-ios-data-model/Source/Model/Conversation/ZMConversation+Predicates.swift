@@ -103,9 +103,12 @@ extension ZMConversation {
     class func predicateForGroupConversations() -> NSPredicate {
         let groupConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let notInFolderPredicate = NSCompoundPredicate(notPredicateWithSubpredicate: predicateForConversationsInFolders())
-        let notTeamOneToOneConveration = NSCompoundPredicate(notPredicateWithSubpredicate: predicateForTeamOneToOneConversation())
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), groupConversationPredicate, notInFolderPredicate, notTeamOneToOneConveration])
+        return .all(of: [
+            predicateForConversationsExcludingArchived(),
+            groupConversationPredicate,
+            notInFolderPredicate
+        ])
     }
 
     @objc(predicateForLabeledConversations:)
@@ -146,7 +149,7 @@ extension ZMConversation {
     @objc(predicateForOneToOneConversations)
     class func predicateForOneToOneConversations() -> NSPredicate {
         // We consider a conversation to be one-to-one if it's of type .oneToOne, is a team 1:1 or an outgoing connection request.
-        let oneToOneConversationPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicateForOneToOneConversation(), predicateForTeamOneToOneConversation(), predicateForUnconnectedConversations()])
+        let oneToOneConversationPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicateForOneToOneConversation(), predicateForUnconnectedConversations()])
         let notInFolderPredicate = NSCompoundPredicate(notPredicateWithSubpredicate: predicateForConversationsInFolders())
 
         return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), oneToOneConversationPredicate, notInFolderPredicate])
@@ -202,12 +205,18 @@ extension ZMConversation {
 
     private class func isValidOneOnOne() -> NSPredicate {
         let isOneOneOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let hasOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) != NULL")
         let isConnectionAccepted = NSPredicate(format: "\(ZMConversationOneOnOneUserKey).connection.status == \(ZMConnectionStatus.accepted.rawValue)")
-        return .all(of: [isOneOneOne, isConnectionAccepted])
+        let isInSelfTeam = NSPredicate(format: "\(#keyPath(ZMConversation.team)) != NULL")
+        return isOneOneOne.and(hasOneOnOneUser).and(isConnectionAccepted.or(isInSelfTeam))
     }
 
     private class func isValidGroup() -> NSPredicate {
-        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        let isGroup = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        // Fake 1:1 conversations are actually groups, so we check
+        // whether this group has a one on one user to filter it out.
+        let hasNoOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) == NULL")
+        return isGroup.and(hasNoOneOnOneUser)
     }
 
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {

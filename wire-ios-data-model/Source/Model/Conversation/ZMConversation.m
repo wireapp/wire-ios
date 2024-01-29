@@ -453,7 +453,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMConversationType conversationType = [self internalConversationType];
     
     // Exception: the group conversation is considered a 1-1 if:
-    // 1. Belongs to the team.
+    // 1. Belongs to the self team.
     // 2. Has no name given.
     // 3. Conversation has only one other participant.
 
@@ -461,7 +461,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     // local participant roles, so check its count first to avoid unncessary iterations.
 
     if (conversationType == ZMConversationTypeGroup &&
-        self.teamRemoteIdentifier != nil &&
+        self.team != nil &&
         self.userDefinedName.length == 0 &&
         self.localParticipantRoles.count == 2 &&
         self.localParticipantsExcludingSelf.count == 1)
