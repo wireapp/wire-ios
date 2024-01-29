@@ -22,6 +22,7 @@ import WireCoreCrypto
 public protocol AcmeAPIInterface {
     func getACMEDirectory() async throws -> Data
     func getACMENonce(path: String) async throws -> String
+    func getTrustAnchor() async throws -> String
     func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse
     func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse
 }
@@ -31,6 +32,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     // MARK: - Properties
 
+    private let rootCertificatePath = "roots.pem"
     private let acmeDiscoveryPath: String
     private let httpClient: HttpClientCustom
 
@@ -74,6 +76,28 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
         return replayNonce
 
+    }
+
+    public func getTrustAnchor() async throws -> String {
+        guard
+            let baseURL = URL(string: acmeDiscoveryPath)?.extractBaseURL,
+            let url = URL(string: rootCertificatePath, relativeTo: baseURL)
+        else {
+            throw NetworkError.errorEncodingRequest
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.get
+
+        let (data, response) = try await httpClient.send(request)
+
+        guard
+            let certificateChain = String(bytes: data, encoding: .utf8)
+        else {
+            throw NetworkError.errorDecodingResponseNew(response)
+        }
+
+        return certificateChain
     }
 
     public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
@@ -167,4 +191,12 @@ public class HttpClientE2EI: NSObject, HttpClientCustom {
         return try await URLSession.shared.data(for: request)
     }
 
+}
+
+extension URL {
+    var extractBaseURL: URL? {
+        var baseURL = URLComponents(url: self, resolvingAgainstBaseURL: false)
+        baseURL?.path = ""
+        return baseURL?.url
+    }
 }

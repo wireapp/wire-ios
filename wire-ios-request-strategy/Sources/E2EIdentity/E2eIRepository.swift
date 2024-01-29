@@ -21,6 +21,8 @@ import WireCoreCrypto
 
 public protocol E2eIRepositoryInterface {
 
+    func fetchTrustAnchor() async throws
+
     func createEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String, team: UUID) async throws -> E2eIEnrollmentInterface
 }
 
@@ -44,6 +46,11 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         self.e2eiSetupService = e2eiSetupService
         self.keyRotator = keyRotator
         self.coreCryptoProvider = coreCryptoProvider
+    }
+
+    public func fetchTrustAnchor() async throws {
+        let trustAnchor = try await acmeApi.getTrustAnchor()
+        try await e2eiSetupService.registerTrustAnchor(trustAnchor)
     }
 
     public func createEnrollment(
