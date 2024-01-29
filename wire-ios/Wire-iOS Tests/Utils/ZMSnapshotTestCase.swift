@@ -333,22 +333,6 @@ extension ZMSnapshotTestCase {
         }
     }
 
-    func verifyInAllTabletWidths(view: UIView,
-                                 extraLayoutPass: Bool = false,
-                                 configuration: ((UIView) -> Swift.Void)? = nil,
-                                 file: StaticString = #file,
-                                 line: UInt = #line) {
-        assertAmbigousLayout(view, file: file, line: line)
-        for width in tabletWidths() {
-            verifyView(view: view,
-                       extraLayoutPass: extraLayoutPass,
-                       width: width,
-                       configuration: configuration,
-                       file: file,
-                       line: line)
-        }
-    }
-
     /// verify the snapshot with default iphone size
     ///
     /// - Parameters:
