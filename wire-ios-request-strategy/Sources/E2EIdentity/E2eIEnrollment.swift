@@ -165,6 +165,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
             let challenge = try await e2eiService.setAuthzResponse(authz: apiResponse.response)
 
             return AcmeAuthorization(nonce: apiResponse.nonce,
+                                     location: apiResponse.location,
                                      response: apiResponse.response,
                                      challengeType: apiResponse.challengeType,
                                      newAcmeAuthz: challenge)

@@ -164,6 +164,18 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     }
 
+    private struct AuthorizationResponse: Decodable {
+
+        var challenges: [AuthorizationChallenge]
+
+    }
+
+    private struct AuthorizationChallenge: Decodable {
+
+        var type: AuthorizationChallengeType
+
+    }
+
 }
 
 enum HeaderKey {

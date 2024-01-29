@@ -214,6 +214,7 @@ class AcmeAPITests: ZMTBaseTest {
                                             url: "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcap/1pceubr",
                                             status: "pending",
                                             token: "NEi1HaRRYqM0R9cGZaHdv0dBWIkRbyCY",
+                                            target: "target",
                                             nonce: headerNonce)
 
         // given

@@ -45,18 +45,6 @@ public struct ACMEAuthorizationResponse: Equatable {
 
 }
 
-struct AuthorizationResponse: Decodable {
-
-    var challenges: [AuthorizationChallenge]
-
-}
-
-struct AuthorizationChallenge: Decodable {
-
-    var type: AuthorizationChallengeType
-
-}
-
 enum AuthorizationChallengeType: String, Decodable {
 
     case DPoP = "wire-dpop-01"
