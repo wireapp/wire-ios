@@ -39,7 +39,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -54,7 +54,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -69,7 +69,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -84,7 +84,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -105,7 +105,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -127,7 +127,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -149,7 +149,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -171,7 +171,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -193,7 +193,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -212,7 +212,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -233,7 +233,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
     }
 
     func testThatItRendersEmojiInLargeFont_33() {
@@ -246,7 +246,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -262,7 +262,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -280,7 +280,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -296,7 +296,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -311,7 +311,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -326,7 +326,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -341,7 +341,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -356,7 +356,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -374,7 +374,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -390,7 +390,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -406,7 +406,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -421,7 +421,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -436,7 +436,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -450,7 +450,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -462,7 +462,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         let cell = makeCell(for: message)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -480,7 +480,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         cell.container.touchesBegan([], with: nil)
 
         // THEN
-        verifyInAllPhoneWidths(view: cell)
+        verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
 
@@ -494,7 +494,12 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         return cell
     }
 
-    private func verifyAccessibilityIdentifiers(_ cell: ConversationReplyCell, _ message: ZMConversationMessage?, file: StaticString = #file, line: UInt = #line) {
+    private func verifyAccessibilityIdentifiers(
+        _ cell: ConversationReplyCell,
+        _ message: ZMConversationMessage?,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         let contentView = cell.contentView
 
         // Structure
