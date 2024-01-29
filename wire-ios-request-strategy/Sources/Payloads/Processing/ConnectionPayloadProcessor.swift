@@ -68,11 +68,15 @@ final class ConnectionPayloadProcessor {
         if previousStatus == .pending, connection.status == .accepted {
             // Execute after 3 seconds
             Task {
-                let resolver = OneOnOneResolver(syncContext: context)
-
-                try! await resolver?.resolveOneOnOneConversation(with: payload.qualifiedTo!, in: context)
+                if let resolver = OneOnOneResolver(syncContext: context) {
+                    try? await resolver.resolveOneOnOneConversation(with: payload.qualifiedTo!, in: context)
+                } else {
+                    // Debugging check - will not be included in production
+                    assertionFailure("OneOnOneResolver initialization failed")
+                }
             }
         }
+
         connection.lastUpdateDateInGMT = payload.lastUpdate
     }
 
