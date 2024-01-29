@@ -19,14 +19,16 @@
 import XCTest
 
 class ConversationTests_List: ConversationTestsBase {
-    func testThatTheConversationListOrderIsUpdatedAsWeReceiveMessages() {
+    func testThatTheConversationListOrderIsUpdatedAsWeReceiveMessages() throws {
         XCTAssertTrue(login())
 
         // given
         var mockExtraConversation: MockConversation?
 
+        let user1 = try XCTUnwrap(user1)
+        let user2 = try XCTUnwrap(user2)
         self.mockTransportSession.performRemoteChanges { (session) in
-            mockExtraConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [self.user1, self.user2])
+            mockExtraConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [user1, user2])
             mockExtraConversation?.changeName(by: self.selfUser, name: "Extra conversation")
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
