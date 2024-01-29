@@ -31,7 +31,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
         syncMOC.performGroupedAndWait { syncMOC in
             // Given
             BackendInfo.isFederationEnabled = false
-            let groupID = MLSGroupID([1, 2, 3])
+            let groupID = MLSGroupID(.init([1, 2, 3]))
             let conversation = groupID.createConversation(in: syncMOC)
 
             // When
@@ -46,7 +46,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
         syncMOC.performGroupedAndWait { syncMOC in
             // Given
             BackendInfo.isFederationEnabled = true
-            let groupID = MLSGroupID([1, 2, 3])
+            let groupID = MLSGroupID(.init([1, 2, 3]))
             let conversation = groupID.createConversation(in: syncMOC)
 
             // When
@@ -61,7 +61,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
         try syncMOC.performAndWait { [self] in
             // Given
             BackendInfo.isFederationEnabled = false
-            let groupID = MLSGroupID([1, 2, 3])
+            let groupID = MLSGroupID(.init([1, 2, 3]))
             let pendingConversation = groupID.createConversation(in: syncMOC)
             pendingConversation.mlsStatus = .pendingJoin
             let readyConversation = groupID.createConversation(in: syncMOC)

@@ -46,7 +46,7 @@ public protocol SessionActivationObserver: AnyObject {
     func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
 
-public protocol SessionManagerDelegate: SessionActivationObserver {
+public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLogin(error: Error?)
     func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
     func sessionManagerWillOpenAccount(_ account: Account,
@@ -932,12 +932,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             self?.delegate?.sessionManagerDidReportLockChange(forSession: session)
         }
 
-        accountTokens[account.userIdentifier] = [teamObserver,
-                                                 selfObserver!,
-                                                 conversationListObserver,
-                                                 connectionRequestObserver,
-                                                 unreadCountObserver,
-                                                 databaseEncryptionObserverToken
+        accountTokens[account.userIdentifier] = [
+            teamObserver,
+            selfObserver!,
+            conversationListObserver,
+            connectionRequestObserver,
+            unreadCountObserver,
+            databaseEncryptionObserverToken
         ]
     }
 

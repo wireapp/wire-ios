@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -130,6 +130,198 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
         }
 
         mock(id)
+    }
+
+}
+
+public class MockUserProfile: UserProfile {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - lastSuggestedHandle
+
+    public var lastSuggestedHandle: String?
+
+
+    // MARK: - requestPhoneVerificationCode
+
+    public var requestPhoneVerificationCodePhoneNumber_Invocations: [String] = []
+    public var requestPhoneVerificationCodePhoneNumber_MockMethod: ((String) -> Void)?
+
+    public func requestPhoneVerificationCode(phoneNumber: String) {
+        requestPhoneVerificationCodePhoneNumber_Invocations.append(phoneNumber)
+
+        guard let mock = requestPhoneVerificationCodePhoneNumber_MockMethod else {
+            fatalError("no mock for `requestPhoneVerificationCodePhoneNumber`")
+        }
+
+        mock(phoneNumber)
+    }
+
+    // MARK: - requestPhoneNumberChange
+
+    public var requestPhoneNumberChangeCredentials_Invocations: [ZMPhoneCredentials] = []
+    public var requestPhoneNumberChangeCredentials_MockMethod: ((ZMPhoneCredentials) -> Void)?
+
+    public func requestPhoneNumberChange(credentials: ZMPhoneCredentials) {
+        requestPhoneNumberChangeCredentials_Invocations.append(credentials)
+
+        guard let mock = requestPhoneNumberChangeCredentials_MockMethod else {
+            fatalError("no mock for `requestPhoneNumberChangeCredentials`")
+        }
+
+        mock(credentials)
+    }
+
+    // MARK: - requestPhoneNumberRemoval
+
+    public var requestPhoneNumberRemoval_Invocations: [Void] = []
+    public var requestPhoneNumberRemoval_MockMethod: (() -> Void)?
+
+    public func requestPhoneNumberRemoval() {
+        requestPhoneNumberRemoval_Invocations.append(())
+
+        guard let mock = requestPhoneNumberRemoval_MockMethod else {
+            fatalError("no mock for `requestPhoneNumberRemoval`")
+        }
+
+        mock()
+    }
+
+    // MARK: - requestEmailChange
+
+    public var requestEmailChangeEmail_Invocations: [String] = []
+    public var requestEmailChangeEmail_MockError: Error?
+    public var requestEmailChangeEmail_MockMethod: ((String) throws -> Void)?
+
+    public func requestEmailChange(email: String) throws {
+        requestEmailChangeEmail_Invocations.append(email)
+
+        if let error = requestEmailChangeEmail_MockError {
+            throw error
+        }
+
+        guard let mock = requestEmailChangeEmail_MockMethod else {
+            fatalError("no mock for `requestEmailChangeEmail`")
+        }
+
+        try mock(email)
+    }
+
+    // MARK: - requestSettingEmailAndPassword
+
+    public var requestSettingEmailAndPasswordCredentials_Invocations: [ZMEmailCredentials] = []
+    public var requestSettingEmailAndPasswordCredentials_MockError: Error?
+    public var requestSettingEmailAndPasswordCredentials_MockMethod: ((ZMEmailCredentials) throws -> Void)?
+
+    public func requestSettingEmailAndPassword(credentials: ZMEmailCredentials) throws {
+        requestSettingEmailAndPasswordCredentials_Invocations.append(credentials)
+
+        if let error = requestSettingEmailAndPasswordCredentials_MockError {
+            throw error
+        }
+
+        guard let mock = requestSettingEmailAndPasswordCredentials_MockMethod else {
+            fatalError("no mock for `requestSettingEmailAndPasswordCredentials`")
+        }
+
+        try mock(credentials)
+    }
+
+    // MARK: - cancelSettingEmailAndPassword
+
+    public var cancelSettingEmailAndPassword_Invocations: [Void] = []
+    public var cancelSettingEmailAndPassword_MockMethod: (() -> Void)?
+
+    public func cancelSettingEmailAndPassword() {
+        cancelSettingEmailAndPassword_Invocations.append(())
+
+        guard let mock = cancelSettingEmailAndPassword_MockMethod else {
+            fatalError("no mock for `cancelSettingEmailAndPassword`")
+        }
+
+        mock()
+    }
+
+    // MARK: - requestCheckHandleAvailability
+
+    public var requestCheckHandleAvailabilityHandle_Invocations: [String] = []
+    public var requestCheckHandleAvailabilityHandle_MockMethod: ((String) -> Void)?
+
+    public func requestCheckHandleAvailability(handle: String) {
+        requestCheckHandleAvailabilityHandle_Invocations.append(handle)
+
+        guard let mock = requestCheckHandleAvailabilityHandle_MockMethod else {
+            fatalError("no mock for `requestCheckHandleAvailabilityHandle`")
+        }
+
+        mock(handle)
+    }
+
+    // MARK: - requestSettingHandle
+
+    public var requestSettingHandleHandle_Invocations: [String] = []
+    public var requestSettingHandleHandle_MockMethod: ((String) -> Void)?
+
+    public func requestSettingHandle(handle: String) {
+        requestSettingHandleHandle_Invocations.append(handle)
+
+        guard let mock = requestSettingHandleHandle_MockMethod else {
+            fatalError("no mock for `requestSettingHandleHandle`")
+        }
+
+        mock(handle)
+    }
+
+    // MARK: - cancelSettingHandle
+
+    public var cancelSettingHandle_Invocations: [Void] = []
+    public var cancelSettingHandle_MockMethod: (() -> Void)?
+
+    public func cancelSettingHandle() {
+        cancelSettingHandle_Invocations.append(())
+
+        guard let mock = cancelSettingHandle_MockMethod else {
+            fatalError("no mock for `cancelSettingHandle`")
+        }
+
+        mock()
+    }
+
+    // MARK: - suggestHandles
+
+    public var suggestHandles_Invocations: [Void] = []
+    public var suggestHandles_MockMethod: (() -> Void)?
+
+    public func suggestHandles() {
+        suggestHandles_Invocations.append(())
+
+        guard let mock = suggestHandles_MockMethod else {
+            fatalError("no mock for `suggestHandles`")
+        }
+
+        mock()
+    }
+
+    // MARK: - add
+
+    public var addObserver_Invocations: [UserProfileUpdateObserver] = []
+    public var addObserver_MockMethod: ((UserProfileUpdateObserver) -> Any)?
+    public var addObserver_MockValue: Any?
+
+    @objc(addObserver:)
+    public func add(observer: UserProfileUpdateObserver) -> Any {
+        addObserver_Invocations.append(observer)
+
+        if let mock = addObserver_MockMethod {
+            return mock(observer)
+        } else if let mock = addObserver_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `addObserver`")
+        }
     }
 
 }

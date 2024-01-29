@@ -68,8 +68,9 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             let keyPackagesExcludingSelfClient = payload.keyPackages.filter {
                 $0.client != action.excludedSelfClientId
             }
-
-            guard keyPackagesExcludingSelfClient.isNonEmpty else {
+            let selfUser = ZMUser.selfUser(in: context)
+            let isSelfUserRequesting = selfUser.remoteIdentifier == action.userId && selfUser.domain == action.domain
+            guard isSelfUserRequesting || keyPackagesExcludingSelfClient.isNonEmpty else {
                 return action.fail(with: .emptyKeyPackages)
             }
 
