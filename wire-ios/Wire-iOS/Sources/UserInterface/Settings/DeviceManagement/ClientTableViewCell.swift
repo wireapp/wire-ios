@@ -35,10 +35,7 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
                                         color: LabelColors.textCellSubtitle)
     let proteusIdLabel = DynamicFontLabel(style: .caption1,
                                             color: LabelColors.textCellSubtitle)
-    let proteusVerficiationStatusImageView = UIImageView()
-
-    private let verifiedImage = Asset.Images.verifiedShield.image.resizableImage(withCapInsets: .zero)
-
+    let statusStackView = UIStackView()
     var showLabel: Bool = false {
         didSet {
             updateLabel()
@@ -47,15 +44,25 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
 
     var viewModel: ClientTableViewCellModel? {
         didSet {
-            guard let viewModel = viewModel else { return }
-            nameLabel.text = viewModel.title
-            proteusIdLabel.text = viewModel.proteusLabelText
-            mlsThumbprintLabel.text = viewModel.mlsThumbprintLabelText
-            proteusVerficiationStatusImageView.image = viewModel.isProteusVerified ? verifiedImage : .none
-            updateLabel()        }
+            nameLabel.text = viewModel?.title
+            proteusIdLabel.text = viewModel?.proteusLabelText
+            mlsThumbprintLabel.text = viewModel?.mlsThumbprintLabelText
+            statusStackView.removeArrangedSubviews()
+            if let e2eIdentityStatusImage = viewModel?.e2eIdentityStatus?.uiImage {
+                statusStackView.addArrangedSubview(UIImageView(image: e2eIdentityStatusImage))
+            }
+            if viewModel?.isProteusVerified ?? false {
+                statusStackView.addArrangedSubview(UIImageView(image: verifiedImage))
+            }
+            updateLabel()
+        }
     }
 
     var wr_editable: Bool
+
+    private let verifiedImage = Asset.Images.verifiedShield.image.resizableImage(withCapInsets: .zero)
+    private var mlsInfoHeighConstraint: NSLayoutConstraint { mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 0)
+    }
 
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -98,12 +105,11 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             labelLabel,
             proteusIdLabel,
             mlsThumbprintLabel,
-            proteusVerficiationStatusImageView
+            statusStackView
         ].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(view)
         }
-
         // Setting the constraints for the view
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
@@ -114,10 +120,9 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             labelLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             labelLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
 
-            proteusVerficiationStatusImageView.topAnchor.constraint(equalTo: nameLabel.topAnchor),
-            proteusVerficiationStatusImageView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: 8),
-            proteusVerficiationStatusImageView.heightAnchor.constraint(equalToConstant: 16),
-            proteusVerficiationStatusImageView.widthAnchor.constraint(equalToConstant: 16),
+            statusStackView.topAnchor.constraint(equalTo: nameLabel.topAnchor, constant: 2),
+            statusStackView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: 4),
+            statusStackView.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
 
             mlsThumbprintLabel.topAnchor.constraint(equalTo: labelLabel.bottomAnchor, constant: 4),
             mlsThumbprintLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
@@ -128,6 +133,8 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             proteusIdLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
             proteusIdLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
+        statusStackView.axis = .horizontal
+        statusStackView.spacing = 4
     }
 
     private func updateLabel() {
@@ -140,6 +147,11 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
 
     func redrawFont() {
         updateLabel()
+    }
+
+    override func prepareForReuse() {
+        viewModel = nil
+        super.prepareForReuse()
     }
 }
 
@@ -157,9 +169,11 @@ extension ClientTableViewCellModel {
         let mlsThumbPrint = userClient.mlsPublicKeys.ed25519?.fingerprintStringWithSpaces ?? ""
         let mlsThumbprintLabelText = mlsThumbPrint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
 
-        return .init(title: title, label: userClient.label ?? "",
+        return .init(title: title,
+                     label: userClient.label ?? "",
                      proteusLabelText: proteusIdLabelText,
                      mlsThumbprintLabelText: mlsThumbprintLabelText,
-                     isProteusVerified: isProteusVerified)
+                     isProteusVerified: isProteusVerified,
+                     e2eIdentityStatus: userClient.e2eIdentityCertificate?.status)
     }
 }
