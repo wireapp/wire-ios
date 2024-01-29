@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - MockLongPressGestureRecognizer
+
 final class MockLongPressGestureRecognizer: UILongPressGestureRecognizer {
     let mockState: UIGestureRecognizer.State
     var mockLocation: CGPoint?
@@ -42,11 +44,17 @@ final class MockLongPressGestureRecognizer: UILongPressGestureRecognizer {
     }
 }
 
+// MARK: - ConversationInputBarViewControllerAudioRecorderSnapshotTests
+
 final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDataSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: ConversationInputBarViewController!
     var mockLongPressGestureRecognizer: MockLongPressGestureRecognizer!
     var userSession: UserSessionMock!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -58,12 +66,16 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
         mockLongPressGestureRecognizer = MockLongPressGestureRecognizer(location: .zero, state: .began)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         mockLongPressGestureRecognizer = nil
         userSession = nil
         super.tearDown()
     }
+
+    // MARK: - Helpers
 
     func longPressChanged() {
         let changedGestureRecognizer = MockLongPressGestureRecognizer(location: CGPoint(x: 0, y: -30), state: .changed)
@@ -74,6 +86,8 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
         let endedGestureRecognizer = MockLongPressGestureRecognizer(location: .zero, state: .ended)
         sut.audioButtonLongPressed(endedGestureRecognizer)
     }
+
+    // MARK: - Snapshot Tests
 
     func testAudioRecorderTouchBegan() {
         // GIVEN & THEN
@@ -109,4 +123,5 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
             self.longPressEnded()
         })
     }
+
 }
