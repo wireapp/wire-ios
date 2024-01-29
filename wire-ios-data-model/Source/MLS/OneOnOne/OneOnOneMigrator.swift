@@ -129,9 +129,12 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
-            // copy local messages
+            // move local messages
             if let proteusConversation = connection.conversation {
+                // Since ZMMessages only have a single conversation connected,
+                // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }

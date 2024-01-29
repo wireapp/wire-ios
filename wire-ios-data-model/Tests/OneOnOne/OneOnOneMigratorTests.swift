@@ -124,7 +124,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         }
     }
 
-    func test_MigrateToMLS_CopyMessages() async throws {
+    func test_MigrateToMLS_MoveMessages() async throws {
         // Given
         let userID: QualifiedID = .random()
         let mlsGroupID: MLSGroupID = .random()
@@ -138,6 +138,11 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         let mockMessage = "Hello World!"
         try await uiMOC.perform {
             _ = try proteusConversation.appendText(content: mockMessage)
+
+            let lastProteusMessage = proteusConversation.lastMessage?.textMessageData?.messageText
+            XCTAssertEqual(lastProteusMessage, mockMessage)
+
+            XCTAssertNil(mlsConversation.lastMessage)
         }
 
         // Mock
@@ -158,6 +163,8 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         await uiMOC.perform {
             let lastMLSMessage = mlsConversation.lastMessage?.textMessageData?.messageText
             XCTAssertEqual(lastMLSMessage, mockMessage)
+
+            XCTAssertNil(proteusConversation.lastMessage)
         }
     }
 
