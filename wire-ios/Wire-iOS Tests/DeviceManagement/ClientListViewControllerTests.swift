@@ -55,7 +55,12 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
     /// - Parameters:
     /// - userInterfaceStyle: the color for UIUserInterfaceStyle
     /// - numberOfClients: number of clients other than self device. Default: display 3 cells, to show footer in same screen
-    func prepareSut(userInterfaceStyle: UIUserInterfaceStyle = .light, numberOfClients: Int = 3) {
+    func prepareSut(
+        userInterfaceStyle: UIUserInterfaceStyle = .light,
+        numberOfClients: Int = 3,
+        shouldDisplayMLSInfo: Bool = true,
+        isProteusVerified: Bool = true
+    ) {
         var clientsList: [UserClient]?
 
         for _ in 0 ..< numberOfClients {
@@ -65,12 +70,19 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
             clientsList?.append(client)
         }
 
-        sut = ClientListViewController(clientsList: clientsList,
+        sut = ClientListViewController(clientsList: Array(repeating: mockUserClient(), count: numberOfClients),
                                        selfClient: selfClient,
                                        credentials: nil,
                                        detailedView: true,
                                        showTemporary: true)
 
+        let mockFingerPrint = shouldDisplayMLSInfo ? .mockFingerPrint : ""
+        sut.selfClientClientTableViewCellModel = .mock(
+            isProteusVerified: isProteusVerified,
+            mlsThumbprint: mockFingerPrint)
+        sut.clientTableViewCellModels = Array(repeating: .mock(isProteusVerified: isProteusVerified,
+                                                               mlsThumbprint: mockFingerPrint),
+                                              count: numberOfClients)
         sut.isLoadingViewVisible = false
         sut.overrideUserInterfaceStyle = userInterfaceStyle
     }
@@ -131,4 +143,41 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
 
         verify(matching: navWrapperController)
     }
+
+    func testThatMLSInfoIsHidden_whenMlsInfoIsNotAvailable() {
+        prepareSut(shouldDisplayMLSInfo: false)
+    }
+
+    func testThatMLSInfoIsHidden_whenMlsInfoIsNotAvailable_inDarkMode() {
+        prepareSut(userInterfaceStyle: .dark, shouldDisplayMLSInfo: false)
+        verify(matching: sut)
+    }
+
+    func testThatProteusBadgeIsNotDisplayed_whenProteusIsNotVerified() {
+        prepareSut(isProteusVerified: false)
+        verify(matching: sut)
+    }
+
+    func testThatProteusBadgeIsNotDisplayed_whenProteusIsNotVerified_inDarkMode() {
+        prepareSut(userInterfaceStyle: .dark, isProteusVerified: false)
+        verify(matching: sut)
+    }
+}
+
+extension ClientTableViewCellModel {
+    typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
+
+    static func mock(title: String = "Lorem ipsum",
+                     label: String =  "Lorem ipsum",
+                     isProteusVerified: Bool,
+                     mlsThumbprint: String = .mockFingerPrint,
+                     proteusId: String = .mockProteusId
+    ) -> Self {
+        return .init(title: title,
+                     label: label,
+                     proteusLabelText: proteusId.isNonEmpty ? DeviceDetailsSection.Proteus.value(proteusId) : "",
+                     mlsThumbprintLabelText: mlsThumbprint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbprint) : "",
+                     isProteusVerified: isProteusVerified)
+    }
+
 }

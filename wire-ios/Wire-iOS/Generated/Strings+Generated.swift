@@ -2824,6 +2824,10 @@ internal enum L10n {
           internal enum Mls {
             /// MLS with Ed25519 Signature
             internal static let signature = L10n.tr("Localizable", "device.details.section.mls.signature", fallback: "MLS with Ed25519 Signature")
+            /// MLS Thumbprint: %@
+            internal static func thumbprint(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "device.details.section.mls.thumbprint", String(describing: p1), fallback: "MLS Thumbprint: %@")
+            }
             /// MLS Thumbprint
             internal static let title = L10n.tr("Localizable", "device.details.section.mls.title", fallback: "MLS Thumbprint")
           }
@@ -2836,6 +2840,10 @@ internal enum L10n {
             internal static let keyFingerprint = L10n.tr("Localizable", "device.details.section.proteus.key_fingerprint", fallback: "Proteus Key Fingerprint")
             /// PROTEUS DEVICE DETAILS
             internal static let title = L10n.tr("Localizable", "device.details.section.proteus.title", fallback: "PROTEUS DEVICE DETAILS")
+            /// Proteus ID: %@
+            internal static func value(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "device.details.section.proteus.value", String(describing: p1), fallback: "Proteus ID: %@")
+            }
           }
         }
       }

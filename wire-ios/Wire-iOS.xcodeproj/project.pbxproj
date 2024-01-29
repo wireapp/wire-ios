@@ -259,6 +259,7 @@
 		2577CB6A2B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB692B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift */; };
 		2577CB7B2B1DC787007D3443 /* DeviceMLSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */; };
 		2577CB822B1DFF66007D3443 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB812B1DFF66007D3443 /* ViewConstants.swift */; };
+		25B236922B67A97E00EDB479 /* ClientTableViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B236912B67A97E00EDB479 /* ClientTableViewCellModel.swift */; };
 		4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		40C69D702A8627C900376B1C /* TemporaryFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D6F2A8627C900376B1C /* TemporaryFileService.swift */; };
@@ -2277,6 +2278,7 @@
 		2577CB692B18DB8F007D3443 /* DeveloperDeviceDetailsSettingsSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDeviceDetailsSettingsSelectionViewModel.swift; sourceTree = "<group>"; };
 		2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceMLSView.swift; sourceTree = "<group>"; };
 		2577CB812B1DFF66007D3443 /* ViewConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstants.swift; sourceTree = "<group>"; };
+		25B236912B67A97E00EDB479 /* ClientTableViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTableViewCellModel.swift; sourceTree = "<group>"; };
 		2B56189E29A517E800D8CCCA /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2B6F6AB329ACC04A001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityLevelViewTests.swift; sourceTree = "<group>"; };
@@ -5719,6 +5721,7 @@
 				8744D5BD1C41D6C2000F8F93 /* SettingsClientViewController.swift */,
 				87934E111C451C1100186A85 /* FingerprintTableViewCell.swift */,
 				873C5FE41C10426A00D5132A /* ClientTableViewCell.swift */,
+				25B236912B67A97E00EDB479 /* ClientTableViewCellModel.swift */,
 			);
 			path = DeviceManagement;
 			sourceTree = "<group>";
@@ -9246,6 +9249,7 @@
 				16626502217DACBE00300F45 /* ConversationMessageCellTableViewAdapter.swift in Sources */,
 				161B75C820B6BCB50002B0F7 /* ZMUserSession+Calling.swift in Sources */,
 				EFF9404822414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift in Sources */,
+				25B236922B67A97E00EDB479 /* ClientTableViewCellModel.swift in Sources */,
 				EF0154B7225B922200A77FB6 /* ContactsViewController+Constraints.swift in Sources */,
 				871BC2811D34F8F800DF0793 /* String+Fingerprint.swift in Sources */,
 				D3DA6E7B292F67680045CC57 /* CallingActionsView.swift in Sources */,
