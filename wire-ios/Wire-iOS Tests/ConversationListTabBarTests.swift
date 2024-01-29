@@ -29,12 +29,10 @@ final class ConversationListTabBarTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-
-        snapshotBackgroundColor = UIColor(white: 0.2, alpha: 1) // In order to make the separator more visible
         accentColor = .brightYellow
         UIView.performWithoutAnimation({
             self.sut = ConversationListTabBar()
-
+            sut.backgroundColor = UIColor(white: 0.2, alpha: 1) // In order to make the separator more visible
             // SUT has a priority 750 height constraint. fix its height first
             NSLayoutConstraint.activate([
                 sut.heightAnchor.constraint(equalToConstant: 56)
