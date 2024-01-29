@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class LocationSendViewControllerTests: ZMSnapshotTestCase {
+final class LocationSendViewControllerTests: BaseSnapshotTestCase {
 
     var sut: LocationSendViewController! = nil
 
@@ -36,17 +36,17 @@ final class LocationSendViewControllerTests: ZMSnapshotTestCase {
 
     func testThatItRendersSendControllerCorrectly_ShortAddress() {
         sut.address = "Hackescher Markt"
-        verifyInAllPhoneWidths(view: sut.prepareForSnapshot())
+        verifyInAllPhoneWidths(matching: sut.prepareForSnapshot())
     }
 
     func testThatItRendersSendControllerCorrectly_MediumAddress() {
         sut.address = "Hackescher Markt, 10178 Berlin"
-        verifyInAllPhoneWidths(view: sut.prepareForSnapshot())
+        verifyInAllPhoneWidths(matching: sut.prepareForSnapshot())
     }
 
     func testThatItRendersSendControllerCorrectly_LongAddress() {
         sut.address = "Hackescher Markt, Rosenthaler Straße 41, 10178 Berlin"
-        verifyInAllPhoneWidths(view: sut.prepareForSnapshot())
+        verifyInAllPhoneWidths(matching: sut.prepareForSnapshot())
     }
 
 }
