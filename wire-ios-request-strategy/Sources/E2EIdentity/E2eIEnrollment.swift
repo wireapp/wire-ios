@@ -33,9 +33,13 @@ public protocol E2eIEnrollmentInterface {
                                                             location: String)
 
     /// Fetch challenges.
-    func createAuthz(prevNonce: String, authzEndpoint: String) async throws -> (challenges: NewAcmeAuthz,
-                                                                                nonce: String,
-                                                                                location: String)
+    func createAuthorization(prevNonce: String,
+                             authzEndpoint: String) async throws -> AcmeAuthorization
+
+    /// Get authorizations
+    func getAuthorizations(prevNonce: String,
+                           authorizationsEndpoints: [String]) async throws -> AuthorizationResult
+
     /// Fetch a nonce from the Wire server.
     func getWireNonce(clientId: String) async throws -> String
 
@@ -151,22 +155,45 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         }
     }
 
-    public func createAuthz(prevNonce: String, authzEndpoint: String) async throws -> (challenges: NewAcmeAuthz,
-                                                                                       nonce: String,
-                                                                                       location: String) {
+    public func createAuthorization(prevNonce: String,
+                                    authzEndpoint: String) async throws -> AcmeAuthorization {
         logger.info("create authz at  \(authzEndpoint)")
 
         do {
             let authzRequest = try await e2eiService.getNewAuthzRequest(url: authzEndpoint, previousNonce: prevNonce)
-            let apiResponse = try await acmeApi.sendACMERequest(path: authzEndpoint, requestBody: authzRequest)
-            let challenges = try await e2eiService.setAuthzResponse(authz: apiResponse.response)
+            let apiResponse = try await acmeApi.sendAuthorizationRequest(path: authzEndpoint, requestBody: authzRequest)
+            let challenge = try await e2eiService.setAuthzResponse(authz: apiResponse.response)
 
-            return (challenges: challenges, nonce: apiResponse.nonce, location: apiResponse.location)
+            return AcmeAuthorization(nonce: apiResponse.nonce,
+                                     response: apiResponse.response,
+                                     challengeType: apiResponse.challengeType,
+                                     newAcmeAuthz: challenge)
         } catch {
             logger.error("failed to create authz: \(error.localizedDescription)")
 
             throw E2EIRepositoryFailure.failedToCreateAuthz(error)
         }
+    }
+
+    public func getAuthorizations(prevNonce: String,
+                                  authorizationsEndpoints: [String]) async throws -> AuthorizationResult {
+        logger.info("get authorizations")
+
+        var challenges: [AuthorizationChallengeType: NewAcmeAuthz] = [:]
+        var nonce = prevNonce
+        try await authorizationsEndpoints.asyncForEach { endpoint in
+            let auth = try await createAuthorization(prevNonce: nonce, authzEndpoint: endpoint)
+            challenges[auth.challengeType] = auth.newAcmeAuthz
+            nonce = auth.nonce
+        }
+
+        guard let oidcChallenge = challenges[.OIDC],
+              let dpopChallenge = challenges[.DPoP] else {
+
+            throw E2EIRepositoryFailure.failedToGetChallenges
+        }
+
+        return AuthorizationResult(oidcAuthorization: oidcChallenge, dpopAuthorization: dpopChallenge, nonce: nonce)
     }
 
     public func getWireNonce(clientId: String) async throws -> String {
@@ -362,6 +389,7 @@ enum E2EIRepositoryFailure: Error {
     case failedToCreateAcmeAccount(_ underlyingError: Error)
     case failedToCreateNewOrder(_ underlyingError: Error)
     case failedToCreateAuthz(_ underlyingError: Error)
+    case failedToGetChallenges
     case failedToGetWireNonce(_ underlyingError: Error)
     case failedToGetDPoPToken(_ underlyingError: Error)
     case failedToGetAccessToken(_ underlyingError: Error)
@@ -383,6 +411,7 @@ public struct ChallengeResponse: Codable, Equatable {
     var url: String
     var status: String
     var token: String
+    var target: String
     var nonce: String
 
 }
@@ -398,5 +427,23 @@ public struct AccessTokenResponse: Decodable, Equatable {
         case token
         case type
     }
+
+}
+
+public struct AuthorizationResult {
+
+    var oidcAuthorization: NewAcmeAuthz
+    var dpopAuthorization: NewAcmeAuthz
+    var nonce: String
+
+}
+
+public struct AcmeAuthorization {
+
+    var nonce: String
+    var location: String?
+    var response: Data
+    var challengeType: AuthorizationChallengeType
+    var newAcmeAuthz: NewAcmeAuthz
 
 }

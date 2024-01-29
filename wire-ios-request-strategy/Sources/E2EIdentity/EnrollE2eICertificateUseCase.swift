@@ -55,20 +55,20 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let acmeNonce = try await enrollment.getACMENonce()
         let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)
         let newOrder = try await enrollment.createNewOrder(prevNonce: newAccountNonce)
-        let authzResponse = try await enrollment.createAuthz(prevNonce: newOrder.nonce,
-                                                             authzEndpoint: newOrder.acmeOrder.authorizations[0])
+        let authorizations = try await enrollment.getAuthorizations(
+            prevNonce: newOrder.nonce,
+            authorizationsEndpoints: newOrder.acmeOrder.authorizations)
+        let oidcAuthorization = authorizations.oidcAuthorization
+        let dPopAuthorization = authorizations.dpopAuthorization
 
-        let oidcChallenge = authzResponse.challenges.wireOidcChallenge
-        let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge
+        let keyauth = oidcAuthorization.keyauth ?? ""
+        let acmeAudience = oidcAuthorization.challenge.url
 
-        let keyauth = authzResponse.challenges.keyauth
-        let acmeAudience = oidcChallenge.url
-
-        guard let identityProvider = URL(string: oidcChallenge.target) else {
+        guard let identityProvider = URL(string: oidcAuthorization.challenge.target) else {
             throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
         }
 
-        guard let clientId = getClientId(from: oidcChallenge.target) else {
+        guard let clientId = getClientId(from: oidcAuthorization.challenge.target) else {
             throw EnrollE2EICertificateUseCaseFailure.missingClientId
         }
 
@@ -81,13 +81,13 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let refreshTokenFromCC = try? await enrollment.getOAuthRefreshToken()
 
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(accessToken: wireAccessToken.token,
-                                                                               prevNonce: authzResponse.nonce,
-                                                                               acmeChallenge: wireDpopChallenge)
+                                                                               prevNonce: authorizations.nonce,
+                                                                               acmeChallenge: dPopAuthorization.challenge)
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(idToken: idToken,
                                                                                refreshToken: refreshTokenFromCC ?? refreshToken,
                                                                                prevNonce: dpopChallengeResponse.nonce,
-                                                                               acmeChallenge: oidcChallenge)
+                                                                               acmeChallenge: oidcAuthorization.challenge)
 
         let orderResponse = try await enrollment.checkOrderRequest(location: newOrder.location, prevNonce: oidcChallengeResponse.nonce)
         let finalizeResponse = try await enrollment.finalize(location: orderResponse.location, prevNonce: orderResponse.acmeResponse.nonce)
