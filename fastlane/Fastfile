@@ -104,7 +104,7 @@ platform :ios do
     desc "Build & Upload Col 1 Restricted AppStore build"
     lane :appstore_col_1_restricted do |options|
         options[:build_type] = "RC"
-        options[:override_folder] = "BK-CI-configuration"
+        options[:override_folder] = "BK-COLUMN1"
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
         options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_RESTRICTED']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
@@ -118,7 +118,7 @@ platform :ios do
     desc "Build & Upload Col 3 Restricted AppStore build"
     lane :appstore_col_3_restricted do |options|
         options[:build_type] = "RC"
-        options[:override_folder] = "COLUMN3-CI-configuration"
+        options[:override_folder] = "BK-COLUMN3"
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
         options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_RESTRICTED']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
@@ -145,7 +145,7 @@ platform :ios do
     desc "Build & Upload Col 3 Production AppStore build"
     lane :appstore_col_3_prod do |options|
         options[:build_type] = "AppStore"
-        options[:override_folder] = "COLUMN3-CI-configuration"
+        options[:override_folder] = "BK-COLUMN3"
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_PRODUCTION']
         options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_PRODUCTION']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
@@ -251,7 +251,7 @@ platform :ios do
         else
             override_folder = options[:override_folder]
             if override_folder.nil? 
-                override_folder = "CI configuration"
+                override_folder = "Cloud"
             end
 
             build = Build.new(options: options)
@@ -646,7 +646,7 @@ class Build
             %x( convert -background '#0008' -fill white -gravity center -size #{width}x#{height} caption:"#{extra_info}" "#{image}" +swap -gravity south -composite "#{image}" )
             processed += 1
         end
-        UI.important("Proccessed #{processed} icons in #{iconset_location} by adding '#{extra_info}'")
+        UI.important("Processed #{processed} icons in #{iconset_location} by adding '#{extra_info}'")
     end
 
     def extra_info
