@@ -72,9 +72,23 @@ final class ClientListViewController: UIViewController,
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
 
-    var sortedClients: [UserClient] = []
+    var selfClientClientTableViewCellModel: ClientTableViewCellModel?
+    var clientTableViewCellModels: [ClientTableViewCellModel] = []
+    var sortedClients: [UserClient] = [] {
+        didSet {
+            clientTableViewCellModels = sortedClients.map(ClientTableViewCellModel.from(userClient:))
+        }
+    }
 
-    let selfClient: UserClient?
+    var selfClient: UserClient? {
+        didSet {
+            guard let selfClient = selfClient else {
+                selfClientClientTableViewCellModel = nil
+                return
+            }
+            selfClientClientTableViewCellModel = .from(userClient: selfClient)
+        }
+    }
     let detailedView: Bool
     var credentials: ZMEmailCredentials?
     var clientsObserverToken: Any?
@@ -392,18 +406,16 @@ final class ClientListViewController: UIViewController,
         if let cell = tableView.dequeueReusableCell(withIdentifier: ClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? ClientTableViewCell {
             cell.selectionStyle = .none
             cell.showDisclosureIndicator()
-            cell.showVerified = self.detailedView
 
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
-                cell.userClient = self.selfClient
+                cell.viewModel = selfClientClientTableViewCellModel
                 cell.wr_editable = false
-                cell.showVerified = false
             case 1:
-                cell.userClient = self.sortedClients[indexPath.row]
+                cell.viewModel = clientTableViewCellModels[indexPath.row]
                 cell.wr_editable = true
             default:
-                cell.userClient = nil
+                cell.viewModel = nil
             }
 
             cell.accessibilityTraits = .button

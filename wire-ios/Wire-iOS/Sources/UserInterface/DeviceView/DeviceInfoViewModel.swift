@@ -216,15 +216,7 @@ extension E2eIdentityCertificate {
         return notValidBefore + kServerRetainedDays + kRandomInterval
     }
 
-    private var comparedDate: Date {
-        return E2eIdentityCertificateDateProvider(now: .now).now
-    }
-
     func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
         return isActivated && isExpired && (lastUpdateDate + gracePeriod) < comparedDate
-    }
-
-    struct E2eIdentityCertificateDateProvider: DateProviding {
-        let now: Date
     }
 }
