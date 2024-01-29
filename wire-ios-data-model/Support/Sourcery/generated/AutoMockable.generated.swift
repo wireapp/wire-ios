@@ -574,20 +574,23 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_Invocations: [(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?)] = []
     public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockError: Error?
-    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod: ((WireCoreCrypto.E2eiEnrollment, String, UInt32?) async throws -> Void)?
+    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod: ((WireCoreCrypto.E2eiEnrollment, String, UInt32?) async throws -> [String]?)?
+    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockValue: [String]??
 
-    public func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws {
+    public func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws -> [String]? {
         e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_Invocations.append((enrollment: enrollment, certificateChain: certificateChain, nbKeyPackage: nbKeyPackage))
 
         if let error = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockError {
             throw error
         }
 
-        guard let mock = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod else {
+        if let mock = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod {
+            return try await mock(enrollment, certificateChain, nbKeyPackage)
+        } else if let mock = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage`")
         }
-
-        try await mock(enrollment, certificateChain, nbKeyPackage)
     }
 
     // MARK: - e2eiNewActivationEnrollment
@@ -706,20 +709,23 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     public var e2eiRegisterIntermediateCaCertPem_Invocations: [String] = []
     public var e2eiRegisterIntermediateCaCertPem_MockError: Error?
-    public var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> Void)?
+    public var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> [String]?)?
+    public var e2eiRegisterIntermediateCaCertPem_MockValue: [String]??
 
-    public func e2eiRegisterIntermediateCa(certPem: String) async throws {
+    public func e2eiRegisterIntermediateCa(certPem: String) async throws -> [String]? {
         e2eiRegisterIntermediateCaCertPem_Invocations.append(certPem)
 
         if let error = e2eiRegisterIntermediateCaCertPem_MockError {
             throw error
         }
 
-        guard let mock = e2eiRegisterIntermediateCaCertPem_MockMethod else {
+        if let mock = e2eiRegisterIntermediateCaCertPem_MockMethod {
+            return try await mock(certPem)
+        } else if let mock = e2eiRegisterIntermediateCaCertPem_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `e2eiRegisterIntermediateCaCertPem`")
         }
-
-        try await mock(certPem)
     }
 
     // MARK: - e2eiRotateAll
