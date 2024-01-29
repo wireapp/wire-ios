@@ -58,7 +58,7 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     var isE2eIdentityEnabled: Bool {
-        return e2eIdentityCertificate != nil
+        return e2eIdentityCertificate != nil && mlsThumbprint != nil
     }
 
     var serialNumber: String? {

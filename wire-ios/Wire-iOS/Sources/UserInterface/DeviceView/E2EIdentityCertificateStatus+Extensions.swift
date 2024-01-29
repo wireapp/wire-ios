@@ -46,4 +46,17 @@ extension E2EIdentityCertificateStatus {
             return Image(.certificateValid)
         }
     }
+
+    var uiImage: UIImage? {
+        switch self {
+        case .notActivated:
+            return Asset.Images.certificateExpired.image
+        case .revoked:
+            return Asset.Images.certificateRevoked.image
+        case .expired:
+            return Asset.Images.certificateExpired.image
+        case .valid:
+            return Asset.Images.certificateValid.image
+        }
+    }
 }
