@@ -25,17 +25,13 @@ struct DeviceMLSView: View {
     var body: some View {
         VStack {
             CopyValueView(
-                title: L10n.Localizable.Device.Details.Secion.Mls.title,
+                title: L10n.Localizable.Device.Details.Section.Mls.title,
                 value: viewModel.mlsThumbprint ?? "",
                 isCopyEnabled: viewModel.isCopyEnabled,
                 performCopy: viewModel.copyToClipboard
             )
             .frame(maxHeight: .infinity)
             .padding(.all, ViewConstants.Padding.standard)
-        }.onAppear {
-            Task {
-                await viewModel.fetchMLSFingerPrint()
-            }
         }
     }
 

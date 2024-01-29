@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,23 +18,25 @@
 
 import Foundation
 
-public final class MockExpiredE2eIdentityProvider: E2eIdentityProviding {
-    lazy var dateFormatter = DateFormatter()
+/**
+ * Handles the input of the username after login if the user doesn't have one.
+ */
 
-    public var isE2EIdentityEnabled: Bool = true
+class AuthenticationAddUsernameInputHandler: AuthenticationEventHandler {
 
-    public var certificate: E2eIdentityCertificate {
-        E2eIdentityCertificate(
-            certificateDetails: .mockCertificate(),
-            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
-            certificateStatus: "Revoked",
-            serialNumber: .mockSerialNumber()
-        )
+    weak var statusProvider: AuthenticationStatusProvider?
+
+    func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {
+        // Only handle input during the add username phase.
+        guard case .addUsername = currentStep else {
+            return nil
+        }
+
+        guard let handle = context as? String else {
+            return nil
+        }
+
+        return [.setUsername(handle)]
     }
 
-    public init() {}
-
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        certificate
-    }
 }

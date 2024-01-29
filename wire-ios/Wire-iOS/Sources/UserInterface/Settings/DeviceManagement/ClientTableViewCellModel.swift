@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,24 +18,10 @@
 
 import Foundation
 
-public final class MockNotActivatedE2eIdentityProvider: E2eIdentityProviding {
-
-    lazy var dateFormatter = DateFormatter()
-
-    public var isE2EIdentityEnabled: Bool = true
-
-    public var certificate: E2eIdentityCertificate {
-        E2eIdentityCertificate(
-            certificateDetails: .mockCertificate(),
-            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
-            certificateStatus: "Not activated",
-            serialNumber: .mockSerialNumber()
-        )
-    }
-
-    public init() {}
-
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        certificate
-    }
+struct ClientTableViewCellModel {
+    let title: String
+    let label: String
+    let proteusLabelText: String
+    let mlsThumbprintLabelText: String
+    let isProteusVerified: Bool
 }

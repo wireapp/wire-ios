@@ -104,6 +104,20 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         )
     }
 
+    func test_itHandlesEmptyKeyPackagesAsSuccessIfSelfUser() {
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        action = ClaimMLSKeyPackageAction(
+            domain: selfUser.domain,
+            userId: selfUser.remoteIdentifier
+        )
+
+        test_itHandlesSuccess(
+            status: 200,
+            payload: transportData(for: Payload(keyPackages: []))
+        )
+
+    }
+
     func test_itHandlesFailures() {
         test_itHandlesFailures([
             .failure(status: 200, error: .malformedResponse),
