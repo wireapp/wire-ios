@@ -21,6 +21,7 @@ import XCTest
 import WireCoreCrypto
 @testable import WireDataModel
 @testable import WireDataModelSupport
+import Combine
 
 class CommitSenderTests: ZMBaseManagedObjectTest {
 
@@ -32,6 +33,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockClearPendingCommitInvocations: [Data]!
     private var mockClearPendingGroupInvocations: [Data]!
+    private var cancellables: Set<AnyCancellable>!
 
     private lazy var groupID: MLSGroupID = .random()
     private lazy var commitBundle = CommitBundle(
@@ -53,6 +55,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        cancellables = .init()
 
         sut = CommitSender(
             coreCryptoProvider: mockCoreCryptoProvider,
@@ -76,6 +79,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         mockCoreCryptoProvider = nil
         mockActionsProvider = nil
         sut = nil
+        cancellables = nil
         super.tearDown()
     }
 
@@ -269,10 +273,11 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         // Set up expectation
         let expectation = XCTestExpectation(description: "observed epoch change")
         var receivedGroupIDs = [MLSGroupID]()
-        _ = sut.onEpochChanged().collect(1).sink {
+
+        sut.onEpochChanged().collect(1).sink {
             receivedGroupIDs = $0
             expectation.fulfill()
-        }
+        }.store(in: &cancellables)
 
         // When
         _ = try await sut.sendCommitBundle(commitBundle, for: groupID)
