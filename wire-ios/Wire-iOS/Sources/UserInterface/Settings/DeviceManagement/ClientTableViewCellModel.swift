@@ -21,7 +21,7 @@ import Foundation
 struct ClientTableViewCellModel {
     let title: String
     let label: String
-    let proteusID: String
-    let mlsThumbprint: String
+    let proteusLabelText: String
+    let mlsThumbprintLabelText: String
     let isProteusVerified: Bool
 }

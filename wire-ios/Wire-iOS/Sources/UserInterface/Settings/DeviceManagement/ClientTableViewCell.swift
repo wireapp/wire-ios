@@ -49,11 +49,10 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
         didSet {
             guard let viewModel = viewModel else { return }
             nameLabel.text = viewModel.title
-            proteusIdLabel.text = viewModel.proteusID
-            mlsThumbprintLabel.text = viewModel.mlsThumbprint
+            proteusIdLabel.text = viewModel.proteusLabelText
+            mlsThumbprintLabel.text = viewModel.mlsThumbprintLabelText
             proteusVerficiationStatusImageView.image = viewModel.isProteusVerified ? verifiedImage : .none
-            updateLabel()
-        }
+            updateLabel()        }
     }
 
     var wr_editable: Bool
@@ -159,8 +158,8 @@ extension ClientTableViewCellModel {
         let mlsThumbprintLabelText = mlsThumbPrint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
 
         return .init(title: title, label: userClient.label ?? "",
-                     proteusID: proteusIdLabelText,
-                     mlsThumbprint: mlsThumbprintLabelText,
+                     proteusLabelText: proteusIdLabelText,
+                     mlsThumbprintLabelText: mlsThumbprintLabelText,
                      isProteusVerified: isProteusVerified)
     }
 }

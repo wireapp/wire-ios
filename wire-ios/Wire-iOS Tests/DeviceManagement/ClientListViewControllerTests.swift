@@ -79,9 +79,9 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
         let mockFingerPrint = shouldDisplayMLSInfo ? .mockFingerPrint : ""
         sut.selfClientClientTableViewCellModel = .mock(
             isProteusVerified: isProteusVerified,
-            mlsThumbprint: .mockFingerPrint)
+            mlsThumbprint: mockFingerPrint)
         sut.clientTableViewCellModels = Array(repeating: .mock(isProteusVerified: isProteusVerified,
-                                                               mlsThumbprint: .mockFingerPrint),
+                                                               mlsThumbprint: mockFingerPrint),
                                               count: numberOfClients)
         sut.isLoadingViewVisible = false
         sut.overrideUserInterfaceStyle = userInterfaceStyle
@@ -167,11 +167,16 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
 extension ClientTableViewCellModel {
     typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
 
-    static func mock(isProteusVerified: Bool, mlsThumbprint: String) -> Self {
-        return .init(title: "Lorem ipsum",
-                     label: "Lorem ipsum",
-                     proteusID: DeviceDetailsSection.Proteus.value(String.mockProteusId),
-                     mlsThumbprint: DeviceDetailsSection.Mls.thumbprint(mlsThumbprint),
+    static func mock(title: String = "Lorem ipsum",
+                     label: String =  "Lorem ipsum",
+                     isProteusVerified: Bool,
+                     mlsThumbprint: String = .mockFingerPrint,
+                     proteusId: String = .mockProteusId
+    ) -> Self {
+        return .init(title: title,
+                     label: label,
+                     proteusLabelText: proteusId.isNonEmpty ? DeviceDetailsSection.Proteus.value(proteusId) : "",
+                     mlsThumbprintLabelText: mlsThumbprint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbprint) : "",
                      isProteusVerified: isProteusVerified)
     }
 

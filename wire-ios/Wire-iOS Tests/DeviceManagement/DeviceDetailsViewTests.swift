@@ -274,15 +274,20 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 }
 
 extension String {
-    static var mockProteusId: String { "abcdefghijklmnopqrstuvwxyzabcdefgh" }
-
-    static var mockSerialNumber: String {
-        return "abcdefghijklmnopqrstuvwxyz"
+    static var mockProteusId: String {
+        "abcdefghijklmnopqrstuvwxyzabcdefgh"
             .uppercased()
             .splitStringIntoLines(charactersPerLine: 16)
     }
 
-   static var mockFingerPrint: String { return "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
+    static var mockSerialNumber: String {
+        "abcdefghijklmnopqrstuvwxyz"
+            .uppercased()
+            .splitStringIntoLines(charactersPerLine: 16)
+    }
+
+    static var mockFingerPrint: String {
+        "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
             .uppercased()
             .splitStringIntoLines(charactersPerLine: 16)
     }
