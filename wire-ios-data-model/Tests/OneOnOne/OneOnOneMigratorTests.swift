@@ -129,7 +129,7 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         let userID: QualifiedID = .random()
         let mlsGroupID: MLSGroupID = .random()
 
-        let (connection, proteusConversation, mlsConversation) = await createConversations(
+        let (_, proteusConversation, mlsConversation) = await createConversations(
             userID: userID,
             mlsGroupID: mlsGroupID,
             in: uiMOC
