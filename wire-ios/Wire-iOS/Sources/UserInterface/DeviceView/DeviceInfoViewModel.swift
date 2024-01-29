@@ -61,6 +61,13 @@ final class DeviceInfoViewModel: ObservableObject {
         return e2eIdentityCertificate != nil
     }
 
+    var serialNumber: String? {
+        e2eIdentityCertificate?.serialNumber
+            .uppercased()
+            .splitStringIntoLines(charactersPerLine: 16)
+            .replacingOccurrences(of: " ", with: ":")
+    }
+
     @Published
     var e2eIdentityCertificate: E2eIdentityCertificate?
     @Published var isRemoved: Bool = false

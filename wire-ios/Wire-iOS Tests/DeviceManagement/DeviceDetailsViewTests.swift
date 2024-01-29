@@ -280,12 +280,6 @@ extension String {
             .splitStringIntoLines(charactersPerLine: 16)
     }
 
-    static var mockSerialNumber: String {
-        "abcdefghijklmnopqrstuvwxyz"
-            .uppercased()
-            .splitStringIntoLines(charactersPerLine: 16)
-    }
-
     static var mockFingerPrint: String {
         "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
             .uppercased()
