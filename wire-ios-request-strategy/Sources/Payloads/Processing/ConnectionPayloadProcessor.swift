@@ -62,6 +62,17 @@ final class ConnectionPayloadProcessor {
 
         connection.conversation = conversation
         connection.status = payload.status.internalStatus
+
+        let previousStatus = connection.status
+
+        if previousStatus == .pending, connection.status == .accepted {
+            // Execute after 3 seconds
+            Task {
+                let resolver = OneOnOneResolver(syncContext: context)
+
+                try! await resolver?.resolveOneOnOneConversation(with: payload.qualifiedTo!, in: context)
+            }
+        }
         connection.lastUpdateDateInGMT = payload.lastUpdate
     }
 
