@@ -19,15 +19,17 @@
 import Foundation
 
 struct CoreDataStackHelper {
-    private let storageDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    private let fileManager = FileManager.default
+
+    var storageDirectory: URL { fileManager.temporaryDirectory }
 
     @MainActor
-    func createStack() async throws -> CoreDataStack {
+    func createStack(at directory: URL) async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: UUID())
 
         let stack = CoreDataStack(
             account: account,
-            applicationContainer: storageDirectory,
+            applicationContainer: directory,
             inMemoryStore: true
         )
 
@@ -42,13 +44,18 @@ struct CoreDataStackHelper {
         }
     }
 
-    func cleanupStorageDirectory() throws {
-        let files = try FileManager.default.contentsOfDirectory(
+    func cleanupDirectory(_ url: URL) throws {
+        guard storageDirectory.hasDirectoryPath else {
+            assertionFailure("url is not a directory path!")
+            return
+        }
+
+        let files = try fileManager.contentsOfDirectory(
             at: storageDirectory,
             includingPropertiesForKeys: nil,
             options: []
         )
 
-        try files.forEach { try FileManager.default.removeItem(at: $0) }
+        try files.forEach { try fileManager.removeItem(at: $0) }
     }
 }
