@@ -68,7 +68,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
             throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
         }
 
-        guard let clientId = getClientId(from: oidcAuthorization.challenge.target) else {
+        guard let clientId = extractClientId(from: oidcAuthorization.challenge.target) else {
             throw EnrollE2EICertificateUseCaseFailure.missingClientId
         }
 
@@ -105,7 +105,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
 
     }
 
-    private func getClientId(from path: String) -> String? {
+    private func extractClientId(from path: String) -> String? {
         guard let urlComponents = URLComponents(string: path),
               let clientId = urlComponents.queryItems?.first(where: { $0.name == "client_id" })?.value else {
             return nil
