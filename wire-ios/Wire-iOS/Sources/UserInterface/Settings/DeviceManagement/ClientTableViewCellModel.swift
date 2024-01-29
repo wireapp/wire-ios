@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 struct ClientTableViewCellModel {
     let title: String
@@ -24,4 +25,5 @@ struct ClientTableViewCellModel {
     let proteusLabelText: String
     let mlsThumbprintLabelText: String
     let isProteusVerified: Bool
+    let e2eIdentityStatus: E2EIdentityCertificateStatus?
 }
