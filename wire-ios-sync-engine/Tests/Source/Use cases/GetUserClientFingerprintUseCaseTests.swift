@@ -64,7 +64,9 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         // since ProteusProvider is created on the fly when accessed by managedObjectContext
         // when checking the hasSessionWithSelfClient
         DeveloperFlag.proteusViaCoreCrypto.enable(true)
-        syncMOC.proteusService = mockProteusService
+        syncMOC.performAndWait {
+            syncMOC.proteusService = mockProteusService
+        }
         sut = createSut(proteusEnabled: true)
 
         mockProteusService.sessionExistsId_MockValue = sessionEstablished

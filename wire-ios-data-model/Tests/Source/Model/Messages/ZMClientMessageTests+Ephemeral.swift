@@ -407,8 +407,7 @@ extension ZMClientMessageTests_Ephemeral {
                 let genericMessage = clientMessage.underlyingMessage,
                 case .deleted? = genericMessage.content {
                 return true
-            }
-            else {
+            } else {
                 return false
             }
         }) as? ZMClientMessage

@@ -281,7 +281,7 @@ extension ZMConversation {
     @objc(appendDecryptionFailedSystemMessageAtTime:sender:client:errorCode:)
     public func appendDecryptionFailedSystemMessage(at date: Date?, sender: ZMUser, client: UserClient?, errorCode: Int) {
         let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
-        let clients = client.flatMap { Set(arrayLiteral: $0) } ?? Set<UserClient>()
+        let clients = client.flatMap { [$0] } ?? Set<UserClient>()
         let serverTimestamp = date ?? timestampAfterLastMessage()
         let systemMessage = appendSystemMessage(type: type,
                                                sender: sender,
@@ -290,7 +290,7 @@ extension ZMConversation {
                                                timestamp: serverTimestamp)
 
         systemMessage.senderClientID = client?.remoteIdentifier
-        systemMessage.decryptionErrorCode = NSNumber(integerLiteral: errorCode)
+        systemMessage.decryptionErrorCode = NSNumber(value: errorCode)
     }
 
     /// Adds the user to the list of participants if not already present and inserts a .participantsAdded system message
@@ -317,7 +317,7 @@ extension ZMConversation {
             appendSystemMessage(
                 type: .participantsAdded,
                 sender: user,
-                users: Set(arrayLiteral: user),
+                users: [user],
                 clients: nil,
                 timestamp: date
             )
@@ -691,8 +691,7 @@ extension ZMConversation {
                 return false
             } else if $0.isWirelessUser {
                 return false
-            }
-            else {
+            } else {
                 return selfUser.team == nil || $0.team != selfUser.team
             }
         } != nil

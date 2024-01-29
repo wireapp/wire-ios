@@ -674,16 +674,16 @@ class CallKitManagerTest: DatabaseTest {
 
     // MARK: Activity & Intents
 
-    func userActivityFor(contacts: [INPerson]?, isVideo: Bool = false) -> NSUserActivity {
+    func userActivityFor(contacts: [INPerson], isVideo: Bool) -> NSUserActivity {
 
-        let intent: INIntent
-
-        if isVideo {
-            intent = INStartCallIntent(audioRoute: .speakerphoneAudioRoute, destinationType: .normal, contacts: contacts, recordTypeForRedialing: .unknown, callCapability: .videoCall)
-        } else {
-            intent = INStartCallIntent(audioRoute: .speakerphoneAudioRoute, destinationType: .normal, contacts: contacts, recordTypeForRedialing: .unknown, callCapability: .audioCall)
-        }
-
+        let intent = INStartCallIntent(
+            callRecordFilter: .none,
+            callRecordToCallBack: .none,
+            audioRoute: .speakerphoneAudioRoute,
+            destinationType: .normal,
+            contacts: contacts,
+            callCapability: isVideo ? .videoCall : .audioCall
+        )
         let interaction = INInteraction(intent: intent, response: .none)
 
         let activity = NSUserActivity(activityType: "voip")
@@ -699,7 +699,7 @@ class CallKitManagerTest: DatabaseTest {
         let handle = INPersonHandle(value: identifier, type: .unknown)
         let person = INPerson(personHandle: handle, nameComponents: .none, displayName: .none, image: .none, contactIdentifier: .none, customIdentifier: identifier)
         let callHandle = WireSyncEngine.CallHandle(encodedString: identifier)!
-        let activity = self.userActivityFor(contacts: [person])
+        let activity = self.userActivityFor(contacts: [person], isVideo: false)
 
         mockCallKitManagerDelegate.mockConversations[callHandle] = conversation
 

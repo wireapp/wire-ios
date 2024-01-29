@@ -33,7 +33,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
         mockMLSService = MockMLSServiceInterface()
         mockMLSEventProcessor = .init()
-        mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
+        mockMLSEventProcessor.updateConversationIfNeededConversationFallbackGroupIDContext_MockMethod = { _, _, _ in }
         mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in }
 
         sut = ConversationEventPayloadProcessor(
@@ -981,7 +981,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         await syncMOC.perform { [self] in
-            let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_Invocations
+            let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationFallbackGroupIDContext_Invocations
             XCTAssertEqual(updateConversationCalls.count, 1)
             XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
         }
