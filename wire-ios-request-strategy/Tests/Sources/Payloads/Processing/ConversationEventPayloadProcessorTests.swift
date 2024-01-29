@@ -604,7 +604,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateOrCreateConversation_Group_OneOnOneUser() async throws {
-        let (teamID, qualifiedID, selfUser, members) = await syncMOC.perform {
+        let (teamID, qualifiedID, members) = await syncMOC.perform {
             // given
             let teamID = UUID.create()
             let team = Team.insertNewObject(in: self.syncMOC)
@@ -614,7 +614,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            return (teamID, qualifiedID, selfUser, members)
+            return (teamID, qualifiedID, members)
         }
 
         let payload = Payload.Conversation.stub(
