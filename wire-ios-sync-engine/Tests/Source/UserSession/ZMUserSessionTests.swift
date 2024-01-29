@@ -400,13 +400,14 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(sut.networkState, .offline)
 
         // when
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        var token: Any? = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didReceiveData()
 
         // then
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(stateRecorder.stateChanges.count, 1)
         XCTAssertEqual(stateRecorder.stateChanges.first, .onlineSynchronizing)
+        token = nil
     }
 
     func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOnline() {
@@ -414,13 +415,13 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         let stateRecorder = NetworkStateRecorder()
 
         // when
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        var token: Any? = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didReceiveData()
 
         // then
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-
+        token = nil
     }
 
     func testThatItNotifiesObserversWhenTheNetworkStatusBecomesOffline() {
@@ -428,13 +429,14 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         let stateRecorder = NetworkStateRecorder()
 
         // when
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        var token: Any? = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didGoOffline()
 
         // then
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(stateRecorder.stateChanges.count, 1)
         XCTAssertEqual(stateRecorder.stateChanges.first, .offline)
+        token = nil
     }
 
     func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOffline() {
@@ -445,12 +447,13 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForOfflineStatus())
 
         // when
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        var token: Any? = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didGoOffline()
 
         // then
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(stateRecorder.stateChanges.count, 0)
+        token = nil
     }
 
     func testThatItSetsTheMinimumBackgroundFetchInterval() {
