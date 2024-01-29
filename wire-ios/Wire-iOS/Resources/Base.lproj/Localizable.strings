@@ -2063,6 +2063,7 @@ to reset this device and log in again";
 // MARK: - Device Details
 "device.details.section.proteus.title" = "PROTEUS DEVICE DETAILS";
 "device.details.section.proteus.id" = "Proteus ID";
+"device.details.section.proteus.value" = "Proteus ID: %@";
 "device.details.section.proteus.activated" = "Activated";
 "device.details.section.proteus.key_fingerprint" = "Proteus Key Fingerprint";
 "device.details.section.e2ei.title" = "End-to-end Identity Certificate";
@@ -2077,5 +2078,6 @@ to reset this device and log in again";
 "device.details.section.e2ei.serial_number" = "Serial Number";
 "device.details.section.mls.signature" = "MLS with Ed25519 Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
+"device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";
 "device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";

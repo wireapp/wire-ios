@@ -60,17 +60,13 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             }
             Spacer()
         }
-        if let certificate = viewModel.e2eIdentityCertificate, certificate.status != .notActivated {
+        if let serialNumber = viewModel.serialNumber, serialNumber.isNonEmpty {
             Text(L10n.Localizable.Device.Details.Section.E2ei.serialNumber)
                 .font(FontSpec.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .padding(.top, ViewConstants.Padding.medium)
                 .padding(.bottom, ViewConstants.Padding.small)
-            Text(
-                certificate.serialNumber
-                    .splitStringIntoLines(charactersPerLine: 16)
-                    .replacingOccurrences(of: " ", with: ":")
-            )
+            Text(serialNumber)
             .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
         }
     }

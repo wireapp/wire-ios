@@ -31,7 +31,7 @@ public struct E2eIdentityCertificate: Equatable {
     public var expiryDate: Date
     public var status: E2EIdentityCertificateStatus
     public var serialNumber: String
-
+    public var comparedDate: Date
     public init(
         clientId: String,
         certificateDetails: String,
@@ -39,7 +39,8 @@ public struct E2eIdentityCertificate: Equatable {
         notValidBefore: Date,
         expiryDate: Date,
         certificateStatus: E2EIdentityCertificateStatus,
-        serialNumber: String
+        serialNumber: String,
+        comparedDate: Date = DateProvider(now: .now).now
     ) {
         self.clientId = clientId
         self.details = certificateDetails
@@ -48,5 +49,14 @@ public struct E2eIdentityCertificate: Equatable {
         self.expiryDate = expiryDate
         self.status = certificateStatus
         self.serialNumber = serialNumber
+        self.comparedDate = comparedDate
+    }
+
+    public struct DateProvider: DateProviding {
+        public let now: Date
+
+        public init(now: Date) {
+            self.now = now
+        }
     }
 }
