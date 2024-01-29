@@ -77,7 +77,7 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
 
     func testAudioRecorderTouchBegan() {
         // GIVEN & THEN
-        verifyInAllPhoneWidths(view: sut.view,
+        verifyInAllPhoneWidths(matching: sut.view,
                                configuration: { _ in
             // WHEN
             self.sut.createAudioViewController(audioRecorder: MockAudioRecorder(), userSession: self.userSession)
@@ -88,7 +88,7 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
 
     func testAudioRecorderTouchChanged() {
         // GIVEN & THEN
-        verifyInAllPhoneWidths(view: sut.view,
+        verifyInAllPhoneWidths(matching: sut.view,
                                configuration: { _ in
             // WHEN
             self.sut.createAudioViewController(audioRecorder: MockAudioRecorder(), userSession: self.userSession)
@@ -99,7 +99,7 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
 
     func testAudioRecorderTouchEnded() {
         // GIVEN & THEN
-        verifyInAllPhoneWidths(view: sut.view,
+        verifyInAllPhoneWidths(matching: sut.view,
                                configuration: { _ in
             // WHEN
             let audioRecorder = MockAudioRecorder()
