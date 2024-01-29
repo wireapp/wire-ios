@@ -141,6 +141,16 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
 }
 
+struct HandleValidation {
+    static var allowedCharacters: CharacterSet = {
+        return CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.").union(.decimalDigits)
+    }()
+
+    static var allowedLength: CountableClosedRange<Int> {
+        return 2...256
+    }
+}
+
 /// This struct represents the current state of a handle
 /// change operation and performs necessary validation steps of
 /// a new handle. The `ChangeHandleViewController` uses this state
@@ -169,14 +179,6 @@ struct HandleChangeState {
         self.availability = availability
     }
 
-    private static var allowedCharacters: CharacterSet = {
-        return CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.").union(.decimalDigits)
-    }()
-
-    private static var allowedLength: CountableClosedRange<Int> {
-        return 2...256
-    }
-
     /// Validates the passed in handle and updates the state if
     /// no error occurs, otherwise a `ValidationError` will be thrown.
     mutating func update(_ handle: String) throws {
@@ -189,10 +191,10 @@ struct HandleChangeState {
     /// is invalid, an error will be thrown.
     /// This function does not update the `HandleChangeState` itself.
     func validate(_ handle: String) throws {
-        let subset = CharacterSet(charactersIn: handle).isSubset(of: HandleChangeState.allowedCharacters)
+        let subset = CharacterSet(charactersIn: handle).isSubset(of: HandleValidation.allowedCharacters)
         guard subset && handle.isEqualToUnicodeName else { throw ValidationError.invalidCharacter }
-        guard handle.count >= HandleChangeState.allowedLength.lowerBound else { throw ValidationError.tooShort }
-        guard handle.count <= HandleChangeState.allowedLength.upperBound else { throw ValidationError.tooLong }
+        guard handle.count >= HandleValidation.allowedLength.lowerBound else { throw ValidationError.tooShort }
+        guard handle.count <= HandleValidation.allowedLength.upperBound else { throw ValidationError.tooLong }
         guard handle != currentHandle else { throw ValidationError.sameAsPrevious }
     }
 
@@ -404,7 +406,7 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
     }
 }
 
-fileprivate extension String {
+extension String {
 
     var isEqualToUnicodeName: Bool {
         return applyingTransform(.toUnicodeName, reverse: false) == self

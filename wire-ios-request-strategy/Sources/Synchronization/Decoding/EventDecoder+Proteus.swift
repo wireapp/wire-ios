@@ -175,13 +175,14 @@ extension EventDecoder {
                 domain: event.conversationDomain,
                 in: context
             )
-
-            conversation?.appendDecryptionFailedSystemMessage(
-                at: event.timestamp,
-                sender: sender.user!,
-                client: sender,
-                errorCode: Int(error?.rawValue ?? 0)
-            )
+            if let senderUser = sender.user {
+                conversation?.appendDecryptionFailedSystemMessage(
+                    at: event.timestamp,
+                    sender: senderUser,
+                    client: sender,
+                    errorCode: Int(error?.rawValue ?? 0)
+                )
+            }
         }
 
         let userInfo: [String: Any] = [
@@ -191,7 +192,7 @@ extension EventDecoder {
 
         NotificationInContext(
             name: ZMConversation.failedToDecryptMessageNotificationName,
-            context: sender.managedObjectContext!.notificationContext,
+            context: context.notificationContext,
             object: conversation,
             userInfo: userInfo
         ).post()

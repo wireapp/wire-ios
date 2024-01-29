@@ -103,6 +103,7 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
             )
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.userIdentifier
+            selfUser.handle = "handle"
             self.syncMOC.saveOrRollback()
         }
     }
@@ -152,7 +153,6 @@ extension UserClientRequestStrategyTests {
 
     func testThatPrekeysAreGeneratedBeforeAttemptingToRegisterClient() {
         syncMOC.performGroupedBlockAndWait {
-
             // given
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             self.sut.notifyChangeTrackers(client)

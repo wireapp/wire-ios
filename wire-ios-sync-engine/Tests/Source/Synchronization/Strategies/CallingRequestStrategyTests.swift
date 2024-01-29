@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -449,9 +449,9 @@ class CallingRequestStrategyTests: MessagingTest {
 
     // MARK: - Targeted Calling Messages
 
-    func testThatItTargetsCallMessagesIfTargetClientsAreSpecified() {
+    func testThatItTargetsCallMessagesIfTargetClientsAreSpecified() throws {
         var sentMessage: GenericMessageEntity?
-        let (conversation, user1, client1, user2, client2, targets) = syncMOC.performAndWait { [self] in
+        let (conversationAVSID, user1, client1, user2, client2, targets) = try syncMOC.performAndWait { [self] in
             sut = CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: mockApplicationStatus,
@@ -495,12 +495,13 @@ class CallingRequestStrategyTests: MessagingTest {
                 sentMessage = message as? GenericMessageEntity
             }
 
-            return (conversation, user1, client1, user2, client2, targets)
+            let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
+            return (conversationAVSID, user1, client1, user2, client2, targets)
         }
 
         // When we schedule the targeted message
         syncMOC.performGroupedBlock {
-            self.sut.send(data: Data(), conversationId: conversation.avsIdentifier!, targets: targets, overMLSSelfConversation: false) { _ in }
+            self.sut.send(data: Data(), conversationId: conversationAVSID, targets: targets, overMLSSelfConversation: false) { _ in }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -533,8 +534,8 @@ class CallingRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async {
-        let (user1, user2, client1, client2, client3, client4, conversation) = await syncMOC.perform { [self] in
+    func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async throws {
+        let (user1, user2, client1, client2, client3, client4, conversationAVSID) = try await syncMOC.perform { [self] in
             // Given
             let selfClient = createSelfClient()
 
@@ -560,7 +561,8 @@ class CallingRequestStrategyTests: MessagingTest {
 
             syncMOC.saveOrRollback()
 
-            return (user1, user2, client1, client2, client3, client4, conversation)
+            let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
+            return (user1, user2, client1, client2, client3, client4, conversationAVSID)
         }
 
         var sentMessage: GenericMessageEntity?
@@ -570,7 +572,12 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // When we schedule the message with no targets
         syncMOC.performGroupedBlock {
-            self.sut.send(data: Data(), conversationId: conversation.avsIdentifier!, targets: nil, overMLSSelfConversation: false) { _ in }
+            self.sut.send(
+                data: Data(),
+                conversationId: conversationAVSID,
+                targets: nil,
+                overMLSSelfConversation: false
+            ) { _ in }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -670,9 +677,9 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertTrue(sut.callCenter?.isMuted ?? false)
     }
 
-    func test_ThatItHandlesMLSRejectMessage() {
+    func test_ThatItHandlesMLSRejectMessage() throws {
         var sentMessage: GenericMessageEntity?
-        let (user1AVSIdentifier, client1RemoteIdentifier, conversation) = syncMOC.performAndWait { [self] in
+        let (user1AVSIdentifier, client1RemoteIdentifier, conversationAVSID) = try syncMOC.performAndWait { [self] in
             // Given
             createMLSSelfConversation()
             let selfClient = createSelfClient()
@@ -703,7 +710,8 @@ class CallingRequestStrategyTests: MessagingTest {
 
             self.syncMOC.mlsService = mockMLSService
 
-            return (user1.avsIdentifier, client1.remoteIdentifier!, conversation)
+            let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
+            return (user1.avsIdentifier, client1.remoteIdentifier!, conversationAVSID)
         }
 
         // Targeting one client
@@ -715,7 +723,7 @@ class CallingRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedBlock {
             self.sut.send(
                 data: self.callMessage(withType: "REJECT"),
-                conversationId: conversation.avsIdentifier!,
+                conversationId: conversationAVSID,
                 targets: targets,
                 overMLSSelfConversation: true
             ) { _ in

@@ -186,7 +186,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     // MARK: - Event Processing
 
-    func testThatItUpdatesLabels_OnPropertiesUpdateEvent() async {
+    func testThatItUpdatesLabels_OnPropertiesUpdateEvent() {
         var conversation: ZMConversation!
         let conversationId = UUID()
 
@@ -206,7 +206,9 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             XCTFail("missing event")
             return
         }
-        await self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+        syncMOC.performGroupedBlockAndWait {
+            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+        }
 
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

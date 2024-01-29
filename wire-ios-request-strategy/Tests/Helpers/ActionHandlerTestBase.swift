@@ -137,7 +137,9 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
             label: label,
             apiVersion: apiVersion
         )
-        handler.handleResponse(response, action: action)
+        syncMOC.performGroupedBlockAndWait {
+            self.handler.handleResponse(response, action: action)
+        }
 
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5), file: file, line: line)
