@@ -21,7 +21,10 @@ import WireDataModel
 
 final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneToOneConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(context: context)
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: MLSEventProcessor(context: context),
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
 
     // MARK: - Request
 

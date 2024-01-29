@@ -84,7 +84,9 @@ final class SearchHeaderViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [tokenFieldContainer, tokenField, searchIcon, clearButton, tokenFieldContainer].prepareForLayout()
+        [tokenFieldContainer, tokenField, searchIcon, clearButton, tokenFieldContainer].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
           searchIcon.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
           searchIcon.leadingAnchor.constraint(equalTo: tokenField.leadingAnchor, constant: 16),

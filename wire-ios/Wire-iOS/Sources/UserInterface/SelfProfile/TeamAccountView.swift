@@ -71,8 +71,8 @@ final class TeamAccountView: AccountView {
     }
 
     private func createConstraints() {
-        let inset: CGFloat = CGFloat.TeamAccountView.imageInset
-        [imageView, imageViewContainer].prepareForLayout()
+        let inset = CGFloat.TeamAccountView.imageInset
+        [imageView, imageViewContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: inset),
@@ -97,7 +97,7 @@ final class TeamAccountView: AccountView {
         let dotSize: CGFloat = 9
         let dotInset: CGFloat = 2
 
-        [dotView, imageViewContainer].prepareForLayout()
+        [dotView, imageViewContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         return [ dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -dotInset),
                                       dotView.centerYAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: dotInset),

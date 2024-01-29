@@ -27,7 +27,10 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     let conversationService: ConversationServiceInterface
     let mlsEventProcessor: MLSEventProcessing
 
-    private lazy var processor = ConversationEventPayloadProcessor(context: context)
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: mlsEventProcessor,
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
     private let eventPayloadDecoder = EventPayloadDecoder()
 
     // MARK: - Life cycle
@@ -138,9 +141,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             from: event.payload
         ) else { return }
 
-        await context.perform {
-            self.processor.processPayload(payload, originalEvent: event, in: self.context)
-        }
+        await processor.processPayload(payload, originalEvent: event, in: context)
     }
 
     private func processConversationMemberJoin(_ event: ZMUpdateEvent) async {
@@ -319,15 +320,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         if let conversation, usersContainedSelfUser {
             await updateMLSStatus(for: conversation, context: context)
         }
-
     }
 
     private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) async {
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
-            groupID: nil,
+            fallbackGroupID: nil,
             context: context
         )
     }
-
 }
