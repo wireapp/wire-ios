@@ -175,7 +175,7 @@ extension DeviceInfoViewModel {
             certificate: certificate,
             title: title,
             addedDate: addedDate,
-            proteusID: proteusID?.uppercased().fingerprintStringWithSpaces ?? "",
+            proteusID: proteusID ?? "",
             mlsThumbprint: mlsThumbprint,
             isProteusVerificationEnabled: userClient.verified,
             actionsHandler: DeviceDetailsViewActionsHandler(

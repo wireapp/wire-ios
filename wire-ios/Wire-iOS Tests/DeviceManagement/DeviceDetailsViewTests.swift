@@ -275,7 +275,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
 
 extension String {
     static var mockProteusId: String {
-        "abcdefghijklmnopqrstuvwxyzabcdefgh"
+        "abcdefghijklmnop"
             .uppercased()
             .splitStringIntoLines(charactersPerLine: 16)
     }
