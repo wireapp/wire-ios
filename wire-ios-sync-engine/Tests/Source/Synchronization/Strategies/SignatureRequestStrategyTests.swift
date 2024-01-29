@@ -32,7 +32,9 @@ class SignatureRequestStrategyTests: MessagingTest {
                                               data: Data(),
                                               managedObjectContext: syncMOC)
         signatureStatus.documentID = "documentId"
-        syncMOC.signatureStatus = signatureStatus
+        syncMOC.performAndWait {
+            syncMOC.signatureStatus = signatureStatus
+        }
         sut = SignatureRequestStrategy(withManagedObjectContext: syncMOC,
                                        applicationStatus: mockApplicationStatus)
     }
@@ -46,17 +48,22 @@ class SignatureRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesCorrectRequestIfStateIsWaitingForConsentURL() {
         // given
-        syncMOC.signatureStatus?.state = .waitingForConsentURL
+        var request: ZMTransportRequest?
+        syncMOC.performAndWait {
+            syncMOC.signatureStatus?.state = .waitingForConsentURL
 
         // when
-        let request = sut.nextRequestIfAllowed(for: .v0)
-
+            request = sut.nextRequestIfAllowed(for: .v0)
+        }
         // then
+
         XCTAssertNotNil(request)
         let payload = request?.payload?.asDictionary()
-        XCTAssertEqual(payload?["documentId"] as? String, syncMOC.signatureStatus?.documentID)
-        XCTAssertEqual(payload?["name"] as? String, syncMOC.signatureStatus?.fileName)
-        XCTAssertEqual(payload?["hash"] as? String, syncMOC.signatureStatus?.encodedHash)
+        syncMOC.performAndWait {
+            XCTAssertEqual(payload?["documentId"] as? String, syncMOC.signatureStatus?.documentID)
+            XCTAssertEqual(payload?["name"] as? String, syncMOC.signatureStatus?.fileName)
+            XCTAssertEqual(payload?["hash"] as? String, syncMOC.signatureStatus?.encodedHash)
+        }
         XCTAssertEqual(request?.path, "/signature/request")
         XCTAssertEqual(request?.method, ZMTransportRequestMethod.post)
     }
@@ -69,10 +76,12 @@ class SignatureRequestStrategyTests: MessagingTest {
         let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when user inserted correct OTP code
-        sut.didReceive(successResponse, forSingleRequest: sut.requestSync!)
-        syncMOC.signatureStatus?.state = .waitingForSignature
-        let request = sut.nextRequestIfAllowed(for: .v0)
-
+        var request: ZMTransportRequest?
+        syncMOC.performAndWait {
+            sut.didReceive(successResponse, forSingleRequest: sut.requestSync!)
+            syncMOC.signatureStatus?.state = .waitingForSignature
+            request = sut.nextRequestIfAllowed(for: .v0)
+        }
         // then
         XCTAssertNotNil(request)
         XCTAssertEqual(request?.path, "/signature/pending/\(responseId)")
@@ -87,11 +96,13 @@ class SignatureRequestStrategyTests: MessagingTest {
         let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when
-        _ = sut.nextRequestIfAllowed(for: .v0)
-        sut.didReceive(successResponse, forSingleRequest: sut.requestSync!)
+        syncMOC.performAndWait {
+            _ = sut.nextRequestIfAllowed(for: .v0)
+            sut.didReceive(successResponse, forSingleRequest: sut.requestSync!)
 
-        // then
-        XCTAssertEqual(syncMOC.signatureStatus?.state, .waitingForCodeVerification)
+            // then
+            XCTAssertEqual(syncMOC.signatureStatus?.state, .waitingForCodeVerification)
+        }
     }
 
     func testThatItNotifiesSignatureStatusAfterSuccessfulResponseToReceiveSignature() {
@@ -102,11 +113,13 @@ class SignatureRequestStrategyTests: MessagingTest {
         let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when
-        _ = sut.nextRequestIfAllowed(for: .v0)
-        sut.didReceive(successResponse, forSingleRequest: sut.retrieveSync!)
+        syncMOC.performAndWait {
+            _ = sut.nextRequestIfAllowed(for: .v0)
+            sut.didReceive(successResponse, forSingleRequest: sut.retrieveSync!)
 
-        // then
-        XCTAssertEqual(syncMOC.signatureStatus?.state, .finished)
+            // then
+            XCTAssertEqual(syncMOC.signatureStatus?.state, .finished)
+        }
     }
 
     func testThatItNotifiesSignatureStatusAfterFailedResponseToReceiveConsentURL() {
@@ -114,11 +127,13 @@ class SignatureRequestStrategyTests: MessagingTest {
         let successResponse = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when
-        _ = sut.nextRequestIfAllowed(for: .v0)
-        sut.didReceive(successResponse, forSingleRequest: sut.requestSync!)
+        syncMOC.performAndWait {
+            _ = sut.nextRequestIfAllowed(for: .v0)
+            sut.didReceive(successResponse, forSingleRequest: sut.requestSync!)
 
-        // then
-        XCTAssertEqual(syncMOC.signatureStatus?.state, .signatureInvalid)
+            // then
+            XCTAssertEqual(syncMOC.signatureStatus?.state, .signatureInvalid)
+        }
     }
 
     func testThatItNotifiesSignatureStatusAfterFailedResponseToReceiveSignature() {
@@ -126,11 +141,13 @@ class SignatureRequestStrategyTests: MessagingTest {
         let successResponse = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when
-        _ = sut.nextRequestIfAllowed(for: .v0)
-        sut.didReceive(successResponse, forSingleRequest: sut.retrieveSync!)
+        syncMOC.performAndWait {
+            _ = sut.nextRequestIfAllowed(for: .v0)
+            sut.didReceive(successResponse, forSingleRequest: sut.retrieveSync!)
 
-        // then
-        XCTAssertEqual(syncMOC.signatureStatus?.state, .signatureInvalid)
+            // then
+            XCTAssertEqual(syncMOC.signatureStatus?.state, .signatureInvalid)
+        }
     }
 
     private func randomAsset() -> WireProtos.Asset? {
