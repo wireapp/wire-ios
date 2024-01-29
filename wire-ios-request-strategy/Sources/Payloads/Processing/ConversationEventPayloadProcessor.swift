@@ -512,9 +512,24 @@ struct ConversationEventPayloadProcessor {
                     conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
                 }
             }
+
+            // If we discover this group is actually a fake one on one,
+            // then we should link the one on one user.
+            linkOneOnOneUserIfNeeded(for: conversation)
         }
 
         return conversation
+    }
+
+    private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
+        guard
+            conversation.conversationType == .oneOnOne,
+            let otherUser = conversation.localParticipantsExcludingSelf.first
+        else {
+            return
+        }
+        
+        conversation.oneOnOneUser = otherUser
     }
 
     @discardableResult
