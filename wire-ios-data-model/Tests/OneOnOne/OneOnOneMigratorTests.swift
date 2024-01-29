@@ -20,24 +20,39 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
+final class OneOnOneMigratorTests: XCTestCase {
+
+    private let helper = CoreDataStackHelper()
+
+    var coreDataStack: CoreDataStack!
+    var uiMOC: NSManagedObjectContext!
 
     var sut: OneOnOneMigrator!
     var mlsService: MockMLSServiceInterface!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
+
         mlsService = MockMLSServiceInterface()
         mlsService.createGroupForWith_MockMethod = { _, _ in }
         mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in}
 
         sut = OneOnOneMigrator(mlsService: mlsService)
+
+        coreDataStack = try await helper.createStack()
+        uiMOC = coreDataStack.viewContext
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
+        try await super.tearDown()
+
+        uiMOC = nil
+        coreDataStack = nil
+
         sut = nil
         mlsService = nil
-        super.tearDown()
+
+        try helper.cleanupStorageDirectory()
     }
 
     // MARK: - Tests
@@ -180,7 +195,9 @@ final class OneOnOneMigratorTests: ZMBaseManagedObjectTest {
         mlsConversation: ZMConversation
     ) {
         await context.perform { [self] in
-            let user = createUser(id: userID, in: context)
+            let user = ZMUser.insertNewObject(in: context)
+            user.remoteIdentifier = userID.uuid
+            user.domain = userID.domain
 
             let (connection, proteusConversation) = createProtheusConnection(
                 status: .accepted,
