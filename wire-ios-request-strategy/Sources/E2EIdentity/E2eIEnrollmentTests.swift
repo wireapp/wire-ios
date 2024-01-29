@@ -347,6 +347,10 @@ class MockAcmeApi: AcmeAPIInterface {
     var mockResponseData: Data?
     var mockChallengeResponse: ChallengeResponse?
 
+    func getTrustAnchor() async throws -> String {
+        return ""
+    }
+
     func getACMEDirectory() async throws -> Data {
         let payload = acmeDirectoriesResponse()
 
