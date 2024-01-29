@@ -98,8 +98,8 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
             guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
                 throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
             }
-
-            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+            print(certificateChain)
+            //            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
         } catch is DecodingError {
             throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
         }
