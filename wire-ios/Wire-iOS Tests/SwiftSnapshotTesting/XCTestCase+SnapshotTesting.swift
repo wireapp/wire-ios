@@ -152,13 +152,22 @@ extension XCTestCase {
                line: line)
     }
 
-    func verifyInAllPhoneWidths(matching value: UIViewController,
-                                snapshotBackgroundColor: UIColor? = nil,
-                                named name: String? = nil,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-        verifyInAllPhoneWidths(matching: value.view, snapshotBackgroundColor: snapshotBackgroundColor, named: name, file: file, testName: testName, line: line)
+    func verifyInAllPhoneWidths(
+        matching value: UIViewController,
+        snapshotBackgroundColor: UIColor? = nil,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        verifyInAllPhoneWidths(
+            matching: value.view,
+            snapshotBackgroundColor: snapshotBackgroundColor,
+            named: name,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
     func verifyInAllPhoneWidths(matching value: UIView,
