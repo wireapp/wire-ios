@@ -182,17 +182,15 @@ extension ZMMessage: SideEffectSource {
 extension ZMConnection: SideEffectSource {
 
     func affectedObjectsAndKeys(keyStore: DependencyKeyStore, knownKeys: Set<String>) -> ObjectAndChanges {
-        let user = self.to
-
         let conversationChanges = byUpdateAffectedKeys(
-            for: user?.oneOnOneConversation,
+            for: to?.oneOnOneConversation,
             knownKeys: knownKeys,
             keyStore: keyStore,
             keyMapping: { "\(#keyPath(ZMConversation.oneOnOneUser.connection)).\($0)" }
         )
 
         let userChanges = byUpdateAffectedKeys(
-            for: user,
+            for: to,
             knownKeys: knownKeys,
             keyStore: keyStore,
             keyMapping: { "\(#keyPath(ZMUser.connection)).\($0)" }
@@ -202,8 +200,9 @@ extension ZMConnection: SideEffectSource {
     }
 
     func affectedObjectsForInsertionOrDeletion(keyStore: DependencyKeyStore) -> ObjectAndChanges {
+
         return byInsertOrDeletionAffectedKeys(
-            for: to.oneOnOneConversation,
+            for: to?.oneOnOneConversation,
             keyStore: keyStore,
             affectedKey: #keyPath(ZMConversation.oneOnOneUser.connection)
         )
