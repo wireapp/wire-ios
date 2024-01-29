@@ -469,7 +469,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
     // MARK: - Highlighting
 
     func testThatItHighlightsCellOnTouchInside_60() throws {
-        throw XCTSkip("disable temporarly because of background color")
+
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Message contents")
         message.senderUser = MockUserType.createUser(name: "Bruno")
