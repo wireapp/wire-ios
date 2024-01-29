@@ -881,11 +881,13 @@ extension AuthenticationCoordinator {
 
         Task {
             do {
-                _ = try await e2eiCertificateUseCase?.invoke(e2eiClientId: e2eiClientId,
-                                                             userName: userName,
-                                                             userHandle: handle,
-                                                             team: teamID,
-                                                             authenticate: oauthUseCase.invoke)
+                _ = try await e2eiCertificateUseCase?.invoke(
+                    e2eiClientId: e2eiClientId,
+                    userName: userName,
+                    userHandle: handle,
+                    team: teamID,
+                    authenticate: oauthUseCase.invoke
+                )
                 session.reportEndToEndIdentityEnrollmentSuccess()
             } catch {
                 await MainActor.run {

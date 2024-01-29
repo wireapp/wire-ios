@@ -123,7 +123,8 @@ extension ZMClientRegistrationStatus {
         var action = GetFeatureConfigsAction()
         action.perform(in: managedObjectContext.notificationContext) { [weak self] result in
             switch result {
-            case .success: self?.didFetchFeatureConfigs()
+            case .success: 
+                self?.didFetchFeatureConfigs()
             case .failure:
                 self?.fetchFeatureConfigs()
             }
