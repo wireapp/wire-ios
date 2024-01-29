@@ -29,4 +29,12 @@ public extension TimeInterval {
     static let tenSeconds = 10 * oneSecond
     static let oneSecond = TimeInterval(1)
 
+    /// Number of seconds for a whole year (accounting for leap years) from now.
+
+    static var oneYearFromNow: Self {
+        let now = Date()
+        let oneYearFromNow = Calendar.current.date(byAdding: .year, value: 1, to: now)!
+        return oneYearFromNow.timeIntervalSince(now)
+    }
+
 }

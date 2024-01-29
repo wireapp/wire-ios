@@ -132,6 +132,15 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             )
         }
 
+        if let mlsMigration = payload.mlsMigration {
+            featureRepository.storeMLSMigration(
+                Feature.MLSMigration(
+                    status: mlsMigration.status,
+                    config: mlsMigration.config
+                )
+            )
+        }
+
         if let selfDeletingMessages = payload.selfDeletingMessages {
             featureRepository.storeSelfDeletingMessages(
                 Feature.SelfDeletingMessages(

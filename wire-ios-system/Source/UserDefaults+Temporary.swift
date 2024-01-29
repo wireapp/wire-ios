@@ -59,7 +59,9 @@ private final class SuiteCleanUp {
                 .url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: .init(string: "/")!, create: false)
                 .appendingPathComponent("Preferences")
                 .appendingPathComponent(suiteName + ".plist")
-            try fileManager.removeItem(at: url)
+            if fileManager.fileExists(atPath: url.path) {
+                try fileManager.removeItem(at: url)
+            }
         } catch {
             zmLog.warn("Could not remove temporary user defaults file: " + String(reflecting: error))
         }

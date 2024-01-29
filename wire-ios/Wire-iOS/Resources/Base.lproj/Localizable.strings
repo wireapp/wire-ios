@@ -466,6 +466,8 @@
 "content.system.mls_migration.ongoing_call" = "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.";
 "content.system.mls_migration.learn_more" = "Learn more about MLS";
 "content.system.mls_migration.potentialGap" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
+"content.system.mls_migration.mls_not_supported_by_otherUser" = "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.";
+"content.system.mls_migration.mls_not_supported_by_you" = "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.";
 
 // Link attachment messages
 
@@ -1583,6 +1585,14 @@
 
 "registration.signin.alert.password_needed.title" = "Password needed";
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
+
+"registration.signin.username.title" = "Your username";
+"registration.signin.username.message" = "Enter your username. It helps others to find you in Wire and connect with you.";
+"registration.signin.username.placeholder" = "username";
+"registration.signin.username.unknown_error.title" = "Couldn't update username";
+"registration.signin.username.unknown_error.message" = "Please try again later.";
+"registration.signin.username.already_taken_error.title" = "Username is already taken";
+"registration.signin.username.already_taken_error.message" = "The username is already taken, please try another one";
 
 "registration.devices.title" = "Devices";
 "registration.devices.active_list_header" = "Active";

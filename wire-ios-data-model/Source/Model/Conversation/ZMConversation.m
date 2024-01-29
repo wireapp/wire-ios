@@ -54,9 +54,7 @@ NSString *const ZMConversationAllMessagesKey = @"allMessages";
 NSString *const ZMConversationHiddenMessagesKey = @"hiddenMessages";
 NSString *const ZMConversationParticipantRolesKey = @"participantRoles";
 NSString *const ZMConversationNonTeamRolesKey = @"nonTeamRoles";
-NSString *const ZMConversationHasUnreadKnock = @"hasUnreadKnock";
 NSString *const ZMConversationUserDefinedNameKey = @"userDefinedName";
-NSString *const ZMIsDimmedKey = @"zmIsDimmed";
 NSString *const ZMNormalizedUserDefinedNameKey = @"normalizedUserDefinedName";
 NSString *const ZMConversationListIndicatorKey = @"conversationListIndicator";
 NSString *const ZMConversationConversationTypeKey = @"conversationType";
@@ -69,8 +67,6 @@ NSString *const ZMConversationExternalParticipantsStateKey = @"externalParticipa
 NSString *const ZMConversationNeedsToDownloadRolesKey = @"needsToDownloadRoles";
 NSString *const ZMConversationLegalHoldStatusKey = @"legalHoldStatus";
 NSString *const ZMConversationNeedsToVerifyLegalHoldKey = @"needsToVerifyLegalHold";
-NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey";
-NSString *const ZMConversationEstimatedUnreadCountKey = @"estimatedUnreadCount";
 NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data";
 NSString *const SecurityLevelKey = @"securityLevel";
 NSString *const ZMConversationLabelsKey = @"labels";
@@ -649,22 +645,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMConversationType conversationType =  (ZMConversationType)[[self primitiveConversationType] shortValue];
     [self didAccessValueForKey:ZMConversationConversationTypeKey];
     return conversationType;
-}
-
-// Used to merge a local 1:1 conversation with the remote conversation after a connection
-// request has been accepted.
-- (void)mergeWithExistingConversationWithRemoteID:(NSUUID *)remoteID;
-{
-    ZMConversation *existingConversation = [ZMConversation internalFetchObjectWithRemoteIdentifier:remoteID inManagedObjectContext:self.managedObjectContext];
-    if ((existingConversation != nil) && ![existingConversation isEqual:self]) {
-        Require(self.remoteIdentifier == nil);
-        [self.mutableMessages unionSet:existingConversation.allMessages];
-        // Just to be on the safe side, force update:
-        self.needsToBeUpdatedFromBackend = YES;
-        // This is a duplicate. Delete the other one
-        [self.managedObjectContext deleteObject:existingConversation];
-    }
-    self.remoteIdentifier = remoteID;
 }
 
 + (NSPredicate *)predicateForSearchQuery:(NSString *)searchQuery team:(Team *)team moc:(NSManagedObjectContext *)moc
