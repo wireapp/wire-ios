@@ -64,12 +64,19 @@ final class ConnectionPayloadProcessor {
         connection.status = payload.status.internalStatus
 
         let previousStatus = connection.status
+        let threeSecDelay: UInt64 = 3_000_000_000
 
         if previousStatus == .pending, connection.status == .accepted {
-            // Execute after 3 seconds
             Task {
-                if let resolver = OneOnOneResolver(syncContext: context) {
-                    try? await resolver.resolveOneOnOneConversation(with: payload.qualifiedTo!, in: context)
+                try? await Task.sleep(nanoseconds: threeSecDelay)
+                if let resolver = OneOnOneResolver(syncContext: context),
+                   let qualifiedTo = payload.qualifiedTo {
+                    do {
+                        try await resolver.resolveOneOnOneConversation(with: qualifiedTo, in: context)
+
+                    } catch {
+                        assertionFailure("Error resolving one-on-one conversation: \(error)")
+                    }
                 } else {
                     // Debugging check - will not be included in production
                     assertionFailure("OneOnOneResolver initialization failed")
