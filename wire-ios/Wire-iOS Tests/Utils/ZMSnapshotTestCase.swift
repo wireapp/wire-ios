@@ -314,6 +314,7 @@ extension ZMSnapshotTestCase {
                        line: line)
     }
 
+    @available(*, deprecated, message: "Use `verifyInAllPhoneWidths(matching value: UIView` instead")
     func verifyInAllPhoneWidths(view: UIView,
                                 extraLayoutPass: Bool = false,
                                 tolerance: CGFloat = tolerance,
