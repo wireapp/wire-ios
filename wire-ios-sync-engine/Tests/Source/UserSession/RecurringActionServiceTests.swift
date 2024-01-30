@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,68 +17,100 @@
 //
 
 import Foundation
+import WireTesting
 import XCTest
+
 @testable import WireSyncEngine
 
-class RecurringActionServiceTests: ZMTBaseTest {
+final class RecurringActionServiceTests: XCTestCase {
 
+    var userDefaults: UserDefaults!
+    var dateProvider: MockDateProvider!
     var sut: RecurringActionService!
-    let actionID = "11"
-    var actionPerformed = false
 
     override func setUp() {
         super.setUp()
 
-        sut = RecurringActionService()
-        sut.storage = UserDefaults(suiteName: "RecurringActionServiceTests")!
+        userDefaults = .temporary()
+        dateProvider = .init(now: .now.addingTimeInterval(-.oneDay))
+        sut = RecurringActionService(
+            storage: userDefaults,
+            dateProvider: dateProvider
+        )
     }
 
     override func tearDown() {
-        actionPerformed = false
-        sut.storage.removePersistentDomain(forName: actionID)
         sut = nil
+        dateProvider = nil
+        userDefaults = nil
 
         super.tearDown()
     }
 
-    func testThatItAddsActions() {
-        // given
-        let action = RecurringAction(id: actionID, interval: 5, perform: {})
+    func testThatItPerformsActionInitially() {
+        // Given
+        var actionPerformed = false
+        sut.registerAction(.init(id: .random(length: 5), interval: 1) {
+            actionPerformed = true
+        })
 
-        // when
-        XCTAssertEqual(sut.actions.count, 0)
-        sut.registerAction(action)
+        // When
+        sut.performActionsIfNeeded()
 
-        // then
-        XCTAssertEqual(sut.actions.count, 1)
+        // Then
+        XCTAssertTrue(actionPerformed)
     }
 
-    func testThatItPerformsAction() {
+    func testThatItDoesNotPerformActionTooEarly() {
+        // Given
+        var actionPerformed = false
+        sut.registerAction(.init(id: .random(length: 5), interval: 3) {
+            actionPerformed = true
+        })
+
+        // When
+        sut.performActionsIfNeeded()
+        actionPerformed = false
+        dateProvider.now += .oneSecond
+        sut.performActionsIfNeeded()
+
+        // Then
+        XCTAssertFalse(actionPerformed)
+    }
+
+    func testThatItForcePerformsAction() {
         // given
+        var actionPerformed = false
+        let actionID = String.random(length: 5)
+
         sut.persistLastCheckDate(for: actionID)
-        let action = RecurringAction(id: actionID, interval: 1, perform: { self.actionPerformed = true })
-        sut.registerAction(action)
+        sut.registerAction(.init(id: actionID, interval: 100) {
+            actionPerformed = true
+        })
+
+        XCTAssertFalse(actionPerformed)
 
         // when
-        Thread.sleep(forTimeInterval: 2)
-        sut.performActionsIfNeeded()
+        sut.forcePerformAction(id: actionID)
 
         // then
         XCTAssertTrue(actionPerformed)
     }
 
-    func testThatItDoesNotPerformAction_TimeHasNotExpired() {
-        // given
-        let action = RecurringAction(id: actionID, interval: 4, perform: { self.actionPerformed = true })
-        sut.registerAction(action)
-        sut.persistLastCheckDate(for: actionID)
+    func testThatItPerformsActionAgain() {
+        // Given
+        var actionPerformed = false
+        sut.registerAction(.init(id: .random(length: 5), interval: 3) {
+            actionPerformed = true
+        })
 
-        // when
-        Thread.sleep(forTimeInterval: 2)
+        // When
+        sut.performActionsIfNeeded()
+        actionPerformed = false
+        dateProvider.now += .tenSeconds
         sut.performActionsIfNeeded()
 
-        // then
-        XCTAssertFalse(actionPerformed)
+        // Then
+        XCTAssertTrue(actionPerformed)
     }
-
 }

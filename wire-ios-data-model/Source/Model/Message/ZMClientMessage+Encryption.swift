@@ -805,7 +805,7 @@ extension GenericMessage {
 
         var loggedId: String {
             get async {
-                await context.perform({ client.remoteIdentifier ?? "<nil>" })
+                await context.perform { String(describing: client.remoteIdentifier) }
             }
         }
 
@@ -855,7 +855,7 @@ extension GenericMessage {
            guard !client.failedToEstablishSession else {
                // If the session is corrupted, we will send a special payload.
                let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-               WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(client.remoteIdentifier ?? "<nil>")", attributes: nil)
+               WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: " + String(describing: client.remoteIdentifier), attributes: nil)
                return Proteus_ClientEntry(withClientId: client.clientId, data: data)
            }
 
@@ -883,7 +883,7 @@ extension GenericMessage {
                 fatal("buttonAction needs a recipient")
             }
 
-            return Set(arrayLiteral: sender)
+            return [sender]
         }
 
         func recipientForConfirmationMessage() -> Set<ZMUser>? {
@@ -896,12 +896,12 @@ extension GenericMessage {
                     return nil
             }
 
-            return Set(arrayLiteral: sender)
+            return [sender]
         }
 
         func recipientForOtherUsers() -> Set<ZMUser>? {
             guard conversation.connectedUser != nil || (otherUsers.isEmpty == false) else { return nil }
-            if let connectedUser = conversation.connectedUser { return Set(arrayLiteral: connectedUser) }
+            if let connectedUser = conversation.connectedUser { return [connectedUser] }
             return Set(otherUsers)
         }
 
@@ -926,18 +926,18 @@ extension GenericMessage {
             guard let sender = message.sender else {
                 zmLog.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
                 WireLogger.proteus.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)", attributes: nil)
-                return Set(arrayLiteral: selfUser)
+                return [selfUser]
             }
 
             // If self deletes their own message, we want to send a delete message for everyone, so return nil.
             guard !sender.isSelfUser else { return nil }
 
             // Otherwise we delete only for self and the sender, all other recipients are unaffected.
-            return Set(arrayLiteral: sender, selfUser)
+            return [sender, selfUser]
         }
 
         func allAuthorizedRecipients() -> Set<ZMUser> {
-            if let connectedUser = conversation.connectedUser { return Set(arrayLiteral: connectedUser, selfUser) }
+            if let connectedUser = conversation.connectedUser { return [connectedUser, selfUser] }
 
             func mentionedServices() -> Set<ZMUser> {
                 return services.filter { service in

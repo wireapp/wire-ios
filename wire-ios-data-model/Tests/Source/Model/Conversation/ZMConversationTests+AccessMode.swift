@@ -169,8 +169,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
             // then
             if let strings = $1 {
                 XCTAssertEqual(Set(sut.accessModeStrings!), Set(strings))
-            }
-            else {
+            } else {
                 XCTAssertTrue(sut.accessModeStrings == nil)
             }
         }
@@ -183,8 +182,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
             // then
             if let optionSet = $0 {
                 XCTAssertEqual(sut.accessMode!, optionSet)
-            }
-            else {
+            } else {
                 XCTAssertTrue(sut.accessMode == nil)
             }
         }

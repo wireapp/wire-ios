@@ -65,7 +65,7 @@ extension SelfProfileViewController {
     @discardableResult func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
         var resultViewController: UIViewController? = .none
         // Let's assume for the moment that menu is only 2 levels deep
-        rootGroup?.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) -> Void in
+        rootGroup?.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) in
 
             if let cellIdentifier = topCellDescriptor.identifier,
                 let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,
@@ -76,7 +76,7 @@ extension SelfProfileViewController {
             }
 
             if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
-                topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: SettingsCellDescriptorType) -> Void in
+                topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: SettingsCellDescriptorType) in
                     if let cellIdentifier = cellDescriptor.identifier,
                         let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,
                         let topViewController = topCellGroupDescriptor.generateViewController(),
@@ -120,7 +120,7 @@ extension UIAlertController {
 
         let title = L10n.Localizable.Self.NewDeviceAlert.title
 
-        let messageFormat = clients.count > 1 ? "self.new_device_alert.message_plural".localized : "self.new_device_alert.message".localized
+        let messageFormat = clients.count > 1 ? L10n.Localizable.Self.NewDeviceAlert.messagePlural(clients.count) : L10n.Localizable.Self.NewDeviceAlert.message(clients.count)
 
         let message = String(format: messageFormat, deviceNamesAndDates.joined(separator: "\n\n"))
 

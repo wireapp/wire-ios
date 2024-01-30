@@ -48,7 +48,7 @@ extension ZMOperationLoopTests {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // expect
-        expectation(
+        customExpectation(
             forNotification: .NSManagedObjectContextDidSave,
             object: nil,
             handler: nil)
@@ -76,7 +76,7 @@ extension ZMOperationLoopTests {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // expect
-        expectation(
+        customExpectation(
             forNotification: .NSManagedObjectContextDidSave,
             object: nil,
             handler: nil)

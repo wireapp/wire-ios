@@ -254,7 +254,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         var token: Any?
         self.syncMOC.performGroupedBlockAndWait {
             self.createMessage(uploaded: true, assetId: true)
-            let expectation = self.expectation(description: "Notification fired")
+            let expectation = self.customExpectation(description: "Notification fired")
             token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: nil) {_ in
@@ -263,7 +263,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         }
 
         // THEN
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }

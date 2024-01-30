@@ -27,8 +27,8 @@ class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
         let path = "foo/bar"
         let url = URL(string: path, relativeTo: nil)!
 
-        let exp = self.expectation(description: "expected callback")
-        let callback: (Data?, HTTPURLResponse?, Error?) -> Void = { (_, _, _) -> Void in
+        let exp = self.customExpectation(description: "expected callback")
+        let callback: (Data?, HTTPURLResponse?, Error?) -> Void = { _, _, _ in
             exp.fulfill()
         }
 
@@ -48,13 +48,13 @@ class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
     func testThatAddingRequestStartsOperationLoop() {
 
         // given
-        let exp = self.expectation(description: "new operation loop started")
-        let token = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "RequestAvailableNotification"), object: nil, queue: nil) { (_) -> Void in
+        let exp = self.customExpectation(description: "new operation loop started")
+        let token = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "RequestAvailableNotification"), object: nil, queue: nil) { _ in
             exp.fulfill()
         }
 
         let url = URL(string: "foo/bar", relativeTo: nil)!
-        let callback: (Data?, URLResponse?, Error?) -> Void = { (_, _, _) -> Void in }
+        let callback: (Data?, URLResponse?, Error?) -> Void = { _, _, _ in }
 
         // when
         self.sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
@@ -69,7 +69,7 @@ class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
 
         // given
         let url = URL(string: "foo/bar", relativeTo: nil)!
-        let callback: (Data?, URLResponse?, Error?) -> Void = { (_, _, _) -> Void in }
+        let callback: (Data?, URLResponse?, Error?) -> Void = { _, _, _ in }
 
         // here we block sync thread and check that right after giphyRequestWithURL call no request is created
         // after we signal semaphore sync thread should be unblocked and pending request should be created

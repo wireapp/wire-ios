@@ -886,7 +886,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
 
-        confirmImageViewController.previewTitle = conversation.displayNameWithFallback.localized
+        confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         present(confirmImageViewController, animated: false)
     }
@@ -995,7 +995,9 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func createConstraints() {
-        [securityLevelView, inputBar, markdownButton, typingIndicatorView].prepareForLayout()
+        [securityLevelView, inputBar, markdownButton, typingIndicatorView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         let bottomConstraint = inputBar.bottomAnchor.constraint(equalTo: inputBar.superview!.bottomAnchor)
         bottomConstraint.priority = .defaultLow

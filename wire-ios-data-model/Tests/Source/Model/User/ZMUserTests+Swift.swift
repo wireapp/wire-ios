@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 // MARK: - Modified keys for profile picture upload
 final class ZMUserTests_Swift: ModelObjectsTests {
@@ -273,7 +274,7 @@ extension ZMUserTests_Swift {
 extension ZMUserTests_Swift {
 
     func testThatItPostsPreviewRequestNotifications() {
-        let noteExpectation = expectation(description: "PreviewAssetFetchNotification should be fired")
+        let noteExpectation = customExpectation(description: "PreviewAssetFetchNotification should be fired")
         var userObjectId: NSManagedObjectID?
 
         let token = ManagedObjectObserverToken(name: .userDidRequestPreviewAsset,
@@ -289,14 +290,14 @@ extension ZMUserTests_Swift {
         userObjectId = user.objectID
         user.requestPreviewProfileImage()
 
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
 
     func testThatItPostsCompleteRequestNotifications() {
-        let noteExpectation = expectation(description: "CompleteAssetFetchNotification should be fired")
+        let noteExpectation = customExpectation(description: "CompleteAssetFetchNotification should be fired")
         var userObjectId: NSManagedObjectID?
 
         let token = ManagedObjectObserverToken(name: .userDidRequestCompleteAsset,
@@ -312,7 +313,7 @@ extension ZMUserTests_Swift {
         userObjectId = user.objectID
         user.requestCompleteProfileImage()
 
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
@@ -892,7 +893,7 @@ extension ZMUserTests_Swift {
         conversation.addParticipantAndUpdateConversationState(user: sut, role: nil)
 
         // then
-        XCTAssertEqual(sut.activeConversations, Set(arrayLiteral: conversation))
+        XCTAssertEqual(sut.activeConversations, [conversation])
     }
 
 }
@@ -977,6 +978,19 @@ extension ZMUserTests_Swift {
         // THEN
         XCTAssert(user.readReceiptsEnabled)
     }
+
+    func testThatMLSCantBeRemovedAsASupportedProtocol() {
+        // GIVEN
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.supportedProtocols = [.proteus, .mls]
+
+        // WHEN
+        user.supportedProtocols = [.proteus]
+
+        // THEN
+        XCTAssertEqual(user.supportedProtocols, [.proteus, .mls])
+    }
+
 }
 
 // MARK: - Verifying user
@@ -1024,7 +1038,7 @@ extension ZMUserTests_Swift {
         let user = createUser(in: uiMOC)
 
         // expect
-        expectation(forNotification: ConnectToUserAction.notificationName, object: nil)
+        customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)
 
         // when
         user.connect { (_) in }
@@ -1033,25 +1047,56 @@ extension ZMUserTests_Swift {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatAcceptSendsAUpdateConnectionAction() {
-        // given
-        let user = createUser(in: uiMOC)
-        user.connection = ZMConnection.insertNewObject(in: uiMOC)
+    func testAcceptConnectionRequest() throws {
+        let userID = QualifiedID(uuid: UUID(), domain: "local@domain.com")
+        let proteusConversationID = QualifiedID(uuid: UUID(), domain: "local@domain.com")
 
-        // expect
-        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
-            guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
-                return false
-            }
+        try syncMOC.performAndWait {
+            let user = createUser(in: syncMOC)
+            user.remoteIdentifier = userID.uuid
+            user.domain = userID.domain
+            user.supportedProtocols = [.proteus, .mls]
+            user.connection = ZMConnection.insertNewObject(in: syncMOC)
 
-            return action.newStatus == .accepted
+            let proteusConversation = ZMConversation.insertConversation(moc: syncMOC, participants: [], type: .connection)
+            proteusConversation?.remoteIdentifier = proteusConversationID.uuid
+            proteusConversation?.domain = proteusConversation?.domain
+            proteusConversation?.messageProtocol = .proteus
+
+            user.connection?.conversation = proteusConversation
+
+            try syncMOC.save()
         }
 
-        // when
-        user.accept { (_) in }
+        let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: uiMOC))
+        let proteusConversation = try XCTUnwrap(ZMConversation.fetch(with: proteusConversationID, in: uiMOC))
 
-        // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        // Mock successful connection updates.
+        _ = MockActionHandler<UpdateConnectionAction>(
+            result: .success(()),
+            context: uiMOC.notificationContext
+        )
+
+        let oneOneOneResolver = MockOneOnOneResolverInterface()
+        oneOneOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in .noAction }
+
+        // Expect
+        let didSucceed = XCTestExpectation(description: "didSucceed")
+
+        // When I accept the connection request from the other user.
+        user.accept(oneOnOneResolver: oneOneOneResolver) { error in
+            if let error {
+                XCTFail("unexpected error: \(error)")
+            } else {
+                didSucceed.fulfill()
+            }
+        }
+
+        // Then
+        wait(for: [didSucceed], timeout: 0.5)
+        XCTAssertEqual(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
+        let invocation = try XCTUnwrap(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.first)
+        XCTAssertEqual(invocation.userID, userID)
     }
 
     func testThatBlockSendsAUpdateConnectionAction() {
@@ -1060,7 +1105,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }
@@ -1081,7 +1126,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }
@@ -1102,7 +1147,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,38 +17,67 @@
 //
 
 import Foundation
+import WireDataModel
 
 extension ZMUserSession {
 
-    func refreshUsersMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
-
-        return RecurringAction(id: "refreshUserMetadata", interval: interval) { [weak self] in
-            self?.perform {
-                let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
-                guard let users = self?.managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
-                    return
+    var updateProteusToMLSMigrationStatusAction: RecurringAction {
+        .init(id: #function, interval: .oneDay) { [weak self] in
+            Task { [weak self] in
+                do {
+                    try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
+                } catch {
+                    WireLogger.mls.error("proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))")
                 }
-                users.forEach { $0.refreshData() }
             }
         }
-
     }
 
-    func refreshConversationsMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
+    var refreshUsersMissingMetadataAction: RecurringAction {
+        .init(id: #function, interval: 3 * .oneHour) { [weak self] in
 
-        return RecurringAction(id: "refreshConversationMetadata", interval: interval) { [weak self] in
-            self?.perform {
+            guard let context = self?.managedObjectContext else { return }
+            context.performGroupedAndWait { context in
+
+                let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
+                guard let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
+                    return
+                }
+
+                users.forEach { $0.refreshData() }
+                context.saveOrRollback()
+            }
+        }
+    }
+
+    var refreshConversationsMissingMetadataAction: RecurringAction {
+        .init(id: #function, interval: 3 * .oneHour) { [weak self] in
+
+            guard let context = self?.managedObjectContext else { return }
+            context.performGroupedAndWait { context in
+
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
-                guard let conversations = self?.managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
+                guard let conversations = context.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
                     return
                 }
+
                 conversations.forEach { $0.needsToBeUpdatedFromBackend = true }
+                context.saveOrRollback()
             }
-
         }
-
     }
 
+    var refreshTeamMetadataAction: RecurringAction {
+        .init(id: #function, interval: .oneDay) { [weak self] in
+
+            guard let context = self?.managedObjectContext else { return }
+            context.performGroupedAndWait { context in
+
+                guard let team = ZMUser.selfUser(in: context).team else { return }
+                team.refreshMetadata()
+            }
+        }
+    }
 }

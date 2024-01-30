@@ -32,7 +32,7 @@ extension ZMBaseManagedObjectTest {
     @discardableResult
     func createMLSGroup(in moc: NSManagedObjectContext) -> MLSGroup {
         let group = MLSGroup.insertNewObject(in: moc)
-        group.id = MLSGroupID(.random(length: 32))
+        group.id = .random()
         return group
     }
 
@@ -40,6 +40,13 @@ extension ZMBaseManagedObjectTest {
         let team = Team.insertNewObject(in: moc)
         team.remoteIdentifier = UUID()
         return team
+    }
+
+    func createUser(id: QualifiedID, in moc: NSManagedObjectContext) -> ZMUser {
+        let user = ZMUser.insertNewObject(in: moc)
+        user.remoteIdentifier = id.uuid
+        user.domain = id.domain
+        return user
     }
 
     func createUser(in moc: NSManagedObjectContext) -> ZMUser {
@@ -79,5 +86,25 @@ extension ZMBaseManagedObjectTest {
         let externalUser = createUser(in: moc)
         createMembership(in: moc, user: externalUser, team: nil, with: .partner)
         return externalUser
+    }
+
+    func createConnection(
+        status: ZMConnectionStatus,
+        to user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> (ZMConnection, ZMConversation) {
+        let connection = ZMConnection.insertNewObject(in: context)
+        connection.to = user
+        connection.status = status
+        connection.message = "Connect to me"
+        connection.lastUpdateDate = .now
+
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .connection
+        conversation.remoteIdentifier = .create()
+        conversation.domain = "local@domain.com"
+        conversation.connection = connection
+
+        return (connection, conversation)
     }
 }

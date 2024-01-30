@@ -100,12 +100,12 @@ extension MessagingTestBase {
 
         return Payload.ConversationEvent<Event>(
             id: conversationID?.uuid,
-            qualifiedID: conversationID,
+            data: data,
             from: senderID?.uuid,
+            qualifiedID: conversationID,
             qualifiedFrom: senderID,
             timestamp: timestamp,
-            type: ZMUpdateEvent.eventTypeString(for: Event.eventType),
-            data: data
+            type: ZMUpdateEvent.eventTypeString(for: Event.eventType)
         )
 
     }

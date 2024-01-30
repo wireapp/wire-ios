@@ -47,15 +47,10 @@ extern NSString *const ZMConversationMutedStatusKey;
 extern NSString *const ZMConversationAllMessagesKey;
 extern NSString *const ZMConversationHiddenMessagesKey;
 extern NSString *const ZMConversationParticipantRolesKey;
-extern NSString *const ZMConversationHasUnreadKnock;
 extern NSString *const ZMConversationUserDefinedNameKey;
-extern NSString *const ZMVisibleWindowLowerKey;
-extern NSString *const ZMVisibleWindowUpperKey;
-extern NSString *const ZMIsDimmedKey;
 extern NSString *const ZMNormalizedUserDefinedNameKey;
 extern NSString *const ZMConversationListIndicatorKey;
 extern NSString *const ZMConversationConversationTypeKey;
-extern NSString *const ZMConversationExternalParticipantsStateKey;
 extern NSString *const ZMConversationNeedsToDownloadRolesKey;
 extern NSString *const ZMConversationIsForcedReadOnlyKey;
 
@@ -65,13 +60,11 @@ extern NSString *const ZMConversationClearedTimeStampKey;
 extern NSString *const ZMConversationArchivedChangedTimeStampKey;
 extern NSString *const ZMConversationSilencedChangedTimeStampKey;
 
-extern NSString *const ZMNotificationConversationKey;
 extern NSString *const ZMConversationRemoteIdentifierDataKey;
 extern NSString *const TeamRemoteIdentifierDataKey;
 
 extern const NSUInteger ZMConversationMaxTextMessageLength;
 extern NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay;
-extern NSString *const ZMConversationEstimatedUnreadCountKey;
 
 extern NSString *const ZMConversationInternalEstimatedUnreadSelfMentionCountKey;
 extern NSString *const ZMConversationInternalEstimatedUnreadSelfReplyCountKey;
@@ -132,8 +125,6 @@ NS_ASSUME_NONNULL_END
     @param message The message that should be inserted.
 */
 - (void)appendMessage:(nonnull ZMMessage *)message;
-
-- (void)mergeWithExistingConversationWithRemoteID:(nonnull NSUUID *)remoteID;
 
 - (ZMConversationType)internalConversationType;
 

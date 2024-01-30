@@ -504,7 +504,7 @@ extension AssetV3DownloadRequestStrategyTests {
 
         // EXPECT
         var token: Any?
-        let expectation = self.expectation(description: "Notification fired")
+        let expectation = self.customExpectation(description: "Notification fired")
         token = NotificationInContext.addObserver(name: .NonCoreDataChangeInManagedObject,
                                                   context: self.uiMOC.notificationContext,
                                                   object: nil) { note in
@@ -523,7 +523,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
 
         // THEN
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }

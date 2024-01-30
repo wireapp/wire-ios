@@ -198,16 +198,19 @@ final class ProfileHeaderViewController: UIViewController {
 
         addChild(availabilityTitleViewController)
 
-        stackView = CustomSpacingStackView(customSpacedArrangedSubviews: [nameHandleStack,
-                                                                          teamNameLabel,
-                                                                          imageView,
-                                                                          availabilityTitleViewController.view,
-                                                                          guestIndicatorStack,
-                                                                          externalIndicator,
-                                                                          federatedIndicator,
-                                                                          groupRoleIndicator,
-                                                                          warningView
-                                                                         ])
+        stackView = CustomSpacingStackView(
+            customSpacedArrangedSubviews: [
+                nameHandleStack,
+                teamNameLabel,
+                imageView,
+                availabilityTitleViewController.view,
+                guestIndicatorStack,
+                externalIndicator,
+                federatedIndicator,
+                groupRoleIndicator,
+                warningView
+            ]
+        )
 
         stackView.alignment = .center
         stackView.axis = .vertical
@@ -299,7 +302,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     private func updateTeamLabel() {
         if let teamName = user.teamName, !options.contains(.hideTeamName) {
-            teamNameLabel.text = teamName.localized
+            teamNameLabel.text = teamName
             teamNameLabel.accessibilityValue = teamNameLabel.text
             teamNameLabel.isHidden = false
         } else {

@@ -30,7 +30,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
     override func setUp() {
         super.setUp()
-        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .random())
+        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
         mockProteusService = MockProteusServiceInterface()
 
         // Mock
@@ -275,7 +275,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         await syncMOC.perform {
             switch payloadAndStrategy.strategy {
             case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, Set(arrayLiteral: self.syncSelfUser, self.syncUser1))
+                XCTAssertEqual(users, [self.syncSelfUser, self.syncUser1])
             default:
                 XCTFail()
             }
@@ -327,7 +327,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             guard let payloadAndStrategy = payload else { return XCTFail() }
             switch payloadAndStrategy.strategy {
             case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, Set(arrayLiteral: self.syncSelfUser))
+                XCTAssertEqual(users, [self.syncSelfUser])
             default:
                 XCTFail()
             }
@@ -336,7 +336,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
     func testThatItCreatesPayloadForZMLastReadMessages() async throws {
         // Given
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.domain.com"
 
         let message = try await self.syncMOC.perform {
@@ -427,7 +427,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             // Then
             switch unWrappedPayloadAndStrategy.strategy {
             case .ignoreAllMissingClientsNotFromUsers(let users):
-                XCTAssertEqual(users, Set(arrayLiteral: self.syncUser1))
+                XCTAssertEqual(users, [self.syncUser1])
             default:
                 XCTFail()
             }

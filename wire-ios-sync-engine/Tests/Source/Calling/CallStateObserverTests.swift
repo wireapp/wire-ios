@@ -249,7 +249,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         uiMOC.zm_callCenter = mockCallCenter
 
         // expect
-        expectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
+        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
             return true
         }
 
@@ -266,7 +266,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         uiMOC.zm_callCenter  = mockCallCenter
 
         // expect
-        expectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
+        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
             return true
         }
 
@@ -285,7 +285,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // expect
-        expectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (note) -> Bool in
             if let open = note.userInfo?[CallStateObserver.CallInProgressKey] as? Bool, open == false {
                 return true
             } else {
@@ -431,6 +431,10 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             self.conversation.remoteIdentifier = .create()
             self.conversation.lastModifiedDate = startDate
 
+            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            connection.conversation = self.conversation
+            connection.status = .accepted
+
             XCTAssertEqual(self.conversation.mutedMessageTypes, .all)
             XCTAssertFalse(self.conversation.isArchived)
 
@@ -442,6 +446,10 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             otherConvo?.userDefinedName = "Other"
             otherConvo?.lastServerTimeStamp = Date()
             otherConvo?.lastModifiedDate = startDate.addingTimeInterval(500)
+
+            let otherConnection = ZMConnection.insertNewObject(in: self.syncMOC)
+            otherConnection.conversation = otherConvo
+            otherConnection.status = .accepted
 
             self.syncMOC.saveOrRollback()
         }

@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +17,8 @@
 //
 
 import Foundation
+import WireDataModel
+
 // sourcery: AutoMockable
 public protocol ConversationServiceInterface {
 
@@ -35,7 +38,8 @@ public protocol ConversationServiceInterface {
     )
 
     func syncConversation(
-        qualifiedID: QualifiedID) async
+        qualifiedID: QualifiedID
+    ) async
 
 }
 
@@ -45,6 +49,7 @@ public enum ConversationCreationFailure: Error {
     case missingSelfClientID
     case conversationNotFound
     case networkError(CreateGroupConversationAction.Failure)
+    case underlyingError(Error)
 
 }
 
@@ -52,12 +57,17 @@ public final class ConversationService: ConversationServiceInterface {
 
     // MARK: - Properties
 
-    let context: NSManagedObjectContext
+    private let context: NSManagedObjectContext
+    private let participantsServiceBuilder: (NSManagedObjectContext) -> ConversationParticipantsServiceInterface
 
     // MARK: - Life cycle
 
-    public init(context: NSManagedObjectContext) {
+    public init(context: NSManagedObjectContext,
+                participantsServiceBuilder: ((NSManagedObjectContext) -> ConversationParticipantsServiceInterface)? = nil) {
         self.context = context
+        self.participantsServiceBuilder = participantsServiceBuilder ?? { syncContext in
+            ConversationParticipantsService(context: syncContext)
+        }
     }
 
     // MARK: - Create conversation
@@ -251,14 +261,38 @@ public final class ConversationService: ConversationServiceInterface {
         )
 
         action.perform(in: context.notificationContext) { result in
+
             self.context.perform {
                 switch result {
                 case .success(let objectID):
-                    if let conversation = try? self.context.existingObject(with: objectID) as? ZMConversation {
-                        completion(.success(conversation))
-                    } else {
-                        completion(.failure(.conversationNotFound))
+                    Task {
+                        do {
+                            try await self.handleMLSConversationIfNeeded(for: objectID, participants: usersExcludingSelfUser)
+                        } catch {
+                            if error.isFailedToAddSomeUsersError {
+                                // we ignore the error a system message is inserted
+                                // and focus on group creation successful
+                            } else {
+                                await self.context.perform {
+                                    completion(.failure(.underlyingError(error)))
+                                }
+                                return
+                            }
+                        }
+
+                        await self.context.perform {
+                            if let conversation = try? self.context.existingObject(with: objectID) as? ZMConversation {
+                                completion(.success(conversation))
+                            } else {
+                                completion(.failure(.conversationNotFound))
+                            }
+                        }
                     }
+
+                case .failure(CreateGroupConversationAction.Failure.notConnected):
+                    users.forEach { $0.needsToBeUpdatedFromBackend = true }
+                    self.context.enqueueDelayedSave()
+                    completion(.failure(.networkError(.notConnected)))
 
                 case .failure(let failure):
                     completion(.failure(.networkError(failure)))
@@ -267,11 +301,51 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
+    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID, participants: Set<ZMUser>) async throws {
+        guard let syncContext = await context.perform({ self.context.zm_sync }) else {
+            assertionFailure("handleMLSConversationIfNeeded must be done on syncContext")
+            return
+        }
+        guard let syncConversation = await syncContext.perform({
+            let conversation = try? syncContext.existingObject(with: conversationObjectId) as? ZMConversation
+
+            guard conversation?.messageProtocol == .mls else {
+                // proteus: nothing to do for proteus, see action handler
+                // mixed: Conversations should never be created with mixed protocol, that's why we break here
+                return ZMConversation?.none
+            }
+            return conversation
+        }) else {
+            return
+        }
+
+        await syncContext.perform {
+            Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: syncConversation.mlsGroupID)))")
+
+            // Self user is creator, so we don't need to process a welcome message
+            syncConversation.mlsStatus = .ready
+            syncContext.saveOrRollback()
+        }
+
+        let (mlsGroupID, mlsService) = await syncContext.perform {
+            (syncConversation.mlsGroupID, syncContext.mlsService)
+        }
+
+        guard let mlsGroupID, let mlsService else { return }
+
+        try await mlsService.createGroup(for: mlsGroupID, with: [])
+
+        let participantsService = participantsServiceBuilder(syncContext)
+        if !participants.isEmpty {
+            try await participantsService.addParticipants(Array(participants), to: syncConversation)
+        }
+    }
+
     // MARK: - Sync conversation
 
     public func syncConversation(
         qualifiedID: QualifiedID,
-        completion: @escaping () -> Void
+        completion: @escaping () -> Void = {}
     ) {
         var action = SyncConversationAction(qualifiedID: qualifiedID)
         action.perform(in: context.notificationContext) { _ in

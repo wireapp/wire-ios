@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsAction> {
 
@@ -48,7 +49,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             }
 
             do {
-                let payload = try JSONDecoder().decode(ResponsePayload.self, from: data)
+                let payload = try JSONDecoder.defaultDecoder.decode(ResponsePayload.self, from: data)
                 processPayload(payload)
                 action.succeed()
             } catch {
@@ -131,11 +132,29 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             )
         }
 
+        if let mlsMigration = payload.mlsMigration {
+            featureRepository.storeMLSMigration(
+                Feature.MLSMigration(
+                    status: mlsMigration.status,
+                    config: mlsMigration.config
+                )
+            )
+        }
+
         if let selfDeletingMessages = payload.selfDeletingMessages {
             featureRepository.storeSelfDeletingMessages(
                 Feature.SelfDeletingMessages(
                     status: selfDeletingMessages.status,
                     config: selfDeletingMessages.config
+                )
+            )
+        }
+
+        if let mlsMigration = payload.mlsMigration {
+            featureRepository.storeMLSMigration(
+                Feature.MLSMigration(
+                    status: mlsMigration.status,
+                    config: mlsMigration.config
                 )
             )
         }
@@ -157,6 +176,7 @@ extension GetFeatureConfigsActionHandler {
         let fileSharing: FeatureStatus?
         let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
         let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
+        let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
 
     }
 

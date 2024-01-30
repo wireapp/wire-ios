@@ -174,7 +174,7 @@ extension ZMConversation {
     }
 
     private static func dateFromTimestamp(_ timestamp: Int64) -> Date {
-        let interval = Double(integerLiteral: timestamp) / 1000
+        let interval = Double(timestamp) / 1000
         return Date(timeIntervalSince1970: interval)
     }
 

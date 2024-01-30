@@ -27,6 +27,7 @@ final class TextFieldValidator {
     enum ValidationError: Error, Equatable {
         case tooShort(kind: ValidatedTextField.Kind)
         case tooLong(kind: ValidatedTextField.Kind)
+        case invalidUsername
         case invalidEmail
         case invalidPhoneNumber
         case invalidPassword([PasswordValidationResult.Violation])
@@ -80,6 +81,11 @@ final class TextFieldValidator {
             } else if stringToValidate.count < 2 {
                 return .tooShort(kind: kind)
             }
+        case .username:
+            let subset = CharacterSet(charactersIn: text).isSubset(of: HandleValidation.allowedCharacters)
+            guard subset && text.isEqualToUnicodeName else { return .invalidUsername }
+            guard text.count >= HandleValidation.allowedLength.lowerBound else { return .tooShort(kind: .username) }
+            guard text.count <= HandleValidation.allowedLength.upperBound else { return .tooLong(kind: .username) }
         case .phoneNumber, .unknown:
             // phone number is validated with the custom validator
             break
@@ -114,6 +120,8 @@ extension TextFieldValidator.ValidationError: LocalizedError {
                 return "unknown.guidance.tooshort".localized
             case .phoneNumber:
                 return L10n.Localizable.Phone.Guidance.tooshort
+            case .username:
+                return L10n.Localizable.Name.Guidance.tooshort
             }
         case .tooLong(kind: let kind):
             switch kind {
@@ -128,6 +136,8 @@ extension TextFieldValidator.ValidationError: LocalizedError {
                 return "unknown.guidance.toolong".localized
             case .phoneNumber:
                 return L10n.Localizable.Phone.Guidance.toolong
+            case .username:
+                return L10n.Localizable.Name.Guidance.toolong
             }
         case .invalidEmail:
             return L10n.Localizable.Email.Guidance.invalid
@@ -139,6 +149,8 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             return violations.contains(.tooLong)
                 ? L10n.Localizable.Password.Guidance.toolong
                 : PasswordRuleSet.localizedErrorMessage
+        case .invalidUsername:
+            return "invalid"
         }
     }
 
