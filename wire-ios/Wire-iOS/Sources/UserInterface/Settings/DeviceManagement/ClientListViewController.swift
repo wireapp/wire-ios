@@ -72,23 +72,18 @@ final class ClientListViewController: UIViewController,
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
 
-    var selfClientClientTableViewCellModel: ClientTableViewCellModel?
-    var clientTableViewCellModels: [ClientTableViewCellModel] = []
-    var sortedClients: [UserClient] = [] {
-        didSet {
-            clientTableViewCellModels = sortedClients.map(ClientTableViewCellModel.from(userClient:))
+    var selfClientClientTableViewCellModel: ClientTableViewCellModel? {
+        guard let selfClient = selfClient else {
+            return nil
         }
+        return .from(userClient: selfClient)
     }
+    var clientTableViewCellModels: [ClientTableViewCellModel] {
+        return sortedClients.map { .from(userClient: $0) }
+    }
+    var sortedClients: [UserClient] = []
 
-    var selfClient: UserClient? {
-        didSet {
-            guard let selfClient = selfClient else {
-                selfClientClientTableViewCellModel = nil
-                return
-            }
-            selfClientClientTableViewCellModel = .from(userClient: selfClient)
-        }
-    }
+    var selfClient: UserClient?
     let detailedView: Bool
     var credentials: ZMEmailCredentials?
     var clientsObserverToken: Any?
@@ -525,7 +520,7 @@ final class ClientListViewController: UIViewController,
                     for client in userClients {
                         let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
                         client.e2eIdentityCertificate = certificates.first(where: {$0.clientId == mlsClientIdRawValue})
-                        if client.e2eIdentityCertificate == nil {
+                        if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
                             client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
                         }
                         updatedUserClients.append(client)
