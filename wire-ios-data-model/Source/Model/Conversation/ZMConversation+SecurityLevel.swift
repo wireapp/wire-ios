@@ -303,8 +303,8 @@ extension ZMConversation {
         _ user: ZMUser,
         date: Date = .now
     ) {
-        guard 
-            !user.isSelfUser, 
+        guard
+            !user.isSelfUser,
             !localParticipants.contains(user)
         else {
             return
@@ -323,11 +323,10 @@ extension ZMConversation {
             )
 
         case .oneOnOne, .connection:
-            if 
+            if
                 user.connection == nil,
                 let context = managedObjectContext,
-                !user.isOnSameTeam(otherUser: ZMUser.selfUser(in: context))
-            {
+                !user.isOnSameTeam(otherUser: ZMUser.selfUser(in: context)) {
                 user.connection = ZMConnection.insertNewObject(in: managedObjectContext!)
             }
 

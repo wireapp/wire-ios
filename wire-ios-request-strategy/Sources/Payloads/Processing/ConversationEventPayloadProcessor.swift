@@ -527,7 +527,7 @@ struct ConversationEventPayloadProcessor {
         else {
             return
         }
-        
+
         conversation.oneOnOneUser = otherUser
     }
 

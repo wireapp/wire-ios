@@ -679,7 +679,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             conversation,
-            modifier: { conversation, _ in
+            modifier: { _, _ in
                 otherUser.connection?.status = ZMConnectionStatus.accepted
             },
             expectedChangedFields: ["connectionStateChanged"],
