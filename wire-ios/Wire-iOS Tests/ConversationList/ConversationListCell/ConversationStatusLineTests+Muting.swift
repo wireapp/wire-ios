@@ -56,7 +56,7 @@ extension ConversationStatusLineTests_Muting {
     func testStatusShowSpecialSummaryForSingleEphemeralReplyWhenOnlyReplies_group() {
         // GIVEN
         let sut = self.createGroupConversation()
-        sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"), date: nil)
+        sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"))
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
 
         let selfMessage = appendSelfMessage(to: sut)
@@ -217,7 +217,7 @@ extension ConversationStatusLineTests_Muting {
     func testStatusShowSpecialSummaryForSingleEphemeralMentionWhenOnlyMentions_group() {
         // GIVEN
         let sut = self.createGroupConversation()
-        sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"), date: nil)
+        sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"))
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
         appendMention(to: sut)
         markAllMessagesAsUnread(in: sut)

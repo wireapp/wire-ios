@@ -403,7 +403,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.syncUser1
             connection.status = .accepted
-            conversation.connection = connection
+            self.syncUser1.oneOnOneConversation = conversation
             conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
 
             self.syncMOC.saveOrRollback()
@@ -453,7 +453,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.syncUser1
             connection.status = .accepted
-            conversation.connection = connection
+            self.syncUser1.oneOnOneConversation = conversation
             conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
 
             self.syncMOC.saveOrRollback()
@@ -486,7 +486,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.syncUser1
             connection.status = .accepted
-            conversation.connection = connection
+            self.syncUser1.oneOnOneConversation = conversation
 
             let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)

@@ -73,7 +73,8 @@ final class ConnectionPayloadProcessor {
 
         let previousStatus = connection.status
 
-        connection.conversation = conversation
+        connection.to.oneOnOneConversation = conversation
+
         connection.status = payload.status.internalStatus
 
         let threeSecDelay: TimeInterval = delay
