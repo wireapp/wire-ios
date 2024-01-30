@@ -93,7 +93,7 @@ extension CoreDataStack {
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
         databaseKey: VolatileData? = nil,
-        completion: @escaping (Result<BackupInfo>) -> Void
+        completion: @escaping (Swift.Result<BackupInfo, Error>) -> Void
     ) {
         func fail(_ error: BackupError) {
             log.debug("error backing up local store: \(error)")
