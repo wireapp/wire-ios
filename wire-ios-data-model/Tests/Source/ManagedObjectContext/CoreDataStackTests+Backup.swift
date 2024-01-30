@@ -47,8 +47,8 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         super.tearDown()
     }
 
-    func createBackup(accountIdentifier: UUID, databaseKey: VolatileData? = nil, file: StaticString = #file, line: UInt = #line) -> Swift.Result<URL, Error> {
-        var result: Swift.Result<URL, Error>!
+    func createBackup(accountIdentifier: UUID, databaseKey: VolatileData? = nil, file: StaticString = #file, line: UInt = #line) -> Result<URL, Error> {
+        var result: Result<URL, Error>!
 
         CoreDataStack.backupLocalStorage(
             accountIdentifier: accountIdentifier,

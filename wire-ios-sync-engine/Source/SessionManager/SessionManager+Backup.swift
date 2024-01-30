@@ -40,7 +40,7 @@ extension SessionManager {
         case unknown
     }
 
-    public func backupActiveAccount(password: String, completion: @escaping (Swift.Result<URL, Error>) -> Void) {
+    public func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) {
         guard
             let userId = accountManager.selectedAccount?.userIdentifier,
             let clientId = activeUserSession?.selfUserClient?.remoteIdentifier,
@@ -70,15 +70,15 @@ extension SessionManager {
     }
 
     private static func handle(
-        result: Swift.Result<CoreDataStack.BackupInfo, Error>,
+        result: Result<CoreDataStack.BackupInfo, Error>,
         password: String,
         accountId: UUID,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        completion: @escaping (Swift.Result<URL, Error>) -> Void,
+        completion: @escaping (Result<URL, Error>) -> Void,
         handle: String
         ) {
         workerQueue.async(group: dispatchGroup) {
-            let encrypted: Swift.Result<URL, Error>
+            let encrypted: Result<URL, Error>
 
             switch result {
             case .success(let info):
@@ -108,8 +108,8 @@ extension SessionManager {
     /// Restores the account database from the Wire iOS database back up file.
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
     /// is called.
-    public func restoreFromBackup(at location: URL, password: String, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
-        func complete(_ result: Swift.Result<Void, Error>) {
+    public func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        func complete(_ result: Result<Void, Error>) {
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(result)
             }

@@ -270,9 +270,9 @@ class SessionManagerTests_Backup: IntegrationTest {
         password: String,
         file: StaticString = #file,
         line: UInt = #line
-    ) -> Swift.Result<URL, Error> {
+    ) -> Result<URL, Error> {
 
-        var result: Swift.Result<URL, Error> = .failure(TestError.uninitialized)
+        var result: Result<URL, Error> = .failure(TestError.uninitialized)
         sessionManager?.backupActiveAccount(password: password) { result = $0 }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         return result
@@ -283,9 +283,9 @@ class SessionManagerTests_Backup: IntegrationTest {
         from url: URL,
         file: StaticString = #file,
         line: UInt = #line
-        ) -> Swift.Result<Void, Error> {
+        ) -> Result<Void, Error> {
 
-        var result: Swift.Result<Void, Error> = .failure(TestError.uninitialized)
+        var result: Result<Void, Error> = .failure(TestError.uninitialized)
         sessionManager?.restoreFromBackup(at: url, password: password) { result = $0 }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         return result

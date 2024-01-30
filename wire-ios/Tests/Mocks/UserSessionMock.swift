@@ -219,7 +219,7 @@ final class UserSessionMock: UserSession {
 
     func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
     ) {
 
     }

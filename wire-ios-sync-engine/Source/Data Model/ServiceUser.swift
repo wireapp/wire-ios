@@ -279,7 +279,7 @@ extension AddBotError {
 
 public extension ZMConversation {
 
-    func add(serviceUser: ServiceUser, in userSession: ZMUserSession, completionHandler: @escaping (Swift.Result<Void, Error>) -> Void) {
+    func add(serviceUser: ServiceUser, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         guard let serviceUserData = serviceUser.serviceUserData else {
             fatal("Not a service user")
         }
@@ -287,7 +287,7 @@ public extension ZMConversation {
         add(serviceUser: serviceUserData, in: userSession, completionHandler: completionHandler)
     }
 
-    func add(serviceUser serviceUserData: ServiceUserData, in userSession: ZMUserSession, completionHandler: @escaping (Swift.Result<Void, Error>) -> Void) {
+    func add(serviceUser serviceUserData: ServiceUserData, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         add(serviceUser: serviceUserData,
             transportSession: userSession.transportSession,
             eventProcessor: userSession.updateEventProcessor!,
@@ -299,7 +299,7 @@ public extension ZMConversation {
                       transportSession: TransportSessionType,
                       eventProcessor: UpdateEventProcessor,
                       contextProvider: ContextProvider,
-                      completionHandler: @escaping (Swift.Result<Void, Error>) -> Void) {
+                      completionHandler: @escaping (Result<Void, Error>) -> Void) {
 
         guard transportSession.reachability.mayBeReachable else {
             completionHandler(.failure(AddBotError.offline))

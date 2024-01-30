@@ -294,7 +294,7 @@ final class ServiceUserTests: IntegrationTest {
         let conversation = self.conversation(for: self.groupConversation)!
 
         // when
-        var result: Swift.Result<Void, Error>!
+        var result: Result<Void, Error>!
         conversation.add(serviceUser: service, in: userSession!) {
             result = $0
             jobIsDone.fulfill()

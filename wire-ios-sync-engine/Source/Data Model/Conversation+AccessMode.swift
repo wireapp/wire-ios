@@ -179,7 +179,7 @@ extension ZMConversation {
     }
 
     /// Deletes the existing wireless link.
-    public func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    public func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -204,7 +204,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow guests.
-    public func setAllowGuests(_ allowGuests: Bool, in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    public func setAllowGuests(_ allowGuests: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -217,7 +217,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow services.
-    public func setAllowServices(_ allowServices: Bool, in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    public func setAllowServices(_ allowServices: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(SetAllowServicesError.invalidOperation))
         }
@@ -231,7 +231,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow services.
-    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (Result<Void, Error>) -> Void) {
         let request = WirelessRequestFactory.setAccessRoles(allowGuests: allowGuests, allowServices: allowServices, for: self, apiVersion: apiVersion)
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
