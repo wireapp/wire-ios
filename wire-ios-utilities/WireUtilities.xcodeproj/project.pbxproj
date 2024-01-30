@@ -62,12 +62,10 @@
 		546E8A501B750146009EBA02 /* NSOperationQueue+HelpersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A4F1B750146009EBA02 /* NSOperationQueue+HelpersTests.m */; };
 		546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A521B7501D0009EBA02 /* NSUUID+DataTests.m */; };
 		546E8A591B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A581B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m */; };
-		546E8A5C1B7503C6009EBA02 /* FunctionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */; };
 		546E8A621B75045E009EBA02 /* UnownedObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */; };
 		54A3430E1E4B7DFB00B48A0F /* NSOrderedSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */; };
 		54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */; };
 		54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */; };
-		54CA31291B74F36B00B820C0 /* Functional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CA31151B74F36B00B820C0 /* Functional.swift */; };
 		54CA312B1B74F36B00B820C0 /* NSData+ZMAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31161B74F36B00B820C0 /* NSData+ZMAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA312D1B74F36B00B820C0 /* NSDate+Utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31171B74F36B00B820C0 /* NSDate+Utility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA312F1B74F36B00B820C0 /* NSOperationQueue+Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31181B74F36B00B820C0 /* NSOperationQueue+Helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -308,14 +306,12 @@
 		546E8A4F1B750146009EBA02 /* NSOperationQueue+HelpersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSOperationQueue+HelpersTests.m"; path = "Source/NSOperationQueue+HelpersTests.m"; sourceTree = "<group>"; };
 		546E8A521B7501D0009EBA02 /* NSUUID+DataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSUUID+DataTests.m"; path = "Source/NSUUID+DataTests.m"; sourceTree = "<group>"; };
 		546E8A581B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSManagedObjectContext+WireUtilitiesTests.m"; path = "Source/NSManagedObjectContext+WireUtilitiesTests.m"; sourceTree = "<group>"; };
-		546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FunctionalTests.swift; path = Source/FunctionalTests.swift; sourceTree = "<group>"; };
 		546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedObjectTests.swift; path = Source/UnownedObjectTests.swift; sourceTree = "<group>"; };
 		54BD49EE1D41FA1D006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WireUtilities.xcconfig; sourceTree = "<group>"; };
 		54C1B1001B31A1E400CB8CF3 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSUUID+Type1.swift"; sourceTree = "<group>"; };
 		54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSUUID+Type1Tests.swift"; path = "Source/NSUUID+Type1Tests.swift"; sourceTree = "<group>"; };
-		54CA31151B74F36B00B820C0 /* Functional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functional.swift; sourceTree = "<group>"; };
 		54CA31161B74F36B00B820C0 /* NSData+ZMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ZMAdditions.h"; sourceTree = "<group>"; };
 		54CA31171B74F36B00B820C0 /* NSDate+Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Utility.h"; sourceTree = "<group>"; };
 		54CA31181B74F36B00B820C0 /* NSOperationQueue+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+Helpers.h"; sourceTree = "<group>"; };
@@ -698,7 +694,6 @@
 				54CA31511B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h */,
 				097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */,
 				F9FCE0A01C7DBBD00092BA68 /* ZMSwiftExceptionHandler.h */,
-				54CA31151B74F36B00B820C0 /* Functional.swift */,
 				F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */,
 				BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */,
 				54CA311E1B74F36B00B820C0 /* Sets.swift */,
@@ -811,7 +806,6 @@
 				546E8A581B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m */,
 				D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */,
 				16A5FE04215A770000AEEBBD /* IndexSet+HelperTests.swift */,
-				546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */,
 				163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */,
 				168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */,
 				BF3C1B0E20DA7289001CE126 /* Equatable+OneOfTests.swift */,
@@ -1140,7 +1134,6 @@
 				6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */,
 				D504CD372090CB2900A78DAA /* Flip.swift in Sources */,
 				163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */,
-				54CA31291B74F36B00B820C0 /* Functional.swift in Sources */,
 				5E4BC1C6218C830500A8682E /* String+Spaces.swift in Sources */,
 				871939C521D4D93600738968 /* ZMMobileProvisionParser.m in Sources */,
 				BF3493F41EC362D400B0C314 /* Iterator+Containment.swift in Sources */,
@@ -1225,7 +1218,6 @@
 				163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */,
 				EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */,
 				5E9EA4C422423EA800D401B2 /* ArraySafeIndexTests.swift in Sources */,
-				546E8A5C1B7503C6009EBA02 /* FunctionalTests.swift in Sources */,
 				09F027D01B721DA300BADDB6 /* NSUserDefaults+SharedUserDefaultsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
