@@ -111,27 +111,24 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         XCTAssertEqual(result.acmeOrder, expectedAcmeOrder)
     }
 
-    func testThatItCreatesAuthz() async throws {
+    func testThatItCreatesAuthorization() async throws {
         // expectation
         let expectedNonce = "Nonce"
         let expectedLocation = "Location"
-        let wireDpopChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "wire server")
         let wireOidcChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "google")
 
         // given
         mockAcmeApi.mockNonce = expectedNonce
         mockAcmeApi.mockLocation = expectedLocation
-        mockE2eiService.wireDpopChallenge = wireDpopChallenge
-        mockE2eiService.wireOidcChallenge = wireOidcChallenge
+        mockE2eiService.mockChallenge = wireOidcChallenge
 
         // when
-        let result = try await sut.createAuthz(prevNonce: "prevNonce", authzEndpoint: "https://endpoint.com")
+        let result = try await sut.createAuthorization(prevNonce: "prevNonce", authzEndpoint: "https://endpoint.com")
 
         // then
         XCTAssertEqual(result.nonce, expectedNonce)
         XCTAssertEqual(result.location, expectedLocation)
-//        XCTAssertEqual(result.challenges.wireDpopChallenge, wireDpopChallenge)
-//        XCTAssertEqual(result.challenges.wireOidcChallenge, wireOidcChallenge)
+        XCTAssertEqual(result.challengeType, .OIDC)
     }
 
     func testThatItGetsWireNonce() async throws {
@@ -192,6 +189,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
                                                           url: "url",
                                                           status: "valid",
                                                           token: "token",
+                                                          target: "target",
                                                           nonce: "nonce")
         // given
         mockAcmeApi.mockChallengeResponse = expectedChallengeResponse
@@ -213,6 +211,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
                                                           url: "url",
                                                           status: "valid",
                                                           token: "token",
+                                                          target: "target",
                                                           nonce: "nonce")
 
         // given
@@ -236,6 +235,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
                                                   url: "url",
                                                   status: "valid",
                                                   token: "token",
+                                                  target: "target",
                                                   nonce: "nonce")
 
         // when
@@ -251,6 +251,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
                                                   url: "url",
                                                   status: "valid",
                                                   token: "token",
+                                                  target: "target",
                                                   nonce: "nonce")
 
         // when
@@ -345,7 +346,12 @@ class MockAcmeApi: AcmeAPIInterface {
     var mockNonce: String?
     var mockLocation: String?
     var mockResponseData: Data?
+    var mockChallengeType: AuthorizationChallengeType = .OIDC
     var mockChallengeResponse: ChallengeResponse?
+
+    func getTrustAnchor() async throws -> String {
+        return ""
+    }
 
     func getACMEDirectory() async throws -> Data {
         let payload = acmeDirectoriesResponse()
@@ -368,7 +374,15 @@ class MockAcmeApi: AcmeAPIInterface {
                                                           url: "",
                                                           status: "",
                                                           token: "",
+                                                          target: "",
                                                           nonce: "")
+    }
+
+    func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse {
+        return ACMEAuthorizationResponse(nonce: mockNonce ?? "",
+                                         location: mockLocation ?? "",
+                                         response: mockResponseData ?? Data(),
+                                         challengeType: mockChallengeType)
     }
 
     private func acmeDirectoriesResponse() -> [String: String] {
@@ -385,12 +399,11 @@ class MockAcmeApi: AcmeAPIInterface {
 
 class MockE2eIService: E2eIServiceInterface {
     var mockAcmeOrder: NewAcmeOrder?
-    var wireDpopChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "wire server")
-    var wireOidcChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "google")
     var mockDpopToken: String?
     var mockSetChallengeResponse: Int = 0
     var mockOrderResponse: String?
     var mockFinalizeResponse: String?
+    var mockChallenge: AcmeChallenge?
 
     func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory {
         return AcmeDirectory(newNonce: "", newAccount: "", newOrder: "", revokeCert: "")
@@ -416,9 +429,10 @@ class MockE2eIService: E2eIServiceInterface {
     }
 
     func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz {
+        let wireDpopChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "wire server")
         return NewAcmeAuthz(identifier: "111",
                             keyauth: "keyauth",
-                            challenge: wireDpopChallenge)
+                            challenge: mockChallenge ?? wireDpopChallenge)
     }
 
     func createDpopToken(nonce: String) async throws -> String {

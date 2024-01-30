@@ -47,6 +47,8 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                        userHandle: String,
                        team: UUID,
                        authenticate: OAuthBlock) async throws {
+        try await e2eiRepository.fetchTrustAnchor()
+
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId,
                                                                    userName: userName,
                                                                    handle: userHandle,
@@ -55,58 +57,57 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let acmeNonce = try await enrollment.getACMENonce()
         let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)
         let newOrder = try await enrollment.createNewOrder(prevNonce: newAccountNonce)
-        let authzResponse = try await enrollment.createAuthz(prevNonce: newOrder.nonce,
-                                                             authzEndpoint: newOrder.acmeOrder.authorizations[0])
+        let authorizations = try await enrollment.getAuthorizations(
+            prevNonce: newOrder.nonce,
+            authorizationsEndpoints: newOrder.acmeOrder.authorizations)
+        let oidcAuthorization = authorizations.oidcAuthorization
+        let dPopAuthorization = authorizations.dpopAuthorization
 
-//        let oidcChallenge = authzResponse.challenges.wireOidcChallenge
-//        let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge
+        let keyauth = oidcAuthorization.keyauth ?? ""
+        let acmeAudience = oidcAuthorization.challenge.url
 
-//        let keyauth = authzResponse.challenges.keyauth
-//        let acmeAudience = oidcChallenge.url
-//
-//        guard let identityProvider = URL(string: oidcChallenge.target) else {
-//            throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
-//        }
-//
-//        guard let clientId = getClientId(from: oidcChallenge.target) else {
-//            throw EnrollE2EICertificateUseCaseFailure.missingClientId
-//        }
-//
-//        let (idToken, refreshToken) = try await authenticate(identityProvider, clientId, keyauth, acmeAudience)
-//        let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
-//        let dpopToken = try await enrollment.getDPoPToken(wireNonce)
-//        let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
-//                                                                      dpopToken: dpopToken)
-//
-//        let refreshTokenFromCC = try? await enrollment.getOAuthRefreshToken()
-//
-//        let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(accessToken: wireAccessToken.token,
-//                                                                               prevNonce: authzResponse.nonce,
-//                                                                               acmeChallenge: wireDpopChallenge)
-//
-//        let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(idToken: idToken,
-//                                                                               refreshToken: refreshTokenFromCC ?? refreshToken,
-//                                                                               prevNonce: dpopChallengeResponse.nonce,
-//                                                                               acmeChallenge: oidcChallenge)
-//
-//        let orderResponse = try await enrollment.checkOrderRequest(location: newOrder.location, prevNonce: oidcChallengeResponse.nonce)
-//        let finalizeResponse = try await enrollment.finalize(location: orderResponse.location, prevNonce: orderResponse.acmeResponse.nonce)
-//        let certificateRequest = try await enrollment.certificateRequest(location: finalizeResponse.location,
-//                                                                         prevNonce: finalizeResponse.acmeResponse.nonce)
-//
+        guard let identityProvider = URL(string: oidcAuthorization.challenge.target) else {
+            throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
+        }
+
+        guard let clientId = extractClientId(from: oidcAuthorization.challenge.target) else {
+            throw EnrollE2EICertificateUseCaseFailure.missingClientId
+        }
+
+        let (idToken, refreshToken) = try await authenticate(identityProvider, clientId, keyauth, acmeAudience)
+        let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
+        let dpopToken = try await enrollment.getDPoPToken(wireNonce)
+        let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
+                                                                      dpopToken: dpopToken)
+
+        let refreshTokenFromCC = try? await enrollment.getOAuthRefreshToken()
+
+        let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(accessToken: wireAccessToken.token,
+                                                                               prevNonce: authorizations.nonce,
+                                                                               acmeChallenge: dPopAuthorization.challenge)
+
+        let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(idToken: idToken,
+                                                                               refreshToken: refreshTokenFromCC ?? refreshToken,
+                                                                               prevNonce: dpopChallengeResponse.nonce,
+                                                                               acmeChallenge: oidcAuthorization.challenge)
+
+        let orderResponse = try await enrollment.checkOrderRequest(location: newOrder.location, prevNonce: oidcChallengeResponse.nonce)
+        let finalizeResponse = try await enrollment.finalize(location: orderResponse.location, prevNonce: orderResponse.acmeResponse.nonce)
+        let certificateRequest = try await enrollment.certificateRequest(location: finalizeResponse.location,
+                                                                         prevNonce: finalizeResponse.acmeResponse.nonce)
+
         do {
-//            guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
-//                throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
-//            }
-//
-//            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+            guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
+                throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
+            }
+            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
         } catch is DecodingError {
             throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
         }
 
     }
 
-    private func getClientId(from path: String) -> String? {
+    private func extractClientId(from path: String) -> String? {
         guard let urlComponents = URLComponents(string: path),
               let clientId = urlComponents.queryItems?.first(where: { $0.name == "client_id" })?.value else {
             return nil
