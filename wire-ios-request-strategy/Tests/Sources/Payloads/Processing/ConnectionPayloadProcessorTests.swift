@@ -18,14 +18,17 @@
 
 import XCTest
 @testable import WireRequestStrategy
+import WireDataModelSupport
 
 final class ConnectionPayloadProcessorTests: MessagingTestBase {
 
     var sut: ConnectionPayloadProcessor!
+    var mockResolver: MockOneOnOneResolverInterface!
 
     override func setUp() {
         super.setUp()
-        sut = ConnectionPayloadProcessor()
+        mockResolver = MockOneOnOneResolverInterface()
+        sut = ConnectionPayloadProcessor(resolver: mockResolver)
         BackendInfo.storage = .temporary()
     }
 
@@ -109,6 +112,38 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
             // then
             XCTAssertEqual(connection.conversation.qualifiedID, conversationID)
         }
+    }
+
+    func testThatOneOnOneResolverIsInvoked_WhenConnectionRequestIsAccepted() {
+        // GIVEN
+        let conversationID: QualifiedID = .randomID()
+        let connection = self.oneToOneConversation.connection!
+        let payload = self.createConnectionPayload(
+            to: self.otherUser.qualifiedID!,
+            conversation: conversationID
+        )
+
+        let expectation = XCTestExpectation(description: "")
+
+        mockResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
+            defer {
+                expectation.fulfill()
+            }
+            let id = try self.syncMOC.performAndWait {
+                try XCTUnwrap(connection.conversation.mlsGroupID)
+            }
+           return OneOnOneConversationResolution.migratedToMLSGroup(identifier: id)
+        }
+
+        // WHEN
+        sut.updateOrCreateConnection(from: payload, in: syncMOC, delay: UInt64(0.5))
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        wait(for: [expectation], timeout: 0.5)
+        XCTAssertEqual(mockResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
+
     }
 
     func testThatOtherUserIsAddedToConversation() {

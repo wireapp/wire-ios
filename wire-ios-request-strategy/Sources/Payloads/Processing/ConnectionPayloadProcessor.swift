@@ -20,6 +20,16 @@ import Foundation
 
 final class ConnectionPayloadProcessor {
 
+    let resolver: OneOnOneResolverInterface?
+
+    convenience init(context: NSManagedObjectContext) {
+        self.init(resolver: OneOnOneResolver(syncContext: context))
+    }
+
+    init(resolver: OneOnOneResolverInterface?) {
+        self.resolver = resolver
+    }
+
     func processPayload(
         _ payload: Payload.UserConnectionEvent,
         in context: NSManagedObjectContext
@@ -32,7 +42,8 @@ final class ConnectionPayloadProcessor {
 
     func updateOrCreateConnection(
         from payload: Payload.Connection,
-        in context: NSManagedObjectContext
+        in context: NSManagedObjectContext,
+        delay: TimeInterval = 3
     ) {
         guard let userID = payload.to ?? payload.qualifiedTo?.uuid else {
             Logging.eventProcessing.error("Missing to field in connection payload, aborting...")
@@ -60,16 +71,17 @@ final class ConnectionPayloadProcessor {
         conversation.lastModifiedDate = payload.lastUpdate
         conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
+        let previousStatus = connection.status
+
         connection.conversation = conversation
         connection.status = payload.status.internalStatus
 
-        let previousStatus = connection.status
-        let threeSecDelay: UInt64 = 3_000_000_000
+        let threeSecDelay: TimeInterval = delay
 
         if previousStatus == .pending, connection.status == .accepted {
-            Task {
-                try? await Task.sleep(nanoseconds: threeSecDelay)
-                if let resolver = OneOnOneResolver(syncContext: context),
+            WaitingGroupTask(context: context) {
+                try? await Task.sleep(nanoseconds: UInt64(threeSecDelay))
+                if let resolver = self.resolver,
                    let qualifiedTo = payload.qualifiedTo {
                     do {
                         try await resolver.resolveOneOnOneConversation(with: qualifiedTo, in: context)
@@ -78,7 +90,6 @@ final class ConnectionPayloadProcessor {
                         assertionFailure("Error resolving one-on-one conversation: \(error)")
                     }
                 } else {
-                    // Debugging check - will not be included in production
                     assertionFailure("OneOnOneResolver initialization failed")
                 }
             }

@@ -22,7 +22,7 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private lazy var processor = ConnectionPayloadProcessor(context: context)
 
     override func request(for action: UpdateConnectionAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {

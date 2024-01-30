@@ -114,7 +114,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     }
 
     private func createConnectionsAndFinishSyncPhase(_ connections: [Payload.Connection], hasMore: Bool) {
-        let processor = ConnectionPayloadProcessor()
+        let processor = ConnectionPayloadProcessor(context: managedObjectContext)
 
         for connection in connections {
             processor.updateOrCreateConnection(
@@ -198,7 +198,7 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
             switch event.type {
             case .userConnection:
                 if let conversationEvent = Payload.UserConnectionEvent(payloadData) {
-                    let processor = ConnectionPayloadProcessor()
+                    let processor = ConnectionPayloadProcessor(context: managedObjectContext)
                     processor.processPayload(
                         conversationEvent,
                         in: managedObjectContext
@@ -222,7 +222,7 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private lazy var processor = ConnectionPayloadProcessor(context: context)
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -276,7 +276,7 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private lazy var processor = ConnectionPayloadProcessor(context: context)
 
     init(context: NSManagedObjectContext) {
         self.context = context
