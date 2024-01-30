@@ -29,7 +29,6 @@ FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 #import <WireUtilities/NSData+ZMAdditions.h>
 #import <WireUtilities/NSData+ZMSCrypto.h>
 #import <WireUtilities/NSOperationQueue+Helpers.h>
-#import <WireUtilities/NSSet+Zeta.h>
 #import <WireUtilities/NSUUID+Data.h>
 #import <WireUtilities/ZMFunctional.h>
 #import <WireUtilities/ZMTimer.h>
