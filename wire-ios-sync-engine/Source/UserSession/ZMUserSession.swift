@@ -56,14 +56,12 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 @objcMembers
 public class ZMUserSession: NSObject {
 
-    private static let logger = Logger(subsystem: "VoIP Push", category: "ZMUserSession")
-
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
 
     private(set) var isNetworkOnline = true
-    private(set) var isPerformingSync = true {
+    var isPerformingSync = true {
         willSet {
             notificationDispatcher.operationMode = newValue ? .economical : .normal
         }
@@ -95,7 +93,7 @@ public class ZMUserSession: NSObject {
     // When we move to the monorepo, uncomment hotFixApplicator
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-    private(set) var recurringActionService = RecurringActionService(
+    var recurringActionService = RecurringActionService(
         storage: .standard,
         dateProvider: .system
     ) as RecurringActionServiceInterface
@@ -305,6 +303,14 @@ public class ZMUserSession: NSObject {
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 
+    public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol =  {
+        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
+    }()
+
+    public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
+        return GetE2eIdentityCertificatesUseCase(coreCryptoProvider: coreCryptoProvider)
+    }()
+
     lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface = {
         let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         return MLSConversationVerificationStatusProvider(
@@ -316,6 +322,10 @@ public class ZMUserSession: NSObject {
         return MLSConversationVerificationManager(
             mlsService: mlsService,
             mlsConversationVerificationStatusProvider: mlsConversationVerificationStatusProvider)
+    }()
+
+    public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
+        ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -741,7 +751,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
         networkState = state
     }
-
 }
 
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
@@ -788,7 +797,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didStartQuickSync() {
-        Self.logger.trace("did start quick sync")
+        WireLogger.sync.debug("did start quick sync")
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
@@ -796,7 +805,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didFinishQuickSync() {
-        Self.logger.trace("did finish quick sync")
+        WireLogger.sync.debug("did finish quick sync")
         processEvents()
 
         NotificationInContext(

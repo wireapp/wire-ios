@@ -34,20 +34,12 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
-
-    func openChangeHandleViewController(with handle: String)
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
     func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool)
-
-    func removeUsernameTakeover()
-    func showUsernameTakeover(suggestedHandle: String, name: String)
-
     func showPermissionDeniedViewController()
 
     @discardableResult
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
-
-    var hasUsernameTakeoverViewController: Bool { get }
 }
 
 extension ConversationListViewController: ConversationListContainerViewModelDelegate {}
@@ -71,9 +63,7 @@ extension ConversationListViewController {
 
         var selectedConversation: ZMConversation?
 
-        var userProfileObserverToken: Any?
         private var initialSyncObserverToken: Any?
-        private var userObserverToken: Any?
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: Any?
         var connectionRequestsObserverToken: Any?
@@ -95,7 +85,6 @@ extension ConversationListViewController {
 extension ConversationListViewController.ViewModel {
     func setupObservers() {
         if let userSession = ZMUserSession.shared() {
-            userObserverToken = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession) as Any
             initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
         }
 
@@ -128,25 +117,27 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
-    private var userProfile: UserProfile? {
-        return ZMUserSession.shared()?.userProfile
-    }
+    func requestMarketingConsentIfNeeded() {
+        if let userSession = ZMUserSession.shared(), let selfUser = ZMUser.selfUser() {
+            guard
+                userSession.hasCompletedInitialSync == true,
+                userSession.isPendingHotFixChanges == false
+            else {
+                return
+            }
 
-    func requestSuggestedHandlesIfNeeded() {
-        guard let session = ZMUserSession.shared(),
-            let userProfile = userProfile else { return }
-
-        if nil == session.providedSelfUser.handle,
-            session.hasCompletedInitialSync == true,
-            session.isPendingHotFixChanges == false {
-
-            userProfileObserverToken = userProfile.add(observer: self)
-            userProfile.suggestHandles()
+            selfUser.fetchMarketingConsent(in: userSession, completion: {[weak self] result in
+                switch result {
+                case .failure:
+                    self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
+                        selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
+                    })
+                case .success:
+                    // The user already gave a marketing consent, no need to ask for it again.
+                    return
+                }
+            })
         }
-    }
-
-    func setSuggested(handle: String) {
-        userProfile?.requestSettingHandle(handle: handle)
     }
 
     private var isComingFromRegistration: Bool {
@@ -163,9 +154,7 @@ extension ConversationListViewController.ViewModel {
         // and is not coming from the registration flow (where we alreday ask for permissions).
         guard selfUser.handle != nil else { return false }
         guard !isComingFromRegistration else { return false }
-
         guard !AutomationHelper.sharedHelper.skipFirstLoginAlerts else { return false }
-        guard false == viewController?.hasUsernameTakeoverViewController else { return false }
 
         guard Settings.shared.pushAlertHappenedMoreThan1DayBefore else { return false }
 
@@ -187,7 +176,7 @@ extension ConversationListViewController.ViewModel {
 
 extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObserver {
     func initialSyncCompleted() {
-        requestSuggestedHandlesIfNeeded()
+        requestMarketingConsentIfNeeded()
     }
 }
 

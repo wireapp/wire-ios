@@ -46,7 +46,6 @@ final class ConversationListViewController: UIViewController {
     var startCallToken: Any?
 
     var pushPermissionDeniedViewController: PermissionDeniedViewController?
-    var usernameTakeoverViewController: UserNameTakeOverViewController?
 
     private let noConversationLabel: UILabel = {
         let label = UILabel()
@@ -169,7 +168,7 @@ final class ConversationListViewController: UIViewController {
         super.viewWillAppear(animated)
 
         viewModel.savePendingLastRead()
-        viewModel.requestSuggestedHandlesIfNeeded()
+        viewModel.requestMarketingConsentIfNeeded()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -383,10 +382,9 @@ final class ConversationListViewController: UIViewController {
                                      completion: completion)
     }
 
-    var hasUsernameTakeoverViewController: Bool {
-        return usernameTakeoverViewController != nil
+    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
+        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
     }
-
 }
 
 // MARK: - UITabBarDelegate

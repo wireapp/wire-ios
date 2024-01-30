@@ -663,7 +663,7 @@ extension UserProfileUpdateRequestStrategyTests {
 
         // WHEN
         let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.keyExistsResponse())
+        request?.complete(with: self.handleExistsResponse())
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -759,6 +759,13 @@ extension UserProfileUpdateRequestStrategyTests {
     func badRequestResponse() -> ZMTransportResponse {
         return ZMTransportResponse(payload: ["label": "bad-request"] as NSDictionary,
                                    httpStatus: 400,
+                                   transportSessionError: nil,
+                                   apiVersion: APIVersion.v0.rawValue)
+    }
+
+    func handleExistsResponse() -> ZMTransportResponse {
+        return ZMTransportResponse(payload: ["label": "handle-exists"] as NSDictionary,
+                                   httpStatus: 409,
                                    transportSessionError: nil,
                                    apiVersion: APIVersion.v0.rawValue)
     }
