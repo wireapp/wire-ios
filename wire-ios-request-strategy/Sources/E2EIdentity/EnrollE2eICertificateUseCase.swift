@@ -47,6 +47,8 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                        userHandle: String,
                        team: UUID,
                        authenticate: OAuthBlock) async throws {
+        try await e2eiRepository.fetchTrustAnchor()
+
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId,
                                                                    userName: userName,
                                                                    handle: userHandle,

@@ -349,6 +349,10 @@ class MockAcmeApi: AcmeAPIInterface {
     var mockChallengeType: AuthorizationChallengeType = .OIDC
     var mockChallengeResponse: ChallengeResponse?
 
+    func getTrustAnchor() async throws -> String {
+        return ""
+    }
+
     func getACMEDirectory() async throws -> Data {
         let payload = acmeDirectoriesResponse()
 
