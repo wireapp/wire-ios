@@ -87,6 +87,7 @@
         <attribute name="needsToDownloadRoles" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="needsToVerifyLegalHold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="normalizedUserDefinedName" optional="YES" attributeType="String"/>
+        <attribute name="qualifiedId" optional="YES" attributeType="String"/>
         <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="securityLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
@@ -117,8 +118,7 @@
         </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="remoteIdentifier"/>
-                <constraint value="domain"/>
+                <constraint value="qualifiedId"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
@@ -235,7 +235,7 @@
     </entity>
     <entity name="ParticipantRole" representedClassName=".ParticipantRole" syncable="YES">
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
-        <relationship name="conversation" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation"/>
+        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation"/>
         <relationship name="role" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Role" inverseName="participantRoles" inverseEntity="Role"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User"/>
     </entity>
@@ -325,6 +325,7 @@
         <attribute name="phoneNumber" optional="YES" attributeType="String"/>
         <attribute name="previewProfileAssetIdentifier" optional="YES" attributeType="String"/>
         <attribute name="providerIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="qualifiedId" optional="YES" attributeType="String"/>
         <attribute name="readReceiptsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="readReceiptsEnabledChangedRemotely" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
@@ -359,8 +360,7 @@
         </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="remoteIdentifier"/>
-                <constraint value="domain"/>
+                <constraint value="qualifiedId"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
