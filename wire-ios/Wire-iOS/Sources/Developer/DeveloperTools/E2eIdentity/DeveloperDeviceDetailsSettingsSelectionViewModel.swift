@@ -164,12 +164,12 @@ extension E2eIdentityCertificate {
     static var mockNotActivated: E2eIdentityCertificate {
         E2eIdentityCertificate(
             clientId: "sdfsdfsdfs",
-            certificateDetails: .mockCertificate(),
+            certificateDetails: "",
             mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
-            notValidBefore: dateFormatter.date(from: "15.09.2024") ?? Date.now,
-            expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
+            notValidBefore: Date.now,
+            expiryDate: Date.now,
             certificateStatus: .notActivated,
-            serialNumber: .mockSerialNumber
+            serialNumber: ""
         )
     }
 }

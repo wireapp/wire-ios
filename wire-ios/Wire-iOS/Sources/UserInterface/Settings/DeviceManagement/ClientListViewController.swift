@@ -72,9 +72,18 @@ final class ClientListViewController: UIViewController,
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
 
+    var selfClientClientTableViewCellModel: ClientTableViewCellModel? {
+        guard let selfClient = selfClient else {
+            return nil
+        }
+        return .from(userClient: selfClient)
+    }
+    var clientTableViewCellModels: [ClientTableViewCellModel] {
+        return sortedClients.map { .from(userClient: $0) }
+    }
     var sortedClients: [UserClient] = []
 
-    let selfClient: UserClient?
+    var selfClient: UserClient?
     let detailedView: Bool
     var credentials: ZMEmailCredentials?
     var clientsObserverToken: Any?
@@ -203,10 +212,10 @@ final class ClientListViewController: UIViewController,
             userClient: client,
             title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
             addedDate: client.activationDate?.formattedDate ?? "",
-            proteusID: client.proteusSessionID?.clientID,
+            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16),
             isSelfClient: client.isSelfClient(),
             userSession: userSession,
-            credentials: self.credentials,
+            credentials: credentials,
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
             mlsThumbprint: client.mlsPublicKeys.ed25519?.splitStringIntoLines(charactersPerLine: 16),
             getProteusFingerprint: userSession.getUserClientFingerprint
@@ -392,18 +401,16 @@ final class ClientListViewController: UIViewController,
         if let cell = tableView.dequeueReusableCell(withIdentifier: ClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? ClientTableViewCell {
             cell.selectionStyle = .none
             cell.showDisclosureIndicator()
-            cell.showVerified = self.detailedView
 
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
-                cell.userClient = self.selfClient
+                cell.viewModel = selfClientClientTableViewCellModel
                 cell.wr_editable = false
-                cell.showVerified = false
             case 1:
-                cell.userClient = self.sortedClients[indexPath.row]
+                cell.viewModel = clientTableViewCellModels[indexPath.row]
                 cell.wr_editable = true
             default:
-                cell.userClient = nil
+                cell.viewModel = nil
             }
 
             cell.accessibilityTraits = .button
@@ -513,7 +520,7 @@ final class ClientListViewController: UIViewController,
                     for client in userClients {
                         let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
                         client.e2eIdentityCertificate = certificates.first(where: {$0.clientId == mlsClientIdRawValue})
-                        if client.e2eIdentityCertificate == nil {
+                        if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
                             client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
                         }
                         updatedUserClients.append(client)

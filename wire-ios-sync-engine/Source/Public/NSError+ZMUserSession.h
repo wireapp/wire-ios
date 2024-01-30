@@ -58,6 +58,8 @@ typedef NS_ENUM(NSUInteger, ZMUserSessionErrorCode) {
     /// The user needs to enroll into end-to-end identity in order to complete the registration
     /// of a new client.
     ZMUserSessionNeedsToEnrollE2EIToRegisterClient,
+    /// The user account does not have a handle, and a handle is needed to register a new client.
+    ZMUserSessionNeedsToHandleToRegisterClient,
     /// Too many clients have been registered for this user,
     /// one needs to be deleted before registering a new one
     ZMUserSessionCanNotRegisterMoreClients,

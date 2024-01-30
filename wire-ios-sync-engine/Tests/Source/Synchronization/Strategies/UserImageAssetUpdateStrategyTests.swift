@@ -68,26 +68,33 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         self.mockApplicationStatus.mockSynchronizationState = .online
         self.updateStatus = MockImageUpdateStatus()
 
-        sut = UserImageAssetUpdateStrategy(managedObjectContext: syncMOC,
-                                           applicationStatus: mockApplicationStatus,
-                                           imageUploadStatus: updateStatus)
+        sut = self.syncMOC.performAndWait {
+            UserImageAssetUpdateStrategy(managedObjectContext: self.syncMOC,
+                                         applicationStatus: mockApplicationStatus,
+                                         imageUploadStatus: updateStatus)
+        }
 
-        self.syncMOC.zm_userImageCache = UserImageLocalCache(location: nil)
-        self.uiMOC.zm_userImageCache = self.syncMOC.zm_userImageCache
+        let cache = UserImageLocalCache(location: nil)
+        syncMOC.performAndWait {
+            self.syncMOC.zm_userImageCache = cache
+        }
+        uiMOC.performAndWait {
+            self.uiMOC.zm_userImageCache = cache
+        }
     }
 
     override func tearDown() {
         self.mockApplicationStatus = nil
         self.updateStatus = nil
         self.sut = nil
-        self.syncMOC.zm_userImageCache = nil
+        syncMOC.performAndWait {
+            self.syncMOC.zm_userImageCache = nil
+        }
         BackendInfo.domain = nil
         super.tearDown()
     }
-}
 
-// MARK: - Profile image upload
-extension UserImageAssetUpdateStrategyTests {
+    // MARK: - Profile image upload
 
     func testThatItDoesNotReturnARequestWhenThereIsNoImageToUpload() {
         // WHEN
@@ -211,10 +218,7 @@ extension UserImageAssetUpdateStrategyTests {
 
     }
 
-}
-
-// MARK: - Profile image download
-extension UserImageAssetUpdateStrategyTests {
+    // MARK: - Profile image download
 
     func testThatItCreatesDownstreamRequestSyncs() {
         XCTAssertNotNil(sut.downstreamRequestSyncs[.preview])
@@ -233,11 +237,18 @@ extension UserImageAssetUpdateStrategyTests {
 
     func testThatItWhitelistsUserOnPreviewSyncForPreviewImageNotification() {
         // GIVEN
-        let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
-        user.previewProfileAssetIdentifier = "fooo"
+        let user = syncMOC.performAndWait {
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.previewProfileAssetIdentifier = "fooo"
+            return user
+        }
+
         let sync = self.sut.downstreamRequestSyncs[.preview]!
         XCTAssertFalse(sync.hasOutstandingItems)
-        syncMOC.saveOrRollback()
+
+        syncMOC.performAndWait {
+            self.syncMOC.saveOrRollback()
+        }
 
         // WHEN
         uiMOC.performGroupedBlock {
@@ -251,11 +262,18 @@ extension UserImageAssetUpdateStrategyTests {
 
     func testThatItWhitelistsUserOnPreviewSyncForCompleteImageNotification() {
         // GIVEN
-        let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
-        user.completeProfileAssetIdentifier = "fooo"
+        let user = syncMOC.performAndWait {
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.completeProfileAssetIdentifier = "fooo"
+            return user
+        }
+
         let sync = self.sut.downstreamRequestSyncs[.complete]!
         XCTAssertFalse(sync.hasOutstandingItems)
-        syncMOC.saveOrRollback()
+
+        syncMOC.performAndWait {
+            self.syncMOC.saveOrRollback()
+        }
 
         // WHEN
         uiMOC.performGroupedBlock {
@@ -267,25 +285,28 @@ extension UserImageAssetUpdateStrategyTests {
         XCTAssertTrue(sync.hasOutstandingItems)
     }
 
-    func testThatItCreatesRequestForCorrectAssetIdentifier(for size: ProfileImageSize, apiVersion: APIVersion) {
+    func testThatItCreatesRequestForCorrectAssetIdentifier(for size: ProfileImageSize, apiVersion: APIVersion) throws {
         // GIVEN
         let domain = "example.domain.com"
         BackendInfo.domain = domain
-        let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
         let assetId = "foo-bar"
 
-        switch size {
-        case .preview:
-            user.previewProfileAssetIdentifier = assetId
-        case .complete:
-            user.completeProfileAssetIdentifier = assetId
+        let userObjectId = try syncMOC.performAndWait {
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+
+            switch size {
+            case .preview:
+                user.previewProfileAssetIdentifier = assetId
+            case .complete:
+                user.completeProfileAssetIdentifier = assetId
+            }
+
+            self.syncMOC.saveOrRollback()
+            return try XCTUnwrap(user.objectID)
         }
-
-        syncMOC.saveOrRollback()
-
         // WHEN
         uiMOC.performGroupedBlock {
-            let user = self.uiMOC.object(with: user.objectID) as? ZMUser
+            let user = self.uiMOC.object(with: userObjectId) as? ZMUser
 
             switch size {
             case .preview:
@@ -307,106 +328,129 @@ extension UserImageAssetUpdateStrategyTests {
             expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
         }
 
-        let request = self.sut.downstreamRequestSyncs[size]?.nextRequest(for: apiVersion)
-        XCTAssertNotNil(request)
-        XCTAssertEqual(request?.path, expectedPath)
-        XCTAssertEqual(request?.method, .get)
+        self.syncMOC.performAndWait {
+            let request = self.sut.downstreamRequestSyncs[size]?.nextRequest(for: apiVersion)
+            XCTAssertNotNil(request)
+            XCTAssertEqual(request?.path, expectedPath)
+            XCTAssertEqual(request?.method, .get)
+        }
     }
 
-    func testThatItCreatesRequestForCorrectAssetIdentifierForPreviewImage() {
-        testThatItCreatesRequestForCorrectAssetIdentifier(for: .preview, apiVersion: .v0)
-        testThatItCreatesRequestForCorrectAssetIdentifier(for: .preview, apiVersion: .v1)
-        testThatItCreatesRequestForCorrectAssetIdentifier(for: .preview, apiVersion: .v2)
+    func testThatItCreatesRequestForCorrectAssetIdentifierForPreviewImage() throws {
+        try testThatItCreatesRequestForCorrectAssetIdentifier(for: .preview, apiVersion: .v0)
+        try testThatItCreatesRequestForCorrectAssetIdentifier(for: .preview, apiVersion: .v1)
+        try testThatItCreatesRequestForCorrectAssetIdentifier(for: .preview, apiVersion: .v2)
     }
 
-    func testThatItCreatesRequestForCorrectAssetIdentifierForCompleteImage() {
-        testThatItCreatesRequestForCorrectAssetIdentifier(for: .complete, apiVersion: .v0)
-        testThatItCreatesRequestForCorrectAssetIdentifier(for: .complete, apiVersion: .v1)
-        testThatItCreatesRequestForCorrectAssetIdentifier(for: .complete, apiVersion: .v2)
+    func testThatItCreatesRequestForCorrectAssetIdentifierForCompleteImage() throws {
+        try testThatItCreatesRequestForCorrectAssetIdentifier(for: .complete, apiVersion: .v0)
+        try testThatItCreatesRequestForCorrectAssetIdentifier(for: .complete, apiVersion: .v1)
+        try testThatItCreatesRequestForCorrectAssetIdentifier(for: .complete, apiVersion: .v2)
     }
 
-    func testThatItUpdatesCorrectUserImageDataForPreviewImage() {
-        // GIVEN
-        let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
-        let imageData = "image".data(using: .utf8)!
-        let sync = self.sut.downstreamRequestSyncs[.preview]!
-        user.previewProfileAssetIdentifier = "foo"
-        let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
+    func testThatItUpdatesCorrectUserImageDataForPreviewImage() throws {
+        try syncMOC.performAndWait {
+            // GIVEN
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            let imageData = try XCTUnwrap("image".data(using: .utf8))
+            let sync = try XCTUnwrap(self.sut.downstreamRequestSyncs[.preview])
+            user.previewProfileAssetIdentifier = "foo"
+            let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
 
-        // WHEN
-        self.sut.update(user, with: response, downstreamSync: sync)
+            // WHEN
+            self.sut.update(user, with: response, downstreamSync: sync)
 
-        // THEN
-        XCTAssertEqual(user.imageSmallProfileData, imageData)
+            // THEN
+            XCTAssertEqual(user.imageSmallProfileData, imageData)
+        }
     }
 
-    func testThatItUpdatesCorrectUserImageDataForCompleteImage() {
-        // GIVEN
-        let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
-        let imageData = "image".data(using: .utf8)!
-        let sync = self.sut.downstreamRequestSyncs[.complete]!
-        user.completeProfileAssetIdentifier = "foo"
-        let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
+    func testThatItUpdatesCorrectUserImageDataForCompleteImage() throws {
+        try syncMOC.performAndWait {
+            // GIVEN
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            let imageData = try XCTUnwrap("image".data(using: .utf8))
+            let sync = try XCTUnwrap(self.sut.downstreamRequestSyncs[.complete])
+            user.completeProfileAssetIdentifier = "foo"
+            let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
 
-        // WHEN
-        self.sut.update(user, with: response, downstreamSync: sync)
+            // WHEN
+            self.sut.update(user, with: response, downstreamSync: sync)
 
-        // THEN
-        XCTAssertEqual(user.imageMediumData, imageData)
+            // THEN
+            XCTAssertEqual(user.imageMediumData, imageData)
+        }
     }
 
     func testThatItDeletesPreviewProfileAssetIdentifierWhenReceivingAPermanentErrorForPreviewImage() {
         // Given
-        let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
         let assetId = UUID.create().transportString()
-        user.previewProfileAssetIdentifier = assetId
-        syncMOC.saveOrRollback()
 
+        let user = syncMOC.performAndWait {
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.previewProfileAssetIdentifier = assetId
+            syncMOC.saveOrRollback()
+            return user
+        }
         // When
         uiMOC.performGroupedBlock {
             (self.uiMOC.object(with: user.objectID) as? ZMUser)?.requestPreviewProfileImage()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        guard let request = sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("nil request generated") }
-        XCTAssertEqual(request.path, "/assets/v3/\(assetId)")
-        XCTAssertEqual(request.method, .get)
+        syncMOC.performAndWait {
+            guard let request = sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("nil request generated") }
+            XCTAssertEqual(request.path, "/assets/v3/\(assetId)")
+            XCTAssertEqual(request.method, .get)
 
-        // Given
-        let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
-        request.complete(with: response)
+            // Given
+            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            request.complete(with: response)
 
-        // THEN
-        user.requestPreviewProfileImage()
+            // THEN
+            user.requestPreviewProfileImage()
+        }
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertNil(user.previewProfileAssetIdentifier)
-        XCTAssertNil(sut.nextRequestIfAllowed(for: .v0))
+        syncMOC.performAndWait {
+            XCTAssertNil(user.previewProfileAssetIdentifier)
+            XCTAssertNil(sut.nextRequestIfAllowed(for: .v0))
+        }
     }
 
     func testThatItDeletesCompleteProfileAssetIdentifierWhenReceivingAPermanentErrorForCompleteImage() {
         // Given
-        let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
         let assetId = UUID.create().transportString()
-        user.completeProfileAssetIdentifier = assetId
-        syncMOC.saveOrRollback()
+        let user = syncMOC.performAndWait {
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.completeProfileAssetIdentifier = assetId
+            syncMOC.saveOrRollback()
+            return user
+        }
 
         // When
         uiMOC.performGroupedBlock {
             (self.uiMOC.object(with: user.objectID) as? ZMUser)?.requestCompleteProfileImage()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        guard let request = sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("nil request generated") }
-        XCTAssertEqual(request.path, "/assets/v3/\(assetId)")
-        XCTAssertEqual(request.method, .get)
+        syncMOC.performAndWait {
+            guard let request = sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("nil request generated") }
+            XCTAssertEqual(request.path, "/assets/v3/\(assetId)")
+            XCTAssertEqual(request.method, .get)
 
-        // Given
-        let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
-        request.complete(with: response)
+            // Given
+            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            request.complete(with: response)
 
-        // THEN
-        user.requestCompleteProfileImage()
+            // THEN
+            user.requestCompleteProfileImage()
+        }
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertNil(user.completeProfileAssetIdentifier)
-        XCTAssertNil(sut.nextRequestIfAllowed(for: .v0))
+
+        syncMOC.performAndWait {
+            XCTAssertNil(user.completeProfileAssetIdentifier)
+            XCTAssertNil(sut.nextRequestIfAllowed(for: .v0))
+        }
     }
 
 }

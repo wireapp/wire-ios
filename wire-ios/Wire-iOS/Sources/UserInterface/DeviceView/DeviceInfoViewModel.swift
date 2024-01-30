@@ -58,7 +58,14 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     var isE2eIdentityEnabled: Bool {
-        return e2eIdentityCertificate != nil
+        return e2eIdentityCertificate != nil && mlsThumbprint != nil
+    }
+
+    var serialNumber: String? {
+        e2eIdentityCertificate?.serialNumber
+            .uppercased()
+            .splitStringIntoLines(charactersPerLine: 16)
+            .replacingOccurrences(of: " ", with: ":")
     }
 
     @Published
@@ -175,7 +182,7 @@ extension DeviceInfoViewModel {
             certificate: certificate,
             title: title,
             addedDate: addedDate,
-            proteusID: proteusID?.uppercased().fingerprintStringWithSpaces ?? "",
+            proteusID: proteusID ?? "",
             mlsThumbprint: mlsThumbprint,
             isProteusVerificationEnabled: userClient.verified,
             actionsHandler: DeviceDetailsViewActionsHandler(
@@ -216,15 +223,7 @@ extension E2eIdentityCertificate {
         return notValidBefore + kServerRetainedDays + kRandomInterval
     }
 
-    private var comparedDate: Date {
-        return E2eIdentityCertificateDateProvider(now: .now).now
-    }
-
     func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
         return isActivated && isExpired && (lastUpdateDate + gracePeriod) < comparedDate
-    }
-
-    struct E2eIdentityCertificateDateProvider: DateProviding {
-        let now: Date
     }
 }

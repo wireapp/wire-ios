@@ -73,7 +73,7 @@ extension SessionManager: VoIPPushManagerDelegate {
         }
 
         withSession(for: account) { session in
-            try? session.processPendingCallEvents {
+            session.processPendingCallEvents {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             }
         }

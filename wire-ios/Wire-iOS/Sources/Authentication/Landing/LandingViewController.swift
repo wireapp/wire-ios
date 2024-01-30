@@ -439,6 +439,7 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     private func updateBarButtonItem() {
+        navigationItem.backButtonDisplayMode = .minimal
         if SessionManager.shared?.firstAuthenticatedAccount == nil {
             navigationItem.rightBarButtonItem = nil
         } else {

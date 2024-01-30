@@ -192,8 +192,7 @@ class E2eIServiceTests: ZMConversationTestsBase {
         let wireOidcChallenge = AcmeChallenge(delegate: Data(), url: "", target: "")
         let expectedAcmeOrder = NewAcmeAuthz(identifier: "",
                                              keyauth: "",
-                                             wireDpopChallenge: wireDpopChallenge,
-                                             wireOidcChallenge: wireOidcChallenge)
+                                             challenge: wireDpopChallenge)
 
         // Given
         var mockSetAuthzResponse = 0

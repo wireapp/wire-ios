@@ -176,5 +176,5 @@ public extension WireLogger {
     static let authentication = WireLogger(tag: "authentication")
     static let session = WireLogger(tag: "session")
     static let e2ei = WireLogger(tag: "end-to-end-identity")
-
+    static let sync = WireLogger(tag: "sync")
 }
