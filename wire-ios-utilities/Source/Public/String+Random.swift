@@ -21,10 +21,10 @@ import Foundation
 public extension String {
 
     static func randomDomain(hostLength: UInt = 5) -> String {
-        return "\(String.random(length: hostLength)).com"
+        return "\(String.randomAlphanumerical(length: hostLength)).com"
     }
 
-    static func random(length: UInt) -> String {
+    static func randomAlphanumerical(length: UInt) -> String {
         if length == 0 {
             return String()
         }
