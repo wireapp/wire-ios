@@ -37,24 +37,3 @@ public struct SetGenerator<Element: Hashable>: IteratorProtocol {
         }
     }
 }
-
-// MARK: Set
-extension Set {
-
-    /// Returns a set with elements filtered out
-    func filter(_ includeElement: (Element) -> Bool) -> Set<Element> {
-        return Set(Array(self).filter(includeElement))
-    }
-
-    func reduce<U>(_ initial: U, combine: (U, Element) -> U) -> U {
-        return Array(self).reduce(initial, combine)
-    }
-
-    /// Returns a set with mapped elements. The resulting set might be smaller than self because
-    /// of collisions in the mapping.
-    func map<U>(_ transform: (Element) -> U) -> Set<U> {
-        return Set<U>(Array(self).map(transform))
-    }
-
-    var allObjects: [Element] { return Array(self) }
-}
