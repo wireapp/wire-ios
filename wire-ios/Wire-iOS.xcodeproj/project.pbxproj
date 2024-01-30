@@ -210,6 +210,8 @@
 		16D4932A203DCCCA008DDFFA /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D49329203DCCCA008DDFFA /* UserCell.swift */; };
 		16D4932C203DD480008DDFFA /* UserCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D4932B203DD480008DDFFA /* UserCellTests.swift */; };
 		16D68E9B1CEF99C7003AB9E0 /* WaveformProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D68E9A1CEF99C7003AB9E0 /* WaveformProgressView.swift */; };
+		16D74BE82B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BE72B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift */; };
+		16D74BF82B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BF72B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift */; };
 		16D74BEA2B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BE92B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift */; };
 		16D74BEC2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */; };
 		16D74BEE2B5933D000160298 /* AddUsernameStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BED2B5933D000160298 /* AddUsernameStepDescription.swift */; };
@@ -2228,6 +2230,8 @@
 		16D49329203DCCCA008DDFFA /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		16D4932B203DD480008DDFFA /* UserCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCellTests.swift; sourceTree = "<group>"; };
 		16D68E9A1CEF99C7003AB9E0 /* WaveformProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformProgressView.swift; sourceTree = "<group>"; };
+		16D74BE72B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationE2EIdentityMissingErrorHandler.swift; sourceTree = "<group>"; };
+		16D74BF72B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollE2EIdentityStepDescription.swift; sourceTree = "<group>"; };
 		16D74BE92B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationMissingUsernameErrorHandler.swift; sourceTree = "<group>"; };
 		16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStartMissingUsernameErrorHandler.swift; sourceTree = "<group>"; };
 		16D74BED2B5933D000160298 /* AddUsernameStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUsernameStepDescription.swift; sourceTree = "<group>"; };
@@ -4643,6 +4647,7 @@
 				5E8FFC1B21EF7CB50052DF03 /* AddEmailPasswordStepDescription.swift */,
 				5E8FFC2121EF86000052DF03 /* EmailLinkVerificationStepDescription.swift */,
 				5E8FFC2521F0879B0052DF03 /* ReauthenticateWithCompanyLoginStepDescription.swift */,
+				16D74BF72B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -4916,6 +4921,7 @@
 		5E8DA75F211B139500360979 /* Registration Error */ = {
 			isa = PBXGroup;
 			children = (
+				16D74BE72B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift */,
 				5E8DA757211B055100360979 /* AuthenticationClientLimitErrorHandler.swift */,
 				5E8DA759211B075E00360979 /* AuthenticationNoCredentialsErrorHandler.swift */,
 				5E8DA75D211B0E5800360979 /* AuthenticationNeedsReauthenticationErrorHandler.swift */,
@@ -9138,6 +9144,7 @@
 				5E1D74C32266221800AD1F32 /* AccentColorProvider.swift in Sources */,
 				068500BD26B9580700721F80 /* FileMessageRestrictionView.swift in Sources */,
 				061EF88D27971EC000584C53 /* SettingsProfileLinkCellDescriptor.swift in Sources */,
+				16D74BF82B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift in Sources */,
 				5E3FB06E206BC7B40075E910 /* Tab.swift in Sources */,
 				011853962AE6BA5D0071FA32 /* ProfileClientViewModel.swift in Sources */,
 				D5189473204D543C00C095C1 /* InitialSyncObserver.swift in Sources */,
@@ -9642,6 +9649,7 @@
 				A993719123F7461600881564 /* UIView+ExtendedBlockAnimations.swift in Sources */,
 				D550F57920445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift in Sources */,
 				E662588B2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift in Sources */,
+				16D74BE82B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift in Sources */,
 				871BC3601D34F94200DF0793 /* SettingsPropertyFactory.swift in Sources */,
 				EF2C246F22AFA76C009389C6 /* ZClientViewController+ZMUserObserver.swift in Sources */,
 				6328284324A11847000748D2 /* UserTypeIconStyle.swift in Sources */,

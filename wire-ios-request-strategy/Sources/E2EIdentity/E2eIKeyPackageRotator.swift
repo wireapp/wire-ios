@@ -94,6 +94,10 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
             )
         }
 
+        guard rotateBundle.commits.isNonEmpty else {
+            return // FIXME: [jacob] remove this guard when implementing WPB-6281
+        }
+
         // Replace the key packages with the ones including the certificate
         try await replaceKeyPackages(rotateBundle: rotateBundle)
 

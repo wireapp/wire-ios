@@ -34,7 +34,13 @@ typedef NS_ENUM(NSUInteger, ZMClientRegistrationPhase) {
     
     /// the user is logged in but is waiting to fetch the selfUser - we send out a request to fetch the selfUser
     ZMClientRegistrationPhaseWaitingForSelfUser,
-    
+
+    /// the user is logged in but is waiting to fetch the fetching config
+    ZMClientRegistrationPhaseWaitingForFetchConfigs,
+
+    // we are for the user to finish the end-to-end identity enrollment
+    ZMClientRegistrationPhaseWaitingForE2EIEnrollment,
+
     /// the user has too many devices registered - we send a request to fetch all devices
     ZMClientRegistrationPhaseFetchingClients,
     
@@ -47,10 +53,13 @@ typedef NS_ENUM(NSUInteger, ZMClientRegistrationPhase) {
     /// the user has not yet selected a handle, which is a requirement for registering a client.
     ZMClientRegistrationPhaseWaitingForHandle,
 
+    /// waiting for proteus prekeys to be generated
     ZMClientRegistrationPhaseWaitingForPrekeys,
 
+    /// proteus prekeys are being generated
     ZMClientRegistrationPhaseGeneratingPrekeys,
 
+    /// waiting for the MLS client to be registered
     ZMClientRegistrationPhaseRegisteringMLSClient,
 
     /// The client is registered
@@ -89,12 +98,15 @@ extern NSString *const ZMPersistedClientIdKey;
 @property (nonatomic, weak) id <ZMClientRegistrationStatusDelegate> registrationStatusDelegate;
 @property (nonatomic) BOOL needsToCheckCredentials;
 @property (nonatomic) BOOL needsToVerifySelfClient;
+@property (nonatomic) BOOL needsToFetchFeatureConfigs;
 @property (nonatomic) BOOL needsRefreshSelfUser;
 @property (nonatomic, readonly) BOOL needsToRegisterMLSCLient;
 @property (nonatomic, readonly) BOOL isWaitingForLogin;
 @property (nonatomic) BOOL isWaitingForUserClients;
 @property (nonatomic) BOOL isWaitingForClientsToBeDeleted;
 @property (nonatomic) BOOL isGeneratingPrekeys;
+@property (nonatomic) BOOL isWaitingForE2EIEnrollment;
 @property (nonatomic) BOOL isWaitingForMLSClientToBeRegistered;
+
 
 @end

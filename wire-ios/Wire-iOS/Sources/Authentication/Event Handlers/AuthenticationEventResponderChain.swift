@@ -130,6 +130,7 @@ class AuthenticationEventResponderChain {
         registerHandler(AuthenticationClientLimitErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(AuthenticationNoCredentialsErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(AuthenticationNeedsReauthenticationErrorHandler(), to: &clientRegistrationErrorHandlers)
+        registerHandler(AuthenticationE2EIdentityMissingErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(AuthenticationMissingUsernameErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(ClientRegistrationErrorEventHandler(), to: &clientRegistrationErrorHandlers)
 

@@ -43,6 +43,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
         )
 
         configuration = [
+            .allowsRequestsWhileUnauthenticated,
             .allowsRequestsWhileOnline,
             .allowsRequestsDuringQuickSync,
             .allowsRequestsWhileWaitingForWebsocket,
