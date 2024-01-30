@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireSystem
 
-class DuplicateUsersMigrationPolicy: NSEntityMigrationPolicy {
+class DuplicateTeamsMigrationPolicy: NSEntityMigrationPolicy {
 
     private enum Keys: String {
         case needsToBeUpdatedFromBackend
@@ -28,28 +28,30 @@ class DuplicateUsersMigrationPolicy: NSEntityMigrationPolicy {
     private let zmLog = ZMSLog(tag: "core-data")
 
     override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
-        zmLog.safePublic("beginning duplicate Users migration", level: .info)
-        WireLogger.localStorage.info("beginning duplicate Users migration")
+        zmLog.safePublic("beginning duplicate teams migration", level: .info)
+        WireLogger.localStorage.info("beginning duplicate teams migration")
 
         let context = manager.sourceContext
 
         let duplicates: [String: [NSManagedObject]] = context.findDuplicated(
-            entityName: ZMUser.entityName(),
-            by: #keyPath(ZMUser.remoteIdentifier)
+            entityName: Team.entityName(),
+            by: #keyPath(Team.remoteIdentifier)
         )
 
-        zmLog.safePublic(SanitizedString(stringLiteral: "found (\(duplicates.count)) occurences of duplicate Users"), level: .info)
-        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate Users")
+        zmLog.safePublic(SanitizedString(stringLiteral: "found (\(duplicates.count)) occurences of duplicate teams"), level: .info)
+        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate teams")
 
-        duplicates.forEach { (_, users: [NSManagedObject]) in
-            guard users.count > 1 else {
+        duplicates.forEach { (_, teams: [NSManagedObject]) in
+            guard teams.count > 1 else {
                 return
             }
+           
+            // for now we just keep one team and mark to sync and drop the rest.
+            teams.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
+            teams.dropFirst().forEach(context.delete)
 
-            users.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
-            users.dropFirst().forEach(context.delete)
-            zmLog.safePublic("removed 1 occurence of duplicate Users", level: .warn)
-            WireLogger.localStorage.info("removed 1 occurence of duplicate Users")
+            zmLog.safePublic("removed 1 occurence of duplicate teams", level: .warn)
+            WireLogger.localStorage.info("removed 1 occurence of duplicate teams")
         }
     }
 

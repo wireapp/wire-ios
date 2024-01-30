@@ -326,14 +326,15 @@
         <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING" idrefs="z232"></relationship>
     </object>
     <object type="XDDEVENTITYMAPPING" id="z161">
+        <attribute name="migrationpolicyclassname" type="string">DuplicateConversationsMigrationPolicy</attribute>
         <attribute name="sourcename" type="string">Conversation</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">14</attribute>
         <attribute name="destinationname" type="string">Conversation</attribute>
         <attribute name="autogenerateexpression" type="bool">1</attribute>
         <relationship name="mappingmodel" type="1/1" destination="XDDEVMAPPINGMODEL" idrefs="z396"></relationship>
-        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z376 z487 z239 z174 z335 z388 z297 z233 z498 z273 z253 z186 z378 z249 z309 z143 z284 z190 z427 z280 z311 z116 z228 z341 z183 z397 z505 z242 z455 z202 z139 z199 z153 z316 z518 z257 z102 z422 z344 z148 z421 z231 z328 z269 z475"></relationship>
-        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z352 z162 z287 z152 z508 z499 z440 z429 z366"></relationship>
+        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z311 z174 z421 z341 z297 z269 z505 z273 z202 z378 z153 z143 z257 z427 z487 z344 z116 z335 z231 z183 z233 z475 z242 z253 z139 z249 z316 z284 z102 z280 z239 z148 z228 z388 z328 z397 z498 z455 z186 z199 z309 z518 z190 z376 z422"></relationship>
+        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z366 z152 z440 z162 z508 z429 z287 z499 z352"></relationship>
     </object>
     <object type="XDDEVRELATIONSHIPMAPPING" id="z162">
         <attribute name="autogenerateexpression" type="bool">1</attribute>
@@ -1848,14 +1849,15 @@ dmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEAAAAIAAAACVRyb290gAGvERzU
         <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING" idrefs="z314"></relationship>
     </object>
     <object type="XDDEVENTITYMAPPING" id="z489">
+        <attribute name="migrationpolicyclassname" type="string">DuplicateTeamsMigrationPolicy</attribute>
         <attribute name="sourcename" type="string">Team</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">12</attribute>
         <attribute name="destinationname" type="string">Team</attribute>
         <attribute name="autogenerateexpression" type="bool">1</attribute>
         <relationship name="mappingmodel" type="1/1" destination="XDDEVMAPPINGMODEL" idrefs="z396"></relationship>
-        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z454 z438 z317 z375 z426 z307 z226"></relationship>
-        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z266 z340 z360 z362"></relationship>
+        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z317 z307 z454 z375 z226 z438 z426"></relationship>
+        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z340 z266 z362 z360"></relationship>
     </object>
     <object type="XDDEVRELATIONSHIPMAPPING" id="z490">
         <attribute name="autogenerateexpression" type="bool">1</attribute>
