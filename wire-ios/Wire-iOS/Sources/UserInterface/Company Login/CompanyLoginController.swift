@@ -272,18 +272,20 @@ extension CompanyLoginController {
     func updateBackendEnvironment(with url: URL) {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.switchBackend(configuration: url) { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.delegate?.controller(self, showLoadingView: false)
-            guard let backendEnvironment = result.value else {
-                if case SessionManager.SwitchBackendError.loggedInAccounts? = result.error {
+
+            switch result {
+            case .success(let backendEnvironment):
+                BackendEnvironment.shared = backendEnvironment
+                self.startAutomaticSSOFlow(promptOnError: false)
+            case .failure(let error):
+                if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
                     self.presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
                 } else {
                     self.presentCompanyLoginAlert(error: .domainNotRegistered)
                 }
-                return
             }
-            BackendEnvironment.shared = backendEnvironment
-            self.startAutomaticSSOFlow(promptOnError: false)
         }
     }
 }
