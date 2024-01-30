@@ -24,6 +24,7 @@ let ZMParticipantRoleRoleValueKey           = #keyPath(ParticipantRole.role)
 final public class ParticipantRole: ZMManagedObject {
 
     @NSManaged public var conversation: ZMConversation?
+    /// - Note: user is optional but we should make sure it's always created with one using `create(managedObjectContext:user:conversation:)`
     @NSManaged public var user: ZMUser?
     @NSManaged public var role: Role?
 
