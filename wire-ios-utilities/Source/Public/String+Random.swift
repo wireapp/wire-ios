@@ -25,11 +25,16 @@ public extension String {
     }
 
     static func random(length: UInt) -> String {
-        let randomChars = (0..<length).compactMap { _ in
-            "a...z".randomElement()
+        if length == 0 {
+            return String()
         }
 
-        return String(randomChars)
+        let letters = Array("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+        var s = String()
+        for _ in 0..<length {
+            s.append(letters.randomElement()!)
+        }
+        return s
     }
 
 }
