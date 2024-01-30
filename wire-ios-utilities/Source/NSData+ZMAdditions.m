@@ -18,33 +18,10 @@
 
 
 @import WireSystem;
+@import CommonCrypto;
 
 #import "NSData+ZMAdditions.h"
 #import <zlib.h>
-#import <CommonCrypto/CommonCrypto.h>
-
-
-@implementation NSData (ZMSorting)
-
-// We need this for the Core Data to be able to compare NSData / sort NSData
-- (NSComparisonResult)compare:(NSData *)otherData
-{
-    NSInteger r = memcmp(self.bytes, otherData.bytes, MIN(self.length, otherData.length));
-    if (r == 0) {
-        r = ((NSInteger) self.length) - ((NSInteger) otherData.length);
-    }
-    if (r < 0) {
-        return NSOrderedAscending;
-    } else if (r == 0) {
-        return NSOrderedSame;
-    }
-    
-    return NSOrderedDescending;
-}
-
-@end
-
-
 
 @implementation NSData (ZMHTTPCompression)
 
