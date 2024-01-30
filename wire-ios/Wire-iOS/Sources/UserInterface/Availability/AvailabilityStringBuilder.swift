@@ -80,6 +80,7 @@ final class AvailabilityStringBuilder: NSObject {
 
     static func color(for availability: Availability) -> UIColor {
         typealias IconColors = SemanticColors.Icon
+
         switch availability {
         case .none:
             return UIColor.clear

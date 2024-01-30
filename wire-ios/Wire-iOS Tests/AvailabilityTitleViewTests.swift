@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,19 +83,19 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
     // MARK: - Other profile
 
     func testThatItRendersCorrectly_OtherProfile_NoneAvailability() {
-        createTest(for: [.hideActionHint], with: .none, on: otherUser!, userInterfaceStyle: .light)
+        createTest(for: [.hideActionHint], with: .none, on: otherUser, userInterfaceStyle: .light)
     }
 
     func testThatItRendersCorrectly_OtherProfile_AvailableAvailability() {
-        createTest(for: [.hideActionHint], with: .available, on: otherUser!, userInterfaceStyle: .light)
+        createTest(for: [.hideActionHint], with: .available, on: otherUser, userInterfaceStyle: .light)
     }
 
     func testThatItRendersCorrectly_OtherProfile_AwayAvailability() {
-        createTest(for: [.hideActionHint], with: .away, on: otherUser!, userInterfaceStyle: .light)
+        createTest(for: [.hideActionHint], with: .away, on: otherUser, userInterfaceStyle: .light)
     }
 
     func testThatItRendersCorrectly_OtherProfile_BusyAvailability() {
-        createTest(for: [.hideActionHint], with: .busy, on: otherUser!, userInterfaceStyle: .light)
+        createTest(for: [.hideActionHint], with: .busy, on: otherUser, userInterfaceStyle: .light)
     }
 
     // MARK: - Common methods
@@ -111,7 +111,7 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
     ) {
         updateAvailability(for: user, newValue: availability)
 
-        sut = AvailabilityTitleView(user: user, options: options, userSession: userSession)
+        sut = .init(user: user, options: options, userSession: userSession)
         sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.backgroundColor = .systemBackground
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
@@ -119,7 +119,7 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
         verify(matching: sut, file: file, testName: testName, line: line)
     }
 
-    func updateAvailability(for user: ZMUser, newValue: Availability) {
+    private func updateAvailability(for user: ZMUser, newValue: Availability) {
         if user == ZMUser.selfUser() {
             user.availability = newValue
         } else {
