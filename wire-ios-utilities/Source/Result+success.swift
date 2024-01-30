@@ -30,34 +30,6 @@ public enum ZMResult<T> {
 }
 
 public extension ZMResult {
-    func map<U>(_ transform: (T) throws -> U) -> ZMResult<U> {
-        switch self {
-        case .success(let value):
-            do {
-                return .success(try transform(value))
-            } catch {
-                return .failure(error)
-            }
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
-
-    func map<U>(_ transform: (T) throws -> U) -> Swift.Result<U, Error> {
-        switch self {
-        case .success(let value):
-            do {
-                return .success(try transform(value))
-            } catch {
-                return .failure(error)
-            }
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
-}
-
-public extension ZMResult {
     var value: T? {
         guard case let .success(value) = self else { return nil }
         return value

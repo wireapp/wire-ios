@@ -49,12 +49,20 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
     func createBackup(accountIdentifier: UUID, databaseKey: VolatileData? = nil, file: StaticString = #file, line: UInt = #line) -> Swift.Result<URL, Error> {
         var result: Swift.Result<URL, Error>!
-        CoreDataStack.backupLocalStorage(accountIdentifier: accountIdentifier,
-                                         clientIdentifier: name,
-                                         applicationContainer: DatabaseBaseTest.applicationContainer,
-                                         dispatchGroup: self.dispatchGroup,
-                                         databaseKey: databaseKey) {
-            result = $0.map { $0.url }
+
+        CoreDataStack.backupLocalStorage(
+            accountIdentifier: accountIdentifier,
+            clientIdentifier: name,
+            applicationContainer: DatabaseBaseTest.applicationContainer,
+            dispatchGroup: self.dispatchGroup,
+            databaseKey: databaseKey
+        ) {
+            do {
+                let url = try $0.get().url
+                result = .success(url)
+            } catch {
+                result = .failure(error)
+            }
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         return result
