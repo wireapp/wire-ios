@@ -16,12 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension Swift.Result where Success == Void {
-    public static func success() -> Self {
-        .success(())
-    }
-}
-
 public typealias Result<T> = ZMResult<T>
 
 public enum ZMResult<T> {

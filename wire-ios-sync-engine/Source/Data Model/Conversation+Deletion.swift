@@ -82,7 +82,7 @@ extension ZMConversation {
                             syncContext: contextProvider.syncContext
                         )
                         await MainActor.run {
-                            completion(.success())
+                            completion(.success(()))
                         }
                     } catch {
                         WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
