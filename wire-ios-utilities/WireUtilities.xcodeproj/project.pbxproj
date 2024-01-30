@@ -158,6 +158,7 @@
 		D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */; };
 		D56A2D4A207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */; };
 		D5D65A13207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */; };
+		E6C4B37B2B68EFD6008BF384 /* NSString+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C4B37A2B68EFD6008BF384 /* NSString+Random.swift */; };
 		E9C337542ABC91DE0084ABCF /* Array+Cardinality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */; };
 		EE162710250BA12900D35062 /* VolatileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE16270F250BA12900D35062 /* VolatileData.swift */; };
 		EE162712250BA6E600D35062 /* VolatileDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE162711250BA6E600D35062 /* VolatileDataTests.swift */; };
@@ -407,6 +408,7 @@
 		D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SwiftTests.swift"; sourceTree = "<group>"; };
 		D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+PerformGrouped.swift"; sourceTree = "<group>"; };
+		E6C4B37A2B68EFD6008BF384 /* NSString+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSString+Random.swift"; sourceTree = "<group>"; };
 		E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Cardinality.swift"; sourceTree = "<group>"; };
 		EE16270F250BA12900D35062 /* VolatileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolatileData.swift; sourceTree = "<group>"; };
 		EE162711250BA6E600D35062 /* VolatileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolatileDataTests.swift; path = Source/VolatileDataTests.swift; sourceTree = "<group>"; };
@@ -731,6 +733,7 @@
 				EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */,
 				EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */,
 				EEBFE03D2A3AE58E001F1060 /* String+Random.swift */,
+				E6C4B37A2B68EFD6008BF384 /* NSString+Random.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -1138,6 +1141,7 @@
 				EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */,
 				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
 				6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */,
+				E6C4B37B2B68EFD6008BF384 /* NSString+Random.swift in Sources */,
 				D504CD372090CB2900A78DAA /* Flip.swift in Sources */,
 				163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */,
 				54CA31291B74F36B00B820C0 /* Functional.swift in Sources */,
