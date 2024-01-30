@@ -63,7 +63,6 @@
 		546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A521B7501D0009EBA02 /* NSUUID+DataTests.m */; };
 		546E8A591B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A581B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m */; };
 		546E8A621B75045E009EBA02 /* UnownedObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */; };
-		54A3430E1E4B7DFB00B48A0F /* NSOrderedSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */; };
 		54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */; };
 		54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */; };
 		54CA312B1B74F36B00B820C0 /* NSData+ZMAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31161B74F36B00B820C0 /* NSData+ZMAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -183,7 +182,6 @@
 		F19E55A822B3AAF3005C792D /* Data+ReadableHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19E55A722B3AAF3005C792D /* Data+ReadableHash.swift */; };
 		F1D567B1207BA40C00CCDD77 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		F1D567B5207BA50700CCDD77 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */; };
 		F9C9A7891CAE9F900039E10C /* NSString+Normalization.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A78B1CAE9F9A0039E10C /* NSString+Normalization.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A78A1CAE9F9A0039E10C /* NSString+Normalization.m */; };
 		F9C9A78E1CAEA0110039E10C /* NSString_NormalizationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A78C1CAEA00D0039E10C /* NSString_NormalizationTests.m */; };
@@ -435,8 +433,6 @@
 		F1E148C7207BAED000F81833 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		F1E148CB207BAED000F81833 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		F1E148CC207BAED000F81833 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSOrderedSet.swift; sourceTree = "<group>"; };
-		F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSOrderedSetTests.swift; path = Source/NSOrderedSetTests.swift; sourceTree = "<group>"; };
 		F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Normalization.h"; sourceTree = "<group>"; };
 		F9C9A78A1CAE9F9A0039E10C /* NSString+Normalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Normalization.m"; sourceTree = "<group>"; };
 		F9C9A78C1CAEA00D0039E10C /* NSString_NormalizationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSString_NormalizationTests.m; path = Source/NSString_NormalizationTests.m; sourceTree = "<group>"; };
@@ -694,7 +690,6 @@
 				54CA31511B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h */,
 				097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */,
 				F9FCE0A01C7DBBD00092BA68 /* ZMSwiftExceptionHandler.h */,
-				F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */,
 				BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */,
 				54CA311E1B74F36B00B820C0 /* Sets.swift */,
 				54024FE51DF81C8E009BF6A0 /* Dictionary.swift */,
@@ -809,7 +804,6 @@
 				163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */,
 				168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */,
 				BF3C1B0E20DA7289001CE126 /* Equatable+OneOfTests.swift */,
-				F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */,
 				871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */,
 				546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */,
 				BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */,
@@ -1148,7 +1142,6 @@
 				E9C337542ABC91DE0084ABCF /* Array+Cardinality.swift in Sources */,
 				A9CDCDC2237D9928008A9BC6 /* UIColor+Hex.swift in Sources */,
 				8735AE6F2035E3BC00DCE66E /* StringLengthValidator.swift in Sources */,
-				F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */,
 				EE1E354221E7739400F1144B /* DarwinNotificationCenter.swift in Sources */,
 				A9CDCDC6237D9A6E008A9BC6 /* UIColor+Equatable.swift in Sources */,
 			);
@@ -1193,7 +1186,6 @@
 				871E12351C4FEED200862958 /* UnownedNSObjectTests.swift in Sources */,
 				F9D381B01B70B94300E6E4EB /* ZMFunctionalTests.m in Sources */,
 				BFA2F03920C9490500EBE97C /* FunctionOperatorTests.swift in Sources */,
-				54A3430E1E4B7DFB00B48A0F /* NSOrderedSetTests.swift in Sources */,
 				A98EC2A726B8169700D10C80 /* UTIHelperTests.swift in Sources */,
 				54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */,
 				BF9D0B061F1CF39A005D4C31 /* Optional+ApplyTests.swift in Sources */,
