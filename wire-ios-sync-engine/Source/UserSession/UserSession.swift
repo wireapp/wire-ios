@@ -184,7 +184,7 @@ public protocol UserSession: AnyObject {
 
     func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool>
+            ZMResult<Bool>
         ) -> Void
     )
 
@@ -452,7 +452,7 @@ extension ZMUserSession: UserSession {
 
     public func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool>
+            ZMResult<Bool>
         ) -> Void
     ) {
         ZMUser.selfUser(inUserSession: self).fetchConsent(

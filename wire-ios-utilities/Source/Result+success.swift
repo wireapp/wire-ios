@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public typealias Result<T> = ZMResult<T>
-
 public enum ZMResult<T> {
     case success(T)
     case failure(Error)

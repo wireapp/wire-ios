@@ -74,9 +74,9 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         migrator: CoreDataMessagingMigratorProtocol,
         file: StaticString = #file,
         line: UInt = #line
-    ) -> Result<URL>? {
+    ) -> ZMResult<URL>? {
 
-        var result: Result<URL>?
+        var result: ZMResult<URL>?
         CoreDataStack.importLocalStorage(
             accountIdentifier: accountIdentifier,
             from: backup,

@@ -61,7 +61,7 @@ extension ZMConversation {
     /// Fetches the link to access the conversation.
     /// @param completion called when the operation is ended. Called with .success and the link fetched. If the link
     ///        was not generated yet, it is called with .success(nil).
-    public func fetchWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String?>) -> Void) {
+    public func fetchWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (ZMResult<String?>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -92,7 +92,7 @@ extension ZMConversation {
     }
 
     /// Updates the conversation access mode if necessary and creates the link to access the conversation.
-    public func updateAccessAndCreateWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String>) -> Void) {
+    public func updateAccessAndCreateWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (ZMResult<String>) -> Void) {
         // Legacy access mode: access and access_mode have to be updated in order to create the link.
         if isLegacyAccessMode {
             setAllowGuests(true, in: userSession) { result in
@@ -108,7 +108,7 @@ extension ZMConversation {
         }
     }
 
-    func createWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String>) -> Void) {
+    func createWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (ZMResult<String>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -146,7 +146,7 @@ extension ZMConversation {
     }
 
     /// Checks if a guest link can be generated or not
-    public func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Bool>) -> Void) {
+    public func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (ZMResult<Bool>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }

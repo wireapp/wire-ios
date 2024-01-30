@@ -29,7 +29,7 @@ enum ConsentRequestError: Error {
 }
 
 extension ZMUser {
-    public typealias CompletionFetch = (Result<Bool>) -> Void
+    public typealias CompletionFetch = (ZMResult<Bool>) -> Void
 
     public func fetchMarketingConsent(in userSession: ZMUserSession,
                                       completion: @escaping CompletionFetch) {

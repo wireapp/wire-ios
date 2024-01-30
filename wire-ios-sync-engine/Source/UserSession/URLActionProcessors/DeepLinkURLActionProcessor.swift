@@ -128,7 +128,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         }
     }
 
-    private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation>) -> Void) {
+    private func synchronise(_ conversation: ZMConversation, completion: @escaping (ZMResult<ZMConversation>) -> Void) {
         guard let qualifiedID = conversation.qualifiedID else {
             completion(.success(conversation))
             return

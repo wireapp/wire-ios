@@ -68,7 +68,7 @@ extension CoreDataStack {
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
         migration: @escaping (NSManagedObjectContext) throws -> Void,
-        completion: @escaping (Result<Void>) -> Void
+        completion: @escaping (ZMResult<Void>) -> Void
         ) {
 
         func fail(_ error: MigrationError) {

@@ -55,7 +55,7 @@ extension UnauthenticatedSession {
     ///
     /// - parameter completion: The result closure with the sso settings
 
-    public func fetchSSOSettings(completion: @escaping (Result<SSOSettings>) -> Void) {
+    public func fetchSSOSettings(completion: @escaping (ZMResult<SSOSettings>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(SSOSettingsError.unknown))
         }

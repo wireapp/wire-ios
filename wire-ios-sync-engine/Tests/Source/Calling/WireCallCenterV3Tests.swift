@@ -30,7 +30,7 @@ class WireCallCenterTransportMock: WireCallCenterTransport {
 
     }
 
-    func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data>) -> Void)) {
+    func sendSFT(data: Data, url: URL, completionHandler: @escaping ((ZMResult<Data>) -> Void)) {
 
     }
 

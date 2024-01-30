@@ -28,9 +28,9 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     var setAllowGuests: SetHandler?
     var allowGuestsChangedHandler: ((Bool) -> Void)?
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)?
-    var linkResult: Result<String?>?
+    var linkResult: ZMResult<String?>?
     var deleteResult: Swift.Result<Void, Error> = .success(())
-    var createResult: Result<String>?
+    var createResult: ZMResult<String>?
     var isCodeEnabled = true
     var areGuestPresent = true
     var isConversationFromSelfTeam = true
@@ -45,11 +45,11 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
         setAllowGuests?(allowGuests, completion)
     }
 
-    func createConversationLink(completion: @escaping (Result<String>) -> Void) {
+    func createConversationLink(completion: @escaping (ZMResult<String>) -> Void) {
         createResult.apply(completion)
     }
 
-    func fetchConversationLink(completion: @escaping (Result<String?>) -> Void) {
+    func fetchConversationLink(completion: @escaping (ZMResult<String?>) -> Void) {
         linkResult.apply(completion)
     }
 

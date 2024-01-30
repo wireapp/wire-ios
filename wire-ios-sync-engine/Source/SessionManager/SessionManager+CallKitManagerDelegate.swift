@@ -30,7 +30,7 @@ extension SessionManager: CallKitManagerDelegate {
 
     func lookupConversation(
         by handle: CallHandle,
-        completionHandler: @escaping (Result<ZMConversation>) -> Void
+        completionHandler: @escaping (ZMResult<ZMConversation>) -> Void
     ) {
         WireLogger.calling.info("lookup conversation for: \(handle)")
         guard let account  = accountManager.account(with: handle.accountID) else {
@@ -48,7 +48,7 @@ extension SessionManager: CallKitManagerDelegate {
 
     func lookupConversationAndProcessPendingCallEvents(
         by handle: CallHandle,
-        completionHandler: @escaping (Result<ZMConversation>) -> Void
+        completionHandler: @escaping (ZMResult<ZMConversation>) -> Void
     ) {
         WireLogger.calling.info("lookup conversation and process pending call events for: \(handle)")
 

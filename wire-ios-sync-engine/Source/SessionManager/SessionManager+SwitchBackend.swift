@@ -25,7 +25,7 @@ extension SessionManager {
         case invalidBackend
     }
 
-    public typealias CompletedSwitch = (Result<BackendEnvironment>) -> Void
+    public typealias CompletedSwitch = (ZMResult<BackendEnvironment>) -> Void
 
     public func canSwitchBackend() -> SwitchBackendError? {
         guard accountManager.accounts.isEmpty else { return .loggedInAccounts }
