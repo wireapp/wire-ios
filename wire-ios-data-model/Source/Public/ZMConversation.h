@@ -61,9 +61,6 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
     ZMConversationListIndicatorPending
 };
 
-
-extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a range in an attributed string should be displayed dimmed.
-
 @interface ZMConversation : ZMManagedObject
 
 @property (nonatomic, copy, nullable) NSString *userDefinedName;

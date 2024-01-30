@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,28 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
 
-class UserNameTakeOverViewControllerTests: BaseSnapshotTestCase {
+/**
+ * Handles the input of the username after login if the user doesn't have one.
+ */
 
-    var sut: UserNameTakeOverViewController!
+class AuthenticationAddUsernameInputHandler: AuthenticationEventHandler {
 
-    override func setUp() {
-        super.setUp()
-        accentColor = .vividRed
-    }
+    weak var statusProvider: AuthenticationStatusProvider?
 
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
+    func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {
+        // Only handle input during the add username phase.
+        guard case .addUsername = currentStep else {
+            return nil
+        }
 
-    func testThatItRendersCorrectInitally() {
-        sut = UserNameTakeOverViewController(suggestedHandle: "joseluis4839", name: "Jose Luis")
-        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+        guard let handle = context as? String else {
+            return nil
+        }
 
-        verify(matching: sut.view)
+        return [.setUsername(handle)]
     }
 
 }

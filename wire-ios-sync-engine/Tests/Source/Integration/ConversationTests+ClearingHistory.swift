@@ -94,12 +94,12 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertTrue(objectIDs!.contains(conversationID!))
     }
 
-    func testThatDeletedConversationsStayDeletedAfterResyncing() {
+    func testThatDeletedConversationsStayDeletedAfterResyncing() throws {
         // given
         let messagesCount: UInt = 5
         loginAndFillConversationWithMessages(mockConversation: self.groupConversation, messagesCount: messagesCount)
 
-        var conversation = self.conversation(for: self.groupConversation!)
+        var conversation = conversation(for: try XCTUnwrap(self.groupConversation))
         XCTAssertEqual(conversation!.allMessages.count, 5)
 
         let conversationDirectory = self.userSession?.managedObjectContext.conversationListDirectory()
@@ -117,7 +117,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation!.allMessages.count, 0)
-        XCTAssertFalse(conversationDirectory!.conversationsIncludingArchived.contains(conversation))
+        XCTAssertFalse(conversationDirectory!.conversationsIncludingArchived.contains(conversation!))
 
         conversation = nil
         self.recreateSessionManagerAndDeleteLocalData()
@@ -182,11 +182,11 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertFalse(objectIDs!.contains(conversationID!))
     }
 
-    func testThatRemotelyArchivedConversationIsIncludedInTheCorrectConversationLists() {
+    func testThatRemotelyArchivedConversationIsIncludedInTheCorrectConversationLists() throws {
         // given
         let messagesCount: UInt = 5
         loginAndFillConversationWithMessages(mockConversation: self.groupConversation, messagesCount: messagesCount)
-        let conversation = self.conversation(for: self.groupConversation!)
+        let conversation = try XCTUnwrap(conversation(for: self.groupConversation!))
 
         let conversationDirectory = self.userSession?.managedObjectContext.conversationListDirectory()
 
