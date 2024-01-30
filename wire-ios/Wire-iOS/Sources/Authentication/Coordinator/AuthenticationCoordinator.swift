@@ -413,6 +413,9 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                         self?.eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     }
                 }
+
+            case .enrollE2EI:
+                startE2EIdentityEnrollment()
             }
         }
     }
@@ -855,6 +858,52 @@ extension AuthenticationCoordinator {
         }
 
         stateController.unwindState()
+    }
+
+    // MARK: - End-to-end Identity
+
+    private func startE2EIdentityEnrollment() {
+        typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
+
+        guard let session = statusProvider.sharedUserSession else { return }
+        let e2eiCertificateUseCase = session.enrollE2eICertificate
+        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+            return
+        }
+        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+        let selfUser = ZMUser.selfUser(inUserSession: session)
+
+        guard
+            let userName = selfUser.name,
+            let handle = selfUser.handle,
+            let teamID = selfUser.teamIdentifier,
+            let e2eiClientId = E2eIClientID(user: selfUser)
+        else {
+            return
+        }
+
+        Task {
+            do {
+                _ = try await e2eiCertificateUseCase?.invoke(
+                    e2eiClientId: e2eiClientId,
+                    userName: userName,
+                    userHandle: handle,
+                    team: teamID,
+                    authenticate: oauthUseCase.invoke
+                )
+                session.reportEndToEndIdentityEnrollmentSuccess()
+            } catch {
+                await MainActor.run {
+                    executeActions([
+                        .hideLoadingView,
+                        .presentAlert(
+                            .init(title: E2ei.Error.Alert.title,
+                                  message: E2ei.Error.Alert.message,
+                                  actions: [.ok]))
+                    ])
+                }
+            }
+        }
     }
 
     private func showAlertWithNoInternetConnectionError() {

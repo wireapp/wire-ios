@@ -4802,6 +4802,26 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "registration.signin.alert.password_needed.title", fallback: "Password needed")
           }
         }
+        internal enum E2ei {
+          /// Your team now uses end-to-end identity to make Wire's usage more secure.
+          /// 
+          ///  Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.
+          internal static let subtitle = L10n.tr("Localizable", "registration.signin.e2ei.subtitle", fallback: "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.")
+          /// End-to-end identity certificate
+          internal static let title = L10n.tr("Localizable", "registration.signin.e2ei.title", fallback: "End-to-end identity certificate")
+          internal enum Error {
+            internal enum Alert {
+              /// Failed to retrieve certificate
+              internal static let message = L10n.tr("Localizable", "registration.signin.e2ei.error.alert.message", fallback: "Failed to retrieve certificate")
+              /// Something went wrong
+              internal static let title = L10n.tr("Localizable", "registration.signin.e2ei.error.alert.title", fallback: "Something went wrong")
+            }
+          }
+          internal enum GetCertificateButton {
+            /// Get Certificate
+            internal static let title = L10n.tr("Localizable", "registration.signin.e2ei.get_certificate_button.title", fallback: "Get Certificate")
+          }
+        }
         internal enum TooManyDevices {
           /// Remove one of your other devices to start using Wire on this one.
           internal static let subtitle = L10n.tr("Localizable", "registration.signin.too_many_devices.subtitle", fallback: "Remove one of your other devices to start using Wire on this one.")
