@@ -263,8 +263,7 @@ final class ProfileHeaderViewController: UIViewController {
                 isMLSCertified = verificationStatuses.isMLSCertified
                 isProteusVerified = verificationStatuses.isProteusVerified
             } catch {
-                #warning("TODO: log instead")
-                fatalError(String(reflecting: error))
+                WireLogger.sync.error("failed to get self user's verification status: \(String(reflecting: error))")
             }
         }
     }

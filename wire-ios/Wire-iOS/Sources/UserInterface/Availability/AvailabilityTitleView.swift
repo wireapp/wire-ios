@@ -138,7 +138,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
                     icons.insert(attachment, at: 0)
                 }
             } catch {
-                fatalError("TODO: log")
+                WireLogger.sync.error("failed to get self user's verification status: \(String(reflecting: error))")
             }
             accessibilityLabel = title
         } else if availability == .none && options.contains(.allowSettingStatus) {
