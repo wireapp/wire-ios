@@ -22,6 +22,9 @@ import WireCoreCrypto
 public protocol E2eIRepositoryInterface {
 
     func fetchTrustAnchor() async throws
+
+    func fetchFederationCertificate() async throws
+
     func createEnrollment(context: NSManagedObjectContext) async throws -> E2eIEnrollmentInterface
 }
 
@@ -62,6 +65,11 @@ public final class E2eIRepository: E2eIRepositoryInterface {
     public func fetchTrustAnchor() async throws {
         let trustAnchor = try await acmeApi.getTrustAnchor()
         try await e2eiSetupService.registerTrustAnchor(trustAnchor)
+    }
+
+    public func fetchFederationCertificate() async throws {
+        let federationCertificate = try await acmeApi.getFederationCertificate()
+        try await e2eiSetupService.registerFederationCertificate(federationCertificate)
     }
 
     public func createEnrollment(context: NSManagedObjectContext) async throws -> E2eIEnrollmentInterface {
