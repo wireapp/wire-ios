@@ -387,7 +387,7 @@ final class InputBarButtonsView: UIView {
             let isFirstButton = previous == buttons.first
             let isLastButton = rowIsFull && current == buttons.last
 
-            [previous, current].prepareForLayout()
+            [previous, current].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             constraints.append(previous.trailingAnchor.constraint(equalTo: current.leadingAnchor))
 
             if isFirstButton {
