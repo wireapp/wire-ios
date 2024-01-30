@@ -567,7 +567,7 @@
     XCTAssertTrue([c2.allMessages containsObject:message2]);
 
     XCTAssertEqual(activeList.count, 2u);
-    XCTAssertEqualObjects(activeList.set, conversations);
+    XCTAssertEqualObjects([NSSet setWithArray:activeList], conversations);
     XCTAssertEqual(archivedList.count, 0u);
     XCTAssertEqual(clearedList.count, 0u);
 

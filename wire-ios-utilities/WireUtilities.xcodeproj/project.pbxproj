@@ -36,7 +36,6 @@
 		3E88BD441B1F3EA300232589 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		3E88BE1F1B1F478200232589 /* NSSet+Zeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BDF71B1F478200232589 /* NSSet+Zeta.m */; };
 		3E88BE411B1F478200232589 /* ZMFunctional.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BE081B1F478200232589 /* ZMFunctional.m */; };
-		3E88BE431B1F478200232589 /* ZMFunctional+noARC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BE091B1F478200232589 /* ZMFunctional+noARC.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3E88BE511B1F478200232589 /* ZMOSVersions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BE101B1F478200232589 /* ZMOSVersions.m */; };
 		3E88BE551B1F478200232589 /* ZMTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BE121B1F478200232589 /* ZMTimer.m */; };
 		3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */; };
@@ -261,7 +260,6 @@
 		3E88BD7E1B1F3F8000232589 /* WireUtilities-Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireUtilities-Test-Info.plist"; sourceTree = "<group>"; };
 		3E88BDF71B1F478200232589 /* NSSet+Zeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSSet+Zeta.m"; sourceTree = "<group>"; };
 		3E88BE081B1F478200232589 /* ZMFunctional.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMFunctional.m; sourceTree = "<group>"; };
-		3E88BE091B1F478200232589 /* ZMFunctional+noARC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMFunctional+noARC.m"; sourceTree = "<group>"; };
 		3E88BE101B1F478200232589 /* ZMOSVersions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMOSVersions.m; sourceTree = "<group>"; };
 		3E88BE121B1F478200232589 /* ZMTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimer.m; sourceTree = "<group>"; };
 		3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUUID+Data.m"; sourceTree = "<group>"; };
@@ -537,7 +535,6 @@
 				3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */,
 				F9C9A78A1CAE9F9A0039E10C /* NSString+Normalization.m */,
 				3E88BE081B1F478200232589 /* ZMFunctional.m */,
-				3E88BE091B1F478200232589 /* ZMFunctional+noARC.m */,
 				3E88BE101B1F478200232589 /* ZMOSVersions.m */,
 				3E88BE121B1F478200232589 /* ZMTimer.m */,
 				09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */,
@@ -1043,7 +1040,6 @@
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
 				EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */,
 				1623F8F52AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift in Sources */,
-				3E88BE431B1F478200232589 /* ZMFunctional+noARC.m in Sources */,
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
 				16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */,
 				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
