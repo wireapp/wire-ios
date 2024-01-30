@@ -17,7 +17,9 @@
 //
 
 import XCTest
+import WireSyncEngineSupport
 import SnapshotTesting
+
 @testable import Wire
 
 final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestCase {
@@ -44,7 +46,15 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
     }
 
     func setupSut() {
-        sut = ConversationListTopBarViewController(account: mockAccount, selfUser: mockSelfUser, userSession: userSession)
+        sut = ConversationListTopBarViewController(
+            account: mockAccount,
+            selfUser: mockSelfUser,
+            userSession: userSession,
+            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase(
+                isMLSCertified: false,
+                isProteusVerified: false
+            )
+        )
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
         sut.view.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark

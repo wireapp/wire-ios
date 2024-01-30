@@ -17,7 +17,9 @@
 //
 
 import SnapshotTesting
+import WireSyncEngineSupport
 import XCTest
+
 @testable import Wire
 
 // MARK: - MockConversationList
@@ -69,7 +71,13 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, conversationListType: MockConversationList.self, userSession: userSession)
-        sut = ConversationListViewController(viewModel: viewModel)
+        sut = ConversationListViewController(
+            viewModel: viewModel,
+            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase(
+                isMLSCertified: false,
+                isProteusVerified: false
+            )
+        )
         viewModel.viewController = sut
         sut.onboardingHint.arrowPointToView = sut.tabBar
         sut.overrideUserInterfaceStyle = .dark

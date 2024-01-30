@@ -18,12 +18,17 @@
 
 import WireSyncEngine
 
-final class MockGetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol {
+public final class MockGetSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol {
 
-    var isMLSCertified = false
-    var isProteusVerified = false
+    var isMLSCertified: Bool
+    var isProteusVerified: Bool
 
-    func invoke() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
+    public init(isMLSCertified: Bool, isProteusVerified: Bool) {
+        self.isMLSCertified = isMLSCertified
+        self.isProteusVerified = isProteusVerified
+    }
+
+    public func invoke() async throws -> (isMLSCertified: Bool, isProteusVerified: Bool) {
         (isMLSCertified, isProteusVerified)
     }
 }

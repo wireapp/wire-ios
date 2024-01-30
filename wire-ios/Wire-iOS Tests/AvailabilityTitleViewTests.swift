@@ -114,7 +114,10 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
             user: user,
             options: options,
             userSession: userSession,
-            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase()
+            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase(
+                isMLSCertified: false,
+                isProteusVerified: false
+            )
         )
 
         sut.overrideUserInterfaceStyle = hasDarkMode ? .dark : .light
