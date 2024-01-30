@@ -115,6 +115,12 @@
             <fetchIndexElement property="internalIsArchived" type="Binary" order="ascending"/>
             <fetchIndexElement property="lastModifiedDate" type="Binary" order="ascending"/>
         </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="remoteIdentifier"/>
+                <constraint value="domain"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="Feature" representedClassName=".Feature" syncable="YES">
         <attribute name="configData" optional="YES" attributeType="Binary"/>
@@ -231,7 +237,7 @@
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <relationship name="conversation" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation"/>
         <relationship name="role" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Role" inverseName="participantRoles" inverseEntity="Role"/>
-        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User"/>
     </entity>
     <entity name="Reaction" representedClassName=".Reaction" syncable="YES">
         <attribute name="firstReactionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -285,6 +291,11 @@
         <fetchIndex name="byRemoteIdentifier_dataIndex">
             <fetchIndexElement property="remoteIdentifier_data" type="Binary" order="ascending"/>
         </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="remoteIdentifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="TextMessage" representedClassName="ZMTextMessage" parentEntity="Message" syncable="YES">
         <attribute name="text" optional="YES" attributeType="String"/>
