@@ -238,11 +238,13 @@ extension CompanyLoginController {
     func startAutomaticSSOFlow(promptOnError: Bool = true) {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.activeUnauthenticatedSession.fetchSSOSettings { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.delegate?.controller(self, showLoadingView: false)
-            guard let ssoCode = result.value?.ssoCode else {
+
+            guard case .success(let settings) = result, let ssoCode = settings.ssoCode else {
                 guard promptOnError else { return }
-                return self.displayCompanyLoginPrompt(ssoOnly: true)
+                self.displayCompanyLoginPrompt(ssoOnly: true)
+                return
             }
             self.attemptLoginWithSSOCode(ssoCode)
         }
@@ -257,12 +259,15 @@ extension CompanyLoginController {
     private func lookup(domain: String) {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.activeUnauthenticatedSession.lookup(domain: domain) { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.delegate?.controller(self, showLoadingView: false)
-            guard let domainInfo = result.value else {
-                return self.presentCompanyLoginAlert(error: .domainNotRegistered)
+
+            switch result {
+            case .success(let domainInfo):
+                self.delegate?.controllerDidStartBackendSwitch(self, toURL: domainInfo.configurationURL)
+            case .failure:
+                self.presentCompanyLoginAlert(error: .domainNotRegistered)
             }
-            self.delegate?.controllerDidStartBackendSwitch(self, toURL: domainInfo.configurationURL)
         }
     }
 

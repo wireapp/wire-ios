@@ -20,10 +20,3 @@ public enum ZMResult<T> {
     case success(T)
     case failure(Error)
 }
-
-public extension ZMResult {
-    var value: T? {
-        guard case let .success(value) = self else { return nil }
-        return value
-    }
-}
