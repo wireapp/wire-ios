@@ -204,11 +204,11 @@ extension ZMConversation {
     }
 
     private class func isValidOneOnOne() -> NSPredicate {
-        let isOneOneOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
         let hasOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) != NULL")
         let isConnectionAccepted = NSPredicate(format: "\(ZMConversationOneOnOneUserKey).connection.status == \(ZMConnectionStatus.accepted.rawValue)")
         let isInSelfTeam = NSPredicate(format: "\(#keyPath(ZMConversation.team)) != NULL")
-        return isOneOneOne.and(hasOneOnOneUser).and(isConnectionAccepted.or(isInSelfTeam))
+        return isOneOnOne.and(hasOneOnOneUser).and(isConnectionAccepted.or(isInSelfTeam))
     }
 
     private class func isValidGroup() -> NSPredicate {
