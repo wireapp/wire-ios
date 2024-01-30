@@ -47,6 +47,7 @@ final class ZMConversationTests_Services: BaseZMMessageTests {
         conversation.oneOnOneUser = serviceUser
         conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC), role: nil)
         conversation.addParticipantAndUpdateConversationState(user: serviceUser, role: nil)
+        try uiMOC.save()
         return conversation
     }
 
