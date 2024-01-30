@@ -49,7 +49,7 @@ extension ZMBaseManagedObjectTest {
             user.remoteIdentifier = UUID.create()
         }
         let userClient = UserClient.insertNewObject(in: moc)
-        userClient.remoteIdentifier = NSString.createAlphanumerical()
+        userClient.remoteIdentifier = .randomRemoteIdentifier()
         userClient.user = user
 
         if createSessionWithSelfUser {

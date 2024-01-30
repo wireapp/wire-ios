@@ -18,7 +18,30 @@
 
 import Foundation
 
+extension NSString {
+
+    @objc static func randomAlphanumerical(length: UInt) -> String {
+        String.randomAlphanumerical(length: length)
+    }
+
+    @objc public static func randomClientIdentifier() -> String {
+        String.randomClientIdentifier()
+    }
+
+    @objc public static func randomRemoteIdentifier() -> String {
+        String.randomRemoteIdentifier()
+    }
+}
+
 public extension String {
+
+    static func randomClientIdentifier(length: UInt = 16) -> String {
+        randomAlphanumerical(length: length)
+    }
+
+    static func randomRemoteIdentifier(length: UInt = 16) -> String {
+        randomAlphanumerical(length: length)
+    }
 
     static func randomDomain(hostLength: UInt = 5) -> String {
         return "\(String.randomAlphanumerical(length: hostLength)).com"

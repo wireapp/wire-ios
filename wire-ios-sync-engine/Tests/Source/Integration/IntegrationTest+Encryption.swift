@@ -32,7 +32,7 @@ extension IntegrationTest {
             selfClient.user!.remoteIdentifier = UUID()
         }
         if selfClient.remoteIdentifier == nil {
-            selfClient.remoteIdentifier = NSString.createAlphanumerical() as String
+            selfClient.remoteIdentifier = .randomRemoteIdentifier()
         }
 
         var cypherText: Data?
@@ -180,7 +180,7 @@ extension IntegrationTest {
     /// If the client has no remote identifier, it will create one
     fileprivate func encryptionContext(for client: UserClient) -> EncryptionContext {
         if client.remoteIdentifier == nil {
-            client.remoteIdentifier = NSString.createAlphanumerical() as String
+            client.remoteIdentifier = .randomRemoteIdentifier()
         }
         let url =  self.otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
