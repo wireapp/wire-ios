@@ -28,8 +28,6 @@
 		163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */; };
 		163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */; };
 		168B158C1F25F67600AB3C44 /* DispatchGroupQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */; };
-		16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A5FDF6215A746B00AEEBBD /* IndexSet+Helpers.swift */; };
-		16A5FE05215A770000AEEBBD /* IndexSet+HelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A5FE04215A770000AEEBBD /* IndexSet+HelperTests.swift */; };
 		16B75F66222EDC5000DCAFF2 /* String+Stripping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */; };
 		16B75F68222EE3A000DCAFF2 /* String+StrippingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */; };
 		16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */; };
@@ -240,8 +238,6 @@
 		163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueue.swift; sourceTree = "<group>"; };
 		163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupContextTests.swift; sourceTree = "<group>"; };
 		168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueueTests.swift; sourceTree = "<group>"; };
-		16A5FDF6215A746B00AEEBBD /* IndexSet+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexSet+Helpers.swift"; sourceTree = "<group>"; };
-		16A5FE04215A770000AEEBBD /* IndexSet+HelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexSet+HelperTests.swift"; sourceTree = "<group>"; };
 		16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Stripping.swift"; sourceTree = "<group>"; };
 		16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+StrippingTests.swift"; sourceTree = "<group>"; };
 		16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUnregisteringNotificationCenterToken.swift; sourceTree = "<group>"; };
@@ -518,7 +514,6 @@
 				09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */,
 				097E36C21B7B62150039CC4C /* NSLocale+Internal.m */,
 				54181A4F1F594E4100155ABC /* FileManager+Move.swift */,
-				16A5FDF6215A746B00AEEBBD /* IndexSet+Helpers.swift */,
 				54181A531F594F6B00155ABC /* FileManager+Protection.swift */,
 				54181A551F594FD800155ABC /* FileManager+FileProtectionLock.swift */,
 				EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */,
@@ -720,7 +715,6 @@
 				F9D381A11B70B91000E6E4EB /* ZMTimerTests.m */,
 				546E8A581B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m */,
 				D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */,
-				16A5FE04215A770000AEEBBD /* IndexSet+HelperTests.swift */,
 				163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */,
 				168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */,
 				BF3C1B0E20DA7289001CE126 /* Equatable+OneOfTests.swift */,
@@ -1008,7 +1002,6 @@
 				EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */,
 				1623F8F52AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift in Sources */,
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
-				16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */,
 				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
 				067BB07125068D6500946EC8 /* String+HexDecodedData.swift in Sources */,
 				014C36B62B2754FC00D7E8EA /* Sequence+Async.swift in Sources */,
@@ -1088,7 +1081,6 @@
 				F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */,
 				5E4BC1BE2189EA3900A8682E /* AnyPropertyTests.swift in Sources */,
 				A9CDCDCA237D9AE3008A9BC6 /* ColorComponentsTests.swift in Sources */,
-				16A5FE05215A770000AEEBBD /* IndexSet+HelperTests.swift in Sources */,
 				EFD003562179FABC008C20D3 /* StringLengthValidatorTests.swift in Sources */,
 				54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */,
 				546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */,
