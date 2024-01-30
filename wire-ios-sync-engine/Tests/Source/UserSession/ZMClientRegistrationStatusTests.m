@@ -94,6 +94,11 @@
     return [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsToEnrollE2EIToRegisterClient userInfo:nil];
 }
 
+- (NSError *)needToSetHandleError
+{
+    return [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsToHandleToRegisterClient userInfo:nil];
+}
+
 - (void)testThatItInsertsANewClientIfThereIsNoneWaitingToBeSynced
 {
     [self.syncMOC performBlockAndWait:^{
@@ -169,7 +174,8 @@
         ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
         selfUser.remoteIdentifier = NSUUID.createUUID;
         selfUser.emailAddress = @"email@domain.com";
-        
+        selfUser.handle = @"handle";
+
         UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
         client.remoteIdentifier = @"identifier";
         client.user = selfUser;
@@ -216,6 +222,7 @@
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
         selfUser.remoteIdentifier = [NSUUID UUID];
         selfUser.emailAddress = @"email@domain.com";
+        selfUser.handle = @"handle";
 
         UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
         client.user = selfUser;
@@ -296,6 +303,7 @@
         // given
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
         selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.handle = @"handle";
         selfUser.emailAddress = nil;
         selfUser.phoneNumber = nil;
 
@@ -311,12 +319,13 @@
 }
 
 
-- (void)testThatItDoesNotTransitionsFrom_WaitingForEmail_To_Unregistered_WhenSelfUserChangesWithoutEmailAddress
+- (void)testThatItIsWaitingForEmailVerfication_WhenSelfUserChangesWithoutEmailAddress
 {
     [self.syncMOC performBlockAndWait:^{
         // given
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
         selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.handle = @"handle";
         selfUser.emailAddress = nil;
         selfUser.phoneNumber = nil;
 
@@ -331,6 +340,26 @@
     }];
 }
 
+- (void)testThatItIsWaitingForHandle_WhenSelfUserChangesWithoutHandle
+{
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.handle = nil;
+        selfUser.emailAddress = @"email@example.com";
+        selfUser.phoneNumber = nil;
+
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForHandle);
+
+        // when
+        [self.sut didFetchSelfUser];
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForHandle);
+    }];
+}
+
 - (void)testThatItResetsThePhaseToWaitingForLoginIfItNeedsPasswordToRegisterClient
 {
     [self.syncMOC performBlockAndWait:^{
@@ -338,6 +367,7 @@
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
         selfUser.remoteIdentifier = [NSUUID UUID];
         selfUser.emailAddress = @"email@domain.com";
+        selfUser.handle = @"handle";
         [[[self.mockCookieStorage stub] andReturn:[NSData data]] authenticationCookieData];
         self.sut.emailCredentials = nil;
 
@@ -366,6 +396,7 @@
         // given
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
         selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.handle = @"handle";
         selfUser.emailAddress = nil;
         selfUser.phoneNumber = nil;
         selfUser.usesCompanyLogin = YES;
@@ -438,6 +469,7 @@
     // given
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = [NSUUID UUID];
+    selfUser.handle = @"handle";
     selfUser.emailAddress = nil;
     selfUser.phoneNumber = nil;
     [self.uiMOC saveOrRollback];
@@ -451,6 +483,27 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    // then
+    [self.mockClientRegistrationDelegate verify];
+}
+
+- (void)testThatItNotifiesTheUIIfTheRegistrationFailsWithMissingHandle
+{
+    // given
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = [NSUUID UUID];
+    selfUser.handle = nil;
+    selfUser.emailAddress = @"email@example.com";
+    selfUser.phoneNumber = nil;
+    [self.uiMOC saveOrRollback];
+
+    NSError *error = [self needToSetHandleError];
+    [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: error];
+
+    // when
+    [self.sut didFetchSelfUser];
+    WaitForAllGroupsToBeEmpty(0.5);
+
     // then
     [self.mockClientRegistrationDelegate verify];
 }

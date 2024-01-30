@@ -22,13 +22,14 @@ class ConversationStatusStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
+        syncMOC.performAndWait {
+            let syncSelfUser =  ZMUser.selfUser(in: self.syncMOC)
+            syncSelfUser.remoteIdentifier = UUID.create()
+            selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            selfConversation.remoteIdentifier = syncSelfUser.remoteIdentifier
 
-        let syncSelfUser =  ZMUser.selfUser(in: self.syncMOC)
-        syncSelfUser.remoteIdentifier = UUID.create()
-        selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        selfConversation.remoteIdentifier = syncSelfUser.remoteIdentifier
-
-        sut = ConversationStatusStrategy(managedObjectContext: self.syncMOC)
+            sut = ConversationStatusStrategy(managedObjectContext: self.syncMOC)
+        }
     }
 
     override func tearDown() {

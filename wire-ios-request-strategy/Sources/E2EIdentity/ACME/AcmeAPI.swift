@@ -22,7 +22,9 @@ import WireCoreCrypto
 public protocol AcmeAPIInterface {
     func getACMEDirectory() async throws -> Data
     func getACMENonce(path: String) async throws -> String
+    func getTrustAnchor() async throws -> String
     func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse
+    func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse
     func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse
 }
 
@@ -31,6 +33,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     // MARK: - Properties
 
+    private let rootCertificatePath = "roots.pem"
     private let acmeDiscoveryPath: String
     private let httpClient: HttpClientCustom
 
@@ -76,6 +79,28 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     }
 
+    public func getTrustAnchor() async throws -> String {
+        guard
+            let baseURL = URL(string: acmeDiscoveryPath)?.extractBaseURL,
+            let url = URL(string: rootCertificatePath, relativeTo: baseURL)
+        else {
+            throw NetworkError.errorEncodingRequest
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.get
+
+        let (data, response) = try await httpClient.send(request)
+
+        guard
+            let certificateChain = String(bytes: data, encoding: .utf8)
+        else {
+            throw NetworkError.errorDecodingResponseNew(response)
+        }
+
+        return certificateChain
+    }
+
     public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
         guard let url = URL(string: path) else {
             throw NetworkError.errorEncodingRequest
@@ -96,6 +121,34 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
         return ACMEResponse(nonce: replayNonce, location: location, response: data)
 
+    }
+
+    public func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse {
+        guard let url = URL(string: path) else {
+            throw NetworkError.errorEncodingRequest
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: Constant.contentType)
+        request.setValue(ContentType.json, forHTTPHeaderField: Constant.accept)
+        request.httpBody = requestBody
+
+        let (data, response) = try await httpClient.send(request)
+
+        guard
+            let authorizationResponse = try? JSONDecoder().decode(AuthorizationResponse.self, from: data),
+            let type = authorizationResponse.challenges.first?.type,
+            let httpResponse = response as? HTTPURLResponse,
+            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)
+        else {
+            throw NetworkError.errorDecodingResponseNew(response)
+        }
+
+        let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
+        return ACMEAuthorizationResponse(nonce: replayNonce,
+                                         location: location,
+                                         response: data,
+                                         challengeType: type)
     }
 
     public func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse {
@@ -121,6 +174,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
                                  url: challengeResponse.url,
                                  status: challengeResponse.status,
                                  token: challengeResponse.token,
+                                 target: challengeResponse.target,
                                  nonce: replayNonce)
     }
 
@@ -130,6 +184,19 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         var url: String
         var status: String
         var token: String
+        var target: String
+
+    }
+
+    private struct AuthorizationResponse: Decodable {
+
+        var challenges: [AuthorizationChallenge]
+
+    }
+
+    private struct AuthorizationChallenge: Decodable {
+
+        var type: AuthorizationChallengeType
 
     }
 
@@ -153,6 +220,7 @@ private enum HTTPMethod {
 
 private enum Constant {
     static let contentType = "Content-Type"
+    static let accept = "Accept"
 }
 
 public protocol HttpClientCustom {
@@ -167,4 +235,12 @@ public class HttpClientE2EI: NSObject, HttpClientCustom {
         return try await URLSession.shared.data(for: request)
     }
 
+}
+
+extension URL {
+    var extractBaseURL: URL? {
+        var baseURL = URLComponents(url: self, resolvingAgainstBaseURL: false)
+        baseURL?.path = ""
+        return baseURL?.url
+    }
 }

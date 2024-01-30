@@ -67,17 +67,17 @@ class ClientUpdateStatusTests: MessagingTest {
 
     func insertNewClient(_ isSelfClient: Bool) -> UserClient! {
         var client: UserClient!
-        let remoteIdentifier = syncMOC.performGroupedAndWait { syncMOC in
-            let remoteIdentifier = isSelfClient ? "selfIdentifier" : "identifier"
+        syncMOC.performGroupedAndWait { syncMOC in
             client = UserClient.insertNewObject(in: syncMOC)
-            client.remoteIdentifier = remoteIdentifier
+            client.remoteIdentifier = isSelfClient ? "selfIdentifier" : "identifier"
             client.user = ZMUser.selfUser(in: syncMOC)
             syncMOC.saveOrRollback()
-            return remoteIdentifier
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         if isSelfClient {
-            syncMOC.setPersistentStoreMetadata(remoteIdentifier, key: "PersistedClientId")
+            syncMOC.performAndWait {
+                self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: "PersistedClientId")
+            }
         }
         return client
     }
@@ -97,7 +97,9 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([selfClient, otherClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([selfClient, otherClient])
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -123,7 +125,10 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([client, selfClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([client, selfClient])
+        }
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -169,7 +174,7 @@ class ClientUpdateStatusTests: MessagingTest {
         let client = insertNewClient()
 
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([client, selfClient])
+        syncMOC.performAndWait { self.sut.didFetchClients([client, selfClient]) }
         XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         self.receivedNotifications.removeAll()
 
@@ -178,7 +183,9 @@ class ClientUpdateStatusTests: MessagingTest {
         self.sut.deleteClients(withCredentials: credentials)
         XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.deletingClients)
 
-        self.sut.didDeleteClient()
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didDeleteClient()
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -202,7 +209,9 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([otherClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([otherClient])
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -224,7 +233,10 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([otherClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([otherClient])
+        }
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -247,7 +259,9 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([client, selfClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([client, selfClient])
+        }
 
         let error = NSError(domain: "ClientManagement", code: Int(ClientUpdateError.invalidCredentials.rawValue), userInfo: nil)
         self.receivedNotifications.removeAll()
@@ -279,22 +293,28 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // delete self client
         let selfClient = insertSelfClient()
-        selfClient.markedToDelete = true
-        selfClient.setLocallyModifiedKeys(Set([ZMUserClientMarkedToDeleteKey]))
-        selfClient.managedObjectContext?.saveOrRollback()
+        self.syncMOC.performAndWait {
+            selfClient.markedToDelete = true
+            selfClient.setLocallyModifiedKeys(Set([ZMUserClientMarkedToDeleteKey]))
+            selfClient.managedObjectContext?.saveOrRollback()
+        }
 
         // WHEN
         // re-create
-        self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
-        self.sut.determineInitialClientStatus()
+        self.syncMOC.performAndWait {
+            self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
+            self.sut.determineInitialClientStatus()
+        }
         clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] (type, clientObjectIDs, error) in
             self?.receivedNotifications.append(ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error))
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertFalse(selfClient.markedToDelete)
-        XCTAssertFalse(selfClient.hasLocalModifications(forKey: ZMUserClientMarkedToDeleteKey))
+        self.syncMOC.performAndWait {
+            XCTAssertFalse(selfClient.markedToDelete)
+            XCTAssertFalse(selfClient.hasLocalModifications(forKey: ZMUserClientMarkedToDeleteKey))
+        }
 
     }
 

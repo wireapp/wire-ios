@@ -106,7 +106,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 senderClientId: nil,
                 hasEpochChanged: false,
                 identity: nil,
-                bufferedMessages: nil
+                bufferedMessages: nil,
+                crlNewDistributionPoints: nil
             )
         }
 
@@ -152,7 +153,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: false,
                 identity: nil,
-                bufferedMessages: nil
+                bufferedMessages: nil,
+                crlNewDistributionPoints: nil
             )
         }
 
@@ -198,7 +200,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: false,
                 identity: nil,
-                bufferedMessages: nil
+                bufferedMessages: nil,
+                crlNewDistributionPoints: nil
             )
         }
 
@@ -255,8 +258,9 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                         commitDelay: nil,
                         senderClientId: sender.rawValue.data(using: .utf8)!,
                         hasEpochChanged: false,
-                        identity: nil)
-                ]
+                        identity: nil,
+                        crlNewDistributionPoints: nil)
+                ], crlNewDistributionPoints: nil
             )
         }
 
@@ -305,7 +309,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: hasEpochChanged,
                 identity: nil,
-                bufferedMessages: nil
+                bufferedMessages: nil,
+                crlNewDistributionPoints: nil
             )
         }
 

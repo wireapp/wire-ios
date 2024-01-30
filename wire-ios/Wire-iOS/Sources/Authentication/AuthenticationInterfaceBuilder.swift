@@ -145,6 +145,11 @@ class AuthenticationInterfaceBuilder {
             )
             return viewController
 
+        case .addUsername:
+            let addUsernameStep = AddUsernameStepDescription()
+            let viewController = makeViewController(for: addUsernameStep)
+            return viewController
+
         case .enterActivationCode(let credentials, _):
             let step: AuthenticationStepDescription
 

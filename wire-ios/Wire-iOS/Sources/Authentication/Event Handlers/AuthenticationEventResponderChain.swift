@@ -117,6 +117,7 @@ class AuthenticationEventResponderChain {
 
     fileprivate func registerDefaultEventHandlers() {
         // flowStartHandlers
+        registerHandler(AuthenticationStartMissingUsernameErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartMissingCredentialsErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartReauthenticateErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartCompanyLoginLinkEventHandler(), to: &flowStartHandlers)
@@ -130,6 +131,7 @@ class AuthenticationEventResponderChain {
         registerHandler(AuthenticationNoCredentialsErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(AuthenticationNeedsReauthenticationErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(AuthenticationE2EIdentityMissingErrorHandler(), to: &clientRegistrationErrorHandlers)
+        registerHandler(AuthenticationMissingUsernameErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(ClientRegistrationErrorEventHandler(), to: &clientRegistrationErrorHandlers)
 
         // backupEventHandlers
@@ -172,6 +174,7 @@ class AuthenticationEventResponderChain {
         registerHandler(AuthenticationAddEmailPasswordInputHandler(), to: &userInputObservers)
         registerHandler(AuthenticationReauthenticateInputHandler(), to: &userInputObservers)
         registerHandler(AuthenticationShowCustomBackendInfoHandler(), to: &userInputObservers)
+        registerHandler(AuthenticationAddUsernameInputHandler(), to: &userInputObservers)
 
         // deviceConfigurationHandlers
         registerHandler(DeviceConfigurationEventHandler(), to: &deviceConfigurationHandlers)

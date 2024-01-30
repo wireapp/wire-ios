@@ -37,6 +37,7 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 
 @property (nonatomic) id clientUpdateToken;
+@property (nonatomic) id userProfileUpdateToken;
 @property (nonatomic) BOOL tornDown;
 
 @end
@@ -54,6 +55,7 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
         self.cookieStorage = cookieStorage;
         
         [self observeClientUpdates];
+        [self observeProfileUpdates];
     }
     return self;
 }
@@ -62,6 +64,12 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 {
     self.needsToVerifySelfClient = !self.needsToRegisterClient;
     self.needsToFetchFeatureConfigs = self.needsToRegisterClient;
+    self.needsRefreshSelfUser = self.needsToRegisterClient;
+}
+
+- (void)observeProfileUpdates
+{
+    self.userProfileUpdateToken = [UserProfileUpdateStatus addObserver:self in:self.managedObjectContext.notificationContext];
 }
 
 - (void)observeClientUpdates
@@ -150,7 +158,7 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     }
     
     // before registering client we need to fetch self user to know whether or not the user has registered an email address
-    if (self.isWaitingForSelfUser) {
+    if (self.isWaitingForSelfUser || self.needsRefreshSelfUser) {
         return ZMClientRegistrationPhaseWaitingForSelfUser;
     }
     
@@ -181,7 +189,12 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     if (!self.needsToRegisterClient) {
         return ZMClientRegistrationPhaseRegistered;
     }
-    
+
+    // a handle is a requirement to complete client registration
+    if (self.isAddingHandleNecessary) {
+        return ZMClientRegistrationPhaseWaitingForHandle;
+    }
+
     // when the user has previously only registered by phone and now wants to register a second device, he needs to register his email address and password first
     if (self.isAddingEmailNecessary) {
         return ZMClientRegistrationPhaseWaitingForEmailVerfication;
@@ -243,6 +256,12 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     return ![self.managedObjectContext registeredOnThisDevice] &&
             self.isWaitingForSelfUserEmail &&
            !selfUser.usesCompanyLogin;
+}
+
+- (BOOL)isAddingHandleNecessary
+{
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
+    return selfUser.handle == nil;
 }
 
 - (void)didRegisterProteusClient:(UserClient *)client
