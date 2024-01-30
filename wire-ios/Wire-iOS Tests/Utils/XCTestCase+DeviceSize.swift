@@ -19,7 +19,6 @@
 import XCTest
 
 extension XCTestCase {
-    static let DeviceSizeIPhone5          = CGSize(width: 320, height: 568)
     static let DeviceSizeIPhone6          = CGSize(width: 375, height: 667)
     static let DeviceSizeIPhone6Plus      = CGSize(width: 414, height: 736)
     static let DeviceSizeIPhoneX          = CGSize(width: 375, height: 812)
@@ -63,9 +62,7 @@ extension XCTestCase {
         }))
     }
 
-    // TODO: [AGIS] - Check if that's still the case when we drop iOS 13 and 14
-    /// return the smallest iPhone screen size that Wire app supports
     public var defaultIPhoneSize: CGSize {
-        return XCTestCase.DeviceSizeIPhone5
+        return XCTestCase.DeviceSizeIPhoneX
     }
 }
