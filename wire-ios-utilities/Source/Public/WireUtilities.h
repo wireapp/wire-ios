@@ -30,7 +30,6 @@ FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 #import <WireUtilities/NSData+ZMSCrypto.h>
 #import <WireUtilities/NSOperationQueue+Helpers.h>
 #import <WireUtilities/NSSet+Zeta.h>
-#import <WireUtilities/NSURL+QueryComponents.h>
 #import <WireUtilities/NSUUID+Data.h>
 #import <WireUtilities/ZMAssertQueue.h>
 #import <WireUtilities/ZMDebugHelpers.h>
