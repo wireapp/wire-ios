@@ -17,7 +17,9 @@
 //
 
 import XCTest
+
 @testable import Wire
+@testable import WireSyncEngineSupport
 
 final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
@@ -29,16 +31,16 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        otherUser = ZMUser.insertNewObject(in: uiMOC)
-        otherUser?.name = "Giovanni"
+        otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+        otherUser.name = "Giovanni"
         selfUser = ZMUser.selfUser()
         userSession = UserSessionMock()
     }
 
     override func tearDown() {
-        userSession = nil
         selfUser = nil
         otherUser = nil
+        userSession = nil
         sut = nil
 
         super.tearDown()
@@ -46,60 +48,77 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
     // MARK: - Self Profile
 
-    func testThatItRendersCorrectly_SelfProfile_NoneAvailability() {
-        createTest(for: [.allowSettingStatus], with: .none, on: selfUser)
+    func testThatItRendersCorrectly_SelfProfile_NoneAvailability() async {
+        await createTest(for: .allowSettingStatus, with: .none, on: selfUser)
     }
 
-    func testThatItRendersCorrectly_SelfProfile_AvailableAvailability() {
-        createTest(for: [.allowSettingStatus], with: .available, on: selfUser)
+    func testThatItRendersCorrectly_SelfProfile_AvailableAvailability() async {
+        await createTest(for: .allowSettingStatus, with: .available, on: selfUser)
     }
 
-    func testThatItRendersCorrectly_SelfProfile_AwayAvailability() {
-        createTest(for: [.allowSettingStatus], with: .away, on: selfUser)
+    func testThatItRendersCorrectly_SelfProfile_AwayAvailability() async {
+        await createTest(for: .allowSettingStatus, with: .away, on: selfUser)
     }
 
-    func testThatItRendersCorrectly_SelfProfile_BusyAvailability() {
-        createTest(for: [.allowSettingStatus], with: .busy, on: selfUser)
+    func testThatItRendersCorrectly_SelfProfile_BusyAvailability() async {
+        await createTest(for: .allowSettingStatus, with: .busy, on: selfUser)
     }
 
     // MARK: - Headers profile
 
-    func testThatItRendersCorrectly_Header_NoneAvailability() {
-        createTest(for: .header, with: .none, on: selfUser)
+    func testThatItRendersCorrectly_Header_NoneAvailability_Light() async {
+        await createTest(for: .header, with: .none, on: selfUser, userInterfaceStyle: .light)
     }
 
-    func testThatItRendersCorrectly_Header_AvailableAvailability() {
-        createTest(for: .header, with: .available, on: selfUser)
+    func testThatItRendersCorrectly_Header_NoneAvailability_Dark() async {
+        await createTest(for: .header, with: .none, on: selfUser, userInterfaceStyle: .dark)
     }
 
-    func testThatItRendersCorrectly_Header_AwayAvailability() {
-        createTest(for: .header, with: .away, on: selfUser)
+    func testThatItRendersCorrectly_Header_AvailableAvailability_Light() async {
+        await createTest(for: .header, with: .available, on: selfUser, userInterfaceStyle: .light)
     }
 
-    func testThatItRendersCorrectly_Header_BusyAvailability() {
-        createTest(for: .header, with: .busy, on: selfUser)
+    func testThatItRendersCorrectly_Header_AvailableAvailability_Dark() async {
+        await createTest(for: .header, with: .available, on: selfUser, userInterfaceStyle: .dark)
+    }
+
+    func testThatItRendersCorrectly_Header_AwayAvailability_Light() async {
+        await createTest(for: .header, with: .away, on: selfUser, userInterfaceStyle: .light)
+    }
+
+    func testThatItRendersCorrectly_Header_AwayAvailability_Dark() async {
+        await createTest(for: .header, with: .away, on: selfUser, userInterfaceStyle: .dark)
+    }
+
+    func testThatItRendersCorrectly_Header_BusyAvailability_Light() async {
+        await createTest(for: .header, with: .busy, on: selfUser, userInterfaceStyle: .light)
+    }
+
+    func testThatItRendersCorrectly_Header_BusyAvailability_Dark() async {
+        await createTest(for: .header, with: .busy, on: selfUser, userInterfaceStyle: .dark)
     }
 
     // MARK: - Other profile
 
-    func testThatItRendersCorrectly_OtherProfile_NoneAvailability() {
-        createTest(for: [.hideActionHint], with: .none, on: otherUser, userInterfaceStyle: .light)
+    func testThatItRendersCorrectly_OtherProfile_NoneAvailability() async {
+        await createTest(for: .hideActionHint, with: .none, on: otherUser, userInterfaceStyle: .light)
     }
 
-    func testThatItRendersCorrectly_OtherProfile_AvailableAvailability() {
-        createTest(for: [.hideActionHint], with: .available, on: otherUser, userInterfaceStyle: .light)
+    func testThatItRendersCorrectly_OtherProfile_AvailableAvailability() async {
+        await createTest(for: .hideActionHint, with: .available, on: otherUser, userInterfaceStyle: .light)
     }
 
-    func testThatItRendersCorrectly_OtherProfile_AwayAvailability() {
-        createTest(for: [.hideActionHint], with: .away, on: otherUser, userInterfaceStyle: .light)
+    func testThatItRendersCorrectly_OtherProfile_AwayAvailability() async {
+        await createTest(for: .hideActionHint, with: .away, on: otherUser, userInterfaceStyle: .light)
     }
 
-    func testThatItRendersCorrectly_OtherProfile_BusyAvailability() {
-        createTest(for: [.hideActionHint], with: .busy, on: otherUser, userInterfaceStyle: .light)
+    func testThatItRendersCorrectly_OtherProfile_BusyAvailability() async {
+        await createTest(for: .hideActionHint, with: .busy, on: otherUser, userInterfaceStyle: .light)
     }
 
     // MARK: - Common methods
 
+    @MainActor
     private func createTest(
         for options: AvailabilityTitleView.Options,
         with availability: Availability,
@@ -108,14 +127,18 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
         file: StaticString = #file,
         line: UInt = #line,
         testName: String = #function
-    ) {
+    ) async {
         updateAvailability(for: user, newValue: availability)
+        let sut = AvailabilityTitleView(
+            user: user,
+            options: options,
+            userSession: userSession
+        )
 
-        sut = .init(user: user, options: options, userSession: userSession)
         sut.overrideUserInterfaceStyle = userInterfaceStyle
-        sut.backgroundColor = .systemBackground
+        sut.backgroundColor = userInterfaceStyle == .dark ? .black : .white
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
-
+        await Task.yield()
         verify(matching: sut, file: file, testName: testName, line: line)
     }
 
