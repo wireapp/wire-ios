@@ -45,7 +45,6 @@
 		3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */; };
 		3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF601B1F68DC00232589 /* NSOperationQueue+Helpers.m */; };
 		3E88BF6B1B1F693F00232589 /* NSData+ZMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF661B1F693F00232589 /* NSData+ZMAdditions.m */; };
-		3E88BF6F1B1F693F00232589 /* NSDate+Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF681B1F693F00232589 /* NSDate+Utility.m */; };
 		54024FE61DF81C8E009BF6A0 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54024FE51DF81C8E009BF6A0 /* Dictionary.swift */; };
 		54024FE81DF81CC6009BF6A0 /* DictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */; };
 		54181A501F594E4100155ABC /* FileManager+Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54181A4F1F594E4100155ABC /* FileManager+Move.swift */; };
@@ -66,7 +65,6 @@
 		54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */; };
 		54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */; };
 		54CA312B1B74F36B00B820C0 /* NSData+ZMAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31161B74F36B00B820C0 /* NSData+ZMAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54CA312D1B74F36B00B820C0 /* NSDate+Utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31171B74F36B00B820C0 /* NSDate+Utility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA312F1B74F36B00B820C0 /* NSOperationQueue+Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31181B74F36B00B820C0 /* NSOperationQueue+Helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA31311B74F36B00B820C0 /* NSOrderedSet+Zeta.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31191B74F36B00B820C0 /* NSOrderedSet+Zeta.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA31331B74F36B00B820C0 /* NSSet+Zeta.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA311A1B74F36B00B820C0 /* NSSet+Zeta.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -185,7 +183,6 @@
 		F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A7971CAEA83B0039E10C /* ZMEncodedNSUUIDWithTimestampTests.m */; };
 		F9C9A7B31CAEADFF0039E10C /* ZMAccentColor.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7B21CAEADFF0039E10C /* ZMAccentColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9D381AA1B70B91F00E6E4EB /* NSURL+QueryComponentsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F9D3819F1B70B91000E6E4EB /* NSURL+QueryComponentsTest.m */; };
-		F9D381AC1B70B92F00E6E4EB /* NSDate+ZMUTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9D3819C1B70B91000E6E4EB /* NSDate+ZMUTests.m */; };
 		F9D381AE1B70B93800E6E4EB /* ZMTimerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9D381A11B70B91000E6E4EB /* ZMTimerTests.m */; };
 		F9D381B01B70B94300E6E4EB /* ZMFunctionalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9D381A01B70B91000E6E4EB /* ZMFunctionalTests.m */; };
 		F9D381B21B70B94B00E6E4EB /* NSSet+ZMUTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9D3819E1B70B91000E6E4EB /* NSSet+ZMUTests.m */; };
@@ -282,7 +279,6 @@
 		3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUUID+Data.m"; sourceTree = "<group>"; };
 		3E88BF601B1F68DC00232589 /* NSOperationQueue+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+Helpers.m"; sourceTree = "<group>"; };
 		3E88BF661B1F693F00232589 /* NSData+ZMAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+ZMAdditions.m"; sourceTree = "<group>"; };
-		3E88BF681B1F693F00232589 /* NSDate+Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Utility.m"; sourceTree = "<group>"; };
 		54024FE51DF81C8E009BF6A0 /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryTests.swift; sourceTree = "<group>"; };
 		54181A4F1F594E4100155ABC /* FileManager+Move.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FileManager+Move.swift"; sourceTree = "<group>"; };
@@ -306,7 +302,6 @@
 		54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSUUID+Type1.swift"; sourceTree = "<group>"; };
 		54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSUUID+Type1Tests.swift"; path = "Source/NSUUID+Type1Tests.swift"; sourceTree = "<group>"; };
 		54CA31161B74F36B00B820C0 /* NSData+ZMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ZMAdditions.h"; sourceTree = "<group>"; };
-		54CA31171B74F36B00B820C0 /* NSDate+Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Utility.h"; sourceTree = "<group>"; };
 		54CA31181B74F36B00B820C0 /* NSOperationQueue+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+Helpers.h"; sourceTree = "<group>"; };
 		54CA31191B74F36B00B820C0 /* NSOrderedSet+Zeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOrderedSet+Zeta.h"; sourceTree = "<group>"; };
 		54CA311A1B74F36B00B820C0 /* NSSet+Zeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSSet+Zeta.h"; sourceTree = "<group>"; };
@@ -430,7 +425,6 @@
 		F9C9A7951CAEA72A0039E10C /* ZMEncodedNSUUIDWithTimestamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMEncodedNSUUIDWithTimestamp.h; sourceTree = "<group>"; };
 		F9C9A7971CAEA83B0039E10C /* ZMEncodedNSUUIDWithTimestampTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMEncodedNSUUIDWithTimestampTests.m; path = Source/ZMEncodedNSUUIDWithTimestampTests.m; sourceTree = "<group>"; };
 		F9C9A7B21CAEADFF0039E10C /* ZMAccentColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAccentColor.h; sourceTree = "<group>"; };
-		F9D3819C1B70B91000E6E4EB /* NSDate+ZMUTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDate+ZMUTests.m"; path = "Source/NSDate+ZMUTests.m"; sourceTree = "<group>"; };
 		F9D3819D1B70B91000E6E4EB /* NSOrderedSet+ZMUTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSOrderedSet+ZMUTests.m"; path = "Source/NSOrderedSet+ZMUTests.m"; sourceTree = "<group>"; };
 		F9D3819E1B70B91000E6E4EB /* NSSet+ZMUTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSSet+ZMUTests.m"; path = "Source/NSSet+ZMUTests.m"; sourceTree = "<group>"; };
 		F9D3819F1B70B91000E6E4EB /* NSURL+QueryComponentsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL+QueryComponentsTest.m"; path = "Source/NSURL+QueryComponentsTest.m"; sourceTree = "<group>"; };
@@ -556,7 +550,6 @@
 				F9C9A7931CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m */,
 				3E88BF661B1F693F00232589 /* NSData+ZMAdditions.m */,
 				543B04A01BC6B693008C2912 /* NSData+ZMSCrypto.m */,
-				3E88BF681B1F693F00232589 /* NSDate+Utility.m */,
 				3E88BF601B1F68DC00232589 /* NSOperationQueue+Helpers.m */,
 				3E88BDF51B1F478200232589 /* NSOrderedSet+Zeta.m */,
 				3E88BDF71B1F478200232589 /* NSSet+Zeta.m */,
@@ -665,7 +658,6 @@
 				54CA31281B74F36B00B820C0 /* WireUtilities.h */,
 				54CA31161B74F36B00B820C0 /* NSData+ZMAdditions.h */,
 				543B049C1BC6B5FA008C2912 /* NSData+ZMSCrypto.h */,
-				54CA31171B74F36B00B820C0 /* NSDate+Utility.h */,
 				54CA31181B74F36B00B820C0 /* NSOperationQueue+Helpers.h */,
 				54CA31191B74F36B00B820C0 /* NSOrderedSet+Zeta.h */,
 				54CA311A1B74F36B00B820C0 /* NSSet+Zeta.h */,
@@ -776,7 +768,6 @@
 				F9C9A7971CAEA83B0039E10C /* ZMEncodedNSUUIDWithTimestampTests.m */,
 				F9C9A78C1CAEA00D0039E10C /* NSString_NormalizationTests.m */,
 				546E8A4B1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m */,
-				F9D3819C1B70B91000E6E4EB /* NSDate+ZMUTests.m */,
 				546E8A4F1B750146009EBA02 /* NSOperationQueue+HelpersTests.m */,
 				F9D3819D1B70B91000E6E4EB /* NSOrderedSet+ZMUTests.m */,
 				F9D3819E1B70B91000E6E4EB /* NSSet+ZMUTests.m */,
@@ -840,7 +831,6 @@
 				54CA31431B74F36B00B820C0 /* ZMAssertQueue.h in Headers */,
 				54CA31451B74F36B00B820C0 /* ZMDebugHelpers.h in Headers */,
 				546B1784241930830091F4B3 /* ZMObjectValidationError.h in Headers */,
-				54CA312D1B74F36B00B820C0 /* NSDate+Utility.h in Headers */,
 				54CA314D1B74F36B00B820C0 /* ZMTimer.h in Headers */,
 				54CA31371B74F36B00B820C0 /* NSUserDefaults+SharedUserDefaults.h in Headers */,
 				54CA31331B74F36B00B820C0 /* NSSet+Zeta.h in Headers */,
@@ -1104,7 +1094,6 @@
 				06CDC6FA2A2F2B4B00EB518D /* TimeInterval+Units.swift in Sources */,
 				09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */,
 				3E88BE511B1F478200232589 /* ZMOSVersions.m in Sources */,
-				3E88BF6F1B1F693F00232589 /* NSDate+Utility.m in Sources */,
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
 				EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */,
 				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
@@ -1160,7 +1149,6 @@
 				5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */,
 				EFC0C7B021772E6200380C4B /* EmojiOnlyStringTests.swift in Sources */,
 				0125F73F2B29E7E200D989AB /* Sequence_AsyncTests.swift in Sources */,
-				F9D381AC1B70B92F00E6E4EB /* NSDate+ZMUTests.m in Sources */,
 				16030DC221AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift in Sources */,
 				F9C9A78E1CAEA0110039E10C /* NSString_NormalizationTests.m in Sources */,
 				BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */,
