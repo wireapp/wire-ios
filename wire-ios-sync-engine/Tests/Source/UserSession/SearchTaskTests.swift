@@ -20,7 +20,7 @@ import Foundation
 
 @testable import WireSyncEngine
 
-class SearchTaskTests: DatabaseTest {
+final class SearchTaskTests: DatabaseTest {
 
     var teamIdentifier: UUID!
     var mockTransportSession: MockTransportSession!
@@ -164,7 +164,6 @@ class SearchTaskTests: DatabaseTest {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA")
-        let normaliedName = user.normalizedName
 
         let request = SearchRequest(query: "serA", searchOptions: [.contacts])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
@@ -323,9 +322,9 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    // MARK: Team member local search
+    // MARK: Team member search
 
-    func testThatItCanSearchForTeamMembersLocally() {
+    func testThatTeamMembersAreNotSearchedLocally() {
         // given
         let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
@@ -345,7 +344,7 @@ class SearchTaskTests: DatabaseTest {
         // expect
         task.addResultHandler { (result, _) in
             resultArrived.fulfill()
-            XCTAssertEqual(result.teamMembers.compactMap(\.user), [user])
+            XCTAssertEqual(result.teamMembers.compactMap(\.user), [])
         }
 
         // when
@@ -353,186 +352,34 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItCanExcludeNonActiveTeamMembersLocally() {
+    func testThatTeamMembersAreSearchedRemotely() {
         // given
+        setCurrentAPIVersion(.v2)
+        mockTransportSession.performRemoteChanges { remoteChanges in
+            let userA = remoteChanges.insertUser(withName: "User A")
+            let selfUser = remoteChanges.insertSelfUser(withName: "Self User")
+            let team = remoteChanges.insertTeam(withName: "Team A", isBound: true)
+            team.identifier = self.teamIdentifier.transportString()
+            team.creator = userA
+            remoteChanges.insertMember(with: selfUser, in: team)
+            remoteChanges.insertMember(with: userA, in: team)
+        }
         let resultArrived = customExpectation(description: "received result")
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let userB = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC)
-        let memberB = Member.insertNewObject(in: uiMOC) // non-active team-member
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-
-        conversation.conversationType = .group
-        conversation.remoteIdentifier = UUID()
-        conversation.addParticipantsAndUpdateConversationState(users: Set([userA, ZMUser.selfUser(in: uiMOC)]), role: nil)
-
-        userA.name = "Member A"
-        userB.name = "Member B"
-
-        memberA.team = team
-        memberA.user = userA
-
-        memberB.team = team
-        memberB.user = userB
-
-        uiMOC.saveOrRollback()
-
-        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
+        let request = SearchRequest(query: "user", searchOptions: [.contacts, .teamMembers])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
-
-        // expect
-        task.addResultHandler { (result, _) in
+        var result: SearchResult!
+        task.addResultHandler { r, _ in
+            result = r
             resultArrived.fulfill()
-            XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
         }
 
         // when
-        task.performLocalSearch()
+        task.performRemoteSearch()
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-    }
 
-    func testThatItIncludesNonActiveTeamMembersLocally_WhenSelfUserWasCreatedByThem() {
-        // given
-        let resultArrived = customExpectation(description: "received result")
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC) // non-active team-member
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-
-        userA.name = "Member A"
-        userA.handle = "abc"
-
-        selfUser.membership?.permissions = .partner
-        selfUser.membership?.createdBy = userA
-
-        memberA.team = team
-        memberA.user = userA
-        memberA.permissions = .admin
-
-        uiMOC.saveOrRollback()
-
-        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
-        let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
-
-        // expect
-        task.addResultHandler { (result, _) in
-            resultArrived.fulfill()
-            XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
-        }
-
-        // when
-        task.performLocalSearch()
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    func testThatItCanExcludeNonActivePartnersLocally() {
-        // given
-        let resultArrived = customExpectation(description: "received result")
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let userB = ZMUser.insertNewObject(in: uiMOC)
-        let userC = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC)
-        let memberB = Member.insertNewObject(in: uiMOC) // active partner
-        let memberC = Member.insertNewObject(in: uiMOC) // non-active partner
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-
-        conversation.conversationType = .group
-        conversation.remoteIdentifier = UUID()
-        conversation.addParticipantsAndUpdateConversationState(users: Set([userA, userB, ZMUser.selfUser(in: self.uiMOC)]), role: nil)
-
-        userA.name = "Member A"
-        userB.name = "Member B"
-        userC.name = "Member C"
-
-        memberA.team = team
-        memberA.user = userA
-        memberA.permissions = .member
-
-        memberB.team = team
-        memberB.user = userB
-        memberB.permissions = .partner
-
-        memberC.team = team
-        memberC.user = userC
-        memberC.permissions = .partner
-
-        uiMOC.saveOrRollback()
-
-        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
-        let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
-
-        // expect
-        task.addResultHandler { (result, _) in
-            resultArrived.fulfill()
-            XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA, userB])
-        }
-
-        // when
-        task.performLocalSearch()
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    func testThatItIncludesNonActivePartnersLocally_WhenSearchingWithExactHandle() {
-        // given
-        let resultArrived = customExpectation(description: "received result")
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC) // non-active partner
-
-        userA.name = "Member A"
-        userA.handle = "abc"
-
-        memberA.team = team
-        memberA.user = userA
-        memberA.permissions = .partner
-
-        uiMOC.saveOrRollback()
-
-        let request = SearchRequest(query: "@abc", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
-        let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
-
-        // expect
-        task.addResultHandler { (result, _) in
-            resultArrived.fulfill()
-            XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
-        }
-
-        // when
-        task.performLocalSearch()
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    func testThatItIncludesNonActivePartnersLocally_WhenSelfUserCreatedPartner() {
-        // given
-        let resultArrived = customExpectation(description: "received result")
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC) // non-active partner
-
-        userA.name = "Member A"
-        userA.handle = "abc"
-
-        memberA.team = team
-        memberA.user = userA
-        memberA.permissions = .partner
-        memberA.createdBy = ZMUser.selfUser(in: uiMOC)
-
-        uiMOC.saveOrRollback()
-
-        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
-        let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
-
-        // expect
-        task.addResultHandler { (result, _) in
-            resultArrived.fulfill()
-            XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
-        }
-
-        // when
-        task.performLocalSearch()
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        // then
+        XCTAssertEqual(result.teamMembers.count, 1)
+        XCTAssertEqual(result.teamMembers.first?.name, "User A")
     }
 
     // MARK: Conversation Search

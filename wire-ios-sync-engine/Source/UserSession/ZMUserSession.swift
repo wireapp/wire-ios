@@ -56,8 +56,6 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 @objcMembers
 public class ZMUserSession: NSObject {
 
-    private static let logger = Logger(subsystem: "VoIP Push", category: "ZMUserSession")
-
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
@@ -260,6 +258,10 @@ public class ZMUserSession: NSObject {
         GetUserClientFingerprintUseCase(syncContext: coreDataStack.syncContext,
                                         transportSession: transportSession,
                                         proteusProvider: proteusProvider)
+    }()
+
+    public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
+        ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -512,6 +514,7 @@ public class ZMUserSession: NSObject {
         recurringActionService.registerAction(refreshUsersMissingMetadataAction)
         recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
+        recurringActionService.registerAction(refreshTeamMetadataAction)
     }
 
     func startRequestLoopTracker() {
@@ -727,7 +730,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didStartQuickSync() {
-        Self.logger.trace("did start quick sync")
+        WireLogger.sync.debug("did start quick sync")
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
@@ -735,7 +738,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didFinishQuickSync() {
-        Self.logger.trace("did finish quick sync")
+        WireLogger.sync.debug("did finish quick sync")
         processEvents()
 
         NotificationInContext(

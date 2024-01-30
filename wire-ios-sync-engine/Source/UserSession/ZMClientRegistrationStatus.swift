@@ -132,12 +132,16 @@ extension ZMClientRegistrationStatus {
     @objc
     public func didFetchSelfUser() {
         WireLogger.userClient.info("did fetch self user")
+        self.needsRefreshSelfUser = false
 
         if needsToRegisterClient() {
-            if isAddingEmailNecessary() {
+            prepareForClientRegistration()
+
+            if isAddingHandleNecessary() {
+                notifyHandleIsNecessary()
+            } else if isAddingEmailNecessary() {
                 notifyEmailIsNecessary()
             }
-            prepareForClientRegistration()
         } else if !needsToVerifySelfClient {
             emailCredentials = nil
         }
@@ -147,6 +151,15 @@ extension ZMClientRegistrationStatus {
         let error = NSError(
             domain: NSError.ZMUserSessionErrorDomain,
             code: Int(ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
+        )
+
+        registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
+    }
+
+    private func notifyHandleIsNecessary() {
+        let error = NSError(
+            domain: NSError.ZMUserSessionErrorDomain,
+            code: Int(ZMUserSessionErrorCode.needsToHandleToRegisterClient.rawValue)
         )
 
         registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
@@ -187,9 +200,23 @@ extension ZMClientRegistrationStatus {
     }
 
     public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple], lastResortPrekey: IdPrekeyTuple) {
-        self.prekeys = prekeys.map { [NSNumber(integerLiteral: Int($0.id)): $0.prekey]}
+        self.prekeys = prekeys.map { [NSNumber(value: Int($0.id)): $0.prekey]}
         self.lastResortPrekey = lastResortPrekey.prekey
         self.isGeneratingPrekeys = false
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
+}
+
+extension ZMClientRegistrationStatus: UserProfileUpdateObserver {
+
+    public func didSetHandle() {
+        managedObjectContext.perform { [self] in
+            if needsToRegisterClient() {
+                if isAddingEmailNecessary() {
+                    notifyEmailIsNecessary()
+                }
+            }
+        }
+    }
+
 }
