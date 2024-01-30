@@ -263,6 +263,29 @@ class AcmeAPITests: ZMTBaseTest {
         XCTAssertEqual(request.httpMethod, "GET")
     }
 
+    func testThatItSendsFederationCertificateRequest() async throws {
+        // given
+        let path = "https://acme/federation"
+
+        // mock
+        let mockResponse = HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: nil
+        )!
+        let mockData = Data()
+        mockHttpClient?.mockResponse = (mockData, mockResponse)
+
+        // when
+        _ = try await acmeApi?.getFederationCertificate()
+        let request = try XCTUnwrap(mockHttpClient?.sentRequests.first)
+
+        // then
+        XCTAssertEqual(request.url?.absoluteString, "https://acme/federation")
+        XCTAssertEqual(request.httpMethod, "GET")
+    }
+
 }
 
 class MockHttpClient: HttpClientCustom {
