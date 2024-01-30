@@ -145,8 +145,6 @@
 		BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */; };
 		BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */; };
 		D504CD352090C2F800A78DAA /* Papply.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD342090C2F800A78DAA /* Papply.swift */; };
-		D504CD372090CB2900A78DAA /* Flip.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD362090CB2900A78DAA /* Flip.swift */; };
-		D504CD3B2090D00500A78DAA /* FlipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD3A2090D00500A78DAA /* FlipTests.swift */; };
 		D504CD3D2090D12900A78DAA /* PapplyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD3C2090D12900A78DAA /* PapplyTests.swift */; };
 		D53DB99F203ED59C00655CB4 /* Result+success.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB99E203ED59C00655CB4 /* Result+success.swift */; };
 		D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */; };
@@ -388,8 +386,6 @@
 		BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+EmojiTests.swift"; sourceTree = "<group>"; };
 		D504CD342090C2F800A78DAA /* Papply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Papply.swift; sourceTree = "<group>"; };
-		D504CD362090CB2900A78DAA /* Flip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flip.swift; sourceTree = "<group>"; };
-		D504CD3A2090D00500A78DAA /* FlipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipTests.swift; sourceTree = "<group>"; };
 		D504CD3C2090D12900A78DAA /* PapplyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PapplyTests.swift; sourceTree = "<group>"; };
 		D53DB99E203ED59C00655CB4 /* Result+success.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+success.swift"; sourceTree = "<group>"; };
 		D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
@@ -691,7 +687,6 @@
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
 				BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */,
 				BFA2F03520C9480A00EBE97C /* FunctionOperators.swift */,
-				D504CD362090CB2900A78DAA /* Flip.swift */,
 				D504CD342090C2F800A78DAA /* Papply.swift */,
 				BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */,
 				BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */,
@@ -802,7 +797,6 @@
 				54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */,
 				BFA2F03720C9484E00EBE97C /* FunctionOperatorTests.swift */,
 				D504CD3C2090D12900A78DAA /* PapplyTests.swift */,
-				D504CD3A2090D00500A78DAA /* FlipTests.swift */,
 				BF9D0B051F1CF39A005D4C31 /* Optional+ApplyTests.swift */,
 				54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */,
 				F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */,
@@ -1115,7 +1109,6 @@
 				EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */,
 				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
 				6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */,
-				D504CD372090CB2900A78DAA /* Flip.swift in Sources */,
 				163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */,
 				5E4BC1C6218C830500A8682E /* String+Spaces.swift in Sources */,
 				871939C521D4D93600738968 /* ZMMobileProvisionParser.m in Sources */,
@@ -1158,7 +1151,6 @@
 				EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */,
 				16B75F68222EE3A000DCAFF2 /* String+StrippingTests.swift in Sources */,
 				7C35807F231E5F5B00D994FD /* ZMPhoneNumberValidatorTests.m in Sources */,
-				D504CD3B2090D00500A78DAA /* FlipTests.swift in Sources */,
 				546E8A4C1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m in Sources */,
 				872633E81D929C28008B69D8 /* OptionalComparisonTests.swift in Sources */,
 				7C358075231E534600D994FD /* ZMAccentColorValidatorTests.m in Sources */,
