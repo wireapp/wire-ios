@@ -771,7 +771,7 @@
     [self establishSessionWithMockUser:self.user1];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    XCTAssertFalse(self.user1.clients.isEmpty);
+    XCTAssertFalse(self.user1.clients.count == 0);
     ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
     
     [self setupInitialSecurityLevel:initialSecurityLevel inConversation:conversation];

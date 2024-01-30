@@ -58,10 +58,3 @@ extension Set {
 
     var allObjects: [Element] { return Array(self) }
 }
-
-/// Make NSSet more Set like:
-extension NSSet {
-    @objc public var isEmpty: Bool {
-        return count == 0
-    }
-}
