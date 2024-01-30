@@ -46,6 +46,7 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     override func tearDown() async throws {
         coreDataStack = nil
+        context = nil
         testUser = nil
         sut = nil
 
