@@ -53,11 +53,6 @@ static NSString * const LastUpdateDateInGMTKey = @"lastUpdateDateInGMT";
     return LastUpdateDateInGMTKey;
 }
 
-- (BOOL)hasValidConversation
-{
-    return (self.status != ZMConnectionStatusPending) && (self.conversation.conversationType != ZMConversationTypeInvalid);
-}
-
 - (NSDate *)lastUpdateDate;
 {
     return self.lastUpdateDateInGMT;
@@ -77,7 +72,6 @@ static NSString * const LastUpdateDateInGMTKey = @"lastUpdateDateInGMT";
 
 @implementation ZMConnection (Internal)
 
-@dynamic conversation;
 @dynamic to;
 @dynamic existsOnBackend;
 @dynamic lastUpdateDateInGMT;
@@ -117,15 +111,10 @@ struct stringAndStatus {
         [newStatus isEqual:@(ZMConnectionStatusAccepted)]) {
         self.to.needsToBeUpdatedFromBackend = YES;
 
-        if (self.conversation.isArchived) {
+        if (self.to.oneOnOneConversation.isArchived) {
             // When a connection is accepted we always want to bring it out of the archive
-            self.conversation.isArchived = NO;
+            self.to.oneOnOneConversation.isArchived = NO;
         }
-    }
-
-    if ([newStatus isEqual:@(ZMConnectionStatusCancelled)]) {
-        self.to.connection = nil;
-        self.to = nil;
     }
 
     if (![oldStatus isEqual:newStatus]) {
@@ -176,7 +165,7 @@ struct stringAndStatus {
 
 - (void)updateConversationType
 {
-    self.conversation.conversationType = [self.class conversationTypeForConnectionStatus:self.status];
+    self.to.oneOnOneConversation.conversationType = [self.class conversationTypeForConnectionStatus:self.status];
 }
 
 + (NSPredicate *)predicateForFilteringResults

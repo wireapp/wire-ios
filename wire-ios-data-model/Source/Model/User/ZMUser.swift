@@ -77,6 +77,13 @@ extension ZMUser: UserType {
         return selfUser.isFederating(with: self)
     }
 
+    // MARK: - One on one conversation
+
+    /// The one on one conversation with this user.
+
+    @NSManaged
+    public var oneOnOneConversation: ZMConversation?
+
     // MARK: - Conversation Roles
 
     public func canManagedGroupRole(of user: UserType, conversation: ZMConversation) -> Bool {

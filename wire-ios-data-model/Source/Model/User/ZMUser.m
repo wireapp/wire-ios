@@ -54,6 +54,7 @@ static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
 static NSString *const ConversationsCreatedKey = @"conversationsCreated";
 static NSString *const ActiveCallConversationsKey = @"activeCallConversations";
 static NSString *const ConnectionKey = @"connection";
+static NSString *const OneOnOneConversationKey = @"oneOnOneConversation";
 static NSString *const EmailAddressKey = @"emailAddress";
 static NSString *const PhoneNumberKey = @"phoneNumber";
 static NSString *const NameKey = @"name";
@@ -327,6 +328,7 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
                                            ConversationsCreatedKey,
                                            ActiveCallConversationsKey,
                                            ConnectionKey,
+                                           OneOnOneConversationKey,
                                            ConversationsCreatedKey,
                                            ParticipantRolesKey,
                                            NormalizedEmailAddressKey,

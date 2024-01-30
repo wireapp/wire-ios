@@ -60,7 +60,7 @@ final class ConnectionPayloadProcessor {
         conversation.lastModifiedDate = payload.lastUpdate
         conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
-        connection.conversation = conversation
+        connection.to.oneOnOneConversation = conversation
         connection.status = payload.status.internalStatus
         connection.lastUpdateDateInGMT = payload.lastUpdate
     }

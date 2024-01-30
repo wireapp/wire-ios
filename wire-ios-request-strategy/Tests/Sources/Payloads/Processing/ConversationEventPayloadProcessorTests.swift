@@ -603,6 +603,40 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    func testUpdateOrCreateConversation_Group_OneOnOneUser() async throws {
+        let (teamID, qualifiedID, members) = await syncMOC.perform {
+            // given
+            let teamID = UUID.create()
+            let team = Team.insertNewObject(in: self.syncMOC)
+            team.remoteIdentifier = teamID
+            let qualifiedID = self.groupConversation.qualifiedID!
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
+            let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
+            let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
+            return (teamID, qualifiedID, members)
+        }
+
+        let payload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            members: members,
+            teamID: teamID
+        )
+
+        // when
+        await sut.updateOrCreateConversation(
+            from: payload,
+            in: syncMOC
+        )
+
+        // then
+        await syncMOC.perform {
+            XCTAssertEqual(self.groupConversation.conversationType, .oneOnOne)
+            XCTAssertEqual(self.groupConversation.oneOnOneUser, self.otherUser)
+        }
+    }
+
     // MARK: 1:1 / Connection Conversations
 
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {

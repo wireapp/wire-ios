@@ -1486,9 +1486,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     connection.status = ZMConnectionStatusIgnored;
-    connection.conversation = oneToOne;
     connection.to = connectedUser;
-    
+    connectedUser.oneOnOneConversation = oneToOne;
+
     // then
     XCTAssertNil(unconnectedUser.oneToOneConversation);
     XCTAssertEqual(oneToOne, connectedUser.oneToOneConversation);

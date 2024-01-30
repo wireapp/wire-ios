@@ -166,9 +166,12 @@
 {
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:context];
     conversation.conversationType = ZMConversationTypeOneOnOne;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:context];
+    user.remoteIdentifier = [NSUUID createUUID];
+    user.oneOnOneConversation = conversation;
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:context];
+    connection.to = user;
     connection.status = ZMConnectionStatusAccepted;
-    conversation.connection = connection;
     return conversation;
 }
 

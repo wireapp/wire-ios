@@ -123,14 +123,11 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) throws {
-        guard
-            let otherUser = ZMUser.fetch(with: userID, in: context),
-            let connection = otherUser.connection
-        else {
+        guard let otherUser = ZMUser.fetch(with: userID, in: context) else {
             throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
         }
 
-        connection.conversation = conversation
+        otherUser.oneOnOneConversation = conversation
     }
 
 }

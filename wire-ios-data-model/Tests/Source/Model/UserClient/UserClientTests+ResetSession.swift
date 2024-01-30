@@ -31,11 +31,13 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
 
         let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
-        connection.conversation.appendDecryptionFailedSystemMessage(at: Date(),
-                                                                    sender: otherUser,
-                                                                    client: otherClient,
-                                                                    errorCode: Int(CBOX_TOO_DISTANT_FUTURE.rawValue))
-        let systemMessage: ZMSystemMessage = (connection.conversation.lastMessage as! ZMSystemMessage)
+        otherUser.oneOnOneConversation?.appendDecryptionFailedSystemMessage(
+            at: Date(),
+            sender: otherUser,
+            client: otherClient,
+            errorCode: Int(CBOX_TOO_DISTANT_FUTURE.rawValue)
+        )
+        let systemMessage: ZMSystemMessage = (otherUser.oneOnOneConversation?.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -56,11 +58,13 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
 
         let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
-        connection.conversation.appendDecryptionFailedSystemMessage(at: Date(),
-                                                                    sender: otherUser,
-                                                                    client: otherClient,
-                                                                    errorCode: Int(CBOX_REMOTE_IDENTITY_CHANGED.rawValue))
-        let systemMessage: ZMSystemMessage = (connection.conversation.lastMessage as! ZMSystemMessage)
+        otherUser.oneOnOneConversation?.appendDecryptionFailedSystemMessage(
+            at: Date(),
+            sender: otherUser,
+            client: otherClient,
+            errorCode: Int(CBOX_REMOTE_IDENTITY_CHANGED.rawValue)
+        )
+        let systemMessage: ZMSystemMessage = (otherUser.oneOnOneConversation?.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -83,11 +87,13 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
 
         let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
-        connection.conversation.appendDecryptionFailedSystemMessage(at: Date(),
-                                                                    sender: otherUser,
-                                                                    client: otherUserClient1,
-                                                                    errorCode: Int(CBOX_TOO_DISTANT_FUTURE.rawValue))
-        let systemMessage: ZMSystemMessage = (connection.conversation.lastMessage as! ZMSystemMessage)
+        otherUser.oneOnOneConversation?.appendDecryptionFailedSystemMessage(
+            at: Date(),
+            sender: otherUser,
+            client: otherUserClient1,
+            errorCode: Int(CBOX_TOO_DISTANT_FUTURE.rawValue)
+        )
+        let systemMessage: ZMSystemMessage = (otherUser.oneOnOneConversation?.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
