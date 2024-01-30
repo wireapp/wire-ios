@@ -28,12 +28,12 @@ protocol CallKitManagerDelegate: AnyObject {
 
     func lookupConversation(
         by handle: CallHandle,
-        completionHandler: @escaping (ZMResult<ZMConversation>) -> Void
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     )
 
     func lookupConversationAndProcessPendingCallEvents(
         by handle: CallHandle,
-        completionHandler: @escaping (ZMResult<ZMConversation>) -> Void
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     )
 
     /// End all active calls in all user sessions

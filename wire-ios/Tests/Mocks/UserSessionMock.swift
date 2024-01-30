@@ -211,7 +211,7 @@ final class UserSessionMock: UserSession {
 
     func fetchMarketingConsent(
         completion: @escaping (
-            ZMResult<Bool>
+            Result<Bool, Error>
         ) -> Void
     ) {
 

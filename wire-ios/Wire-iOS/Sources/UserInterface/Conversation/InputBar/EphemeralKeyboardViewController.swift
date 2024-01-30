@@ -69,7 +69,7 @@ extension UIAlertController {
 
     /// We call this method when user decides to add a custom timeout for their messages
     static func requestCustomTimeInterval(over controller: UIViewController,
-                                          with completion: @escaping (ZMResult<TimeInterval>) -> Void) {
+                                          with completion: @escaping (Result<TimeInterval, Error>) -> Void) {
         let alertController = UIAlertController(title: "Custom timer", message: nil, preferredStyle: .alert)
         alertController.addTextField { (textField: UITextField) in
             textField.keyboardType = .decimalPad

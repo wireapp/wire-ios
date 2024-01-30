@@ -44,7 +44,7 @@ enum SendingState {
 /// `SendingCallState` in the `send` method. In comparison to the `PostContent` class, the `SendController`
 /// itself has no knowledge about conversation degradation.
 final class SendController {
-    typealias SendableCompletion = (ZMResult<[Sendable]>) -> Void
+    typealias SendableCompletion = (Result<[Sendable], Error>) -> Void
 
     private var observer: SendableBatchObserver?
     private var isCancelled = false

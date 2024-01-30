@@ -168,7 +168,7 @@ class MockProvider: CXProvider {
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
 
     var mockConversations: [WireSyncEngine.CallHandle: ZMConversation] = [:]
-    func lookupConversation(by handle: WireSyncEngine.CallHandle, completionHandler: @escaping (ZMResult<ZMConversation>) -> Void) {
+    func lookupConversation(by handle: WireSyncEngine.CallHandle, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
         if let conversation = mockConversations[handle] {
             completionHandler(.success(conversation))
         } else {
@@ -179,7 +179,7 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
     var lookupConversationAndProcessPendingCallEventsCalls = 0
     func lookupConversationAndProcessPendingCallEvents(
         by handle: WireSyncEngine.CallHandle,
-        completionHandler: @escaping (WireUtilities.ZMResult<ZMConversation>
+        completionHandler: @escaping (WireUtilities.Result<ZMConversation, Error>
     ) -> Void) {
         lookupConversationAndProcessPendingCallEventsCalls += 1
         lookupConversation(by: handle, completionHandler: completionHandler)

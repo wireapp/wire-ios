@@ -62,7 +62,7 @@ extension ZMConversation {
                             transportSession: TransportSessionType,
                             eventProcessor: UpdateEventProcessor,
                             contextProvider: ContextProvider,
-                            completion: @escaping (ZMResult<ZMConversation>) -> Void) {
+                            completion: @escaping (Result<ZMConversation, Error>) -> Void) {
 
         guard let request = ConversationJoinRequestFactory.requestForJoinConversation(key: key, code: code) else {
             return completion(.failure(ConversationJoinError.unknown))
@@ -121,7 +121,7 @@ extension ZMConversation {
                                code: String,
                                transportSession: TransportSessionType,
                                contextProvider: ContextProvider,
-                               completion: @escaping (ZMResult<(conversationId: UUID, conversationName: String)>) -> Void) {
+                               completion: @escaping (Result<(conversationId: UUID, conversationName: String), Error>) -> Void) {
 
         guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code) else {
             completion(.failure(ConversationFetchError.unknown))

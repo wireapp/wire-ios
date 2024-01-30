@@ -31,8 +31,8 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
     }
 
     func performMigration(accountIdentifier: UUID,
-                          migration: @escaping (NSManagedObjectContext) throws -> Void) -> ZMResult<Void>? {
-        var result: ZMResult<Void>?
+                          migration: @escaping (NSManagedObjectContext) throws -> Void) -> Result<Void, Error>? {
+        var result: Result<Void, Error>?
         CoreDataStack.migrateLocalStorage(accountIdentifier: accountIdentifier,
                                           applicationContainer: DatabaseBaseTest.applicationContainer,
                                           dispatchGroup: dispatchGroup,
@@ -73,7 +73,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        var result: ZMResult<Void>?
+        var result: Result<Void, Error>?
         performIgnoringZMLogError {
             result = self.performMigration(accountIdentifier: uuid) { (context) in
                 context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
@@ -95,7 +95,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         let uuid = UUID()
 
         // when
-        var result: ZMResult<Void>?
+        var result: Result<Void, Error>?
         performIgnoringZMLogError {
             result = self.performMigration(accountIdentifier: uuid) { (_) in }
         }
@@ -124,7 +124,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        var result: ZMResult<Void>?
+        var result: Result<Void, Error>?
         performIgnoringZMLogError {
             result = self.performMigration(accountIdentifier: uuid) { (_) in
                 throw TestError.somethingWentWrong

@@ -167,7 +167,7 @@ extension CoreDataStack {
         from backupDirectory: URL,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        completion: @escaping ((ZMResult<URL>) -> Void)
+        completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "import backup") else {
             WireLogger.localStorage.error("backup: error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
@@ -194,7 +194,7 @@ extension CoreDataStack {
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
         messagingMigrator: CoreDataMessagingMigratorProtocol,
-        completion: @escaping ((ZMResult<URL>) -> Void)
+        completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         func fail(_ error: BackupImportError) {
             WireLogger.localStorage.error("backup: error backing up local store: \(error)")

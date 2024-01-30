@@ -146,7 +146,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
     // MARK: - Helpers
 
-    func checkThat(statusCode: Int, isProcessedAs expectedResult: ZMResult<DomainInfo>, payload: ZMTransportData?) {
+    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<DomainInfo, Error>, payload: ZMTransportData?) {
         let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")
 
         // given

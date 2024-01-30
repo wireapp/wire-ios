@@ -186,7 +186,7 @@ public extension ServiceUser {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (ZMResult<ZMConversation>) -> Void) {
+    func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
 
         createConversation(transportSession: userSession.transportSession,
                            eventProcessor: userSession.updateEventProcessor!,
@@ -198,7 +198,7 @@ public extension ServiceUser {
         transportSession: TransportSessionType,
         eventProcessor: UpdateEventProcessor,
         contextProvider: ContextProvider,
-        completionHandler: @escaping (ZMResult<ZMConversation>) -> Void
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
         guard transportSession.reachability.mayBeReachable else {
             completionHandler(.failure(AddBotError.offline))
