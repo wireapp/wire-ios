@@ -142,7 +142,7 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
         sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.backgroundColor = userInterfaceStyle == .dark ? .black : .white
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
-        try! await Task.sleep(nanoseconds: 100_000_000)
+        await Task.yield()
         verify(matching: sut, file: file, testName: testName, line: line)
     }
 
