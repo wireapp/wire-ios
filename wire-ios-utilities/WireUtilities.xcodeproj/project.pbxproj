@@ -36,7 +36,6 @@
 		3E88BD441B1F3EA300232589 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		3E88BE1F1B1F478200232589 /* NSSet+Zeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BDF71B1F478200232589 /* NSSet+Zeta.m */; };
 		3E88BE411B1F478200232589 /* ZMFunctional.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BE081B1F478200232589 /* ZMFunctional.m */; };
-		3E88BE511B1F478200232589 /* ZMOSVersions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BE101B1F478200232589 /* ZMOSVersions.m */; };
 		3E88BE551B1F478200232589 /* ZMTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BE121B1F478200232589 /* ZMTimer.m */; };
 		3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */; };
 		3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF601B1F68DC00232589 /* NSOperationQueue+Helpers.m */; };
@@ -68,7 +67,6 @@
 		54CA313D1B74F36B00B820C0 /* SwiftDebugging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CA311F1B74F36B00B820C0 /* SwiftDebugging.swift */; };
 		54CA313F1B74F36B00B820C0 /* UnownedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CA31201B74F36B00B820C0 /* UnownedObject.swift */; };
 		54CA31471B74F36B00B820C0 /* ZMFunctional.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31241B74F36B00B820C0 /* ZMFunctional.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54CA314B1B74F36B00B820C0 /* ZMOSVersions.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31261B74F36B00B820C0 /* ZMOSVersions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA314D1B74F36B00B820C0 /* ZMTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31271B74F36B00B820C0 /* ZMTimer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA314F1B74F36B00B820C0 /* WireUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31281B74F36B00B820C0 /* WireUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA31531B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31511B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -258,7 +256,6 @@
 		3E88BD7E1B1F3F8000232589 /* WireUtilities-Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireUtilities-Test-Info.plist"; sourceTree = "<group>"; };
 		3E88BDF71B1F478200232589 /* NSSet+Zeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSSet+Zeta.m"; sourceTree = "<group>"; };
 		3E88BE081B1F478200232589 /* ZMFunctional.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMFunctional.m; sourceTree = "<group>"; };
-		3E88BE101B1F478200232589 /* ZMOSVersions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMOSVersions.m; sourceTree = "<group>"; };
 		3E88BE121B1F478200232589 /* ZMTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimer.m; sourceTree = "<group>"; };
 		3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUUID+Data.m"; sourceTree = "<group>"; };
 		3E88BF601B1F68DC00232589 /* NSOperationQueue+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+Helpers.m"; sourceTree = "<group>"; };
@@ -293,7 +290,6 @@
 		54CA311F1B74F36B00B820C0 /* SwiftDebugging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftDebugging.swift; sourceTree = "<group>"; };
 		54CA31201B74F36B00B820C0 /* UnownedObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnownedObject.swift; sourceTree = "<group>"; };
 		54CA31241B74F36B00B820C0 /* ZMFunctional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMFunctional.h; sourceTree = "<group>"; };
-		54CA31261B74F36B00B820C0 /* ZMOSVersions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMOSVersions.h; sourceTree = "<group>"; };
 		54CA31271B74F36B00B820C0 /* ZMTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTimer.h; sourceTree = "<group>"; };
 		54CA31281B74F36B00B820C0 /* WireUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireUtilities.h; sourceTree = "<group>"; };
 		54CA31511B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+WireUtilities.h"; sourceTree = "<group>"; };
@@ -531,7 +527,6 @@
 				3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */,
 				F9C9A78A1CAE9F9A0039E10C /* NSString+Normalization.m */,
 				3E88BE081B1F478200232589 /* ZMFunctional.m */,
-				3E88BE101B1F478200232589 /* ZMOSVersions.m */,
 				3E88BE121B1F478200232589 /* ZMTimer.m */,
 				09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */,
 				097E36C21B7B62150039CC4C /* NSLocale+Internal.m */,
@@ -635,7 +630,6 @@
 				54CA311C1B74F36B00B820C0 /* NSUserDefaults+SharedUserDefaults.h */,
 				54CA311D1B74F36B00B820C0 /* NSUUID+Data.h */,
 				54CA31241B74F36B00B820C0 /* ZMFunctional.h */,
-				54CA31261B74F36B00B820C0 /* ZMOSVersions.h */,
 				54CA31271B74F36B00B820C0 /* ZMTimer.h */,
 				54CA31511B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h */,
 				097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */,
@@ -796,7 +790,6 @@
 				54CA31371B74F36B00B820C0 /* NSUserDefaults+SharedUserDefaults.h in Headers */,
 				54CA31331B74F36B00B820C0 /* NSSet+Zeta.h in Headers */,
 				871939C321D4D92900738968 /* ZMMobileProvisionParser.h in Headers */,
-				54CA314B1B74F36B00B820C0 /* ZMOSVersions.h in Headers */,
 				F9FCE0A21C7DBBD00092BA68 /* ZMSwiftExceptionHandler.h in Headers */,
 				54CA31531B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h in Headers */,
 				F9C9A7B31CAEADFF0039E10C /* ZMAccentColor.h in Headers */,
@@ -1049,7 +1042,6 @@
 				54181A501F594E4100155ABC /* FileManager+Move.swift in Sources */,
 				06CDC6FA2A2F2B4B00EB518D /* TimeInterval+Units.swift in Sources */,
 				09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */,
-				3E88BE511B1F478200232589 /* ZMOSVersions.m in Sources */,
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
 				EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */,
 				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
