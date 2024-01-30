@@ -19,25 +19,28 @@
 import XCTest
 @testable import Wire
 
-class AvailabilityTitleViewTests: ZMSnapshotTestCase {
+final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
     var selfUser: ZMUser!
-    var otherUser: ZMUser?
+    var otherUser: ZMUser!
     var userSession: UserSessionMock!
+    var sut: AvailabilityTitleView!
 
     override func setUp() {
         super.setUp()
 
-        otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+        otherUser = ZMUser.insertNewObject(in: uiMOC)
         otherUser?.name = "Giovanni"
         selfUser = ZMUser.selfUser()
-
         userSession = UserSessionMock()
     }
 
     override func tearDown() {
+        userSession = nil
         selfUser = nil
         otherUser = nil
+        sut = nil
+
         super.tearDown()
     }
 
@@ -80,19 +83,19 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
     // MARK: - Other profile
 
     func testThatItRendersCorrectly_OtherProfile_NoneAvailability() {
-        createTest(for: [.hideActionHint], with: .none, on: otherUser!, hasDarkMode: false)
+        createTest(for: [.hideActionHint], with: .none, on: otherUser!, userInterfaceStyle: .light)
     }
 
     func testThatItRendersCorrectly_OtherProfile_AvailableAvailability() {
-        createTest(for: [.hideActionHint], with: .available, on: otherUser!, hasDarkMode: false)
+        createTest(for: [.hideActionHint], with: .available, on: otherUser!, userInterfaceStyle: .light)
     }
 
     func testThatItRendersCorrectly_OtherProfile_AwayAvailability() {
-        createTest(for: [.hideActionHint], with: .away, on: otherUser!, hasDarkMode: false)
+        createTest(for: [.hideActionHint], with: .away, on: otherUser!, userInterfaceStyle: .light)
     }
 
     func testThatItRendersCorrectly_OtherProfile_BusyAvailability() {
-        createTest(for: [.hideActionHint], with: .busy, on: otherUser!, hasDarkMode: false)
+        createTest(for: [.hideActionHint], with: .busy, on: otherUser!, userInterfaceStyle: .light)
     }
 
     // MARK: - Common methods
@@ -101,17 +104,18 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
         for options: AvailabilityTitleView.Options,
         with availability: Availability,
         on user: ZMUser,
-        hasDarkMode: Bool = true,
+        userInterfaceStyle: UIUserInterfaceStyle = .dark,
         file: StaticString = #file,
         line: UInt = #line,
         testName: String = #function
     ) {
         updateAvailability(for: user, newValue: availability)
-        let sut = AvailabilityTitleView(user: user, options: options, userSession: userSession)
 
-        sut.overrideUserInterfaceStyle = hasDarkMode ? .dark : .light
-        sut.backgroundColor = hasDarkMode ? .black : .white
+        sut = AvailabilityTitleView(user: user, options: options, userSession: userSession)
+        sut.overrideUserInterfaceStyle = userInterfaceStyle
+        sut.backgroundColor = .systemBackground
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
+
         verify(matching: sut, file: file, testName: testName, line: line)
     }
 
@@ -123,5 +127,4 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
             user.updateAvailability(newValue)
         }
     }
-
 }
