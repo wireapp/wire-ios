@@ -61,12 +61,6 @@ extension Set {
 
 /// Make NSSet more Set like:
 extension NSSet {
-    @objc public func union(_ s: NSSet) -> NSSet {
-        let r = NSMutableSet(set: s)
-        r.union(self as Set<NSObject>)
-        return r
-    }
-
     @objc public var isEmpty: Bool {
         return count == 0
     }
