@@ -302,17 +302,15 @@ public class ZMUserSession: NSObject {
         return GetE2eIdentityCertificatesUseCase(coreCryptoProvider: coreCryptoProvider)
     }()
 
-    lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface = {
-        let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
-        return MLSConversationVerificationStatusProvider(
-            e2eIVerificationStatusService: e2eIVerificationStatusService,
-            syncContext: syncContext)
-    }()
-
     lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {
+        let verificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+        let verificationStatusProvider = MLSConversationVerificationStatusProvider(
+            e2eIVerificationStatusService: verificationStatusService,
+            syncContext: syncContext)
+
         return MLSConversationVerificationManager(
             mlsService: mlsService,
-            mlsConversationVerificationStatusProvider: mlsConversationVerificationStatusProvider)
+            mlsConversationVerificationStatusProvider: verificationStatusProvider)
     }()
 
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {

@@ -31,6 +31,11 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
+    }
 
     // MARK: - Life cycle
 
@@ -53,21 +58,21 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         handle: String,
         teamId: UUID) async throws -> E2eiEnrollment {
             let ciphersuite = CiphersuiteName.default.rawValue
-            let expiryDays = UInt32(90)
+            let expirySec = UInt32(TimeInterval.oneDay * 90)
 
-            return try await coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            return try await coreCrypto.perform {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 if e2eiIsEnabled {
                     return try await $0.e2eiNewRotateEnrollment(displayName: userName,
                                                                 handle: handle,
                                                                 team: teamId.uuidString.lowercased(),
-                                                                expirySec: expiryDays,
+                                                                expirySec: expirySec,
                                                                 ciphersuite: ciphersuite)
                 } else {
                     return try await $0.e2eiNewActivationEnrollment(displayName: userName,
                                                                     handle: handle,
                                                                     team: teamId.uuidString.lowercased(),
-                                                                    expirySec: expiryDays,
+                                                                    expirySec: expirySec,
                                                                     ciphersuite: ciphersuite)
                 }
             }

@@ -35,3 +35,19 @@ public struct ACMEResponse: Equatable {
     var response: Data
 
 }
+
+public struct ACMEAuthorizationResponse: Equatable {
+
+    var nonce: String
+    var location: String
+    var response: Data
+    var challengeType: AuthorizationChallengeType
+
+}
+
+enum AuthorizationChallengeType: String, Decodable {
+
+    case DPoP = "wire-dpop-01"
+    case OIDC = "wire-oidc-01"
+
+}
