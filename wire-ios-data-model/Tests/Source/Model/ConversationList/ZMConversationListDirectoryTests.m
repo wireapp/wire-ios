@@ -154,6 +154,7 @@
     self.oneToOneConversationInTeam.conversationType = ZMConversationTypeGroup;
     self.oneToOneConversationInTeam.userDefinedName = nil;
     self.oneToOneConversationInTeam.team = team;
+    self.oneToOneConversationInTeam.oneOnOneUser = teamUser;
     [self.oneToOneConversationInTeam addParticipantAndUpdateConversationStateWithUser:teamUser role:nil];
     [self.oneToOneConversationInTeam addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
 
@@ -177,6 +178,7 @@
     self.serviceConversation.conversationType = ZMConversationTypeGroup;
     self.serviceConversation.userDefinedName = nil;
     self.serviceConversation.team = team;
+    self.serviceConversation.oneOnOneUser = serviceUser;
     [self.serviceConversation addParticipantAndUpdateConversationStateWithUser:serviceUser role:nil];
     [self.serviceConversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
 
@@ -223,7 +225,6 @@
                                             self.favoritedConversation,
                                             self.serviceConversation]];
     // then
-    
     XCTAssertEqualObjects([NSSet setWithArray:list], expected);
 }
 

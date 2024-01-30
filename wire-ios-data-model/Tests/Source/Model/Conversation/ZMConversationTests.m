@@ -879,9 +879,12 @@
 - (void)testThatGroupConversationInTeamWithOnlyTwoParticipantsIsConsideredOneToOne
 {
     // given
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    team.remoteIdentifier = [NSUUID createUUID];
+
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
-    conversation.teamRemoteIdentifier = [NSUUID createUUID];
+    conversation.team = team;
 
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
@@ -898,9 +901,12 @@
 - (void)testThatGroupConversationInTeamWithOnlyBotIsConsideredGroup
 {
     // given
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    team.remoteIdentifier = [NSUUID createUUID];
+
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
-    conversation.teamRemoteIdentifier = [NSUUID createUUID];
+    conversation.team = team;
 
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
@@ -977,9 +983,12 @@
 - (void)testThatOneToOneConversationInTeamReturnsAConnectedUser
 {
     // given
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    team.remoteIdentifier = [NSUUID createUUID];
+
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
-    conversation.teamRemoteIdentifier = [NSUUID createUUID];
+    conversation.team = team;
 
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
