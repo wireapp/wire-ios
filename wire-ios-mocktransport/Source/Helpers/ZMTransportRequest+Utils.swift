@@ -21,11 +21,15 @@ import Foundation
 @objc public extension ZMTransportRequest {
 
     var URL: URL {
-        return Foundation.URL(string: self.path)!
+        return Foundation.URL(string: path)!
     }
 
     var queryParameters: [String: Any] {
-        return ((self.URL as NSURL).zm_queryComponents() as? [String: Any]) ?? [:]
+        let urlComponents = URLComponents(string: path)
+        let queryItems = urlComponents?.queryItems ?? []
+        return queryItems.reduce(into: [:]) { partialResult, queryItem in
+            partialResult[queryItem.name] = queryItem.value
+        }
     }
 
     var multipartBodyItemsFromRequestOrFile: [ZMMultipartBodyItem] {
