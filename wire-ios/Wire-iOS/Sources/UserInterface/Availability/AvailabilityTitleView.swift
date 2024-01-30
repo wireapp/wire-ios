@@ -102,24 +102,25 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
     /// Refreshes the content and appearance of the view.
     func updateConfiguration() {
         updateAppearance()
+        let availability = user.availability
         Task {
-            await updateContent()
+            await updateContent(availability)
         }
     }
 
     /// Refreshes the content of the view, based on the user data and the options.
-    private func updateContent() async {
+    private func updateContent(_ availability: AvailabilityKind) async {
         typealias AvailabilityStatusStrings = L10n.Accessibility.AccountPage.AvailabilityStatus
 
-        let availability = user.availability
         let fontStyle: FontSize = options.contains(.useLargeFont) ? .normal : .small
-        var icons = [
+        let leadingIcons = [
             AvailabilityStringBuilder.icon(
                 for: availability,
                 with: AvailabilityStringBuilder.color(for: availability),
                 and: fontStyle
             )
         ]
+        var trailingIcons =  [NSTextAttachment?]()
         let isInteractive = options.contains(.allowSettingStatus)
         var title = ""
 
@@ -130,12 +131,12 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
                 if verificationStatuses.isProteusVerified {
                     let attachment = NSTextAttachment(image: Asset.Images.verifiedShield.image)
                     attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
-                    icons.insert(attachment, at: 0)
+                    trailingIcons.insert(attachment, at: 0)
                 }
                 if verificationStatuses.isMLSCertified {
                     let attachment = NSTextAttachment(image: Asset.Images.certificateValid.image)
                     attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
-                    icons.insert(attachment, at: 0)
+                    trailingIcons.insert(attachment, at: 0)
                 }
             } catch {
                 WireLogger.sync.error("failed to get self user's verification status: \(String(reflecting: error))")
@@ -151,9 +152,9 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
 
         let showInteractiveIcon = isInteractive && !options.contains(.hideActionHint)
         configure(
-            leadingIcons: icons.compactMap { $0 },
+            leadingIcons: leadingIcons.compactMap { $0 },
             title: title,
-            trailingIcons: [],
+            trailingIcons: trailingIcons.compactMap { $0 },
             subtitle: nil,
             interactive: isInteractive,
             showInteractiveIcon: showInteractiveIcon

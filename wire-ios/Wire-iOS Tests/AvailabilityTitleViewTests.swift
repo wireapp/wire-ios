@@ -21,7 +21,7 @@ import XCTest
 @testable import Wire
 @testable import WireSyncEngineSupport
 
-class AvailabilityTitleViewTests: ZMSnapshotTestCase {
+final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
     var selfUser: ZMUser!
     var otherUser: ZMUser?
@@ -46,87 +46,107 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
     // MARK: - Self Profile
 
-    func testThatItRendersCorrectly_SelfProfile_NoneAvailability() {
-        createTest(for: [.allowSettingStatus], with: .none, on: selfUser)
+    func testThatItRendersCorrectly_SelfProfile_NoneAvailability() async {
+        await createTest(for: [.allowSettingStatus], with: .none, on: selfUser)
     }
 
-    func testThatItRendersCorrectly_SelfProfile_AvailableAvailability() {
-        createTest(for: [.allowSettingStatus], with: .available, on: selfUser)
+    func testThatItRendersCorrectly_SelfProfile_AvailableAvailability() async {
+        await createTest(for: [.allowSettingStatus], with: .available, on: selfUser)
     }
 
-    func testThatItRendersCorrectly_SelfProfile_AwayAvailability() {
-        createTest(for: [.allowSettingStatus], with: .away, on: selfUser)
+    func testThatItRendersCorrectly_SelfProfile_AwayAvailability() async {
+        await createTest(for: [.allowSettingStatus], with: .away, on: selfUser)
     }
 
-    func testThatItRendersCorrectly_SelfProfile_BusyAvailability() {
-        createTest(for: [.allowSettingStatus], with: .busy, on: selfUser)
+    func testThatItRendersCorrectly_SelfProfile_BusyAvailability() async {
+        await createTest(for: [.allowSettingStatus], with: .busy, on: selfUser)
     }
 
     // MARK: - Headers profile
 
-    func testThatItRendersCorrectly_Header_NoneAvailability() {
-        createTest(for: .header, with: .none, on: selfUser)
+    func testThatItRendersCorrectly_Header_NoneAvailability_Light() async {
+        await createTest(for: .header, with: .none, on: selfUser, userInterfaceStyle: .light)
     }
 
-    func testThatItRendersCorrectly_Header_AvailableAvailability() {
-        createTest(for: .header, with: .available, on: selfUser)
+    func testThatItRendersCorrectly_Header_NoneAvailability_Dark() async {
+        await createTest(for: .header, with: .none, on: selfUser, userInterfaceStyle: .dark)
     }
 
-    func testThatItRendersCorrectly_Header_AwayAvailability() {
-        createTest(for: .header, with: .away, on: selfUser)
+    func testThatItRendersCorrectly_Header_AvailableAvailability_Light() async {
+        await createTest(for: .header, with: .available, on: selfUser, userInterfaceStyle: .light, isProteusVerified: true)
     }
 
-    func testThatItRendersCorrectly_Header_BusyAvailability() {
-        createTest(for: .header, with: .busy, on: selfUser)
+    func testThatItRendersCorrectly_Header_AvailableAvailability_Dark() async {
+        await createTest(for: .header, with: .available, on: selfUser, userInterfaceStyle: .dark, isProteusVerified: true)
+    }
+
+    func testThatItRendersCorrectly_Header_AwayAvailability_Light() async {
+        await createTest(for: .header, with: .away, on: selfUser, userInterfaceStyle: .light, isMLSCertified: true)
+    }
+
+    func testThatItRendersCorrectly_Header_AwayAvailability_Dark() async {
+        await createTest(for: .header, with: .away, on: selfUser, userInterfaceStyle: .dark, isMLSCertified: true)
+    }
+
+    func testThatItRendersCorrectly_Header_BusyAvailability_Light() async {
+        await createTest(for: .header, with: .busy, on: selfUser, userInterfaceStyle: .light, isMLSCertified: true, isProteusVerified: true)
+    }
+
+    func testThatItRendersCorrectly_Header_BusyAvailability_Dark() async {
+        await createTest(for: .header, with: .busy, on: selfUser, userInterfaceStyle: .dark, isMLSCertified: true, isProteusVerified: true)
     }
 
     // MARK: - Other profile
 
-    func testThatItRendersCorrectly_OtherProfile_NoneAvailability() {
-        createTest(for: [.hideActionHint], with: .none, on: otherUser!, hasDarkMode: false)
+    func testThatItRendersCorrectly_OtherProfile_NoneAvailability() async {
+        await createTest(for: [.hideActionHint], with: .none, on: otherUser!, userInterfaceStyle: .light)
     }
 
-    func testThatItRendersCorrectly_OtherProfile_AvailableAvailability() {
-        createTest(for: [.hideActionHint], with: .available, on: otherUser!, hasDarkMode: false)
+    func testThatItRendersCorrectly_OtherProfile_AvailableAvailability() async {
+        await createTest(for: [.hideActionHint], with: .available, on: otherUser!, userInterfaceStyle: .light)
     }
 
-    func testThatItRendersCorrectly_OtherProfile_AwayAvailability() {
-        createTest(for: [.hideActionHint], with: .away, on: otherUser!, hasDarkMode: false)
+    func testThatItRendersCorrectly_OtherProfile_AwayAvailability() async {
+        await createTest(for: [.hideActionHint], with: .away, on: otherUser!, userInterfaceStyle: .light)
     }
 
-    func testThatItRendersCorrectly_OtherProfile_BusyAvailability() {
-        createTest(for: [.hideActionHint], with: .busy, on: otherUser!, hasDarkMode: false)
+    func testThatItRendersCorrectly_OtherProfile_BusyAvailability() async {
+        await createTest(for: [.hideActionHint], with: .busy, on: otherUser!, userInterfaceStyle: .light)
     }
 
     // MARK: - Common methods
 
+    @MainActor
     private func createTest(
         for options: AvailabilityTitleView.Options,
         with availability: AvailabilityKind,
         on user: ZMUser,
-        hasDarkMode: Bool = true,
+        userInterfaceStyle: UIUserInterfaceStyle = .dark,
+        isMLSCertified: Bool = false,
+        isProteusVerified: Bool = false,
         file: StaticString = #file,
         line: UInt = #line,
         testName: String = #function
-    ) {
+    ) async {
         updateAvailability(for: user, newValue: availability)
         let sut = AvailabilityTitleView(
             user: user,
             options: options,
             userSession: userSession,
             getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase(
-                isMLSCertified: false,
-                isProteusVerified: false
+                isMLSCertified: isMLSCertified,
+                isProteusVerified: isProteusVerified
             )
         )
 
-        sut.overrideUserInterfaceStyle = hasDarkMode ? .dark : .light
-        sut.backgroundColor = hasDarkMode ? .black : .white
+        sut.overrideUserInterfaceStyle = userInterfaceStyle
+        sut.backgroundColor = userInterfaceStyle == .dark ? .black : .white
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
+        try! await Task.sleep(nanoseconds: 100_000_000)
         verify(matching: sut, file: file, testName: testName, line: line)
     }
 
-    func updateAvailability(for user: ZMUser, newValue: AvailabilityKind) {
+    private func updateAvailability(for user: ZMUser, newValue: AvailabilityKind) {
         if user == ZMUser.selfUser() {
             user.availability = newValue
         } else {
