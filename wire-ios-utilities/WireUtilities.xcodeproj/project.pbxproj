@@ -134,8 +134,6 @@
 		BFA2F03920C9490500EBE97C /* FunctionOperatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2F03720C9484E00EBE97C /* FunctionOperatorTests.swift */; };
 		BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */; };
 		BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */; };
-		D504CD352090C2F800A78DAA /* Papply.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD342090C2F800A78DAA /* Papply.swift */; };
-		D504CD3D2090D12900A78DAA /* PapplyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD3C2090D12900A78DAA /* PapplyTests.swift */; };
 		D53DB99F203ED59C00655CB4 /* Result+success.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB99E203ED59C00655CB4 /* Result+success.swift */; };
 		D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */; };
 		D56A2D4A207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */; };
@@ -362,8 +360,6 @@
 		BFA2F03720C9484E00EBE97C /* FunctionOperatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionOperatorTests.swift; sourceTree = "<group>"; };
 		BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+EmojiTests.swift"; sourceTree = "<group>"; };
-		D504CD342090C2F800A78DAA /* Papply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Papply.swift; sourceTree = "<group>"; };
-		D504CD3C2090D12900A78DAA /* PapplyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PapplyTests.swift; sourceTree = "<group>"; };
 		D53DB99E203ED59C00655CB4 /* Result+success.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+success.swift"; sourceTree = "<group>"; };
 		D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SwiftTests.swift"; sourceTree = "<group>"; };
@@ -651,7 +647,6 @@
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
 				BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */,
 				BFA2F03520C9480A00EBE97C /* FunctionOperators.swift */,
-				D504CD342090C2F800A78DAA /* Papply.swift */,
 				BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */,
 				BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */,
 				5E4BC1C5218C830500A8682E /* String+Spaces.swift */,
@@ -757,7 +752,6 @@
 				BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */,
 				54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */,
 				BFA2F03720C9484E00EBE97C /* FunctionOperatorTests.swift */,
-				D504CD3C2090D12900A78DAA /* PapplyTests.swift */,
 				BF9D0B051F1CF39A005D4C31 /* Optional+ApplyTests.swift */,
 				54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */,
 				F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */,
@@ -1049,7 +1043,6 @@
 				F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */,
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,
 				546B178224192FB70091F4B3 /* ZMObjectValidationError.m in Sources */,
-				D504CD352090C2F800A78DAA /* Papply.swift in Sources */,
 				54CA313F1B74F36B00B820C0 /* UnownedObject.swift in Sources */,
 				5E9EA4C122423E0300D401B2 /* Array+SafeIndex.swift in Sources */,
 				3E88BE551B1F478200232589 /* ZMTimer.m in Sources */,
@@ -1087,7 +1080,6 @@
 				54024FE81DF81CC6009BF6A0 /* DictionaryTests.swift in Sources */,
 				BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */,
 				D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */,
-				D504CD3D2090D12900A78DAA /* PapplyTests.swift in Sources */,
 				EF2AFCA022817AC0008C921A /* UUID+DataTests.swift in Sources */,
 				F9D381AE1B70B93800E6E4EB /* ZMTimerTests.m in Sources */,
 				168B158C1F25F67600AB3C44 /* DispatchGroupQueueTests.swift in Sources */,
