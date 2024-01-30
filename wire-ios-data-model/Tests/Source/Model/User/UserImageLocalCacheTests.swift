@@ -17,33 +17,41 @@
 // 
 
 import Foundation
-import WireDataModel
+@testable import WireDataModel
 
-extension ZMUser {
+final class UserImageLocalCacheTests: XCTestCase {
 
-    func setV3PictureIdentifiers() {
-        previewProfileAssetIdentifier = UUID.create().transportString()
-        completeProfileAssetIdentifier = UUID.create().transportString()
-    }
-}
+    private let coreDataStackHelper = CoreDataStackHelper()
 
-class UserImageLocalCacheTests: BaseZMMessageTests {
+    var coreDataStack: CoreDataStack!
+    var context: NSManagedObjectContext!
 
     var testUser: ZMUser!
     var sut: UserImageLocalCache!
 
-    override func setUp() {
-        super.setUp()
-        testUser = ZMUser.insertNewObject(in: self.uiMOC)
-        testUser.remoteIdentifier = UUID.create()
+    override func setUp() async throws {
+        try await super.setUp()
+
+        coreDataStack = try await coreDataStackHelper.createStack(at: coreDataStackHelper.storageDirectory)
+        context = coreDataStack.viewContext
+
+        testUser = await context.perform {
+            let testUser = ZMUser.insertNewObject(in: self.context)
+            testUser.remoteIdentifier = UUID()
+            return testUser
+        }
 
         sut = UserImageLocalCache(location: nil)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
+        coreDataStack = nil
         testUser = nil
         sut = nil
-        super.tearDown()
+
+        try coreDataStackHelper.cleanupDirectory(coreDataStackHelper.storageDirectory)
+
+        try await super.tearDown()
     }
 
     func testThatItHasNilData() {
@@ -63,8 +71,8 @@ class UserImageLocalCacheTests: BaseZMMessageTests {
         sut = UserImageLocalCache(location: nil)
 
         // then
-        let previewImageArrived = customExpectation(description: "Preview image arrived")
-        let completeImageArrived = customExpectation(description: "Complete image arrived")
+        let previewImageArrived = expectation(description: "Preview image arrived")
+        let completeImageArrived = expectation(description: "Complete image arrived")
         sut.userImage(testUser, size: .preview, queue: .global()) { (smallDataResult) in
             XCTAssertEqual(smallDataResult, smallData)
             previewImageArrived.fulfill()
@@ -75,13 +83,11 @@ class UserImageLocalCacheTests: BaseZMMessageTests {
             completeImageArrived.fulfill()
         }
 
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5)
     }
 
-}
+    // MARK: - Storing
 
-// MARK: - Storing
-extension UserImageLocalCacheTests {
     func testThatItHasNilDataWhenNotSetForV3() {
         testUser.setV3PictureIdentifiers()
         XCTAssertNil(sut.userImage(testUser, size: .preview))
@@ -122,10 +128,7 @@ extension UserImageLocalCacheTests {
         XCTAssertEqual(sut.userImage(testUser, size: .preview), smallData)
     }
 
-}
-
-// MARK: - Retrieval
-extension UserImageLocalCacheTests {
+    // MARK: - Retrieval
 
     func testThatItReturnsV3AssetsWhenPresent() {
         // given
@@ -144,10 +147,8 @@ extension UserImageLocalCacheTests {
         XCTAssertEqual(sut.userImage(testUser, size: .preview), smallData)
     }
 
-}
+    // MARK: - Removal
 
-// MARK: - Removal
-extension UserImageLocalCacheTests {
     func testThatItRemovesAllImagesFromCache() {
         // given
         testUser.setV3PictureIdentifiers()
@@ -161,4 +162,15 @@ extension UserImageLocalCacheTests {
         XCTAssertNil(sut.userImage(testUser, size: .complete))
         XCTAssertNil(sut.userImage(testUser, size: .preview))
     }
+}
+
+// MARK: - ZMUser Extension
+
+private extension ZMUser {
+
+    func setV3PictureIdentifiers() {
+        previewProfileAssetIdentifier = UUID.create().transportString()
+        completeProfileAssetIdentifier = UUID.create().transportString()
+    }
+
 }
