@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import XCTest
+
 @testable import Wire
+@testable import WireSyncEngineSupport
 
 class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
@@ -38,6 +40,7 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
     override func tearDown() {
         selfUser = nil
         otherUser = nil
+
         super.tearDown()
     }
 
@@ -107,7 +110,12 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
         testName: String = #function
     ) {
         updateAvailability(for: user, newValue: availability)
-        let sut = AvailabilityTitleView(user: user, options: options, userSession: userSession)
+        let sut = AvailabilityTitleView(
+            user: user,
+            options: options,
+            userSession: userSession,
+            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase()
+        )
 
         sut.overrideUserInterfaceStyle = hasDarkMode ? .dark : .light
         sut.backgroundColor = hasDarkMode ? .black : .white
@@ -123,5 +131,4 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
             user.updateAvailability(newValue)
         }
     }
-
 }

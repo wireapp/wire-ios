@@ -252,6 +252,10 @@ final class UserSessionMock: UserSession {
         mockGetUserClientFingerprintUseCaseProtocol
     }
 
+    var getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol {
+        fatalError("not implemented yet")
+    }
+
     var selfUserClient: UserClient? {
         return nil
     }
