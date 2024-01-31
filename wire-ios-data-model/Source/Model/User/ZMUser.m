@@ -97,7 +97,7 @@ static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 static NSString *const DomainKey = @"domain";
 static NSString *const IsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSendRecipient";
-static NSString *const QualifiedIdKey = @"qualifiedId";
+static NSString *const PrimaryKey = @"primaryKey";
 
 
 @interface ZMBoxedSelfUser : NSObject
@@ -356,7 +356,7 @@ static NSString *const QualifiedIdKey = @"qualifiedId";
                                            LegalHoldRequestKey,
                                            NeedsToAcknowledgeLegalHoldStatusKey,
                                            NeedsToRefetchLabelsKey,
-                                           QualifiedIdKey,
+                                           PrimaryKey,
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
                                            DomainKey,
                                            MessagesFailedToSendRecipientKey,

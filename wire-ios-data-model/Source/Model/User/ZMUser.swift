@@ -243,7 +243,28 @@ extension ZMUser {
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
     @NSManaged public var needsToRefetchLabels: Bool
 
-    @NSManaged public var domain: String?
+    @NSManaged private var primitiveDomain: String?
+
+    public var domain: String? {
+        get {
+            willAccessValue(forKey: "domain")
+            let value = primitiveDomain
+            didAccessValue(forKey: "domain")
+            return value
+        }
+
+        set {
+            willChangeValue(forKey: "domain")
+            primitiveDomain = newValue
+            didChangeValue(forKey: "domain")
+            primaryKey = ...
+        }
+    }
+
+    @NSManaged private primaryKey: String
+
+    /// combination of domain and remoteIdentifier
+    @NSManaged public var primaryKey: String?
 
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {

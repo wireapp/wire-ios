@@ -324,8 +324,8 @@
         <attribute name="normalizedName" optional="YES" attributeType="String"/>
         <attribute name="phoneNumber" optional="YES" attributeType="String"/>
         <attribute name="previewProfileAssetIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="primaryKey" optional="YES" attributeType="String"/>
         <attribute name="providerIdentifier" optional="YES" attributeType="String"/>
-        <attribute name="qualifiedId" optional="YES" attributeType="String"/>
         <attribute name="readReceiptsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="readReceiptsEnabledChangedRemotely" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
@@ -360,7 +360,7 @@
         </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="qualifiedId"/>
+                <constraint value="primaryKey"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
