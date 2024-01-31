@@ -2820,14 +2820,6 @@ internal enum L10n {
           /// Certificate Details
           internal static let title = L10n.tr("Localizable", "device.details.certificate_details.title", fallback: "Certificate Details")
         }
-        internal enum Secion {
-          internal enum Mls {
-            /// MLS with Ed25519 Signature
-            internal static let signature = L10n.tr("Localizable", "device.details.secion.mls.signature", fallback: "MLS with Ed25519 Signature")
-            /// MLS Thumbprint
-            internal static let title = L10n.tr("Localizable", "device.details.secion.mls.title", fallback: "MLS Thumbprint")
-          }
-        }
         internal enum Section {
           internal enum E2ei {
             /// Get Certificate
@@ -2853,6 +2845,16 @@ internal enum L10n {
               internal static let valid = L10n.tr("Localizable", "device.details.section.e2ei.status.valid", fallback: "Valid")
             }
           }
+          internal enum Mls {
+            /// MLS with Ed25519 Signature
+            internal static let signature = L10n.tr("Localizable", "device.details.section.mls.signature", fallback: "MLS with Ed25519 Signature")
+            /// MLS Thumbprint: %@
+            internal static func thumbprint(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "device.details.section.mls.thumbprint", String(describing: p1), fallback: "MLS Thumbprint: %@")
+            }
+            /// MLS Thumbprint
+            internal static let title = L10n.tr("Localizable", "device.details.section.mls.title", fallback: "MLS Thumbprint")
+          }
           internal enum Proteus {
             /// Activated
             internal static let activated = L10n.tr("Localizable", "device.details.section.proteus.activated", fallback: "Activated")
@@ -2862,6 +2864,10 @@ internal enum L10n {
             internal static let keyFingerprint = L10n.tr("Localizable", "device.details.section.proteus.key_fingerprint", fallback: "Proteus Key Fingerprint")
             /// PROTEUS DEVICE DETAILS
             internal static let title = L10n.tr("Localizable", "device.details.section.proteus.title", fallback: "PROTEUS DEVICE DETAILS")
+            /// Proteus ID: %@
+            internal static func value(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "device.details.section.proteus.value", String(describing: p1), fallback: "Proteus ID: %@")
+            }
           }
         }
       }
@@ -4863,6 +4869,26 @@ internal enum L10n {
           internal enum SignOutButton {
             /// Log out
             internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.sign_out_button.title", fallback: "Log out")
+          }
+        }
+        internal enum Username {
+          /// Enter your username. It helps others to find you in Wire and connect with you.
+          internal static let message = L10n.tr("Localizable", "registration.signin.username.message", fallback: "Enter your username. It helps others to find you in Wire and connect with you.")
+          /// username
+          internal static let placeholder = L10n.tr("Localizable", "registration.signin.username.placeholder", fallback: "username")
+          /// Your username
+          internal static let title = L10n.tr("Localizable", "registration.signin.username.title", fallback: "Your username")
+          internal enum AlreadyTakenError {
+            /// The username is already taken, please try another one
+            internal static let message = L10n.tr("Localizable", "registration.signin.username.already_taken_error.message", fallback: "The username is already taken, please try another one")
+            /// Username is already taken
+            internal static let title = L10n.tr("Localizable", "registration.signin.username.already_taken_error.title", fallback: "Username is already taken")
+          }
+          internal enum UnknownError {
+            /// Please try again later.
+            internal static let message = L10n.tr("Localizable", "registration.signin.username.unknown_error.message", fallback: "Please try again later.")
+            /// Couldn't update username
+            internal static let title = L10n.tr("Localizable", "registration.signin.username.unknown_error.title", fallback: "Couldn't update username")
           }
         }
       }

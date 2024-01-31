@@ -38,17 +38,23 @@ extension XCTestCase {
     }
 }
 
-final class CallViewControllerTests: XCTestCase {
+final class CallViewControllerTests: ZMSnapshotTestCase {
 
     var mockVoiceChannel: MockVoiceChannel!
     var conversation: ZMConversation!
     var sut: CallViewController!
     var userSession: UserSessionMock!
+    var selfUser: ZMUser!
+    var otherUser: ZMUser!
 
     override func setUp() {
         super.setUp()
+        selfUser = ZMUser.selfUser(in: uiMOC)
+        otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = UUID()
+        otherUser.name = "Bruno"
         userSession = UserSessionMock()
-        conversation = ((MockConversation.oneOnOneConversation() as Any) as! ZMConversation)
+        conversation = createOneToOneConversation(selfUser: selfUser, otherUser: otherUser, messageProtocol: .proteus)
         mockVoiceChannel = MockVoiceChannel(conversation: conversation)
         mockVoiceChannel.mockVideoState = VideoState.started
         mockVoiceChannel.mockIsVideoCall = true
@@ -67,6 +73,8 @@ final class CallViewControllerTests: XCTestCase {
     }
 
     override func tearDown() {
+        selfUser = nil
+        otherUser = nil
         userSession = nil
         sut = nil
         conversation = nil
@@ -149,4 +157,27 @@ final class CallViewControllerTests: XCTestCase {
             return callController
         }
     }
+
+    // MARK: - Mock ZMConversation
+
+    func createOneToOneConversation(selfUser: ZMUser,
+                                    otherUser: ZMUser,
+                                    messageProtocol: MessageProtocol) -> ZMConversation {
+
+        let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
+        mockConversation.messageProtocol = messageProtocol
+        mockConversation.add(participants: selfUser)
+
+        mockConversation.conversationType = .oneOnOne
+        mockConversation.remoteIdentifier = UUID.create()
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
+        connection.to = otherUser
+        connection.status = .accepted
+        connection.conversation = mockConversation
+
+        connection.add(user: otherUser)
+
+        return mockConversation
+    }
+
 }

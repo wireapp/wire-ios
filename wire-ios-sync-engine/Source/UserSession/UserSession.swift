@@ -217,6 +217,14 @@ public protocol UserSession: AnyObject {
 
     var featureChangeActionsHandler: FeatureChangeActions { get }
 
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
+
+    var e2eiFeature: Feature.E2EI { get }
+
+    func fetchAllClients()
+
 }
 
 extension ZMUserSession: UserSession {

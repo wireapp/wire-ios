@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-// TODO: Remove this
+// TODO: Remove this once this feature/e2ei is ready to be merged to develop
 
 class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
 
@@ -77,15 +77,15 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
             Section(
                 header: "Select E2eIdentity Status",
                 items: E2EIdentityCertificateStatus.allCases.map({
-                    Item(title: $0.titleForStatus(), value: $0.titleForStatus().count == 0 ? "None" : $0.titleForStatus())
+                    Item(title: $0.title, value: $0.title.count == 0 ? "None" : $0.title)
                 })
             )
         ]
         selectedItemID = UUID()
         guard let status = E2EIdentityCertificateStatus.allCases
-                                                        .first(where: {$0.titleForStatus() == Self.selectedE2eIdentiyStatus ?? ""}),
+                                                        .first(where: {$0.title == Self.selectedE2eIdentiyStatus ?? ""}),
               let selectedItem = sections.flatMap(\.items).first(where: {
-            $0.value == status.titleForStatus()
+            $0.value == status.title
         }) else {
             return
         }
@@ -103,31 +103,81 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
         }
     }
 
-    static func e2eIdentityProvider() -> E2eIdentityProviding {
-        guard  DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled else {
-            return E2eIdentityProvider()
+    static func mockCertifiateForSelectedStatus() -> E2eIdentityCertificate? {
+        guard let selectedE2eIdentiyStatus = selectedE2eIdentiyStatus,
+              let selectedStatus = E2EIdentityCertificateStatus.status(for: selectedE2eIdentiyStatus) else {
+            return nil
         }
-        let status = E2EIdentityCertificateStatus.status(
-            for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
-        )
-        switch status {
+        switch selectedStatus {
         case .notActivated:
-            return MockNotActivatedE2eIdentityProvider()
+            return .mockNotActivated
         case .revoked:
-            return MockRevokedE2eIdentityProvider()
+            return .mockRevoked
         case .expired:
-            return MockExpiredE2eIdentityProvider()
+            return .mockExpired
         case .valid:
-            return MockValidE2eIdentityProvider()
-        case .none:
-            return E2eIdentityProvider()
+            return .mockValid
         }
     }
 
-    static func mlsProvider() -> MLSProviding {
-        guard DeveloperFlag.enableMLSSupport.isOn else {
-            return MLSProvider()
-        }
-        return MockMLSProvider(isMLSEnbaled: true)
+}
+
+extension E2eIdentityCertificate {
+    static let  dateFormatter = DateFormatter()
+
+    static var mockRevoked: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            clientId: "sdfsdfsdfs",
+            certificateDetails: .mockCertificate(),
+            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            notValidBefore: dateFormatter.date(from: "15.10.2023") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
+            certificateStatus: .revoked,
+            serialNumber: .mockSerialNumber
+        )
+    }
+
+    static var mockValid: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            clientId: "sdfsdfsdfs",
+            certificateDetails: .mockCertificate(),
+            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
+            certificateStatus: .valid,
+            serialNumber: .mockSerialNumber
+        )
+    }
+
+    static var mockExpired: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            clientId: "sdfsdfsdfs",
+            certificateDetails: .mockCertificate(),
+            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
+            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
+            certificateStatus: .expired,
+            serialNumber: .mockSerialNumber
+        )
+    }
+
+    static var mockNotActivated: E2eIdentityCertificate {
+        E2eIdentityCertificate(
+            clientId: "sdfsdfsdfs",
+            certificateDetails: "",
+            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            notValidBefore: Date.now,
+            expiryDate: Date.now,
+            certificateStatus: .notActivated,
+            serialNumber: ""
+        )
+    }
+}
+
+private extension E2EIdentityCertificateStatus {
+    static func status(for string: String) -> E2EIdentityCertificateStatus? {
+        E2EIdentityCertificateStatus.allCases.filter({
+            $0.title == string
+        }).first
     }
 }

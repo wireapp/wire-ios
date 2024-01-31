@@ -214,6 +214,7 @@ class AcmeAPITests: ZMTBaseTest {
                                             url: "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcap/1pceubr",
                                             status: "pending",
                                             token: "NEi1HaRRYqM0R9cGZaHdv0dBWIkRbyCY",
+                                            target: "target",
                                             nonce: headerNonce)
 
         // given
@@ -239,13 +240,38 @@ class AcmeAPITests: ZMTBaseTest {
         }
     }
 
+    func testThatItSendsTrustAnchorRequest() async throws {
+        // given
+        let path = "https://acme/roots.pem"
+
+        // mock
+        let mockResponse = HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: nil
+        )!
+        let mockData = Data()
+        mockHttpClient?.mockResponse = (mockData, mockResponse)
+
+        // when
+        _ = try await acmeApi?.getTrustAnchor()
+        let request = try XCTUnwrap(mockHttpClient?.sentRequests.first)
+
+        // then
+        XCTAssertEqual(request.url?.absoluteString, "https://acme/roots.pem")
+        XCTAssertEqual(request.httpMethod, "GET")
+    }
+
 }
 
 class MockHttpClient: HttpClientCustom {
 
     var mockResponse: (Data, URLResponse)?
+    var sentRequests: [URLRequest] = []
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        sentRequests.append(request)
         guard let mockResponse = mockResponse else {
             throw NetworkError.errorDecodingResponseNew(mockResponse!.1)
         }
