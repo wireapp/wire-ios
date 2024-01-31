@@ -28,10 +28,6 @@ final class AvailabilityTitleViewController: UIViewController {
     private let user: UserType
     let userSession: UserSession
 
-    var availabilityTitleView: AvailabilityTitleView? {
-        view as? AvailabilityTitleView
-    }
-
     private var userChangeObserver: UserChangeObserver?
 
     init(user: UserType, options: AvailabilityTitleView.Options, userSession: UserSession) {
@@ -47,23 +43,21 @@ final class AvailabilityTitleViewController: UIViewController {
     }
 
     override func loadView() {
-        view = UserStatusView(
+        let view = UserStatusView(
             options: options,
             userSession: userSession
         )
         updateUserStatusView()
         setupNotificationObservation()
-    }
-
-    override func viewDidLoad() {
-        availabilityTitleView?.tapHandler = { [weak self] _ in
-            guard let `self` = self else { return }
-            self.presentAvailabilityPicker()
+        view.tapHandler = { [weak self] _ in
+            self?.presentAvailabilityPicker()
         }
+        self.view = view
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
         if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
             updateUserStatusView()
         }
@@ -71,12 +65,9 @@ final class AvailabilityTitleViewController: UIViewController {
 
     func presentAvailabilityPicker() {
         let alertViewController = UIAlertController.availabilityPicker { [weak self] availability in
-            guard let `self` = self else { return }
-            self.didSelectAvailability(availability)
+            self?.didSelectAvailability(availability)
         }
-
         alertViewController.configPopover(pointToView: view)
-
         present(alertViewController, animated: true)
     }
 
@@ -110,7 +101,7 @@ final class AvailabilityTitleViewController: UIViewController {
         )
 
         // refresh view when some user info changes
-        let userChangeObserver = BlockBasedUserChangeObserver { [weak self] changes in
+        let userChangeObserver = ClosureBasedUserChangeObserver { [weak self] changes in
             if changes.nameChanged || changes.availabilityChanged {
                 self?.updateUserStatusView()
             }

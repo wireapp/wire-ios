@@ -18,7 +18,8 @@
 
 import Foundation
 
-public final class BlockBasedUserChangeObserver: NSObject, UserChangeObserver {
+/// Allows for handling user change events via closure.
+public final class ClosureBasedUserChangeObserver: NSObject, UserChangeObserver {
 
     /// Optionally assing any observation token here in order to retain it.
     public var observationToken: NSObjectProtocol?
