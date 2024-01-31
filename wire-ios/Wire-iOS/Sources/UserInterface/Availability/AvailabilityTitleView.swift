@@ -109,7 +109,7 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
     }
 
     /// Refreshes the content of the view, based on the user data and the options.
-    private func updateContent(_ availability: AvailabilityKind) async {
+    private func updateContent(_ availability: Availability) async {
         typealias AvailabilityStatusStrings = L10n.Accessibility.AccountPage.AvailabilityStatus
 
         let fontStyle: FontSize = options.contains(.useLargeFont) ? .normal : .small

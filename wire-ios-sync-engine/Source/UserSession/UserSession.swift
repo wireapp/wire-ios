@@ -249,7 +249,6 @@ extension ZMUserSession: UserSession {
         get {
             appLockController.isActive
         }
-
         set {
             appLockController.isActive = newValue
         }
