@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,39 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCommonComponents
-import WireDataModel
-
-enum AvailabilityLabelStyle: Int {
-    case list, participants
-}
+import WireProtos
 
 extension Availability {
 
-    var localizedName: String {
-        switch self {
+    public init(proto: WireProtos.Availability) {
+        switch proto.type {
         case .none:
-            L10n.Localizable.Availability.none
+            self = .none
         case .available:
-            L10n.Localizable.Availability.available
+            self = .available
         case .away:
-            L10n.Localizable.Availability.away
+            self = .away
         case .busy:
-            L10n.Localizable.Availability.busy
+            self = .busy
         }
     }
+}
 
-    var iconType: StyleKitIcon? {
-        switch self {
-        case .none:
-            nil
-        case .available:
-            .statusAvailable
-        case .away:
-            .statusAway
-        case .busy:
-            .statusBusy
+extension WireProtos.Availability {
+
+    public init(_ availability: Availability) {
+        self = WireProtos.Availability.with { populator in
+            switch availability {
+            case .none:
+                populator.type = .none
+            case .available:
+                populator.type = .available
+            case .away:
+                populator.type = .away
+            case .busy:
+                populator.type = .busy
+            }
         }
     }
 }

@@ -49,7 +49,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     var isFederated: Bool { get }
 
     /// The availability of the user
-    var availability: AvailabilityKind { get set }
+    var availability: Availability { get set }
 
     /// Team membership for this user.
     var membership: Member? { get }
