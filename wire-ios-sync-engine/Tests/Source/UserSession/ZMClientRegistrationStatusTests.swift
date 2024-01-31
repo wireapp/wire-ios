@@ -30,7 +30,7 @@ extension ZMClientRegistrationStatusTests {
             sut.didFail(toRegisterClient: tooManyClientsError()! as NSError)
 
             // then
-            XCTAssertEqual(sut.currentPhase, ZMClientRegistrationPhase.fetchingClients)
+            XCTAssertEqual(sut.currentPhase, .fetchingClients)
         }
     }
 

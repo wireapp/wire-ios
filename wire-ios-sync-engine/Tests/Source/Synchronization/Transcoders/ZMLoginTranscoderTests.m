@@ -24,7 +24,6 @@
 #import "ZMAuthenticationStatus.h"
 #import "NSError+ZMUserSession.h"
 #import "ZMUserSessionRegistrationNotification.h"
-#import "ZMClientRegistrationStatus.h"
 #import "ZMAuthenticationStatus.h"
 #import "ZMAuthenticationStatus_Internal.h"
 #import "Tests-Swift.h"

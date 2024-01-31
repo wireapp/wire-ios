@@ -27,7 +27,6 @@
 #import "ZMSyncStrategy+Internal.h"
 #import "ZMSyncStrategy+ManagedObjectChanges.h"
 #import "WireSyncEngineLogs.h"
-#import "ZMClientRegistrationStatus.h"
 #import "ZMHotFix.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
@@ -55,8 +54,8 @@
 @interface ZMSyncStrategy (Registration) <ZMClientRegistrationStatusDelegate>
 @end
 
-@interface ZMClientRegistrationStatus (Protocol) <ClientRegistrationDelegate>
-@end
+//@interface ZMClientRegistrationStatus (Protocol) <ClientRegistrationDelegate>
+//@end
 
 
 @implementation ZMSyncStrategy
