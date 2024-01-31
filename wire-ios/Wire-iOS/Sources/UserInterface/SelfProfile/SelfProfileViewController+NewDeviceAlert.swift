@@ -97,33 +97,44 @@ extension SelfProfileViewController {
 }
 
 extension UIAlertController {
+
     convenience init(forNewSelfClients clients: Set<UserClient>) {
         var deviceNamesAndDates: [String] = []
 
         for userClient in clients {
             let deviceName: String
 
-            if let model = userClient.model,
-                model.isEmpty == false {
+            if let model = userClient.model, !model.isEmpty {
                 deviceName = model
             } else {
                 deviceName = userClient.type.rawValue
             }
 
-            let formattedDate = userClient.activationDate?.formattedDate
-            let formatKey = L10n.Localizable.Registration.Devices.activated(formattedDate as Any)
+            let formattedDate: String
+            if let activationDate = userClient.activationDate {
+                formattedDate = activationDate.formattedDate
+            } else {
+                formattedDate = ""
+            }
 
-            let deviceDate = formatKey
+            let deviceActivationDate = L10n.Localizable.Registration.Devices.activated(formattedDate)
 
-            deviceNamesAndDates.append("\(deviceName)\n\(deviceDate)")
+            deviceNamesAndDates.append("\(deviceName) \(deviceActivationDate)")
         }
 
         let title = L10n.Localizable.Self.NewDeviceAlert.title
 
-        let messageFormat = clients.count > 1 ? L10n.Localizable.Self.NewDeviceAlert.messagePlural(clients.count) : L10n.Localizable.Self.NewDeviceAlert.message(clients.count)
+        let messageBody = deviceNamesAndDates.joined(separator: "\n\n")
 
-        let message = String(format: messageFormat, deviceNamesAndDates.joined(separator: "\n\n"))
+        let messageFormat: String
 
-        self.init(title: title, message: message, preferredStyle: .alert)
+        if clients.count > 1 {
+            messageFormat = L10n.Localizable.Self.NewDeviceAlert.messagePlural(messageBody)
+        } else {
+            messageFormat = L10n.Localizable.Self.NewDeviceAlert.message(messageBody)
+        }
+
+        self.init(title: title, message: messageFormat, preferredStyle: .alert)
     }
+
 }
