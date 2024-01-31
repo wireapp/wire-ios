@@ -30,6 +30,7 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
 
     private let featureRepository: FeatureRepositoryInterface
     private let userRepository: UserRepositoryInterface
+    private let logger = WireLogger(tag: "supported-protocols")
 
     // MARK: - Life cycle
 
@@ -56,9 +57,13 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
     }
 
     func calculateSupportedProtocols() -> Set<MessageProtocol> {
+        logger.debug("calculating supported protocols...")
+
         let remoteProtocols = remotelySupportedProtocols()
         let migrationState = currentMigrationState()
         let allClientsMLSReady = allSelfUserClientsAreActiveMLSClients()
+
+        logger.debug("remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)")
 
         var result = Set<MessageProtocol>()
 
@@ -92,6 +97,8 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
             result = [.proteus]
         }
 
+        logger.debug("calculated supported protocols: \(result)")
+
         return result
     }
 
@@ -118,12 +125,16 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
         return result
     }
 
-    enum ProteusToMLSMigrationState {
+    enum ProteusToMLSMigrationState: String, CustomStringConvertible {
 
         case disabled
         case notStarted
         case ongoing
         case finalised
+
+        var description: String {
+            return rawValue
+        }
 
     }
 

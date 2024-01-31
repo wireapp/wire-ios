@@ -69,6 +69,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("resolving one on one with user: \(userID)")
 
         let messageProtocol = await protocolSelector.getProtocolForUser(
             with: userID,
@@ -77,6 +78,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         switch messageProtocol {
         case .none:
+            WireLogger.conversation.debug("no common protocols found")
             await context.perform {
                 guard
                     let otherUser = ZMUser.fetch(with: userID, in: context),
@@ -90,6 +92,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return .archivedAsReadOnly
 
         case .mls:
+            WireLogger.conversation.debug("should resolve to mls one on one")
             let mlsGroupIdentifier = try await migrator.migrateToMLS(
                 userID: userID,
                 in: context
@@ -97,6 +100,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return .migratedToMLSGroup(identifier: mlsGroupIdentifier)
 
         case .proteus:
+            WireLogger.conversation.debug("should resolve to proteus one on one")
             return .noAction
 
         // This should never happen:
