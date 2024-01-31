@@ -57,3 +57,13 @@ extension MessageProtocol {
         self = Self.allCases[.init(int16Value)]
     }
 }
+
+// MARK: - Custom string convertible
+
+extension MessageProtocol: CustomStringConvertible {
+
+    public var description: String {
+        return rawValue
+    }
+
+}
