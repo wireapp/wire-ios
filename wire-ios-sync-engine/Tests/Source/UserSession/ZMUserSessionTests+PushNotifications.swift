@@ -311,9 +311,9 @@ extension ZMUserSessionTests_PushNotifications {
 
             let sender = ZMUser.insertNewObject(in: self.syncMOC)
             sender.remoteIdentifier = UUID()
+            sender.oneOnOneConversation = conversation
 
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
-            connection.conversation = conversation
             connection.to = sender
             connection.status = .accepted
 
@@ -340,9 +340,9 @@ extension ZMUserSessionTests_PushNotifications {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .connection
         conversation.remoteIdentifier = UUID()
+        conversation.oneOnOneUser = sender
 
         let connection = ZMConnection.insertNewObject(in: uiMOC)
-        connection.conversation = conversation
         connection.to = sender
         connection.status = .pending
 

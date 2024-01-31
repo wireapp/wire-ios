@@ -108,8 +108,12 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         syncMOC.performGroupedBlockAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .connection
-            conversation.connection = ZMConnection.insertNewObject(in: self.syncMOC)
-            conversation.connection?.status = .pending
+
+            let user = ZMUser.insertNewObject(in: self.syncMOC)
+            user.connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            user.connection?.status = .pending
+            user.oneOnOneConversation = conversation
+
             self.syncMOC.saveOrRollback()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -371,9 +375,13 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesTheObserverIfTheConnectionStateOfAConversationChangesAndAfterThatItMatchesAList() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-        conversation.connection!.status = .pending
         conversation.conversationType = .connection
+
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        user.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        user.connection?.status = .pending
+        user.oneOnOneConversation = conversation
+        self.uiMOC.saveOrRollback()
 
         let pendingList = ZMConversation.pendingConversations(in: self.uiMOC)
         let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
@@ -386,13 +394,11 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let normalObserver = TestObserver()
         tokenArray.append(ConversationListChangeInfo.addListObserver( normalObserver, for: normalList, managedObjectContext: self.uiMOC))
 
-        self.uiMOC.saveOrRollback()
-
         XCTAssertEqual(pendingList.count, 1)
         XCTAssertEqual(normalList.count, 0)
 
         // when
-        conversation.connection!.status = .accepted
+        user.connection?.status = .accepted
         conversation.conversationType = .oneOnOne
         self.uiMOC.saveOrRollback()
 
@@ -601,13 +607,14 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesObserversWhenTheUserInOneOnOneConversationGetsBlocked() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-        conversation.connection?.status = .accepted
         conversation.conversationType = .oneOnOne
-        conversation.connection?.to = user
+
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        user.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        user.connection?.status = .accepted
+        user.oneOnOneConversation = conversation
+
         self.uiMOC.saveOrRollback()
 
         let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
@@ -634,13 +641,14 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesObserversWhenTheUserInOneOnOneConversationGetsBlockedDueToMissingLegalholdConsent() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-        conversation.connection?.status = .accepted
         conversation.conversationType = .oneOnOne
-        conversation.connection?.to = user
+
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        user.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        user.connection?.status = .accepted
+        user.oneOnOneConversation = conversation
+
         self.uiMOC.saveOrRollback()
 
         let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)

@@ -33,8 +33,9 @@ class LocalNotificationDispatcherCallingTests: DatabaseTest {
 
     override func setUp() {
         super.setUp()
-
-        sut = LocalNotificationDispatcher(in: syncMOC)
+        syncMOC.performAndWait {
+            sut = LocalNotificationDispatcher(in: syncMOC)
+        }
 
         notificationCenter = UserNotificationCenterMock()
         sut.notificationCenter = notificationCenter
@@ -68,7 +69,9 @@ class LocalNotificationDispatcherCallingTests: DatabaseTest {
 
     func testThatMissedCallCreatesCallingNotification() {
         // when
-        sut.processMissedCall(in: conversation, caller: sender)
+        syncMOC.performAndWait {
+            sut.processMissedCall(in: conversation, caller: sender)
+        }
 
         // then
         XCTAssertEqual(sut.callingNotifications.notifications.count, 1)
@@ -77,7 +80,9 @@ class LocalNotificationDispatcherCallingTests: DatabaseTest {
 
     func testThatIncomingCallCreatesCallingNotification() {
         // when
-        sut.process(callState: .incoming(video: false, shouldRing: true, degraded: false), in: conversation, caller: sender)
+        syncMOC.performAndWait {
+            sut.process(callState: .incoming(video: false, shouldRing: true, degraded: false), in: conversation, caller: sender)
+        }
 
         // then
         XCTAssertEqual(sut.callingNotifications.notifications.count, 1)
@@ -90,7 +95,9 @@ class LocalNotificationDispatcherCallingTests: DatabaseTest {
 
         for ignoredCallState in ignoredCallStates {
             // when
-            sut.process(callState: ignoredCallState, in: conversation, caller: sender)
+            syncMOC.performAndWait {
+                sut.process(callState: ignoredCallState, in: conversation, caller: sender)
+            }
 
             // then
             XCTAssertEqual(sut.callingNotifications.notifications.count, 0)
@@ -100,14 +107,18 @@ class LocalNotificationDispatcherCallingTests: DatabaseTest {
 
     func testThatIncomingCallIsReplacedByCanceledCallNotification() {
         // given
-        sut.process(callState: .incoming(video: false, shouldRing: true, degraded: false), in: conversation, caller: sender)
+        syncMOC.performAndWait {
+            sut.process(callState: .incoming(video: false, shouldRing: true, degraded: false), in: conversation, caller: sender)
+        }
         XCTAssertEqual(sut.callingNotifications.notifications.count, 1)
         XCTAssertEqual(scheduledRequests.count, 1)
 
         let incomingCallNotificationID = scheduledRequests.first!.identifier
 
         // when
-        sut.processMissedCall(in: conversation, caller: sender)
+        syncMOC.performAndWait {
+            sut.processMissedCall(in: conversation, caller: sender)
+        }
 
         // then
         XCTAssertEqual(sut.callingNotifications.notifications.count, 1)
@@ -117,15 +128,18 @@ class LocalNotificationDispatcherCallingTests: DatabaseTest {
 
     func testThatIncomingCallIsClearedWhenCallIsAnsweredElsewhere() {
         // given
-        sut.process(callState: .incoming(video: false, shouldRing: true, degraded: false), in: conversation, caller: sender)
+        syncMOC.performAndWait {
+            sut.process(callState: .incoming(video: false, shouldRing: true, degraded: false), in: conversation, caller: sender)
+        }
         XCTAssertEqual(sut.callingNotifications.notifications.count, 1)
         XCTAssertEqual(scheduledRequests.count, 1)
 
         let incomingCallNotificationID = scheduledRequests.first!.identifier
 
         // when
-        sut.process(callState: .terminating(reason: .anweredElsewhere), in: conversation, caller: sender)
-
+        syncMOC.performAndWait {
+            sut.process(callState: .terminating(reason: .anweredElsewhere), in: conversation, caller: sender)
+        }
         // then
         XCTAssertEqual(sut.callingNotifications.notifications.count, 0)
         XCTAssertEqual(scheduledRequests.count, 1)

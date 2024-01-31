@@ -38,7 +38,7 @@
 @class Team;
 
 NS_ASSUME_NONNULL_BEGIN
-extern NSString *const ZMConversationConnectionKey;
+extern NSString *const ZMConversationOneOnOneUserKey;
 extern NSString *const ZMConversationHasUnreadMissedCallKey;
 extern NSString *const ZMConversationHasUnreadUnsentMessageKey;
 extern NSString *const ZMConversationNeedsToCalculateUnreadMessagesKey;
@@ -47,15 +47,10 @@ extern NSString *const ZMConversationMutedStatusKey;
 extern NSString *const ZMConversationAllMessagesKey;
 extern NSString *const ZMConversationHiddenMessagesKey;
 extern NSString *const ZMConversationParticipantRolesKey;
-extern NSString *const ZMConversationHasUnreadKnock;
 extern NSString *const ZMConversationUserDefinedNameKey;
-extern NSString *const ZMVisibleWindowLowerKey;
-extern NSString *const ZMVisibleWindowUpperKey;
-extern NSString *const ZMIsDimmedKey;
 extern NSString *const ZMNormalizedUserDefinedNameKey;
 extern NSString *const ZMConversationListIndicatorKey;
 extern NSString *const ZMConversationConversationTypeKey;
-extern NSString *const ZMConversationExternalParticipantsStateKey;
 extern NSString *const ZMConversationNeedsToDownloadRolesKey;
 extern NSString *const ZMConversationIsForcedReadOnlyKey;
 
@@ -65,13 +60,11 @@ extern NSString *const ZMConversationClearedTimeStampKey;
 extern NSString *const ZMConversationArchivedChangedTimeStampKey;
 extern NSString *const ZMConversationSilencedChangedTimeStampKey;
 
-extern NSString *const ZMNotificationConversationKey;
 extern NSString *const ZMConversationRemoteIdentifierDataKey;
 extern NSString *const TeamRemoteIdentifierDataKey;
 
 extern const NSUInteger ZMConversationMaxTextMessageLength;
 extern NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay;
-extern NSString *const ZMConversationEstimatedUnreadCountKey;
 
 extern NSString *const ZMConversationInternalEstimatedUnreadSelfMentionCountKey;
 extern NSString *const ZMConversationInternalEstimatedUnreadSelfReplyCountKey;
@@ -116,7 +109,6 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, nullable) NSUUID *teamRemoteIdentifier;
 @property (readonly, nonatomic, nonnull) NSMutableSet<ZMMessage *> *mutableMessages;
 @property (readonly, nonatomic, nonnull) NSSet<ZMMessage *> *hiddenMessages;
-@property (nonatomic, nullable) ZMConnection *connection;
 @property (readonly, nonatomic) enum ZMConnectionStatus relatedConnectionState; // This is a computed property, needed for snapshoting
 @property (nonatomic, nonnull) ZMUser *creator;
 @property (nonatomic, nullable) NSDate *lastModifiedDate;
