@@ -57,14 +57,10 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             dispatchGroup: self.dispatchGroup,
             databaseKey: databaseKey
         ) {
-            do {
-                let url = try $0.get().url
-                result = .success(url)
-            } catch {
-                result = .failure(error)
-            }
+            result = $0.map { $0.url }
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
+
         return result
     }
 

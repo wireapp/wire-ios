@@ -151,12 +151,7 @@ extension SessionManager {
                 applicationContainer: self.sharedContainerURL,
                 dispatchGroup: self.dispatchGroup
             ) { result in
-                switch result {
-                case .success:
-                    completion(.success(()))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
+                completion(result.map { _ in })
             }
         }
     }
