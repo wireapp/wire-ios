@@ -70,6 +70,7 @@ indirect enum AuthenticationFlowStep: Equatable {
     case clientManagement(clients: [UserClient], credentials: ZMCredentials?)
     case deleteClient(clients: [UserClient], credentials: ZMCredentials?)
     case addEmailAndPassword
+    case enrollE2EIdentity
     case addUsername
     case registerEmailCredentials(ZMEmailCredentials, isResend: Bool)
     case pendingEmailLinkVerification(ZMEmailCredentials)
@@ -112,6 +113,7 @@ indirect enum AuthenticationFlowStep: Equatable {
         case .clientManagement: return true
         case .deleteClient: return true
         case .addEmailAndPassword: return true
+        case .enrollE2EIdentity: return true
         case .addUsername: return true
         case .pendingInitialSync: return false
         case .pendingEmailLinkVerification: return true
