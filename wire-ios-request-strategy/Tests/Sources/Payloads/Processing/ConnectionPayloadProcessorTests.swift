@@ -130,6 +130,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
             defer {
                 expectation.fulfill()
             }
+
             let id = try self.syncMOC.performAndWait {
                 try XCTUnwrap(connection.conversation.mlsGroupID)
             }
@@ -137,7 +138,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
         }
 
         // WHEN
-        sut.updateOrCreateConnection(from: payload, in: syncMOC, delay: UInt64(0.5))
+        sut.updateOrCreateConnection(from: payload, in: syncMOC, delay: TimeInterval(UInt64(0.5)))
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
