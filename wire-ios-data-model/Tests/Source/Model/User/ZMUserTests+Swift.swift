@@ -461,16 +461,14 @@ extension ZMUserTests_Swift {
         let pattern = "^.*[0-9-.]{20,20}\(suffix)$"
         checkFilenameIsValid(pattern: pattern, filename: filename)
     }
-}
 
-// MARK: - Availability
-extension ZMUserTests_Swift {
+    // MARK: - Availability
 
     func testThatWeCanUpdateAvailabilityFromGenericMessage() {
         // given
         let user = ZMUser.insert(in: self.uiMOC, name: "Foo")
         XCTAssertEqual(user.availability, .none)
-        let availability = Availability(.away)
+        let availability = WireProtos.Availability(.away)
         // when
         user.updateAvailability(from: GenericMessage(content: availability))
 

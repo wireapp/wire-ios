@@ -416,7 +416,7 @@ extension ClientMessageTests {
         let senderClientID = NSString.createAlphanumerical()
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let availability = Availability(.away)
+        let availability = WireProtos.Availability(.away)
         let contentData = try GenericMessage(content: availability, nonce: UUID.create()).serializedData()
         let data: NSDictionary = try [
             "sender": XCTUnwrap(senderClientID),

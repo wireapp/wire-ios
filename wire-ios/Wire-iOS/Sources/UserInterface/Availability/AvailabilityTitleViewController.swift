@@ -57,23 +57,21 @@ final class AvailabilityTitleViewController: UIViewController {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
             availabilityTitleView?.updateConfiguration()
         }
     }
 
     func presentAvailabilityPicker() {
-        let alertViewController = UIAlertController.availabilityPicker { [weak self] (availability) in
-            guard let `self` = self else { return }
-            self.didSelectAvailability(availability)
+        let alertViewController = UIAlertController.availabilityPicker { [weak self] availability in
+            self?.didSelectAvailability(availability)
         }
-
         alertViewController.configPopover(pointToView: view)
-
         present(alertViewController, animated: true)
     }
 
-    private func didSelectAvailability(_ availability: AvailabilityKind) {
+    private func didSelectAvailability(_ availability: Availability) {
         let changes = { [weak self] in
             self?.user.availability = availability
             self?.provideHapticFeedback()

@@ -56,7 +56,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var needsRichProfileUpdate: Bool = false
 
-    var availability: AvailabilityKind = .none
+    var availability: Availability = .none
 
     var teamName: String?
 
