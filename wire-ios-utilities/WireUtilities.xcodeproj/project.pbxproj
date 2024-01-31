@@ -159,6 +159,7 @@
 		D56A2D4A207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */; };
 		D5D65A13207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */; };
 		E6C4B37B2B68EFD6008BF384 /* NSString+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C4B37A2B68EFD6008BF384 /* NSString+Random.swift */; };
+		E6C4B37E2B6A896E008BF384 /* StringRandomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C4B37D2B6A896E008BF384 /* StringRandomTests.swift */; };
 		E9C337542ABC91DE0084ABCF /* Array+Cardinality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */; };
 		EE162710250BA12900D35062 /* VolatileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE16270F250BA12900D35062 /* VolatileData.swift */; };
 		EE162712250BA6E600D35062 /* VolatileDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE162711250BA6E600D35062 /* VolatileDataTests.swift */; };
@@ -409,6 +410,7 @@
 		D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SwiftTests.swift"; sourceTree = "<group>"; };
 		D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+PerformGrouped.swift"; sourceTree = "<group>"; };
 		E6C4B37A2B68EFD6008BF384 /* NSString+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSString+Random.swift"; sourceTree = "<group>"; };
+		E6C4B37D2B6A896E008BF384 /* StringRandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringRandomTests.swift; sourceTree = "<group>"; };
 		E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Cardinality.swift"; sourceTree = "<group>"; };
 		EE16270F250BA12900D35062 /* VolatileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolatileData.swift; sourceTree = "<group>"; };
 		EE162711250BA6E600D35062 /* VolatileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolatileDataTests.swift; path = Source/VolatileDataTests.swift; sourceTree = "<group>"; };
@@ -765,6 +767,14 @@
 			path = UIColor;
 			sourceTree = "<group>";
 		};
+		E6C4B37C2B6A895C008BF384 /* Public */ = {
+			isa = PBXGroup;
+			children = (
+				E6C4B37D2B6A896E008BF384 /* StringRandomTests.swift */,
+			);
+			path = Public;
+			sourceTree = "<group>";
+		};
 		F9C9A79F1CAEACB10039E10C /* Validation */ = {
 			isa = PBXGroup;
 			children = (
@@ -792,6 +802,7 @@
 		F9D3819B1B70B8A700E6E4EB /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				E6C4B37C2B6A895C008BF384 /* Public */,
 				EE162711250BA6E600D35062 /* VolatileDataTests.swift */,
 				A9CDCDC7237D9ABD008A9BC6 /* UIColor */,
 				F9C9A7BE1CAEAFE10039E10C /* Validation */,
@@ -1185,6 +1196,7 @@
 				546E8A591B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m in Sources */,
 				BF3C1B1020DA7339001CE126 /* Equatable+OneOfTests.swift in Sources */,
 				EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */,
+				E6C4B37E2B6A896E008BF384 /* StringRandomTests.swift in Sources */,
 				16B75F68222EE3A000DCAFF2 /* String+StrippingTests.swift in Sources */,
 				7C35807F231E5F5B00D994FD /* ZMPhoneNumberValidatorTests.m in Sources */,
 				D504CD3B2090D00500A78DAA /* FlipTests.swift in Sources */,
