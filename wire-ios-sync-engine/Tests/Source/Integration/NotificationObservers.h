@@ -51,7 +51,7 @@ typedef void(^ObserverCallback)(NSObject *note);
 
 
 
-@interface UserChangeObserver : ChangeObserver <ZMUserObserver>
+@interface UserChangeObserver : ChangeObserver <ZMUserChangeObserver>
 - (instancetype)initWithUser:(ZMUser *)user;
 - (instancetype)initWithUser:(id<UserType>)user managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 

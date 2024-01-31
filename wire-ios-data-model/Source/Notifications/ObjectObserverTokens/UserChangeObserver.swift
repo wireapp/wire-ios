@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public protocol UserChangeObserver: NSObjectProtocol {
+@objc(ZMUserChangeObserver)
+public protocol UserChangeObserver: NSObjectProtocol {
     func userDidChange(_ changeInfo: UserChangeInfo)
 }
 
