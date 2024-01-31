@@ -140,7 +140,7 @@ public final class SendMLSMessageAction: EntityAction {
                 return "Unknown error (response status: \(status), label: \(label), message: \(message))"
 
             case .unreachableDomains(let domains):
-                return "Some domains were unrechable: \(domains)"
+                return "Some domains were unreachable: \(domains)"
             }
         }
     }
