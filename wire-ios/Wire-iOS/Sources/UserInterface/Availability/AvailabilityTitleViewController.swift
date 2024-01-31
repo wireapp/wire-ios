@@ -24,13 +24,13 @@ import WireSyncEngine
 final class AvailabilityTitleViewController: UIViewController {
 
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-    private let options: AvailabilityTitleView.Options
+    private let options: UserStatusView.Options
     private let user: UserType
     let userSession: UserSession
 
     private var userChangeObserver: UserChangeObserver?
 
-    init(user: UserType, options: AvailabilityTitleView.Options, userSession: UserSession) {
+    init(user: UserType, options: UserStatusView.Options, userSession: UserSession) {
         self.user = user
         self.options = options
         self.userSession = userSession

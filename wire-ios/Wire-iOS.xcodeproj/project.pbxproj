@@ -5167,14 +5167,14 @@
 		7C5836621FD5AB98001CC843 /* Availability */ = {
 			isa = PBXGroup;
 			children = (
-				7C5836651FD5ABFE001CC843 /* TitleView.swift */,
-				7C5836631FD5ABE7001CC843 /* UserStatusView.swift */,
-				1639A85A2264EAB800868AB9 /* AvailabilityTitleViewController.swift */,
 				7C5DF2CB1FD7DEAD00B793B6 /* AvailabilityExtensions.swift */,
-				7CED30711FD97748009F0DAC /* IconStringsBuilder.swift */,
 				7CED307B1FD97895009F0DAC /* AvailabilityStringBuilder.swift */,
+				1639A85A2264EAB800868AB9 /* AvailabilityTitleViewController.swift */,
+				7CED30711FD97748009F0DAC /* IconStringsBuilder.swift */,
+				7C5836651FD5ABFE001CC843 /* TitleView.swift */,
 				1639A85C2265FC8800868AB9 /* UIAlertController+Availability.swift */,
 				597A3BB92B641F280020E337 /* UserStatus.swift */,
+				7C5836631FD5ABE7001CC843 /* UserStatusView.swift */,
 			);
 			path = Availability;
 			sourceTree = "<group>";

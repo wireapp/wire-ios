@@ -119,7 +119,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
     // MARK: - Common methods
 
     private func createTest(
-        options: AvailabilityTitleView.Options,
+        options: UserStatusView.Options,
         availability: Availability,
         user: ZMUser,
         userInterfaceStyle: UIUserInterfaceStyle = .dark,
@@ -127,7 +127,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
         line: UInt = #line,
         testName: String = #function
     ) {
-        let sut = AvailabilityTitleView(
+        let sut = UserStatusView(
             options: options,
             userSession: userSession
         )
