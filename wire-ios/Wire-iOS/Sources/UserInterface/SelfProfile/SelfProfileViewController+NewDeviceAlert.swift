@@ -28,7 +28,7 @@ extension SelfProfileViewController {
             assertionFailure("ZMUser.selfUser() is nil")
             return false
         }
-        let clientsRequiringUserAttention = selfUser.clientsRequiringUserAttention
+        let clientsRequiringUserAttention = Array(selfUser.clientsRequiringUserAttention)
 
         if clientsRequiringUserAttention.count > 0 {
             self.presentNewLoginAlertController(clientsRequiringUserAttention)
@@ -38,7 +38,7 @@ extension SelfProfileViewController {
         }
     }
 
-    fileprivate func presentNewLoginAlertController(_ clients: Set<UserClient>) {
+    fileprivate func presentNewLoginAlertController(_ clients: [UserClientType]) {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
         let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { _ in
@@ -98,7 +98,7 @@ extension SelfProfileViewController {
 
 extension UIAlertController {
 
-    convenience init(forNewSelfClients clients: Set<UserClient>) {
+    convenience init(forNewSelfClients clients: [UserClientType]) {
         var deviceNamesAndDates: [String] = []
 
         for userClient in clients {
