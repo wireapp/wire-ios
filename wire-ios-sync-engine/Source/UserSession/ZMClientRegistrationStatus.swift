@@ -119,6 +119,18 @@ extension ZMClientRegistrationStatus {
         return !hasNotYetRegisteredClient
     }
 
+    private func fetchFeatureConfigs() {
+        var action = GetFeatureConfigsAction()
+        action.perform(in: managedObjectContext.notificationContext) { [weak self] result in
+            switch result {
+            case .success:
+                self?.didFetchFeatureConfigs()
+            case .failure:
+                self?.fetchFeatureConfigs()
+            }
+        }
+    }
+
     @objc
     public func didDeleteClient() {
         WireLogger.userClient.info("client was deleted. will prepare for registration")
@@ -145,6 +157,17 @@ extension ZMClientRegistrationStatus {
         } else if !needsToVerifySelfClient {
             emailCredentials = nil
         }
+
+        if needsToFetchFeatureConfigs {
+            fetchFeatureConfigs()
+        }
+    }
+
+    @objc
+    public func didFetchFeatureConfigs() {
+        WireLogger.userClient.info("did fetch feature configs")
+        needsToFetchFeatureConfigs = false
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
     private func notifyEmailIsNecessary() {
@@ -156,6 +179,15 @@ extension ZMClientRegistrationStatus {
         registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
     }
 
+    @objc
+    public func notifyE2EIEnrollmentNecessary() {
+        let error = NSError(
+            domain: NSError.ZMUserSessionErrorDomain,
+            code: Int(ZMUserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue)
+        )
+        registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
+    }
+
     private func notifyHandleIsNecessary() {
         let error = NSError(
             domain: NSError.ZMUserSessionErrorDomain,
@@ -163,6 +195,11 @@ extension ZMClientRegistrationStatus {
         )
 
         registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
+    }
+
+    @objc
+    public var needsToEnrollE2EI: Bool {
+        return FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
     }
 
     @objc(needsToRegisterMLSClientInContext:)
@@ -203,6 +240,13 @@ extension ZMClientRegistrationStatus {
         self.prekeys = prekeys.map { [NSNumber(value: Int($0.id)): $0.prekey]}
         self.lastResortPrekey = lastResortPrekey.prekey
         self.isGeneratingPrekeys = false
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
+    }
+
+    public func didEnrollIntoEndToEndIdentity() {
+        WireLogger.userClient.info("user client did enroll into end-2-end idenity")
+        isWaitingForE2EIEnrollment = false
+        isWaitingForMLSClientToBeRegistered = true
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 }
