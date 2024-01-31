@@ -84,7 +84,7 @@ final class ConnectionPayloadProcessor {
                 try? await Task.sleep(nanoseconds: UInt64(threeSecDelay))
 
                 guard let resolver = self.resolver, let qualifiedTo = payload.qualifiedTo else {
-                    WireLogger.mls.error("OneOnOneResolver initialization failed or qualifiedTo is nil")
+                    WireLogger.conversation.error("OneOnOneResolver initialization failed or qualifiedTo is nil")
                     assertionFailure("OneOnOneResolver initialization failed or qualifiedTo is nil")
                     return
                 }
@@ -92,7 +92,7 @@ final class ConnectionPayloadProcessor {
                 do {
                     try await resolver.resolveOneOnOneConversation(with: qualifiedTo, in: context)
                 } catch {
-                    WireLogger.mls.error("Error resolving one-on-one conversation: \(error)")
+                    WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
                     assertionFailure("Error resolving one-on-one conversation: \(error)")
                 }
             }

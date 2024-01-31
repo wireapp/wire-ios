@@ -115,36 +115,34 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testThatOneOnOneResolverIsInvoked_WhenConnectionRequestIsAccepted() {
+    func testThatOneOnOneResolverIsInvoked_WhenConnectionRequestIsAccepted() throws {
         // GIVEN
-        let conversationID: QualifiedID = .randomID()
-        let connection = self.oneToOneConversation.connection!
-        let payload = self.createConnectionPayload(
-            to: self.otherUser.qualifiedID!,
-            conversation: conversationID
-        )
+        syncMOC.performAndWait {
+            let otherUser = ZMUser.insertNewObject(in: syncMOC)
+            otherUser.remoteIdentifier = .create()
 
-        let expectation = XCTestExpectation(description: "")
+            let connection = ZMConnection.insertNewObject(in: syncMOC)
+            connection.status = .pending
+            connection.to = otherUser
 
-        mockResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
-            defer {
-                expectation.fulfill()
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.remoteIdentifier = .create()
+            conversation.conversationType = .connection
+            conversation.oneOnOneUser = otherUser
+
+            mockResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
+
+               return OneOnOneConversationResolution.noAction
             }
 
-            let id = try self.syncMOC.performAndWait {
-                try XCTUnwrap(connection.conversation.mlsGroupID)
-            }
-           return OneOnOneConversationResolution.migratedToMLSGroup(identifier: id)
+            // WHEN
+            let payload = self.createConnectionPayload(connection, status: .accepted)
+            sut.updateOrCreateConnection(from: payload, in: syncMOC, delay: TimeInterval(UInt64(0.5)))
+
+            // THEN
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            XCTAssertEqual(mockResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
         }
-
-        // WHEN
-        sut.updateOrCreateConnection(from: payload, in: syncMOC, delay: TimeInterval(UInt64(0.5)))
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        wait(for: [expectation], timeout: 0.5)
-        XCTAssertEqual(mockResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
 
     }
 
