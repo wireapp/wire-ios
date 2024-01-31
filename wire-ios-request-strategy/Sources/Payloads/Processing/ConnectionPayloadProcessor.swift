@@ -43,7 +43,7 @@ final class ConnectionPayloadProcessor {
     func updateOrCreateConnection(
         from payload: Payload.Connection,
         in context: NSManagedObjectContext,
-        delay: TimeInterval = 3
+        delay: TimeInterval = 0
     ) {
         guard let userID = payload.to ?? payload.qualifiedTo?.uuid else {
             Logging.eventProcessing.error("Missing to field in connection payload, aborting...")
@@ -77,11 +77,9 @@ final class ConnectionPayloadProcessor {
 
         connection.status = payload.status.internalStatus
 
-        let threeSecDelay: TimeInterval = delay
-
         if previousStatus == .pending, connection.status == .accepted {
             WaitingGroupTask(context: context) {
-                try? await Task.sleep(nanoseconds: UInt64(threeSecDelay))
+                try? await Task.sleep(nanoseconds: UInt64(delay))
 
                 guard let resolver = self.resolver, let qualifiedTo = payload.qualifiedTo else {
                     WireLogger.conversation.error("OneOnOneResolver initialization failed or qualifiedTo is nil")
