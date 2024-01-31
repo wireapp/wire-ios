@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public typealias TeamMembership = Membership
-public typealias Membership = Member
-
+public typealias TeamMembership = Member
 @objcMembers public class Member: ZMManagedObject {
 
     @NSManaged public var team: Team?

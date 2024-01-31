@@ -237,6 +237,8 @@
 		55C40BCE22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */; };
 		55C40BD722B0F78500EFD8BD /* ZMUserLegalHoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C40BD422B0F75C00EFD8BD /* ZMUserLegalHoldTests.swift */; };
 		590C55752B62BF0000FC1CE8 /* MLSGroupID+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590C55742B62BF0000FC1CE8 /* MLSGroupID+random.swift */; };
+		591942B62B6A4B4D0000B390 /* UserChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591942B52B6A4B4D0000B390 /* UserChangeObserver.swift */; };
+		591942B82B6A4BCC0000B390 /* BlockBasedUserChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591942B72B6A4BCC0000B390 /* BlockBasedUserChangeObserver.swift */; };
 		594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */; };
 		597A3BB42B6416CA0020E337 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB32B6416CA0020E337 /* Availability.swift */; };
 		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
@@ -1078,6 +1080,8 @@
 		55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+LegalHoldRequest.swift"; sourceTree = "<group>"; };
 		55C40BD422B0F75C00EFD8BD /* ZMUserLegalHoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUserLegalHoldTests.swift; sourceTree = "<group>"; };
 		590C55742B62BF0000FC1CE8 /* MLSGroupID+random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MLSGroupID+random.swift"; sourceTree = "<group>"; };
+		591942B52B6A4B4D0000B390 /* UserChangeObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChangeObserver.swift; sourceTree = "<group>"; };
+		591942B72B6A4BCC0000B390 /* BlockBasedUserChangeObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockBasedUserChangeObserver.swift; sourceTree = "<group>"; };
 		594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		5972D9792B480E790089D1D3 /* CoreCryptoProtocolExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoProtocolExt.swift; sourceTree = "<group>"; };
 		597A3BB32B6416CA0020E337 /* Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Availability.swift; sourceTree = "<group>"; };
@@ -2797,6 +2801,7 @@
 				F99C5B891ED460E20049CCD7 /* TeamChangeInfo.swift */,
 				1672A613234499B500380537 /* LabelChangeInfo.swift */,
 				A995F05B23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift */,
+				591942B52B6A4B4D0000B390 /* UserChangeObserver.swift */,
 			);
 			path = ObjectObserverTokens;
 			sourceTree = "<group>";
@@ -2805,10 +2810,11 @@
 			isa = PBXGroup;
 			children = (
 				F9A7062C1CAEE01D00C2F5FE /* AnyClassTuple.swift */,
+				591942B72B6A4BCC0000B390 /* BlockBasedUserChangeObserver.swift */,
 				F9A7062D1CAEE01D00C2F5FE /* DependentObjectsKeysForObservedObjectKeysCache.swift */,
-				F9A7062E1CAEE01D00C2F5FE /* StringKeyPath.swift */,
 				F9A7062F1CAEE01D00C2F5FE /* KeySet.swift */,
 				F9A706331CAEE01D00C2F5FE /* SetSnapshot.swift */,
+				F9A7062E1CAEE01D00C2F5FE /* StringKeyPath.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -3722,6 +3728,7 @@
 			files = (
 				EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */,
 				63B74CBD2AE1715000A73006 /* ProteusToMLSMigrationCoordinator.swift in Sources */,
+				591942B62B6A4B4D0000B390 /* UserChangeObserver.swift in Sources */,
 				BF1B98041EC313C600DE033B /* Team.swift in Sources */,
 				A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */,
 				165124D82189AE90006A3C75 /* ZMAssetClientMessage+Quotes.swift in Sources */,
@@ -4097,6 +4104,7 @@
 				0642A3332445F2B600DCCFCD /* ZMClientMessage+UpdateEvent.swift in Sources */,
 				EEAAD75C252C6DAE00E6A44E /* ModifiedObjects.swift in Sources */,
 				EE5E2C1526DFC31900C3928A /* MessageDestructionTimeoutType.swift in Sources */,
+				591942B82B6A4BCC0000B390 /* BlockBasedUserChangeObserver.swift in Sources */,
 				F991CE1B1CB561B0004D8465 /* ZMAddressBookContact.m in Sources */,
 				63B1335C29A503D100009D84 /* MLSService.swift in Sources */,
 				6391A7FA2A6FD6FC00832665 /* MappingModel_2.106-2.107.xcmappingmodel in Sources */,

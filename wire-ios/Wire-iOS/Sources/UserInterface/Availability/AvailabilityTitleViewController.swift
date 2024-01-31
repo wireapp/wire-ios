@@ -29,8 +29,10 @@ final class AvailabilityTitleViewController: UIViewController {
     let userSession: UserSession
 
     var availabilityTitleView: AvailabilityTitleView? {
-        return view as? AvailabilityTitleView
+        view as? AvailabilityTitleView
     }
+
+    private var userChangeObserver: UserChangeObserver?
 
     init(user: UserType, options: AvailabilityTitleView.Options, userSession: UserSession) {
         self.user = user
@@ -45,7 +47,12 @@ final class AvailabilityTitleViewController: UIViewController {
     }
 
     override func loadView() {
-        view = AvailabilityTitleView(user: user, options: options, userSession: userSession)
+        view = UserStatusView(
+            user: user,
+            options: options,
+            userSession: userSession
+        )
+        setupNotificationObservation()
     }
 
     override func viewDidLoad() {
@@ -91,4 +98,30 @@ final class AvailabilityTitleViewController: UIViewController {
         feedbackGenerator.impactOccurred()
     }
 
+    // MARK: - Notifications
+
+    private func setupNotificationObservation() {
+        // refresh view when app becomes active
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateUserStatusView),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
+        // refresh view when some user info changes
+        let userChangeObserver = BlockBasedUserChangeObserver { [weak self] changes in
+            if changes.nameChanged || changes.availabilityChanged {
+                self?.updateUserStatusView()
+            }
+        }
+        userChangeObserver.observationToken = userSession.addUserObserver(userChangeObserver, for: user)
+        self.userChangeObserver = userChangeObserver
+    }
+
+    @objc
+    private func updateUserStatusView() {
+        let view = view as! UserStatusView
+        view.updateConfiguration()
+    }
 }
