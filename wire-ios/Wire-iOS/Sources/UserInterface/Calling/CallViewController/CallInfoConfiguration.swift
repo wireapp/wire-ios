@@ -262,6 +262,19 @@ extension VoiceChannel {
         return participants(ofKind: .all, activeSpeakersLimit: CallInfoConfiguration.maxActiveSpeakers)
     }
 
+    var degradationState: CallDegradationState {
+        guard let degradationReason else { return .none }
+
+        switch state {
+        case .incoming(video: _, shouldRing: _, degraded: true):
+            return .incoming(reason: degradationReason)
+        case .answered(degraded: true), .outgoing(degraded: true):
+            return .outgoing(reason: degradationReason)
+        default:
+            return .none
+        }
+    }
+
     private var hashboxFirstDegradedUser: HashBoxUser? {
         guard let firstDegradedUser = firstDegradedUser else {
             return nil
@@ -270,14 +283,14 @@ extension VoiceChannel {
         return HashBox(value: firstDegradedUser)
     }
 
-    var degradationState: CallDegradationState {
-        switch state {
-        case .incoming(video: _, shouldRing: _, degraded: true):
-            return .incoming(degradedUser: hashboxFirstDegradedUser)
-        case .answered(degraded: true), .outgoing(degraded: true):
-            return .outgoing(degradedUser: hashboxFirstDegradedUser)
-        default:
-            return .none
+    private var degradationReason: CallDegradationReason? {
+        guard let conversation else { return nil }
+
+        switch conversation.messageProtocol {
+        case .mls, .mixed:
+            return .invalidCertificate
+        case .proteus:
+            return .degradedUser(user: hashboxFirstDegradedUser)
         }
     }
 

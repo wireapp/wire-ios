@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class ActiveCallRouterTests: XCTestCase {
+class ActiveCallRouterTests: ZMSnapshotTestCase {
 
     var sut: ActiveCallRouter!
     var userSession: UserSessionMock!
@@ -74,7 +74,7 @@ class ActiveCallRouterTests: XCTestCase {
 
     func testThat_ItSetIsActiveCallShown_ToFalse_When_RestoringCallFromTopOverlay() {
         // given
-        let conversation = ((MockConversation.oneOnOneConversation() as Any) as! ZMConversation)
+        let conversation = createOneToOneConversation()
         let voiceChannel = MockVoiceChannel(conversation: conversation)
         let mockSelfClient = MockUserClient()
         mockSelfClient.remoteIdentifier = "selfClient123"
@@ -87,6 +87,29 @@ class ActiveCallRouterTests: XCTestCase {
 
         // then
         XCTAssertFalse(sut.isActiveCallShown)
+    }
+
+    private func createOneToOneConversation() -> ZMConversation {
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = UUID()
+        otherUser.name = "Bruno"
+
+        let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
+        mockConversation.messageProtocol = .proteus
+        mockConversation.add(participants: selfUser)
+
+        mockConversation.conversationType = .oneOnOne
+        mockConversation.remoteIdentifier = UUID.create()
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
+        connection.to = otherUser
+        connection.status = .accepted
+        connection.conversation = mockConversation
+
+        connection.add(user: otherUser)
+
+        return mockConversation
     }
 
 }

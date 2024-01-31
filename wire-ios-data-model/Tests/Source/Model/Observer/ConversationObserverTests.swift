@@ -843,6 +843,41 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssertTrue(securityNotification.securityLevelChanged)
     }
 
+    func testThatItNotifiesAboutSecurityLevelChange_SendingMessageToDegradedMlsConversation() throws {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.messageProtocol = .mls
+        conversation.mlsVerificationStatus = .degraded
+        self.uiMOC.saveOrRollback()
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        let observer = ConversationObserver()
+        self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
+
+        // when
+        try conversation.appendText(content: "Foo")
+        self.uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(observer.notifications.count, 2)
+
+        guard
+            let first = observer.notifications.first,
+            let second = observer.notifications.last
+        else {
+            return
+        }
+
+        // We get two notifications - one for messages added and another for non-core data change
+        let messagesNotification = first.messagesChanged ? first : second
+        let verificationStatusNotification = first.mlsVerificationStatusChanged ? first : second
+
+        XCTAssertTrue(messagesNotification.messagesChanged)
+        XCTAssertTrue(verificationStatusNotification.mlsVerificationStatusChanged)
+    }
+
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
 
         // given

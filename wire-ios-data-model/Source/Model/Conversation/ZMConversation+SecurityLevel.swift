@@ -369,12 +369,26 @@ extension ZMConversation {
 // MARK: - Messages resend/expiration
 extension ZMConversation {
 
+    public var isDegraded: Bool {
+        switch messageProtocol {
+        case .proteus, .mixed:
+            return securityLevel == .secureWithIgnored
+        case .mls:
+            return mlsVerificationStatus == .degraded
+        }
+    }
+
     private func acknowledgePrivacyChanges() {
         precondition(managedObjectContext?.zm_isUserInterfaceContext == true)
 
         // Downgrade the conversation to be unverified
-        if securityLevel == .secureWithIgnored {
-            securityLevel = .notSecure
+        if isDegraded {
+            switch messageProtocol {
+            case .proteus, .mixed:
+                securityLevel = .notSecure
+            case .mls:
+                mlsVerificationStatus = .notVerified
+            }
         }
 
         // Accept legal hold
