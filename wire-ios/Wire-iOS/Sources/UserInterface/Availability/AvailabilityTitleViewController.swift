@@ -48,10 +48,10 @@ final class AvailabilityTitleViewController: UIViewController {
 
     override func loadView() {
         view = UserStatusView(
-            user: user,
             options: options,
             userSession: userSession
         )
+        updateUserStatusView()
         setupNotificationObservation()
     }
 
@@ -64,8 +64,8 @@ final class AvailabilityTitleViewController: UIViewController {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            availabilityTitleView?.updateConfiguration()
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            updateUserStatusView()
         }
     }
 
@@ -122,6 +122,11 @@ final class AvailabilityTitleViewController: UIViewController {
     @objc
     private func updateUserStatusView() {
         let view = view as! UserStatusView
-        view.updateConfiguration()
+        view.userStatus = .init(
+            name: user.name ?? "",
+            availability: user.availability,
+            isCertified: false,
+            isVerified: false
+        )
     }
 }

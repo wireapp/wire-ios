@@ -21,27 +21,30 @@ import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
 
-typealias UserStatusView = AvailabilityTitleView
+typealias AvailabilityTitleView = UserStatusView
 
 /// A title view subclass that displays the availability of the user.
-final class AvailabilityTitleView: TitleView {
+final class UserStatusView: TitleView {
 
     // MARK: - Properties
 
-    private let user: UserType
     private let options: Options
+    public var userStatus = UserStatus(name: "", availability: .none, isCertified: false, isVerified: false) {
+        didSet {
+            updateConfiguration()
+        }
+    }
 
     // MARK: - Initialization
 
     /// Creates a view for the specific user and options.
-    /// - parameter user: The user to display the availability of.
     /// - parameter options: The options to display the availability.
-    init(user: UserType, options: Options, userSession: UserSession) {
+    init(
+        options: Options,
+        userSession: UserSession
+    ) {
         self.options = options
-        self.user = user
-
         super.init()
-
         updateConfiguration()
     }
 
@@ -61,7 +64,7 @@ final class AvailabilityTitleView: TitleView {
     }
 
     /// Refreshes the content and appearance of the view.
-    func updateConfiguration() {
+    private func updateConfiguration() {
         updateAppearance()
         updateContent()
     }
@@ -70,7 +73,7 @@ final class AvailabilityTitleView: TitleView {
     private func updateContent() {
         typealias AvailabilityStatusStrings = L10n.Accessibility.AccountPage.AvailabilityStatus
 
-        let availability = user.availability
+        let availability = userStatus.availability
         let fontStyle: FontSize = options.contains(.useLargeFont) ? .normal : .small
         let icon = AvailabilityStringBuilder.icon(
             for: availability,
@@ -81,7 +84,7 @@ final class AvailabilityTitleView: TitleView {
         var title = ""
 
         if options.contains(.displayUserName) {
-            title = user.name ?? ""
+            title = userStatus.name
             accessibilityLabel = title
         } else if availability == .none && options.contains(.allowSettingStatus) {
             title = L10n.Localizable.Availability.Message.setStatus
