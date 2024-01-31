@@ -365,11 +365,14 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     self?.startRegistration(unverifiedCredential)
                 }
 
-            case .setUserName(let userName):
-                updateUnregisteredUser(\.name, userName)
+            case .setFullName(let fullName):
+                updateUnregisteredUser(\.name, fullName)
 
             case .setUserPassword(let password):
                 updateUnregisteredUser(\.password, password)
+
+            case .setUsername(let username):
+                updateUsername(username)
 
             case .updateBackendEnvironment(let url):
                 companyLoginController?.updateBackendEnvironment(with: url)
@@ -874,6 +877,33 @@ extension AuthenticationCoordinator {
                 self?.sessionManager.markNetworkSessionsAsReady(false)
             }
             action(error)
+        }
+    }
+
+    private func updateUsername(_ username: String) {
+        typealias AlreadyTakenError = L10n.Localizable.Registration.Signin.Username.AlreadyTakenError
+        typealias UnknownError = L10n.Localizable.Registration.Signin.Username.UnknownError
+
+        let changeUsername = statusProvider.sharedUserSession?.changeUsername
+
+        Task {
+            do {
+                try await changeUsername?.invoke(username: username)
+            } catch let error as ChangeUsernameError {
+                await MainActor.run {
+                    let alert = switch error {
+                    case .taken:
+                        AuthenticationCoordinatorAlert(title: AlreadyTakenError.title,
+                                                       message: AlreadyTakenError.message,
+                                                       actions: [.ok])
+                    case .unknown:
+                        AuthenticationCoordinatorAlert(title: UnknownError.title,
+                                                       message: UnknownError.message,
+                                                       actions: [.ok])
+                    }
+                    executeAction(.presentAlert(alert))
+                }
+            }
         }
     }
 }

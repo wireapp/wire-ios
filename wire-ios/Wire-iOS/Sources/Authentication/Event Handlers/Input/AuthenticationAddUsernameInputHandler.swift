@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,25 @@
 
 import Foundation
 
-extension ZMConnection {
+/**
+ * Handles the input of the username after login if the user doesn't have one.
+ */
 
-    /// add a user to connection's conversation, if not there already
-    /// - Parameter user: the user to insert
-    @objc
-    public func add(user: ZMUser) {
-        conversation?.addParticipantAndUpdateConversationState(user: user, role: nil)
+class AuthenticationAddUsernameInputHandler: AuthenticationEventHandler {
+
+    weak var statusProvider: AuthenticationStatusProvider?
+
+    func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {
+        // Only handle input during the add username phase.
+        guard case .addUsername = currentStep else {
+            return nil
+        }
+
+        guard let handle = context as? String else {
+            return nil
+        }
+
+        return [.setUsername(handle)]
     }
+
 }
