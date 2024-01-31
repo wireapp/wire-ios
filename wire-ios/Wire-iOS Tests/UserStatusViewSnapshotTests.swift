@@ -21,12 +21,12 @@ import XCTest
 @testable import Wire
 @testable import WireSyncEngineSupport
 
-final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
+final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
 
     var selfUser: ZMUser!
     var otherUser: ZMUser!
     var userSession: UserSessionMock!
-    var sut: AvailabilityTitleView!
+    var sut: UserStatusView!
 
     override func setUp() {
         super.setUp()
