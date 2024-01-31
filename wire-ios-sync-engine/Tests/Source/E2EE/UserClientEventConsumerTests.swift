@@ -33,7 +33,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
 
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
 
-            self.clientRegistrationStatus = ZMMockClientRegistrationStatus(managedObjectContext: self.syncMOC,
+            self.clientRegistrationStatus = ZMMockClientRegistrationStatus(context: self.syncMOC,
                                                                            cookieStorage: self.cookieStorage)
 
             self.sut = UserClientEventConsumer(managedObjectContext: self.syncMOC,
@@ -47,7 +47,6 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     override func tearDown() {
-        self.clientRegistrationStatus.tearDown()
         self.clientRegistrationStatus = nil
         self.clientUpdateStatus = nil
         self.sut = nil

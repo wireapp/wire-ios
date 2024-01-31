@@ -21,11 +21,9 @@
 @import WireDataModel;
 
 #import "MessagingTest.h"
-#import "ZMClientRegistrationStatus.h"
 #import "ZMCredentials.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "Tests-Swift.h"
-#import "ZMClientRegistrationStatus+Internal.h"
 #import "NSError+ZMUserSession.h"
 
 @interface FakeCredentialProfider : NSObject <ZMCredentialProvider>
@@ -63,9 +61,7 @@
     self.mockCookieStorage = [OCMockObject niceMockForClass:[ZMPersistentCookieStorage class]];
     self.mockClientRegistrationDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMClientRegistrationStatusDelegate)];
     [[[self.mockCookieStorage stub] andReturn:[NSData data]] authenticationCookieData];
-    
-    self.sut = [[ZMClientRegistrationStatus alloc] initWithManagedObjectContext:self.syncMOC
-                                                                  cookieStorage:self.mockCookieStorage];
+    self.sut = [[ZMClientRegistrationStatus alloc] initWithContext:self.syncMOC cookieStorage:self.mockCookieStorage];
     self.sut.registrationStatusDelegate = self.mockClientRegistrationDelegate;
 }
 
@@ -73,7 +69,6 @@
 {
     self.mockCookieStorage = nil;
     self.mockClientRegistrationDelegate = nil;
-    [self.sut tearDown];
     self.sut = nil;
     
     [super tearDown];
