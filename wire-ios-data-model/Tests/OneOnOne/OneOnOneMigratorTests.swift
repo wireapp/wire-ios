@@ -161,9 +161,14 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // When
         try await uiMOC.perform {
-            try proteusConversation.appendText(content: "Hello World!")
-            try proteusConversation.appendKnock()
-            try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            var message = try proteusConversation.appendText(content: "Hello World!")
+            message.updateServerTimestamp(with: 0)
+
+            message = try proteusConversation.appendKnock()
+            message.updateServerTimestamp(with: 1)
+
+            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message.updateServerTimestamp(with: 2)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
             XCTAssertNil(mlsConversation.lastMessage)
