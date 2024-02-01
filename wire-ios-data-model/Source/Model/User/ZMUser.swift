@@ -203,7 +203,7 @@ public struct AssetKey {
 }
 
 extension ProfileImageSize: CustomDebugStringConvertible {
-     public var debugDescription: String {
+    public var debugDescription: String {
         switch self {
         case .preview:
             return "ProfileImageSize.preview"
@@ -452,11 +452,7 @@ extension ZMUser: UserConnections {
             case .success:
                 Task {
                     do {
-                        guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
-                            completion(AcceptConnectionError.unableToResolveConversation)
-                            return
-                        }
-
+                        let resolver: OneOnOneResolverInterface = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
                         try await resolver.resolveOneOnOneConversation(
                             with: QualifiedID(uuid: userID, domain: domain),
                             in: context
@@ -469,7 +465,6 @@ extension ZMUser: UserConnections {
                             completion(error)
                         }
                     }
-
                 }
 
             case .failure(let error):
