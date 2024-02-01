@@ -243,10 +243,8 @@ extension ZMUser {
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
     @NSManaged public var needsToRefetchLabels: Bool
 
-    @NSManaged private var primitiveDomain: String?
-
     static let domainKey: String = "domain"
-
+    @NSManaged private var primitiveDomain: String?
     public var domain: String? {
         get {
             willAccessValue(forKey: Self.domainKey)
@@ -263,18 +261,13 @@ extension ZMUser {
         }
     }
 
-    @NSManaged private var primitiveRemoteIdentifier: String?
-
     static let remoteIdentifierKey: String = "remoteIdentifier"
-
+    @NSManaged private var primitiveRemoteIdentifier: String?
     // keep the same as objc non_specified for now
     public var remoteIdentifier: UUID! {
         get {
             willAccessValue(forKey: Self.remoteIdentifierKey)
             let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
-//            guard let value = self.transientUUID(forKey: Self.remoteIdentifierKey) else {
-//                fatal("trying to access MLSGroup ID before setting it")
-//            }
             didAccessValue(forKey: "remoteIdentifier")
             return value
         }
@@ -291,6 +284,10 @@ extension ZMUser {
     @NSManaged private var primaryKey: String
 
     private func updatePrimaryKey(remoteIdentifier: UUID?, domain: String?) {
+        guard entity.attributesByName["primaryKey"] != nil else {
+            // trying to access primaryKey property from older model - tests
+            return
+        }
         primaryKey = "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
     }
 

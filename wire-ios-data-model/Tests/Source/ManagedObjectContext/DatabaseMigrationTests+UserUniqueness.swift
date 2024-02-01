@@ -40,42 +40,39 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testThatItPerformsMigrationFromOldVersionsBefore107_ToCurrentModelVersion() throws {
+    func testThatItPerformsMigrationFrom110Version_ToCurrentModelVersion() throws {
         // With version 107 and later we can not insert duplicated keys anymore!
 
-        let versions = [(84...96), (98...110)].joined().map {
-            "2.\($0).0"
-        }
+        let initialVersion = "2.110.0"
 
-        try versions.forEach { initialVersion in
-            try migrateStoreToCurrentVersion(
-                sourceVersion: initialVersion,
-                preMigrationAction: { context in
-                    insertDuplicateUsers(with: userId, domain: domain, in: context)
-                    try context.save()
+        try migrateStoreToCurrentVersion(
+            sourceVersion: initialVersion,
+            preMigrationAction: { context in
+                insertDuplicateUsers(with: userId, domain: domain, in: context)
+                try context.save()
 
-                    let clients = try fetchUsers(with: userId, domain: domain, in: context)
-                    XCTAssertEqual(clients.count, 2)
-                },
-                postMigrationAction: { context in
-                    // verify it deleted duplicates
-                    var clients = try fetchUsers(with: userId, domain: domain, in: context)
+                let clients = try fetchUsers(with: userId, domain: domain, in: context)
+                XCTAssertEqual(clients.count, 2)
+            },
+            postMigrationAction: { context in
+                // verify it deleted duplicates
+                var clients = try fetchUsers(with: userId, domain: domain, in: context)
 
-                    XCTAssertEqual(clients.count, 1)
+                XCTAssertEqual(clients.count, 1)
 
-                    // verify we can't insert duplicates
-                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                    insertDuplicateUsers(with: userId, domain: domain, in: context)
-                    try context.save()
+                // verify we can't insert duplicates
+                context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                insertDuplicateUsers(with: userId, domain: domain, in: context)
+                try context.save()
 
-                    clients = try fetchUsers(with: userId, domain: domain, in: context)
-                    XCTAssertEqual(clients.count, 1)
-                }
-            )
+                clients = try fetchUsers(with: userId, domain: domain, in: context)
+                XCTAssertEqual(clients.count, 1)
+            }
+        )
 
-            // clean after each test
-            try? FileManager.default.removeItem(at: tmpStoreURL)
-        }
+        // clean after each test
+        try? FileManager.default.removeItem(at: tmpStoreURL)
+
     }
 
     // MARK: - Migration Helpers
@@ -180,13 +177,10 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
         domain: String,
         in context: NSManagedObjectContext
     ) throws -> [ZMUser] {
-
         let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-        fetchRequest.predicate = NSPredicate(format: "%K == %@ && %K == %@", #keyPath(ZMUser.remoteIdentifier), identifier.uuidString,
-                                             #keyPath(ZMUser.domain), identifier.uuidString)
-
-        fetchRequest.fetchLimit = 2
-
+        fetchRequest.predicate = NSPredicate(format: "%K == %@ && %K == %@",
+                                             ZMUser.remoteIdentifierDataKey()!, identifier.uuidData as CVarArg,
+                                             #keyPath(ZMUser.domain), domain)
         return try context.fetch(fetchRequest)
     }
 

@@ -59,7 +59,7 @@ struct CoreDataMessagingMigrationStep {
         toDestinationModel destinationModel: NSManagedObjectModel
     ) throws -> NSMappingModel {
         guard let customMapping = customMappingModel(fromSourceModel: sourceModel, toDestinationModel: destinationModel) else {
-            return try inferredMappingModel(fromSourceModel:sourceModel, toDestinationModel: destinationModel)
+            return try inferredMappingModel(fromSourceModel: sourceModel, toDestinationModel: destinationModel)
         }
         return customMapping
     }
