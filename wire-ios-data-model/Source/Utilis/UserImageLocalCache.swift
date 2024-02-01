@@ -104,8 +104,8 @@ extension NSManagedObjectContext {
             largeUserImageCache.removeObject(forKey: completeKey)
         }
 
-        if let completeKey = user.imageCacheKey(for: .preview) {
-            smallUserImageCache.removeObject(forKey: completeKey)
+        if let previewKey = user.imageCacheKey(for: .preview) {
+            smallUserImageCache.removeObject(forKey: previewKey)
         }
     }
 

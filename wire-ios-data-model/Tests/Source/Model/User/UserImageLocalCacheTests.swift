@@ -40,8 +40,8 @@ final class UserImageLocalCacheTests: XCTestCase {
         testUser = await context.perform {
             let testUser = ZMUser.insertNewObject(in: self.context)
             testUser.remoteIdentifier = uuid
-            testUser.previewProfileAssetIdentifier = "preview-\(uuid.uuidString)"
-            testUser.completeProfileAssetIdentifier = "complete-\(uuid.uuidString)"
+            testUser.previewProfileAssetIdentifier = "preview"
+            testUser.completeProfileAssetIdentifier = "complete"
             return testUser
         }
 
