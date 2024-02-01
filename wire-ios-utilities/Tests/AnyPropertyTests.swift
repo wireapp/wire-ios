@@ -21,7 +21,7 @@ import WireUtilities
 
 // MARK: Type Erased Scenario
 
-protocol Message: class {
+protocol Message: AnyObject {
     associatedtype Content
     var content: Content { get set }
     var sender: String { get }

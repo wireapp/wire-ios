@@ -100,10 +100,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
         initialisatingMLS = false
         hasInitialisedMLS = true
-        resumeInitialiseMlsContinuations(with: .success())
+        resumeInitialiseMlsContinuations(with: .success(()))
     }
 
-    private func resumeInitialiseMlsContinuations(with result: Swift.Result<Void, Error>) {
+    private func resumeInitialiseMlsContinuations(with result: Result<Void, Error>) {
         for continuation in initialiseMlsContinuations {
             continuation.resume(with: result)
         }
@@ -142,7 +142,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    private func resumeCoreCryptoContinuations(with result: Swift.Result<SafeCoreCrypto, Error>) {
+    private func resumeCoreCryptoContinuations(with result: Result<SafeCoreCrypto, Error>) {
         for continuation in coreCryptoContinuations {
             continuation.resume(with: result)
         }

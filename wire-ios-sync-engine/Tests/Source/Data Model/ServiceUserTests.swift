@@ -294,7 +294,7 @@ final class ServiceUserTests: IntegrationTest {
         let conversation = self.conversation(for: self.groupConversation)!
 
         // when
-        var result: Swift.Result<Void, Error>!
+        var result: Result<Void, Error>!
         conversation.add(serviceUser: service, in: userSession!) {
             result = $0
             jobIsDone.fulfill()
@@ -312,8 +312,13 @@ final class ServiceUserTests: IntegrationTest {
         let service = self.createService()
 
         // when
-        service.createConversation(in: userSession!) { (result) in
-            XCTAssertNotNil(result.value)
+        service.createConversation(in: userSession!) { result in
+            switch result {
+            case .success:
+                break
+            case .failure:
+                XCTFail("expected '.success'")
+            }
             jobIsDone.fulfill()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
