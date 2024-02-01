@@ -24,11 +24,8 @@ public protocol CoreCryptoProviderProtocol {
 
     /// Retrieve the shared core crypto instance or create one if one does not yet exist.
     ///
-    /// - parameters:
-    ///   - requireMLS: if true the core crypto instance will be configured for MLS
-    ///
     /// This function is safe to be called concurrently from multiple Tasks
-    func coreCrypto(requireMLS: Bool) async throws -> SafeCoreCryptoProtocol
+    func coreCrypto() async throws -> SafeCoreCryptoProtocol
 
     /// Initialise an new MLS client with basic credentials
     ///
@@ -73,13 +70,13 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
     }
 
-    public func coreCrypto(requireMLS: Bool = false) async throws -> SafeCoreCryptoProtocol {
+    public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
         return try await getCoreCrypto()
     }
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
-        _ = try await coreCrypto(requireMLS: false).perform { coreCrypto in
+        _ = try await coreCrypto().perform { coreCrypto in
             try await coreCrypto.mlsInit(
                 clientId: mlsClientID.clientID.utf8Data!, // TODO: [jacob] don't force unwrap
                 ciphersuites: [CiphersuiteName.default.rawValue],
@@ -91,7 +88,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws {
         WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
-        try await coreCrypto(requireMLS: false).perform { coreCrypto in
+        try await coreCrypto().perform { coreCrypto in
             _ = try await coreCrypto.e2eiMlsInitOnly(
                 enrollment: enrollment,
                 certificateChain: certificateChain,

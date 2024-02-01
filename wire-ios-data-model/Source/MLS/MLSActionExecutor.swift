@@ -54,7 +54,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
-            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 

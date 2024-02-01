@@ -31,7 +31,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
-            try await coreCryptoProvider.coreCrypto(requireMLS: false)
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 
