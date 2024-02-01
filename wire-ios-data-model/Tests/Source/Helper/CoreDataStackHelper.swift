@@ -21,7 +21,19 @@ import Foundation
 struct CoreDataStackHelper {
     private let fileManager = FileManager.default
 
-    var storageDirectory: URL { fileManager.temporaryDirectory }
+    var storageDirectory: URL {
+        var path = fileManager.temporaryDirectory
+        if #available(iOS 16, *) {
+            path.append(path: "CoreDataStackHelper", directoryHint: .isDirectory)
+        } else {
+            path.appendPathComponent("CoreDataStackHelper", isDirectory: true)
+        }
+        return path
+    }
+
+    func createStack() async throws -> CoreDataStack {
+        try await createStack(at: storageDirectory)
+    }
 
     @MainActor
     func createStack(at directory: URL) async throws -> CoreDataStack {
@@ -42,6 +54,10 @@ struct CoreDataStackHelper {
                 }
             }
         }
+    }
+
+    func cleanupDirectory() throws {
+        try cleanupDirectory(storageDirectory)
     }
 
     func cleanupDirectory(_ url: URL) throws {
