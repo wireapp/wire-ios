@@ -32,12 +32,16 @@ final class UserImageLocalCacheTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
 
+        let uuid = UUID()
+
         coreDataStack = try await coreDataStackHelper.createStack(at: coreDataStackHelper.storageDirectory)
         context = coreDataStack.viewContext
 
         testUser = await context.perform {
             let testUser = ZMUser.insertNewObject(in: self.context)
-            testUser.remoteIdentifier = UUID()
+            testUser.remoteIdentifier = uuid
+            testUser.previewProfileAssetIdentifier = "preview-\(uuid.uuidString)"
+            testUser.completeProfileAssetIdentifier = "complete-\(uuid.uuidString)"
             return testUser
         }
 
@@ -62,7 +66,6 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     func testThatPersistedDataCanBeRetrievedAsynchronously() {
         // given
-        testUser.setV3PictureIdentifiers()
         let largeData = "LARGE".data(using: .utf8)!
         let smallData = "SMALL".data(using: .utf8)!
 
@@ -74,12 +77,12 @@ final class UserImageLocalCacheTests: XCTestCase {
         // then
         let previewImageArrived = expectation(description: "Preview image arrived")
         let completeImageArrived = expectation(description: "Complete image arrived")
-        sut.userImage(testUser, size: .preview, queue: .global()) { (smallDataResult) in
+        sut.userImage(testUser, size: .preview, queue: .global()) { smallDataResult in
             XCTAssertEqual(smallDataResult, smallData)
             previewImageArrived.fulfill()
         }
 
-        sut.userImage(testUser, size: .complete, queue: .global()) { (largeDataResult) in
+        sut.userImage(testUser, size: .complete, queue: .global()) { largeDataResult in
             XCTAssertEqual(largeDataResult, largeData)
             completeImageArrived.fulfill()
         }
@@ -90,17 +93,15 @@ final class UserImageLocalCacheTests: XCTestCase {
     // MARK: - Storing
 
     func testThatItHasNilDataWhenNotSetForV3() {
-        testUser.setV3PictureIdentifiers()
         XCTAssertNil(sut.userImage(testUser, size: .preview))
         XCTAssertNil(sut.userImage(testUser, size: .complete))
     }
 
-    func testThatItSetsSmallAndLargeUserImageForV3() {
+    func testThatItSetsSmallAndLargeUserImageForV3() throws {
 
         // given
-        testUser.setV3PictureIdentifiers()
-        let largeData = "LARGE".data(using: .utf8)!
-        let smallData = "SMALL".data(using: .utf8)!
+        let largeData = try XCTUnwrap("LARGE".data(using: .utf8))
+        let smallData = try XCTUnwrap("SMALL".data(using: .utf8))
 
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
@@ -112,12 +113,11 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     }
 
-    func testThatItPersistsSmallAndLargeUserImageForV3() {
+    func testThatItPersistsSmallAndLargeUserImageForV3() throws {
 
         // given
-        testUser.setV3PictureIdentifiers()
-        let largeData = "LARGE".data(using: .utf8)!
-        let smallData = "SMALL".data(using: .utf8)!
+        let largeData = try XCTUnwrap("LARGE".data(using: .utf8))
+        let smallData = try XCTUnwrap("SMALL".data(using: .utf8))
 
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
@@ -131,13 +131,12 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     // MARK: - Retrieval
 
-    func testThatItReturnsV3AssetsWhenPresent() {
+    func testThatItReturnsV3AssetsWhenPresent() throws {
         // given
-        let largeData = "LARGE".data(using: .utf8)!
-        let smallData = "SMALL".data(using: .utf8)!
+        let largeData = try XCTUnwrap("LARGE".data(using: .utf8))
+        let smallData = try XCTUnwrap("SMALL".data(using: .utf8))
 
         // when
-        testUser.setV3PictureIdentifiers()
         XCTAssertNil(sut.userImage(testUser, size: .complete))
         XCTAssertNil(sut.userImage(testUser, size: .preview))
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
@@ -150,11 +149,18 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     // MARK: - Removal
 
-    func testThatItRemovesAllImagesFromCache() {
+    func testThatItRemovesAllImagesFromCache() throws {
         // given
-        testUser.setV3PictureIdentifiers()
-        sut.setUserImage(testUser, imageData: "baz".data(using: .utf8)!, size: .complete)
-        sut.setUserImage(testUser, imageData: "moo".data(using: .utf8)!, size: .preview)
+        sut.setUserImage(
+            testUser,
+            imageData: try XCTUnwrap("baz".data(using: .utf8)),
+            size: .complete
+        )
+        sut.setUserImage(
+            testUser,
+            imageData: try XCTUnwrap("moo".data(using: .utf8)),
+            size: .preview
+        )
 
         // when
         sut.removeAllUserImages(testUser)
@@ -163,15 +169,4 @@ final class UserImageLocalCacheTests: XCTestCase {
         XCTAssertNil(sut.userImage(testUser, size: .complete))
         XCTAssertNil(sut.userImage(testUser, size: .preview))
     }
-}
-
-// MARK: - ZMUser Extension
-
-private extension ZMUser {
-
-    func setV3PictureIdentifiers() {
-        previewProfileAssetIdentifier = UUID.create().transportString()
-        completeProfileAssetIdentifier = UUID.create().transportString()
-    }
-
 }
