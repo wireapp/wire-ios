@@ -414,16 +414,6 @@ static NSString *const PrimaryKey = @"primaryKey";
     return [self fetchObjectsWithRemoteIdentifiers:UUIDs inManagedObjectContext:moc];
 }
 
-- (NSUUID *)remoteIdentifier;
-{
-    return [self transientUUIDForKey:@"remoteIdentifier"];
-}
-
-- (void)setRemoteIdentifier:(NSUUID *)remoteIdentifier;
-{
-    [self setTransientUUID:remoteIdentifier forKey:@"remoteIdentifier"];
-}
-
 - (NSUUID *)teamIdentifier;
 {
     return [self transientUUIDForKey:@"teamIdentifier"];

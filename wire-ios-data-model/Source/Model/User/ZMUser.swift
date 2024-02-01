@@ -257,14 +257,34 @@ extension ZMUser {
             willChangeValue(forKey: "domain")
             primitiveDomain = newValue
             didChangeValue(forKey: "domain")
-            primaryKey = ...
+            updatePrimaryKey(remoteIdentifier: remoteIdentifier, domain: newValue)
         }
     }
 
-    @NSManaged private primaryKey: String
+    @NSManaged private var primitiveRemoteIdentifier: String?
+    // keep the same as objc non_specified for now
+    public var remoteIdentifier: UUID! {
+        get {
+            willAccessValue(forKey: "remoteIdentifier")
+            let value = self.transientUUID(forKey: "remoteIdentifier")
+            didAccessValue(forKey: "remoteIdentifier")
+            return value
+        }
+
+        set {
+            willChangeValue(forKey: "remoteIdentifier")
+            self.setTransientUUID(newValue, forKey: "remoteIdentifier")
+            didChangeValue(forKey: "remoteIdentifier")
+            updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
+        }
+    }
 
     /// combination of domain and remoteIdentifier
-    @NSManaged public var primaryKey: String?
+    @NSManaged private var primaryKey: String
+
+    private func updatePrimaryKey(remoteIdentifier: UUID?, domain: String?) {
+        primaryKey = "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
+    }
 
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
