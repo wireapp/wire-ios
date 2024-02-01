@@ -21,7 +21,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-final class AvailabilityTitleViewController: UIViewController {
+final class UserStatusViewController: UIViewController {
 
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
     private let options: UserStatusView.Options

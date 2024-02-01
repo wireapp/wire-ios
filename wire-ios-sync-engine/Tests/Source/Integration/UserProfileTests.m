@@ -124,9 +124,9 @@
     
     id editableUserObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
     id editableUserObserverToken = [self.userSession.userProfile addObserver:editableUserObserver];
-    
+
     [(id<ZMUserObserver>)[userObserver expect] userDidChange:OCMOCK_ANY]; // <- DONE: when receiving this, I know that the phone number was set
-    
+
     // expect
     XCTestExpectation *phoneNumberVerificationCodeExpectation = [self customExpectationWithDescription:@"phoneNumberVerificationCodeExpectation"];
     [[[editableUserObserver expect] andDo:^(NSInvocation *inv) {
