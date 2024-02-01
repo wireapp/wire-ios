@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public class CertificateRevocationListAPI: CertificateRevocationListAPIProtocol {
-    
     private let httpClient: HttpClientCustom
 
     public init(httpClient: HttpClientCustom = HttpClientE2EI()) {

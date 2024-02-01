@@ -36,7 +36,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto(requireMLS: true)
@@ -67,7 +66,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     }
 
     public func checkExpiringCRLs() async {
-        
         let distributionPointsOfExpiringCRLs = crlExpirationDatesRepository
             .fetchAllCRLExpirationDates()
             .filter({ isCRLExpiringSoon(expirationDate: $0.value) })

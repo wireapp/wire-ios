@@ -60,7 +60,6 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
     public func updateAllStatuses() async {
         let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
             let conversations = ZMConversation.fetchMLSConversations(in: syncContext)
-            
             return conversations.compactMap {
                 guard let groupID = $0.mlsGroupID else {
                     return nil

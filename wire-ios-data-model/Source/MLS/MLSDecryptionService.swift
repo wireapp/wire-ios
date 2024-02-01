@@ -25,7 +25,6 @@ import WireSystem
 public protocol MLSDecryptionServiceInterface {
 
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
-    
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
 
     func decrypt(
