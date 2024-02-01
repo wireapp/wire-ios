@@ -37,7 +37,7 @@ public enum ReadReceiptModeError: Error {
 extension ZMConversation {
 
     /// Enable or disable read receipts in a group conversation
-    public func setEnableReadReceipts(_ enabled: Bool, in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    public func setEnableReadReceipts(_ enabled: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(ReadReceiptModeError.unknown))
         }

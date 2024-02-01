@@ -89,7 +89,7 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
     // Expected response payload:
     // { "id": UUID, "payload": <Some update event> }
 
-    func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure> {
+    func parseResponse(_ response: NetworkResponse) -> Result<Output, Failure> {
         logger.trace("parsing response: \(response, privacy: .public)")
 
         switch response {
