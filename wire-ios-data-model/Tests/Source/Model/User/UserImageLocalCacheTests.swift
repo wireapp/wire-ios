@@ -28,26 +28,30 @@ final class UserImageLocalCacheTests: XCTestCase {
     var coreDataStack: CoreDataStack!
     var context: NSManagedObjectContext!
 
+    var testUserIdentifier: UUID!
     var testUser: ZMUser!
     var sut: UserImageLocalCache!
 
     override func setUp() async throws {
         try await super.setUp()
 
-        let uuid = UUID()
+        let testUserIdentifier = UUID()
+        self.testUserIdentifier = testUserIdentifier
 
         coreDataStack = try await coreDataStackHelper.createStack(at: tmpDirectory)
         context = coreDataStack.viewContext
 
         testUser = await context.perform {
             let testUser = ZMUser.insertNewObject(in: self.context)
-            testUser.remoteIdentifier = uuid
+            testUser.remoteIdentifier = testUserIdentifier
             testUser.previewProfileAssetIdentifier = "preview"
             testUser.completeProfileAssetIdentifier = "complete"
             return testUser
         }
 
-        sut = UserImageLocalCache(location: tmpDirectory)
+        debugPrint("this is before sut is touched")
+
+        sut = makeCache()
     }
 
     override func tearDown() async throws {
@@ -74,7 +78,7 @@ final class UserImageLocalCacheTests: XCTestCase {
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
         sut.setUserImage(testUser, imageData: smallData, size: .preview)
-        sut = UserImageLocalCache(location: tmpDirectory)
+        sut = makeCache()
 
         // then
         let previewImageArrived = expectation(description: "Preview image arrived")
@@ -124,7 +128,7 @@ final class UserImageLocalCacheTests: XCTestCase {
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
         sut.setUserImage(testUser, imageData: smallData, size: .preview)
-        sut = UserImageLocalCache(location: tmpDirectory)
+        sut = makeCache()
 
         // then
         XCTAssertEqual(sut.userImage(testUser, size: .complete), largeData)
@@ -170,5 +174,13 @@ final class UserImageLocalCacheTests: XCTestCase {
         // then
         XCTAssertNil(sut.userImage(testUser, size: .complete))
         XCTAssertNil(sut.userImage(testUser, size: .preview))
+    }
+
+    // MARK: - Helpers
+
+    private func makeCache() -> UserImageLocalCache {
+        let directory = tmpDirectory.appendingPathComponent(testUserIdentifier.uuidString, isDirectory: true)
+        debugPrint("makeCache at directory: \(directory)")
+        return UserImageLocalCache(location: directory)
     }
 }
