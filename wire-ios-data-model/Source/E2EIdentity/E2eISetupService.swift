@@ -23,7 +23,13 @@ public protocol E2eISetupServiceInterface {
 
     func registerTrustAnchor(_ trustAnchor: String) async throws
 
-    func setupEnrollment(userName: String, handle: String, team: UUID) async throws -> E2eiEnrollment
+    func setupEnrollment(
+        clientID: E2eIClientID,
+        userName: String,
+        handle: String,
+        team: UUID,
+        isUpgradingClient: Bool
+    ) async throws -> E2eiEnrollment
 
 }
 
@@ -53,35 +59,60 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         }
     }
 
-    public func setupEnrollment(userName: String, handle: String, team: UUID) async throws -> E2eiEnrollment {
+    public func setupEnrollment(
+        clientID: E2eIClientID,
+        userName: String,
+        handle: String,
+        team: UUID,
+        isUpgradingClient: Bool
+    ) async throws -> E2eiEnrollment {
         do {
-            return try await setupNewActivationOrRotate(userName: userName, handle: handle, teamId: team)
+            return try await setupNewActivationOrRotate(
+                clientID: clientID,
+                userName: userName,
+                handle: handle,
+                teamId: team,
+                isUpgradingClient: isUpgradingClient
+            )
         } catch {
             throw Failure.failedToSetupE2eIClient(error)
         }
     }
 
     private func setupNewActivationOrRotate(
+        clientID: E2eIClientID,
         userName: String,
         handle: String,
-        teamId: UUID) async throws -> E2eiEnrollment {
+        teamId: UUID,
+        isUpgradingClient: Bool
+    ) async throws -> E2eiEnrollment {
             let ciphersuite = CiphersuiteName.default.rawValue
             let expirySec = UInt32(TimeInterval.oneDay * 90)
 
             return try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
-                if e2eiIsEnabled {
-                    return try await $0.e2eiNewRotateEnrollment(displayName: userName,
-                                                                handle: handle,
-                                                                team: teamId.uuidString.lowercased(),
-                                                                expirySec: expirySec,
-                                                                ciphersuite: ciphersuite)
-                } else {
-                    return try await $0.e2eiNewActivationEnrollment(displayName: userName,
+                if isUpgradingClient {
+                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
+                    if e2eiIsEnabled {
+                        return try await $0.e2eiNewRotateEnrollment(displayName: userName,
                                                                     handle: handle,
                                                                     team: teamId.uuidString.lowercased(),
                                                                     expirySec: expirySec,
                                                                     ciphersuite: ciphersuite)
+                    } else {
+                        return try await $0.e2eiNewActivationEnrollment(displayName: userName,
+                                                                        handle: handle,
+                                                                        team: teamId.uuidString.lowercased(),
+                                                                        expirySec: expirySec,
+                                                                        ciphersuite: ciphersuite)
+                    }
+                } else {
+                    return try await $0.e2eiNewEnrollment(
+                        clientId: clientID.rawValue,
+                        displayName: userName,
+                        handle: handle,
+                        team: teamId.uuidString.lowercased(),
+                        expirySec: expirySec,
+                        ciphersuite: ciphersuite)
                 }
             }
         }

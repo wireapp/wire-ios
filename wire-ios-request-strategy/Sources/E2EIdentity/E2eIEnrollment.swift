@@ -80,6 +80,9 @@ public protocol E2eIEnrollmentInterface {
     /// Rotate KeyPackages and migrate conversations.
     func rotateKeysAndMigrateConversations(certificateChain: String) async throws
 
+    /// Create new MLS client with e2e identity
+    func createMLSClient(certificateChain: String) async throws
+
     /// Fetch the OIDC refresh token.
     func getOAuthRefreshToken()  async throws -> String?
 
@@ -368,6 +371,10 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
             logger.warn("failed to rotate keys: \(error.localizedDescription)")
             throw E2EIRepositoryFailure.failedToRotateKeys(error)
         }
+    }
+
+    public func createMLSClient(certificateChain: String) async throws {
+        try await e2eiService.createNewClient(certificateChain: certificateChain)
     }
 
     public func getOAuthRefreshToken()  async throws -> String? {

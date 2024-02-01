@@ -74,6 +74,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     private let managedObjectContext: NSManagedObjectContext
     private let cookieProvider: CookieProvider
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var needsRefreshSelfUser: Bool = false
     private var needsToCheckCredentials: Bool = false
     private var needsToFetchFeatureConfigs: Bool = false
@@ -87,9 +88,14 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private var userProfileObserverToken: Any?
     private var clientUpdateObserverToken: Any?
 
-    public init(context: NSManagedObjectContext, cookieProvider: CookieProvider) {
+    public init(
+        context: NSManagedObjectContext,
+        cookieProvider: CookieProvider,
+        coreCryptoProvider: CoreCryptoProviderProtocol
+    ) {
         self.managedObjectContext = context
         self.cookieProvider = cookieProvider
+        self.coreCryptoProvider = coreCryptoProvider
 
         super.init()
 
@@ -418,6 +424,17 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
                 isWaitingForE2EIEnrollment = true
                 notifyE2EIEnrollmentNecessary()
             } else {
+                guard let mlsClientID = MLSClientID(userClient: client) else {
+                    fatalError("Needs to register MLS client but can't retrieve qualified client ID")
+                }
+
+                WaitingGroupTask(context: managedObjectContext) {
+                    do {
+                        try await self.coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
+                    } catch {
+                        WireLogger.mls.error("Failed to initialise mls client: \(error)")
+                    }
+                }
                 isWaitingForMLSClientToBeRegistered = true
             }
         } else {
