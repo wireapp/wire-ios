@@ -197,9 +197,11 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
     ) {
         let duplicate1 = ZMUser.insertNewObject(in: context)
         duplicate1.remoteIdentifier = identifier
+        duplicate1.domain = domain
 
         let duplicate2 = ZMUser.insertNewObject(in: context)
         duplicate2.remoteIdentifier = identifier
+        duplicate2.domain = domain
     }
 
 }
