@@ -239,14 +239,14 @@ extension CompanyLoginController {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.activeUnauthenticatedSession.fetchSSOSettings { [weak self] result in
             guard let self else { return }
-            self.delegate?.controller(self, showLoadingView: false)
+            delegate?.controller(self, showLoadingView: false)
 
             guard case .success(let settings) = result, let ssoCode = settings.ssoCode else {
                 guard promptOnError else { return }
-                self.displayCompanyLoginPrompt(ssoOnly: true)
+                displayCompanyLoginPrompt(ssoOnly: true)
                 return
             }
-            self.attemptLoginWithSSOCode(ssoCode)
+            attemptLoginWithSSOCode(ssoCode)
         }
     }
 }
