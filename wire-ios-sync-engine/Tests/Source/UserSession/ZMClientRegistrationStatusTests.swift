@@ -19,7 +19,488 @@
 import XCTest
 @testable import WireSyncEngine
 
-extension ZMClientRegistrationStatusTests {
+class MockCookieStorage: CookieProvider {
+
+    var isAuthenticated: Bool = true
+
+    func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
+
+    var didCallDeleteKeychainItems: Bool = false
+    func deleteKeychainItems() {
+        didCallDeleteKeychainItems = true
+    }
+
+}
+
+class ZMClientRegistrationStatusTests: MessagingTest {
+
+    private var sut: ZMClientRegistrationStatus!
+    private var mockCookieStorage: MockCookieStorage!
+    private var mockClientRegistationDelegate: MockClientRegistrationStatusDelegate!
+
+    override func setUp() {
+        super.setUp()
+
+        // be sure to call this before initializing sut
+        uiMOC.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
+        mockCookieStorage = MockCookieStorage()
+        mockCookieStorage.isAuthenticated = true
+        mockClientRegistationDelegate = MockClientRegistrationStatusDelegate()
+        self.sut = ZMClientRegistrationStatus(context: self.syncMOC, cookieProvider: mockCookieStorage)
+        self.sut.registrationStatusDelegate = self.mockClientRegistationDelegate
+    }
+
+    override func tearDown() {
+        self.mockClientRegistationDelegate = nil
+        self.mockCookieStorage = nil
+        self.sut = nil
+
+        super.tearDown()
+    }
+
+    func testThatItInsertsANewClientIfThereIsNoneWaitingToBeSynced() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            let client  = UserClient.insertNewObject(in: self.syncMOC)
+            client.user = selfUser
+            client.remoteIdentifier = "identifier"
+
+            XCTAssertEqual(selfUser.clients.count, 1)
+
+            // when
+            sut.prepareForClientRegistration()
+
+            // then
+            XCTAssertEqual(selfUser.clients.count, 2)
+        }
+    }
+
+    func testThatItDoesNotInsertANewClientIfThereIsAlreadyOneWaitingToBeSynced() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            let client  = UserClient.insertNewObject(in: self.syncMOC)
+            client.user = selfUser
+
+            XCTAssertEqual(selfUser.clients.count, 1)
+
+            // when
+            sut.prepareForClientRegistration()
+
+            // then
+            XCTAssertEqual(selfUser.clients.count, 1)
+        }
+    }
+
+    func testThatItReturns_WaitingForSelfUser_IfSelfUserDoesNotHaveRemoteID() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = nil
+
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .waitingForSelfUser)
+        }
+    }
+
+    func testThatItReturns_Registered_IfSelfClientIsSet() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            syncMOC.setPersistentStoreMetadata("lala", key: ZMPersistedClientIdKey)
+
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .registered)
+        }
+    }
+
+    func testThatItReturns_WaitingForDeletion_AfterUserSelectedClientToDelete() {
+        // given
+        self.syncMOC.performAndWait {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
+            selfUser.handle = "handle"
+
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = "identifier"
+            client.user = selfUser
+
+            self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
+            self.syncMOC.saveOrRollback()
+
+            // when
+            sut.didDetectCurrentClientDeletion()
+
+            // then
+            XCTAssertEqual(sut.currentPhase, .waitingForPrekeys)
+            XCTAssertTrue(mockClientRegistationDelegate.didCallDeleteSelfUserClient)
+        }
+    }
+
+    func testThatItResets_LocallyModifiedKeys_AfterUserSelectedClientToDelete() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = "identifier"
+            client.user = selfUser
+            client.setLocallyModifiedKeys(Set(["numberOfKeysRemaining"]))
+            self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
+
+            // when
+            sut.didDetectCurrentClientDeletion()
+
+            // then
+            XCTAssertFalse(client.hasLocalModifications(forKey: "numberOfKeysRemaining"))
+        }
+    }
+
+    func testThatItInvalidatesSelfClientAndDeletesAndRecreatesCryptoBoxOnDidDetectCurrentClientDeletion() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
+            selfUser.handle = "handle"
+
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.user = selfUser
+            syncMOC.saveOrRollback()
+
+            // when
+            sut.didFail(toRegisterClient: tooManyClientsError() as NSError)
+            ZMClientUpdateNotification.notifyFetchingClientsCompleted(userClients: [client], context: self.uiMOC)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.sut.currentPhase, .waitingForDeletion)
+        }
+    }
+
+    func testThatItReturnsYESForNeedsToRegisterClientIfNoClientIdInMetadata() {
+        syncMOC.performAndWait {
+            self.syncMOC.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
+            XCTAssertTrue(ZMClientRegistrationStatus.needsToRegisterClient(in: self.syncMOC))
+        }
+    }
+
+    func testThatItReturnsNOForNeedsToRegisterClientIfThereIsClientIdInMetadata() {
+        syncMOC.performAndWait {
+            self.syncMOC.setPersistentStoreMetadata("lala", key: ZMPersistedClientIdKey)
+            XCTAssertFalse(ZMClientRegistrationStatus.needsToRegisterClient(in: self.syncMOC))
+        }
+    }
+
+    func testThatItNotfiesCredentialProviderWhenClientIsRegistered() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+
+            // when
+            sut.prepareForClientRegistration()
+
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = UUID().transportString()
+
+            sut.didRegisterProteusClient(client)
+
+            // then
+            XCTAssertEqual(sut.currentPhase, .registered)
+        }
+    }
+
+    func testThatItNotfiesDelegateWhenClientIsRegistered() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+
+            sut.prepareForClientRegistration()
+
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = UUID().transportString()
+
+            // when
+            self.sut.didRegisterProteusClient(client)
+
+            // then
+            XCTAssertTrue(self.mockClientRegistationDelegate.didCallRegisterSelfUserClient)
+        }
+    }
+
+    func testThatItTransitionsFrom_WaitingForEmail_To_WaitingForPrekeys_WhenSelfUserChangesWithEmailAddress() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.handle = "handle"
+            selfUser.emailAddress = nil
+            selfUser.phoneNumber = nil
+
+            XCTAssertEqual(sut.currentPhase, .waitingForEmailVerfication)
+
+            // when
+            selfUser.emailAddress = "me@example.com"
+            sut.didFetchSelfUser()
+
+            // then
+            XCTAssertEqual(sut.currentPhase, .waitingForPrekeys)
+        }
+    }
+
+    func testThatItIsWaitingForEmailVerfication_WhenSelfUserChangesWithoutEmailAddress() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.handle = "handle"
+            selfUser.emailAddress = nil
+            selfUser.phoneNumber = nil
+
+            XCTAssertEqual(sut.currentPhase, .waitingForEmailVerfication)
+
+            // when
+            selfUser.emailAddress = nil
+            sut.didFetchSelfUser()
+
+            // then
+            XCTAssertEqual(sut.currentPhase, .waitingForEmailVerfication)
+        }
+    }
+
+    func testThatItIsWaitingForHandle_WhenSelfUserChangesWithoutHandle() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.handle = nil
+            selfUser.emailAddress = "email@example.com"
+            selfUser.phoneNumber = nil
+
+            XCTAssertEqual(sut.currentPhase, .waitingForHandle)
+
+            // when
+            sut.didFetchSelfUser()
+
+            // then
+            XCTAssertEqual(sut.currentPhase, .waitingForHandle)
+        }
+    }
+
+    func testThatItResetsThePhaseToWaitingForLoginIfItNeedsPasswordToRegisterClient() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = "email@domain.com"
+            selfUser.handle = "handle"
+            self.sut.emailCredentials = nil
+            XCTAssertEqual(sut.currentPhase, .waitingForPrekeys)
+
+            // when
+            sut.didFail(toRegisterClient: needsPasswordError())
+
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .waitingForLogin)
+
+            // and when
+
+            // the user entered the password, we can proceed trying to register the client
+            self.sut.emailCredentials = ZMEmailCredentials(email: "john.doe@example.com", password: "123456789")
+
+            // then
+            XCTAssertEqual(sut.currentPhase, .waitingForPrekeys)
+        }
+    }
+
+    func testThatItDoesNotRequireEmailRegistrationForTeamUser() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.handle = "handle"
+            selfUser.emailAddress = nil
+            selfUser.phoneNumber = nil
+            selfUser.usesCompanyLogin = true
+
+            // then
+            XCTAssertEqual(sut.currentPhase, .waitingForPrekeys)
+        }
+    }
+
+    // MARK: AuthenticationNotifications
+
+    func testThatItNotifiesTheUIAboutSuccessfulRegistration() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = self.userIdentifier
+            self.syncMOC.saveOrRollback()
+
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = "yay"
+
+            // when
+            sut.didRegisterProteusClient(client)
+
+            // then
+            XCTAssertEqual(sut.currentPhase, .registered)
+            XCTAssertTrue(mockClientRegistationDelegate.didCallRegisterSelfUserClient)
+        }
+    }
+
+    func testThatItNotifiesTheUIIfTheRegistrationFailsWithNeedToToEnrollE2EI() {
+        self.syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.emailAddress = nil
+            selfUser.phoneNumber = nil
+            syncMOC.saveOrRollback()
+
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = "yay"
+
+            enableMLS()
+            enableE2EI()
+
+            // when
+            sut.didRegisterProteusClient(client)
+
+            // then
+            XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
+            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, needToToEnrollE2EIToRegisterClientError())
+        }
+    }
+
+    func testThatItNotifiesTheUIIfTheRegistrationFailsWithMissingEmailVerification() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.handle = "handle"
+            selfUser.emailAddress = nil
+            selfUser.phoneNumber = nil
+            self.syncMOC.saveOrRollback()
+
+            // when
+            sut.didFetchSelfUser()
+
+            // then
+            XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
+            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, needToRegisterEmailError())
+        }
+    }
+
+    func testThatItNotifiesTheUIIfTheRegistrationFailsWithMissingHandle() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            selfUser.handle = nil
+            selfUser.emailAddress = "email@example.com"
+            selfUser.phoneNumber = nil
+            syncMOC.saveOrRollback()
+
+            // when
+            sut.didFetchSelfUser()
+
+            // then
+            XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
+            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, needToSetHandleError())
+        }
+    }
+
+    func testThatItNotifiesTheUIIfTheRegistrationFailsWithMissingPasswordError() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = self.userIdentifier
+            syncMOC.saveOrRollback()
+            let error = NSError(
+                domain: "ZMUserSession",
+                code: Int(ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue),
+                userInfo: selfUser.loginCredentials.dictionaryRepresentation)
+
+            // when
+            sut.didFail(toRegisterClient: error)
+
+            // then
+            XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
+            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, error)
+        }
+    }
+
+    func testThatItNotifiesTheUIIfTheRegistrationFailsWithWrongCredentialsError() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = self.userIdentifier
+            syncMOC.saveOrRollback()
+
+            let error = NSError(
+                domain: "ZMUserSession",
+                code: Int(ZMUserSessionErrorCode.invalidCredentials.rawValue)
+            )
+
+            // when
+            sut.didFail(toRegisterClient: error)
+
+            // then
+            XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
+            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, error)
+        }
+    }
+
+    func testThatItDoesNotNotifiesTheUIIfTheRegistrationFailsWithTooManyClientsError() {
+        syncMOC.performAndWait {
+            // given
+            let error = tooManyClientsError()
+
+            // when
+            sut.didFail(toRegisterClient: error)
+
+            // then
+            XCTAssertFalse(self.mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
+        }
+    }
+
+    func testThatItDeletesTheCookieIfFetchingClientsFailedWithError_SelfClientIsInvalid() {
+        // given
+        syncMOC.performAndWait {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.user = selfUser
+            client.remoteIdentifier = "identifer"
+            syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
+            syncMOC.saveOrRollback()
+            XCTAssertNotNil(selfUser.selfClient)
+        }
+        let error = NSError(domain: "ClientManagement", code: ClientUpdateError.selfClientIsInvalid.rawValue)
+
+        // when
+        ZMClientUpdateNotification.notifyFetchingClientsDidFail(error: error, context: uiMOC)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        syncMOC.performAndWait {
+            XCTAssertNil(syncMOC.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
+            XCTAssertTrue(mockCookieStorage.didCallDeleteKeychainItems)
+        }
+    }
+
     func testThatItReturns_FetchingClients_WhenReceivingAnErrorWithTooManyClients() {
         syncMOC.performAndWait {
             // given
@@ -27,7 +508,7 @@ extension ZMClientRegistrationStatusTests {
             selfUser.remoteIdentifier = UUID()
 
             // when
-            sut.didFail(toRegisterClient: tooManyClientsError()! as NSError)
+            sut.didFail(toRegisterClient: tooManyClientsError() as NSError)
 
             // then
             XCTAssertEqual(sut.currentPhase, .fetchingClients)
@@ -218,6 +699,26 @@ extension ZMClientRegistrationStatusTests {
     }
 
     // MARK: - Helpers
+
+    func needsPasswordError() -> NSError {
+        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue))
+    }
+
+    func tooManyClientsError() -> NSError {
+        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue))
+    }
+
+    func needToRegisterEmailError() -> NSError {
+        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue))
+    }
+
+    func needToToEnrollE2EIToRegisterClientError() -> NSError {
+        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue))
+    }
+
+    func needToSetHandleError() -> NSError {
+        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsToHandleToRegisterClient.rawValue))
+    }
 
     @objc
     func enableMLS() {

@@ -187,6 +187,8 @@ class MockCookieStorage: CookieProvider {
 
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
 
+    func deleteKeychainItems() { }
+
 }
 
 class URLSessionMock: URLRequestable {

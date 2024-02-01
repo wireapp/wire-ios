@@ -60,7 +60,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext, analytics: analytics)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
         self.clientRegistrationStatus = ZMClientRegistrationStatus(context: managedObjectContext,
-                                                                   cookieStorage: cookieStorage)
+                                                                   cookieProvider: cookieStorage)
         self.pushNotificationStatus = PushNotificationStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository

@@ -73,7 +73,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     var lastResortPrekey: IdPrekeyTuple?
 
     private let managedObjectContext: NSManagedObjectContext
-    private let cookieStorage: ZMPersistentCookieStorage
+    private let cookieProvider: CookieProvider
     private var needsRefreshSelfUser: Bool = false
     private var needsToCheckCredentials: Bool = false
     private var needsToFetchFeatureConfigs: Bool = false
@@ -87,10 +87,9 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private var userProfileObserverToken: Any?
     private var clientUpdateObserverToken: Any?
 
-    @objc
-    public init(context: NSManagedObjectContext, cookieStorage: ZMPersistentCookieStorage) {
+    public init(context: NSManagedObjectContext, cookieProvider: CookieProvider) {
         self.managedObjectContext = context
-        self.cookieStorage = cookieStorage
+        self.cookieProvider = cookieProvider
 
         super.init()
 
@@ -214,7 +213,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     var isWaitingForLogin: Bool {
-        return cookieStorage.authenticationCookieData == nil
+        return !cookieProvider.isAuthenticated
     }
 
     var needsToRegisterClient: Bool {
@@ -315,7 +314,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     @objc
     public func invalidateCookieAndNotify() {
         emailCredentials = nil
-        cookieStorage.deleteKeychainItems()
+        cookieProvider.deleteKeychainItems()
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         let outError = NSError.userSessionErrorWith(ZMUserSessionErrorCode.clientDeletedRemotely, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
