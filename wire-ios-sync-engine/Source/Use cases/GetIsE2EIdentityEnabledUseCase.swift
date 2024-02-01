@@ -32,7 +32,7 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
     }
 
     public func invoke() async throws -> Bool {
-        let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        let coreCrypto = try await coreCryptoProvider.coreCrypto()
         return try await coreCrypto.perform {
             try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue)
         }

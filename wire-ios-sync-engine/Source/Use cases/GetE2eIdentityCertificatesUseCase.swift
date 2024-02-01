@@ -37,7 +37,7 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     public func invoke(mlsGroupId: MLSGroupID,
                        clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
 
-        let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        let coreCrypto = try await coreCryptoProvider.coreCrypto()
         let clientIds = clientIds.compactMap({$0.rawValue.data(using: .utf8)})
         let wireIdentities = try await getWireIdentity(coreCrypto: coreCrypto,
                                                        conversationId: mlsGroupId.data,

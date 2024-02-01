@@ -33,7 +33,7 @@ public final class E2eIVerificationStatusService: E2eIVerificationStatusServiceI
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
-            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 

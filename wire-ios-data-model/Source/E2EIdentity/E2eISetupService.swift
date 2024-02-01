@@ -41,7 +41,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
-            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 
@@ -54,7 +54,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     // MARK: - Public interface
 
     public func registerTrustAnchor(_ trustAnchor: String) async throws {
-        try await coreCryptoProvider.coreCrypto(requireMLS: false).perform { coreCrypto in
+        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
             try await coreCrypto.e2eiRegisterAcmeCa(trustAnchorPem: trustAnchor)
         }
     }
