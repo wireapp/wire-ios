@@ -24,14 +24,14 @@ final class AvailabilityTitleViewController: UIViewController {
 
     private lazy var feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    private let options: AvailabilityTitleView.Options
+    private let options: UserStatusView.Options
     private let user: UserType
     private let userSession: UserSession
     private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
 
     init(
         user: UserType,
-        options: AvailabilityTitleView.Options,
+        options: UserStatusView.Options,
         userSession: UserSession,
         getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
     ) {
@@ -48,7 +48,7 @@ final class AvailabilityTitleViewController: UIViewController {
     }
 
     override func loadView() {
-        let view = AvailabilityTitleView(
+        let view = UserStatusView(
             user: user,
             options: options,
             userSession: userSession,
@@ -62,7 +62,7 @@ final class AvailabilityTitleViewController: UIViewController {
         super.traitCollectionDidChange(previousTraitCollection)
 
         if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            (view as! AvailabilityTitleView).updateConfiguration()
+            (view as? UserStatusView)?.updateConfiguration()
         }
     }
 

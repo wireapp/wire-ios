@@ -21,17 +21,17 @@ import XCTest
 @testable import Wire
 @testable import WireSyncEngineSupport
 
-final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
+final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
 
     var selfUser: ZMUser!
     var otherUser: ZMUser!
     var userSession: UserSessionMock!
-    var sut: AvailabilityTitleView!
+    var sut: UserStatusView!
 
     override func setUp() {
         super.setUp()
 
-        otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser = ZMUser.insertNewObject(in: self.uiMOC)
         otherUser.name = "Giovanni"
         selfUser = ZMUser.selfUser()
         userSession = UserSessionMock()
@@ -119,7 +119,7 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
     // MARK: - Common methods
 
     private func createTest(
-        options: AvailabilityTitleView.Options,
+        options: UserStatusView.Options,
         availability: Availability,
         user: ZMUser,
         userInterfaceStyle: UIUserInterfaceStyle = .dark,
@@ -131,7 +131,7 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
     ) {
         updateAvailability(for: user, newValue: availability)
 
-        let sut = AvailabilityTitleView(
+        let sut = UserStatusView(
             user: user,
             options: options,
             userSession: userSession,
@@ -143,7 +143,6 @@ final class AvailabilityTitleViewTests: ZMSnapshotTestCase {
         sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.backgroundColor = .systemBackground
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
-
         verify(matching: sut, file: file, testName: testName, line: line)
     }
 

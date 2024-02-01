@@ -22,28 +22,7 @@ import WireSyncEngine
 import WireCommonComponents
 
 /// A title view subclass that displays the availability of the user.
-final class AvailabilityTitleView: TitleView, ZMUserObserver {
-
-    /// The available options for this view.
-    struct Options: OptionSet {
-        let rawValue: Int
-
-        /// Whether we allow the user to update the status by tapping this view.
-        static let allowSettingStatus = Options(rawValue: 1 << 0)
-
-        /// Whether to hide the action hint (down arrow) next to the status.
-        static let hideActionHint = Options(rawValue: 1 << 1)
-
-        /// Whether to display the user name instead of the availability.
-        static let displayUserName = Options(rawValue: 1 << 2)
-
-        /// Whether to use a large text font instead of the default small one.
-        static let useLargeFont = Options(rawValue: 1 << 3)
-
-        /// The default options for using the view in a title bar.
-        static var header: Options = [.allowSettingStatus, .hideActionHint, .displayUserName, .useLargeFont]
-
-    }
+final class UserStatusView: TitleView, UserChangeObserver {
 
     // MARK: - Properties
 
@@ -52,16 +31,11 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
     private let options: Options
     private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
 
-    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-
     // MARK: - Initialization
 
-    /**
-     * Creates a view for the specific user and options.
-     * - parameter user: The user to display the availability of.
-     * - parameter options: The options to display the availability.
-     */
-
+    /// Creates a view for the specific user and options.
+    /// - parameter user: The user to display the availability of.
+    /// - parameter options: The options to display the availability.
     init(
         user: UserType,
         options: Options,
@@ -95,8 +69,10 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        updateConfiguration()
+
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            updateConfiguration()
+        }
     }
 
     /// Refreshes the content and appearance of the view.
@@ -187,5 +163,28 @@ final class AvailabilityTitleView: TitleView, ZMUserObserver {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.availabilityChanged || changeInfo.nameChanged else { return }
         updateConfiguration()
+    }
+}
+
+extension UserStatusView {
+
+    /// The available options for this view.
+    struct Options: OptionSet {
+        let rawValue: Int
+
+        /// Whether we allow the user to update the status by tapping this view.
+        static let allowSettingStatus = Options(rawValue: 1 << 0)
+
+        /// Whether to hide the action hint (down arrow) next to the status.
+        static let hideActionHint = Options(rawValue: 1 << 1)
+
+        /// Whether to display the user name instead of the availability.
+        static let displayUserName = Options(rawValue: 1 << 2)
+
+        /// Whether to use a large text font instead of the default small one.
+        static let useLargeFont = Options(rawValue: 1 << 3)
+
+        /// The default options for using the view in a title bar.
+        static var header: Options = [.allowSettingStatus, .hideActionHint, .displayUserName, .useLargeFont]
     }
 }
