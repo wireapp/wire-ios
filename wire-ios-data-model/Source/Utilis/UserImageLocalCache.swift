@@ -100,8 +100,13 @@ extension NSManagedObjectContext {
 
     /// Removes all images for user
     open func removeAllUserImages(_ user: ZMUser) {
-        user.imageCacheKey(for: .complete).apply(largeUserImageCache.removeObject)
-        user.imageCacheKey(for: .preview).apply(smallUserImageCache.removeObject)
+        if let completeKey = user.imageCacheKey(for: .complete) {
+            largeUserImageCache.removeObject(forKey: completeKey)
+        }
+
+        if let completeKey = user.imageCacheKey(for: .preview) {
+            smallUserImageCache.removeObject(forKey: completeKey)
+        }
     }
 
     open func setUserImage(_ user: ZMUser, imageData: Data, size: ProfileImageSize) {
