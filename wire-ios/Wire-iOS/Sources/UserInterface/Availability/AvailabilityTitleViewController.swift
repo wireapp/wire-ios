@@ -47,12 +47,13 @@ final class AvailabilityTitleViewController: UIViewController {
             options: options,
             userSession: userSession
         )
-        updateUserStatusView()
-        setupNotificationObservation()
         view.tapHandler = { [weak self] _ in
             self?.presentAvailabilityPicker()
         }
         self.view = view
+
+        updateUserStatusView()
+        setupNotificationObservation()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
