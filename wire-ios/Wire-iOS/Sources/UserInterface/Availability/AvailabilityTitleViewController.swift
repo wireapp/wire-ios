@@ -28,7 +28,10 @@ final class AvailabilityTitleViewController: UIViewController {
     private let user: UserType
     let userSession: UserSession
 
-    private var userChangeObserver: UserChangeObserver?
+    /// Used to update the `UserStatusView` on changes of a user.
+    private var userChangeObservation: NSObjectProtocol?
+    /// The observer passed to `UserChangeInfo. addUserObserver(_:for:)` is not retained so this strong reference is needed.
+    private var userChangeObserver: UserObserver?
 
     init(user: UserType, options: UserStatusView.Options, userSession: UserSession) {
         self.user = user
@@ -107,8 +110,7 @@ final class AvailabilityTitleViewController: UIViewController {
                 self?.updateUserStatusView()
             }
         }
-        userChangeObserver.observationToken = userSession.addUserObserver(userChangeObserver, for: user)
-        self.userChangeObserver = userChangeObserver
+        let userChangeObservation = userSession.addUserObserver(userChangeObserver, for: user)
     }
 
     @objc

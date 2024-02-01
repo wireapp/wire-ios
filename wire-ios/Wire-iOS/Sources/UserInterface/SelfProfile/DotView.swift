@@ -98,7 +98,7 @@ final class DotView: UIView {
     }
 }
 
-extension DotView: UserChangeObserver {
+extension DotView: UserObserver {
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
         guard changeInfo.trustLevelChanged ||

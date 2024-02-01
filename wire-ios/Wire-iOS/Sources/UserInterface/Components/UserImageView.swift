@@ -22,7 +22,7 @@ import WireSyncEngine
  * A view that displays the avatar for a remote user.
  */
 
-class UserImageView: AvatarImageView, UserChangeObserver {
+class UserImageView: AvatarImageView, UserObserver {
 
     /**
      * The different sizes for the avatar image.

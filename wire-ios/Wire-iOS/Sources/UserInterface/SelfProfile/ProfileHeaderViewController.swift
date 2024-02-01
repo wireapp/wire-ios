@@ -329,9 +329,9 @@ final class ProfileHeaderViewController: UIViewController {
     }
 }
 
-// MARK: - UserChangeObserver
+// MARK: - ZMUserObserver
 
-extension ProfileHeaderViewController: UserChangeObserver {
+extension ProfileHeaderViewController: UserObserver {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
 

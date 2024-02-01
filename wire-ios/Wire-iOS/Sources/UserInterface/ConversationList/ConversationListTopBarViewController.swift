@@ -257,7 +257,7 @@ extension ConversationListTopBarViewController: UIViewControllerTransitioningDel
     }
 }
 
-extension ConversationListTopBarViewController: UserChangeObserver {
+extension ConversationListTopBarViewController: UserObserver {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.nameChanged || changeInfo.teamsChanged {

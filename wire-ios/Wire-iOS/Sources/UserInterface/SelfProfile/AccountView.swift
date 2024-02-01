@@ -252,7 +252,7 @@ extension BaseAccountView: ZMConversationListObserver {
     }
 }
 
-extension BaseAccountView: UserChangeObserver {
+extension BaseAccountView: UserObserver {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
             updateAppearance()

@@ -472,7 +472,7 @@ extension ClientListViewController: ClientRemovalObserverDelegate {
     }
 }
 
-extension ClientListViewController: UserChangeObserver {
+extension ClientListViewController: UserObserver {
 
     func userDidChange(_ note: UserChangeInfo) {
         if note.clientsChanged || note.trustLevelChanged {

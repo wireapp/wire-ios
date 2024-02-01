@@ -19,10 +19,8 @@
 import Foundation
 
 /// Allows for handling user change events via closure.
-public final class ClosureBasedUserChangeObserver: NSObject, UserChangeObserver {
-
-    /// Optionally assing any observation token here in order to retain it.
-    public var observationToken: NSObjectProtocol?
+@objc(ZMClosureBasedUserChangeObserver)
+public final class ClosureBasedUserChangeObserver: NSObject, UserObserver {
 
     private let userDidChange: (UserChangeInfo) -> Void
 

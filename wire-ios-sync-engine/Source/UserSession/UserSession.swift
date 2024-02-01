@@ -138,12 +138,12 @@ public protocol UserSession: AnyObject {
     func setEncryptionAtRest(enabled: Bool, skipMigration: Bool) throws
 
     func addUserObserver(
-        _ observer: UserChangeObserver,
+        _ observer: UserObserver,
         for: UserType
     ) -> NSObjectProtocol?
 
     func addUserObserver(
-        _ observer: UserChangeObserver
+        _ observer: UserObserver
     ) -> NSObjectProtocol
 
     func addMessageObserver(
@@ -322,7 +322,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func addUserObserver(
-        _ observer: UserChangeObserver,
+        _ observer: UserObserver,
         for user: UserType
     ) -> NSObjectProtocol? {
         return UserChangeInfo.add(
@@ -333,7 +333,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func addUserObserver(
-        _ observer: UserChangeObserver
+        _ observer: UserObserver
     ) -> NSObjectProtocol {
         return UserChangeInfo.add(
             userObserver: observer,

@@ -44,11 +44,11 @@ class UserObserverTests: NotificationDispatcherTestBase {
 
     let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
 
-    var userObserver: UserObserver!
+    var userObserver: MockUserObserver!
 
     override func setUp() {
         super.setUp()
-        userObserver = UserObserver()
+        userObserver = MockUserObserver()
     }
 
     override func tearDown() {
