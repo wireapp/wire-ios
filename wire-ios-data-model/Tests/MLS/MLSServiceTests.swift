@@ -421,16 +421,18 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             removal: .init(ed25519: removalKey)
         )
 
-        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            return []
-        }
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in [] }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in [] }
 
-        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            return []
-        }
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { (_, _, _, _) in
-            return users.map {
-                KeyPackage(client: .randomAlphanumerical(length: 4), domain: $0.domain, keyPackage: .randomAlphanumerical(length: 3), keyPackageRef: .randomAlphanumerical(length: 6), userID: $0.id)
+            users.map {
+                KeyPackage(
+                    client: .randomAlphanumerical(length: 4),
+                    domain: $0.domain,
+                    keyPackage: .randomAlphanumerical(length: 3),
+                    keyPackageRef: .randomAlphanumerical(length: 6),
+                    userID: $0.id
+                )
             }
         }
         var mockAddMembersCalled = false
