@@ -237,7 +237,10 @@
 		55C40BCE22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */; };
 		55C40BD722B0F78500EFD8BD /* ZMUserLegalHoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C40BD422B0F75C00EFD8BD /* ZMUserLegalHoldTests.swift */; };
 		590C55752B62BF0000FC1CE8 /* MLSGroupID+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590C55742B62BF0000FC1CE8 /* MLSGroupID+random.swift */; };
+		591942B62B6A4B4D0000B390 /* UserChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591942B52B6A4B4D0000B390 /* UserChangeObserver.swift */; };
 		594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */; };
+		597A3BB42B6416CA0020E337 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB32B6416CA0020E337 /* Availability.swift */; };
+		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
 		597B70C72B03C6A5006C2121 /* UpdateConversationProtocolAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */; };
 		598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
@@ -1079,8 +1082,11 @@
 		55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+LegalHoldRequest.swift"; sourceTree = "<group>"; };
 		55C40BD422B0F75C00EFD8BD /* ZMUserLegalHoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUserLegalHoldTests.swift; sourceTree = "<group>"; };
 		590C55742B62BF0000FC1CE8 /* MLSGroupID+random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MLSGroupID+random.swift"; sourceTree = "<group>"; };
+		591942B52B6A4B4D0000B390 /* UserChangeObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChangeObserver.swift; sourceTree = "<group>"; };
 		594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		5972D9792B480E790089D1D3 /* CoreCryptoProtocolExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoProtocolExt.swift; sourceTree = "<group>"; };
+		597A3BB32B6416CA0020E337 /* Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Availability.swift; sourceTree = "<group>"; };
+		597A3BB62B6418170020E337 /* Availability+WireProtos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Availability+WireProtos.swift"; sourceTree = "<group>"; };
 		597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolAction.swift; sourceTree = "<group>"; };
 		5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+allTypes.swift"; sourceTree = "<group>"; };
 		59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolTests.swift; sourceTree = "<group>"; };
@@ -1968,6 +1974,22 @@
 			path = generated;
 			sourceTree = "<group>";
 		};
+		597A3BB52B6418090020E337 /* Availability */ = {
+			isa = PBXGroup;
+			children = (
+				597A3BB32B6416CA0020E337 /* Availability.swift */,
+				597A3BB62B6418170020E337 /* Availability+WireProtos.swift */,
+			);
+			path = Availability;
+			sourceTree = "<group>";
+		};
+		597A3BB82B641EA20020E337 /* UserStatus */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UserStatus;
+			sourceTree = "<group>";
+		};
 		59D1C3012B1DE6FF0016F6B2 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -2690,6 +2712,8 @@
 		F9A706031CAEE01D00C2F5FE /* User */ = {
 			isa = PBXGroup;
 			children = (
+				597A3BB52B6418090020E337 /* Availability */,
+				597A3BB82B641EA20020E337 /* UserStatus */,
 				1687ABAB20EBE0770007C240 /* UserType.swift */,
 				EEF4010623A9213B007B1A97 /* UserType+Team.swift */,
 				1607AAF1243768D200A93D29 /* UserType+Materialize.swift */,
@@ -2793,6 +2817,7 @@
 				F99C5B891ED460E20049CCD7 /* TeamChangeInfo.swift */,
 				1672A613234499B500380537 /* LabelChangeInfo.swift */,
 				A995F05B23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift */,
+				591942B52B6A4B4D0000B390 /* UserChangeObserver.swift */,
 			);
 			path = ObjectObserverTokens;
 			sourceTree = "<group>";
@@ -2802,9 +2827,9 @@
 			children = (
 				F9A7062C1CAEE01D00C2F5FE /* AnyClassTuple.swift */,
 				F9A7062D1CAEE01D00C2F5FE /* DependentObjectsKeysForObservedObjectKeysCache.swift */,
-				F9A7062E1CAEE01D00C2F5FE /* StringKeyPath.swift */,
 				F9A7062F1CAEE01D00C2F5FE /* KeySet.swift */,
 				F9A706331CAEE01D00C2F5FE /* SetSnapshot.swift */,
+				F9A7062E1CAEE01D00C2F5FE /* StringKeyPath.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -3721,6 +3746,7 @@
 			files = (
 				EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */,
 				63B74CBD2AE1715000A73006 /* ProteusToMLSMigrationCoordinator.swift in Sources */,
+				591942B62B6A4B4D0000B390 /* UserChangeObserver.swift in Sources */,
 				BF1B98041EC313C600DE033B /* Team.swift in Sources */,
 				A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */,
 				165124D82189AE90006A3C75 /* ZMAssetClientMessage+Quotes.swift in Sources */,
@@ -3832,6 +3858,7 @@
 				16CDEBFB2209D13B00E74A41 /* ZMMessage+Quotes.swift in Sources */,
 				EE997A1425062295008336D2 /* Logging.swift in Sources */,
 				F9331C841CB4191B00139ECC /* NSPredicate+ZMSearch.m in Sources */,
+				597A3BB42B6416CA0020E337 /* Availability.swift in Sources */,
 				BFCD502D21511D58008CD845 /* DraftMessage.swift in Sources */,
 				63B1336B29A503D100009D84 /* MLSGroupStatus.swift in Sources */,
 				F9A706BD1CAEE01D00C2F5FE /* CryptoBox.swift in Sources */,
@@ -3955,6 +3982,7 @@
 				63B1336E29A503D100009D84 /* StaleMLSKeyMaterialDetector.swift in Sources */,
 				63B1336229A503D100009D84 /* CoreCryptoKeyProvider.swift in Sources */,
 				EEF09CA22B1DB3F500D729A1 /* OneOnOneMigrator.swift in Sources */,
+				597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */,
 				EECCF10429D1BC7B000C0BF3 /* ProteusError+CBox.swift in Sources */,
 				16D68E971CEF2EC4003AB9E0 /* ZMFileMetadata.swift in Sources */,
 				BF421B2D1EF3F91D0079533A /* Team+Patches.swift in Sources */,

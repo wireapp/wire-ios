@@ -24,15 +24,15 @@ import WireSyncEngine
 final class AvailabilityTitleViewController: UIViewController {
 
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-    private let options: AvailabilityTitleView.Options
+    private let options: UserStatusView.Options
     private let user: UserType
     let userSession: UserSession
 
-    var availabilityTitleView: AvailabilityTitleView? {
-        return view as? AvailabilityTitleView
+    var availabilityTitleView: UserStatusView? {
+        view as? UserStatusView
     }
 
-    init(user: UserType, options: AvailabilityTitleView.Options, userSession: UserSession) {
+    init(user: UserType, options: UserStatusView.Options, userSession: UserSession) {
         self.user = user
         self.options = options
         self.userSession = userSession
@@ -45,7 +45,7 @@ final class AvailabilityTitleViewController: UIViewController {
     }
 
     override func loadView() {
-        view = AvailabilityTitleView(user: user, options: options, userSession: userSession)
+        view = UserStatusView(user: user, options: options, userSession: userSession)
     }
 
     override func viewDidLoad() {
@@ -57,23 +57,21 @@ final class AvailabilityTitleViewController: UIViewController {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
             availabilityTitleView?.updateConfiguration()
         }
     }
 
     func presentAvailabilityPicker() {
-        let alertViewController = UIAlertController.availabilityPicker { [weak self] (availability) in
-            guard let `self` = self else { return }
-            self.didSelectAvailability(availability)
+        let alertViewController = UIAlertController.availabilityPicker { [weak self] availability in
+            self?.didSelectAvailability(availability)
         }
-
         alertViewController.configPopover(pointToView: view)
-
         present(alertViewController, animated: true)
     }
 
-    private func didSelectAvailability(_ availability: AvailabilityKind) {
+    private func didSelectAvailability(_ availability: Availability) {
         let changes = { [weak self] in
             self?.user.availability = availability
             self?.provideHapticFeedback()
@@ -90,5 +88,4 @@ final class AvailabilityTitleViewController: UIViewController {
         feedbackGenerator.prepare()
         feedbackGenerator.impactOccurred()
     }
-
 }

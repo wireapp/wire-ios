@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,24 +17,10 @@
 //
 
 import Foundation
-import WireDataModel
 
-private extension Availability {
-
-    var dontRemindMeUserDefaultsKey: String {
-        "dont_remind_me_\(localizedName)"
-    }
-
+@objc(ZMUserChangeObserver)
+public protocol UserChangeObserver: NSObjectProtocol {
+    func userDidChange(_ changeInfo: UserChangeInfo)
 }
 
-extension Settings {
-
-    func shouldRemindUserWhenChanging(_ availability: Availability) -> Bool {
-        defaults.bool(forKey: availability.dontRemindMeUserDefaultsKey) != true
-    }
-
-    func dontRemindUserWhenChanging(_ availability: Availability) {
-        defaults.set(true, forKey: availability.dontRemindMeUserDefaultsKey)
-    }
-
-}
+public typealias ZMUserObserver = UserChangeObserver
