@@ -134,7 +134,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
             userSession: userSession
         )
         sut.overrideUserInterfaceStyle = userInterfaceStyle
-        sut.backgroundColor = userInterfaceStyle == .dark ? .black : .white
+        sut.backgroundColor = .systemBackground
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
         sut.userStatus = .init(
             name: user.name ?? "",
@@ -142,6 +142,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
             isCertified: false,
             isVerified: false
         )
+
         verify(matching: sut, file: file, testName: testName, line: line)
     }
 
