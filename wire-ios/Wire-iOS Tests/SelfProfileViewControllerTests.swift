@@ -112,7 +112,7 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         mockClient2.model = "iPad Pro"
         mockClient2.activationDate = Calendar.current.date(from: DateComponents(year: 2022, month: 1, day: 2))
 
-        let clients = [mockClient1, mockClient2] // Add both clients to the array
+        let clients = [mockClient1, mockClient2]
 
         // WHEN
         let alertController = UIAlertController(forNewSelfClients: clients)
