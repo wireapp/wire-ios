@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireDataModel
 
-class UserObserverTests: NotificationDispatcherTestBase {
+final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
     let UserClientsKey = "clients"
 
@@ -57,7 +57,7 @@ class UserObserverTests: NotificationDispatcherTestBase {
     }
 }
 
-extension UserObserverTests {
+extension UserChangeInfoObservationTests {
 
     func checkThatItNotifiesTheObserverOfAChange(_ user: ZMUser, modifier: (ZMUser) -> Void, expectedChangedField: UserInfoChangeKey) {
         checkThatItNotifiesTheObserverOfAChange(user, modifier: modifier, expectedChangedFields: [expectedChangedField])
