@@ -23,6 +23,8 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     private let coreDataStackHelper = CoreDataStackHelper()
 
+    private var tmpDirectory: URL { coreDataStackHelper.storageDirectory }
+
     var coreDataStack: CoreDataStack!
     var context: NSManagedObjectContext!
 
@@ -34,7 +36,7 @@ final class UserImageLocalCacheTests: XCTestCase {
 
         let uuid = UUID()
 
-        coreDataStack = try await coreDataStackHelper.createStack(at: coreDataStackHelper.storageDirectory)
+        coreDataStack = try await coreDataStackHelper.createStack(at: tmpDirectory)
         context = coreDataStack.viewContext
 
         testUser = await context.perform {
@@ -45,7 +47,7 @@ final class UserImageLocalCacheTests: XCTestCase {
             return testUser
         }
 
-        sut = UserImageLocalCache(location: nil)
+        sut = UserImageLocalCache(location: tmpDirectory)
     }
 
     override func tearDown() async throws {
@@ -54,7 +56,7 @@ final class UserImageLocalCacheTests: XCTestCase {
         testUser = nil
         sut = nil
 
-        try coreDataStackHelper.cleanupDirectory(coreDataStackHelper.storageDirectory)
+        try coreDataStackHelper.cleanupDirectory(tmpDirectory)
 
         try await super.tearDown()
     }
@@ -72,7 +74,7 @@ final class UserImageLocalCacheTests: XCTestCase {
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
         sut.setUserImage(testUser, imageData: smallData, size: .preview)
-        sut = UserImageLocalCache(location: nil)
+        sut = UserImageLocalCache(location: tmpDirectory)
 
         // then
         let previewImageArrived = expectation(description: "Preview image arrived")
@@ -122,7 +124,7 @@ final class UserImageLocalCacheTests: XCTestCase {
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
         sut.setUserImage(testUser, imageData: smallData, size: .preview)
-        sut = UserImageLocalCache(location: nil)
+        sut = UserImageLocalCache(location: tmpDirectory)
 
         // then
         XCTAssertEqual(sut.userImage(testUser, size: .complete), largeData)
