@@ -21,6 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol OneOnOneMigratorInterface {
 
+    @discardableResult
     func migrateToMLS(
         userID: QualifiedID,
         in context: NSManagedObjectContext
@@ -50,41 +51,31 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
 
     // MARK: - Methods
 
+    @discardableResult
     public func migrateToMLS(
         userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
-        let mlsGroupID = try await fetchMLSOneOnOneConversation(
+        let mlsGroupID = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
         )
 
-        try await establishMLSGroupIfNeeded(
+        try await establishLocalMLSConversationIfNeeded(
             userID: userID,
             mlsGroupID: mlsGroupID
         )
 
-        try await context.perform {
-            guard let mlsConversation = ZMConversation.fetch(
-                with: mlsGroupID,
-                in: context
-            ) else {
-                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
-            }
-
-            try self.switchActiveOneOnOneConversation(
-                userID: userID,
-                conversation: mlsConversation,
-                in: context
-            )
-
-            context.saveOrRollback()
-        }
+        try await switchLocalConversationToMLS(
+            userID: userID,
+            mlsGroupID: mlsGroupID,
+            in: context
+        )
 
         return mlsGroupID
     }
 
-    private func fetchMLSOneOnOneConversation(
+    private func syncMLSConversationFromBackend(
         userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
@@ -100,7 +91,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
-    private func establishMLSGroupIfNeeded(
+    private func establishLocalMLSConversationIfNeeded(
         userID: QualifiedID,
         mlsGroupID: MLSGroupID
     ) async throws {
@@ -118,16 +109,37 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
-    private func switchActiveOneOnOneConversation(
+    private func switchLocalConversationToMLS(
         userID: QualifiedID,
-        conversation: ZMConversation,
+        mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
-    ) throws {
-        guard let otherUser = ZMUser.fetch(with: userID, in: context) else {
-            throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
+    ) async throws {
+        try await context.perform {
+            guard let mlsConversation = ZMConversation.fetch(
+                with: mlsGroupID,
+                in: context
+            ) else {
+                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
+            }
+
+            guard let otherUser = ZMUser.fetch(with: userID, in: context) else {
+                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
+            }
+
+            // move local messages
+            if let proteusConversation = otherUser.oneOnOneConversation {
+                // Since ZMMessages only have a single conversation connected,
+                // forming this union also removes the relationship to the proteus conversation.
+                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+
+                // update just to be sure
+                mlsConversation.needsToBeUpdatedFromBackend = true
+            }
+
+            // switch active conversation
+            otherUser.oneOnOneConversation = mlsConversation
+
+            context.saveOrRollback()
         }
-
-        otherUser.oneOnOneConversation = conversation
     }
-
 }
