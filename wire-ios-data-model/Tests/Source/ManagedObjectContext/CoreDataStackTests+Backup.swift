@@ -47,8 +47,13 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         super.tearDown()
     }
 
-    func createBackup(accountIdentifier: UUID, databaseKey: VolatileData? = nil, file: StaticString = #file, line: UInt = #line) -> Result<URL, Error> {
-        var result: Result<URL, Error>!
+    func createBackup(
+        accountIdentifier: UUID,
+        databaseKey: VolatileData? = nil,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> Result<URL, Error> {
+        var result: Result<URL, Error>?
 
         CoreDataStack.backupLocalStorage(
             accountIdentifier: accountIdentifier,
@@ -59,9 +64,9 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         ) {
             result = $0.map { $0.url }
         }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1), file: file, line: line)
 
-        return result
+        return result ?? .failure(CoreDataStackTests.timedOut)
     }
 
     func importBackup(
@@ -88,13 +93,13 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
     }
 
     func createBackupAndDeleteOriginalAccount(accountIdentifier: UUID, file: StaticString = #file, line: UInt = #line) throws -> URL {
+
+        defer { clearStorageFolder() }
+
         // create populated account database
         let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
         _ = ZMConversation.insertGroupConversation(moc: directory.viewContext, participants: [ZMUser]())
         directory.viewContext.saveOrRollback()
-
-        // Delete account
-        defer { clearStorageFolder() }
 
         let backup = createBackup(accountIdentifier: accountIdentifier)
         return try backup.get()
@@ -104,8 +109,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
     func testThatItFailsWithWrongAccountIdentifier() throws {
         // given
-        let uuid = UUID()
-        _ = createStorageStackAndWaitForCompletion(userID: uuid)
+        _ = createStorageStackAndWaitForCompletion(userID: UUID())
 
         // when
         let result = createBackup(accountIdentifier: UUID())
@@ -113,7 +117,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         // then
         XCTAssertThrowsError(try result.get()) { error in
             switch error as? CoreDataStack.BackupError {
-            case .failedToRead?: break
+            case .failedToRead: break
             default: XCTFail("unexpected error type")
             }
         }
@@ -197,13 +201,20 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
         // then
         XCTAssertThrowsError(try result.get()) { error in
+
             switch error as? CoreDataStack.BackupError {
             case .failedToWrite(let failureError):
+
                 switch failureError as? CoreDataStack.BackupError {
-                case .missingEAREncryptionKey: break
-                default: XCTFail("unexpected error type")
+                case .missingEAREncryptionKey:
+                    break
+
+                default:
+                    XCTFail("unexpected error type")
                 }
-            default: XCTFail("unexpected error type")
+
+            default:
+                XCTFail("unexpected error type")
             }
         }
     }

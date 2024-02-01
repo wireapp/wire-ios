@@ -63,16 +63,13 @@ class SessionManagerTests_Backup: IntegrationTest {
         let result = backupActiveAcount(password: name)
 
         // then
-        guard case .failure(let error) = result else {
-            XCTFail("expected error '.noActiveAccount'")
-            return
-        }
-
-        switch error as? SessionManager.BackupError {
-        case .noActiveAccount:
-            break
-        default:
-            XCTFail("expected error '.noActiveAccount'")
+        XCTAssertThrowsError(try result.get()) { error in
+            switch error as? SessionManager.BackupError {
+            case .noActiveAccount:
+                break
+            default:
+                XCTFail("expected error '.noActiveAccount'")
+            }
         }
     }
 

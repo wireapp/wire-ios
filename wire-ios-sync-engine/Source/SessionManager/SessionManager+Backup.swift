@@ -78,10 +78,7 @@ extension SessionManager {
         handle: String
         ) {
         workerQueue.async(group: dispatchGroup) {
-            let encrypted: Result<URL, Error>
-
-            switch result {
-            case .success(let info):
+            let encrypted = result.flatMap { info in
                 do {
                     // 1. Compress the backup
                     let compressed = try compress(backup: info)
@@ -89,12 +86,10 @@ extension SessionManager {
                     // 2. Encrypt the backup
                     let url = targetBackupURL(for: info, handle: handle)
                     try encrypt(from: compressed, to: url, password: password, accountId: accountId)
-                    encrypted = .success(url)
+                    return .success(url)
                 } catch {
-                    encrypted = .failure(error)
+                    return .failure(error)
                 }
-            case .failure(let error):
-                encrypted = .failure(error)
             }
 
             DispatchQueue.main.async(group: dispatchGroup) {
