@@ -65,8 +65,6 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
     var spyKeyStore: SpyUserClientKeyStore!
     var proteusService: MockProteusServiceInterface!
     var proteusProvider: MockProteusProvider!
-    var coreCrypto: MockSafeCoreCrypto!
-    var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     var postLoginAuthenticationObserverToken: Any?
 
@@ -83,9 +81,6 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
                 mockProteusService: self.proteusService,
                 mockKeyStore: spyKeyStore
             )
-            self.coreCrypto = MockSafeCoreCrypto()
-            self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
-            self.coreCryptoProvider.coreCryptoRequireMLS_MockValue = self.coreCrypto
             self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: self.userIdentifier, useCache: true)
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
@@ -98,8 +93,7 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
                 clientRegistrationStatus: self.clientRegistrationStatus,
                 clientUpdateStatus: self.clientUpdateStatus,
                 context: self.syncMOC,
-                proteusProvider: self.proteusProvider,
-                coreCryptoProvider: self.coreCryptoProvider
+                proteusProvider: self.proteusProvider
             )
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.userIdentifier
@@ -130,24 +124,6 @@ extension UserClientRequestStrategyTests {
         selfClient.remoteIdentifier = nil
         selfClient.user = ZMUser.selfUser(in: context)
         return selfClient
-    }
-
-    func testThatMLSPublicKeysAreCreatedBeforeAttemptingToRegisterMLSClient() {
-        syncMOC.performGroupedBlockAndWait {
-
-            // given
-            let client = self.createSelfClient(self.sut.managedObjectContext!)
-            self.clientRegistrationStatus.mockPhase = .registeringMLSClient
-
-            // when
-            XCTAssertNil(self.sut.nextRequest(for: .v0))
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        syncMOC.performGroupedBlockAndWait {
-            // then
-            XCTAssertEqual(self.coreCryptoProvider.coreCryptoRequireMLS_Invocations.count, 1)
-        }
     }
 
     func testThatPrekeysAreGeneratedBeforeAttemptingToRegisterClient() {

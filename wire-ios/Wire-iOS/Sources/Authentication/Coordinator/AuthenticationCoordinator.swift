@@ -872,6 +872,7 @@ extension AuthenticationCoordinator {
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
         let selfUser = ZMUser.selfUser(inUserSession: session)
+        let isUpgradingMLSClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
 
         guard
             let userName = selfUser.name,
@@ -889,6 +890,7 @@ extension AuthenticationCoordinator {
                     userName: userName,
                     userHandle: handle,
                     team: teamID,
+                    isUpgradingMLSClient: isUpgradingMLSClient,
                     authenticate: oauthUseCase.invoke
                 )
                 session.reportEndToEndIdentityEnrollmentSuccess()

@@ -377,6 +377,7 @@ public class ZMUserSession: NSObject {
             requestCancellation: transportSession,
             application: application,
             lastEventIDRepository: lastEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
             analytics: analytics
         )
         self.earService = earService ?? EARService(
@@ -622,10 +623,12 @@ public class ZMUserSession: NSObject {
     func createMLSClientIfNeeded() {
         // TODO: [jacob] refactor out WPB-6198
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
+            guard let mlsClientID = MLSClientID(user: ZMUser.selfUser(in: syncContext)) else {
+                fatalError("Needs to register MLS client but can't retrieve qualified client ID")
+            }
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
-                    // Make sure MLS client exists, mls public keys will be generated upon creation
-                    _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+                    _ = try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
                 } catch {
                     WireLogger.mls.error("Failed to create MLS client: \(error)")
                 }

@@ -23,7 +23,13 @@ public protocol E2eIRepositoryInterface {
 
     func fetchTrustAnchor() async throws
 
-    func createEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String, team: UUID) async throws -> E2eIEnrollmentInterface
+    func createEnrollment(
+        e2eiClientId: E2eIClientID,
+        userName: String,
+        handle: String,
+        team: UUID,
+        isUpgradingClient: Bool
+    ) async throws -> E2eIEnrollmentInterface
 }
 
 public final class E2eIRepository: E2eIRepositoryInterface {
@@ -57,13 +63,16 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         e2eiClientId: E2eIClientID,
         userName: String,
         handle: String,
-        team: UUID
+        team: UUID,
+        isUpgradingClient: Bool
     ) async throws -> E2eIEnrollmentInterface {
 
         let e2eIdentity = try await e2eiSetupService.setupEnrollment(
+            clientID: e2eiClientId,
             userName: userName,
             handle: handle,
-            team: team
+            team: team,
+            isUpgradingClient: isUpgradingClient
         )
 
         let e2eiService = E2eIService(e2eIdentity: e2eIdentity, coreCryptoProvider: coreCryptoProvider)

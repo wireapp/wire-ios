@@ -248,12 +248,15 @@ final class DeveloperToolsViewModel: ObservableObject {
             return
         }
 
+        let isUpgradingMLSClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
+
         Task {
             do {
                 _ = try await e2eiCertificateUseCase?.invoke(e2eiClientId: e2eiClientId,
                                                              userName: userName,
                                                              userHandle: handle,
                                                              team: teamId,
+                                                             isUpgradingMLSClient: isUpgradingMLSClient,
                                                              authenticate: oauthUseCase.invoke)
             } catch {
                 WireLogger.e2ei.error("failed to enroll e2ei: \(error)")

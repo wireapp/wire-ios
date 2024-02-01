@@ -29,6 +29,7 @@ public protocol EnrollE2eICertificateUseCaseInterface {
                 userName: String,
                 userHandle: String,
                 team: UUID,
+                isUpgradingMLSClient: Bool,
                 authenticate: OAuthBlock) async throws
 
 }
@@ -46,13 +47,15 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                        userName: String,
                        userHandle: String,
                        team: UUID,
+                       isUpgradingMLSClient: Bool,
                        authenticate: OAuthBlock) async throws {
         try await e2eiRepository.fetchTrustAnchor()
 
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId,
                                                                    userName: userName,
                                                                    handle: userHandle,
-                                                                   team: team)
+                                                                   team: team,
+                                                                   isUpgradingClient: isUpgradingMLSClient)
 
         let acmeNonce = try await enrollment.getACMENonce()
         let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)
@@ -100,7 +103,11 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
             guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
                 throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
             }
-            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+            if isUpgradingMLSClient {
+                try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+            } else {
+                try await enrollment.createMLSClient(certificateChain: certificateChain)
+            }
         } catch is DecodingError {
             throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
         }
