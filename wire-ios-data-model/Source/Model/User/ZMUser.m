@@ -49,7 +49,6 @@ static NSString *const SessionObjectIDAsStringKey = @"SessionObjectID";
 static NSString *const SelfUserKey = @"ZMSelfUser";
 static NSString *const NormalizedNameKey = @"normalizedName";
 static NSString *const NormalizedEmailAddressKey = @"normalizedEmailAddress";
-static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
 
 static NSString *const ConversationsCreatedKey = @"conversationsCreated";
 static NSString *const ActiveCallConversationsKey = @"activeCallConversations";

@@ -245,36 +245,44 @@ extension ZMUser {
 
     @NSManaged private var primitiveDomain: String?
 
+    static let domainKey: String = "domain"
+
     public var domain: String? {
         get {
-            willAccessValue(forKey: "domain")
+            willAccessValue(forKey: Self.domainKey)
             let value = primitiveDomain
-            didAccessValue(forKey: "domain")
+            didAccessValue(forKey: Self.domainKey)
             return value
         }
 
         set {
-            willChangeValue(forKey: "domain")
+            willChangeValue(forKey: Self.domainKey)
             primitiveDomain = newValue
-            didChangeValue(forKey: "domain")
+            didChangeValue(forKey: Self.domainKey)
             updatePrimaryKey(remoteIdentifier: remoteIdentifier, domain: newValue)
         }
     }
 
     @NSManaged private var primitiveRemoteIdentifier: String?
+
+    static let remoteIdentifierKey: String = "remoteIdentifier"
+
     // keep the same as objc non_specified for now
     public var remoteIdentifier: UUID! {
         get {
-            willAccessValue(forKey: "remoteIdentifier")
-            let value = self.transientUUID(forKey: "remoteIdentifier")
+            willAccessValue(forKey: Self.remoteIdentifierKey)
+            let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
+//            guard let value = self.transientUUID(forKey: Self.remoteIdentifierKey) else {
+//                fatal("trying to access MLSGroup ID before setting it")
+//            }
             didAccessValue(forKey: "remoteIdentifier")
             return value
         }
 
         set {
-            willChangeValue(forKey: "remoteIdentifier")
-            self.setTransientUUID(newValue, forKey: "remoteIdentifier")
-            didChangeValue(forKey: "remoteIdentifier")
+            willChangeValue(forKey: Self.remoteIdentifierKey)
+            self.setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
+            didChangeValue(forKey: Self.remoteIdentifierKey)
             updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
         }
     }
