@@ -29,34 +29,32 @@ public protocol OneOnOneResolverInterface {
 
 }
 
+public enum OneOnOneResolverError: Error {
+
+    case migratorNotFound
+
+}
+
 public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Dependencies
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
-    private let migrator: OneOnOneMigratorInterface
+    private let migrator: OneOnOneMigratorInterface?
 
     // MARK: - Life cycle
 
-    public convenience init?(syncContext: NSManagedObjectContext) {
+    public convenience init(syncContext: NSManagedObjectContext) {
         let mlsService = syncContext.performAndWait {
             syncContext.mlsService
         }
 
-        guard let mlsService else {
-            return nil
-        }
-
-        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
-    }
-
-    public convenience init?(mlsService: MLSService) {
-        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
+        self.init(migrator: mlsService.map(OneOnOneMigrator.init))
     }
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        migrator: OneOnOneMigratorInterface
+        migrator: OneOnOneMigratorInterface? = nil
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
@@ -93,10 +91,16 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         case .mls:
             WireLogger.conversation.debug("should resolve to mls one on one")
+
+            guard let migrator else {
+                throw OneOnOneResolverError.migratorNotFound
+            }
+
             let mlsGroupIdentifier = try await migrator.migrateToMLS(
                 userID: userID,
                 in: context
             )
+
             return .migratedToMLSGroup(identifier: mlsGroupIdentifier)
 
         case .proteus:

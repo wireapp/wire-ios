@@ -184,13 +184,13 @@ public protocol UserSession: AnyObject {
 
     func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool>
+            Result<Bool, Error>
         ) -> Void
     )
 
     func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
     )
 
     func classification(
@@ -451,7 +451,7 @@ extension ZMUserSession: UserSession {
 
     public func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool>
+            Result<Bool, Error>
         ) -> Void
     ) {
         ZMUser.selfUser(inUserSession: self).fetchConsent(
@@ -463,7 +463,7 @@ extension ZMUserSession: UserSession {
 
     public func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
     ) {
         ZMUser.selfUser(inUserSession: self).setMarketingConsent(
             to: granted,

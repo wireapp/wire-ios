@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,7 @@
 //
 
 import Foundation
-import WireDataModel
 
-extension ZMMessage {
-
-    func updateServerTimestamp(with timeInterval: TimeInterval) {
-        serverTimestamp = Date(timeIntervalSince1970: timeInterval)
-    }
-
-}
-
-extension ZMConversationMessage {
-    func updateServerTimestamp(with timeInterval: TimeInterval) {
-        guard let message = self as? ZMMessage else {
-            assertionFailure("expected 'self' to be object of 'ZMMessage'!")
-            return
-        }
-        message.updateServerTimestamp(with: timeInterval)
-    }
+enum CoreDataStackTests: Error {
+    case timedOut
 }
