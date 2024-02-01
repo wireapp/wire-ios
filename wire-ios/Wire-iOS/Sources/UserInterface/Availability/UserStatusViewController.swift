@@ -110,7 +110,8 @@ final class UserStatusViewController: UIViewController {
                 self?.updateUserStatusView()
             }
         }
-        let userChangeObservation = userSession.addUserObserver(userChangeObserver, for: user)
+        self.userChangeObserver = userChangeObserver
+        userChangeObservation = userSession.addUserObserver(userChangeObserver, for: user)
     }
 
     @objc
