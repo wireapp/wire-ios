@@ -420,7 +420,6 @@ extension ZMUser: UserConnections {
     public enum AcceptConnectionError: Error {
 
         case invalidState
-        case unableToResolveConversation
         case unableToSwitchToMLS
 
     }
@@ -452,7 +451,7 @@ extension ZMUser: UserConnections {
             case .success:
                 Task {
                     do {
-                        let resolver: OneOnOneResolverInterface = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
+                        let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
                         try await resolver.resolveOneOnOneConversation(
                             with: QualifiedID(uuid: userID, domain: domain),
                             in: context
