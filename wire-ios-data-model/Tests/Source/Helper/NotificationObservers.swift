@@ -29,7 +29,7 @@ extension ObserverType {
     }
 }
 
-class UserObserver: NSObject, ZMUserObserver {
+final class UserObserver: NSObject, UserChangeObserver {
 
     var notifications = [UserChangeInfo]()
 

@@ -22,5 +22,3 @@ import Foundation
 public protocol UserChangeObserver: NSObjectProtocol {
     func userDidChange(_ changeInfo: UserChangeInfo)
 }
-
-public typealias ZMUserObserver = UserChangeObserver

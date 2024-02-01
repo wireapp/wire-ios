@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-extension SearchTests: ZMUserObserver {
+extension SearchTests: UserChangeObserver {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         userNotifications.append(changeInfo)

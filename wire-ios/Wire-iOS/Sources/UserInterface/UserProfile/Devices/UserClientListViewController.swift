@@ -145,7 +145,7 @@ final class UserClientListViewController: UIViewController,
     }
 }
 
-extension UserClientListViewController: ZMUserObserver {
+extension UserClientListViewController: UserChangeObserver {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.clientsChanged || changeInfo.trustLevelChanged else { return }

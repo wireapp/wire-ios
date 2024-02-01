@@ -18,7 +18,7 @@
 import Foundation
 import WireSyncEngine
 
-extension ZClientViewController: ZMUserObserver {
+extension ZClientViewController: UserChangeObserver {
 
     public func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {

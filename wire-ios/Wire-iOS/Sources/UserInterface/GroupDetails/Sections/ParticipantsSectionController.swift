@@ -273,7 +273,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
 }
 
-extension ParticipantsSectionController: ZMUserObserver {
+extension ParticipantsSectionController: UserChangeObserver {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged || changeInfo.nameChanged else { return }

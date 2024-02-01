@@ -216,9 +216,9 @@ extension ConnectRequestsViewController: ZMConversationListObserver {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - UserChangeObserver
 
-extension ConnectRequestsViewController: ZMUserObserver {
+extension ConnectRequestsViewController: UserChangeObserver {
     func userDidChange(_ change: UserChangeInfo) {
         tableView.reloadData() // may need a slightly different approach, like enumerating through table cells of type FirstTimeTableViewCell and setting their bgColor property
     }

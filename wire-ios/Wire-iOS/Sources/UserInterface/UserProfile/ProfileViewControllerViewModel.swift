@@ -259,7 +259,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
 }
 
-extension ProfileViewControllerViewModel: ZMUserObserver {
+extension ProfileViewControllerViewModel: UserChangeObserver {
     func userDidChange(_ note: UserChangeInfo) {
         if note.trustLevelChanged {
             viewModelDelegate?.updateShowVerifiedShield()

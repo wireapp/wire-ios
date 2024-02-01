@@ -21,7 +21,7 @@ import WireSyncEngine
 
 typealias AccentColorChangeHandlerBlock = (UIColor?, Any?) -> Void
 
-final class AccentColorChangeHandler: NSObject, ZMUserObserver {
+final class AccentColorChangeHandler: NSObject, UserChangeObserver {
 
     private var handlerBlock: AccentColorChangeHandlerBlock?
     private var observer: Any?
