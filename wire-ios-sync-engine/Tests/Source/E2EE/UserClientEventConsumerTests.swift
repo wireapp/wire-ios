@@ -34,7 +34,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
 
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(context: self.syncMOC,
-                                                                           cookieStorage: self.cookieStorage)
+                                                                           cookieProvider: self.cookieStorage)
 
             self.sut = UserClientEventConsumer(managedObjectContext: self.syncMOC,
                                                clientRegistrationStatus: self.clientRegistrationStatus,

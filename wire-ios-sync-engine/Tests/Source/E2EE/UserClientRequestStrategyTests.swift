@@ -90,7 +90,7 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
                 context: self.syncMOC,
-                cookieStorage: self.cookieStorage
+                cookieProvider: self.cookieStorage
             )
             self.clientRegistrationStatus.registrationStatusDelegate = self.mockClientRegistrationStatusDelegate
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
