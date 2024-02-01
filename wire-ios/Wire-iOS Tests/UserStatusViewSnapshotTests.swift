@@ -127,6 +127,8 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
         line: UInt = #line,
         testName: String = #function
     ) {
+        updateAvailability(for: user, newValue: availability)
+
         let sut = UserStatusView(
             options: options,
             userSession: userSession
@@ -141,5 +143,14 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
             isVerified: false
         )
         verify(matching: sut, file: file, testName: testName, line: line)
+    }
+
+    private func updateAvailability(for user: ZMUser, newValue: Availability) {
+        if user == ZMUser.selfUser() {
+            user.availability = newValue
+        } else {
+            // if the user is not self, force the update of the availability
+            user.updateAvailability(newValue)
+        }
     }
 }
