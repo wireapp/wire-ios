@@ -179,7 +179,7 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
     var lookupConversationAndProcessPendingCallEventsCalls = 0
     func lookupConversationAndProcessPendingCallEvents(
         by handle: WireSyncEngine.CallHandle,
-        completionHandler: @escaping (WireUtilities.Result<ZMConversation, Error>
+        completionHandler: @escaping (Result<ZMConversation, Error>
     ) -> Void) {
         lookupConversationAndProcessPendingCallEventsCalls += 1
         lookupConversation(by: handle, completionHandler: completionHandler)
