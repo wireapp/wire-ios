@@ -122,15 +122,12 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
-            guard
-                let otherUser = ZMUser.fetch(with: userID, in: context),
-                let connection = otherUser.connection
-            else {
+            guard let otherUser = ZMUser.fetch(with: userID, in: context) else {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
             // move local messages
-            if let proteusConversation = connection.conversation {
+            if let proteusConversation = otherUser.oneOnOneConversation {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
@@ -140,7 +137,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
             }
 
             // switch active conversation
-            connection.conversation = mlsConversation
+            otherUser.oneOnOneConversation = mlsConversation
 
             context.saveOrRollback()
         }

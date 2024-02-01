@@ -70,8 +70,8 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // When
         await uiMOC.perform {
-            XCTAssertEqual(connection.conversation, proteusConversation)
-            XCTAssertNil(mlsConversation.connection)
+            XCTAssertEqual(proteusConversation.oneOnOneUser?.remoteIdentifier, userID.uuid)
+            XCTAssertNil(mlsConversation.oneOnOneUser)
         }
 
         try await sut.migrateToMLS(
@@ -86,8 +86,8 @@ final class OneOnOneMigratorTests: XCTestCase {
         XCTAssertEqual(createGroupInvocation.users, [MLSUser(userID)])
 
         await uiMOC.perform {
-            XCTAssertEqual(connection.conversation, mlsConversation)
-            XCTAssertNil(proteusConversation.connection)
+            XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
+            XCTAssertNil(proteusConversation.oneOnOneUser)
         }
     }
 
@@ -114,8 +114,8 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // When
         await uiMOC.perform {
-            XCTAssertEqual(connection.conversation, proteusConversation)
-            XCTAssertNil(mlsConversation.connection)
+            XCTAssertEqual(proteusConversation.oneOnOneUser?.remoteIdentifier, userID.uuid)
+            XCTAssertNil(mlsConversation.oneOnOneUser)
         }
 
         try await sut.migrateToMLS(
@@ -128,8 +128,8 @@ final class OneOnOneMigratorTests: XCTestCase {
         XCTAssertTrue(mockMLSService.addMembersToConversationWithFor_Invocations.isEmpty)
 
         await uiMOC.perform {
-            XCTAssertEqual(connection.conversation, mlsConversation)
-            XCTAssertNil(proteusConversation.connection)
+            XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
+            XCTAssertNil(proteusConversation.oneOnOneUser)
         }
     }
 
@@ -226,7 +226,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         conversation.conversationType = .connection
         conversation.remoteIdentifier = .create()
         conversation.domain = "local@domain.com"
-        conversation.connection = connection
+        conversation.oneOnOneUser = connection.to
 
         return (connection, conversation)
     }
