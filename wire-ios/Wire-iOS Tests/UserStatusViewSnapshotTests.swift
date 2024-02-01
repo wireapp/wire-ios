@@ -127,6 +127,8 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
         line: UInt = #line,
         testName: String = #function
     ) {
+        updateAvailability(for: user, newValue: availability)
+
         let sut = UserStatusView(
             user: user,
             options: options,
@@ -136,5 +138,14 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
         sut.backgroundColor = userInterfaceStyle == .dark ? .black : .white
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
         verify(matching: sut, file: file, testName: testName, line: line)
+    }
+
+    private func updateAvailability(for user: ZMUser, newValue: Availability) {
+        if user == ZMUser.selfUser() {
+            user.availability = newValue
+        } else {
+            // if the user is not self, force the update of the availability
+            user.updateAvailability(newValue)
+        }
     }
 }
