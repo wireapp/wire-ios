@@ -62,15 +62,16 @@ extension SelfProfileViewController {
         }
     }
 
-    @discardableResult func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
+    @discardableResult
+    func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
         var resultViewController: UIViewController? = .none
         // Let's assume for the moment that menu is only 2 levels deep
         rootGroup?.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) in
 
             if let cellIdentifier = topCellDescriptor.identifier,
-                let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,
-                let viewController = cellGroupDescriptor.generateViewController(),
-                cellIdentifier == identifier {
+               let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,
+               let viewController = cellGroupDescriptor.generateViewController(),
+               cellIdentifier == identifier {
                 self.navigationController?.pushViewController(viewController, animated: false)
                 resultViewController = viewController
             }
@@ -78,10 +79,10 @@ extension SelfProfileViewController {
             if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
                 topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: SettingsCellDescriptorType) in
                     if let cellIdentifier = cellDescriptor.identifier,
-                        let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,
-                        let topViewController = topCellGroupDescriptor.generateViewController(),
-                        let viewController = cellGroupDescriptor.generateViewController(),
-                        cellIdentifier == identifier {
+                       let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,
+                       let topViewController = topCellGroupDescriptor.generateViewController(),
+                       let viewController = cellGroupDescriptor.generateViewController(),
+                       cellIdentifier == identifier {
                         self.navigationController?.pushViewController(topViewController, animated: false)
                         self.navigationController?.pushViewController(viewController, animated: false)
                         resultViewController = viewController
