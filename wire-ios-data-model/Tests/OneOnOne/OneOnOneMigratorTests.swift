@@ -154,14 +154,18 @@ final class OneOnOneMigratorTests: XCTestCase {
             context: uiMOC.notificationContext
         )
 
+        // required to add be able to add images
+        await uiMOC.perform {
+            self.uiMOC.zm_fileAssetCache = .init()
+        }
+
         // When
-        let mockMessage = "Hello World!"
         try await uiMOC.perform {
-            _ = try proteusConversation.appendText(content: mockMessage)
+            try proteusConversation.appendText(content: "Hello World!")
+            try proteusConversation.appendKnock()
+            try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
 
-            let lastProteusMessage = proteusConversation.lastMessage?.textMessageData?.messageText
-            XCTAssertEqual(lastProteusMessage, mockMessage)
-
+            XCTAssertEqual(proteusConversation.allMessages.count, 3)
             XCTAssertNil(mlsConversation.lastMessage)
         }
 
@@ -172,8 +176,11 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Then
         await uiMOC.perform {
-            let lastMLSMessage = mlsConversation.lastMessage?.textMessageData?.messageText
-            XCTAssertEqual(lastMLSMessage, mockMessage)
+            let mlsMessages = mlsConversation.allMessages.sorted { $0.serverTimestamp < $1.serverTimestamp }
+            XCTAssertEqual(mlsMessages.count, 3)
+            XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
+            XCTAssertTrue(mlsMessages[1].isKnock)
+            XCTAssertTrue(mlsMessages[2].isImage)
 
             XCTAssertNil(proteusConversation.lastMessage)
         }
