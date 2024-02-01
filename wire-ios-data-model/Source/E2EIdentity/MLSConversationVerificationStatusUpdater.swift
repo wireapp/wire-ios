@@ -19,13 +19,14 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol MLSConversationVerificationStatusProviderInterface {
+public protocol MLSConversationVerificationStatusUpdating {
 
     func updateStatus(_ groupID: MLSGroupID) async throws
+    func updateAllStatuses() async throws
 
 }
 
-public class MLSConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface {
+public class MLSConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating {
 
     // MARK: - Properties
 
@@ -45,11 +46,41 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
     // MARK: - Public interface
 
     public func updateStatus(_ groupID: MLSGroupID) async throws {
-        guard let conversation = await syncContext.perform({
+        let conversation = await syncContext.perform {
             ZMConversation.fetch(with: groupID, in: self.syncContext)
-        }) else {
+        }
+
+        guard let conversation else {
             throw E2eIVerificationStatusService.E2eIVerificationStatusError.missingConversation
         }
+
+        try await updateStatus(for: conversation, groupID: groupID)
+    }
+
+    public func updateAllStatuses() async {
+        let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
+            let conversations = ZMConversation.fetchMLSConversations(in: syncContext)
+            
+            return conversations.compactMap {
+                guard let groupID = $0.mlsGroupID else {
+                    return nil
+                }
+                return (groupID, $0)
+            }
+        }
+
+        for (groupID, conversation) in groupIDConversationTuples {
+            do {
+                try await updateStatus(for: conversation, groupID: groupID)
+            } catch {
+                // TODO: Handle error
+            }
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func updateStatus(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
         do {
             let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
             await syncContext.perform {
@@ -59,8 +90,6 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
             throw error
         }
     }
-
-    // MARK: - Helpers
 
     private func updateStatusAndNotifyUserIfNeeded(newStatusFromCC: MLSVerificationStatus,
                                                    conversation: ZMConversation) {

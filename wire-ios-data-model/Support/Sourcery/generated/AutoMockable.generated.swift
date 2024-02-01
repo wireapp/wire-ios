@@ -3045,7 +3045,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
 }
 
-public class MockMLSConversationVerificationStatusProviderInterface: MLSConversationVerificationStatusProviderInterface {
+public class MockMLSConversationVerificationStatusProviderInterface: MLSConversationVerificationStatusUpdating {
 
     // MARK: - Life cycle
 

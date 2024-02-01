@@ -29,12 +29,12 @@ public final class MLSConversationVerificationManager: MLSConversationVerificati
     // MARK: - Properties
 
     var mlsService: MLSServiceInterface
-    var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface?
+    var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusUpdating?
 
     // MARK: - Life cycle
 
     public init(mlsService: MLSServiceInterface,
-                mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface?) {
+                mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusUpdating?) {
         self.mlsService = mlsService
         self.mlsConversationVerificationStatusProvider = mlsConversationVerificationStatusProvider
     }

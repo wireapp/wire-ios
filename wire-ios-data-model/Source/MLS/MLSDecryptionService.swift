@@ -25,6 +25,8 @@ import WireSystem
 public protocol MLSDecryptionServiceInterface {
 
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
+    
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
 
     func decrypt(
         message: String,
@@ -65,9 +67,14 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
+    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
     public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         return onEpochChangedSubject.eraseToAnyPublisher()
+    }
+
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        return onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Life cycle
@@ -135,6 +142,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             if decryptedMessage.hasEpochChanged {
                 onEpochChangedSubject.send(groupID)
+            }
+
+            if let newDistributionPoints = CRLsDistributionPoints(from: decryptedMessage.crlNewDistributionPoints) {
+                onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
             }
 
             var results = try decryptedMessage.bufferedMessages?.compactMap({ try decryptResult(from: $0) }) ?? []

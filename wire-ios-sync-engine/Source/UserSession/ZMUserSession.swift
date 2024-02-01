@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireSystem
+import WireRequestStrategy
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -104,6 +105,9 @@ public class ZMUserSession: NSObject {
     private(set) var mlsService: MLSServiceInterface
     private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
+    let cRLsChecker: CertificateRevocationListsChecking
+    let cRLsDistributionPointsObserver: CRLsDistributionPointsObserving
+    let mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating
 
     public var syncStatus: SyncStatusProtocol {
         return applicationStatusDirectory.syncStatus
@@ -298,6 +302,10 @@ public class ZMUserSession: NSObject {
             context: syncContext
         )
 
+        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+            from: keyRotator.onNewCRLsDistributionPoints()
+        )
+
         let e2eiRepository = E2eIRepository(
             acmeApi: acmeApi,
             apiProvider: apiProvider,
@@ -320,14 +328,10 @@ public class ZMUserSession: NSObject {
     }()
 
     lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {
-        let verificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
-        let verificationStatusProvider = MLSConversationVerificationStatusProvider(
-            e2eIVerificationStatusService: verificationStatusService,
-            syncContext: syncContext)
-
         return MLSConversationVerificationManager(
             mlsService: mlsService,
-            mlsConversationVerificationStatusProvider: verificationStatusProvider)
+            mlsConversationVerificationStatusProvider: mlsConversationVerificationStatusUpdater
+        )
     }()
 
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
@@ -356,6 +360,8 @@ public class ZMUserSession: NSObject {
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
+        cRLsChecker: CertificateRevocationListsChecker? = nil,
+        cRLsDistributionPointsObserver: CRLsDistributionPointsObserver? = nil,
         sharedUserDefaults: UserDefaults
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
@@ -416,13 +422,31 @@ public class ZMUserSession: NSObject {
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             userDefaults: .standard,
             syncStatus: applicationStatusDirectory.syncStatus,
-            userID: coreDataStack.account.userIdentifier)
+            userID: coreDataStack.account.userIdentifier
+        )
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
             userID: userId
+        )
+
+        let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+        self.mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
+            e2eIVerificationStatusService: e2eIVerificationStatusService,
+            syncContext: coreDataStack.syncContext
+        )
+
+        self.cRLsChecker = cRLsChecker ?? CertificateRevocationListsChecker(
+            crlAPI: CertificateRevocationListAPI(),
+            mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
+            coreCryptoProvider: coreCryptoProvider,
+            context: coreDataStack.syncContext
+        )
+
+        self.cRLsDistributionPointsObserver = cRLsDistributionPointsObserver ?? CRLsDistributionPointsObserver(
+            cRLsChecker: self.cRLsChecker
         )
 
         super.init()
@@ -467,6 +491,9 @@ public class ZMUserSession: NSObject {
 
             if e2eiFeature.isEnabled {
                 mlsConversationVerificationManager.startObservingMLSConversationVerificationStatus()
+                self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+                    from: self.mlsService.onNewCRLsDistributionPoints()
+                )
             }
         }
 
@@ -845,6 +872,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         fetchFeatureConfigs()
         recurringActionService.performActionsIfNeeded()
+
+        Task {
+            await self.cRLsChecker.checkExpiringCRLs()
+        }
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()

@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import WireDataModel
+import Combine
 
 // sourcery: AutoMockable
 public protocol E2eIKeyPackageRotating {
@@ -27,6 +28,8 @@ public protocol E2eIKeyPackageRotating {
         enrollment: E2eiEnrollmentProtocol,
         certificateChain: String
     ) async throws
+
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
 
 }
 
@@ -47,6 +50,7 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
     private let context: NSManagedObjectContext
     private let commitSender: CommitSending
     private let newKeyPackageCount: UInt32 = 100
+    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -111,7 +115,17 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
             }
         }
 
+        // Publish new certificate revocation lists (CRLs) distribution points
+        if let newDistributionPoints = CRLsDistributionPoints(from: rotateBundle.crlNewDistributionPoints) {
+            onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+        }
     }
+
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
+    }
+
+    // MARK: - Helpers
 
     private func replaceKeyPackages(rotateBundle: RotateBundle) async throws {
 

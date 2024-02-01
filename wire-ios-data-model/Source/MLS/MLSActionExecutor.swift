@@ -29,6 +29,7 @@ public protocol MLSActionExecutorProtocol {
     func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent]
     func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
 
 }
 
@@ -51,6 +52,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let commitSender: CommitSending
     private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
+    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -83,7 +85,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     /// Here's it's critical that no other operation like `decryptMessage` is performed
     /// between step 1 and 2. We enforce this by wrapping all `decrypt` and `commit` operations
     /// inside `performNonReentrant`
-    /// 
+    ///
     func performNonReentrant<T>(groupID: MLSGroupID, operation: () async throws -> T) async rethrows -> T {
         if continuationsByGroupID.keys.contains(groupID) {
             await withCheckedContinuation { continuation in
@@ -216,6 +218,12 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                     )
                 }
 
+                if let newDistributionPoints = CRLsDistributionPoints(
+                    from: memberAddMessages.crlNewDistributionPoints
+                ) {
+                    onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+                }
+
                 return CommitBundle(
                     welcome: memberAddMessages.welcome,
                     commit: memberAddMessages.commit,
@@ -253,6 +261,12 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                     )
                 }
 
+                if let newDistributionPoints = CRLsDistributionPoints(
+                    from: conversationInitBundle.crlNewDistributionPoints
+                ) {
+                    onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+                }
+
                 return CommitBundle(
                     welcome: nil,
                     commit: conversationInitBundle.commit,
@@ -273,7 +287,16 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         commitSender.onEpochChanged()
     }
+
+    // MARK: - CRLs distribution points publisher
+    
+    nonisolated
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
+    }
+
 }
+
 
 extension MLSActionExecutor.Action: CustomDebugStringConvertible {
 
