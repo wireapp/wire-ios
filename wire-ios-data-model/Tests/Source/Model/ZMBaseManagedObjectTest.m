@@ -31,8 +31,6 @@
 #import "ZMMessage+Internal.h"
 #import "ZMConversation+UnreadCount.h"
 
-#import "NSString+RandomString.h"
-
 @import WireTransport.Testing;
 
 @interface ZMBaseManagedObjectTest ()
@@ -235,7 +233,7 @@
     selfUser = [ZMUser selfUserInContext:moc];
     selfUser.remoteIdentifier = selfUser.remoteIdentifier ?: [NSUUID createUUID];
     UserClient *selfClient = [UserClient insertNewObjectInManagedObjectContext:moc];
-    selfClient.remoteIdentifier = [NSString createAlphanumericalString];
+    selfClient.remoteIdentifier = [NSString randomRemoteIdentifier];
     selfClient.user = selfUser;
     
     [moc setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMPersistedClientIdKey];

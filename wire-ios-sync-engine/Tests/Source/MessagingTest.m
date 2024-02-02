@@ -353,7 +353,7 @@ static ZMReachability *sharedReachabilityMock = nil;
     }
     
     UserClient *client = [UserClient insertNewObjectInManagedObjectContext:moc];
-    client.remoteIdentifier = [NSString createAlphanumericalString];
+    client.remoteIdentifier = [NSString randomRemoteIdentifier];
     client.user = selfUser;
     
     [moc setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];

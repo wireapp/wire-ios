@@ -34,7 +34,7 @@ class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()
         let quotedMessage = try! conversation.appendText(content: "The sky is blue") as? ZMClientMessage
         let replyMessage = GenericMessage(content: Text(content: "I agree", replyingTo: quotedMessage))
-        let data = ["sender": NSString.createAlphanumerical(), "text": try? replyMessage.serializedData().base64EncodedString()]
+        let data = ["sender": String.randomClientIdentifier(), "text": try? replyMessage.serializedData().base64EncodedString()]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 
@@ -54,7 +54,7 @@ class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()
         let quotedMessage = try! conversation.appendText(content: "The sky is blue") as? ZMClientMessage
         let replyMessage = GenericMessage(content: Ephemeral(content: Text(content: "I agree", replyingTo: quotedMessage), expiresAfter: 1000))
-        let data = ["sender": NSString.createAlphanumerical(), "text": try? replyMessage.serializedData().base64EncodedString()]
+        let data = ["sender": String.randomClientIdentifier(), "text": try? replyMessage.serializedData().base64EncodedString()]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 

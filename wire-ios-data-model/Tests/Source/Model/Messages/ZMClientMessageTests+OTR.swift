@@ -607,7 +607,7 @@ extension DatabaseBaseTest {
         let selfUser = ZMUser.selfUser(in: moc)
 
         let selfClient = UserClient.insertNewObject(in: moc)
-        selfClient.remoteIdentifier = NSString.createAlphanumerical()
+        selfClient.remoteIdentifier = .randomRemoteIdentifier()
         selfClient.user = selfUser
 
         moc.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)

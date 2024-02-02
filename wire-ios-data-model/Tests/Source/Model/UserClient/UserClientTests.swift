@@ -511,7 +511,7 @@ extension UserClientTests {
         self.createSelfClient()
 
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        otherClient.remoteIdentifier = NSString.createAlphanumerical()
+        otherClient.remoteIdentifier = .randomRemoteIdentifier()
 
         // then
         XCTAssertFalse(otherClient.verified)
@@ -522,7 +522,7 @@ extension UserClientTests {
         let selfClient = self.createSelfClient()
 
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        otherClient.remoteIdentifier = NSString.createAlphanumerical()
+        otherClient.remoteIdentifier = .randomRemoteIdentifier()
 
         // when
         selfClient.trustClient(otherClient)
@@ -536,7 +536,7 @@ extension UserClientTests {
         let selfClient = createSelfClient()
 
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        otherClient.remoteIdentifier = NSString.createAlphanumerical()
+        otherClient.remoteIdentifier = .randomRemoteIdentifier()
 
         // when
         selfClient.ignoreClient(otherClient)
