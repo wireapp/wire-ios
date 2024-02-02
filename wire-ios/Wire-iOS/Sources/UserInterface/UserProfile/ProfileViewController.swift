@@ -483,7 +483,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             context.saveOrRollback()
         }
 
-        WireLogger.conversation.debug("duplicate user \(String(describing: user.name)) \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
+        WireLogger.conversation.debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
     }
 }
 
