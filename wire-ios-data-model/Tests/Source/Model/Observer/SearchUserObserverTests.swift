@@ -21,7 +21,7 @@ import Foundation
 
 final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
-    final class TestSearchUserObserver: NSObject, UserObserver {
+    final class TestSearchUserObserver: UserObserver {
 
         var receivedChangeInfo: [UserChangeInfo] = []
 

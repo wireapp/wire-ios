@@ -24,7 +24,7 @@ import WireDataModel
  * An object that coordinates disclosing the legal hold state to the user.
  */
 
-final class LegalHoldDisclosureController: NSObject, UserObserver {
+final class LegalHoldDisclosureController: UserObserver {
 
     enum DisclosureState: Equatable {
         /// No legal hold status is being disclosed.
