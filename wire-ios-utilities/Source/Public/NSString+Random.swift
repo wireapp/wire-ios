@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,24 @@ import Foundation
 
 extension NSString {
 
-    /// Returns a random string with alphanumerical characters
-    @objc(createAlphanumericalString)
-    static public func createAlphanumerical() -> NSString {
-        return NSString(format: "%llx", arc4random()) // swiftlint:disable:this legacy_random
+    @objc static func randomAlphanumerical(length: UInt) -> String {
+        String.randomAlphanumerical(length: length)
+    }
+
+    @objc public static func randomClientIdentifier() -> String {
+        String.randomClientIdentifier()
+    }
+
+    @objc public static func randomRemoteIdentifier() -> String {
+        String.randomRemoteIdentifier()
+    }
+}
+
+// MARK: - Legacy
+
+public extension NSString {
+    @available(*, deprecated, message: "Better use one of the newer random string methods!")
+    @objc static func createLegacyAlphanumerical() -> String {
+        String.createLegacyAlphanumerical()
     }
 }
