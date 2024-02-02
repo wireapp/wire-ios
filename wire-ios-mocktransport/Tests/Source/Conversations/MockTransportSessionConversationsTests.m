@@ -440,7 +440,7 @@
     NSData *messageData = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
     NSString *base64Content = [messageData base64EncodedStringWithOptions:0];
     
-    NSString *redundantClientId = [NSString createAlphanumericalString];
+    NSString *redundantClientId = [NSString randomClientIdentifier];
     NSDictionary *payload = @{
                               @"sender": selfClient.identifier,
                               @"recipients" : @{
@@ -628,7 +628,7 @@
     NSData *messageData = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
     NSString *base64Content = [messageData base64EncodedStringWithOptions:0];
     
-    NSString *redundantClientId = [NSString createAlphanumericalString];
+    NSString *redundantClientId = [NSString randomClientIdentifier];
     NSDictionary *payload = @{
                               @"sender": selfClient.identifier,
                               @"recipients" : @{
