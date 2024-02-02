@@ -21,15 +21,22 @@ import Foundation
 @objc public extension ZMTransportRequest {
 
     var URL: URL {
-        return Foundation.URL(string: path)!
+        Foundation.URL(string: path)!
     }
 
+    // It would be better to use `queryItems: [URLQueryItem]`, 
+    // because an array is sorted (compared to dictionary here).
+    // It can make a difference in the final call,
+    // e.g. for caching requests and have them equal with other platforms.
     var queryParameters: [String: Any] {
-        let urlComponents = URLComponents(string: path)
-        let queryItems = urlComponents?.queryItems ?? []
-        return queryItems.reduce(into: [:]) { partialResult, queryItem in
+        queryItems.reduce(into: [:]) { partialResult, queryItem in
             partialResult[queryItem.name] = queryItem.value
         }
+    }
+
+    var queryItems: [URLQueryItem] {
+        let urlComponents = URLComponents(string: path)
+        return urlComponents?.queryItems ?? []
     }
 
     var multipartBodyItemsFromRequestOrFile: [ZMMultipartBodyItem] {
