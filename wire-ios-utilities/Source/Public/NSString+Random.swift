@@ -32,3 +32,12 @@ extension NSString {
         String.randomRemoteIdentifier()
     }
 }
+
+// MARK: - Legacy
+
+public extension NSString {
+    @available(*, deprecated, message: "Better use one of the newer random string methods!")
+    @objc static func createLegacyAlphanumerical() -> String {
+        String.createLegacyAlphanumerical()
+    }
+}

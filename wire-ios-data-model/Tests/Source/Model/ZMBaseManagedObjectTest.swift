@@ -48,6 +48,7 @@ extension ZMBaseManagedObjectTest {
         if user.remoteIdentifier == nil {
             user.remoteIdentifier = UUID.create()
         }
+
         let userClient = UserClient.insertNewObject(in: moc)
         userClient.remoteIdentifier = String.createLegacyAlphanumerical()
         userClient.user = user
@@ -95,19 +96,5 @@ extension ZMBaseManagedObjectTest {
                                  options: [])
 
         try files.forEach({ try FileManager.default.removeItem(at: $0) })
-    }
-}
-
-// MARK: - Legacy Alphanumerical String
-
-private extension String {
-    // https://github.com/wireapp/wire-ios/pull/920
-    // Replacing all random strings didn't work for the single usage here
-    // So we reverted the change to keep the legacy random func.
-    //
-    // ClientMessageTests_OTR and ClientMessageTests_OTR_Legacy seem to use rely on a "%llx",
-    // but the underlying logic is not clear to me at this point.
-    static func createLegacyAlphanumerical() -> String {
-        String(format: "%llx", arc4random()) // swiftlint:disable:this legacy_random
     }
 }
