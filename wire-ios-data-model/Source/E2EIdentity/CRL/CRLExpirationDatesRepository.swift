@@ -24,25 +24,94 @@ public protocol CRLExpirationDatesRepositoryProtocol {
     func fetchAllCRLExpirationDates() -> [URL: Date]
 }
 
-// TODO: Use userDefaults for storage
+// TODO: Perhaps it's better to use core data?
+// Seems less error prone to have a well defined entity 
+// that stores the distribution point and the expiration date
+// in a single place rather than maintaining a list of distribution points
+// separately from expiration dates in user defaults
+//
+// However, I'm not sure the scaffolding around setting up a new core data entity is worth it
+
 public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol {
 
-    var crlExpirationDateByDistributionPoint: [URL: Date] = [:]
+    // MARK: - Types
+
+    enum Key: DefaultsKey {
+        case expirationDate(dp: String)
+        case distributionPoints
+
+        var rawValue: String {
+            switch self {
+            case .expirationDate(let distributionPoint):
+                "CRL_expirationDate_\(distributionPoint)"
+            case .distributionPoints:
+                "CRL_distributionPoints"
+            }
+        }
+    }
+
+    // MARK: - Properties
+
+    private let storage: PrivateUserDefaults<Key>
+
+    // MARK: - Life cycle
+
+    convenience public init(userID: UUID) {
+        self.init(storage: .init(userID: userID))
+    }
+
+    init(storage: PrivateUserDefaults<Key>) {
+        self.storage = storage
+    }
+
+    // MARK: - Interface
 
     public func crlExpirationDateExists(for distributionPoint: URL) -> Bool {
         return fetchCRLExpirationDate(for: distributionPoint) != nil
     }
 
     public func storeCRLExpirationDate(_ expirationDate: Date, for distributionPoint: URL) {
-        crlExpirationDateByDistributionPoint[distributionPoint] = expirationDate
+        let dpString = distributionPoint.absoluteString
+        storeDistributionPointIfNeeded(dpString)
+        storage.set(expirationDate, forKey: Key.expirationDate(dp: distributionPoint.absoluteString))
     }
 
     public func fetchAllCRLExpirationDates() -> [URL: Date] {
-        return crlExpirationDateByDistributionPoint
+        guard let knownDistributionPoints = storage.object(forKey: Key.distributionPoints) as? Set<String> else {
+            return [:]
+        }
+
+        var expirationDatesByDistributionPoint = [URL: Date]()
+
+        for distributionPoint in knownDistributionPoints {
+            let expirationDate = storage.date(forKey: .expirationDate(dp: distributionPoint))
+
+            guard
+                let expirationDate = expirationDate,
+                let url = URL(string: distributionPoint)
+            else {
+                continue
+            }
+
+            expirationDatesByDistributionPoint[url] = expirationDate
+        }
+
+        return expirationDatesByDistributionPoint
+    }
+
+    // MARK: - Helpers
+
+    private func storeDistributionPointIfNeeded(_ dpString: String) {
+        if var knownDistributionPoints = storage.object(forKey: Key.distributionPoints) as? Set<String> {
+            knownDistributionPoints.insert(dpString)
+            storage.set(knownDistributionPoints, forKey: .distributionPoints)
+        } else {
+            storage.set(Set([dpString]) as Any, forKey: .distributionPoints)
+        }
     }
 
     private func fetchCRLExpirationDate(for distributionPoint: URL) -> Date? {
-        return crlExpirationDateByDistributionPoint[distributionPoint]
+        storage.date(forKey: .expirationDate(dp: distributionPoint.absoluteString))
     }
 
 }
