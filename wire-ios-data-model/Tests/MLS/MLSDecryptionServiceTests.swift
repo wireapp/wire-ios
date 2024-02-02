@@ -282,7 +282,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
     }
 
-    func test_Decrypt_ReportsEpochChanged() async {
+    func test_Decrypt_PublishesEpochChanges() async {
         // Given
         let groupID = MLSGroupID.random()
         let messageData = Data.random()
@@ -331,4 +331,48 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(receivedGroupIDs, [groupID])
     }
 
+    func test_Decrypt_PublishesNewDistributionPoints() async throws {
+        // Given
+        let distributionPoint = "example.domain.com"
+        let messageData = Data.random()
+        let sender = MLSClientID(
+            userID: UUID.create().transportString(),
+            clientID: "client",
+            domain: "example.com"
+        )
+        let senderData = try XCTUnwrap(sender.rawValue.data(using: .utf8))
+
+        // Mock message decryption
+        self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+            return DecryptedMessage(
+                message: messageData,
+                proposals: [],
+                isActive: false,
+                commitDelay: nil,
+                senderClientId: senderData,
+                hasEpochChanged: false,
+                identity: nil,
+                bufferedMessages: nil,
+                crlNewDistributionPoints: [distributionPoint]
+            )
+        }
+
+        // Set expectation to receive new distribution points
+        let expectation = XCTestExpectation(description: "received value")
+        let cancellable = sut.onNewCRLsDistributionPoints().sink { value in
+            XCTAssertEqual(value, CRLsDistributionPoints(from: [distributionPoint]))
+            expectation.fulfill()
+        }
+
+        // When
+        _ = try await sut.decrypt(
+            message: messageData.base64EncodedString(),
+            for: .random(),
+            subconversationType: nil
+        )
+
+        // Then
+        await fulfillment(of: [expectation])
+        cancellable.cancel()
+    }
 }
