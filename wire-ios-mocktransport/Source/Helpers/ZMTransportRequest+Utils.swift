@@ -53,13 +53,6 @@ import Foundation
         return ((multipartData as NSData).multipartDataItemsSeparated(withBoundary: "frontier") as? [ZMMultipartBodyItem]) ?? []
     }
 
-    var binaryDataTypeAsMIME: String? {
-        guard let dataType = self.binaryDataType else {
-            return nil
-        }
-        return MockTransportSession.binaryDataType(asMIME: dataType)
-    }
-
     @objc(RESTComponentAtIndex:) func RESTComponents(index: Int) -> String? {
         guard self.pathComponents.count > index, index > 0 else {
             return nil
