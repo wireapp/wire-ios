@@ -16,11 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Allows for handling user change events via closure.
-@objc(ZMClosureBasedUserChangeObserver)
-public final class ClosureBasedUserChangeObserver: NSObject, UserObserver {
+public final class ClosureBasedUserChangeObserver: UserObserver {
 
     private let userDidChange: (UserChangeInfo) -> Void
 
