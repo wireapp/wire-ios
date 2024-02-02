@@ -1750,25 +1750,65 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     // MARK: - coreCrypto
 
-    public var coreCryptoRequireMLS_Invocations: [Bool] = []
-    public var coreCryptoRequireMLS_MockError: Error?
-    public var coreCryptoRequireMLS_MockMethod: ((Bool) async throws -> SafeCoreCryptoProtocol)?
-    public var coreCryptoRequireMLS_MockValue: SafeCoreCryptoProtocol?
+    public var coreCrypto_Invocations: [Void] = []
+    public var coreCrypto_MockError: Error?
+    public var coreCrypto_MockMethod: (() async throws -> SafeCoreCryptoProtocol)?
+    public var coreCrypto_MockValue: SafeCoreCryptoProtocol?
 
-    public func coreCrypto(requireMLS: Bool) async throws -> SafeCoreCryptoProtocol {
-        coreCryptoRequireMLS_Invocations.append(requireMLS)
+    public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
+        coreCrypto_Invocations.append(())
 
-        if let error = coreCryptoRequireMLS_MockError {
+        if let error = coreCrypto_MockError {
             throw error
         }
 
-        if let mock = coreCryptoRequireMLS_MockMethod {
-            return try await mock(requireMLS)
-        } else if let mock = coreCryptoRequireMLS_MockValue {
+        if let mock = coreCrypto_MockMethod {
+            return try await mock()
+        } else if let mock = coreCrypto_MockValue {
             return mock
         } else {
-            fatalError("no mock for `coreCryptoRequireMLS`")
+            fatalError("no mock for `coreCrypto`")
         }
+    }
+
+    // MARK: - initialiseMLSWithBasicCredentials
+
+    public var initialiseMLSWithBasicCredentialsMlsClientID_Invocations: [MLSClientID] = []
+    public var initialiseMLSWithBasicCredentialsMlsClientID_MockError: Error?
+    public var initialiseMLSWithBasicCredentialsMlsClientID_MockMethod: ((MLSClientID) async throws -> Void)?
+
+    public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
+        initialiseMLSWithBasicCredentialsMlsClientID_Invocations.append(mlsClientID)
+
+        if let error = initialiseMLSWithBasicCredentialsMlsClientID_MockError {
+            throw error
+        }
+
+        guard let mock = initialiseMLSWithBasicCredentialsMlsClientID_MockMethod else {
+            fatalError("no mock for `initialiseMLSWithBasicCredentialsMlsClientID`")
+        }
+
+        try await mock(mlsClientID)
+    }
+
+    // MARK: - initialiseMLSWithEndToEndIdentity
+
+    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollment, certificateChain: String)] = []
+    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockError: Error?
+    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod: ((E2eiEnrollment, String) async throws -> Void)?
+
+    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws {
+        initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
+
+        if let error = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockError {
+            throw error
+        }
+
+        guard let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod else {
+            fatalError("no mock for `initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain`")
+        }
+
+        try await mock(enrollment, certificateChain)
     }
 
 }

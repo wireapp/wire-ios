@@ -90,12 +90,7 @@
     self.fetchRequestForTrackedObjects2 = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     self.fetchRequestForTrackedObjects2.predicate = [NSPredicate predicateWithFormat:@"userDefinedName != nil"];
 
-    self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
-                                                                                         cookieStorage:[[FakeCookieStorage alloc] init]
-                                                                                   requestCancellation:self
-                                                                                           application:self.application
-                                                                                 lastEventIDRepository:self.lastEventIDRepository
-                                                                                             analytics:nil];
+    self.operationStatus = [[OperationStatus alloc] init];
     
     NotificationDispatcher *notificationDispatcher =
     [[NotificationDispatcher alloc] initWithManagedObjectContext:self.coreDataStack.viewContext];
@@ -104,7 +99,7 @@
         
     self.sut = [[ZMSyncStrategy alloc] initWithContextProvider:self.coreDataStack
                                        notificationsDispatcher:notificationDispatcher
-                                    applicationStatusDirectory:self.applicationStatusDirectory
+                                               operationStatus:self.operationStatus
                                                    application:self.application
                                              strategyDirectory:mockStrategyDirectory
                                         eventProcessingTracker:eventProcessingTracker];
@@ -116,7 +111,7 @@
 
 - (void)tearDown;
 {
-    self.applicationStatusDirectory = nil;
+    self.operationStatus = nil;
     self.fetchRequestForTrackedObjects1 = nil;
     self.fetchRequestForTrackedObjects2 = nil;
     self.syncStateDelegate = nil;
@@ -375,14 +370,14 @@
 - (void)testThatItUpdateOperationStatusWhenTheAppEntersBackground
 {
     // given
-    self.applicationStatusDirectory.operationStatus.isInBackground = NO;
+    self.operationStatus.isInBackground = NO;
     
     // when
     [self goToBackground];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertTrue(self.applicationStatusDirectory.operationStatus.isInBackground);
+    XCTAssertTrue(self.operationStatus.isInBackground);
     
 }
 
@@ -390,13 +385,13 @@
 - (void)testThatItUpdateOperationStatusWhenTheAppWillEnterForeground
 {
     // given
-    self.applicationStatusDirectory.operationStatus.isInBackground = YES;
+    self.operationStatus.isInBackground = YES;
 
     // when
     [self goToForeground];
     
     // then
-    XCTAssertFalse(self.applicationStatusDirectory.operationStatus.isInBackground);
+    XCTAssertFalse(self.operationStatus.isInBackground);
 }
 
 - (void)testThatItNotifiesTheOperationLoopOfNewOperationWhenEnteringBackground

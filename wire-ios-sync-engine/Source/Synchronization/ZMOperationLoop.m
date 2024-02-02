@@ -45,7 +45,12 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 @property (nonatomic) id<TransportSessionType> transportSession;
 @property (atomic) BOOL shouldStopEnqueueing;
 @property (nonatomic) BOOL tornDown;
-@property (nonatomic, weak) ApplicationStatusDirectory *applicationStatusDirectory;
+@property (nonatomic) OperationStatus *operationStatus;
+//@property (nonatomic) SyncStatus *syncStatus;
+//@property (nonatomic) PushNotificationStatus *pushNotificationStatus;
+//@property (nonatomic) CallEventStatus *callEventStatus;
+//@property (nonatomic, weak) ApplicationStatusDirectory *applicationStatusDirectory;
+//@property (nonatomic, weak) ApplicationStatusDirectory *applicationStatusDirectory;
 
 @end
 
@@ -59,7 +64,10 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
                          requestStrategy:(id<RequestStrategy>)requestStrategy
                     updateEventProcessor:(id<UpdateEventProcessor>)updateEventProcessor
-              applicationStatusDirectory:(ApplicationStatusDirectory *)applicationStatusDirectory
+              operationStatus:(OperationStatus *)operationStatus
+                              syncStatus:(SyncStatus *)syncStatus
+                  pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
+                         callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
 {
@@ -68,21 +76,24 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     
     self = [super init];
     if (self) {
-        self.applicationStatusDirectory = applicationStatusDirectory;
+        self.operationStatus = operationStatus;
+        self.syncStatus = syncStatus;
+        self.pushNotificationStatus = pushNotificationStatus;
+        self.callEventStatus = callEventStatus;
         self.transportSession = transportSession;
         self.requestStrategy = requestStrategy;
         self.updateEventProcessor = updateEventProcessor;
         self.syncMOC = syncMOC;
         self.shouldStopEnqueueing = NO;
-        applicationStatusDirectory.operationStatus.delegate = self;
-        
+        self.operationStatus.delegate = self;
+
         [ZMRequestAvailableNotification addObserver:self];
         
         NSManagedObjectContext *moc = self.syncMOC;
         // this is needed to avoid loading from syncMOC on the main queue
         [moc performGroupedBlock:^{
             [self.transportSession configurePushChannelWithConsumer:self groupQueue:moc];
-            [self.transportSession.pushChannel setKeepOpen:applicationStatusDirectory.operationStatus.operationState == SyncEngineOperationStateForeground];
+            [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
         }];
     }
 
@@ -189,18 +200,18 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     }];
 }
 
-- (PushNotificationStatus *)pushNotificationStatus
-{
-    return self.applicationStatusDirectory.pushNotificationStatus;
-}
-
-- (CallEventStatus *)callEventStatus {
-    return self.applicationStatusDirectory.callEventStatus;
-}
-
-- (SyncStatus *)syncStatus {
-    return self.applicationStatusDirectory.syncStatus;
-}
+//- (PushNotificationStatus *)pushNotificationStatus
+//{
+//    return self.applicationStatusDirectory.pushNotificationStatus;
+//}
+//
+//- (CallEventStatus *)callEventStatus {
+//    return self.applicationStatusDirectory.callEventStatus;
+//}
+//
+//- (SyncStatus *)syncStatus {
+//    return self.applicationStatusDirectory.syncStatus;
+//}
 
 @end
 
