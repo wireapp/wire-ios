@@ -65,8 +65,19 @@
     Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
     team.remoteIdentifier = [NSUUID createUUID];
 
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = [NSUUID createUUID];
+
+    Member *selfUserMembership = [Member insertNewObjectInManagedObjectContext:self.uiMOC];
+    selfUserMembership.user = selfUser;
+    selfUserMembership.team = team;
+
     ZMUser *teamUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     teamUser.remoteIdentifier = [NSUUID createUUID];
+
+    Member *teamUserMembership = [Member insertNewObjectInManagedObjectContext:self.uiMOC];
+    teamUserMembership.user = teamUser;
+    teamUserMembership.team = team;
 
     ZMUser *otherUser1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser1.remoteIdentifier = [NSUUID createUUID];
@@ -97,9 +108,6 @@
     outgoingPendingUser.remoteIdentifier = [NSUUID createUUID];
     outgoingPendingUser.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     outgoingPendingUser.connection.status = ZMConnectionStatusSent;
-
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    selfUser.remoteIdentifier = [NSUUID createUUID];
 
     ZMUser *serviceUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     serviceUser.serviceIdentifier = @"serviceA";
