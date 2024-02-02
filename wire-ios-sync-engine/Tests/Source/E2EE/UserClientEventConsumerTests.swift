@@ -15,6 +15,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import Foundation
 
 class UserClientEventConsumerTests: RequestStrategyTestBase {
@@ -23,6 +24,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
     var clientRegistrationStatus: ZMMockClientRegistrationStatus!
     var clientUpdateStatus: ZMMockClientUpdateStatus!
     var cookieStorage: ZMPersistentCookieStorage!
+    var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     override func setUp() {
         super.setUp()
@@ -30,11 +32,13 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
             self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer",
                                                            userIdentifier: self.userIdentifier,
                                                            useCache: true)
+            self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
 
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
 
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(context: self.syncMOC,
-                                                                           cookieProvider: self.cookieStorage)
+                                                                           cookieProvider: self.cookieStorage,
+                                                                           coreCryptoProvider: self.coreCryptoProvider)
 
             self.sut = UserClientEventConsumer(managedObjectContext: self.syncMOC,
                                                clientRegistrationStatus: self.clientRegistrationStatus,

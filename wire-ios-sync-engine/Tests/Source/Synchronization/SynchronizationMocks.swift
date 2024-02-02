@@ -95,11 +95,15 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     var mockReadiness: Bool = true
 
     convenience init(managedObjectContext: NSManagedObjectContext) {
-        self.init(context: managedObjectContext, cookieProvider: nil)
+        self.init(context: managedObjectContext, cookieProvider: nil, coreCryptoProvider: nil)
     }
 
-    override init(context moc: NSManagedObjectContext!, cookieProvider: CookieProvider!) {
-        super.init(context: moc, cookieProvider: cookieProvider)
+    override init(
+        context moc: NSManagedObjectContext!,
+        cookieProvider: CookieProvider!,
+        coreCryptoProvider: CoreCryptoProviderProtocol!
+    ) {
+        super.init(context: moc, cookieProvider: cookieProvider, coreCryptoProvider: coreCryptoProvider)
         self.emailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
     }
 

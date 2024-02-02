@@ -553,7 +553,7 @@ public class ZMUserSession: NSObject {
     private func createSyncStrategy() -> ZMSyncStrategy {
         return ZMSyncStrategy(contextProvider: coreDataStack,
                               notificationsDispatcher: notificationDispatcher,
-                              applicationStatusDirectory: applicationStatusDirectory,
+                              operationStatus: applicationStatusDirectory.operationStatus,
                               application: application,
                               strategyDirectory: strategyDirectory!,
                               eventProcessingTracker: eventProcessingTracker)
@@ -563,7 +563,10 @@ public class ZMUserSession: NSObject {
         return ZMOperationLoop(transportSession: transportSession,
                                requestStrategy: syncStrategy,
                                updateEventProcessor: updateEventProcessor!,
-                               applicationStatusDirectory: applicationStatusDirectory,
+                               operationStatus: applicationStatusDirectory.operationStatus,
+                               syncStatus: applicationStatusDirectory.syncStatus,
+                               pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
+                               callEventStatus: applicationStatusDirectory.callEventStatus,
                                uiMOC: managedObjectContext,
                                syncMOC: syncManagedObjectContext)
     }

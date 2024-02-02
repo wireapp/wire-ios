@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireDataModelSupport
 @testable import WireSyncEngine
 
 class MockCookieStorage: CookieProvider {
@@ -36,6 +37,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
     private var sut: ZMClientRegistrationStatus!
     private var mockCookieStorage: MockCookieStorage!
+    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockClientRegistationDelegate: MockClientRegistrationStatusDelegate!
 
     override func setUp() {
@@ -45,8 +47,13 @@ class ZMClientRegistrationStatusTests: MessagingTest {
         uiMOC.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
         mockCookieStorage = MockCookieStorage()
         mockCookieStorage.isAuthenticated = true
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockClientRegistationDelegate = MockClientRegistrationStatusDelegate()
-        self.sut = ZMClientRegistrationStatus(context: self.syncMOC, cookieProvider: mockCookieStorage)
+        self.sut = ZMClientRegistrationStatus(
+            context: self.syncMOC,
+            cookieProvider: mockCookieStorage,
+            coreCryptoProvider: mockCoreCryptoProvider
+        )
         self.sut.registrationStatusDelegate = self.mockClientRegistationDelegate
     }
 
@@ -603,15 +610,17 @@ class ZMClientRegistrationStatusTests: MessagingTest {
         }
     }
 
-    func testThatItReturnsWaitingRegisteringMLSClient_IfE2EIdentityIsNotRequired() {
+    func testThatItReturnsWaitingRegisteringMLSClient_And_InitsMLSCLient_IfE2EIdentityIsNotRequired() {
         syncMOC.performAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.emailAddress = "email@domain.com"
             selfUser.handle = "handle"
+            selfUser.domain = "example.com"
             let selfUserClient = createSelfClient()
             selfUserClient.remoteIdentifier = "clientID"
+            mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
 
             enableMLS()
 
@@ -620,6 +629,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
             // then
             XCTAssertEqual(self.sut.currentPhase, .registeringMLSClient)
+            XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
         }
     }
 

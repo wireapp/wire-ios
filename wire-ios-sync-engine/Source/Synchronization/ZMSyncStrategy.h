@@ -23,7 +23,7 @@
 
 @class ZMTransportRequest;
 @class LocalNotificationDispatcher;
-@class ApplicationStatusDirectory;
+@class OperationStatus;
 @class CallingRequestStrategy;
 @class ZMMissingUpdateEventsTranscoder;
 @class CoreDataStack;
@@ -40,7 +40,7 @@
 
 - (instancetype _Nonnull )initWithContextProvider:(id<ContextProvider> _Nonnull)contextProvider
                           notificationsDispatcher:(NotificationDispatcher * _Nonnull)notificationsDispatcher
-                       applicationStatusDirectory:(ApplicationStatusDirectory * _Nonnull)applicationStatusDirectory
+                                  operationStatus:(OperationStatus * _Nonnull)operationStatus
                                       application:(id<ZMApplication> _Nonnull)application
                                 strategyDirectory:(id<StrategyDirectoryProtocol> _Nonnull)strategyDirectory
                            eventProcessingTracker:(id<EventProcessingTrackerProtocol> _Nonnull)eventProcessingTracker;
@@ -48,7 +48,6 @@
 - (void)tearDown;
 
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *syncMOC;
-@property (nonatomic, weak, readonly, nullable) ApplicationStatusDirectory *applicationStatusDirectory;
 @property (nonatomic, nullable) id<EventProcessingTrackerProtocol> eventProcessingTracker;
 @property (nonatomic, readonly, nullable) id<StrategyDirectoryProtocol> strategyDirectory;
 @end

@@ -45,7 +45,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
         lastEventIDRepository: LastEventIDRepositoryInterface,
-        coreCryptoProvider: CoreCryptoProvider,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         analytics: AnalyticsType? = nil
     ) {
         self.requestCancellation = requestCancellation

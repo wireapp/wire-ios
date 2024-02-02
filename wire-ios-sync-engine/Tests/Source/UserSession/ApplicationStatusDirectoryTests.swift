@@ -18,6 +18,7 @@
 
 import Foundation
 
+import WireDataModelSupport
 @testable import WireSyncEngine
 
 class ApplicationStatusDirectoryTests: MessagingTest {
@@ -36,7 +37,8 @@ class ApplicationStatusDirectoryTests: MessagingTest {
                 cookieStorage: cookieStorage,
                 requestCancellation: self,
                 application: mockApplication,
-                lastEventIDRepository: lastEventIDRepository
+                lastEventIDRepository: lastEventIDRepository,
+                coreCryptoProvider: MockCoreCryptoProviderProtocol()
             )
         }
     }

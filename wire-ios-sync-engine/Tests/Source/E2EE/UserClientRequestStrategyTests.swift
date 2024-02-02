@@ -65,6 +65,7 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
     var spyKeyStore: SpyUserClientKeyStore!
     var proteusService: MockProteusServiceInterface!
     var proteusProvider: MockProteusProvider!
+    var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     var postLoginAuthenticationObserverToken: Any?
 
@@ -81,11 +82,13 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
                 mockProteusService: self.proteusService,
                 mockKeyStore: spyKeyStore
             )
+            self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
             self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: self.userIdentifier, useCache: true)
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
                 context: self.syncMOC,
-                cookieProvider: self.cookieStorage
+                cookieProvider: self.cookieStorage,
+                coreCryptoProvider: self.coreCryptoProvider
             )
             self.clientRegistrationStatus.registrationStatusDelegate = self.mockClientRegistrationStatusDelegate
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
