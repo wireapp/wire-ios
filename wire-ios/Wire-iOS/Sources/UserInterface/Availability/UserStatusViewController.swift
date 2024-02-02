@@ -30,8 +30,6 @@ final class UserStatusViewController: UIViewController {
 
     /// Used to update the `UserStatusView` on changes of a user.
     private var userChangeObservation: NSObjectProtocol?
-    /// The observer passed to `UserChangeInfo. addUserObserver(_:for:)` is not retained so this strong reference is needed.
-    private var userChangeObserver: UserObserving?
 
     init(user: UserType, options: UserStatusView.Options, userSession: UserSession) {
         self.user = user
@@ -104,14 +102,8 @@ final class UserStatusViewController: UIViewController {
             object: nil
         )
 
-        // refresh view when some user info changes
-        let userChangeObserver = ClosureBasedUserChangeObserver { [weak self] changes in
-            if changes.nameChanged || changes.availabilityChanged {
-                self?.updateUserStatusView()
-            }
-        }
-        self.userChangeObserver = userChangeObserver
-        userChangeObservation = userSession.addUserObserver(userChangeObserver, for: user)
+        // refresh view when some user changes
+        userChangeObservation = userSession.addUserObserver(self, for: user)
     }
 
     @objc
@@ -123,5 +115,16 @@ final class UserStatusViewController: UIViewController {
             isCertified: false,
             isVerified: false
         )
+    }
+}
+
+// MARK: UserStatusViewController + UserObserving
+
+extension UserStatusViewController: UserObserving {
+
+    func userDidChange(_ changes: UserChangeInfo) {
+        if changes.nameChanged || changes.availabilityChanged {
+            updateUserStatusView()
+        }
     }
 }
