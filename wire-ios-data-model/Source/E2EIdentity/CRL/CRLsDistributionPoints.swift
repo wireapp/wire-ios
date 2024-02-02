@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct CRLsDistributionPoints {
+public struct CRLsDistributionPoints: Equatable {
 
     let urls: Set<URL>
 
