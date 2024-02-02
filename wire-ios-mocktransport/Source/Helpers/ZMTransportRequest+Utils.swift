@@ -53,7 +53,8 @@ import Foundation
         return ((multipartData as NSData).multipartDataItemsSeparated(withBoundary: "frontier") as? [ZMMultipartBodyItem]) ?? []
     }
 
-    @objc(RESTComponentAtIndex:) func RESTComponents(index: Int) -> String? {
+    @objc(RESTComponentAtIndex:)
+    func RESTComponents(index: Int) -> String? {
         guard self.pathComponents.count > index, index > 0 else {
             return nil
         }
@@ -62,7 +63,13 @@ import Foundation
 
     fileprivate var pathComponents: [String] {
         var components = self.URL.path.components(separatedBy: "/").filter { !$0.isEmpty }
-        components.removeAPIVersionComponent()
+
+        // remove api version from path components
+        let versions = APIVersion.allCases.map { "v\($0.rawValue)" }
+        if let version = components.first, versions.contains(version) {
+            components.removeFirst()
+        }
+
         return components
     }
 
@@ -97,14 +104,5 @@ public extension ZMTransportRequest {
 
     static func ~= (path: String, request: ZMTransportRequest) -> Bool {
         return request.matches(path: path)
-    }
-}
-
-private extension Array where Element == String {
-    mutating func removeAPIVersionComponent() {
-        let versions = APIVersion.allCases.map { "v\($0.rawValue)" }
-        if let version = self.first, versions.contains(version) {
-            self.removeFirst()
-        }
     }
 }
