@@ -56,7 +56,7 @@ enum ProfileAction: Equatable {
         case .connect: return "profile.connection_request_dialog.button_connect".localized
         case .cancelConnectionRequest: return "meta.menu.cancel_connection_request".localized
         case .openSelfProfile: return "meta.menu.open_self_profile".localized
-        case .duplicateUser: return "Duplicate User"
+        case .duplicateUser: return "⚠️ DEBUG - Duplicate User"
         }
     }
 

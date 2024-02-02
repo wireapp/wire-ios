@@ -482,6 +482,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             duplicate.name = "duplicate user \(name)"
             context.saveOrRollback()
         }
+
+        WireLogger.conversation.debug("duplicate user \(String(describing: user.name)) \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
     }
 }
 

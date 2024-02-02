@@ -133,6 +133,9 @@ final class ConversationActionController {
                 conversation.isFavorite = !isFavorite
             }
         case .remove: fatalError()
+        case .duplicateConversation:
+            duplicateConversation()
+
         }
     }
 
@@ -170,6 +173,24 @@ final class ConversationActionController {
         controller.configPopover(pointToView: sourceView ?? target.view, popoverPresenter: target as? PopoverPresenterViewController)
 
         target.present(controller, animated: true)
+    }
+
+    private func duplicateConversation() {
+        guard Bundle.developerModeEnabled else { return }
+
+        guard let context = (userSession as? ZMUserSession)?.syncContext,
+            let conversation = conversation as? ZMConversation else {
+            return
+        }
+        let id = conversation.remoteIdentifier
+        let domain = conversation.domain
+        context.performAndWait {
+            let duplicate = ZMConversation.insertNewObject(in: context)
+            duplicate.remoteIdentifier = id
+            duplicate.domain = domain
+            context.saveOrRollback()
+        }
+        WireLogger.conversation.debug("duplicate conversation \(conversation.qualifiedID?.safeForLoggingDescription)")
     }
 
 }

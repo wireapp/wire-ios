@@ -190,7 +190,6 @@
 		5473E7C61B31A95A00C6A937 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				EE08D03829A79F9B00A9AB02 /* Logging */,
 				8701221520F64171001E6342 /* Cache.swift */,
 				54180BD61F459DCF0020D2BD /* MemoryReferenceDebugger.h */,
 				54180BD71F459DCF0020D2BD /* MemoryReferenceDebugger.swift */,
@@ -271,13 +270,6 @@
 				E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		EE08D03829A79F9B00A9AB02 /* Logging */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Logging;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
