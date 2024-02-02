@@ -42,18 +42,34 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         }
     }
 
-    public init(
+    public convenience init(
+        userID: UUID,
         crlAPI: CertificateRevocationListAPIProtocol,
         mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        context: NSManagedObjectContext,
-        crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol? = nil
+        context: NSManagedObjectContext
+    ) {
+        self.init(
+            crlAPI: crlAPI,
+            crlExpirationDatesRepository: CRLExpirationDatesRepository(userID: userID),
+            mlsConversationsVerificationUpdater: mlsConversationsVerificationUpdater,
+            coreCryptoProvider: coreCryptoProvider,
+            context: context
+        )
+    }
+    
+    init(
+        crlAPI: CertificateRevocationListAPIProtocol,
+        crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
+        mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        context: NSManagedObjectContext
     ) {
         self.crlAPI = crlAPI
+        self.crlExpirationDatesRepository = crlExpirationDatesRepository
         self.mlsConversationsVerificationUpdater = mlsConversationsVerificationUpdater
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
-        self.crlExpirationDatesRepository = crlExpirationDatesRepository ?? CRLExpirationDatesRepository()
     }
 
     public func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async {
