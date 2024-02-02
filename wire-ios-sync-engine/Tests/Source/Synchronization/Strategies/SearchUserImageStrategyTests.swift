@@ -423,7 +423,7 @@ extension SearchUserImageStrategyTests {
 
         let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser1) // This is called when the searchDirectory returns the searchUsers
-        let userObserver = ZMUserObserver(user: searchUser1, managedObjectContext: self.uiMOC)!
+        let userObserver = UserObserver(user: searchUser1, managedObjectContext: uiMOC)!
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -447,7 +447,7 @@ extension SearchUserImageStrategyTests {
 
         let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser1) // This is called when the searchDirectory returns the searchUsers
-        let userObserver = ZMUserObserver(user: searchUser1, managedObjectContext: self.uiMOC)!
+        let userObserver = UserObserver(user: searchUser1, managedObjectContext: uiMOC)!
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
