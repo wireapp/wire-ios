@@ -83,7 +83,7 @@
     ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertNotEqual(selfUser.accentColorValue, accentColor);
     
-    UserChangeObserver *observer = [[UserChangeObserver alloc] initWithUser:selfUser];
+    ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
     selfUser.accentColorValue = accentColor;
@@ -457,7 +457,7 @@
     id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserving)];
     id userObserverToken = [UserChangeInfo addObserver:userObserver forUser:selfUser inManagedObjectContext:self.userSession.managedObjectContext];
     [(id<ZMUserObserving>)[userObserver expect] userDidChange:OCMOCK_ANY]; // when receiving this, I know that the email was set
-    
+
     // expect
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
         if([request.path isEqualToString:@"/self/password"]) {

@@ -83,7 +83,6 @@ final class LegalHoldDisclosureController: UserObserving {
     init(selfUser: SelfUserType, userSession: UserSession, presenter: @escaping ViewControllerPresenter) {
         self.selfUser = selfUser
         self.presenter = presenter
-        super.init()
 
         configureObservers(userSession: userSession)
     }

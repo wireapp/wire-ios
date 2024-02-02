@@ -31,7 +31,6 @@ final class AccentColorChangeHandler: UserObserving {
     }
 
     init(observer: Any?, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock, userSession: UserSession) {
-        super.init()
         handlerBlock = changeHandler
         self.observer = observer
 
