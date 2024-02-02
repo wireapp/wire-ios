@@ -31,6 +31,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var mockCommitSender: MockCommitSending!
     var sut: MLSActionExecutor!
+    var cancellable: AnyCancellable!
 
     override func setUp() {
         super.setUp()
@@ -51,6 +52,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockSafeCoreCrypto = nil
         mockCoreCryptoProvider = nil
         mockCommitSender = nil
+        cancellable.cancel()
+        cancellable = nil
         sut = nil
         super.tearDown()
     }
@@ -269,6 +272,43 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(updateEvents, [mockUpdateEvent])
     }
 
+    func test_AddMembers_PublishesNewDistributionPoints() async throws {
+        // Given
+        let distributionPoint = "acme.domain.com/dp"
+
+        // Mock adding clients returns new distribution point
+        mockCoreCrypto.addClientsToConversationConversationIdKeyPackages_MockMethod = { _, _ in
+            return .init(
+                welcome: .random(),
+                commit: .random(),
+                groupInfo: .init(
+                    encryptionType: .plaintext,
+                    ratchetTreeType: .full,
+                    payload: .random()
+                ),
+                crlNewDistributionPoints: [distributionPoint]
+            )
+        }
+
+        // Mock commit sending
+        mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
+            return []
+        }
+
+        // Set up expectation to receive the new distribution points
+        let expectation = XCTestExpectation(description: "received value")
+        cancellable = sut.onNewCRLsDistributionPoints().sink { value in
+            XCTAssertEqual(value, CRLsDistributionPoints(from: [distributionPoint]))
+            expectation.fulfill()
+        }
+
+        // When
+        _ = try await sut.addMembers([], to: .random())
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 0.5)
+    }
+
     // MARK: - Remove clients
 
     func test_RemoveClients() async throws {
@@ -471,6 +511,44 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then the update event was returned
         XCTAssertEqual(updateEvents, mockUpdateEvents)
+    }
+
+    func test_JoinGroup_PublishesNewDistributionPoints() async throws {
+        // Given
+        let distributionPoint = "acme.domain.com/dp"
+
+        // Mock joining by external commit
+        mockCoreCrypto.joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { _, _, _ in
+
+            return .init(
+                conversationId: .random(),
+                commit: .random(),
+                groupInfo: .init(
+                    encryptionType: .plaintext,
+                    ratchetTreeType: .full,
+                    payload: .random()
+                ),
+                crlNewDistributionPoints: [distributionPoint]
+            )
+        }
+
+        // Mock external commit sending
+        mockCommitSender.sendExternalCommitBundleFor_MockMethod = { _, _ in
+            return []
+        }
+
+        // Set up expectation to receive the new distribution points
+        let expectation = XCTestExpectation(description: "received value")
+        cancellable = sut.onNewCRLsDistributionPoints().sink { value in
+            XCTAssertEqual(value, CRLsDistributionPoints(from: [distributionPoint]))
+            expectation.fulfill()
+        }
+
+        // When
+        _ = try await sut.joinGroup(.random(), groupInfo: .random())
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 0.5)
     }
 
     // MARK: - Decrypt Message
