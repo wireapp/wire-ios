@@ -356,6 +356,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             bringUpCancelConnectionRequestSheet(from: targetView)
         case .openSelfProfile:
             openSelfProfile()
+        case .duplicateUser:
+            duplicateUser()
         }
     }
 
@@ -463,6 +465,23 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         controller.addAction(.cancel())
 
         presentAlert(controller, targetView: view)
+    }
+
+    private func duplicateUser() {
+        guard let user = viewModel.user as? ZMUser, let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext else {
+            assertionFailure("couldn't get context to duplicateUser")
+            return
+        }
+        let id = user.remoteIdentifier
+        let domain = user.domain
+        let name = user.name ?? "nil"
+        context.performAndWait {
+            let duplicate = ZMUser.insertNewObject(in: context)
+            duplicate.remoteIdentifier = id
+            duplicate.domain = domain
+            duplicate.name = "duplicate user \(name)"
+            context.saveOrRollback()
+        }
     }
 }
 
