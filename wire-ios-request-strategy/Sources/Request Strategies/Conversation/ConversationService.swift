@@ -32,6 +32,11 @@ public protocol ConversationServiceInterface {
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     )
 
+    func createFakeOneOnOneProteusConversation(
+        user: ZMUser,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+    )
+
     func syncConversation(
         qualifiedID: QualifiedID,
         completion: @escaping () -> Void
@@ -101,7 +106,7 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
-    public func createTeamOneToOneConversation(
+    public func createFakeOneOnOneProteusConversation(
         user: ZMUser,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {

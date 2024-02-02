@@ -47,7 +47,7 @@ extension UserType {
         }
         let conversationService = ConversationService(context: context)
 
-        conversationService.createTeamOneToOneConversation(user: user) { result in
+        conversationService.createFakeOneOnOneProteusConversation(user: user) { result in
             switch result {
             case .success(let conversation):
                 completion(.success(conversation))

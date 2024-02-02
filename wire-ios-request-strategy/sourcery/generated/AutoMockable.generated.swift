@@ -168,6 +168,21 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
     }
 
+    // MARK: - createFakeOneOnOneProteusConversation
+
+    public var createFakeOneOnOneProteusConversationUserCompletion_Invocations: [(user: ZMUser, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
+    public var createFakeOneOnOneProteusConversationUserCompletion_MockMethod: ((ZMUser, @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
+
+    public func createFakeOneOnOneProteusConversation(user: ZMUser, completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        createFakeOneOnOneProteusConversationUserCompletion_Invocations.append((user: user, completion: completion))
+
+        guard let mock = createFakeOneOnOneProteusConversationUserCompletion_MockMethod else {
+            fatalError("no mock for `createFakeOneOnOneProteusConversationUserCompletion`")
+        }
+
+        mock(user, completion)
+    }
+
     // MARK: - syncConversation
 
     public var syncConversationQualifiedIDCompletion_Invocations: [(qualifiedID: QualifiedID, completion: () -> Void)] = []
