@@ -31,6 +31,10 @@ final class UserStatusViewController: UIViewController {
     /// Used to update the `UserStatusView` on changes of a user.
     private var userChangeObservation: NSObjectProtocol?
 
+    private var userStatusView: UserStatusView {
+        view as! UserStatusView
+    }
+
     init(user: UserType, options: UserStatusView.Options, userSession: UserSession) {
         self.user = user
         self.options = options
@@ -108,8 +112,7 @@ final class UserStatusViewController: UIViewController {
 
     @objc
     private func updateUserStatusView() {
-        let view = view as! UserStatusView
-        view.userStatus = .init(
+        userStatusView.userStatus = .init(
             name: user.name ?? "",
             availability: user.availability,
             isCertified: false,
