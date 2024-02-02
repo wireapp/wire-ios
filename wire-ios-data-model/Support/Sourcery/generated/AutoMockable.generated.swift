@@ -3045,7 +3045,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
 }
 
-public class MockMLSConversationVerificationStatusProviderInterface: MLSConversationVerificationStatusUpdating {
+public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerificationStatusUpdating {
 
     // MARK: - Life cycle
 
@@ -3072,6 +3072,26 @@ public class MockMLSConversationVerificationStatusProviderInterface: MLSConversa
         try await mock(groupID)
     }
 
+    // MARK: - updateAllStatuses
+
+    public var updateAllStatuses_Invocations: [Void] = []
+    public var updateAllStatuses_MockError: Error?
+    public var updateAllStatuses_MockMethod: (() async throws -> Void)?
+
+    public func updateAllStatuses() async throws {
+        updateAllStatuses_Invocations.append(())
+
+        if let error = updateAllStatuses_MockError {
+            throw error
+        }
+
+        guard let mock = updateAllStatuses_MockMethod else {
+            fatalError("no mock for `updateAllStatuses`")
+        }
+
+        try await mock()
+    }
+
 }
 
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
@@ -3096,6 +3116,24 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
             return mock
         } else {
             fatalError("no mock for `onEpochChanged`")
+        }
+    }
+
+    // MARK: - onNewCRLsDistributionPoints
+
+    public var onNewCRLsDistributionPoints_Invocations: [Void] = []
+    public var onNewCRLsDistributionPoints_MockMethod: (() -> AnyPublisher<CRLsDistributionPoints, Never>)?
+    public var onNewCRLsDistributionPoints_MockValue: AnyPublisher<CRLsDistributionPoints, Never>?
+
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPoints_Invocations.append(())
+
+        if let mock = onNewCRLsDistributionPoints_MockMethod {
+            return mock()
+        } else if let mock = onNewCRLsDistributionPoints_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onNewCRLsDistributionPoints`")
         }
     }
 
@@ -3659,6 +3697,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `onEpochChanged`")
+        }
+    }
+
+    // MARK: - onNewCRLsDistributionPoints
+
+    public var onNewCRLsDistributionPoints_Invocations: [Void] = []
+    public var onNewCRLsDistributionPoints_MockMethod: (() -> AnyPublisher<CRLsDistributionPoints, Never>)?
+    public var onNewCRLsDistributionPoints_MockValue: AnyPublisher<CRLsDistributionPoints, Never>?
+
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPoints_Invocations.append(())
+
+        if let mock = onNewCRLsDistributionPoints_MockMethod {
+            return mock()
+        } else if let mock = onNewCRLsDistributionPoints_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onNewCRLsDistributionPoints`")
         }
     }
 
