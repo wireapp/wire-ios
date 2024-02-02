@@ -274,7 +274,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_AddMembers_PublishesNewDistributionPoints() async throws {
         // Given
-        let distributionPoint = "acme.domain.com/dp"
+        let distributionPoint = "example.domain.com/dp"
 
         // Mock adding clients returns new distribution point
         mockCoreCrypto.addClientsToConversationConversationIdKeyPackages_MockMethod = { _, _ in
@@ -515,7 +515,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_JoinGroup_PublishesNewDistributionPoints() async throws {
         // Given
-        let distributionPoint = "acme.domain.com/dp"
+        let distributionPoint = "example.domain.com/dp"
 
         // Mock joining by external commit
         mockCoreCrypto.joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { _, _, _ in

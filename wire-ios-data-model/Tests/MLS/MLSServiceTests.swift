@@ -1758,6 +1758,44 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
     }
 
+    func test_ProcessWelcomeMessage_PublishesNewDistributionPoints() async throws {
+        // Given
+        let distributionPoint = "example.domain.com"
+        let message = Data.random().base64EncodedString()
+
+        // Mock processing welcome message return new distribution point
+        mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
+            return .init(
+                id: .random(),
+                crlNewDistributionPoints: [distributionPoint]
+            )
+        }
+
+        // Mock valid key packages count
+        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
+            return UInt64(self.sut.targetUnclaimedKeyPackageCount)
+        }
+
+        // Mock new distribution points publishers
+        mockDecryptionService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>().eraseToAnyPublisher()
+
+        mockMLSActionExecutor.mockOnNewCRLsDistributionPoints = PassthroughSubject<CRLsDistributionPoints, Never>().eraseToAnyPublisher
+
+        // Expect to receive new distribution point value
+        let expectation = XCTestExpectation(description: "received value")
+        let cancellable = sut.onNewCRLsDistributionPoints().sink { value in
+            XCTAssertEqual(value, CRLsDistributionPoints(from: [distributionPoint]))
+            expectation.fulfill()
+        }
+
+        // When
+        _ = try await sut.processWelcomeMessage(welcomeMessage: message)
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 0.5)
+        cancellable.cancel()
+    }
+
     // MARK: - Update key material
 
     func test_UpdateKeyMaterial() async throws {
@@ -2540,6 +2578,40 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         XCTAssertEqual(receivedConferenceInfo, expectedConferenceInfo)
+    }
+
+    // MARK: - On new distribution points
+
+    func test_OnNewDistributionPoints_InterleavesSources() throws {
+        // Given
+        let dp1 = try XCTUnwrap(CRLsDistributionPoints(from: ["acme.dp1.com"]))
+        let dp2 = try XCTUnwrap(CRLsDistributionPoints(from: ["acme.dp2.com"]))
+        let dp3 = try XCTUnwrap(CRLsDistributionPoints(from: ["acme.dp3.com"]))
+
+        // Mock new distribution points
+        let newDistributionPointsFromDecryptionService = PassthroughSubject<CRLsDistributionPoints, Never>()
+        mockDecryptionService.onNewCRLsDistributionPoints_MockValue = newDistributionPointsFromDecryptionService.eraseToAnyPublisher()
+
+        let newDistributionPointsFromActionExecutor = PassthroughSubject<CRLsDistributionPoints, Never>()
+        mockMLSActionExecutor.mockOnNewCRLsDistributionPoints = newDistributionPointsFromActionExecutor.eraseToAnyPublisher
+
+        // Collect sent values
+        var receivedDPs = [CRLsDistributionPoints]()
+        let expectation = XCTestExpectation(description: "received new distribution points")
+        let cancellable = sut.onNewCRLsDistributionPoints().collect(3).sink {
+            receivedDPs = $0
+            expectation.fulfill()
+        }
+
+        // When
+        newDistributionPointsFromDecryptionService.send(dp1)
+        newDistributionPointsFromActionExecutor.send(dp2)
+        newDistributionPointsFromDecryptionService.send(dp3)
+
+        // Then
+        wait(for: [expectation], timeout: 0.5)
+        cancellable.cancel()
+        XCTAssertEqual(receivedDPs, [dp1, dp2, dp3])
     }
 
     // MARK: - Self group
