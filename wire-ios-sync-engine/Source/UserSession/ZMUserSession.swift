@@ -330,7 +330,7 @@ public class ZMUserSession: NSObject {
     lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {
         return MLSConversationVerificationManager(
             mlsService: mlsService,
-            mlsConversationVerificationStatusProvider: mlsConversationVerificationStatusUpdater
+            mlsConversationVerificationStatusUpdater: mlsConversationVerificationStatusUpdater
         )
     }()
 
