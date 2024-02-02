@@ -180,7 +180,7 @@ final class BackgroundViewController: UIViewController {
     }
 }
 
-extension BackgroundViewController: UserObserver {
+extension BackgroundViewController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         updateFor(imageMediumDataChanged: changeInfo.imageMediumDataChanged,
                        accentColorValueChanged: changeInfo.accentColorValueChanged)

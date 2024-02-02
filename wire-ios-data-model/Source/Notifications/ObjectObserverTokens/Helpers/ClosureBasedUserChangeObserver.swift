@@ -17,7 +17,7 @@
 //
 
 /// Allows for handling user change events via closure.
-public final class ClosureBasedUserChangeObserver: UserObserver {
+public final class ClosureBasedUserChangeObserver: UserObserving {
 
     private let userDidChange: (UserChangeInfo) -> Void
 

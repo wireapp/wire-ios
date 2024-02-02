@@ -29,7 +29,7 @@ extension ObserverType {
     }
 }
 
-final class MockUserObserver: UserObserver {
+final class MockUserObserver: UserObserving {
 
     var notifications = [UserChangeInfo]()
 

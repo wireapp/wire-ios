@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc(ZMUserObserver)
-public protocol UserObserver {
+@objc(ZMUserObserving)
+public protocol UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo)
 }

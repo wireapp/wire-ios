@@ -109,7 +109,7 @@ final class DirectorySectionController: SearchSectionController {
 
 }
 
-extension DirectorySectionController: UserObserver {
+extension DirectorySectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged else { return }

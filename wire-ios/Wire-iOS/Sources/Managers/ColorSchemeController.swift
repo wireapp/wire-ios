@@ -61,7 +61,7 @@ final class ColorSchemeController: NSObject {
     }
 }
 
-extension ColorSchemeController: UserObserver {
+extension ColorSchemeController: UserObserving {
     public func userDidChange(_ note: UserChangeInfo) {
         guard note.accentColorValueChanged else { return }
 
