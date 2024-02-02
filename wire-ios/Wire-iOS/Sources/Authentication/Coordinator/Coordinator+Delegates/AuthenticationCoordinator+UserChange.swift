@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
-extension AuthenticationCoordinator: UserProfileUpdateObserver, UserObserver {
+extension AuthenticationCoordinator: UserProfileUpdateObserver, UserObserving {
 
     func emailUpdateDidFail(_ error: Error!) {
         eventResponderChain.handleEvent(ofType: .authenticationFailure(error as NSError))

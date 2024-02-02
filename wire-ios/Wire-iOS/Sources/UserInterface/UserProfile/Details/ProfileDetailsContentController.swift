@@ -40,7 +40,7 @@ protocol ProfileDetailsContentControllerDelegate: AnyObject {
 final class ProfileDetailsContentController: NSObject,
                                              UITableViewDataSource,
                                              UITableViewDelegate,
-                                             UserObserver {
+                                             UserObserving {
 
     /**
      * The type of content that can be displayed in the profile details.

@@ -1177,9 +1177,9 @@ extension SessionManager: TeamObserver {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
-extension SessionManager: UserObserver {
+extension SessionManager: UserObserving {
     public func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.teamsChanged || changeInfo.nameChanged || changeInfo.imageSmallProfileDataChanged {
             guard let user = changeInfo.user as? ZMUser,

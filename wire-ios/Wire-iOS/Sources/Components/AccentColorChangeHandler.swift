@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-final class AccentColorChangeHandler: UserObserver {
+final class AccentColorChangeHandler: UserObserving {
 
     typealias AccentColorChangeHandlerBlock = (_ newColor: UIColor?, _ observer: Any?) -> Void
     private var handlerBlock: AccentColorChangeHandlerBlock?
@@ -31,7 +31,6 @@ final class AccentColorChangeHandler: UserObserver {
     }
 
     init(observer: Any?, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock, userSession: UserSession) {
-        super.init()
         handlerBlock = changeHandler
         self.observer = observer
 
