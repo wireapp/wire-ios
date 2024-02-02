@@ -26,7 +26,7 @@ typealias SelfUserType = UserType & SelfLegalHoldSubject
 final class ConversationListTopBarViewController: UIViewController {
 
     private var observerToken: Any?
-    private var availabilityViewController: AvailabilityTitleViewController?
+    private var availabilityViewController: UserStatusViewController?
     private var account: Account
     private let selfUser: SelfUserType
     private var userSession: UserSession
@@ -82,7 +82,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private func createTitleView() -> UIView {
         if selfUser.isTeamMember {
-            let availabilityViewController = AvailabilityTitleViewController(user: selfUser, options: .header, userSession: userSession)
+            let availabilityViewController = UserStatusViewController(user: selfUser, options: .header, userSession: userSession)
             addChild(availabilityViewController)
             self.availabilityViewController = availabilityViewController
 
