@@ -85,10 +85,6 @@ extension NSManagedObjectContext {
         return findDuplicated(entityName: T.entityName(), by: keyPath)
     }
 
-    public func findDuplicated<T: ZMManagedObject>(by keyPath1: String, and keyPath2: String) -> [T] {
-        return findDuplicated(entityName: T.entityName(), by: keyPath1, and: keyPath2)
-    }
-
     /// Locates the entities of type `T` that have the same value for `keyPath`.
     /// - Parameters:
     ///   - entityName: name of the managed object entity to be located
@@ -104,7 +100,7 @@ extension NSManagedObjectContext {
 
         guard let entity = NSEntityDescription.entity(forEntityName: entityName, in: self),
               let attribute = entity.attributesByName[keyPath] else {
-            fatal("Cannot preapare the fetch")
+            fatal("Cannot prepare the fetch")
         }
 
         let keyPathExpression = NSExpression(forKeyPath: keyPath)
@@ -144,69 +140,6 @@ extension NSManagedObjectContext {
             fatal("Cannot perform the fetch: \(error)")
         }
     }
-
-    public func findDuplicated<T: NSManagedObject>(entityName: String, by keyPath1: String, and keyPath2: String) -> [T] {
-        if let storeURL = self.persistentStoreCoordinator?.persistentStores.first?.url,
-           !storeURL.isFileURL {
-            zmLog.error("findDuplicated<T> does not support in-memory store")
-            return []
-        }
-
-        guard let entity = NSEntityDescription.entity(forEntityName: entityName, in: self),
-              let attribute1 = entity.attributesByName[keyPath1],
-              let attribute2 = entity.attributesByName[keyPath2] else {
-            fatal("Cannot prepare the fetch")
-        }
-
-        let keyPathExpression = NSExpression(forKeyPath: keyPath1)
-        let keyPathExpression2 = NSExpression(forKeyPath: keyPath2)
-        var keyPathExpressions = [keyPathExpression, keyPathExpression2]
-
-        var propertiesToFetch: [Any] = []
-        var propertiesToGroupBy: [Any] = []
-
-        propertiesToFetch.append(attribute2)
-        propertiesToGroupBy.append(attribute2)
-
-        let countExpression = NSExpression(forFunction: "count:", arguments: keyPathExpressions)
-
-        let countExpressionDescription = NSExpressionDescription()
-        countExpressionDescription.name = "count"
-        countExpressionDescription.expression = countExpression
-        countExpressionDescription.expressionResultType = .integer32AttributeType
-        propertiesToFetch.append(contentsOf: [attribute1, countExpressionDescription])
-        propertiesToGroupBy.append(attribute1)
-
-        let request = NSFetchRequest<NSNumber>()
-        request.entity = entity
-        request.propertiesToFetch = propertiesToFetch
-        request.propertiesToGroupBy = propertiesToGroupBy
-        request.resultType = .dictionaryResultType
-
-        do {
-            let distinctIDAndCount = try self.execute(request) as! NSAsynchronousFetchResult<NSDictionary>
-
-            guard let finalResult = distinctIDAndCount.finalResult else {
-                return []
-            }
-
-            let compoundKeys = finalResult.filter {
-                ($0["count"] as? Int ?? 0) > 1
-            }.compactMap {
-                return ($0[keyPath1], $0[keyPath2])
-            }
-
-            let fetchAllDuplicatesRequest = NSFetchRequest<T>()
-            fetchAllDuplicatesRequest.entity = entity
-            fetchAllDuplicatesRequest.predicate = NSPredicate(format: "%K IN %@ AND %K IN %@", argumentArray: [keyPath1, compoundKeys.map { $0.0 }, keyPath2, compoundKeys.compactMap { $0.1 }])
-
-            return self.fetchOrAssert(request: fetchAllDuplicatesRequest)
-
-        } catch let error {
-            fatal("Cannot perform the fetch: \(error)")
-        }
-    }
-
 }
 
 extension Array where Element: NSObject {
@@ -224,6 +157,3 @@ extension Array where Element: NSObject {
         return tuples.compactMap { $0 }.merge()
     }
 }
-
-
-

@@ -34,37 +34,40 @@ class DuplicateUsersMigrationPolicy: NSEntityMigrationPolicy {
 
         let context = manager.sourceContext
 
-        let duplicateObjects: [NSManagedObject] = context.findDuplicated(
+        let duplicateObjects: [Data: [NSManagedObject]] = context.findDuplicated(
             entityName: ZMUser.entityName(),
-            by: ZMUser.remoteIdentifierDataKey()!,
-            and: #keyPath(ZMUser.domain)
+            by: ZMUser.remoteIdentifierDataKey()!
         )
 
-        let duplicates = duplicateObjects.map { object in
-            guard
-                let remoteIdentifierData = object.value(forKeyPath: ZMUser.remoteIdentifierDataKey()!) as? Data,
-                let remoteIdentifier = UUID(data: remoteIdentifierData),
-                let domain = object.value(forKeyPath: #keyPath(ZMUser.domain)) as? String else {
-                return TupleKeyArray<String, NSManagedObject>?.none
+        var duplicates = [String: [NSManagedObject]]()
+
+        duplicateObjects.forEach { (remoteIdentifierData: Data, objects: [NSManagedObject]) in
+            objects.forEach { object in
+                let domain = object.value(forKeyPath: #keyPath(ZMUser.domain)) as? String
+                let uniqueKey = self.primaryKey(remoteIdentifierData, domain: domain)
+                if duplicates[uniqueKey] == nil {
+                    duplicates[uniqueKey] = []
+                }
+                duplicates[uniqueKey]?.append(object)
             }
-            return TupleKeyArray(key: "\(remoteIdentifier.uuidString)_\(domain)", value: [object])
-        }.compactMap { $0 }.merge()
+        }
 
         zmLog.safePublic(SanitizedString(stringLiteral: "found (\(duplicates.count)) occurences of duplicate users"), level: .info)
         WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate users")
 
-        duplicates.forEach { (_, users: [NSManagedObject]) in
+        duplicates.forEach { (key, users: [NSManagedObject]) in
             guard users.count > 1 else {
+                WireLogger.localStorage.info("skipping user with different domain: \(key)")
                 return
             }
-           
+            WireLogger.localStorage.debug("processing \(key)")
             // for now we just keep one user and mark to sync and drop the rest.
             // Marking needsToBeUpdatedFromBackend supposes we recover the data from backend
             users.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             users.dropFirst().forEach(context.delete)
 
             zmLog.safePublic("removed 1 occurence of duplicate users", level: .warn)
-            WireLogger.localStorage.info("removed 1 occurence of duplicate users")
+            WireLogger.localStorage.info("removed  \(users.count - 1) occurence of duplicate users")
         }
     }
 
