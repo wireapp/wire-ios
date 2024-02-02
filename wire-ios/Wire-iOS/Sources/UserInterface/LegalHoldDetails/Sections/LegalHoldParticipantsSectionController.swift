@@ -119,7 +119,7 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
 }
 
-extension LegalHoldParticipantsSectionController: ZMUserObserver {
+extension LegalHoldParticipantsSectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged else { return }

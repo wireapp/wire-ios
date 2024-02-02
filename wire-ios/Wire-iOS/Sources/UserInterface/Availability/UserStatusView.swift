@@ -22,7 +22,7 @@ import WireSyncEngine
 import WireCommonComponents
 
 /// A title view subclass that displays the availability of the user.
-final class UserStatusView: TitleView, UserChangeObserver {
+final class UserStatusView: TitleView, UserObserving {
 
     // MARK: - Properties
 

@@ -130,12 +130,12 @@ ZM_EMPTY_ASSERTING_INIT()
 
 
 
-@interface UserChangeObserver ()
+@interface ZMUserObserver ()
 @property (nonatomic, weak) id<UserType> user;
 @property (nonatomic) id token;
 @end
 
-@implementation UserChangeObserver
+@implementation ZMUserObserver
 
 - (instancetype)initWithUser:(ZMUser *)user
 {

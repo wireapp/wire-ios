@@ -16,11 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-@objc(ZMUserChangeObserver)
-public protocol UserChangeObserver: NSObjectProtocol {
+@objc(ZMUserObserving)
+public protocol UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo)
 }
-
-public typealias ZMUserObserver = UserChangeObserver
