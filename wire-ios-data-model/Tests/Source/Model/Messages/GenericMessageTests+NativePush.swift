@@ -61,7 +61,7 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
             connection.to = user
 
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            conversation.connection = connection
+            conversation.oneOnOneUser = user
             conversation.conversationType = .oneOnOne
 
             return conversation

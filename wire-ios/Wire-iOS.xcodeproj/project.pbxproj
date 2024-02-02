@@ -570,7 +570,7 @@
 		7C4918A11F8BB1A20038AF4B /* UIScreen+SafeArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4918A01F8BB1A20038AF4B /* UIScreen+SafeArea.swift */; };
 		7C525EBF23603C9100396C42 /* Bundle+SSO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C525EBE23603C9100396C42 /* Bundle+SSO.swift */; };
 		7C52F723200CBE61009F85FB /* CameraKeyboardPermissionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C52F722200CBE61009F85FB /* CameraKeyboardPermissionsCell.swift */; };
-		7C5836641FD5ABE7001CC843 /* AvailabilityTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5836631FD5ABE7001CC843 /* AvailabilityTitleView.swift */; };
+		7C5836641FD5ABE7001CC843 /* UserStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5836631FD5ABE7001CC843 /* UserStatusView.swift */; };
 		7C5836661FD5ABFE001CC843 /* TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5836651FD5ABFE001CC843 /* TitleView.swift */; };
 		7C5B94FA22DCAF3700A6F8BB /* BlockerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B94F922DCAF3700A6F8BB /* BlockerViewController.swift */; };
 		7C5DF2CC1FD7DEAD00B793B6 /* AvailabilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5DF2CB1FD7DEAD00B793B6 /* AvailabilityExtensions.swift */; };
@@ -590,7 +590,7 @@
 		7CEB45281F8FAAC400D772D5 /* UINavigationBarContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB45271F8FAAC400D772D5 /* UINavigationBarContainer.swift */; };
 		7CED30721FD97748009F0DAC /* IconStringsBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED30711FD97748009F0DAC /* IconStringsBuilder.swift */; };
 		7CED307C1FD97895009F0DAC /* AvailabilityStringBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED307B1FD97895009F0DAC /* AvailabilityStringBuilder.swift */; };
-		7CF651861FDA837D00D6B9F4 /* AvailabilityTitleViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFDC2801FD9A98100285047 /* AvailabilityTitleViewTests.swift */; };
+		7CF651861FDA837D00D6B9F4 /* UserStatusViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFDC2801FD9A98100285047 /* UserStatusViewSnapshotTests.swift */; };
 		848DE12B1A83D20000E154B1 /* emoticons.min.json in Resources */ = {isa = PBXBuildFile; fileRef = 848DE12A1A83D20000E154B1 /* emoticons.min.json */; };
 		87071CC01CB68BDA0039388A /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87071CBF1CB68BDA0039388A /* ProgressView.swift */; };
 		870815861BF4E76A00D321BC /* SettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870815851BF4E76A00D321BC /* SettingsCell.swift */; };
@@ -1253,8 +1253,6 @@
 		E6C25FCE2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */; };
 		E6C25FCF2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */; };
 		E6C25FD52AFFAE1200406A1C /* ZMConversation+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CB6F422B39CBF004CB458 /* ZMConversation+Mock.swift */; };
-		E6C25FD72AFFAF4900406A1C /* ZMUser+Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */; };
-		E6C25FD82AFFAF4900406A1C /* ZMUser+Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */; };
 		E6C25FDA2AFFAFB100406A1C /* NSAttributedString+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */; };
 		E6C25FDB2AFFAFB100406A1C /* NSAttributedString+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */; };
 		E6C25FE62B0274F600406A1C /* CountryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFE1D3A230D63EA00389290 /* CountryTests.swift */; };
@@ -2579,7 +2577,7 @@
 		7C4918A01F8BB1A20038AF4B /* UIScreen+SafeArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScreen+SafeArea.swift"; sourceTree = "<group>"; };
 		7C525EBE23603C9100396C42 /* Bundle+SSO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+SSO.swift"; sourceTree = "<group>"; };
 		7C52F722200CBE61009F85FB /* CameraKeyboardPermissionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraKeyboardPermissionsCell.swift; sourceTree = "<group>"; };
-		7C5836631FD5ABE7001CC843 /* AvailabilityTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityTitleView.swift; sourceTree = "<group>"; };
+		7C5836631FD5ABE7001CC843 /* UserStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusView.swift; sourceTree = "<group>"; };
 		7C5836651FD5ABFE001CC843 /* TitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleView.swift; sourceTree = "<group>"; };
 		7C5B94F922DCAF3700A6F8BB /* BlockerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockerViewController.swift; sourceTree = "<group>"; };
 		7C5DF2CB1FD7DEAD00B793B6 /* AvailabilityExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityExtensions.swift; sourceTree = "<group>"; };
@@ -2599,7 +2597,7 @@
 		7CEB45271F8FAAC400D772D5 /* UINavigationBarContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationBarContainer.swift; sourceTree = "<group>"; };
 		7CED30711FD97748009F0DAC /* IconStringsBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconStringsBuilder.swift; sourceTree = "<group>"; };
 		7CED307B1FD97895009F0DAC /* AvailabilityStringBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityStringBuilder.swift; sourceTree = "<group>"; };
-		7CFDC2801FD9A98100285047 /* AvailabilityTitleViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityTitleViewTests.swift; sourceTree = "<group>"; };
+		7CFDC2801FD9A98100285047 /* UserStatusViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusViewSnapshotTests.swift; sourceTree = "<group>"; };
 		848DE12A1A83D20000E154B1 /* emoticons.min.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = emoticons.min.json; path = ../Sources/emoticons.min.json; sourceTree = "<group>"; };
 		870533FE1DD6162400A7F822 /* OverflowSeparatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverflowSeparatorView.swift; sourceTree = "<group>"; };
 		870534001DD6265100A7F822 /* AttributedStringOperators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributedStringOperators.swift; sourceTree = "<group>"; };
@@ -3301,7 +3299,6 @@
 		E66258932B4D661900C23E79 /* DeveloperDebugActionsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsViewModelTests.swift; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
-		E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Availability.swift"; sourceTree = "<group>"; };
 		E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Attachments.swift"; sourceTree = "<group>"; };
 		E6C25FF12B03550A00406A1C /* AppLockModuleInteractorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModuleInteractorTests.swift; sourceTree = "<group>"; };
 		E6C25FF22B03550A00406A1C /* AppLockModuleViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModuleViewTests.swift; sourceTree = "<group>"; };
@@ -5168,13 +5165,13 @@
 		7C5836621FD5AB98001CC843 /* Availability */ = {
 			isa = PBXGroup;
 			children = (
-				7C5836651FD5ABFE001CC843 /* TitleView.swift */,
-				7C5836631FD5ABE7001CC843 /* AvailabilityTitleView.swift */,
-				1639A85A2264EAB800868AB9 /* AvailabilityTitleViewController.swift */,
 				7C5DF2CB1FD7DEAD00B793B6 /* AvailabilityExtensions.swift */,
-				7CED30711FD97748009F0DAC /* IconStringsBuilder.swift */,
 				7CED307B1FD97895009F0DAC /* AvailabilityStringBuilder.swift */,
+				1639A85A2264EAB800868AB9 /* AvailabilityTitleViewController.swift */,
+				7CED30711FD97748009F0DAC /* IconStringsBuilder.swift */,
+				7C5836651FD5ABFE001CC843 /* TitleView.swift */,
 				1639A85C2265FC8800868AB9 /* UIAlertController+Availability.swift */,
+				7C5836631FD5ABE7001CC843 /* UserStatusView.swift */,
 			);
 			path = Availability;
 			sourceTree = "<group>";
@@ -6861,7 +6858,6 @@
 				8732670C1D2D0C49005A62C1 /* AudioRecordKeyboardViewControllerTests.swift */,
 				BFAF4CAE1CEB791B00780537 /* AudioRecordViewControllerTests.swift */,
 				7C6A69041FDFD80E007EBE41 /* AvailabilityLabelTests.swift */,
-				7CFDC2801FD9A98100285047 /* AvailabilityTitleViewTests.swift */,
 				877ABB481E8127B200CBCF2B /* BackgroundViewControllerTests.swift */,
 				87AE8BDB207B99540058715E /* BackupPasswordViewControllerTests.swift */,
 				87C39A8F206BF00A008DA100 /* BackupViewControllerTests.swift */,
@@ -6991,6 +6987,7 @@
 				EF2FEDC7228E9E42000883C8 /* UserImageViewContainerSnapshotTests.swift */,
 				BFAAB23E1DED95B100CBC096 /* UserNameDetailViewTests.swift */,
 				7C25D75A21494E4B002E22BF /* UserSearchResultsViewControllerTests.swift */,
+				7CFDC2801FD9A98100285047 /* UserStatusViewSnapshotTests.swift */,
 				EF2E2F70223BC4A60038D7D9 /* VersionInfoViewControllerSnapshotTests.swift */,
 				D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */,
 				D50892FC2056C2AA004D3AE2 /* WirelessExpirationTimeFormatterTests.swift */,
@@ -7509,7 +7506,6 @@
 			children = (
 				E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */,
 				EF1CB6F422B39CBF004CB458 /* ZMConversation+Mock.swift */,
-				E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -9148,7 +9144,7 @@
 				F19F066E21ECC24F00426BD1 /* EasingFunction.swift in Sources */,
 				870815861BF4E76A00D321BC /* SettingsCell.swift in Sources */,
 				BFBB03061D5DF4CB0065AF4F /* InputBarButtonsView.swift in Sources */,
-				7C5836641FD5ABE7001CC843 /* AvailabilityTitleView.swift in Sources */,
+				7C5836641FD5ABE7001CC843 /* UserStatusView.swift in Sources */,
 				5EDD25412140240B00C0E254 /* SettingsStaticTextCellDescriptor.swift in Sources */,
 				163FB98F20514DB700E74F83 /* UITraitEnvironment+LayoutMargins.swift in Sources */,
 				EF82E1C020EE79EC001B5196 /* ZMConversationMessage+CountDown.swift in Sources */,
@@ -10030,7 +10026,6 @@
 				E9B580CC27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift in Sources */,
 				0608828F29EC742B0053772B /* ConversationMessageFailedRecipientsTests.swift in Sources */,
 				EF2E2F71223BC4A60038D7D9 /* VersionInfoViewControllerSnapshotTests.swift in Sources */,
-				E6C25FD72AFFAF4900406A1C /* ZMUser+Availability.swift in Sources */,
 				638C88C62680F92D0074D512 /* MockCallGridHintNotificationLabel.swift in Sources */,
 				D525426820934629001C04C1 /* IconLabelButtonTests.swift in Sources */,
 				BFF655741E81235900D48337 /* ConversationAvatarViewTests.swift in Sources */,
@@ -10252,7 +10247,7 @@
 				5E53534221B05C330060DB38 /* MessageDetailsViewControllerTests.swift in Sources */,
 				BF079A3620EF9E6F00B152DD /* ConversationListCellTests.swift in Sources */,
 				16A94AED20934AA8008A5718 /* CallParticipantsListViewControllerTests.swift in Sources */,
-				7CF651861FDA837D00D6B9F4 /* AvailabilityTitleViewTests.swift in Sources */,
+				7CF651861FDA837D00D6B9F4 /* UserStatusViewSnapshotTests.swift in Sources */,
 				EE2C42EC25B70F2200B07EFF /* AppLockModule.MockAuthenticationTypeDetector.swift in Sources */,
 				5EDD25462141571600C0E254 /* LicensesLoaderTests.swift in Sources */,
 				5EF5CDAA20EF925000CC98B0 /* MockDataTask.swift in Sources */,
@@ -10430,7 +10425,6 @@
 				E6579E5C2AFFA024004E7FD8 /* MockPinchGestureRecognizer.swift in Sources */,
 				E6579E422AFF9D2B004E7FD8 /* StringCapitalizationTests.swift in Sources */,
 				E6579E4D2AFFA024004E7FD8 /* MockCollection.swift in Sources */,
-				E6C25FD82AFFAF4900406A1C /* ZMUser+Availability.swift in Sources */,
 				E6579E4B2AFFA00A004E7FD8 /* MockServiceUserType.swift in Sources */,
 				E9B439322B0783BD0069DA63 /* SelfProvider.swift in Sources */,
 				E6579E5F2AFFA024004E7FD8 /* MockMessage+Creation.swift in Sources */,
