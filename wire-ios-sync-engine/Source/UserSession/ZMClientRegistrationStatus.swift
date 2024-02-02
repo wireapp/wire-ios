@@ -62,6 +62,39 @@ public enum ClientRegistrationPhase: UInt {
     case registered
 }
 
+extension ClientRegistrationPhase: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .unregistered:
+            "unregistered"
+        case .waitingForLogin:
+            "waitingForLogin"
+        case .waitingForSelfUser:
+            "waitingForSelfUser"
+        case .waitingForFetchConfigs:
+            "waitingForFetchConfigs"
+        case .waitingForE2EIEnrollment:
+            "waitingForE2EIEnrollment"
+        case .fetchingClients:
+            "fetchingClients"
+        case .waitingForDeletion:
+            "waitingForDeletion"
+        case .waitingForEmailVerfication:
+            "waitingForEmailVerfication"
+        case .waitingForHandle:
+            "waitingForHandle"
+        case .waitingForPrekeys:
+            "waitingForPrekeys"
+        case .generatingPrekeys:
+            "generatingPrekeys"
+        case .registeringMLSClient:
+            "registeringMLSClient"
+        case .registered:
+            "registered"
+        }
+    }
+}
+
 @objc
 public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
