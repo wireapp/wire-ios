@@ -300,7 +300,7 @@ extension SettingsTableViewController {
 
 }
 
-extension SettingsTableViewController: ZMUserObserver {
+extension SettingsTableViewController: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
         if note.accentColorValueChanged {
             refreshData()

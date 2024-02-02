@@ -143,11 +143,11 @@ final class UserSessionMock: UserSession {
         fatalError("not implemented")
     }
 
-    func addUserObserver(_ observer: ZMUserObserver, for user: UserType) -> NSObjectProtocol? {
+    func addUserObserver(_ observer: UserObserving, for user: UserType) -> NSObjectProtocol? {
         return nil
     }
 
-    func addUserObserver(_ observer: ZMUserObserver) -> NSObjectProtocol {
+    func addUserObserver(_ observer: UserObserving) -> NSObjectProtocol {
         return NSObject()
     }
 
