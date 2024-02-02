@@ -761,7 +761,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
                 }
             } else if ([obj isKindOfClass:ZMOTRMessage.class]) {
                 ZMOTRMessage *message = (ZMOTRMessage *)obj;
-                if (![message hasFaultForRelationshipNamed:ZMMessageMissingRecipientsKey] && !(message.missingRecipients.count == 0)) {
+                if (![message hasFaultForRelationshipNamed:ZMMessageMissingRecipientsKey] && !message.missingRecipients.isEmpty) {
                     [messagesToKeep addObject:obj];
                 }
             }

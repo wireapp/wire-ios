@@ -1342,14 +1342,14 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     ZMClientMessage *message1 = (ZMClientMessage *)[conversation appendMessageWithText:@"Test"];
     ZMClientMessage *message2 = (ZMClientMessage *)[conversation appendText:@"Test 2" mentions:@[] replyingToMessage:message1 fetchLinkPreview:NO nonce:NSUUID.createUUID];
     XCTAssertEqualObjects(message2.quote, message1);
-    XCTAssertFalse(message1.replies.count == 0);
-
+    XCTAssertFalse(message1.replies.isEmpty);
+    
     // when
     [message1 removeMessageClearingSender:YES];
     [self.uiMOC saveOrRollback];
     
     // then
-    XCTAssertTrue(message1.replies.count == 0);
+    XCTAssertTrue(message1.replies.isEmpty);
     XCTAssertNil(message2.quote);
 }
 
@@ -1362,14 +1362,14 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     ZMClientMessage *message1 = (ZMClientMessage *)[conversation appendMessageWithText:@"Test"];
     ZMClientMessage *message2 = (ZMClientMessage *)[conversation appendText:@"Test 2" mentions:@[] replyingToMessage:message1 fetchLinkPreview:NO nonce:NSUUID.createUUID];
     XCTAssertEqualObjects(message2.quote, message1);
-    XCTAssertFalse(message1.replies.count == 0);
+    XCTAssertFalse(message1.replies.isEmpty);
 
     // when
     [message2 removeMessageClearingSender:YES];
     [self.uiMOC saveOrRollback];
     
     // then
-    XCTAssertTrue(message1.replies.count == 0);
+    XCTAssertTrue(message1.replies.isEmpty);
     XCTAssertNil(message2.quote);
 }
 
@@ -1394,7 +1394,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
     //then
     XCTAssertEqual(conversation.hiddenMessages.count, 0lu);
-    XCTAssertTrue(message.reactions.count == 0);
+    XCTAssertTrue(message.reactions.isEmpty);
 }
 
 - (void)testThatAddingAReactionWithUnicodeProperlyAddReactionForUserOnMessage;
