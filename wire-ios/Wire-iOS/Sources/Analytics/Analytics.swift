@@ -107,7 +107,7 @@ extension Analytics: AnalyticsType {
     }
 }
 
-extension Analytics: ZMUserObserver {
+extension Analytics: UserObserver {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard

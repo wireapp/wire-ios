@@ -19,9 +19,9 @@
 import Foundation
 @testable import WireDataModel
 
-class SearchUserObserverTests: NotificationDispatcherTestBase {
+final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
-    class TestSearchUserObserver: NSObject, ZMUserObserver {
+    final class TestSearchUserObserver: UserObserver {
 
         var receivedChangeInfo: [UserChangeInfo] = []
 
