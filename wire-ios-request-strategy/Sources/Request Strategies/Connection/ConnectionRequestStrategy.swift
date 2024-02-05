@@ -35,6 +35,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     let connectToUserActionHandler: ConnectToUserActionHandler
     let updateConnectionActionHandler: UpdateConnectionActionHandler
     let actionSync: EntityActionSync
+    let resolver: OneOnOneResolver
 
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
@@ -66,6 +67,8 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
             connectToUserActionHandler,
             updateConnectionActionHandler
         ])
+
+        self.resolver = OneOnOneResolver(syncContext: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -185,7 +188,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
 
 extension ConnectionRequestStrategy: ZMEventConsumer {
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
         for event in events {
             guard
                 eventsToProcess.contains(event.type),
@@ -203,7 +206,11 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                         conversationEvent,
                         in: managedObjectContext
                     )
-                }
+
+                    if conversationEvent.connection.status == .accepted, let conversationID = conversationEvent.connection.qualifiedConversationID {
+                            try? await resolver.resolveOneOnOneConversation(with: conversationID, in: managedObjectContext)
+                        }
+                    }
 
             default:
                 break
