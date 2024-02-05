@@ -38,12 +38,12 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockSyncProgress = MockSyncProgress()
+        mockOneOnOneResolver = MockOneOnOneResolverInterface()
 
         sut = ConnectionRequestStrategy(withManagedObjectContext: syncMOC,
                                         applicationStatus: mockApplicationStatus,
-                                        syncProgress: mockSyncProgress)
-
-        mockOneOnOneResolver = MockOneOnOneResolverInterface()
+                                        syncProgress: mockSyncProgress,
+                                        resolver: mockOneOnOneResolver)
 
         apiVersion = .v0
     }
@@ -264,14 +264,16 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
                 return OneOnOneConversationResolution.noAction
              }
 
+            sut.oneOnOneResolutionDelay = 0.3
+
             // WHEN
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 3))
-
-            // THEN
-            XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
         }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
 
 }
 

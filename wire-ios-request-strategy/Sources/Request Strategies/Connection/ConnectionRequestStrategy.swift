@@ -35,11 +35,14 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     let connectToUserActionHandler: ConnectToUserActionHandler
     let updateConnectionActionHandler: UpdateConnectionActionHandler
     let actionSync: EntityActionSync
-    let resolver: OneOnOneResolver
+    let oneOnOneResolver: OneOnOneResolverInterface
+
+    var oneOnOneResolutionDelay: TimeInterval = 3
 
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
-                syncProgress: SyncProgress) {
+                syncProgress: SyncProgress,
+                resolver: OneOnOneResolverInterface? = nil) {
 
         self.syncProgress = syncProgress
         self.localConnectionListSync =
@@ -68,7 +71,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
             updateConnectionActionHandler
         ])
 
-        self.resolver = OneOnOneResolver(syncContext: managedObjectContext)
+        self.oneOnOneResolver = resolver
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -208,11 +211,11 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                     )
 
                     if conversationEvent.connection.status == .accepted, let conversationID = conversationEvent.connection.qualifiedTo {
-                        let delay: TimeInterval = 3
-                        WaitingGroupTask(context: managedObjectContext) {
+
+                        WaitingGroupTask(context: managedObjectContext) { [self] in
                             do {
-                                try await Task.sleep(nanoseconds: UInt64(delay))
-                                try await self.resolver.resolveOneOnOneConversation(with: conversationID, in: self.managedObjectContext)
+                                try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
+                                try await self.oneOnOneResolver.resolveOneOnOneConversation(with: conversationID, in: self.managedObjectContext)
                             } catch {
                                 WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
                                 assertionFailure("Error resolving one-on-one conversation: \(error)")
