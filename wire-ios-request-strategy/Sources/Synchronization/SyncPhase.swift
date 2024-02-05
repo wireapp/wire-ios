@@ -29,7 +29,7 @@ import Foundation
     case fetchingSelfUser
     case fetchingLegalHoldStatus
     case fetchingLabels
-    // create new sync phase here
+    case evaluate1on1ConversationsForMLS
     case fetchingMissedEvents
     case done
 
@@ -67,6 +67,8 @@ import Foundation
             return "fetchingLegalHoldStatus"
         case .fetchingLabels:
             return "fetchingLabels"
+        case .evaluate1on1ConversationsForMLS:
+            return "evaluate1on1ConversationsForMLS"
         case .fetchingMissedEvents:
             return "fetchingMissedEvents"
         case .done:
