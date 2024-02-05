@@ -22,7 +22,7 @@ disabled_rules:
 custom_rules:
   todo_requires_jira_link:
     name: "TODO: Requires Jira Link"
-    regex: '(TODO|FIX\s?ME|FIXME): (?!.*\\[WPB-\\d+\\])'
+    regex: '(TODO|FIX\s?ME|FIXME): (?!\[WPB-\d+\])'
     match_kinds: [comment]
     message: "Add JIRA reference to TODOs and FIX MEs like [WPB-680]."
     severity: warning
