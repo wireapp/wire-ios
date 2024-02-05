@@ -435,7 +435,9 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             commit: mockCommit,
             groupInfo: mockGroupInfoBundle
         )
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Mock properly
+        // swiftlint:enable todo_requires_jira_link
         let mockUpdateEvents = [ZMUpdateEvent]()
 
         // Mock join by external commit

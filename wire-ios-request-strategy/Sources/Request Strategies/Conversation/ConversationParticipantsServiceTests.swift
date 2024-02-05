@@ -18,7 +18,9 @@
 
 import XCTest
 import WireTesting
+
 @testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 class ConversationParticipantsServiceTests: MessagingTestBase {
 
