@@ -255,6 +255,37 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         fatalError("Cannot dequeue cell for index path \(indexPath) and cellDescriptor \(cellDescriptor)")
     }
 
+    func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
+        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
+        let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
+        return cellDescriptor.canCopy
+    }
+
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
+        let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
+
+        guard cellDescriptor.canCopy else {
+            return nil
+        }
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+          let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
+            if let cell = tableView.cellForRow(at: indexPath) as? SettingsCellType {
+              let pasteboard = UIPasteboard.general
+                switch cell.preview {
+                case .text(let value):
+                    pasteboard.string = value
+                default:
+                    assertionFailure("this is not handle, please implement support")
+                }
+
+            }
+          }
+          return UIMenu(children: [copy])
+        }
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
         let property = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]

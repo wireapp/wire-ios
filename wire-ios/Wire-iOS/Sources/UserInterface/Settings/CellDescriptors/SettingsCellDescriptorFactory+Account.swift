@@ -233,7 +233,8 @@ extension SettingsCellDescriptorFactory {
                     presentationStyle: .navigation,
                     presentationAction: presentation,
                     previewGenerator: preview,
-                    accessoryViewMode: .alwaysHide
+                    accessoryViewMode: .alwaysHide,
+                    canCopy: true
                 )
             }
 

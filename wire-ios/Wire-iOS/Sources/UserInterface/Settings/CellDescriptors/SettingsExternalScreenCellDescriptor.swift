@@ -40,6 +40,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     let presentationStyle: PresentationStyle
     let identifier: String?
     let icon: StyleKitIcon?
+    var canCopy: Bool
 
     private let accessoryViewMode: AccessoryViewMode
 
@@ -58,7 +59,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             identifier: nil,
             presentationAction: presentationAction,
             previewGenerator: nil,
-            icon: .none
+            icon: .none,
+            canCopy: false
         )
     }
 
@@ -68,7 +70,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
                      presentationAction: @escaping () -> (UIViewController?),
                      previewGenerator: PreviewGeneratorType? = .none,
                      icon: StyleKitIcon? = nil,
-                     accessoryViewMode: AccessoryViewMode = .default) {
+                     accessoryViewMode: AccessoryViewMode = .default,
+                     canCopy: Bool = false) {
         self.init(
             title: title,
             isDestructive: isDestructive,
@@ -77,7 +80,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             presentationAction: presentationAction,
             previewGenerator: previewGenerator,
             icon: icon,
-            accessoryViewMode: accessoryViewMode
+            accessoryViewMode: accessoryViewMode,
+            canCopy: canCopy
         )
     }
 
@@ -88,7 +92,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
          presentationAction: @escaping () -> (UIViewController?),
          previewGenerator: PreviewGeneratorType? = .none,
          icon: StyleKitIcon? = nil,
-         accessoryViewMode: AccessoryViewMode = .default) {
+         accessoryViewMode: AccessoryViewMode = .default,
+         canCopy: Bool) {
 
         self.title = title
         self.destructive = isDestructive
@@ -98,6 +103,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.previewGenerator = previewGenerator
         self.icon = icon
         self.accessoryViewMode = accessoryViewMode
+        self.canCopy = canCopy
     }
 
     func select(_ value: SettingsPropertyValue?) {
