@@ -21,18 +21,21 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-final class AvailabilityTitleViewController: UIViewController {
+final class UserStatusViewController: UIViewController {
 
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-    private let options: AvailabilityTitleView.Options
+    private let options: UserStatusView.Options
     private let user: UserType
     let userSession: UserSession
 
-    var availabilityTitleView: AvailabilityTitleView? {
-        return view as? AvailabilityTitleView
+    /// Used to update the `UserStatusView` on changes of a user.
+    private var userChangeObservation: NSObjectProtocol?
+
+    private var userStatusView: UserStatusView {
+        view as! UserStatusView
     }
 
-    init(user: UserType, options: AvailabilityTitleView.Options, userSession: UserSession) {
+    init(user: UserType, options: UserStatusView.Options, userSession: UserSession) {
         self.user = user
         self.options = options
         self.userSession = userSession
@@ -45,35 +48,36 @@ final class AvailabilityTitleViewController: UIViewController {
     }
 
     override func loadView() {
-        view = AvailabilityTitleView(user: user, options: options, userSession: userSession)
-    }
-
-    override func viewDidLoad() {
-        availabilityTitleView?.tapHandler = { [weak self] _ in
-            guard let `self` = self else { return }
-            self.presentAvailabilityPicker()
+        let view = UserStatusView(
+            options: options,
+            userSession: userSession
+        )
+        view.tapHandler = { [weak self] _ in
+            self?.presentAvailabilityPicker()
         }
+        self.view = view
+
+        updateUserStatusView()
+        setupNotificationObservation()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            availabilityTitleView?.updateConfiguration()
+
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            updateUserStatusView()
         }
     }
 
     func presentAvailabilityPicker() {
-        let alertViewController = UIAlertController.availabilityPicker { [weak self] (availability) in
-            guard let `self` = self else { return }
-            self.didSelectAvailability(availability)
+        let alertViewController = UIAlertController.availabilityPicker { [weak self] availability in
+            self?.didSelectAvailability(availability)
         }
-
         alertViewController.configPopover(pointToView: view)
-
         present(alertViewController, animated: true)
     }
 
-    private func didSelectAvailability(_ availability: AvailabilityKind) {
+    private func didSelectAvailability(_ availability: Availability) {
         let changes = { [weak self] in
             self?.user.availability = availability
             self?.provideHapticFeedback()
@@ -91,4 +95,39 @@ final class AvailabilityTitleViewController: UIViewController {
         feedbackGenerator.impactOccurred()
     }
 
+    // MARK: - Notifications
+
+    private func setupNotificationObservation() {
+        // refresh view when app becomes active
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateUserStatusView),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
+        // refresh view when some user changes
+        userChangeObservation = userSession.addUserObserver(self, for: user)
+    }
+
+    @objc
+    private func updateUserStatusView() {
+        userStatusView.userStatus = .init(
+            name: user.name ?? "",
+            availability: user.availability,
+            isCertified: false,
+            isVerified: false
+        )
+    }
+}
+
+// MARK: UserStatusViewController + UserObserving
+
+extension UserStatusViewController: UserObserving {
+
+    func userDidChange(_ changes: UserChangeInfo) {
+        if changes.nameChanged || changes.availabilityChanged {
+            updateUserStatusView()
+        }
+    }
 }
