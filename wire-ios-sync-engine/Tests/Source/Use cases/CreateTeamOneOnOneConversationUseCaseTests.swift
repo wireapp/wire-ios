@@ -182,7 +182,6 @@ private class MockConversationServiceInterface: ConversationServiceInterface {
 
     public init() {}
 
-
     // MARK: - createGroupConversation
 
     public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
