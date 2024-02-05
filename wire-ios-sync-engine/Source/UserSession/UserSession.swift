@@ -215,15 +215,15 @@ public protocol UserSession: AnyObject {
 
     var selfUserClient: UserClient? { get }
 
-    var featureChangeActionsHandler: FeatureChangeActions { get }
+    func fetchAllClients()
+
+    // MARK: - End-to-end Identity
+
+    var e2eiFeature: Feature.E2EI { get }
 
     var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
 
     var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
-
-    var e2eiFeature: Feature.E2EI { get }
-
-    func fetchAllClients()
 
 }
 

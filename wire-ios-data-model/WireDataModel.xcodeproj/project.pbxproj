@@ -28,6 +28,7 @@
 		0612D241243DC134008811A7 /* store2-81-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0612D240243DC12E008811A7 /* store2-81-0.wiredatabase */; };
 		0614E96D2A863EED007BB1F6 /* NSPredicate+BaseCompounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0614E96C2A863EED007BB1F6 /* NSPredicate+BaseCompounds.swift */; };
 		0617001323E2FC14005C262D /* GenericMessageTests+LinkMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0617001123E2FBC0005C262D /* GenericMessageTests+LinkMetaData.swift */; };
+		062BC8A12B6BD9AB00692DF7 /* GracePeriodRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062BC8A02B6BD9AB00692DF7 /* GracePeriodRepository.swift */; };
 		062C0D332B2280AA00848A48 /* Feature.E2EId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062C0D322B2280AA00848A48 /* Feature.E2EId.swift */; };
 		062FD8852756053800B9DE39 /* Feature.ConversationGuestLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062FD8842756053800B9DE39 /* Feature.ConversationGuestLinks.swift */; };
 		0630E17726E0F3570012E2F9 /* store2-95-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0630E17626E0F3570012E2F9 /* store2-95-0.wiredatabase */; };
@@ -880,6 +881,7 @@
 		0612D240243DC12E008811A7 /* store2-81-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-81-0.wiredatabase"; sourceTree = "<group>"; };
 		0614E96C2A863EED007BB1F6 /* NSPredicate+BaseCompounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPredicate+BaseCompounds.swift"; sourceTree = "<group>"; };
 		0617001123E2FBC0005C262D /* GenericMessageTests+LinkMetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessageTests+LinkMetaData.swift"; sourceTree = "<group>"; };
+		062BC8A02B6BD9AB00692DF7 /* GracePeriodRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GracePeriodRepository.swift; sourceTree = "<group>"; };
 		062C0D322B2280AA00848A48 /* Feature.E2EId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.E2EId.swift; sourceTree = "<group>"; };
 		062FD8842756053800B9DE39 /* Feature.ConversationGuestLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.ConversationGuestLinks.swift; sourceTree = "<group>"; };
 		0630E17626E0F3570012E2F9 /* store2-95-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-95-0.wiredatabase"; sourceTree = "<group>"; };
@@ -1852,6 +1854,7 @@
 				069BCC542B30945500DF4EC2 /* E2eISetupService.swift */,
 				069BCC552B30945500DF4EC2 /* E2eIVerificationStatusService.swift */,
 				069BCC6B2B31DD0D00DF4EC2 /* MLSConversationVerificationManager.swift */,
+				062BC8A02B6BD9AB00692DF7 /* GracePeriodRepository.swift */,
 			);
 			name = E2EIdentity;
 			path = Source/E2EIdentity;
@@ -3980,6 +3983,7 @@
 				CE4EDC091D6D9A3D002A20AA /* Reaction.swift in Sources */,
 				544E8C131E2F825700F9B8B8 /* ZMConversation+SecurityLevel.swift in Sources */,
 				F9A7067A1CAEE01D00C2F5FE /* ZMExternalEncryptedDataWithKeys.m in Sources */,
+				062BC8A12B6BD9AB00692DF7 /* GracePeriodRepository.swift in Sources */,
 				EE68EECB252DC4730013B242 /* ExplicitChangeDetector.swift in Sources */,
 				63D41E512452F0A60076826F /* ZMMessage+Removal.swift in Sources */,
 				63B1336129A503D100009D84 /* MLSClientID.swift in Sources */,
