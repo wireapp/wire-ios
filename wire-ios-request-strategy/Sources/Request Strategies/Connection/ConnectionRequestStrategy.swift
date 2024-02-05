@@ -207,12 +207,12 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                         in: managedObjectContext
                     )
 
-                    if conversationEvent.connection.status == .accepted, let conversationID = conversationEvent.connection.qualifiedConversationID {
+                    if conversationEvent.connection.status == .accepted, let conversationID = conversationEvent.connection.qualifiedTo {
                         let delay: TimeInterval = 3
-                        Task {
+                        WaitingGroupTask(context: managedObjectContext) {
                             do {
                                 try await Task.sleep(nanoseconds: UInt64(delay))
-                                try await resolver.resolveOneOnOneConversation(with: conversationID, in: managedObjectContext)
+                                try await self.resolver.resolveOneOnOneConversation(with: conversationID, in: self.managedObjectContext)
                             } catch {
                                 WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
                                 assertionFailure("Error resolving one-on-one conversation: \(error)")

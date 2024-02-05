@@ -16,6 +16,7 @@
 //
 
 import XCTest
+import WireDataModelSupport
 @testable import WireRequestStrategy
 
 class ConnectionRequestStrategyTests: MessagingTestBase {
@@ -23,6 +24,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
     var sut: ConnectionRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
+    var mockOneOnOneResolver: MockOneOnOneResolverInterface!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -41,6 +43,8 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
                                         applicationStatus: mockApplicationStatus,
                                         syncProgress: mockSyncProgress)
 
+        mockOneOnOneResolver = MockOneOnOneResolverInterface()
+
         apiVersion = .v0
     }
 
@@ -49,7 +53,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         mockSyncProgress = nil
         mockApplicationStatus = nil
         apiVersion = nil
-
+        mockOneOnOneResolver = nil
         super.tearDown()
     }
 
@@ -246,6 +250,30 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(self.oneToOneConnection.status, .blocked)
         }
     }
+
+    func testThatOneOnOneResolverIsInvoked_WhenConnectionRequestIsAccepted() {
+
+        syncMOC.performAndWait {
+            // GIVEN
+            let connection = createConnectionPayload(self.oneToOneConnection, status: .accepted)
+            let eventType = ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType)!
+            let eventPayload = Payload.UserConnectionEvent(connection: connection, type: eventType)
+            let event = updateEvent(from: eventPayload.payloadData()!)
+
+            mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
+                return OneOnOneConversationResolution.noAction
+             }
+
+            // WHEN
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 3))
+
+            // THEN
+            XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
+        }
+
+}
 
     // MARK: Helpers
 
