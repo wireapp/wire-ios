@@ -23,6 +23,26 @@
 #import "NSData+ZMAdditions.h"
 #import <zlib.h>
 
+@implementation NSData (ZMSorting)
+
+// ⚠️ We need the comparison for Core Data to compare NSData / sort NSData
+- (NSComparisonResult)compare:(NSData *)otherData
+{
+    NSInteger r = memcmp(self.bytes, otherData.bytes, MIN(self.length, otherData.length));
+    if (r == 0) {
+        r = ((NSInteger) self.length) - ((NSInteger) otherData.length);
+    }
+    if (r < 0) {
+        return NSOrderedAscending;
+    } else if (r == 0) {
+        return NSOrderedSame;
+    }
+
+    return NSOrderedDescending;
+}
+
+@end
+
 @implementation NSData (ZMHTTPCompression)
 
 - (NSData *)zm_gzipCompressedHTTPBody;
