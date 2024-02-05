@@ -616,7 +616,7 @@ class CallingRequestStrategyTests: MessagingTest {
     @discardableResult
     private func createClient(for user: ZMUser, connectedTo userClient: UserClient) -> UserClient {
         let client = UserClient.insertNewObject(in: syncMOC)
-        client.remoteIdentifier = NSString.createAlphanumerical() as String
+        client.remoteIdentifier = .randomRemoteIdentifier()
         client.user = user
 
         // TODO: [John] use flag here

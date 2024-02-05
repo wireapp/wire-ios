@@ -26,7 +26,7 @@ typealias SelfUserType = UserType & SelfLegalHoldSubject
 final class ConversationListTopBarViewController: UIViewController {
 
     private var observerToken: Any?
-    private var availabilityViewController: AvailabilityTitleViewController?
+    private var availabilityViewController: UserStatusViewController?
     private var account: Account
     private let selfUser: SelfUserType
     private var userSession: UserSession
@@ -87,16 +87,16 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private func createTitleView() -> UIView {
         if selfUser.isTeamMember {
-            let availabilityViewController = AvailabilityTitleViewController(
+            let userStatusViewController = UserStatusViewController(
                 user: selfUser,
                 options: .header,
                 userSession: userSession,
                 getSelfUserVerificationStatusUseCase: getSelfUserVerificationStatusUseCase
             )
-            addChild(availabilityViewController)
-            self.availabilityViewController = availabilityViewController
+            addChild(userStatusViewController)
+            self.availabilityViewController = userStatusViewController
 
-            return availabilityViewController.view
+            return userStatusViewController.view
         } else {
             let titleLabel = UILabel()
 
@@ -267,7 +267,7 @@ extension ConversationListTopBarViewController: UIViewControllerTransitioningDel
     }
 }
 
-extension ConversationListTopBarViewController: ZMUserObserver {
+extension ConversationListTopBarViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.nameChanged || changeInfo.teamsChanged {

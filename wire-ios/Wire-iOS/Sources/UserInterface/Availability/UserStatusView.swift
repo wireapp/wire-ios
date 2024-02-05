@@ -22,41 +22,27 @@ import WireSyncEngine
 import WireCommonComponents
 
 /// A title view subclass that displays the availability of the user.
-final class UserStatusView: TitleView, UserChangeObserver {
+final class UserStatusView: TitleView {
 
     // MARK: - Properties
 
-    private let user: UserType
-    private var observerToken: NSObjectProtocol?
     private let options: Options
-    private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    public var userStatus = UserStatus(name: "", availability: .none, isCertified: false, isVerified: false) {
+        didSet {
+            updateConfiguration()
+        }
+    }
 
     // MARK: - Initialization
 
     /// Creates a view for the specific user and options.
-    /// - parameter user: The user to display the availability of.
     /// - parameter options: The options to display the availability.
     init(
-        user: UserType,
         options: Options,
-        userSession: UserSession,
-        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+        userSession: UserSession
     ) {
         self.options = options
-        self.user = user
-        self.getSelfUserVerificationStatusUseCase = getSelfUserVerificationStatusUseCase
-
         super.init()
-
-        self.observerToken = userSession.addUserObserver(self, for: user)
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(applicationDidBecomeActive),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
-
         updateConfiguration()
     }
 
@@ -76,18 +62,16 @@ final class UserStatusView: TitleView, UserChangeObserver {
     }
 
     /// Refreshes the content and appearance of the view.
-    func updateConfiguration() {
+    private func updateConfiguration() {
         updateAppearance()
-        let availability = user.availability
-        Task {
-            await updateContent(availability)
-        }
+        updateContent()
     }
 
     /// Refreshes the content of the view, based on the user data and the options.
-    private func updateContent(_ availability: Availability) async {
+    private func updateContent() {
         typealias AvailabilityStatusStrings = L10n.Accessibility.AccountPage.AvailabilityStatus
 
+        let availability = userStatus.availability
         let fontStyle: FontSize = options.contains(.useLargeFont) ? .normal : .small
         let leadingIcons = [
             AvailabilityStringBuilder.icon(
@@ -101,21 +85,16 @@ final class UserStatusView: TitleView, UserChangeObserver {
         var title = ""
 
         if options.contains(.displayUserName) {
-            title = user.name ?? ""
-            do {
-                let verificationStatuses = try await getSelfUserVerificationStatusUseCase.invoke()
-                if verificationStatuses.isProteusVerified {
-                    let attachment = NSTextAttachment(image: Asset.Images.verifiedShield.image)
-                    attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
-                    trailingIcons.insert(attachment, at: 0)
-                }
-                if verificationStatuses.isMLSCertified {
-                    let attachment = NSTextAttachment(image: Asset.Images.certificateValid.image)
-                    attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
-                    trailingIcons.insert(attachment, at: 0)
-                }
-            } catch {
-                WireLogger.sync.error("failed to get self user's verification status: \(String(reflecting: error))")
+            title = userStatus.name
+            if userStatus.isVerified {
+                let attachment = NSTextAttachment(image: Asset.Images.verifiedShield.image)
+                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
+                trailingIcons.insert(attachment, at: 0)
+            }
+            if userStatus.isCertified {
+                let attachment = NSTextAttachment(image: Asset.Images.certificateValid.image)
+                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
+                trailingIcons.insert(attachment, at: 0)
             }
             accessibilityLabel = title
         } else if availability == .none && options.contains(.allowSettingStatus) {
@@ -152,17 +131,6 @@ final class UserStatusView: TitleView, UserChangeObserver {
         }
 
         titleColor = SemanticColors.Label.textDefault
-    }
-
-    // MARK: - Events
-
-    @objc private func applicationDidBecomeActive() {
-        updateConfiguration()
-    }
-
-    func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.availabilityChanged || changeInfo.nameChanged else { return }
-        updateConfiguration()
     }
 }
 

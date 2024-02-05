@@ -29,11 +29,10 @@ final class SaveFileManagerTests: XCTestCase {
         }
         let saveFileManager = SaveFileManager(systemFileSavePresenter: mockSystemSaveFilePresenter)
         saveFileManager.save(
-            value: .random(length: 10),
-            fileName: .random(length: 10),
-            type: .random(length: 3)
+            value: .randomAlphanumerical(length: 10),
+            fileName: .randomAlphanumerical(length: 10),
+            type: .randomAlphanumerical(length: 3)
         )
         wait(for: [expectation], timeout: 0.5)
     }
-
 }

@@ -1061,7 +1061,7 @@ extension ZMUserTests_Swift {
             proteusConversation?.domain = proteusConversation?.domain
             proteusConversation?.messageProtocol = .proteus
 
-            user.connection?.conversation = proteusConversation
+            user.oneOnOneConversation = proteusConversation
 
             try syncMOC.save()
         }

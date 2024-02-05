@@ -131,15 +131,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
     ) {
         updateAvailability(for: user, newValue: availability)
 
-        let sut = UserStatusView(
-            user: user,
-            options: options,
-            userSession: userSession,
-            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase(
-                isMLSCertified: false,
-                isProteusVerified: false
-            )
-        )
+        let sut = UserStatusView(options: options, userSession: userSession)
         sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.backgroundColor = .systemBackground
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
