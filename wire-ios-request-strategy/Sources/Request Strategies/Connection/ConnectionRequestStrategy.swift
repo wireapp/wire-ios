@@ -214,7 +214,8 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                                 try await Task.sleep(nanoseconds: UInt64(delay))
                                 try await resolver.resolveOneOnOneConversation(with: conversationID, in: managedObjectContext)
                             } catch {
-                                print("Failed to resolve one-on-one conversation: \(error)")
+                                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
+                                assertionFailure("Error resolving one-on-one conversation: \(error)")
                             }
                         }
                     }
