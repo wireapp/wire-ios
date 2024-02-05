@@ -65,7 +65,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             saveFileManager: MockSaveFileManager(),
             getProteusFingerprint: mockGetProteusFingerprint
         )
-        let testFingerPrint = String.random(length: 16)
+        let testFingerPrint = String.randomAlphanumerical(length: 16)
         mockGetProteusFingerprint.invokeUserClient_MockMethod = { _ in
             return testFingerPrint.data(using: .utf8)
         }
