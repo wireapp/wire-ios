@@ -80,6 +80,7 @@ extension ZMConversation {
                 }
 
                 Task {
+                    // swiftlint:disable todo_requires_jira_link
                     // FIXME: [jacob] replace with ConversationEventProcessor
                     try? await eventProcessor.processEvents([event])
                     viewContext.performGroupedBlock {
@@ -96,8 +97,9 @@ extension ZMConversation {
 
             /// The user is already a participant in the conversation
             case 204:
-                /// If we get to this case, then we need to re-sync local conversations
-                /// TODO: implement re-syncing conversations
+                // If we get to this case, then we need to re-sync local conversations
+                // TODO: implement re-syncing conversations
+                // swiftlint:enable todo_requires_jira_link
                 Logging.network.debug("Local conversations should be re-synced with remote ones")
                 return completion(.failure(ConversationJoinError.unknown))
 

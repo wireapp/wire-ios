@@ -117,7 +117,9 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // TODO: John remove warning and consult design about this setting.
+    // swiftlint:enable todo_requires_jira_link
 
     func encryptionAtRestSection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(

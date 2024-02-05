@@ -619,7 +619,9 @@ class CallingRequestStrategyTests: MessagingTest {
         client.remoteIdentifier = .randomRemoteIdentifier()
         client.user = user
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [John] use flag here
+        // swiftlint:enable todo_requires_jira_link
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { (session) in
             try! session.createClientSession(
                 client.sessionIdentifier!,

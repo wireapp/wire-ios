@@ -757,7 +757,9 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func conversationExists(groupID: MLSGroupID) async -> Bool {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [jacob] let it throw
+        // swiftlint:enable todo_requires_jira_link
         let result = (try? await coreCrypto.perform { await $0.conversationExists(conversationId: groupID.data) }) ?? false
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
@@ -1021,9 +1023,9 @@ public final class MLSService: MLSServiceInterface {
                     coreCrypto: coreCrypto,
                     context: context
                 ) == true
-            }
+            } // swiftlint:disable todo_requires_jira_link
         }) ?? [] // TODO: [jacob] let it throw
-
+        // swiftlint:enable todo_requires_jira_link
         return await context.perform { conversations.compactMap {
             if let groupId = $0.mlsGroupID {
                 return (groupId, $0)
@@ -1075,9 +1077,9 @@ public final class MLSService: MLSServiceInterface {
                 subgroup: subgroup,
                 coreCrypto: $0,
                 context: context
-            )
+            ) // swiftlint:disable todo_requires_jira_link
         }) ?? false // TODO: [jacob] let it throw
-    }
+    } // swiftlint: enable todo_requires_jira_link
 
     // MARK: - External Proposals
 
@@ -1299,7 +1301,9 @@ public final class MLSService: MLSServiceInterface {
                 try await commitPendingProposals(in: groupID)
             } else {
                 logger.info("commit scheduled in the future, waiting...")
+                // swiftlint:disable todo_requires_jira_link
                 // FIXME: change logic not to wait for all commits
+                // swiftlint:enable todo_requires_jira_link
                 try await Task.sleep(nanoseconds: timestamp.timeIntervalSinceNow.nanoseconds)
                 logger.info("scheduled commit is ready, committing...")
                 try await commitPendingProposals(in: groupID)
@@ -1430,7 +1434,9 @@ public final class MLSService: MLSServiceInterface {
 
         } catch CommitError.failedToSendCommit(recovery: .giveUp) {
             logger.warn("failed to send commit, giving up...")
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] inform user
+            // swiftlint:enable todo_requires_jira_link
             throw CommitError.failedToSendCommit(recovery: .giveUp)
 
         } catch ExternalCommitError.failedToSendCommit(recovery: .retry) {
