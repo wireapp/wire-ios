@@ -76,7 +76,6 @@ import Foundation
     }
 }
 
-@objc
 public protocol SyncProgress {
 
     var currentSyncPhase: SyncPhase { get }
