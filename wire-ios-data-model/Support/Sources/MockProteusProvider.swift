@@ -67,7 +67,7 @@ public class MockProteusProvider: ProteusProviding {
         return SpyUserClientKeyStore(accountDirectory: url, applicationContainer: url)
     }
 
-    // FIXME: [F] this is defined in WireTesting, somehow it is not possible to import here for now - WPB-5867
+    // FIXME: [WPB-5867] this is defined in WireTesting, somehow it is not possible to import here for now - [Francois]
     public static func createTempFolder() -> URL {
         let url = URL(fileURLWithPath: [NSTemporaryDirectory(), UUID().uuidString].joined(separator: "/"))
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
