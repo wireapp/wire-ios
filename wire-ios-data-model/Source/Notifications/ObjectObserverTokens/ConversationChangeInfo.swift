@@ -133,7 +133,7 @@ extension ZMConversation: ObjectInSnapshot {
     }
 
     public var mlsVerificationStatusChanged: Bool {
-        return changedKeysContain(keys: ZMConversation.mlsVerificationStatusKey)
+        changedKeysContain(keys: ZMConversation.mlsVerificationStatusKey)
     }
 
     public var allowGuestsChanged: Bool {
