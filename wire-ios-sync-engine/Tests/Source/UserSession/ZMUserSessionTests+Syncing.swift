@@ -17,6 +17,7 @@
 //
 
 import XCTest
+@testable import WireRequestStrategy
 @testable import WireSyncEngine
 
 class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
