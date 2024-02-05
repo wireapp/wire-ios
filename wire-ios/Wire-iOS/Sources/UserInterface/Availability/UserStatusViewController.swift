@@ -29,12 +29,12 @@ final class UserStatusViewController: UIViewController {
     private let userSession: UserSession
     private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
 
-/// Used to update the `UserStatusView` on changes of a user.
-private var userChangeObservation: NSObjectProtocol?
+    /// Used to update the `UserStatusView` on changes of a user.
+    private var userChangeObservation: NSObjectProtocol?
 
-private var userStatusView: UserStatusView {
-view as! UserStatusView
-}
+    private var userStatusView: UserStatusView {
+        view as! UserStatusView
+    }
 
     init(
         user: UserType,
@@ -60,6 +60,7 @@ view as! UserStatusView
             userSession: userSession
         )
         view.tapHandler = { [weak self] _ in self?.presentAvailabilityPicker() }
+        self.view = view
 
         updateUserStatusView()
         setupNotificationObservation()
