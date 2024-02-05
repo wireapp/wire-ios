@@ -128,7 +128,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         }
     }
 
-    private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation>) -> Void) {
+    private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation, Error>) -> Void) {
         guard let qualifiedID = conversation.qualifiedID else {
             completion(.success(conversation))
             return
@@ -144,7 +144,10 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 return
             }
 
-            guard let groupId = upToDateConversation.mlsGroupID, upToDateConversation.messageProtocol == .mls else {
+            guard
+                let groupId = upToDateConversation.mlsGroupID,
+                upToDateConversation.messageProtocol.isOne(of: .mls, .mixed)
+            else {
                 completion(.success(upToDateConversation))
                 return
             }

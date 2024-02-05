@@ -75,4 +75,8 @@ extension ConversationListViewController {
                                                object: nil)
 
     }
+
+    private func concealContentContainer() {
+        contentContainer.alpha = 0
+    }
 }

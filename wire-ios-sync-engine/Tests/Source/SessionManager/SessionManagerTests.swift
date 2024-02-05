@@ -881,56 +881,6 @@ class SessionManagerTests_Teams: IntegrationTest {
         XCTAssertEqual(account.loginCredentials, selfUser.loginCredentials)
     }
 
-    func testThatItUpdatesAccountAfterTeamNameChanges() {
-        // given
-        var team: MockTeam!
-        self.mockTransportSession.performRemoteChanges { session in
-            team = session.insertTeam(withName: "Wire", isBound: true, users: [self.selfUser])
-            team.creator = self.selfUser
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // when
-        XCTAssert(login())
-
-        let newTeamName = "Not Wire"
-        self.mockTransportSession.performRemoteChanges { _ in
-            team.name = newTeamName
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        guard let account = sessionManager?.accountManager.accounts.first, sessionManager?.accountManager.accounts.count == 1 else { XCTFail("Should have one account"); return }
-        XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
-        XCTAssertEqual(account.teamName, newTeamName)
-    }
-
-    func testThatItUpdatesAccountAfterTeamImageDataChanges() {
-        // given
-        let assetData = "image".data(using: .utf8)!
-        var asset: MockAsset!
-        var team: MockTeam!
-        self.mockTransportSession.performRemoteChanges { session in
-            team = session.insertTeam(withName: "Wire", isBound: true, users: [self.selfUser])
-            team.creator = self.selfUser
-            asset = session.insertAsset(with: UUID(), assetToken: UUID(), assetData: assetData, contentType: "image/jpeg")
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssert(login())
-
-        // when
-        self.mockTransportSession.performRemoteChanges { _ in
-            team.pictureAssetId = asset.identifier
-        }
-        user(for: selfUser)?.team?.requestImage()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        guard let account = sessionManager?.accountManager.accounts.first, sessionManager?.accountManager.accounts.count == 1 else { XCTFail("Should have one account"); return }
-        XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
-        XCTAssertEqual(account.teamImageData, assetData)
-    }
-
     func testThatItUpdatesAccountWithUserDetailsAfterLogin() {
         // when
         XCTAssert(login())
@@ -1628,7 +1578,10 @@ extension SessionManagerTests {
         let conversation1CreatedExpectation = self.customExpectation(description: "Conversation 1 created")
 
         self.sessionManager?.withSession(for: account1, perform: { createdSession in
-            createdSession.managedObjectContext.createSelfUserAndSelfConversation()
+            createdSession.syncContext.performAndWait {
+                createdSession.syncContext.createSelfUserAndSelfConversation()
+                createdSession.syncContext.saveOrRollback()
+            }
 
             let conversation1 = createdSession.insertConversationWithUnreadMessage()
             conversations.append(conversation1)
@@ -1640,7 +1593,10 @@ extension SessionManagerTests {
         let conversation2CreatedExpectation = self.customExpectation(description: "Conversation 2 created")
 
         self.sessionManager?.withSession(for: account2, perform: { createdSession in
-            createdSession.managedObjectContext.createSelfUserAndSelfConversation()
+            createdSession.syncContext.performAndWait {
+                createdSession.syncContext.createSelfUserAndSelfConversation()
+                createdSession.syncContext.saveOrRollback()
+            }
 
             let conversation2 = createdSession.insertConversationWithUnreadMessage()
             XCTAssertNotNil(conversation2.firstUnreadMessage)

@@ -238,7 +238,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func acceptConnectionRequest() {
         user.accept { [weak self] error in
-            if let error = error as? ConnectToUserError {
+            if let error = error as? LocalizedError {
                 self?.viewModelDelegate?.presentError(error)
             } else {
                 self?.user.refreshData()
@@ -259,7 +259,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
 }
 
-extension ProfileViewControllerViewModel: ZMUserObserver {
+extension ProfileViewControllerViewModel: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
         if note.trustLevelChanged {
             viewModelDelegate?.updateShowVerifiedShield()

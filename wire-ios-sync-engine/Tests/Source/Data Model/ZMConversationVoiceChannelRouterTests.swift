@@ -26,39 +26,47 @@ class ZMConversationVoiceChannelTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        oneToOneconversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        oneToOneconversation?.remoteIdentifier = UUID.create()
-        oneToOneconversation.conversationType = .oneOnOne
+        syncMOC.performAndWait {
+            oneToOneconversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            oneToOneconversation?.remoteIdentifier = UUID.create()
+            oneToOneconversation.conversationType = .oneOnOne
 
-        groupConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        groupConversation?.remoteIdentifier = UUID.create()
-        groupConversation.conversationType = .group
+            groupConversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            groupConversation?.remoteIdentifier = UUID.create()
+            groupConversation.conversationType = .group
+        }
     }
 
     func testThatItReturnsAVoiceChannelForAOneOnOneConversations() {
-        // when
-        let voiceChannel = oneToOneconversation.voiceChannel
+        syncMOC.performAndWait {
+            // when
+            let voiceChannel = oneToOneconversation.voiceChannel
 
-        // then
-        XCTAssertNotNil(voiceChannel)
-        XCTAssertEqual(voiceChannel?.conversation, oneToOneconversation)
+            // then
+            XCTAssertNotNil(voiceChannel)
+            XCTAssertEqual(voiceChannel?.conversation, oneToOneconversation)
+        }
     }
 
     func testThatItReturnsAVoiceChannelForAGroupConversation() {
-        // when
-        let voiceChannel = groupConversation.voiceChannel
+        syncMOC.performAndWait {
+            // when
+            let voiceChannel = groupConversation.voiceChannel
 
-        // then
-        XCTAssertNotNil(voiceChannel)
-        XCTAssertEqual(voiceChannel?.conversation, groupConversation)
+            // then
+            XCTAssertNotNil(voiceChannel)
+            XCTAssertEqual(voiceChannel?.conversation, groupConversation)
+        }
     }
 
     func testThatItAlwaysReturnsTheSameVoiceChannelForAOneOnOneConversations() {
-        // when
-        let voiceChannel = oneToOneconversation.voiceChannel
+        syncMOC.performAndWait {
+            // when
+            let voiceChannel = oneToOneconversation.voiceChannel
 
-        // then
-        XCTAssertTrue(oneToOneconversation.voiceChannel === voiceChannel)
+            // then
+            XCTAssertTrue(oneToOneconversation.voiceChannel === voiceChannel)
+        }
     }
 
 }

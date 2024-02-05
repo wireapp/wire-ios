@@ -136,7 +136,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     private func configureConstraints() {
 
-        [avatar, authorLabel, dateLabel].prepareForLayout()
+        [avatar, authorLabel, dateLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let trailingDateLabelConstraint  = dateLabel.trailingAnchor.constraint(
             equalTo: self.trailingAnchor,

@@ -701,7 +701,7 @@ final class ConversationListViewModel: NSObject {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
 private let log = ZMSLog(tag: "ConversationListViewModel")
 

@@ -77,6 +77,13 @@ extension ZMUser: UserType {
         return selfUser.isFederating(with: self)
     }
 
+    // MARK: - One on one conversation
+
+    /// The one on one conversation with this user.
+
+    @NSManaged
+    public var oneOnOneConversation: ZMConversation?
+
     // MARK: - Conversation Roles
 
     public func canManagedGroupRole(of user: UserType, conversation: ZMConversation) -> Bool {
@@ -196,7 +203,7 @@ public struct AssetKey {
 }
 
 extension ProfileImageSize: CustomDebugStringConvertible {
-     public var debugDescription: String {
+    public var debugDescription: String {
         switch self {
         case .preview:
             return "ProfileImageSize.preview"
@@ -410,15 +417,59 @@ extension ZMUser: UserConnections {
         }
     }
 
+    public enum AcceptConnectionError: Error {
+
+        case invalidState
+        case unableToSwitchToMLS
+
+    }
+
     public func accept(completion: @escaping (Error?) -> Void) {
-        connection?.updateStatus(.accepted, completion: { result in
+        accept(
+            oneOnOneResolver: nil,
+            completion: completion
+        )
+    }
+
+    func accept(
+        oneOnOneResolver: OneOnOneResolverInterface?,
+        completion: @escaping (Error?) -> Void
+    ) {
+        guard
+            let context = managedObjectContext,
+            let syncContext = context.zm_sync,
+            let connection,
+            let userID = remoteIdentifier,
+            let domain = domain ?? BackendInfo.domain
+        else {
+            completion(AcceptConnectionError.invalidState)
+            return
+        }
+
+        connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                completion(nil)
+                Task {
+                    do {
+                        let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
+                        try await resolver.resolveOneOnOneConversation(
+                            with: QualifiedID(uuid: userID, domain: domain),
+                            in: context
+                        )
+                        await MainActor.run {
+                            completion(nil)
+                        }
+                    } catch {
+                        await MainActor.run {
+                            completion(error)
+                        }
+                    }
+                }
+
             case .failure(let error):
                 completion(error)
             }
-        })
+        }
     }
 
     public func ignore(completion: @escaping (Error?) -> Void) {

@@ -56,8 +56,6 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 @objcMembers
 public class ZMUserSession: NSObject {
 
-    private static let logger = Logger(subsystem: "VoIP Push", category: "ZMUserSession")
-
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
@@ -262,6 +260,10 @@ public class ZMUserSession: NSObject {
                                         proteusProvider: proteusProvider)
     }()
 
+    public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
+        ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
+    }()
+
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
@@ -400,6 +402,26 @@ public class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+        updateSupportedProtocolsIfNeeded()
+    }
+
+    private func updateSupportedProtocolsIfNeeded() {
+        let recurringAction = RecurringAction(
+            id: "\(account.userIdentifier).updateSupportedProtocols",
+            interval: .oneDay
+        ) { [weak self] in
+            guard let context = self?.syncContext else { return }
+
+            context.perform {
+                let service = SupportedProtocolsService(context: context)
+                service.updateSupportedProtocols()
+            }
+        }
+
+        recurringActionService.registerAction(recurringAction)
+
+        // The action should run once on every launch, then each 24 hours thereafter.
+        recurringActionService.forcePerformAction(id: recurringAction.id)
     }
 
     private func configureTransportSession() {
@@ -444,7 +466,8 @@ public class ZMUserSession: NSObject {
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: self.proteusProvider,
-            mlsService: mlsService
+            mlsService: mlsService,
+            coreCryptoProvider: coreCryptoProvider
         )
     }
 
@@ -491,6 +514,7 @@ public class ZMUserSession: NSObject {
         recurringActionService.registerAction(refreshUsersMissingMetadataAction)
         recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
+        recurringActionService.registerAction(refreshTeamMetadataAction)
     }
 
     func startRequestLoopTracker() {
@@ -539,6 +563,7 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
+        // TODO: [jacob] refactor out WPB-6198
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
@@ -705,7 +730,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didStartQuickSync() {
-        Self.logger.trace("did start quick sync")
+        WireLogger.sync.debug("did start quick sync")
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
@@ -713,7 +738,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didFinishQuickSync() {
-        Self.logger.trace("did finish quick sync")
+        WireLogger.sync.debug("did finish quick sync")
         processEvents()
 
         NotificationInContext(
@@ -819,15 +844,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         action.send(in: syncContext.notificationContext)
     }
 
-    public func didRegisterMLSClient(_ userClient: UserClient) {
-        Task {
-            await mlsService.uploadKeyPackagesIfNeeded()
-        }
-    }
-
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
-        createMLSClientIfNeeded()
-
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier

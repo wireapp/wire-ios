@@ -39,12 +39,15 @@ final class ZMConversationTests_Services: BaseZMMessageTests {
         user = nil
     }
 
-    func createConversation(with service: ServiceUser) -> ZMConversation {
+    func createConversation(with service: ServiceUser) throws -> ZMConversation {
         let conversation = createConversation(in: uiMOC)
         conversation.team = team
         conversation.conversationType = .group
+        let serviceUser = try XCTUnwrap(service as? ZMUser)
+        conversation.oneOnOneUser = serviceUser
         conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC), role: nil)
-        conversation.addParticipantAndUpdateConversationState(user: service as! ZMUser, role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: serviceUser, role: nil)
+        try uiMOC.save()
         return conversation
     }
 
@@ -64,9 +67,9 @@ final class ZMConversationTests_Services: BaseZMMessageTests {
         XCTAssertNil(conversation)
     }
 
-    func testThatItFindsConversationWithService() {
+    func testThatItFindsConversationWithService() throws {
         // given
-        let existingConversation = createConversation(with: service)
+        let existingConversation = try createConversation(with: service)
 
         // when
         let conversation = ZMConversation.existingConversation(in: uiMOC, service: service, team: team)
@@ -76,9 +79,9 @@ final class ZMConversationTests_Services: BaseZMMessageTests {
         XCTAssertEqual(existingConversation, conversation)
     }
 
-    func testThatItDoesNotFindConversationWithMoreMembers() {
+    func testThatItDoesNotFindConversationWithMoreMembers() throws {
         // given
-        let existingConversation = createConversation(with: service)
+        let existingConversation = try createConversation(with: service)
         existingConversation.addParticipantAndUpdateConversationState(user: createUser(in: uiMOC), role: nil)
 
         // when
@@ -88,9 +91,9 @@ final class ZMConversationTests_Services: BaseZMMessageTests {
         XCTAssertNil(conversation)
     }
 
-    func testThatItChecksOnlyConversationsWhereIAmPresent() {
+    func testThatItChecksOnlyConversationsWhereIAmPresent() throws {
         // given
-        let existingConversation = createConversation(with: service)
+        let existingConversation = try createConversation(with: service)
 
         // when
         existingConversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
@@ -100,9 +103,9 @@ final class ZMConversationTests_Services: BaseZMMessageTests {
         XCTAssertNil(conversation)
     }
 
-    func testThatItChecksOnlyConversationsWithNoUserDefinedName() {
+    func testThatItChecksOnlyConversationsWithNoUserDefinedName() throws {
         // given
-        let existingConversation = createConversation(with: service)
+        let existingConversation = try createConversation(with: service)
 
         // when
         existingConversation.userDefinedName = "First"
@@ -112,10 +115,10 @@ final class ZMConversationTests_Services: BaseZMMessageTests {
         XCTAssertNil(conversation)
     }
 
-    func testThatItFindsConversationWithCorrectService() {
+    func testThatItFindsConversationWithCorrectService() throws {
         // given
-        let existingConversation = createConversation(with: service)
-        _ = createConversation(with: createService(in: uiMOC, named: "BAD"))
+        let existingConversation = try createConversation(with: service)
+        _ = try createConversation(with: createService(in: uiMOC, named: "BAD"))
 
         // when
         let conversation = ZMConversation.existingConversation(in: uiMOC, service: service, team: team)
