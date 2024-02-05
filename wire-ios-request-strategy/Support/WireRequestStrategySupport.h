@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
+#import <Foundation/Foundation.h>
 
-extension ZMConversation {
-    // swiftlint:disable todo_requires_jira_link
-    // TODO: move to DM
-    // swiftlint:enable todo_requires_jira_link
-    var firstActiveParticipantOtherThanSelf: ZMUser? {
-        guard let selfUser = ZMUser.selfUser() else {
-            return localParticipants.first
-        }
+//! Project version number for WireRequestStrategySupport.
+FOUNDATION_EXPORT double WireRequestStrategySupportVersionNumber;
 
-        return localParticipants.first(where: {$0 != selfUser})
-    }
+//! Project version string for WireRequestStrategySupport.
+FOUNDATION_EXPORT const unsigned char WireRequestStrategySupportVersionString[];
 
-}
+// In this header, you should import all the public headers of your framework using statements like #import <WireRequestStrategySupport/PublicHeader.h>
+
+

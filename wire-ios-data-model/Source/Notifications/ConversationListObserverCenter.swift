@@ -31,7 +31,9 @@ extension NSManagedObjectContext {
     static let ConversationListObserverCenterKey = "ConversationListObserverCenterKey"
 
     @objc public var conversationListObserverCenter: ConversationListObserverCenter {
+        // swiftlint:disable todo_requires_jira_link
         // FIXME: Uncomment and fix crash when running tests
+        // swiftlint:enable todo_requires_jira_link
         // assert(zm_isUserInterfaceContext, "ConversationListObserver does not exist in syncMOC")
 
         if let observer = self.userInfo[NSManagedObjectContext.ConversationListObserverCenterKey] as? ConversationListObserverCenter {
