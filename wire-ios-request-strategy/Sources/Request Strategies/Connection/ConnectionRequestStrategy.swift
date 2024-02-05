@@ -188,7 +188,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
 
 extension ConnectionRequestStrategy: ZMEventConsumer {
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
             guard
                 eventsToProcess.contains(event.type),
@@ -208,9 +208,17 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                     )
 
                     if conversationEvent.connection.status == .accepted, let conversationID = conversationEvent.connection.qualifiedConversationID {
-                            try? await resolver.resolveOneOnOneConversation(with: conversationID, in: managedObjectContext)
+                        Task {
+                            do {
+                                try await Task.sleep(nanoseconds: 3_000_000_000)
+                                try await resolver.resolveOneOnOneConversation(with: conversationID, in: managedObjectContext)
+                            } catch {
+                                print("Failed to resolve one-on-one conversation: \(error)")
+                            }
                         }
                     }
+
+                }
 
             default:
                 break
