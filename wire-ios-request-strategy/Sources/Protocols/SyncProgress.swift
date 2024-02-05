@@ -18,64 +18,6 @@
 
 import Foundation
 
-@objc public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
-
-    case fetchingLastUpdateEventID
-    case fetchingTeams
-    case fetchingTeamRoles
-    case fetchingConnections
-    case fetchingConversations
-    case fetchingUsers
-    case fetchingSelfUser
-    case fetchingLegalHoldStatus
-    case fetchingLabels
-    case fetchingMissedEvents
-    case done
-
-    public var isLastSlowSyncPhase: Bool {
-        return self == Self.lastSlowSyncPhase
-    }
-
-    public var isSyncing: Bool {
-        return self != .done
-    }
-
-    public var nextPhase: SyncPhase {
-        return SyncPhase(rawValue: rawValue + 1) ?? .done
-    }
-
-    public static var lastSlowSyncPhase: SyncPhase {
-        return .fetchingLabels
-    }
-
-    public var description: String {
-        switch self {
-        case .fetchingLastUpdateEventID:
-            return "fetchingLastUpdateEventID"
-        case .fetchingConnections:
-            return "fetchingConnections"
-        case .fetchingConversations:
-            return "fetchingConversations"
-        case .fetchingTeams:
-            return "fetchingTeams"
-        case .fetchingTeamRoles:
-            return "fetchingTeamRoles"
-        case .fetchingUsers:
-            return "fetchingUsers"
-        case .fetchingSelfUser:
-            return "fetchingSelfUser"
-        case .fetchingLegalHoldStatus:
-            return "fetchingLegalHoldStatus"
-        case .fetchingLabels:
-            return "fetchingLabels"
-        case .fetchingMissedEvents:
-            return "fetchingMissedEvents"
-        case .done:
-            return "done"
-        }
-    }
-}
-
 public protocol SyncProgress {
 
     var currentSyncPhase: SyncPhase { get }
