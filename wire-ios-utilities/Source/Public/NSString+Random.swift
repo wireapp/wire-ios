@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,26 @@
 
 import Foundation
 
-extension ZMConnection {
+extension NSString {
 
-    /// add a user to connection's conversation, if not there already
-    /// - Parameter user: the user to insert
-    @objc
-    public func add(user: ZMUser) {
-        conversation?.addParticipantAndUpdateConversationState(user: user, role: nil)
+    @objc static func randomAlphanumerical(length: UInt) -> String {
+        String.randomAlphanumerical(length: length)
+    }
+
+    @objc public static func randomClientIdentifier() -> String {
+        String.randomClientIdentifier()
+    }
+
+    @objc public static func randomRemoteIdentifier() -> String {
+        String.randomRemoteIdentifier()
+    }
+}
+
+// MARK: - Legacy
+
+public extension NSString {
+    @available(*, deprecated, message: "Better use one of the newer random string methods!")
+    @objc static func createLegacyAlphanumerical() -> String {
+        String.createLegacyAlphanumerical()
     }
 }

@@ -164,6 +164,9 @@ final class ConversationServiceTests: MessagingTestBase {
             in: uiMOC
         )
 
+        XCTAssertNil(oneToOneConversation.oneOnOneUser)
+        XCTAssertNil(user1.oneOnOneConversation)
+
         let didFinish = customExpectation(description: "didFinish")
 
         // Mock
@@ -178,6 +181,10 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success(let conversation):
                 // Then we got back newly created conversation.
                 XCTAssertEqual(conversation, oneToOneConversation)
+
+                // Then the conversation relatioship is set.
+                XCTAssertEqual(oneToOneConversation.oneOnOneUser, self.user1)
+                XCTAssertEqual(self.user1.oneOnOneConversation, conversation)
                 didFinish.fulfill()
 
             case .failure(let error):

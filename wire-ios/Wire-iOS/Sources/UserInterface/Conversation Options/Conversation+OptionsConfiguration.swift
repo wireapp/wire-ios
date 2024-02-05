@@ -85,13 +85,13 @@ extension ZMConversation {
             return conversation.areServicesPresent
         }
 
-        func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
             conversation.setAllowGuests(allowGuests, in: userSession) {
                 completion($0)
             }
         }
 
-        func setAllowServices(_ allowServices: Bool, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
             conversation.setAllowServices(allowServices, in: userSession) {
                 completion($0)
             }
@@ -108,15 +108,15 @@ extension ZMConversation {
             }
         }
 
-        func createConversationLink(completion: @escaping (Result<String>) -> Void) {
+        func createConversationLink(completion: @escaping (Result<String, Error>) -> Void) {
             conversation.updateAccessAndCreateWirelessLink(in: userSession, completion)
         }
 
-        func fetchConversationLink(completion: @escaping (Result<String?>) -> Void) {
+        func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void) {
             conversation.fetchWirelessLink(in: userSession, completion)
         }
 
-        func deleteLink(completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        func deleteLink(completion: @escaping (Result<Void, Error>) -> Void) {
             conversation.deleteWirelessLink(in: userSession, completion)
         }
 

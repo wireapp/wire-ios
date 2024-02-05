@@ -339,7 +339,7 @@ extension ZMClientMessageTests_Ephemeral {
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.syncUser1
             connection.status = .accepted
-            conversation.connection = connection
+            self.syncUser1.oneOnOneConversation = conversation
             conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
 
             self.syncMOC.saveOrRollback()

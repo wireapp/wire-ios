@@ -18,26 +18,6 @@
 
 import Foundation
 
-@objc
-public enum AvailabilityKind: Int, CaseIterable {
-    case none, available, busy, away
-
-    public init(proto: WireProtos.Availability) {
-        /// TODO: change ZMAvailabilityType to NS_CLOSED_ENUM
-        switch proto.type {
-        case .none:
-            self = .none
-        case .available:
-            self = .available
-        case .away:
-            self = .away
-        case .busy:
-            self = .busy
-        }
-    }
-
-}
-
 /// Describes how the user should be notified about a change.
 public struct NotificationMethod: OptionSet {
 
@@ -126,13 +106,13 @@ extension ZMUser {
         return Set(result)
     }
 
-    @objc public var availability: AvailabilityKind {
+    @objc public var availability: Availability {
         get {
             self.willAccessValue(forKey: AvailabilityKey)
             let value = (self.primitiveValue(forKey: AvailabilityKey) as? NSNumber) ?? NSNumber(value: 0)
             self.didAccessValue(forKey: AvailabilityKey)
 
-            return AvailabilityKind(rawValue: value.intValue) ?? .none
+            return .init(rawValue: value.intValue) ?? .none
         }
 
         set {
@@ -142,14 +122,14 @@ extension ZMUser {
         }
     }
 
-    internal func updateAvailability(_ newValue: AvailabilityKind) {
+    public func updateAvailability(_ newValue: Availability) {
         self.willChangeValue(forKey: AvailabilityKey)
         self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
         self.didChangeValue(forKey: AvailabilityKey)
     }
 
     public func updateAvailability(from genericMessage: GenericMessage) {
-        updateAvailability(AvailabilityKind(proto: genericMessage.availability))
+        updateAvailability(.init(proto: genericMessage.availability))
     }
 
     private static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
@@ -158,12 +138,10 @@ extension ZMUser {
     public var needsToNotifyAvailabilityBehaviourChange: NotificationMethod {
         get {
             guard let rawValue = managedObjectContext?.persistentStoreMetadata(forKey: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey) as? Int else { return [] }
-
             return NotificationMethod(rawValue: rawValue)
         }
         set {
             managedObjectContext?.setPersistentStoreMetadata(newValue.rawValue, key: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey)
         }
     }
-
 }

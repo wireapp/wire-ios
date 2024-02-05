@@ -38,14 +38,14 @@ extension ZMConversation {
     /// Delete a conversation remotely and locally for everyone
     ///
     /// Only team conversations can be deleted.
-    public func delete(in userSession: ZMUserSession, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    public func delete(in userSession: ZMUserSession, completion: @escaping (Result<Void, Error>) -> Void) {
         delete(in: userSession.coreDataStack, transportSession: userSession.transportSession, completion: completion)
     }
 
     func delete(
         in contextProvider: ContextProvider,
         transportSession: TransportSessionType,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
     ) {
         let removeLocalConversation = RemoveLocalConversationUseCase()
 
@@ -82,7 +82,7 @@ extension ZMConversation {
                             syncContext: contextProvider.syncContext
                         )
                         await MainActor.run {
-                            completion(.success())
+                            completion(.success(()))
                         }
                     } catch {
                         WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")

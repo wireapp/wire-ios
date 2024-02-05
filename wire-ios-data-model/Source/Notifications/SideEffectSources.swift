@@ -50,16 +50,23 @@ extension ZMManagedObject {
         let classIdentifier = type(of: object).entityName()
 
         var changes = changedValues()
-        guard !changes.isEmpty || !knownKeys.isEmpty else { return [:] }
-        let allKeys = knownKeys.union(changes.keys)
 
+        guard !changes.isEmpty || !knownKeys.isEmpty else {
+            return [:]
+        }
+
+        let allKeys = knownKeys.union(changes.keys)
         let mappedKeys: [String] = Array(allKeys).map(keyMapping)
+
         let keys = mappedKeys.map {
             keyStore.observableKeysAffectedByValue(classIdentifier, key: $0)
-            }.reduce(Set()) {$0.union($1)}
+        }.reduce(Set()) {
+            $0.union($1)
+        }
 
-        guard !keys.isEmpty ||
-            originalChangeKey != nil else { return [:] }
+        guard !keys.isEmpty || originalChangeKey != nil else {
+            return [:]
+        }
 
         var originalChanges = [String: NSObject?]()
         if let originalChangeKey = originalChangeKey {
@@ -82,8 +89,8 @@ extension ZMUser: SideEffectSource {
 
     var allConversations: [ZMConversation] {
         var conversations = self.participantRoles.compactMap(\.conversation)
-        if let connectedConversation = connection?.conversation {
-            conversations.append(connectedConversation)
+        if let oneOnOneConversation {
+            conversations.append(oneOnOneConversation)
         }
         return conversations
     }
@@ -111,7 +118,7 @@ extension ZMUser: SideEffectSource {
         }
 
         let otherPartKeys = allChangedKeys.map {"\(#keyPath(ZMConversation.participantRoles.user)).\($0)"}
-        let selfUserKeys = allChangedKeys.map {"\(#keyPath(ZMConversation.connection)).\(#keyPath(ZMConnection.to)).\($0)"}
+        let selfUserKeys = allChangedKeys.map {"\(#keyPath(ZMConversation.oneOnOneUser)).\($0)"}
         let mappedKeys = otherPartKeys + selfUserKeys
         var keys = mappedKeys.map {keyStore.observableKeysAffectedByValue(classIdentifier, key: $0)}.reduce(Set()) {$0.union($1)}
 
@@ -175,13 +182,30 @@ extension ZMMessage: SideEffectSource {
 extension ZMConnection: SideEffectSource {
 
     func affectedObjectsAndKeys(keyStore: DependencyKeyStore, knownKeys: Set<String>) -> ObjectAndChanges {
-        let conversationChanges = byUpdateAffectedKeys(for: conversation, knownKeys: knownKeys, keyStore: keyStore, keyMapping: {"\(#keyPath(ZMConversation.connection)).\($0)"})
-        let userChanges = byUpdateAffectedKeys(for: to, knownKeys: knownKeys, keyStore: keyStore, keyMapping: {"\(#keyPath(ZMConversation.connection)).\($0)"})
+        let conversationChanges = byUpdateAffectedKeys(
+            for: to?.oneOnOneConversation,
+            knownKeys: knownKeys,
+            keyStore: keyStore,
+            keyMapping: { "\(#keyPath(ZMConversation.oneOnOneUser.connection)).\($0)" }
+        )
+
+        let userChanges = byUpdateAffectedKeys(
+            for: to,
+            knownKeys: knownKeys,
+            keyStore: keyStore,
+            keyMapping: { "\(#keyPath(ZMUser.connection)).\($0)" }
+        )
+
         return conversationChanges.updated(other: userChanges)
     }
 
     func affectedObjectsForInsertionOrDeletion(keyStore: DependencyKeyStore) -> ObjectAndChanges {
-        return [:]
+
+        return byInsertOrDeletionAffectedKeys(
+            for: to?.oneOnOneConversation,
+            keyStore: keyStore,
+            affectedKey: #keyPath(ZMConversation.oneOnOneUser.connection)
+        )
     }
 }
 

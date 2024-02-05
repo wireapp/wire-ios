@@ -26,3 +26,13 @@ extension ZMMessage {
     }
 
 }
+
+extension ZMConversationMessage {
+    func updateServerTimestamp(with timeInterval: TimeInterval) {
+        guard let message = self as? ZMMessage else {
+            assertionFailure("expected 'self' to be object of 'ZMMessage'!")
+            return
+        }
+        message.updateServerTimestamp(with: timeInterval)
+    }
+}

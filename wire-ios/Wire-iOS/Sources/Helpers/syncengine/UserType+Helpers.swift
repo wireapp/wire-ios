@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-typealias ConversationCreatedBlock = (Swift.Result<ZMConversation, Error>) -> Void
+typealias ConversationCreatedBlock = (Result<ZMConversation, Error>) -> Void
 
 extension UserType {
 

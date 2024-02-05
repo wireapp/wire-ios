@@ -109,7 +109,7 @@ static NSString * const PendingKey = @"Pending";
     // Since this is extremely likely to trigger the "participantRoles" and "connection" relationships, we make sure these gets prefetched:
     NSMutableArray *keyPaths = [NSMutableArray arrayWithArray:allConversationsRequest.relationshipKeyPathsForPrefetching];
     [keyPaths addObject:ZMConversationParticipantRolesKey];
-    [keyPaths addObject:ZMConversationConnectionKey];
+    [keyPaths addObject:[NSString stringWithFormat:@"%@.connection", ZMConversationOneOnOneUserKey]];
     allConversationsRequest.relationshipKeyPathsForPrefetching = keyPaths;
     
     NSError *error;

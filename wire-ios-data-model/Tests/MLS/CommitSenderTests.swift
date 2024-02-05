@@ -273,6 +273,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         // Set up expectation
         let expectation = XCTestExpectation(description: "observed epoch change")
         var receivedGroupIDs = [MLSGroupID]()
+
         sut.onEpochChanged().collect(1).sink {
             receivedGroupIDs = $0
             expectation.fulfill()

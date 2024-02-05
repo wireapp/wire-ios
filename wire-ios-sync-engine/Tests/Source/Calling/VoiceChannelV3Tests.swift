@@ -31,13 +31,15 @@ class VoiceChannelV3Tests: MessagingTest {
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
 
-        let selfClient = createSelfClient()
+        let selfClientId = syncMOC.performAndWait {
+            self.createSelfClient().remoteIdentifier!
+        }
 
         conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation?.remoteIdentifier = UUID.create()
         conversation?.conversationType = .group
 
-        wireCallCenterMock = WireCallCenterV3Mock(userId: selfUser.avsIdentifier, clientId: selfClient.remoteIdentifier!, uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock())
+        wireCallCenterMock = WireCallCenterV3Mock(userId: selfUser.avsIdentifier, clientId: selfClientId, uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock())
 
         uiMOC.zm_callCenter = wireCallCenterMock
 

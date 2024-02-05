@@ -29,34 +29,32 @@ public protocol OneOnOneResolverInterface {
 
 }
 
+public enum OneOnOneResolverError: Error {
+
+    case migratorNotFound
+
+}
+
 public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Dependencies
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
-    private let migrator: OneOnOneMigratorInterface
+    private let migrator: OneOnOneMigratorInterface?
 
     // MARK: - Life cycle
 
-    public convenience init?(syncContext: NSManagedObjectContext) {
+    public convenience init(syncContext: NSManagedObjectContext) {
         let mlsService = syncContext.performAndWait {
             syncContext.mlsService
         }
 
-        guard let mlsService else {
-            return nil
-        }
-
-        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
-    }
-
-    public convenience init?(mlsService: MLSService) {
-        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
+        self.init(migrator: mlsService.map(OneOnOneMigrator.init))
     }
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        migrator: OneOnOneMigratorInterface
+        migrator: OneOnOneMigratorInterface? = nil
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
@@ -69,6 +67,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("resolving one on one with user: \(userID)")
 
         let messageProtocol = await protocolSelector.getProtocolForUser(
             with: userID,
@@ -77,10 +76,11 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         switch messageProtocol {
         case .none:
+            WireLogger.conversation.debug("no common protocols found")
             await context.perform {
                 guard
                     let otherUser = ZMUser.fetch(with: userID, in: context),
-                    let conversation = otherUser.connection?.conversation
+                    let conversation = otherUser.oneOnOneConversation
                 else {
                     return
                 }
@@ -90,13 +90,21 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return .archivedAsReadOnly
 
         case .mls:
+            WireLogger.conversation.debug("should resolve to mls one on one")
+
+            guard let migrator else {
+                throw OneOnOneResolverError.migratorNotFound
+            }
+
             let mlsGroupIdentifier = try await migrator.migrateToMLS(
                 userID: userID,
                 in: context
             )
+
             return .migratedToMLSGroup(identifier: mlsGroupIdentifier)
 
         case .proteus:
+            WireLogger.conversation.debug("should resolve to proteus one on one")
             return .noAction
 
         // This should never happen:

@@ -33,25 +33,29 @@ class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        if case .connectBot(let serviceUserData) = urlAction {
-            let serviceUser = ZMSearchUser(contextProvider: contextProvider,
-                                           name: "",
-                                           handle: nil,
-                                           accentColor: .strongBlue,
-                                           remoteIdentifier: serviceUserData.service,
-                                           teamIdentifier: nil,
-                                           user: nil,
-                                           contact: nil)
-            serviceUser.providerIdentifier = serviceUserData.provider.transportString()
-            serviceUser.createConversation(transportSession: transportSession,
-                                           eventProcessor: eventProcessor,
-                                           contextProvider: contextProvider) { [weak delegate] (result) in
+        guard case .connectBot(let serviceUserData) = urlAction else {
+            return
+        }
 
-                                            if let error = result.error {
-                                                delegate?.failedToPerformAction(urlAction, error: error)
-                                            } else {
-                                                delegate?.completedURLAction(urlAction)
-                                            }
+        let serviceUser = ZMSearchUser(contextProvider: contextProvider,
+                                       name: "",
+                                       handle: nil,
+                                       accentColor: .strongBlue,
+                                       remoteIdentifier: serviceUserData.service,
+                                       teamIdentifier: nil,
+                                       user: nil,
+                                       contact: nil)
+        serviceUser.providerIdentifier = serviceUserData.provider.transportString()
+        serviceUser.createConversation(
+            transportSession: transportSession,
+            eventProcessor: eventProcessor,
+            contextProvider: contextProvider
+        ) { [weak delegate] result in
+            switch result {
+            case .success:
+                delegate?.completedURLAction(urlAction)
+            case .failure(let error):
+                delegate?.failedToPerformAction(urlAction, error: error)
             }
         }
     }

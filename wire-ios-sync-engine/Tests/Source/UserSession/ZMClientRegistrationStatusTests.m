@@ -183,13 +183,21 @@
         [self.uiMOC setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];
         [self.uiMOC saveOrRollback];
         
+    }];
+
+    [self.syncMOC performGroupedBlockAndWait:^{
         // when
         [self.sut didDetectCurrentClientDeletion];
     }];
+
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+    __block ZMClientRegistrationPhase phase;
+    [self.syncMOC performBlockAndWait:^{
+        phase = self.sut.currentPhase;
+    }];
+    XCTAssertEqual(phase, ZMClientRegistrationPhaseWaitingForPrekeys);
     [self.mockClientRegistrationDelegate verify];
 }
 
@@ -501,7 +509,9 @@
     [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: error];
 
     // when
-    [self.sut didFetchSelfUser];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.sut didFetchSelfUser];
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then

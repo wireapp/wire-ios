@@ -293,7 +293,6 @@
 		EE7F02292A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */; };
 		EE7F022B2A8391C500FE5695 /* ConversationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F022A2A8391C500FE5695 /* ConversationServiceTests.swift */; };
 		EE7F022D2A8392EF00FE5695 /* MockActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F022C2A8392EF00FE5695 /* MockActionHandler.swift */; };
-		EE82318927D22D79008CD77B /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE82318827D22D79008CD77B /* String+Random.swift */; };
 		EE88078D2AC31FAE00278E3C /* ConversationEventPayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88078C2AC31FAE00278E3C /* ConversationEventPayloadProcessor.swift */; };
 		EE88078F2AC376B300278E3C /* ConversationEventPayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88078E2AC376B300278E3C /* ConversationEventPayloadProcessorTests.swift */; };
 		EE8807912AC4080A00278E3C /* ConnectionPayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807902AC4080900278E3C /* ConnectionPayloadProcessor.swift */; };
@@ -782,7 +781,6 @@
 		EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationActionHandlerTests.swift; sourceTree = "<group>"; };
 		EE7F022A2A8391C500FE5695 /* ConversationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServiceTests.swift; sourceTree = "<group>"; };
 		EE7F022C2A8392EF00FE5695 /* MockActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockActionHandler.swift; sourceTree = "<group>"; };
-		EE82318827D22D79008CD77B /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		EE88078C2AC31FAE00278E3C /* ConversationEventPayloadProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEventPayloadProcessor.swift; sourceTree = "<group>"; };
 		EE88078E2AC376B300278E3C /* ConversationEventPayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEventPayloadProcessorTests.swift; sourceTree = "<group>"; };
 		EE8807902AC4080900278E3C /* ConnectionPayloadProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionPayloadProcessor.swift; sourceTree = "<group>"; };
@@ -1126,7 +1124,6 @@
 				1621D2251D75AB2D007108C2 /* MockEntity2.m */,
 				1621D2261D75AB2D007108C2 /* MockModelObjectContextFactory.h */,
 				1621D2271D75AB2D007108C2 /* MockModelObjectContextFactory.m */,
-				EE82318827D22D79008CD77B /* String+Random.swift */,
 				63CC83F1285CB96A008549AD /* ActionHandlerTestBase.swift */,
 				EE9BC57D28785FB100AF9AEE /* XCTestCase+APIVersion.swift */,
 			);
@@ -2507,7 +2504,6 @@
 				EE88079F2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift in Sources */,
 				0693114C24F79A0E00D14DF5 /* ZMLocalNotificationSetTests.swift in Sources */,
 				EEAC16D6281AEB0200B7A34D /* CallEventContentTests.swift in Sources */,
-				EE82318927D22D79008CD77B /* String+Random.swift in Sources */,
 				1621D2651D75C750007108C2 /* ZMLocallyModifiedObjectSetTests.m in Sources */,
 				06CDDEA3282E9E9800F9360F /* RemovePushTokenActionHandlerTests.swift in Sources */,
 				EEDE7DAD28EAE538007DC6A3 /* ConversationEventProcessorTests.swift in Sources */,

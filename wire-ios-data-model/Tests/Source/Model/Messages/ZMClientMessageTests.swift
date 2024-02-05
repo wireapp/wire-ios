@@ -100,7 +100,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let senderClientID = try XCTUnwrap(NSString.createAlphanumerical())
+        let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
         let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         let contentData = try XCTUnwrap(message.serializedData())
@@ -351,7 +351,7 @@ extension ClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let senderClientID = NSString.createAlphanumerical()
+        let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
         var prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         prototype.messageID = "please-fail"
@@ -413,10 +413,10 @@ extension ClientMessageTests {
 
     func testThatItDoesNotCreateMessageFromAvailabilityMessage() throws {
         // given
-        let senderClientID = NSString.createAlphanumerical()
+        let senderClientID: String = .randomClientIdentifier()
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let availability = Availability(.away)
+        let availability = WireProtos.Availability(.away)
         let contentData = try GenericMessage(content: availability, nonce: UUID.create()).serializedData()
         let data: NSDictionary = try [
             "sender": XCTUnwrap(senderClientID),
@@ -492,7 +492,7 @@ extension ClientMessageTests {
         conversation.remoteIdentifier = UUID.create()
 
         let selfClient = self.createSelfClient()
-        let unknownSender = NSString.createAlphanumerical()
+        let unknownSender: String = .randomClientIdentifier()
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)

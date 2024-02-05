@@ -49,7 +49,7 @@ extension ZMConversation {
     public func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
         in userSession: ZMUserSession, _
-        completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        completion: @escaping (Result<Void, Error>) -> Void) {
         // TODO: move this method to a useCase - WPB-5730
 
         guard let apiVersion = BackendInfo.apiVersion else {

@@ -119,7 +119,7 @@ final class SessionEstablisherTests: MessagingTestBase {
             apiProvider.prekeyAPIApiVersion_MockValue = prekeyApi
         }
 
-        func withFetchPrekeyAPI(returning result: Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError>) -> Arrangement {
+        func withFetchPrekeyAPI(returning result: Result<Payload.PrekeyByQualifiedUserID, NetworkError>) -> Arrangement {
             switch result {
             case.success(let payload):
                 prekeyApi.fetchPrekeysFor_MockValue = payload
