@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-fileprivate extension Team {
+private extension Team {
 
     static var predicateForTeamRolesNeedingToBeUpdated: NSPredicate = {
         NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToDownloadRoles), Team.remoteIdentifierDataKey()!)
@@ -40,10 +40,15 @@ fileprivate extension Team {
 
 }
 
-public final class TeamRolesDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource, ZMRequestGenerator, ZMDownstreamTranscoder {
+public final class TeamRolesDownloadRequestStrategy:
+    AbstractRequestStrategy,
+    ZMContextChangeTrackerSource,
+    ZMRequestGeneratorSource,
+    ZMRequestGenerator,
+    ZMDownstreamTranscoder {
 
-    private (set) var downstreamSync: ZMDownstreamObjectSync!
-    fileprivate unowned var syncStatus: SyncStatus
+    private(set) var downstreamSync: ZMDownstreamObjectSync!
+    private unowned var syncStatus: SyncStatus
 
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, syncStatus: SyncStatus) {
         self.syncStatus = syncStatus
