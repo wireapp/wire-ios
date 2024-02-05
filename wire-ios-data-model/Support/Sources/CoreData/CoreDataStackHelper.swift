@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import WireDataModel
 
-struct CoreDataStackHelper {
+public struct CoreDataStackHelper {
     private let fileManager = FileManager.default
 
-    var storageDirectory: URL {
+    public var storageDirectory: URL {
         var path = fileManager.temporaryDirectory
         if #available(iOS 16, *) {
             path.append(path: "CoreDataStackHelper", directoryHint: .isDirectory)
@@ -31,12 +32,14 @@ struct CoreDataStackHelper {
         return path
     }
 
-    func createStack() async throws -> CoreDataStack {
+    public init() { }
+
+    public func createStack() async throws -> CoreDataStack {
         try await createStack(at: storageDirectory)
     }
 
     @MainActor
-    func createStack(at directory: URL) async throws -> CoreDataStack {
+    public func createStack(at directory: URL) async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: UUID())
 
         let stack = CoreDataStack(
@@ -56,11 +59,11 @@ struct CoreDataStackHelper {
         }
     }
 
-    func cleanupDirectory() throws {
+    public func cleanupDirectory() throws {
         try cleanupDirectory(storageDirectory)
     }
 
-    func cleanupDirectory(_ url: URL) throws {
+    public func cleanupDirectory(_ url: URL) throws {
         guard storageDirectory.hasDirectoryPath else {
             assertionFailure("url is not a directory path!")
             return
