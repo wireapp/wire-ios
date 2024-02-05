@@ -176,7 +176,7 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         // When
-        sut.createTeamOneToOneConversation(user: user1) {
+        sut.createFakeOneOnOneProteusConversation(user: user1) {
             switch $0 {
             case .success(let conversation):
                 // Then we got back newly created conversation.
