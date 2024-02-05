@@ -940,6 +940,7 @@
 		06474D4824AF6825002C695D /* Synchronization */ = {
 			isa = PBXGroup;
 			children = (
+				E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */,
 				06474D4924AF683E002C695D /* Decoding */,
 				16BBA1F72AFC36DF00CDF38A /* QuickSyncCompletedNotification.swift */,
 				16BBA1F92AFC3BAB00CDF38A /* QuickSyncObserver.swift */,
@@ -1796,7 +1797,6 @@
 			isa = PBXGroup;
 			children = (
 				F184018F2073BE0800E9F4CC /* PushMessageHandler.swift */,
-				E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */,
 				161E05432665465A00DADC3D /* SyncProgress.swift */,
 				F18401902073BE0800E9F4CC /* ApplicationStatus.swift */,
 				F18401912073BE0800E9F4CC /* OTREntity.swift */,

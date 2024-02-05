@@ -29,6 +29,7 @@ import Foundation
     case fetchingSelfUser
     case fetchingLegalHoldStatus
     case fetchingLabels
+    // create new sync phase here
     case fetchingMissedEvents
     case done
 
