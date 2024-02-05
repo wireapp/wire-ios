@@ -257,6 +257,8 @@
 		E629E3D02B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3CF2B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift */; };
 		E662588F2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662588E2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift */; };
 		E6E0CE872B70D2C60004ED88 /* SyncPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */; };
+		E6E0CE892B70DDAB0004ED88 /* SynchronizationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */; };
+		E6E0CE8B2B70DE430004ED88 /* OperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE8A2B70DE430004ED88 /* OperationState.swift */; };
 		E6E59B082B56D04500E90D36 /* StubPayloadConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E59B072B56D04500E90D36 /* StubPayloadConversation.swift */; };
 		E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */; };
 		E9E2AA5E2B163A56008CC2DF /* SyncUsersActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */; };
@@ -386,7 +388,7 @@
 		F1956200202A141B005347C0 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902171D709110000FE4AF /* ZMDownstreamObjectSyncOrderingTests.m */; };
 		F1956201202A141E005347C0 /* ZMDownstreamObjectSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902181D709110000FE4AF /* ZMDownstreamObjectSyncTests.m */; };
 		F1956204202A1506005347C0 /* ZMRequestGeneratorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1669021F1D709110000FE4AF /* ZMRequestGeneratorTests.m */; };
-		F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8E01D955D5500098AD3 /* SharedProtocols.swift */; };
+		F963E8E11D955D5500098AD3 /* ClientRegistrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8E01D955D5500098AD3 /* ClientRegistrationDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -735,6 +737,8 @@
 		E629E3CF2B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationMLSWelcome.swift"; sourceTree = "<group>"; };
 		E662588E2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayloadUpdateConversationProtocolChangeTests.swift; sourceTree = "<group>"; };
 		E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPhase.swift; sourceTree = "<group>"; };
+		E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizationState.swift; sourceTree = "<group>"; };
+		E6E0CE8A2B70DE430004ED88 /* OperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationState.swift; sourceTree = "<group>"; };
 		E6E59B072B56D04500E90D36 /* StubPayloadConversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StubPayloadConversation.swift; sourceTree = "<group>"; };
 		E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandlerTests.swift; sourceTree = "<group>"; };
 		E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandler.swift; sourceTree = "<group>"; };
@@ -866,7 +870,7 @@
 		F1E47FED207E0B72008D4299 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		F1E47FEE207E0B72008D4299 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetRequestFactory.swift; sourceTree = "<group>"; };
-		F963E8E01D955D5500098AD3 /* SharedProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedProtocols.swift; sourceTree = "<group>"; };
+		F963E8E01D955D5500098AD3 /* ClientRegistrationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientRegistrationDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -919,11 +923,13 @@
 		06474D4824AF6825002C695D /* Synchronization */ = {
 			isa = PBXGroup;
 			children = (
-				E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */,
 				06474D4924AF683E002C695D /* Decoding */,
 				16BBA1F72AFC36DF00CDF38A /* QuickSyncCompletedNotification.swift */,
 				16BBA1F92AFC3BAB00CDF38A /* QuickSyncObserver.swift */,
 				16BBA1FB2AFC44B100CDF38A /* QuickSyncObserverTests.swift */,
+				E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */,
+				E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */,
+				161E05432665465A00DADC3D /* SyncProgress.swift */,
 			);
 			path = Synchronization;
 			sourceTree = "<group>";
@@ -1765,20 +1771,20 @@
 		F1CD5D842024C259008C574E /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				F184018F2073BE0800E9F4CC /* PushMessageHandler.swift */,
-				161E05432665465A00DADC3D /* SyncProgress.swift */,
 				F18401902073BE0800E9F4CC /* ApplicationStatus.swift */,
+				F963E8E01D955D5500098AD3 /* ClientRegistrationDelegate.swift */,
+				16BA786A2AFE69FB006D8CCF /* EventConsumer.swift */,
+				E629E3A22B47015300D526AD /* EventData.swift */,
+				E6E0CE8A2B70DE430004ED88 /* OperationState.swift */,
 				F18401912073BE0800E9F4CC /* OTREntity.swift */,
 				F18401552073BE0800E9F4CC /* OTREntityTests+Dependency.swift */,
+				F184018F2073BE0800E9F4CC /* PushMessageHandler.swift */,
+				F18402122073C56C00E9F4CC /* RequestStrategy.h */,
 				1621D2721D7715EA007108C2 /* ZMObjectSyncStrategy.h */,
 				1621D2731D7715EA007108C2 /* ZMObjectSyncStrategy.m */,
-				F18402122073C56C00E9F4CC /* RequestStrategy.h */,
 				166901B91D7081C7000FE4AF /* ZMRequestGenerator.h */,
 				166901BA1D7081C7000FE4AF /* ZMRequestGenerator.m */,
 				1669021F1D709110000FE4AF /* ZMRequestGeneratorTests.m */,
-				F963E8E01D955D5500098AD3 /* SharedProtocols.swift */,
-				16BA786A2AFE69FB006D8CCF /* EventConsumer.swift */,
-				E629E3A22B47015300D526AD /* EventData.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -2205,7 +2211,7 @@
 				EEE0EE0528591D3200BBEE29 /* OptionalString+NonEmptyValue.swift in Sources */,
 				168D7CB226FB0E3F00789960 /* EntityActionSync.swift in Sources */,
 				168D7CBB26FB21D900789960 /* RemoveParticipantActionHandler.swift in Sources */,
-				F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */,
+				F963E8E11D955D5500098AD3 /* ClientRegistrationDelegate.swift in Sources */,
 				E629E3A52B4701E200D526AD /* Payload+ConversationList.swift in Sources */,
 				166901F21D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m in Sources */,
 				E614D4D72B480BA7000A44B4 /* Payload+UpdateConversationProtocolChange.swift in Sources */,
@@ -2331,6 +2337,7 @@
 				16229487221EBB8100A98679 /* ZMImagePreprocessingTracker.m in Sources */,
 				E60CBEC32B45CCBF00958C10 /* EventPayloadDecoder.swift in Sources */,
 				F18401D02073BE0800E9F4CC /* PushMessageHandler.swift in Sources */,
+				E6E0CE8B2B70DE430004ED88 /* OperationState.swift in Sources */,
 				16B5B33726FDDD8A001A3216 /* ConnectToUserActionHandler.swift in Sources */,
 				1623F8D52AE6729D004F0319 /* SessionEstablisher.swift in Sources */,
 				16B5B3462701A713001A3216 /* UpdateConnectionActionHandler.swift in Sources */,
@@ -2351,6 +2358,7 @@
 				E6E0CE872B70D2C60004ED88 /* SyncPhase.swift in Sources */,
 				16751E8524CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift in Sources */,
 				EE8807912AC4080A00278E3C /* ConnectionPayloadProcessor.swift in Sources */,
+				E6E0CE892B70DDAB0004ED88 /* SynchronizationState.swift in Sources */,
 				EECBE8EE28E71F19005DE5DD /* SyncConversationActionHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
