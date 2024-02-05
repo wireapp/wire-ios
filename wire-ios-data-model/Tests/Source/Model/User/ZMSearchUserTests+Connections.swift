@@ -18,7 +18,7 @@
 
 import XCTest
 
-class ZMSearchUserTests_Connections: ModelObjectsTests {
+final class ZMSearchUserTests_Connections: ModelObjectsTests {
 
     func testThatConnectSendsAConnectToUserAction() {
         // given
@@ -30,12 +30,16 @@ class ZMSearchUserTests_Connections: ModelObjectsTests {
 
         // expect
         customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)
+        let completionExpectation = XCTestExpectation(description: "completion called")
 
         // when
-        searchUser.connect { (_) in }
+        searchUser.connect { error in
+            XCTAssertNil(error)
+            completionExpectation.fulfill()
+        }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        wait(for: [completionExpectation], timeout: 0.5)
     }
-
 }
