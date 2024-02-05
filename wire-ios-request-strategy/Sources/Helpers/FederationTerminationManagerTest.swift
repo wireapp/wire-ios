@@ -43,7 +43,10 @@ class FederationTerminationManagerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] _ in
             // GIVEN
             otherUser.domain = defederatedDomain
-            guard let conversation = otherUser.connection?.conversation else { return }
+            guard let conversation = otherUser.oneOnOneConversation else {
+                XCTFail("expected one on one conversation")
+                return
+            }
             XCTAssertFalse(conversation.isForcedReadOnly)
 
             // WHEN
@@ -70,7 +73,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
         }
     }
 
-    func testThatItRemovesSentConnectionRequest() throws {
+    func testThatItCancelsSentConnectionRequest() throws {
         syncMOC.performGroupedAndWait { [self] _ in
             // GIVEN
             otherUser.domain = defederatedDomain
@@ -80,7 +83,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
             sut.handleFederationTerminationWith(defederatedDomain)
 
             // THEN
-            XCTAssertEqual(otherUser.connection, nil)
+            XCTAssertEqual(otherUser.connection?.status, .cancelled)
         }
     }
 

@@ -91,7 +91,7 @@ extension ZMUserSession {
         syncMOC.performGroupedBlockAndWait {}
     }
 
-    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,

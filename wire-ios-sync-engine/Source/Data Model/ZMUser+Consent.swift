@@ -29,7 +29,7 @@ enum ConsentRequestError: Error {
 }
 
 extension ZMUser {
-    public typealias CompletionFetch = (Result<Bool>) -> Void
+    public typealias CompletionFetch = (Result<Bool, Error>) -> Void
 
     public func fetchMarketingConsent(in userSession: ZMUserSession,
                                       completion: @escaping CompletionFetch) {
@@ -90,7 +90,7 @@ extension ZMUser {
         transportSession.enqueueOneTime(request)
     }
 
-    public typealias CompletionSet = (Swift.Result<Void, Error>) -> Void
+    public typealias CompletionSet = (Result<Void, Error>) -> Void
     public func setMarketingConsent(to value: Bool,
                                     in userSession: ZMUserSession,
                                     completion: @escaping CompletionSet) {

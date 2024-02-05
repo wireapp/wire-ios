@@ -23,7 +23,10 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
     func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() {
         // given
-        let selfClient = createSelfClient()
+        let selfClient = syncMOC.performAndWait {
+            self.createSelfClient()
+        }
+
         let userId = NSUUID.create()!
 
         mockPushChannel = MockPushChannel()
