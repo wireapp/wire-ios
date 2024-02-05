@@ -16,9 +16,11 @@
 //
 
 import XCTest
-@testable import WireRequestStrategy
 
-class AddParticipantActionHandlerTests: MessagingTestBase {
+@testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
+
+final class AddParticipantActionHandlerTests: MessagingTestBase {
 
     typealias ErrorResponse = AddParticipantActionHandler.ErrorResponse
 

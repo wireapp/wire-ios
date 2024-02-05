@@ -20,6 +20,7 @@ import WireDataModelSupport
 import XCTest
 
 @testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
