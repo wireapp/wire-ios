@@ -32,20 +32,18 @@ import Foundation
     case fetchingMissedEvents
     case done
 
+    static let lastSlowSyncPhase: SyncPhase = .fetchingLabels
+
     public var isLastSlowSyncPhase: Bool {
-        return self == Self.lastSlowSyncPhase
+        self == Self.lastSlowSyncPhase
     }
 
     public var isSyncing: Bool {
-        return self != .done
+        self != .done
     }
 
     public var nextPhase: SyncPhase {
-        return SyncPhase(rawValue: rawValue + 1) ?? .done
-    }
-
-    public static var lastSlowSyncPhase: SyncPhase {
-        return .fetchingLabels
+        SyncPhase(rawValue: rawValue + 1) ?? .done
     }
 
     public var description: String {
