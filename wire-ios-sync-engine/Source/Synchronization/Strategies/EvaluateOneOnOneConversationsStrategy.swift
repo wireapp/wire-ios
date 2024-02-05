@@ -20,7 +20,7 @@ import Foundation
 
 final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
-    private let syncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
+    let syncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
 
     private unowned var syncStatus: SyncStatus
 
