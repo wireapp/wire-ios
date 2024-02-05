@@ -20,6 +20,7 @@ import Foundation
 
 @objc public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
 
+    // start here for slow sync
     case fetchingLastUpdateEventID
     case fetchingTeams
     case fetchingTeamRoles
@@ -30,10 +31,11 @@ import Foundation
     case fetchingLegalHoldStatus
     case fetchingLabels
     case evaluate1on1ConversationsForMLS
+    // following is quick sync only
     case fetchingMissedEvents
     case done
 
-    static let lastSlowSyncPhase: SyncPhase = .fetchingLabels
+    static let lastSlowSyncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
 
     public var isLastSlowSyncPhase: Bool {
         self == Self.lastSlowSyncPhase

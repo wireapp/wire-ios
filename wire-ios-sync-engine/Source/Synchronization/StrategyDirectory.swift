@@ -318,6 +318,11 @@ mlsService: mlsService,
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
+            ),
+            EvaluateOneOnOneConversationsStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncStatus: applicationStatusDirectory.syncStatus
             )
         ]
 

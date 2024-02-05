@@ -511,6 +511,8 @@
 		D55272EA2062732100F542BE /* AssetDeletionStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272E92062732100F542BE /* AssetDeletionStatusTests.swift */; };
 		D55272EC2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */; };
 		D5D10DA4203AE43200145497 /* Conversation+AccessMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */; };
+		E62F31C52B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */; };
+		E62F31C72B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
 		EE01E0391F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */; };
 		EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
@@ -1242,6 +1244,8 @@
 		D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeletionRequestStrategyTests.swift; sourceTree = "<group>"; };
 		D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Backup.swift"; sourceTree = "<group>"; };
 		D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+AccessMode.swift"; sourceTree = "<group>"; };
+		E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategy.swift; sourceTree = "<group>"; };
+		E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategyTests.swift; sourceTree = "<group>"; };
 		EBD7B55754FDA4E74F1006FD /* ZMOperationLoopTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMOperationLoopTests.h; sourceTree = "<group>"; };
 		EE01E0361F90DABC001AA33C /* audio.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = audio.m4a; sourceTree = "<group>"; };
 		EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_ExpiredMessage.swift; sourceTree = "<group>"; };
@@ -2015,31 +2019,32 @@
 		54A170621B30068B001B41A5 /* Strategies */ = {
 			isa = PBXGroup;
 			children = (
-				BF491CD01F03D7CF0055EE44 /* PermissionsDownloadRequestStrategy.swift */,
-				F9ABE84B1EFD568B00D83214 /* TeamDownloadRequestStrategy.swift */,
-				A913C02123A7EDFA0048CE74 /* TeamRolesDownloadRequestStrategy.swift */,
-				F9ABE84D1EFD568B00D83214 /* TeamRequestFactory.swift */,
-				16D9E8B922BCD39200FA463F /* LegalHoldRequestStrategy.swift */,
-				F9F631411DE3524100416938 /* TypingStrategy.swift */,
-				F95706531DE5D1CC0087442C /* SearchUserImageStrategy.swift */,
-				54A170631B300696001B41A5 /* ProxiedRequestStrategy.swift */,
-				09C77C521BA6C77000E2163F /* UserClientRequestStrategy.swift */,
-				0920833F1BA95EE100F82B29 /* UserClientRequestFactory.swift */,
-				166507802459D7CA005300C1 /* UserClientEventConsumer.swift */,
-				8798607A1C3D48A400218A3E /* DeleteAccountRequestStrategy.swift */,
+				D5225721206261C100562561 /* Asset Deletion */,
 				16DABFAD1DCF98D3001973E3 /* CallingRequestStrategy.swift */,
-				547E5B591DDB67390038D936 /* UserProfileUpdateRequestStrategy.swift */,
-				F19F4F3B1E604AA700F4D8FF /* UserImageAssetUpdateStrategy.swift */,
-				EF2CB12622D5E58B00350B0A /* TeamImageAssetUpdateStrategy.swift */,
-				F1C51FE81FB4A9C7009C2269 /* RegistrationStrategy.swift */,
-				EFC8281B1FB343B600E27E21 /* RegistationCredentialVerificationStrategy.swift */,
-				168CF42A20079A02009FCB89 /* TeamInvitationRequestStrategy.swift */,
+				A938BDC723A7964100D4C208 /* ConversationRoleDownstreamRequestStrategy.swift */,
+				8798607A1C3D48A400218A3E /* DeleteAccountRequestStrategy.swift */,
+				E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */,
 				1672A64423473EA100380537 /* LabelDownstreamRequestStrategy.swift */,
 				16D0A11C234C8CD700A83F87 /* LabelUpstreamRequestStrategy.swift */,
-				A938BDC723A7964100D4C208 /* ConversationRoleDownstreamRequestStrategy.swift */,
-				06B99C7A242B51A300FEAFDE /* SignatureRequestStrategy.swift */,
-				D5225721206261C100562561 /* Asset Deletion */,
+				16D9E8B922BCD39200FA463F /* LegalHoldRequestStrategy.swift */,
+				BF491CD01F03D7CF0055EE44 /* PermissionsDownloadRequestStrategy.swift */,
 				162113032B2756EB008F0F9F /* PrekeyGenerator.swift */,
+				54A170631B300696001B41A5 /* ProxiedRequestStrategy.swift */,
+				EFC8281B1FB343B600E27E21 /* RegistationCredentialVerificationStrategy.swift */,
+				F1C51FE81FB4A9C7009C2269 /* RegistrationStrategy.swift */,
+				F95706531DE5D1CC0087442C /* SearchUserImageStrategy.swift */,
+				06B99C7A242B51A300FEAFDE /* SignatureRequestStrategy.swift */,
+				F9ABE84B1EFD568B00D83214 /* TeamDownloadRequestStrategy.swift */,
+				EF2CB12622D5E58B00350B0A /* TeamImageAssetUpdateStrategy.swift */,
+				168CF42A20079A02009FCB89 /* TeamInvitationRequestStrategy.swift */,
+				F9ABE84D1EFD568B00D83214 /* TeamRequestFactory.swift */,
+				A913C02123A7EDFA0048CE74 /* TeamRolesDownloadRequestStrategy.swift */,
+				F9F631411DE3524100416938 /* TypingStrategy.swift */,
+				166507802459D7CA005300C1 /* UserClientEventConsumer.swift */,
+				0920833F1BA95EE100F82B29 /* UserClientRequestFactory.swift */,
+				09C77C521BA6C77000E2163F /* UserClientRequestStrategy.swift */,
+				F19F4F3B1E604AA700F4D8FF /* UserImageAssetUpdateStrategy.swift */,
+				547E5B591DDB67390038D936 /* UserProfileUpdateRequestStrategy.swift */,
 			);
 			path = Strategies;
 			sourceTree = "<group>";
@@ -2047,28 +2052,29 @@
 		54A170661B300700001B41A5 /* Strategies */ = {
 			isa = PBXGroup;
 			children = (
-				BF491CD41F03E0FC0055EE44 /* PermissionsDownloadRequestStrategyTests.swift */,
-				169BC10E22BD17FF0003159B /* LegalHoldRequestStrategyTests.swift */,
-				F9ABE8531EFD56BF00D83214 /* TeamDownloadRequestStrategyTests.swift */,
-				F9ABE8541EFD56BF00D83214 /* TeamDownloadRequestStrategy+EventsTests.swift */,
-				A913C02323A7F1C00048CE74 /* TeamRolesDownloadRequestStrategyTests.swift */,
 				D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */,
 				F94F6B321E54B9C000D46A29 /* CallingRequestStrategyTests.swift */,
-				F9410F621DE44C2E007451FF /* TypingStrategyTests.swift */,
-				F95706581DE5F6D40087442C /* SearchUserImageStrategyTests.swift */,
-				54A170671B300717001B41A5 /* ProxiedRequestStrategyTests.swift */,
+				A938BDC923A7966700D4C208 /* ConversationRoleDownstreamRequestStrategyTests.swift */,
 				87D4625C1C3D526D00433469 /* DeleteAccountRequestStrategyTests.swift */,
-				F170AF1F1E7800CF0033DC33 /* UserImageAssetUpdateStrategyTests.swift */,
-				EF2CB12822D5E5BB00350B0A /* TeamImageAssetUpdateStrategyTests.swift */,
-				F148F66A1FBAFAF600BD6909 /* RegistrationStatusTestHelper.swift */,
 				EFC8281D1FB34F9600E27E21 /* EmailVerificationStrategyTests.swift */,
-				EFC828211FB356CE00E27E21 /* RegistrationStatusTests.swift */,
-				F148F6681FBAF55800BD6909 /* TeamRegistrationStrategyTests.swift */,
-				168CF42C2007BCA0009FCB89 /* TeamInvitationRequestStrategyTests.swift */,
+				E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */,
 				1672A652234784B500380537 /* LabelDownstreamRequestStrategyTests.swift */,
 				16D0A118234B999600A83F87 /* LabelUpstreamRequestStrategyTests.swift */,
-				A938BDC923A7966700D4C208 /* ConversationRoleDownstreamRequestStrategyTests.swift */,
+				169BC10E22BD17FF0003159B /* LegalHoldRequestStrategyTests.swift */,
+				BF491CD41F03E0FC0055EE44 /* PermissionsDownloadRequestStrategyTests.swift */,
+				54A170671B300717001B41A5 /* ProxiedRequestStrategyTests.swift */,
+				F148F66A1FBAFAF600BD6909 /* RegistrationStatusTestHelper.swift */,
+				EFC828211FB356CE00E27E21 /* RegistrationStatusTests.swift */,
+				F95706581DE5F6D40087442C /* SearchUserImageStrategyTests.swift */,
 				06F98D5E24379143007E914A /* SignatureRequestStrategyTests.swift */,
+				F9ABE8541EFD56BF00D83214 /* TeamDownloadRequestStrategy+EventsTests.swift */,
+				F9ABE8531EFD56BF00D83214 /* TeamDownloadRequestStrategyTests.swift */,
+				EF2CB12822D5E5BB00350B0A /* TeamImageAssetUpdateStrategyTests.swift */,
+				168CF42C2007BCA0009FCB89 /* TeamInvitationRequestStrategyTests.swift */,
+				F148F6681FBAF55800BD6909 /* TeamRegistrationStrategyTests.swift */,
+				A913C02323A7F1C00048CE74 /* TeamRolesDownloadRequestStrategyTests.swift */,
+				F9410F621DE44C2E007451FF /* TypingStrategyTests.swift */,
+				F170AF1F1E7800CF0033DC33 /* UserImageAssetUpdateStrategyTests.swift */,
 			);
 			path = Strategies;
 			sourceTree = "<group>";
@@ -3360,6 +3366,7 @@
 				7CE017172317D72A00144905 /* ZMCredentialsTests.swift in Sources */,
 				546F815C1E685F6E00775059 /* LocalNotificationDispatcherTests.swift in Sources */,
 				F1AE5F6F21F73388009CDBBC /* ZMUserSessionTests+Timers.swift in Sources */,
+				E62F31C72B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift in Sources */,
 				161ACB4323F6EE4800ABFF33 /* CompanyLoginURLActionProcessorTests.swift in Sources */,
 				5474C80A1921309400185A3A /* MessagingTest.m in Sources */,
 				872C99531DB525A1006A3BDE /* CallKitManagerTests.swift in Sources */,
@@ -3584,6 +3591,7 @@
 				EE2DE5E429250CC400F42F4C /* CallKitCall.swift in Sources */,
 				5467F1C61E0AE421008C1745 /* KeyValueStore+AccessToken.swift in Sources */,
 				639290A7252DEDB500046171 /* WireCallCenterV3+Degradation.swift in Sources */,
+				E62F31C52B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift in Sources */,
 				8754B84A1F73C25400EC02AD /* ConversationListChangeInfo+UserSession.swift in Sources */,
 				8737D554209217BD00E5A4AF /* URLActions.swift in Sources */,
 				547E5B581DDB4B800038D936 /* UserProfileUpdateStatus.swift in Sources */,
