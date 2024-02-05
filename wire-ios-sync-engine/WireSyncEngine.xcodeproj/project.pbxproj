@@ -559,6 +559,7 @@
 		EE9CDE8E27D9FF5900C4DAC8 /* APIVersionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9CDE8D27D9FF5900C4DAC8 /* APIVersionResolver.swift */; };
 		EE9CDE9027DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9CDE8F27DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift */; };
 		EE9CDE9227DA05D100C4DAC8 /* APIVersionResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */; };
+		EEA58F102B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */; };
 		EEC7AB0C2A08F3DF005614BE /* OperationStateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC7AB0B2A08F3DF005614BE /* OperationStateProvider.swift */; };
 		EECE27C429435FFE00419A8B /* PushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE27C329435FFE00419A8B /* PushTokenService.swift */; };
 		EECE27C6294362F100419A8B /* MockPushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE27C5294362F100419A8B /* MockPushTokenService.swift */; };
@@ -1292,6 +1293,7 @@
 		EE9CDE8F27DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+APIVersionResolver.swift"; sourceTree = "<group>"; };
 		EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIVersionResolverTests.swift; sourceTree = "<group>"; };
 		EEA1ED4025BEBABF006D07D3 /* AppLockIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockIntegrationTests.swift; sourceTree = "<group>"; };
+		EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTeamOneOnOneConversationUseCaseTests.swift; sourceTree = "<group>"; };
 		EEC0A2D229433D360032C1C9 /* SessionManager+PushTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+PushTokenTests.swift"; sourceTree = "<group>"; };
 		EEC7AB0B2A08F3DF005614BE /* OperationStateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationStateProvider.swift; sourceTree = "<group>"; };
 		EECE27C329435FFE00419A8B /* PushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenService.swift; sourceTree = "<group>"; };
@@ -1518,6 +1520,7 @@
 			children = (
 				018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */,
 				16D74BF52B5A961800160298 /* ChangeUsernameUseCaseTests.swift */,
+				EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -3321,6 +3324,7 @@
 				169BA24125EF6F6700374343 /* ZMConversation+Testing.swift in Sources */,
 				1626344720D79C22000D4063 /* ZMUserSessionTests+PushNotifications.swift in Sources */,
 				16D3FD021E3A5C0D0052A535 /* ZMConversationVoiceChannelRouterTests.swift in Sources */,
+				EEA58F102B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift in Sources */,
 				1658C23A1F5404F000889F22 /* FlowManagerMock.swift in Sources */,
 				3E1858BC1951D6DA005FE78F /* MemoryLeaksObserver.m in Sources */,
 				F905C47F1E79A86A00AF34A5 /* WireCallCenterV3Tests.swift in Sources */,
