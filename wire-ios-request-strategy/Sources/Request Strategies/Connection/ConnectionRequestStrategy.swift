@@ -208,9 +208,10 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                     )
 
                     if conversationEvent.connection.status == .accepted, let conversationID = conversationEvent.connection.qualifiedConversationID {
+                        let delay: TimeInterval = 3
                         Task {
                             do {
-                                try await Task.sleep(nanoseconds: 3_000_000_000)
+                                try await Task.sleep(nanoseconds: UInt64(delay))
                                 try await resolver.resolveOneOnOneConversation(with: conversationID, in: managedObjectContext)
                             } catch {
                                 print("Failed to resolve one-on-one conversation: \(error)")
