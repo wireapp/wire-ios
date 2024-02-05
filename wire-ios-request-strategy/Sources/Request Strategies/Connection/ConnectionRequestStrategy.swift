@@ -35,7 +35,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     let connectToUserActionHandler: ConnectToUserActionHandler
     let updateConnectionActionHandler: UpdateConnectionActionHandler
     let actionSync: EntityActionSync
-    let oneOnOneResolver: OneOnOneResolverInterface
+    let oneOnOneResolver: OneOnOneResolverInterface?
 
     var oneOnOneResolutionDelay: TimeInterval = 3
 
@@ -215,7 +215,7 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                         WaitingGroupTask(context: managedObjectContext) { [self] in
                             do {
                                 try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
-                                try await self.oneOnOneResolver.resolveOneOnOneConversation(with: conversationID, in: self.managedObjectContext)
+                                try await self.oneOnOneResolver?.resolveOneOnOneConversation(with: conversationID, in: self.managedObjectContext)
                             } catch {
                                 WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
                                 assertionFailure("Error resolving one-on-one conversation: \(error)")
