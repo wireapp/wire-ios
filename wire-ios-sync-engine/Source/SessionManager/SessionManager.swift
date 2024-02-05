@@ -591,9 +591,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func start(launchOptions: LaunchOptions) {
         if let account = accountManager.selectedAccount {
             selectInitialAccount(account, launchOptions: launchOptions)
+            // swiftlint:disable todo_requires_jira_link
             // TODO: this might need to happen with a completion handler.
             // TODO: register as voip delegate?
             // TODO: process voip actions pending actions
+            // swiftlint:enable todo_requires_jira_link
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerDidFailToLogin(error: nil)
@@ -728,7 +730,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteTemporaryData() {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [F] replace with TemporaryFileServiceInterface
+        // swiftlint:enable todo_requires_jira_link
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
         try? manager
