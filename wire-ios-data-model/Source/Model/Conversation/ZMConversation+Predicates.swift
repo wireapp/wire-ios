@@ -232,7 +232,7 @@ public final class ConversationPredicateFactory: NSObject {
 
         let isOtherUserInSameTeam = {
             if let selfTeam {
-                return NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.team)) == %@", selfTeam)
+                return NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.membership.team)) == %@", selfTeam)
             } else {
                 return NSPredicate(value: false)
             }
