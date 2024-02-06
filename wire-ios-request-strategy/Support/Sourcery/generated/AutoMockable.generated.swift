@@ -168,16 +168,16 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
     }
 
-    // MARK: - createFakeOneOnOneProteusConversation
+    // MARK: - createTeamOneOnOneProteusConversation
 
-    public var createFakeOneOnOneProteusConversationUserCompletion_Invocations: [(user: ZMUser, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
-    public var createFakeOneOnOneProteusConversationUserCompletion_MockMethod: ((ZMUser, @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
+    public var createTeamOneOnOneProteusConversationUserCompletion_Invocations: [(user: ZMUser, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
+    public var createTeamOneOnOneProteusConversationUserCompletion_MockMethod: ((ZMUser, @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
 
-    public func createFakeOneOnOneProteusConversation(user: ZMUser, completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
-        createFakeOneOnOneProteusConversationUserCompletion_Invocations.append((user: user, completion: completion))
+    public func createTeamOneOnOneProteusConversation(user: ZMUser, completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        createTeamOneOnOneProteusConversationUserCompletion_Invocations.append((user: user, completion: completion))
 
-        guard let mock = createFakeOneOnOneProteusConversationUserCompletion_MockMethod else {
-            fatalError("no mock for `createFakeOneOnOneProteusConversationUserCompletion`")
+        guard let mock = createTeamOneOnOneProteusConversationUserCompletion_MockMethod else {
+            fatalError("no mock for `createTeamOneOnOneProteusConversationUserCompletion`")
         }
 
         mock(user, completion)

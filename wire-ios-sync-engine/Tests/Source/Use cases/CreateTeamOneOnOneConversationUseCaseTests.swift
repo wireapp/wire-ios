@@ -163,7 +163,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
         }
 
         // Mock: service created one on one.
-        service.createFakeOneOnOneProteusConversationUserCompletion_MockMethod = { _, completion in
+        service.createTeamOneOnOneProteusConversationUserCompletion_MockMethod = { _, completion in
             completion(.success(conversation))
         }
 

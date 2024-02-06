@@ -32,7 +32,7 @@ public protocol ConversationServiceInterface {
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     )
 
-    func createFakeOneOnOneProteusConversation(
+    func createTeamOneOnOneProteusConversation(
         user: ZMUser,
         completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
     )
@@ -106,10 +106,12 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
-    public func createFakeOneOnOneProteusConversation(
+    public func createTeamOneOnOneProteusConversation(
         user: ZMUser,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
+        // Team 1-1 proteus conversations are "fake 1-1s" because they're
+        // actually group conversation that are treated as 1-1s.
         internalCreateGroupConversation(
             teamID: user.teamIdentifier,
             name: nil,
