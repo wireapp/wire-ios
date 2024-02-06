@@ -358,6 +358,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             openSelfProfile()
         case .duplicateUser:
             duplicateUser()
+        case .duplicateTeam:
+            duplicateTeam()
         }
     }
 
@@ -485,6 +487,32 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         WireLogger.conversation.debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
     }
+
+    private func duplicateTeam() {
+        guard let user = viewModel.user as? ZMUser,
+              let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext,
+              let team = user.team else {
+            assertionFailure("couldn't get context or has no team to duplicateTeam")
+            WireLogger.conversation.debug("can't duplicate team")
+            return
+        }
+
+        context.performAndWait {
+            guard let original = Team.existingObject(for: team.objectID, in: context) else { return }
+            let duplicate = Team.insertNewObject(in: context)
+            duplicate.remoteIdentifier = original.remoteIdentifier
+            duplicate.name = "duplicate user \(original.name ?? "<nil>")"
+            duplicate.conversations = original.conversations
+            duplicate.members = original.members
+            duplicate.roles = original.roles
+            duplicate.creator = original.creator
+
+            context.saveOrRollback()
+
+            WireLogger.conversation.debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
+        }
+    }
+
 }
 
 extension ProfileViewController: ProfileViewControllerDelegate {

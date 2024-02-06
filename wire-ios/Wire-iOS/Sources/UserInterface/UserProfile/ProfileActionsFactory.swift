@@ -37,6 +37,7 @@ enum ProfileAction: Equatable {
     case cancelConnectionRequest
     case openSelfProfile
     case duplicateUser
+    case duplicateTeam
 
     /// The text of the button for this action.
     var buttonText: String {
@@ -57,6 +58,8 @@ enum ProfileAction: Equatable {
         case .cancelConnectionRequest: return "meta.menu.cancel_connection_request".localized
         case .openSelfProfile: return "meta.menu.open_self_profile".localized
         case .duplicateUser: return "⚠️ DEBUG - Duplicate User"
+        case .duplicateTeam: return "⚠️ DEBUG - Duplicate Team"
+
         }
     }
 
@@ -74,6 +77,7 @@ enum ProfileAction: Equatable {
         case .cancelConnectionRequest: return .undo
         case .openSelfProfile: return .personalProfile
         case .duplicateUser: return nil
+        case .duplicateTeam: return nil
         }
     }
 
@@ -181,6 +185,9 @@ final class ProfileActionsFactory {
             // only for debug
             if Bundle.developerModeEnabled {
                 actions.append(.duplicateUser)
+                if user.isTeamMember {
+                    actions.append(.duplicateTeam)
+                }
             }
 
         case (.profileViewer, .none),
