@@ -67,21 +67,22 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
     }
 
-    private var syncPhases: [SyncPhase] {
-        return [.fetchingLastUpdateEventID,
-                .fetchingTeams,
-                .fetchingTeamRoles,
-                .fetchingConnections,
-                .fetchingConversations,
-                .fetchingUsers,
-                .fetchingSelfUser,
-                .fetchingLegalHoldStatus,
-                .fetchingLabels,
-                .fetchingMissedEvents]
-    }
-
     func testThatItGoesThroughTheStatesInSpecificOrder() {
         // given
+        let syncPhases: [SyncPhase] = [
+            .fetchingLastUpdateEventID,
+            .fetchingTeams,
+            .fetchingTeamRoles,
+            .fetchingConnections,
+            .fetchingConversations,
+            .fetchingUsers,
+            .fetchingSelfUser,
+            .fetchingLegalHoldStatus,
+            .fetchingLabels,
+            .evaluate1on1ConversationsForMLS,
+            .fetchingMissedEvents
+        ]
+
         sut.determineInitialSyncPhase()
 
         syncPhases.forEach { syncPhase in
@@ -139,6 +140,8 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
 
         // then
         XCTAssertNotNil(lastEventIDRepository.fetchLastEventID())
@@ -222,6 +225,8 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingLegalHoldStatus)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
 
@@ -487,6 +492,9 @@ extension SyncStatusTests {
         // when
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLabels)
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .evaluate1on1ConversationsForMLS)
+        sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
 
         // then
         XCTAssertEqual(lastEventIDRepository.fetchLastEventID(), newID)
