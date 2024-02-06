@@ -30,7 +30,7 @@ import Foundation
 /// `_storage` property (made by assigning its value to a variable or passing it to a function)
 /// will only be zeroed-out if the copies are never written to. See: https://en.wikipedia.org/wiki/Copy-on-write
 
-public class VolatileData {
+public final class VolatileData {
 
     // MARK: - Properties
 
