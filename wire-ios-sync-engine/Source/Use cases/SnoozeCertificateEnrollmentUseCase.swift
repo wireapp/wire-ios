@@ -72,6 +72,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Helpers
 
     private func registerRecurringActionIfNeeded(interval: TimeInterval, gracePeriod: TimeInterval) {
+
         /// TODO: check if the self client doesn't have a certificate
         /// https://wearezeta.atlassian.net/browse/WPB-765
         guard e2eiFeature.isEnabled else {
