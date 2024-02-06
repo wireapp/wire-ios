@@ -112,9 +112,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = Settings.shared
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
-        Task.detached {
-            await WireLogger.provider?.persist(fileDestination: LogFileDestination.main)
-        }
+
         zmLog.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
         DatadogWrapper.shared?.startMonitoring()
         DatadogWrapper.shared?.log(level: .info, message: "start app")
