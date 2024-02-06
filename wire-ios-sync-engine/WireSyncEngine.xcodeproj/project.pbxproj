@@ -374,6 +374,8 @@
 		554FEE2122AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554FEE2022AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift */; };
 		595902C92B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595902C82B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
+		59C9149A2B7235BB00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C914992B7235BB00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift */; };
+		59C9149C2B7270D000CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C9149B2B7270D000CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */; };
 		59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
 		59D985F22B60146D009B99F0 /* GetSelfUserVerificationStatusUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D985F12B60146D009B99F0 /* GetSelfUserVerificationStatusUseCase.swift */; };
 		59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */; };
@@ -1051,6 +1053,8 @@
 		554FEE2022AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+LegalHold.swift"; sourceTree = "<group>"; };
 		595902C82B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGetSelfUserVerificationStatusUseCase.swift; sourceTree = "<group>"; };
 		597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DeveloperMenu.swift"; sourceTree = "<group>"; };
+		59C914992B7235BB00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift; sourceTree = "<group>"; };
+		59C9149B2B7270D000CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift; sourceTree = "<group>"; };
 		59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D985F12B60146D009B99F0 /* GetSelfUserVerificationStatusUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetSelfUserVerificationStatusUseCase.swift; sourceTree = "<group>"; };
 		59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringAction.swift; sourceTree = "<group>"; };
@@ -1526,8 +1530,9 @@
 		018A3DBD2B0799CA00EB3D6B /* Use cases */ = {
 			isa = PBXGroup;
 			children = (
-				018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */,
 				16D74BF52B5A961800160298 /* ChangeUsernameUseCaseTests.swift */,
+				59C9149B2B7270D000CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */,
+				018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -2619,6 +2624,7 @@
 			children = (
 				EEE46E5628C5EF56005F48D7 /* FetchUserClientsUseCase.swift */,
 				59D985F12B60146D009B99F0 /* GetSelfUserVerificationStatusUseCase.swift */,
+				59C914992B7235BB00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift */,
 				018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */,
 				25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift */,
 				25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */,
@@ -3260,6 +3266,7 @@
 				542DFEE61DDCA452000F5B95 /* UserProfileUpdateStatusTests.swift in Sources */,
 				F95FFBD11EB8A478004031CB /* CallSystemMessageGeneratorTests.swift in Sources */,
 				16E0FBB623311A19000E3235 /* ZMUserSessionTests+Authentication.swift in Sources */,
+				59C9149C2B7270D000CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift in Sources */,
 				D55272EC2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift in Sources */,
 				545434AB19AB6ADA003892D9 /* ZMMissingUpdateEventsTranscoderTests.m in Sources */,
 				018A3DBF2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift in Sources */,
@@ -3629,6 +3636,7 @@
 				1659114F1DEF1F6E007FA847 /* LocalNotificationDispatcher+Calling.swift in Sources */,
 				16DABFAE1DCF98D3001973E3 /* CallingRequestStrategy.swift in Sources */,
 				54DE9BEB1DE74FFB00EFFB9C /* RandomHandleGenerator.swift in Sources */,
+				59C9149A2B7235BB00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift in Sources */,
 				F1C51FE91FB4A9C7009C2269 /* RegistrationStrategy.swift in Sources */,
 				549816301A432BC800A7CE2E /* ZMSelfStrategy.m in Sources */,
 				63CD5958296434A700385037 /* ZMUserSession+AccessToken.swift in Sources */,
