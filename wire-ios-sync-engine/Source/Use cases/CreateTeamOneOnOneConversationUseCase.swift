@@ -40,7 +40,7 @@ public enum CreateTeamOneOnOneConversationError: Error {
 
 }
 
-/// Creates the team one on one conversation with a particlar user, depending
+/// Creates the team one on one conversation with a particular user, depending
 /// on the currently supported protocols of the self and other users.
 
 struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseCaseProtocol {
