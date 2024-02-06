@@ -41,24 +41,27 @@ struct SystemLogger: LoggerProtocol {
 
     func persist(fileDestination: FileLoggerDestination) async {
         var entries: [String] = []
-        do {
-            let store = try OSLogStore(scope: .currentProcessIdentifier)
-            let position: OSLogPosition
-            if let lastReportTime {
-                position = store.position(date: lastReportTime)
-            } else {
-                position = store.position(timeIntervalSinceLatestBoot: 0)
-            }
-            entries = try store
-                .getEntries(at: position)
-                .compactMap { $0 as? OSLogEntryLog }
-                .filter { $0.subsystem == Bundle.main.bundleIdentifier! }
-                .map { "[\($0.date.formatted(.iso8601))] [\($0.category)] \($0.composedMessage)" }
-        } catch {
-            warn(error.localizedDescription, attributes: .safePublic)
-        }
 
-        fileLogger.write(entries: entries, to: fileDestination.log)
+        if #available(iOSApplicationExtension 15.0, *) {
+            do {
+                let store = try OSLogStore(scope: .currentProcessIdentifier)
+                let position: OSLogPosition
+                if let lastReportTime {
+                    position = store.position(date: lastReportTime)
+                } else {
+                    position = store.position(timeIntervalSinceLatestBoot: 0)
+                }
+                entries = try store
+                    .getEntries(at: position)
+                    .compactMap { $0 as? OSLogEntryLog }
+                    .filter { $0.subsystem == Bundle.main.bundleIdentifier! }
+                    .map { "[\($0.date.formatted(.iso8601))] [\($0.category)] \($0.composedMessage)" }
+            } catch {
+                warn(error.localizedDescription, attributes: .safePublic)
+            }
+
+            fileLogger.write(entries: entries, to: fileDestination.log)
+        }
     }
 
     func debug(_ message: LogConvertible, attributes: LogAttributes?) {
@@ -133,7 +136,11 @@ public class FileLogger {
 
         do {
             if let data = entries.joined(separator: "\n").data(using: .utf8) {
-                try updatingHandle?.write(contentsOf: data)
+                if #available(iOSApplicationExtension 13.4, *) {
+                    try updatingHandle?.write(contentsOf: data)
+                } else {
+                    // do nothing
+                }
             }
         } catch {
             updatingHandle = nil
