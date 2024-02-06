@@ -69,7 +69,9 @@ extension ZMConversation {
     }
 }
 
-/// TODO: retire this extension
+// swiftlint:disable todo_requires_jira_link
+// TODO: retire this extension
+// swiftlint:enable todo_requires_jira_link
 extension ZMConversation {
 
     func add(participants: Set<ZMUser>) {

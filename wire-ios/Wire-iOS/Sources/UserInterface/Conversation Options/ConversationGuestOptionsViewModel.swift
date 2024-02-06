@@ -101,7 +101,10 @@ final class ConversationGuestOptionsViewModel {
         state.rows = computeVisibleRows()
     }
 
-    private func computeVisibleRows() -> [CellConfiguration] {/// TODO: copy?
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: copy?
+    // swiftlint:enable todo_requires_jira_link
+    private func computeVisibleRows() -> [CellConfiguration] {
         var rows: [CellConfiguration] = [.allowGuestsToogle(
             get: { [unowned self] in return self.configuration.allowGuests },
             set: { [unowned self] in self.setAllowGuests($0, view: $1) },
