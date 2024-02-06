@@ -34,41 +34,44 @@ class DuplicateConversationsMigrationPolicy: NSEntityMigrationPolicy {
 
         let context = manager.sourceContext
 
-        let duplicateObjects: [NSManagedObject] = context.findDuplicated(
+        let duplicateObjects: [Data: [NSManagedObject]] = context.findDuplicated(
             entityName: ZMConversation.entityName(),
-            by: ZMConversation.remoteIdentifierDataKey()!,
-            and: #keyPath(ZMConversation.domain)
+            by: ZMConversation.remoteIdentifierDataKey()!
         )
 
-        let duplicates = duplicateObjects.map { object in
-            guard
-                let remoteIdentifierData = object.value(forKeyPath: ZMConversation.remoteIdentifierDataKey()!) as? Data,
-                let remoteIdentifier = UUID(data: remoteIdentifierData),
-                let domain = object.value(forKeyPath: #keyPath(ZMConversation.domain)) as? String else {
-                return TupleKeyArray<String, NSManagedObject>?.none
+        var duplicates = [String: [NSManagedObject]]()
+
+        duplicateObjects.forEach { (remoteIdentifierData: Data, objects: [NSManagedObject]) in
+            objects.forEach { object in
+                let domain = object.value(forKeyPath: #keyPath(ZMConversation.domain)) as? String
+                let uniqueKey = self.primaryKey(remoteIdentifierData, domain: domain)
+                if duplicates[uniqueKey] == nil {
+                    duplicates[uniqueKey] = []
+                }
+                duplicates[uniqueKey]?.append(object)
             }
-            return TupleKeyArray(key: "\(remoteIdentifier.uuidString)_\(domain)", value: [object])
-        }.compactMap { $0 }.merge()
+        }
 
         zmLog.safePublic(SanitizedString(stringLiteral: "found (\(duplicates.count)) occurences of duplicate conversations"), level: .info)
         WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate conversations")
 
-        duplicates.forEach { (_, conversations: [NSManagedObject]) in
+        duplicates.forEach { (key, conversations: [NSManagedObject]) in
             guard conversations.count > 1 else {
+                WireLogger.localStorage.info("skipping user with different domain: \(key)")
                 return
             }
-
-            // for now we just keep one conversation and mark to sync and drop the rest.
+            WireLogger.localStorage.debug("processing \(key)")
+            // for now we just keep one user and mark to sync and drop the rest.
             // Marking needsToBeUpdatedFromBackend supposes we recover the data from backend
             conversations.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             conversations.dropFirst().forEach(context.delete)
 
             zmLog.safePublic("removed 1 occurence of duplicate conversations", level: .warn)
-            WireLogger.localStorage.info("removed 1 occurence of duplicate conversations")
+            WireLogger.localStorage.info("removed  \(conversations.count - 1) occurence of duplicate conversations")
         }
     }
 
-    // method to populate primaryKey called after beginMapping on all occurences of ZMUser
+    // method to populate primaryKey called after beginMapping on all occurences of ZMConversation
     @objc(primaryKey::)
     func primaryKey(_ remoteIdentifierData: Data?, domain: String?) -> String {
        return ZMConversation.primaryKey(from: remoteIdentifierData.flatMap(UUID.init(data: )), domain: domain)

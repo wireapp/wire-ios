@@ -33,9 +33,9 @@ class DuplicateTeamsMigrationPolicy: NSEntityMigrationPolicy {
 
         let context = manager.sourceContext
 
-        let duplicates: [String: [NSManagedObject]] = context.findDuplicated(
+        let duplicates: [Data: [NSManagedObject]] = context.findDuplicated(
             entityName: Team.entityName(),
-            by: #keyPath(Team.remoteIdentifier)
+            by: Team.remoteIdentifierDataKey()!
         )
 
         zmLog.safePublic(SanitizedString(stringLiteral: "found (\(duplicates.count)) occurences of duplicate teams"), level: .info)
