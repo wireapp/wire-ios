@@ -29,7 +29,7 @@ public protocol ConversationServiceInterface {
         allowServices: Bool,
         enableReceipts: Bool,
         messageProtocol: MessageProtocol,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     )
 
     func syncConversation(
@@ -79,7 +79,7 @@ public final class ConversationService: ConversationServiceInterface {
         allowServices: Bool,
         enableReceipts: Bool,
         messageProtocol: MessageProtocol,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
         if let teamID = ZMUser.selfUser(in: context).teamIdentifier {
             internalCreateTeamGroupConversation(
@@ -103,7 +103,7 @@ public final class ConversationService: ConversationServiceInterface {
 
     public func createTeamOneToOneConversation(
         user: ZMUser,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
         internalCreateGroupConversation(
             teamID: user.teamIdentifier,
@@ -115,9 +115,17 @@ public final class ConversationService: ConversationServiceInterface {
                 allowServices: true
             ),
             enableReceipts: false,
-            messageProtocol: .proteus,
-            completion: completion
-        )
+            messageProtocol: .proteus
+        ) { result in
+            switch result {
+            case .success(let conversation):
+                user.oneOnOneConversation = conversation
+                completion(.success(conversation))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 
     private func internalCreateTeamGroupConversation(
@@ -128,7 +136,7 @@ public final class ConversationService: ConversationServiceInterface {
         allowServices: Bool,
         enableReceipts: Bool,
         messageProtocol: WireDataModel.MessageProtocol,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
         guard ZMUser.selfUser(in: context).canCreateConversation(type: .group) else {
             completion(.failure(.missingPermissions))
@@ -153,7 +161,7 @@ public final class ConversationService: ConversationServiceInterface {
     private func internalCreateGroupConversation(
         name: String?,
         users: Set<ZMUser>,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
 
         internalCreateGroupWithRetryIfNeeded(
@@ -176,11 +184,11 @@ public final class ConversationService: ConversationServiceInterface {
         accessRoles: Set<ConversationAccessRoleV2>,
         enableReceipts: Bool,
         messageProtocol: WireDataModel.MessageProtocol,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
 
             func createGroup(
                 withUsers users: Set<ZMUser>,
-                completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+                completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
             ) {
                 internalCreateGroupConversation(
                     teamID: teamID,
@@ -226,7 +234,7 @@ public final class ConversationService: ConversationServiceInterface {
         accessRoles: Set<ConversationAccessRoleV2>,
         enableReceipts: Bool,
         messageProtocol: WireDataModel.MessageProtocol,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
         let selfUser = ZMUser.selfUser(in: context)
 

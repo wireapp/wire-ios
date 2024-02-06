@@ -89,6 +89,11 @@
     return [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsToRegisterEmailToRegisterClient userInfo:nil];
 }
 
+- (NSError *)needToToEnrollE2EIToRegisterClientError
+{
+    return [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsToEnrollE2EIToRegisterClient userInfo:nil];
+}
+
 - (NSError *)needToSetHandleError
 {
     return [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsToHandleToRegisterClient userInfo:nil];
@@ -178,13 +183,21 @@
         [self.uiMOC setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];
         [self.uiMOC saveOrRollback];
         
+    }];
+
+    [self.syncMOC performGroupedBlockAndWait:^{
         // when
         [self.sut didDetectCurrentClientDeletion];
     }];
+
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+    __block ZMClientRegistrationPhase phase;
+    [self.syncMOC performBlockAndWait:^{
+        phase = self.sut.currentPhase;
+    }];
+    XCTAssertEqual(phase, ZMClientRegistrationPhaseWaitingForPrekeys);
     [self.mockClientRegistrationDelegate verify];
 }
 
@@ -429,6 +442,36 @@
     }];
 }
 
+- (void)testThatItNotifiesTheUIIfTheRegistrationFailsWithNeedToToEnrollE2EI
+{
+    // given
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = [NSUUID UUID];
+    selfUser.emailAddress = nil;
+    selfUser.phoneNumber = nil;
+    [self.uiMOC saveOrRollback];
+
+    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+    client.remoteIdentifier = @"yay";
+
+    [self.syncMOC performBlockAndWait:^{
+        [self enableMLS];
+        [self enableE2EI];
+    }];
+
+    NSError *error = [self needToToEnrollE2EIToRegisterClientError];
+    [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: error];
+
+    // when
+    [self.syncMOC performBlockAndWait:^{
+        [self.sut didRegisterProteusClient:client];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+
+    // then
+    [self.mockClientRegistrationDelegate verify];
+}
+
 - (void)testThatItNotifiesTheUIIfTheRegistrationFailsWithMissingEmailVerification
 {
     // given
@@ -466,7 +509,9 @@
     [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: error];
 
     // when
-    [self.sut didFetchSelfUser];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.sut didFetchSelfUser];
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then

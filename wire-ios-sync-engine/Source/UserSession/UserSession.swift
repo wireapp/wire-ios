@@ -128,22 +128,23 @@ public protocol UserSession: AnyObject {
         _ changes: @escaping () -> Void,
         completionHandler: (() -> Void)?
     )
-
+    // swiftlint:disable todo_requires_jira_link
     // TODO: rename to "shouldHideNotificationContent"
     var isNotificationContentHidden: Bool { get set }
 
     // TODO: rename to "isEncryptionAtRestEnabled"
+    // swiftlint:enable todo_requires_jira_link
     var encryptMessagesAtRest: Bool { get }
 
     func setEncryptionAtRest(enabled: Bool, skipMigration: Bool) throws
 
     func addUserObserver(
-        _ observer: ZMUserObserver,
+        _ observer: UserObserving,
         for: UserType
     ) -> NSObjectProtocol?
 
     func addUserObserver(
-        _ observer: ZMUserObserver
+        _ observer: UserObserving
     ) -> NSObjectProtocol
 
     func addMessageObserver(
@@ -184,13 +185,13 @@ public protocol UserSession: AnyObject {
 
     func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool>
+            Result<Bool, Error>
         ) -> Void
     )
 
     func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
     )
 
     func classification(
@@ -251,7 +252,6 @@ extension ZMUserSession: UserSession {
         get {
             appLockController.isActive
         }
-
         set {
             appLockController.isActive = newValue
         }
@@ -334,7 +334,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func addUserObserver(
-        _ observer: ZMUserObserver,
+        _ observer: UserObserving,
         for user: UserType
     ) -> NSObjectProtocol? {
         return UserChangeInfo.add(
@@ -345,7 +345,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func addUserObserver(
-        _ observer: ZMUserObserver
+        _ observer: UserObserving
     ) -> NSObjectProtocol {
         return UserChangeInfo.add(
             userObserver: observer,
@@ -463,7 +463,7 @@ extension ZMUserSession: UserSession {
 
     public func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool>
+            Result<Bool, Error>
         ) -> Void
     ) {
         ZMUser.selfUser(inUserSession: self).fetchConsent(
@@ -475,7 +475,7 @@ extension ZMUserSession: UserSession {
 
     public func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
     ) {
         ZMUser.selfUser(inUserSession: self).setMarketingConsent(
             to: granted,

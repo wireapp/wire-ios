@@ -31,7 +31,6 @@
 #import "ZMMessageTests.h"
 #import "MessagingTest+EventFactory.h"
 #import "ZMUpdateEvent+WireDataModel.h"
-#import "NSString+RandomString.h"
 #import "WireDataModelTests-Swift.h"
 
 NSString * const IsExpiredKey = @"isExpired";
@@ -1115,7 +1114,9 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     // then
     XCTAssertNotNil(imageData);
-        // TODO:  [Bill] check why 1 btye is removed from jpegData?
+    // swiftlint:disable todo_requires_jira_link
+    // TODO:  [Bill] check why 1 btye is removed from jpegData?
+    // swiftlint:enable todo_requires_jira_link
     XCTAssertEqual(imageData.length, jpegData.length + 1);
 }
 

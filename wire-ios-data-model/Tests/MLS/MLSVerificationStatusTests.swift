@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,15 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
-extension NSString {
+@testable import WireDataModel
 
-    /// Returns a random string with alphanumerical characters
-    ///
-    @objc(createAlphanumericalString)
-    static public func createAlphanumerical() -> NSString {
-        return NSString(format: "%llx", arc4random()) // swiftlint:disable:this legacy_random
+final class MLSVerificationStatusTests: XCTestCase {
+
+    typealias SUT = MLSVerificationStatus
+
+    /// Ensures that the raw values, which are persited to the database, don't change, once the app has been published.
+    func testRawValuesHaveNotChanged() {
+        XCTAssertEqual(SUT.verified.rawValue, 0)
+        XCTAssertEqual(SUT.notVerified.rawValue, 1)
+        XCTAssertEqual(SUT.degraded.rawValue, 2)
     }
-
 }

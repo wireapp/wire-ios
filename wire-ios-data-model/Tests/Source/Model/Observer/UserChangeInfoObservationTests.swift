@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireDataModel
 
-class UserObserverTests: NotificationDispatcherTestBase {
+final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
     let UserClientsKey = "clients"
 
@@ -44,49 +44,53 @@ class UserObserverTests: NotificationDispatcherTestBase {
 
     let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
 
-    var userObserver: UserObserver!
+    var userObserver: MockUserObserver!
 
     override func setUp() {
         super.setUp()
-        userObserver = UserObserver()
+        userObserver = MockUserObserver()
     }
 
     override func tearDown() {
         userObserver = nil
         super.tearDown()
     }
-}
 
-extension UserObserverTests {
+    // MARK: - Tests
 
     func checkThatItNotifiesTheObserverOfAChange(_ user: ZMUser, modifier: (ZMUser) -> Void, expectedChangedField: UserInfoChangeKey) {
         checkThatItNotifiesTheObserverOfAChange(user, modifier: modifier, expectedChangedFields: [expectedChangedField])
     }
 
-    func checkThatItNotifiesTheObserverOfAChange(_ user: ZMUser, modifier: (ZMUser) -> Void, expectedChangedFields: [UserInfoChangeKey]) {
-
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ user: ZMUser,
+        modifier: (ZMUser) -> Void,
+        expectedChangedFields: [UserInfoChangeKey],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         // given
         self.uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
 
         self.token = UserChangeInfo.add(observer: userObserver, for: user, in: self.uiMOC)
 
         // when
         modifier(user)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
 
         self.uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
 
         // then
         let changeCount = userObserver.notifications.count
-        XCTAssertEqual(changeCount, 1)
+        XCTAssertEqual(changeCount, 1, file: file, line: line)
 
         // and when
         self.uiMOC.saveOrRollback()
 
         // then
-        XCTAssertEqual(userObserver.notifications.count, changeCount, "Should not have changed further once")
+        XCTAssertEqual(userObserver.notifications.count, changeCount, "Should not have changed further once", file: file, line: line)
 
         guard let changes = userObserver.notifications.first else { return }
         changes.checkForExpectedChangeFields(userInfoKeys: Set(userInfoChangeKeys.map {$0.rawValue}),
@@ -580,7 +584,9 @@ extension UserObserverTests {
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // TODO: [jacob] re-enable WPB-5917 and fix calling `legalHoldClient.deleteClientAndEndSession()`
+    // swiftlint:enable todo_requires_jira_link
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)

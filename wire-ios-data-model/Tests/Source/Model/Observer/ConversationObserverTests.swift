@@ -226,24 +226,24 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
         otherUser.name = "Foo"
+        otherUser.oneOnOneConversation = conversation
 
         let connection = ZMConnection.insertNewObject(in: self.uiMOC)
         connection.to = otherUser
         connection.status = .accepted
-        conversation.connection = connection
 
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _, _ in
-                                                        self.notifyNameChange(otherUser, name: "Phil")
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { _, _ in
+                self.notifyNameChange(otherUser, name: "Phil")
             },
-                                                     expectedChangedField: "nameChanged",
-                                                     expectedChangedKeys: ["displayName"]
+            expectedChangedField: "nameChanged",
+            expectedChangedKeys: ["displayName"]
         )
-
     }
 
     func testThatItNotifysTheObserverOfANameChangeBecauseAUserWasAddedLaterAndHisNameChanged() {
@@ -644,37 +644,47 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = ZMConversationType.oneOnOne
+
+        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in
-                                                        conversation.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-                                                        conversation.connection!.status = ZMConnectionStatus.pending
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                otherUser.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+                otherUser.connection?.status = ZMConnectionStatus.pending
+                otherUser.oneOnOneConversation = conversation
             },
-                                                     expectedChangedFields: ["connectionStateChanged",
-                                                                             "nameChanged"],
-                                                     expectedChangedKeys: ["relatedConnectionState"])
+            expectedChangedFields: ["connectionStateChanged"],
+            expectedChangedKeys: ["relatedConnectionState"]
+        )
     }
 
     func testThatItNotifiesTheObserverOfChangedConnectionStatusWhenUpdatingAConnection() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = ZMConversationType.oneOnOne
-        conversation.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-        conversation.connection!.status = ZMConnectionStatus.pending
-        conversation.connection!.to = ZMUser.insertNewObject(in: self.uiMOC)
+
+        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+        otherUser.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        otherUser.connection?.status = .pending
+        otherUser.oneOnOneConversation = conversation
+
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.connection!.status = ZMConnectionStatus.accepted },
-                                                     expectedChangedFields: ["connectionStateChanged",
-                                                                             "nameChanged"],
-                                                     expectedChangedKeys: ["relatedConnectionState"])
-
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { _, _ in
+                otherUser.connection?.status = ZMConnectionStatus.accepted
+            },
+            expectedChangedFields: ["connectionStateChanged"],
+            expectedChangedKeys: ["relatedConnectionState"]
+        )
     }
 
     func testThatItNotifiesTheObserverOfChangedArchivedStatus() {
@@ -956,7 +966,9 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // TODO: [jacob] re-enable WPB-5917 and fix calling `legalHoldClient.deleteClientAndEndSession()`
+    // swiftlint:enable todo_requires_jira_link
     func testThatItNotifiesOfLegalHoldChanges_Disabled() {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group

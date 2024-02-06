@@ -136,8 +136,6 @@ extension ZMConversation {
     /// to commit.
     @NSManaged public var commitPendingProposalDate: Date?
 
-    @NSManaged private var primitiveMlsVerificationStatus: NSNumber?
-
     /// The mls verification status.
     ///
     /// If this conversation is an mls group (which it should be if the
@@ -146,27 +144,21 @@ extension ZMConversation {
     public var mlsVerificationStatus: MLSVerificationStatus? {
         get {
             willAccessValue(forKey: Self.mlsVerificationStatusKey)
-            let value = primitiveMlsVerificationStatus?.int16Value
+            let value = primitiveValue(forKey: Self.mlsVerificationStatusKey) as? MLSVerificationStatus.RawValue
             didAccessValue(forKey: Self.mlsVerificationStatusKey)
 
-            guard let value = value else {
-                return nil
-            }
-
+            guard let value = value else { return nil }
             guard let status = MLSVerificationStatus(rawValue: value) else {
                 fatalError("failed to init MLSVerificationStatus from rawValue: \(value)")
             }
-
             return status
         }
-
         set {
             willChangeValue(forKey: Self.mlsVerificationStatusKey)
-            primitiveMlsVerificationStatus = newValue.map { NSNumber(value: $0.rawValue) }
+            setPrimitiveValue(newValue?.rawValue, forKey: Self.mlsVerificationStatusKey)
             didChangeValue(forKey: Self.mlsVerificationStatusKey)
         }
     }
-
 }
 
 // MARK: - Fetch by group id
