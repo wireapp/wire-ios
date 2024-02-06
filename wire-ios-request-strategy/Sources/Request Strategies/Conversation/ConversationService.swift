@@ -48,6 +48,7 @@ public enum ConversationCreationFailure: Error {
     case missingPermissions
     case missingSelfClientID
     case conversationNotFound
+    case noMLSGroup
     case networkError(CreateGroupConversationAction.Failure)
     case underlyingError(Error)
 
@@ -58,6 +59,7 @@ public final class ConversationService: ConversationServiceInterface {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let createGroupFlow = Flow.createGroup
     private let participantsServiceBuilder: (NSManagedObjectContext) -> ConversationParticipantsServiceInterface
 
     // MARK: - Life cycle
@@ -81,6 +83,17 @@ public final class ConversationService: ConversationServiceInterface {
         messageProtocol: MessageProtocol,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
+        createGroupFlow.start()
+        let flowCompletion = { [weak self] (result: Swift.Result<ZMConversation, ConversationCreationFailure>) in
+            switch result {
+            case .failure(let error):
+                self?.createGroupFlow.fail(error)
+            case .success:
+                self?.createGroupFlow.succeed()
+            }
+            completion(result)
+        }
+
         if let teamID = ZMUser.selfUser(in: context).teamIdentifier {
             internalCreateTeamGroupConversation(
                 teamID: teamID,
@@ -90,13 +103,13 @@ public final class ConversationService: ConversationServiceInterface {
                 allowServices: allowServices,
                 enableReceipts: enableReceipts,
                 messageProtocol: messageProtocol,
-                completion: completion
+                completion: flowCompletion
             )
         } else {
             internalCreateGroupConversation(
                 name: name,
                 users: users,
-                completion: completion
+                completion: flowCompletion
             )
         }
     }
@@ -202,13 +215,16 @@ public final class ConversationService: ConversationServiceInterface {
                 )
             }
 
+            createGroupFlow.checkpoint(description: "create Group with user ids: \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
             createGroup(withUsers: users) { result in
                 switch result {
                 case .failure(.networkError(.unreachableDomains(let domains))):
                     let unreachableUsers = users.belongingTo(domains: domains)
                     let reachableUsers = Set(users).subtracting(unreachableUsers)
 
+                    self.createGroupFlow.checkpoint(description: "retry create Group with unreachableUsers \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
                     createGroup(withUsers: reachableUsers) { retryResult in
+
                         if case .success(let conversation) = retryResult {
                             conversation.appendFailedToAddUsersSystemMessage(
                                 users: unreachableUsers,
@@ -328,7 +344,7 @@ public final class ConversationService: ConversationServiceInterface {
         }
 
         await syncContext.perform {
-            Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: syncConversation.mlsGroupID)))")
+            self.createGroupFlow.checkpoint(description: "marking MLS ZMConversation ready, group ID (\(String(describing: syncConversation.mlsGroupID)))")
 
             // Self user is creator, so we don't need to process a welcome message
             syncConversation.mlsStatus = .ready
@@ -341,10 +357,12 @@ public final class ConversationService: ConversationServiceInterface {
 
         guard let mlsGroupID, let mlsService else { return }
 
+        self.createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
         try await mlsService.createGroup(for: mlsGroupID, with: [])
 
         let participantsService = participantsServiceBuilder(syncContext)
         if !participants.isEmpty {
+            self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: Array(participants), groupId: mlsGroupID))
             try await participantsService.addParticipants(Array(participants), to: syncConversation)
         }
     }
@@ -369,5 +387,17 @@ public final class ConversationService: ConversationServiceInterface {
                 continuation.resume()
             }
         }
+    }
+}
+
+struct MLSAddParticipantLog: LogConvertible {
+    var users: [ZMUser]
+    var groupId: MLSGroupID
+
+    var logDescription: String {
+        let ids = users.compactMap { user in user.managedObjectContext?.performAndWait {
+            user.remoteIdentifier.transportString()
+        } }
+        return "add MLS participants \(ids.joined(separator: ",")) - MLS Group ID: \(groupId.safeForLoggingDescription)"
     }
 }

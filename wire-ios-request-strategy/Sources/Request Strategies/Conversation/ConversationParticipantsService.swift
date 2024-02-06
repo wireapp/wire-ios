@@ -91,7 +91,8 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         _ users: [ZMUser],
         to conversation: ZMConversation
     ) async throws {
-
+        let userIds = await context.perform { users.map { $0.remoteIdentifier.transportString() } }
+        Flow.addParticipants.checkpoint(description: "validate users: \(userIds.joined(separator: ", "))")
         try await validate(users: users, conversation: conversation)
 
         do {
@@ -103,6 +104,9 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 conversation: conversation
             )
         } catch ConversationParticipantsError.failedToAddSomeUsers(users: let failedUsers) {
+            let failedUserIds = await context.perform { failedUsers.map { $0.remoteIdentifier.transportString() } }
+            Flow.addParticipants.checkpoint(description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))")
+
             await appendFailedToAddUsersMessage(
                 in: conversation,
                 users: failedUsers
@@ -119,11 +123,11 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
         switch messageProtocol {
         case .proteus:
-
+            Flow.addParticipants.checkpoint(description: "add users for Proteus")
             try await proteusParticipantsService.addParticipants(users, to: conversation)
 
         case .mls:
-
+            Flow.addParticipants.checkpoint(description: "add users for MLS")
             try await addMLSParticipants(users, to: conversation)
 
         case .mixed:
@@ -153,6 +157,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         } catch MLSConversationParticipantsError.failedToClaimKeyPackages(users: let failedUsers) {
 
             guard failedUsers.isNonEmpty else {
+                Flow.addParticipants.checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
                 return
             }
 
@@ -162,11 +167,14 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
                 // Operation was aborted because some users didn't have key packages
                 // We filter them out and retry once
-
+                Flow.addParticipants.checkpoint(description: "retrying failedUsers begin")
                 try await internalAddParticipants(
                     Array(users.subtracting(failedUsers)),
                     to: conversation
                 )
+                // TODO: maybe we have an issueif this fails again
+                // system message is not inserted for first failedUsers!
+                Flow.addParticipants.checkpoint(description: "retrying failedUsers end")
             }
 
             throw ConversationParticipantsError.failedToAddSomeUsers(users: failedUsers)
