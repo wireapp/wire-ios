@@ -39,8 +39,7 @@ final class UnlockViewController: UIViewController {
         button.setTitleColor(.graphite, for: .normal)
         button.setTitleColor(.lightGraphite, for: .highlighted)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-
-        button.setTitle("share_extension.unlock.submit_button.title".localized(uppercased: true), for: .normal)
+        button.setTitle(L10n.ShareExtension.Unlock.SubmitButton.title.localizedUppercase, for: .normal)
         button.isEnabled = false
 
         button.layer.cornerRadius = 4
@@ -57,7 +56,7 @@ final class UnlockViewController: UIViewController {
         textField.isSecureTextEntry = true
         textField.autocapitalizationType = .none
 
-        textField.placeholder = "share_extension.unlock.textfield.placeholder".localized
+        textField.placeholder = L10n.ShareExtension.Unlock.Textfield.placeholder
         textField.accessibilityIdentifier = "unlock_screen.text_field.enter_passcode"
 
         return textField
@@ -66,7 +65,7 @@ final class UnlockViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
 
-        label.text = "share_extension.unlock.title_label".localized
+        label.text = L10n.ShareExtension.Unlock.titleLabel
         label.accessibilityIdentifier = "unlock_screen.title.enter_passcode"
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textColor = .white
@@ -92,7 +91,7 @@ final class UnlockViewController: UIViewController {
         style.firstLineHeadIndent = leadingMargin
         style.headIndent = leadingMargin
 
-        label.attributedText = NSAttributedString(string: "share_extension.unlock.hint_label".localized,
+        label.attributedText = NSAttributedString(string: L10n.ShareExtension.Unlock.hintLabel,
                                                   attributes: [NSAttributedString.Key.paragraphStyle: style])
         return label
     }()
@@ -206,7 +205,7 @@ extension UnlockViewController {
     func showWrongPasscodeMessage() {
         let textAttachment = NSTextAttachment.textAttachment(for: .exclamationMarkCircle, with: SemanticColors.Label.textErrorDefault, iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize, verticalCorrection: -1, insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4))
 
-        let attributedString = NSAttributedString(string: "share_extension.unlock.error_label".localized) && hintFont
+        let attributedString = NSAttributedString(string: L10n.ShareExtension.Unlock.errorLabel) && hintFont
 
         errorLabel.attributedText = NSAttributedString(attachment: textAttachment) + attributedString
         unlockButton.isEnabled = false
