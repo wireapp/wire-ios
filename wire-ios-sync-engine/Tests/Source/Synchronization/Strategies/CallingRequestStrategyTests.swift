@@ -616,10 +616,12 @@ class CallingRequestStrategyTests: MessagingTest {
     @discardableResult
     private func createClient(for user: ZMUser, connectedTo userClient: UserClient) -> UserClient {
         let client = UserClient.insertNewObject(in: syncMOC)
-        client.remoteIdentifier = NSString.createAlphanumerical() as String
+        client.remoteIdentifier = .randomRemoteIdentifier()
         client.user = user
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [John] use flag here
+        // swiftlint:enable todo_requires_jira_link
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { (session) in
             try! session.createClientSession(
                 client.sessionIdentifier!,

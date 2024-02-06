@@ -105,7 +105,7 @@ final class ProfileHeaderViewController: UIViewController {
     let remainingTimeLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
                                               color: LabelColors.textDefault)
     let imageView =  UserImageView(size: .big)
-    let availabilityTitleViewController: AvailabilityTitleViewController
+    let userStatusViewController: UserStatusViewController
 
     let guestIndicatorStack = UIStackView()
     let groupRoleIndicator = LabelIndicator(context: .groupRole)
@@ -132,7 +132,7 @@ final class ProfileHeaderViewController: UIViewController {
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        self.availabilityTitleViewController = AvailabilityTitleViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint], userSession: userSession)
+        self.userStatusViewController = UserStatusViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint], userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -196,14 +196,14 @@ final class ProfileHeaderViewController: UIViewController {
         updateHandleLabel()
         updateTeamLabel()
 
-        addChild(availabilityTitleViewController)
+        addChild(userStatusViewController)
 
         stackView = CustomSpacingStackView(
             customSpacedArrangedSubviews: [
                 nameHandleStack,
                 teamNameLabel,
                 imageView,
-                availabilityTitleViewController.view,
+                userStatusViewController.view,
                 guestIndicatorStack,
                 externalIndicator,
                 federatedIndicator,
@@ -230,7 +230,7 @@ final class ProfileHeaderViewController: UIViewController {
         configureConstraints()
         applyOptions()
 
-        availabilityTitleViewController.didMove(toParent: self)
+        userStatusViewController.didMove(toParent: self)
 
         if let team = (user as? ZMUser)?.team {
             teamObserver = TeamChangeInfo.add(observer: self, for: team)
@@ -312,7 +312,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     private func updateAvailabilityVisibility() {
         let isHidden = options.contains(.hideAvailability) || !options.contains(.allowEditingAvailability) && user.availability == .none
-        availabilityTitleViewController.view?.isHidden = isHidden
+        userStatusViewController.view?.isHidden = isHidden
     }
 
     private func updateImageButton() {
@@ -329,9 +329,9 @@ final class ProfileHeaderViewController: UIViewController {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
-extension ProfileHeaderViewController: ZMUserObserver {
+extension ProfileHeaderViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
