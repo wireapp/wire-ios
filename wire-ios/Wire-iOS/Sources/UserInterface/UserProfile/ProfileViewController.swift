@@ -474,18 +474,22 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             assertionFailure("couldn't get context to duplicateUser")
             return
         }
-        let id = user.remoteIdentifier
-        let domain = user.domain
-        let name = user.name ?? "nil"
-        context.performAndWait {
-            let duplicate = ZMUser.insertNewObject(in: context)
-            duplicate.remoteIdentifier = id
-            duplicate.domain = domain
-            duplicate.name = "duplicate user \(name)"
-            context.saveOrRollback()
-        }
 
-        WireLogger.conversation.debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
+        context.performAndWait {
+            guard let original = ZMUser.existingObject(for: user.objectID, in: context) else {
+                return
+            }
+            let duplicate = ZMUser.insertNewObject(in: context)
+            duplicate.remoteIdentifier = original.remoteIdentifier
+            duplicate.domain = original.domain
+            duplicate.name = "duplicate user \(original.name ?? "<nil>")"
+            duplicate.connection = original.connection
+            duplicate.participantRoles = original.participantRoles
+            duplicate.createdTeams = original.createdTeams
+            context.saveOrRollback()
+
+            WireLogger.conversation.debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
+        }
     }
 
     private func duplicateTeam() {
