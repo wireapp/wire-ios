@@ -38,7 +38,10 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
     override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if isSyncing {
-            debugPrint("EvaluateOneOnOneConversationsStrategy executed")
+            // TODO: [WPB-5812] epic implementation
+            // - Produce a list of the users we have 1:1 conversations with
+            // - Loop through the list and evaluate the 1:1 conversation for each user.
+
             syncStatus.finishCurrentSyncPhase(phase: syncPhase)
         }
 
