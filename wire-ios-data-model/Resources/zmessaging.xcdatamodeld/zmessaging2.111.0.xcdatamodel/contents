@@ -291,6 +291,11 @@
         <fetchIndex name="byRemoteIdentifier_dataIndex">
             <fetchIndexElement property="remoteIdentifier_data" type="Binary" order="ascending"/>
         </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="remoteIdentifier_data"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="TextMessage" representedClassName="ZMTextMessage" parentEntity="Message" syncable="YES">
         <attribute name="text" optional="YES" attributeType="String"/>
