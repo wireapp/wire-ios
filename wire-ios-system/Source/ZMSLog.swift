@@ -23,7 +23,7 @@ import ZipArchive
 
 /// Represents an entry to be logged.
 @objcMembers
-public class ZMSLogEntry: NSObject {
+public final class ZMSLogEntry: NSObject {
     public let text: String
     public let timestamp: Date
 
@@ -48,7 +48,7 @@ public class ZMSLogEntry: NSObject {
 ///     zmLog.warn("A serious warning!")
 ///
 @objc
-public class ZMSLog: NSObject {
+public final class ZMSLog: NSObject {
 
     public typealias LogHook = (_ level: ZMLogLevel_t, _ tag: String?, _ message: String) -> Void
     public typealias LogEntryHook = (
