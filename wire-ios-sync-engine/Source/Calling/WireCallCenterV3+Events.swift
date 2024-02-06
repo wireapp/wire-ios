@@ -33,19 +33,19 @@ extension WireCallCenterV3: ZMConversationObserver {
 
     private func handleSecurityLevelChange(_ changeInfo: ConversationChangeInfo) {
         guard
-            changeInfo.securityLevelChanged,
+            changeInfo.securityLevelChanged || changeInfo.mlsVerificationStatusChanged,
             let conversationId = changeInfo.conversation.avsIdentifier,
             let previousSnapshot = callSnapshots[conversationId]
         else {
             return
         }
 
-        if changeInfo.conversation.securityLevel == .secureWithIgnored, isActive(conversationId: conversationId) {
+        if changeInfo.conversation.isDegraded, isActive(conversationId: conversationId) {
             // If an active call degrades we end it immediately
             return closeCall(conversationId: conversationId, reason: .securityDegraded)
         }
 
-        let updatedCallState = previousSnapshot.callState.update(withSecurityLevel: changeInfo.conversation.securityLevel)
+        let updatedCallState = previousSnapshot.callState.update(isConversationDegraded: changeInfo.conversation.isDegraded)
 
         if updatedCallState != previousSnapshot.callState {
             callSnapshots[conversationId] = previousSnapshot.update(with: updatedCallState)

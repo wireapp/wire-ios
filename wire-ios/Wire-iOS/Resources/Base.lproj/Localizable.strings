@@ -580,8 +580,9 @@
 "content.system.message_legal_hold.learn_more" = "Learn more";
 
 //
-
 "content.system.is_verified" = "All fingerprints are verified";
+"content.system.mls.conversation_is_verified" = "All devices are verified by End-to-end Identity. [Learn more](%@)";
+"content.system.mls.conversation_is_degraded" = "This conversation is no longer verified, as some user uses at least one device without a valid end-to-end identity certificate.";
 
 "content.system.new_users" = "New user joined.";
 "content.system.verify_devices" = "Verify devices";
@@ -773,6 +774,13 @@
 "call.degraded.ended.alert.message.user" = "The call was disconnected because %@ is no longer a verified contact.";
 "call.degraded.ended.alert.message.unknown" = "The call was disconnected because someone is no longer a verified contact.";
 
+"call.mls.degraded.alert.title" = "Conversation no longer verified";
+"call.mls.degraded.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to start the call?";
+"call.mls.degraded.alert.action.continue" = "Call anyway";
+
+"call.mls.degraded.ended.alert.title" = "Conversation no longer verified";
+"call.mls.degraded.ended.alert.message" = "The call was disconnected as at least one participant started using a new device or has an invalid certificate.";
+
 "call.alert.ongoing.alert_title" = "This will end your other call.";
 
 "call.alert.ongoing.start.message" = "A call is active in another conversation.\nCalling here will hang up the other call.";
@@ -874,6 +882,9 @@
 "meta.degraded.cancel_sending_button" = "Cancel";
 "meta.legalhold.info_button" = "What Is Legal Hold?";
 "meta.legalhold.send_alert_title" = "The conversation is now subject to legal hold.";
+
+"meta.mls.degraded.alert.title" = "Conversation no longer verified";
+"meta.mls.degraded.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to send the message?";
 
 // Remove from conversation dialogue
 "profile.remove_dialog_title" = "Remove?";
@@ -999,6 +1010,8 @@
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
 
+"group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
+"group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
 // Legal hold details
 
@@ -1586,6 +1599,12 @@
 "registration.signin.alert.password_needed.title" = "Password needed";
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
 
+"registration.signin.e2ei.title" = "End-to-end identity certificate";
+"registration.signin.e2ei.subtitle" = "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.";
+"registration.signin.e2ei.get_certificate_button.title" = "Get Certificate";
+"registration.signin.e2ei.error.alert.title" = "Something went wrong";
+"registration.signin.e2ei.error.alert.message" = "Failed to retrieve certificate";
+
 "registration.signin.username.title" = "Your username";
 "registration.signin.username.message" = "Enter your username. It helps others to find you in Wire and connect with you.";
 "registration.signin.username.placeholder" = "username";
@@ -2064,3 +2083,25 @@ to reset this device and log in again";
 // MARK: - Time
 
 "time.just_now" = "Just now";
+
+// MARK: - Device Details
+"device.details.section.proteus.title" = "PROTEUS DEVICE DETAILS";
+"device.details.section.proteus.id" = "Proteus ID";
+"device.details.section.proteus.value" = "Proteus ID: %@";
+"device.details.section.proteus.activated" = "Activated";
+"device.details.section.proteus.key_fingerprint" = "Proteus Key Fingerprint";
+"device.details.section.e2ei.title" = "End-to-end Identity Certificate";
+"device.details.section.e2ei.show_certificate_details" = "Show Certificate Details";
+"device.details.section.e2ei.get_certificate" = "Get Certificate";
+"device.details.section.e2ei.update_certificate" = "Update Certificate";
+"device.details.section.e2ei.status.title" = "Status";
+"device.details.section.e2ei.status.not_activated" = "Not activated";
+"device.details.section.e2ei.status.valid" = "Valid";
+"device.details.section.e2ei.status.revoked" = "Revoked";
+"device.details.section.e2ei.status.expired" = "Expired";
+"device.details.section.e2ei.serial_number" = "Serial Number";
+"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.title" = "MLS Thumbprint";
+"device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
+"device.details.certificate_details.title" = "Certificate Details";
+"device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";

@@ -87,6 +87,8 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 fileSharing: .init(status: .enabled),
                 mls: .init(status: .enabled, config: .init(defaultProtocol: .mls)),
                 selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22)),
+                mlsE2EId: .init(status: .enabled, config: .init(acmeDiscoveryUrl: "https://acme/defaultteams/directory",
+                                                                verificationExpiration: 60)),
                 mlsMigration: .init(
                     status: .enabled,
                     config: .init(
@@ -138,6 +140,11 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
 
+            let e2ei = featureRepository.fetchE2EI()
+            XCTAssertEqual(e2ei.status, .enabled)
+            XCTAssertEqual(e2ei.config.acmeDiscoveryUrl, "https://acme/defaultteams/directory")
+            XCTAssertEqual(e2ei.config.verificationExpiration, 60)
+
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .enabled)
             XCTAssertEqual(
@@ -183,6 +190,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 fileSharing: nil,
                 mls: nil,
                 selfDeletingMessages: nil,
+                mlsE2EId: nil,
                 mlsMigration: nil
             )
 
@@ -226,6 +234,10 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
+
+            let e2ei = featureRepository.fetchE2EI()
+            XCTAssertEqual(e2ei.status, .disabled)
+            XCTAssertEqual(e2ei.config, .init())
 
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .disabled)

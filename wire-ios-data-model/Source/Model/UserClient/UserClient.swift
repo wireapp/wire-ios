@@ -126,6 +126,8 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
+    public var e2eIdentityCertificate: E2eIdentityCertificate?
+
     public var isLegalHoldDevice: Bool {
         return deviceClass == .legalHold || type == .legalHold
     }
@@ -319,6 +321,7 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
+
     public func resetSession() {
         guard
             let uiMOC = managedObjectContext?.zm_userInterface,
@@ -407,6 +410,8 @@ public extension UserClient {
         let activationDate = payloadAsDictionary.date(for: "time")
         let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
 
+        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
+        let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
         let isNewClient = result.isNewClient
@@ -417,7 +422,9 @@ public extension UserClient {
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
         client.remoteIdentifier = id
-
+        if let mlsEd25519 = mlsEd25519 {
+            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519)
+        }
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
 
@@ -434,7 +441,9 @@ public extension UserClient {
             if client.remoteIdentifier != selfClient.remoteIdentifier && isNewClient {
 
                 if let selfClientActivationdate = selfClient.activationDate, client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
+                    // swiftlint:disable todo_requires_jira_link
                     // TODO: Check this flag
+                    // swiftlint:enable todo_requires_jira_link
                     client.needsToNotifyUser = true
                 }
             }
@@ -452,8 +461,9 @@ public extension UserClient {
         var isNewClient: Bool
 
         WireLogger.userClient.info("trying to fetch client with id (\(id))")
-
+        // swiftlint:disable todo_requires_jira_link
         // TODO: could optimize: look into self user relationship before executing a fetch request
+        // swiftlint:enable todo_requires_jira_link
         if let fetchedClient = fetchExistingUserClient(with: id, in: context) {
             WireLogger.userClient.info("fetched existing user client in context \(context)")
             client = fetchedClient
@@ -603,7 +613,9 @@ public extension UserClient {
         preKey: String
     ) async -> Bool {
         do {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: check if we should delete session if it exists before creating new one
+            // swiftlint:enable todo_requires_jira_link
             let proteusSessionId = ProteusSessionID(domain: sessionId.domain, userID: sessionId.userId, clientID: sessionId.clientId)
             try await proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
             return true

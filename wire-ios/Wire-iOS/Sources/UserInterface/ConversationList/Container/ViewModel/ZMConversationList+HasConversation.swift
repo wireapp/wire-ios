@@ -27,7 +27,9 @@ extension ZMConversationList {
     }
 }
 
-/// TODO: move to DM
+// swiftlint:disable todo_requires_jira_link
+// TODO: move to DM
+// swiftlint:enable todo_requires_jira_link
 extension ZMConversationList: ConversationListHelperType {
     static var hasArchivedConversations: Bool {
         guard let session = ZMUserSession.shared() else { return false }
@@ -37,6 +39,7 @@ extension ZMConversationList: ConversationListHelperType {
 }
 
 /// TODO: retire this static helper, refactor as  ZMUserSession's property
+/// // swiftlint:enable todo_requires_jira_link
 protocol ConversationListHelperType {
     static var hasArchivedConversations: Bool { get }
 }
