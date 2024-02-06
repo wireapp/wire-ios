@@ -1365,7 +1365,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     ZMClientMessage *message2 = (ZMClientMessage *)[conversation appendText:@"Test 2" mentions:@[] replyingToMessage:message1 fetchLinkPreview:NO nonce:NSUUID.createUUID];
     XCTAssertEqualObjects(message2.quote, message1);
     XCTAssertFalse(message1.replies.isEmpty);
-    
+
     // when
     [message2 removeMessageClearingSender:YES];
     [self.uiMOC saveOrRollback];

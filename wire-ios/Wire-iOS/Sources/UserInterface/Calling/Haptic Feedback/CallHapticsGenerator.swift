@@ -52,7 +52,9 @@ final class CallHapticsGenerator: CallHapticsGeneratorType {
     func trigger(event: CallHapticsEvent) {
         Log.calling.debug("Triggering haptic feedback event: \(event.rawValue)")
         prepareFeedback(for: event)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: papply(executeFeedback, event))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.executeFeedback(for: event)
+        }
     }
 
     // MARK: - Private
