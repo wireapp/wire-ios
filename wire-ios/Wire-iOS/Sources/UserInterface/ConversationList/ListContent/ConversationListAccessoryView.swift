@@ -19,6 +19,16 @@
 import UIKit
 import WireCommonComponents
 
+// MARK: - BadgeColorConfiguration
+
+private struct BadgeColorConfiguration {
+    var backgroundColor: UIColor
+    var tintColor: UIColor
+    var borderColor: UIColor?
+    var borderWidth: CGFloat?
+    var cornerRadius: CGFloat?
+}
+
 final class ConversationListAccessoryView: UIView {
 
     // MARK: - Properties
@@ -26,7 +36,6 @@ final class ConversationListAccessoryView: UIView {
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
-    typealias ConversationsListAccessibility = L10n.Accessibility.ConversationsList
 
     let mediaPlaybackManager: MediaPlaybackManager?
 
@@ -41,8 +50,6 @@ final class ConversationListAccessoryView: UIView {
     let activeCallWidth: CGFloat = 20
 
     let textLabelColor = LabelColors.textDefaultWhite
-
-    let iconSize: StyleKitIcon.Size = 12
 
     var icon: ConversationStatusIcon? {
         didSet {
@@ -96,13 +103,9 @@ final class ConversationListAccessoryView: UIView {
         updateForIcon()
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        // We need to call this method here because the background, the border color
-        // of the icon when switching from dark to light mode
-        // or vice versa can be updated only inside traitCollectionDidChange.
-        updateForIcon()
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: - Setup Constraints
@@ -137,77 +140,121 @@ final class ConversationListAccessoryView: UIView {
         badgeView.fitIn(view: self)
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    // MARK: - Color Configuration & Appearance
+
+    /// Determines the color configuration for a specific `ConversationStatusIcon`.
+    ///
+    /// This method selects appropriate color settings (including background, tint, border, and corner radius) based on the icon's state.
+    /// Default clear colors are used when no specific styling is needed. The method handles various states such as active calls, silenced status, and standard message notifications.
+    ///
+    /// - Parameter icon: An optional `ConversationStatusIcon` to determine the color scheme for. If `nil`, a default clear configuration is returned.
+    /// - Returns: A `BadgeColorConfiguration` object representing the visual styling for the given icon.
+    private func colorConfiguration(for icon: ConversationStatusIcon?) -> BadgeColorConfiguration {
+        guard let icon = icon else {
+            return BadgeColorConfiguration(backgroundColor: .clear, tintColor: .clear)
+        }
+
+        switch icon {
+        case .pendingConnection, .missedCall, .playingMedia, .mention, .reply, .unreadPing, .unreadMessages:
+            return BadgeColorConfiguration(
+                backgroundColor: ViewColors.backgroundDefaultBlack,
+                tintColor: IconColors.foregroundDefaultWhite
+            )
+        case .activeCall(true):
+            return BadgeColorConfiguration(
+                backgroundColor: IconColors.backgroundJoinCall,
+                tintColor: .clear
+            )
+        case .silenced:
+            return BadgeColorConfiguration(
+                backgroundColor: ViewColors.backgroundDefaultWhite,
+                tintColor: IconColors.foregroundDefaultBlack,
+                borderColor: ViewColors.borderConversationListTableViewCellBadgeReverted,
+                borderWidth: 1,
+                cornerRadius: 6
+            )
+        case .activeCall(false), .typing:
+            return BadgeColorConfiguration(
+                backgroundColor: .clear,
+                tintColor: .clear
+            )
+
+        }
     }
 
-    // MARK: - Set up the view based on the state
+    /// Applies visual styling to the badge view based on the provided configuration.
+    /// Sets background color, tint, border color, border width, and corner radius as specified in the `BadgeColorConfiguration`.
+    ///
+    /// - Parameter config: A `BadgeColorConfiguration` object containing the desired appearance settings for the badge view.
+    private func applyBadgeViewAppearance(with config: BadgeColorConfiguration) {
+        badgeView.backgroundColor = config.backgroundColor
+        badgeView.tintColor = config.tintColor
+        badgeView.layer.borderColor = config.borderColor?.cgColor
+        badgeView.layer.borderWidth = config.borderWidth ?? 0
+        badgeView.layer.cornerRadius = config.cornerRadius ?? 0
+    }
 
+    /// Updates the badge view's appearance based on the current icon.
+    ///
+    /// Retrieves the color configuration for the current `icon` and applies it to the badge view.
+    /// This updates visual elements like background color, tint, border, and corner radius to reflect the icon's status.
+    ///
+    /// Note: Ensure the `icon` property is set before calling this method to reflect the correct appearance.
+    private func updateColorConfiguration() {
+        let colorConfig = colorConfiguration(for: icon)
+        applyBadgeViewAppearance(with: colorConfig)
+    }
+
+    // MARK: - traitCollectionDidChange
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        updateColorConfiguration()
+    }
+
+    /// Set up the view based on the state
     private var viewForState: UIView? {
-        typealias ConversationListVoiceOver = L10n.Localizable.ConversationList.Voiceover.Status
+        guard let icon = self.icon else { return nil }
 
-        guard let icon = icon else { return nil }
-        badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
-        let iconTintColor = IconColors.foregroundDefaultWhite
+        let iconSize: StyleKitIcon.Size = 12
 
+        // Configure the view based on the icon type
         switch icon {
         case .pendingConnection:
             iconView.setTemplateIcon(.clock, size: iconSize)
-            iconView.tintColor = iconTintColor
-            accessibilityValue = ConversationListVoiceOver.pendingConnection
             return iconView
         case .activeCall(false):
-            accessibilityValue = ConversationListVoiceOver.activeCall
-            return .none
+            iconView.setTemplateIcon(.endCall, size: iconSize)
+            return iconView
         case .activeCall(true):
             textLabel.text = L10n.Localizable.ConversationList.RightAccessory.JoinButton.title
             textLabel.textColor = textLabelColor
-            badgeView.backgroundColor = IconColors.backgroundJoinCall
-
-            badgeView.isAccessibilityElement = true
-            badgeView.accessibilityTraits = .button
-            badgeView.accessibilityValue = ConversationsListAccessibility.JoinButton.description
-            badgeView.accessibilityHint = ConversationsListAccessibility.JoinButton.hint
             return textLabel
         case .missedCall:
             iconView.setTemplateIcon(.endCall, size: iconSize)
-            iconView.tintColor = iconTintColor
             return iconView
         case .playingMedia:
-            if let mediaPlayer = activeMediaPlayer, mediaPlayer.state == .playing {
-                iconView.setTemplateIcon(.pause, size: iconSize)
-                iconView.tintColor = iconTintColor
-                accessibilityValue = ConversationListVoiceOver.pauseMedia
-            } else {
-                iconView.setTemplateIcon(.play, size: iconSize)
-                iconView.tintColor = iconTintColor
-                accessibilityValue = ConversationListVoiceOver.playMedia
-            }
+            let isPlaying = activeMediaPlayer?.state == .playing
+            iconView.setTemplateIcon(isPlaying ? .pause : .play, size: iconSize)
             return iconView
         case .silenced:
-            configureSilencedNotificationsIcon()
+            iconView.setTemplateIcon(.bellWithStrikethrough, size: iconSize)
             return iconView
         case .typing:
-            return .none
+            return nil
         case .unreadMessages(let count):
             textLabel.text = String(count)
             textLabel.textColor = textLabelColor
-            accessibilityValue = ConversationsListAccessibility.BadgeView.value(count)
             return textLabel
         case .mention:
             iconView.setTemplateIcon(.mention, size: iconSize)
-            iconView.tintColor = iconTintColor
-            accessibilityValue = ConversationsListAccessibility.MentionStatus.value
             return iconView
         case .reply:
             iconView.setTemplateIcon(.reply, size: iconSize)
-            iconView.tintColor = iconTintColor
-            accessibilityValue = ConversationsListAccessibility.ReplyStatus.value
             return iconView
         case .unreadPing:
             iconView.setTemplateIcon(.ping, size: iconSize)
-            iconView.tintColor = iconTintColor
             return iconView
         }
     }
@@ -227,78 +274,108 @@ final class ConversationListAccessoryView: UIView {
     }
 
     func updateForIcon() {
-        self.badgeView.containedView.subviews.forEach { $0.removeFromSuperview() }
+        badgeView.containedView.subviews.forEach { $0.removeFromSuperview() }
 
-        self.badgeView.isHidden = false
-        self.transparentIconView.isHidden = true
-
-        self.expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
-        self.expandWidthConstraint.constant = defaultViewWidth
+        badgeView.isHidden = false
+        transparentIconView.isHidden = true
+        expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
+        expandWidthConstraint.constant = defaultViewWidth
 
         guard let icon = icon else {
-            self.badgeView.isHidden = true
-            self.transparentIconView.isHidden = true
-
+            badgeView.isHidden = true
+            transparentIconView.isHidden = true
             updateCollapseConstraints(isCollapsed: true)
+            configureAccessibility(for: nil)
             return
+        }
+
+        let colorConfig = colorConfiguration(for: icon)
+        applyBadgeViewAppearance(with: colorConfig)
+
+        configureAccessibility(for: icon)
+
+        if let view = viewForState {
+            badgeView.containedView.addSubview(view)
+            setupContainedViewConstraints(for: view)
         }
 
         switch icon {
         case .activeCall(false):
-            self.badgeView.isHidden = true
-            self.transparentIconView.isHidden = false
-            self.transparentIconView.setTemplateIcon(.phone, size: iconSize)
-            self.transparentIconView.tintColor = IconColors.foregroundDefaultBlack
-
-            self.expandTransparentIconViewWidthConstraint.constant = activeCallWidth
-            self.expandWidthConstraint.constant = activeCallWidth
-
-        case .activeCall(true): // "Join" button
-            self.badgeView.backgroundColor = IconColors.backgroundJoinCall
-
+            configureForInactiveCall()
         case .typing:
-            self.badgeView.isHidden = true
-            self.transparentIconView.isHidden = false
-            self.transparentIconView.setTemplateIcon(.pencil, size: iconSize)
-            self.transparentIconView.tintColor = IconColors.foregroundDefaultBlack
-
-        case .unreadMessages, .mention:
-            self.textLabel.textColor = textLabelColor
-            self.badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
-
-        case .unreadPing, .reply, .missedCall:
-            self.badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
-
+            configureForTyping()
         default:
-            self.transparentIconView.image = .none
+            transparentIconView.image = .none
         }
 
         updateCollapseConstraints(isCollapsed: false)
+    }
 
-        if let view = self.viewForState {
-            self.badgeView.containedView.addSubview(view)
+    private func configureForInactiveCall() {
+        badgeView.isHidden = true
+        transparentIconView.isHidden = false
+        transparentIconView.setIcon(.phone, size: 18, color: IconColors.foregroundDefaultBlack)
+        expandTransparentIconViewWidthConstraint.constant = activeCallWidth
+        expandWidthConstraint.constant = activeCallWidth
+    }
 
-            let parentView = self.badgeView.containedView
-            view.translatesAutoresizingMaskIntoConstraints = false
-            parentView.translatesAutoresizingMaskIntoConstraints = false
+    private func configureForTyping() {
+        badgeView.isHidden = true
+        transparentIconView.isHidden = false
+        transparentIconView.setIcon(.pencil, size: 12, color: IconColors.foregroundDefaultBlack)
+        transparentIconView.tintColor = IconColors.foregroundDefaultBlack
+    }
 
-            NSLayoutConstraint.activate([
-                view.topAnchor.constraint(equalTo: parentView.topAnchor),
-                view.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
-                view.leadingAnchor.constraint(equalTo: parentView.leadingAnchor, constant: 6),
-                view.trailingAnchor.constraint(equalTo: parentView.trailingAnchor, constant: -6)
-            ])
+    private func setupContainedViewConstraints(for view: UIView) {
+        let parentView = badgeView.containedView
+        view.translatesAutoresizingMaskIntoConstraints = false
+        parentView.translatesAutoresizingMaskIntoConstraints = false
 
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: parentView.topAnchor),
+            view.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
+            view.leadingAnchor.constraint(equalTo: parentView.leadingAnchor, constant: 6),
+            view.trailingAnchor.constraint(equalTo: parentView.trailingAnchor, constant: -6)
+        ])
+    }
+
+    /// Configures accessibility settings for the badge view based on the current icon.
+    /// Sets appropriate accessibility values, hints, and traits depending on the icon type to enhance accessibility support.
+    ///
+    /// - Parameter icon: An optional `ConversationStatusIcon` used to determine the accessibility configuration.
+    private func configureAccessibility(for icon: ConversationStatusIcon?) {
+
+        typealias ConversationsListAccessibility = L10n.Accessibility.ConversationsList
+        typealias ConversationListVoiceOver = L10n.Localizable.ConversationList.Voiceover.Status
+
+        switch icon {
+        case .pendingConnection:
+            accessibilityValue = ConversationListVoiceOver.pendingConnection
+        case .activeCall(false):
+            accessibilityValue = ConversationListVoiceOver.activeCall
+        case .activeCall(true):
+            badgeView.accessibilityTraits = .button
+            badgeView.accessibilityValue = ConversationsListAccessibility.JoinButton.description
+            badgeView.accessibilityHint = ConversationsListAccessibility.JoinButton.hint
+        case .playingMedia:
+            if let mediaPlayer = activeMediaPlayer, mediaPlayer.state == .playing {
+                accessibilityValue = ConversationListVoiceOver.pauseMedia
+            } else {
+                accessibilityValue = ConversationListVoiceOver.playMedia
+            }
+        case .silenced:
+            accessibilityValue = ConversationsListAccessibility.SilencedStatus.value
+        case .unreadMessages(let count):
+            accessibilityValue = ConversationsListAccessibility.BadgeView.value(count)
+        case .mention:
+            accessibilityValue = ConversationsListAccessibility.MentionStatus.value
+        case .reply:
+            accessibilityValue = ConversationsListAccessibility.ReplyStatus.value
+        case .none, .typing, .unreadPing:
+            accessibilityValue = nil
+        case .some(.missedCall):
+            accessibilityValue = nil
         }
     }
 
-    private func configureSilencedNotificationsIcon() {
-        iconView.setTemplateIcon(.bellWithStrikethrough, size: iconSize)
-        iconView.tintColor = IconColors.foregroundDefaultBlack
-        badgeView.backgroundColor = ViewColors.backgroundDefaultWhite
-        badgeView.layer.borderColor = IconColors.borderMutedNotifications.cgColor
-        badgeView.layer.borderWidth = 1
-        badgeView.layer.cornerRadius = 6
-        accessibilityValue = ConversationsListAccessibility.SilencedStatus.value
-    }
 }

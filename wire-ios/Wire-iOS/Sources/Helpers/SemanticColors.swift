@@ -153,6 +153,13 @@ public enum SemanticColors {
         static let backgroundCallOverlay = UIColor(light: Asset.Colors.black, dark: Asset.Colors.black)
         static let backgroundCallTopOverlay = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
 
+        // The init here is different because in light mode we would like the color of the border
+        // to be clear. The initializer in all other cases in this file expects a type of ColorAsset
+        // in both light and dark mode.
+        static let borderConversationListTableViewCellBadgeReverted = UIColor { traits in
+            traits.userInterfaceStyle == .dark ? Asset.Colors.gray70.color : .clear
+        }
+
         // Mention
         static let backgroundBlueUsernameMention = UIColor(light: Asset.Colors.blue50Light, dark: Asset.Colors.blue800Dark)
         static let backgroundGreenUsernameMention = UIColor(light: Asset.Colors.green50Light, dark: Asset.Colors.green800Dark)
