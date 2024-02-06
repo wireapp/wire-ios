@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-// TODO: Remove this once this feature/e2ei is ready to be merged to develop
+// TODO: [WPB-6441] Remove this once this feature/e2ei is ready to be merged to develop
 
 class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
 
