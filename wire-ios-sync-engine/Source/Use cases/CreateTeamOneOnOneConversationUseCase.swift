@@ -43,7 +43,7 @@ public enum CreateTeamOneOnOneConversationError: Error {
 /// Creates the team one on one conversation with a particlar user, depending
 /// on the currently supported protocols of the self and other users.
 
-class CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseCaseProtocol {
+struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseCaseProtocol {
 
     private typealias Error = CreateTeamOneOnOneConversationError
 
