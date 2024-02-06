@@ -291,7 +291,10 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 enableReceipts: values.enableReceipts,
                 messageProtocol: values.encryptionProtocol == .proteus ? .proteus : .mls
             ) { [weak self] in
-                guard let self = self else { return }
+                guard let self = self else {
+                    assertionFailure("expect ConversationCreationController not to be <nil>")
+                    return
+                }
 
                 addParticipantsViewController.setLoadingView(isVisible: false)
 

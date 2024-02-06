@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */; };
+		013404E42B5F162D00D2D2D5 /* LegacyLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013404E32B5F162D00D2D2D5 /* LegacyLogger.swift */; };
 		01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030C2A0CED010000CFF2 /* WireLogger.swift */; };
 		01CB030F2A0CED010000CFF2 /* Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030D2A0CED010000CFF2 /* Flow.swift */; };
 		096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1D1B67CEF700565001 /* ZMSLogging.m */; };
@@ -67,6 +69,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregatedLogger.swift; sourceTree = "<group>"; };
+		013404E32B5F162D00D2D2D5 /* LegacyLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLogger.swift; sourceTree = "<group>"; };
 		01CB030C2A0CED010000CFF2 /* WireLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WireLogger.swift; sourceTree = "<group>"; };
 		01CB030D2A0CED010000CFF2 /* Flow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flow.swift; sourceTree = "<group>"; };
 		092758691B70E68F00AD5A78 /* WireSystem.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireSystem.xcconfig; sourceTree = "<group>"; };
@@ -153,6 +157,8 @@
 				01CB030C2A0CED010000CFF2 /* WireLogger.swift */,
 				01CB030D2A0CED010000CFF2 /* Flow.swift */,
 				16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */,
+				013404E32B5F162D00D2D2D5 /* LegacyLogger.swift */,
+				013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */,
 			);
 			path = Logging;
 			sourceTree = "<group>";
@@ -430,12 +436,14 @@
 				54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */,
 				EEDC67192A1778D600201436 /* UserDefaults+Helpers.swift in Sources */,
 				54C0CC411C9C7635000A9286 /* ZMSAsserts.m in Sources */,
+				013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */,
 				54F9BC4E1C48F55900BC09DB /* ZMSTestDetection.m in Sources */,
 				096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */,
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
 				16962EDE20221F970069D88D /* ZMSLogNotifications.m in Sources */,
 				F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */,
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,
+				013404E42B5F162D00D2D2D5 /* LegacyLogger.swift in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,
 				54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */,
 				54D5736A1DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift in Sources */,
