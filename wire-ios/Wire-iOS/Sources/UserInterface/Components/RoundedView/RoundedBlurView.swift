@@ -37,7 +37,9 @@ class RoundedBlurView: RoundedView {
         addSubview(blurView)
     }
 
-    /// TODO: Bill activate super constraints in 1 batch.
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: Bill activate super constraints in 1 batch.
+    // swiftlint:enable todo_requires_jira_link
     func createConstraints() {
         blurView.translatesAutoresizingMaskIntoConstraints = false
         blurView.fitIn(view: self)

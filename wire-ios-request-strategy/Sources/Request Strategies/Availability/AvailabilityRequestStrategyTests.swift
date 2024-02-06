@@ -18,6 +18,7 @@
 
 import XCTest
 import WireRequestStrategy
+import WireRequestStrategySupport
 
 class AvailabilityRequestStrategyTests: MessagingTestBase {
 

@@ -43,6 +43,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
         )
 
         configuration = [
+            .allowsRequestsWhileUnauthenticated,
             .allowsRequestsWhileOnline,
             .allowsRequestsDuringQuickSync,
             .allowsRequestsWhileWaitingForWebsocket,
@@ -124,6 +125,10 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         case .mls:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
             featureRepository.storeMLS(.init(status: response.status, config: response.config))
+
+        case .e2ei:
+            let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
+            featureRepository.storeE2EI(.init(status: response.status, config: response.config))
 
         case .mlsMigration:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLSMigration.Config>.self, from: data)

@@ -103,6 +103,11 @@ protocol GroupDetailsConversation {
     var messageProtocol: MessageProtocol { get }
 
     var mlsGroupID: MLSGroupID? { get }
+
+    var mlsVerificationStatus: MLSVerificationStatus? { get }
+
+    var securityLevel: ZMConversationSecurityLevel { get }
+
 }
 
 typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation
@@ -117,6 +122,19 @@ extension ZMConversation: GroupDetailsConversation {
 
     var syncedMessageDestructionTimeout: TimeInterval {
         return messageDestructionTimeoutValue(for: .groupConversation).rawValue
+    }
+
+}
+
+extension GroupDetailsConversation {
+
+    var isVerified: Bool {
+        switch messageProtocol {
+        case .proteus:
+            return securityLevel == .secure
+        case .mls, .mixed:
+            return mlsVerificationStatus == .verified
+        }
     }
 
 }

@@ -35,7 +35,6 @@ public protocol ConversationLike: NSObjectProtocol {
     var allowServices: Bool { get }
 
     var isUnderLegalHold: Bool { get }
-    var securityLevel: ZMConversationSecurityLevel { get }
 
     func verifyLegalHoldSubjects()
 

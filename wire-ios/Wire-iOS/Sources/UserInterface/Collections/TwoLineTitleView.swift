@@ -32,15 +32,15 @@ final class TwoLineTitleView: UIView {
         return label
     }()
 
-    init(first: String, second: String) {
+    init(first: NSAttributedString, second: NSAttributedString?) {
         super.init(frame: CGRect.zero)
         isAccessibilityElement = true
 
         titleLabel.textAlignment = .center
         subtitleLabel.textAlignment = .center
 
-        titleLabel.text = first
-        subtitleLabel.text = second
+        titleLabel.attributedText = first
+        subtitleLabel.attributedText = second
 
         addSubview(titleLabel)
         addSubview(subtitleLabel)

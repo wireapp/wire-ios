@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 public enum FontTextStyle: String {
     case largeTitle
@@ -116,6 +117,10 @@ public struct FontSpec: Hashable {
 
     public var font: UIFont? {
         return FontScheme.font(for: self)
+    }
+
+    public var swiftUIFont: Font {
+        return Font(self.font! as CTFont)
     }
 }
 

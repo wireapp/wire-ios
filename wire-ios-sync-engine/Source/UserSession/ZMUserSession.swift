@@ -135,6 +135,11 @@ public class ZMUserSession: NSObject {
         return featureRepository.fetchClassifiedDomains()
     }
 
+    public var e2eiFeature: Feature.E2EI {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchE2EI()
+    }
+
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
@@ -260,6 +265,54 @@ public class ZMUserSession: NSObject {
                                         proteusProvider: proteusProvider)
     }()
 
+    public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
+        let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl
+        let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+
+        let apiProvider = APIProvider(httpClient: httpClient)
+
+        let e2eiSetupService = E2eISetupService(coreCryptoProvider: coreCryptoProvider)
+
+        let keyRotator = E2eIKeyPackageRotator(
+            coreCryptoProvider: coreCryptoProvider,
+            conversationEventProcessor: conversationEventProcessor,
+            context: syncContext
+        )
+
+        let e2eiRepository = E2eIRepository(
+            acmeApi: acmeApi,
+            apiProvider: apiProvider,
+            e2eiSetupService: e2eiSetupService,
+            keyRotator: keyRotator,
+            coreCryptoProvider: coreCryptoProvider
+        )
+
+        return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
+    }()
+
+    public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol =  {
+        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
+    }()
+
+    public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
+        return GetE2eIdentityCertificatesUseCase(coreCryptoProvider: coreCryptoProvider)
+    }()
+
+    lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {
+        let verificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+        let verificationStatusProvider = MLSConversationVerificationStatusProvider(
+            e2eIVerificationStatusService: verificationStatusService,
+            syncContext: syncContext)
+
+        return MLSConversationVerificationManager(
+            mlsService: mlsService,
+            mlsConversationVerificationStatusProvider: verificationStatusProvider)
+    }()
+
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
@@ -379,7 +432,7 @@ public class ZMUserSession: NSObject {
                                                        contextProvider: self,
                                                        callNotificationStyleProvider: self)
 
-            // FIXME: [jacob] inject instead of storing on context WPB-5827
+            // FIXME: [WPB-5827] inject instead of storing on context - [jacob]
             self.syncManagedObjectContext.proteusService = self.proteusService
             self.syncManagedObjectContext.mlsService = self.mlsService
 
@@ -390,6 +443,10 @@ public class ZMUserSession: NSObject {
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
             createMLSClientIfNeeded()
+
+            if e2eiFeature.isEnabled {
+                mlsConversationVerificationManager.startObservingMLSConversationVerificationStatus()
+            }
         }
 
         registerForCalculateBadgeCountNotification()
@@ -563,7 +620,7 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
-        // TODO: [jacob] refactor out WPB-6198
+        // TODO: [WPB-6198] refactor out - [jacob]
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
@@ -683,10 +740,10 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
         networkState = state
     }
-
 }
-
+// swiftlint:disable todo_requires_jira_link
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
+// swiftlint:enable todo_requires_jira_link
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         await updateEventProcessor?.bufferEvents(events)
@@ -823,7 +880,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    // // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
+    // swiftlint:disable todo_requires_jira_link
+    // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
+    // swiftlint:enable todo_requires_jira_link
     private func commitPendingProposalsIfNeeded() {
         Task {
             do {

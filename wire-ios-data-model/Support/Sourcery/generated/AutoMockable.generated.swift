@@ -1866,6 +1866,38 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
 }
 
+public class MockE2eIVerificationStatusServiceInterface: E2eIVerificationStatusServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getConversationStatus
+
+    public var getConversationStatusGroupID_Invocations: [MLSGroupID] = []
+    public var getConversationStatusGroupID_MockError: Error?
+    public var getConversationStatusGroupID_MockMethod: ((MLSGroupID) async throws -> MLSVerificationStatus)?
+    public var getConversationStatusGroupID_MockValue: MLSVerificationStatus?
+
+    public func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus {
+        getConversationStatusGroupID_Invocations.append(groupID)
+
+        if let error = getConversationStatusGroupID_MockError {
+            throw error
+        }
+
+        if let mock = getConversationStatusGroupID_MockMethod {
+            return try await mock(groupID)
+        } else if let mock = getConversationStatusGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getConversationStatusGroupID`")
+        }
+    }
+
+}
+
 class MockEARKeyEncryptorInterface: EARKeyEncryptorInterface {
 
     // MARK: - Life cycle
@@ -2533,6 +2565,39 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(mls)
     }
 
+    // MARK: - fetchE2EI
+
+    public var fetchE2EI_Invocations: [Void] = []
+    public var fetchE2EI_MockMethod: (() -> Feature.E2EI)?
+    public var fetchE2EI_MockValue: Feature.E2EI?
+
+    public func fetchE2EI() -> Feature.E2EI {
+        fetchE2EI_Invocations.append(())
+
+        if let mock = fetchE2EI_MockMethod {
+            return mock()
+        } else if let mock = fetchE2EI_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchE2EI`")
+        }
+    }
+
+    // MARK: - storeE2EI
+
+    public var storeE2EI_Invocations: [Feature.E2EI] = []
+    public var storeE2EI_MockMethod: ((Feature.E2EI) -> Void)?
+
+    public func storeE2EI(_ e2ei: Feature.E2EI) {
+        storeE2EI_Invocations.append(e2ei)
+
+        guard let mock = storeE2EI_MockMethod else {
+            fatalError("no mock for `storeE2EI`")
+        }
+
+        mock(e2ei)
+    }
+
     // MARK: - fetchMLSMigration
 
     public var fetchMLSMigration_Invocations: [Void] = []
@@ -2917,6 +2982,35 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
         }
 
         try await mock(qualifiedIDs, context)
+    }
+
+}
+
+public class MockMLSConversationVerificationStatusProviderInterface: MLSConversationVerificationStatusProviderInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - updateStatus
+
+    public var updateStatus_Invocations: [MLSGroupID] = []
+    public var updateStatus_MockError: Error?
+    public var updateStatus_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func updateStatus(_ groupID: MLSGroupID) async throws {
+        updateStatus_Invocations.append(groupID)
+
+        if let error = updateStatus_MockError {
+            throw error
+        }
+
+        guard let mock = updateStatus_MockMethod else {
+            fatalError("no mock for `updateStatus`")
+        }
+
+        try await mock(groupID)
     }
 
 }
@@ -3322,6 +3416,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `onConferenceInfoChangeParentGroupIDSubConversationGroupID`")
+        }
+    }
+
+    // MARK: - epochChanges
+
+    public var epochChanges_Invocations: [Void] = []
+    public var epochChanges_MockMethod: (() -> AsyncStream<MLSGroupID>)?
+    public var epochChanges_MockValue: AsyncStream<MLSGroupID>?
+
+    public func epochChanges() -> AsyncStream<MLSGroupID> {
+        epochChanges_Invocations.append(())
+
+        if let mock = epochChanges_MockMethod {
+            return mock()
+        } else if let mock = epochChanges_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `epochChanges`")
         }
     }
 

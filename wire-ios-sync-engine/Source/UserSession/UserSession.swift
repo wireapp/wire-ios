@@ -128,11 +128,12 @@ public protocol UserSession: AnyObject {
         _ changes: @escaping () -> Void,
         completionHandler: (() -> Void)?
     )
-
+    // swiftlint:disable todo_requires_jira_link
     // TODO: rename to "shouldHideNotificationContent"
     var isNotificationContentHidden: Bool { get set }
 
     // TODO: rename to "isEncryptionAtRestEnabled"
+    // swiftlint:enable todo_requires_jira_link
     var encryptMessagesAtRest: Bool { get }
 
     func setEncryptionAtRest(enabled: Bool, skipMigration: Bool) throws
@@ -214,6 +215,14 @@ public protocol UserSession: AnyObject {
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
+
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
+
+    var e2eiFeature: Feature.E2EI { get }
+
+    func fetchAllClients()
 }
 
 extension ZMUserSession: UserSession {

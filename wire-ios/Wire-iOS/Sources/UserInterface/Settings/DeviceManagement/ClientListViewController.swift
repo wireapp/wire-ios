@@ -19,6 +19,7 @@
 import UIKit
 import WireSyncEngine
 import WireCommonComponents
+import SwiftUI
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -68,10 +69,21 @@ final class ClientListViewController: UIViewController,
 
     private let clientSorter: (UserClient, UserClient) -> Bool
     private let clientFilter: (UserClient) -> Bool
+    private let userSession: UserSession?
+    private let contextProvider: ContextProvider?
 
+    var selfClientClientTableViewCellModel: ClientTableViewCellModel? {
+        guard let selfClient = selfClient else {
+            return nil
+        }
+        return .from(userClient: selfClient)
+    }
+    var clientTableViewCellModels: [ClientTableViewCellModel] {
+        return sortedClients.map { .from(userClient: $0) }
+    }
     var sortedClients: [UserClient] = []
 
-    let selfClient: UserClient?
+    var selfClient: UserClient?
     let detailedView: Bool
     var credentials: ZMEmailCredentials?
     var clientsObserverToken: Any?
@@ -96,15 +108,21 @@ final class ClientListViewController: UIViewController,
         return nil
     }
 
-    required init(clientsList: [UserClient]?,
-                  selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
-                  credentials: ZMEmailCredentials? = .none,
-                  detailedView: Bool = false,
-                  showTemporary: Bool = true,
-                  showLegalHold: Bool = true) {
+    required init(
+        clientsList: [UserClient]?,
+        selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
+        userSession: UserSession? = ZMUserSession.shared(),
+        credentials: ZMEmailCredentials? = .none,
+        contextProvider: ContextProvider? = ZMUserSession.shared(),
+        detailedView: Bool = false,
+        showTemporary: Bool = true,
+        showLegalHold: Bool = true
+    ) {
+        self.userSession = userSession
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
+        self.contextProvider = contextProvider
 
         clientFilter = {
             $0 != selfClient && (showTemporary || $0.type != .temporary) && (showLegalHold || $0.type != .legalHold)
@@ -128,7 +146,7 @@ final class ClientListViewController: UIViewController,
             if clients.isEmpty {
                 (navigationController as? SpinnerCapableViewController ?? self).isLoadingViewVisible = true
             }
-            ZMUserSession.shared()?.fetchAllClients()
+            userSession?.fetchAllClients()
         }
     }
 
@@ -166,6 +184,7 @@ final class ClientListViewController: UIViewController,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -182,13 +201,41 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession = ZMUserSession.shared() else { return }
-        if let navigationController = self.navigationController {
-            let clientViewController = SettingsClientViewController(userClient: client,
-                                                                    userSession: userSession,
-                                                                    credentials: self.credentials)
-            clientViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-            navigationController.pushViewController(clientViewController, animated: true)
+        guard let userSession = userSession,
+              let navigationController = self.navigationController
+        else {
+            assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
+            return
+        }
+        let viewModel = DeviceInfoViewModel.map(
+            certificate: client.e2eIdentityCertificate,
+            userClient: client,
+            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
+            addedDate: client.activationDate?.formattedDate ?? "",
+            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16),
+            isSelfClient: client.isSelfClient(),
+            userSession: userSession,
+            credentials: credentials,
+            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsThumbprint: client.mlsPublicKeys.ed25519?.splitStringIntoLines(charactersPerLine: 16),
+            getProteusFingerprint: userSession.getUserClientFingerprint
+        )
+        let detailsView = DeviceDetailsView(viewModel: viewModel) {
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
+        }
+        let hostingViewController = UIHostingController(rootView: detailsView)
+        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.pushViewController(hostingViewController, animated: true)
+        navigationController.isNavigationBarHidden = true
+    }
+
+    @MainActor
+    private func fetchSelfConversation() async -> MLSGroupID? {
+        guard let syncContext = contextProvider?.syncContext else {
+            return nil
+        }
+        return await syncContext.perform {
+            return ZMConversation.fetchSelfMLSConversation(in: syncContext)?.mlsGroupID
         }
     }
 
@@ -260,9 +307,13 @@ final class ClientListViewController: UIViewController,
     // MARK: - ClientRegistrationObserver
 
     func finishedFetching(_ userClients: [UserClient]) {
-        dismissLoadingView()
-
-        self.clients = userClients.filter { !$0.isSelfClient() }
+        Task {
+            let updatedClients = await updateCertificates(for: userClients)
+            await MainActor.run {
+                dismissLoadingView()
+                clients = updatedClients.filter { !$0.isSelfClient() }
+            }
+        }
     }
 
     func failedToFetchClients(_ error: Error) {
@@ -350,18 +401,16 @@ final class ClientListViewController: UIViewController,
         if let cell = tableView.dequeueReusableCell(withIdentifier: ClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? ClientTableViewCell {
             cell.selectionStyle = .none
             cell.showDisclosureIndicator()
-            cell.showVerified = self.detailedView
 
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
-                cell.userClient = self.selfClient
+                cell.viewModel = selfClientClientTableViewCellModel
                 cell.wr_editable = false
-                cell.showVerified = false
             case 1:
-                cell.userClient = self.sortedClients[indexPath.row]
+                cell.viewModel = clientTableViewCellModels[indexPath.row]
                 cell.wr_editable = true
             default:
-                cell.userClient = nil
+                cell.viewModel = nil
             }
 
             cell.accessibilityTraits = .button
@@ -450,6 +499,59 @@ final class ClientListViewController: UIViewController,
         navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Registration.Devices.title.capitalized)
     }
 
+    private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
+        let mlsGroupID = await fetchSelfConversation()
+        if let mlsGroupID = mlsGroupID, let userSession = userSession {
+            var updatedUserClients = [UserClient]()
+            let mlsResolver = MLSClientResolver()
+            let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
+                if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+                    ($0.clientId.hashValue, mlsClientId)
+                } else {
+                    nil
+                }
+            })
+            let mlsClienIds = mlsClients.values.map({$0})
+            do {
+                let isE2eIEnabledForSelfClient = try await userSession.getIsE2eIdentityEnabled.invoke()
+                let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupID,
+                                                                                           clientIds: mlsClienIds)
+                if certificates.isNonEmpty {
+                    for client in userClients {
+                        let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
+                        client.e2eIdentityCertificate = certificates.first(where: {$0.clientId == mlsClientIdRawValue})
+                        if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
+                            client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                        }
+                        updatedUserClients.append(client)
+                    }
+                    if let selfClient = selfClient {
+                        selfClient.e2eIdentityCertificate = certificates.first(where: {
+                            $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
+                        })
+                        if certificates.isNonEmpty {
+                            selfClient.e2eIdentityCertificate = selfClient.notActivatedE2EIdenityCertificate()
+                        }
+                    }
+                    return updatedUserClients
+                } else if isE2eIEnabledForSelfClient {
+                    for client in clients {
+                        let theClient = client
+                        theClient.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                        updatedUserClients.append(theClient)
+                    }
+                    return updatedUserClients
+                } else {
+                    return userClients
+                }
+            } catch {
+                WireLogger.e2ei.error(error.localizedDescription)
+                return userClients
+            }
+        } else {
+            return userClients
+        }
+    }
 }
 
 // MARK: - ClientRemovalObserverDelegate
@@ -486,4 +588,21 @@ extension ClientListViewController: UserObserving {
         }
     }
 
+}
+
+private extension UserClient {
+    func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
+        guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
+            return nil
+        }
+        return E2eIdentityCertificate(
+            clientId: mlsResolver.rawValue,
+            certificateDetails: "",
+            mlsThumbprint: self.mlsPublicKeys.ed25519 ?? "",
+            notValidBefore: .now,
+            expiryDate: .now,
+            certificateStatus: .notActivated,
+            serialNumber: ""
+        )
+    }
 }

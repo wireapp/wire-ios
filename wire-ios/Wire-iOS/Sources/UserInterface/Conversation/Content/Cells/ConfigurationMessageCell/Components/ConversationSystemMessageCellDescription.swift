@@ -93,7 +93,7 @@ final class ConversationSystemMessageCellDescription {
 
             return [AnyConversationMessageCellDescription(timerCell)]
 
-        case .conversationIsSecure:
+        case .conversationIsSecure, .conversationIsVerified, .conversationIsDegraded:
             let shieldCell = ConversationVerifiedSystemMessageSectionDescription()
             return [AnyConversationMessageCellDescription(shieldCell)]
 

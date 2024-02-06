@@ -182,7 +182,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                         clientRegistrationStatus.didGeneratePrekeys(prekeys, lastResortPrekey: lastResortPrekey)
                     }
                 } catch {
+                    // swiftlint:disable todo_requires_jira_link
                     // TODO: [F] check if we need to propagate error
+                    // swiftlint:enable todo_requires_jira_link
                     WireLogger.proteus.error("prekeys: failed to generatePrekeys: \(error.localizedDescription)")
                 }
             }
@@ -205,8 +207,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             }
         }
 
-        if let request = modifiedSync.nextRequest(for: apiVersion) {
-            return request
+        if clientRegistrationStatus.currentPhase == .registered || clientRegistrationStatus.currentPhase == .registeringMLSClient {
+            if let request = modifiedSync.nextRequest(for: apiVersion) {
+                return request
+            }
         }
 
         return nil
@@ -343,7 +347,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                             self.clientUpdateStatus?.didGeneratePrekeys(prekeys)
                         }
                     } catch {
+                        // swiftlint:disable todo_requires_jira_link
                         // TODO: [F] check if we need to propagate error
+                        // swiftlint:enable todo_requires_jira_link
                         WireLogger.proteus.error("prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)")
                     }
                     managedObjectContext?.leaveAllGroups(groups)

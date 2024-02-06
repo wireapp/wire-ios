@@ -24,7 +24,9 @@ import WireCommonComponents
 // file changes to the minimum instead of renaming the oroginal IconButton
 // class to something else and then had to make changes in a lot more files
 
+// swiftlint:disable todo_requires_jira_link
 // TODO: - [AGIS] Get rid of this class as soon as we make all the appropriate changes to the original class
+// swiftlint:enable todo_requires_jira_link
 class NonLegacyIconButton: IconButton {
 
     override var isSelected: Bool {

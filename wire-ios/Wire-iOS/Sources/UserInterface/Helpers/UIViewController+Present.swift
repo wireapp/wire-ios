@@ -27,6 +27,18 @@ extension UIViewController {
     ///   - completion: the completion closure
     func presentTopmost(animated flag: Bool = true,
                         completion: (() -> Void)? = nil) {
-        UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(self, animated: flag, completion: completion)
+        UIApplication.shared
+            .topmostViewController(onlyFullScreen: false)?
+            .present(self, animated: flag, completion: completion)
+    }
+
+    static func presentTopmost(
+        viewController: UIViewController,
+        animated flag: Bool = true,
+        completion: (() -> Void)? = nil
+    ) {
+        UIApplication.shared
+            .topmostViewController(onlyFullScreen: false)?
+            .present(viewController, animated: flag, completion: completion)
     }
 }

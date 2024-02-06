@@ -17,9 +17,10 @@
 //
 
 import Foundation
-import WireRequestStrategy
-import XCTest
 import WireDataModel
+import WireRequestStrategy
+import WireRequestStrategySupport
+import XCTest
 
 final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 

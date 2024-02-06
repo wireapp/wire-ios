@@ -178,7 +178,9 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func setupViews() {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: if keyboard is open, it should scroll.
+        // swiftlint:enable todo_requires_jira_link
         let collectionView = UICollectionView(forGroupedSections: ())
 
         collectionView.contentInsetAdjustmentBehavior = .never
@@ -281,7 +283,9 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             values.participants = users
 
         case .create:
+            // swiftlint:disable todo_requires_jira_link
             // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
+            // swiftlint:enable todo_requires_jira_link
             guard let userSession = userSession as? ZMUserSession else { return }
 
             addParticipantsViewController.setLoadingView(isVisible: true)

@@ -55,22 +55,15 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
     /// - Parameters:
     /// - userInterfaceStyle: the color for UIUserInterfaceStyle
     /// - numberOfClients: number of clients other than self device. Default: display 3 cells, to show footer in same screen
-    func prepareSut(userInterfaceStyle: UIUserInterfaceStyle = .light, numberOfClients: Int = 3) {
-        var clientsList: [UserClient]?
-
-        for _ in 0 ..< numberOfClients {
-            if clientsList == nil {
-                clientsList = []
-            }
-            clientsList?.append(client)
-        }
-
-        sut = ClientListViewController(clientsList: clientsList,
+    func prepareSut(
+        userInterfaceStyle: UIUserInterfaceStyle = .light,
+        numberOfClients: Int = 3
+    ) {
+        sut = ClientListViewController(clientsList: Array(repeating: mockUserClient(), count: numberOfClients),
                                        selfClient: selfClient,
                                        credentials: nil,
                                        detailedView: true,
                                        showTemporary: true)
-
         sut.isLoadingViewVisible = false
         sut.overrideUserInterfaceStyle = userInterfaceStyle
     }
