@@ -196,60 +196,6 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
         mock(id)
     }
 
-    // MARK: - removeAction
-
-    var removeActionId_Invocations: [String] = []
-    var removeActionId_MockMethod: ((String) -> Void)?
-
-    func removeAction(id: String) {
-        removeActionId_Invocations.append(id)
-
-        guard let mock = removeActionId_MockMethod else {
-            fatalError("no mock for `removeActionId`")
-        }
-
-        mock(id)
-    }
-
-}
-
-public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - start
-
-    public var startWith_Invocations: [TimeInterval] = []
-    public var startWith_MockMethod: ((TimeInterval) -> Void)?
-
-    public func start(with gracePeriod: TimeInterval) {
-        startWith_Invocations.append(gracePeriod)
-
-        guard let mock = startWith_MockMethod else {
-            fatalError("no mock for `startWith`")
-        }
-
-        mock(gracePeriod)
-    }
-
-    // MARK: - remove
-
-    public var remove_Invocations: [Void] = []
-    public var remove_MockMethod: (() -> Void)?
-
-    public func remove() {
-        remove_Invocations.append(())
-
-        guard let mock = remove_MockMethod else {
-            fatalError("no mock for `remove`")
-        }
-
-        mock()
-    }
-
 }
 
 public class MockUserProfile: UserProfile {

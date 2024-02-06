@@ -41,7 +41,7 @@ class AuthenticatedRouter: NSObject {
     private let activeCallRouter: ActiveCallRouter
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: FeatureRepositoryProvider
-    private let featureChangeActionsHandler: E2eINotificationActions
+    private let featureChangeActionsHandler: FeatureChangeActions
 
     // MARK: - Public Property
 
@@ -59,8 +59,7 @@ class AuthenticatedRouter: NSObject {
         userSession: UserSession,
         isComingFromRegistration: Bool,
         needToShowDataUsagePermissionDialog: Bool,
-        featureRepositoryProvider: FeatureRepositoryProvider,
-        featureChangeActionsHandler: E2eINotificationActionsHandler
+        featureRepositoryProvider: FeatureRepositoryProvider
     ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
@@ -73,7 +72,7 @@ class AuthenticatedRouter: NSObject {
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
-        self.featureChangeActionsHandler = featureChangeActionsHandler
+        self.featureChangeActionsHandler = userSession.featureChangeActionsHandler
 
         super.init()
 
@@ -90,11 +89,8 @@ class AuthenticatedRouter: NSObject {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
             let alert = change.hasFurtherActions
-                ? UIAlertController.fromFeatureChangeWithActions(change,
-                                                                 acknowledger: featureRepositoryProvider.featureRepository,
-                                                                 actionsHandler: featureChangeActionsHandler)
-                : UIAlertController.fromFeatureChange(change,
-                                                      acknowledger: featureRepositoryProvider.featureRepository)
+                ? UIAlertController.fromFeatureChangeWithActions(change, actionsHandler: featureChangeActionsHandler)
+                : UIAlertController.fromFeatureChange(change, acknowledger: featureRepositoryProvider.featureRepository)
         else {
             return
         }

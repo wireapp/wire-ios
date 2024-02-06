@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct RecurringAction {
+struct RecurringAction {
 
     let id: String
     let interval: TimeInterval

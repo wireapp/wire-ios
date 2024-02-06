@@ -334,8 +334,8 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
         switch e2ei.status {
         case .enabled:
-            let gracePeriod = TimeInterval(e2ei.config.verificationExpiration)
-            notifyChange(.e2eIEnabled(gracePeriod: gracePeriod))
+            notifyChange(.e2eIEnabled)
+
         case .disabled:
             return
         }
@@ -453,7 +453,7 @@ extension FeatureRepository {
         case fileSharingDisabled
         case conversationGuestLinksEnabled
         case conversationGuestLinksDisabled
-        case e2eIEnabled(gracePeriod: TimeInterval)
+        case e2eIEnabled
 
         public var hasFurtherActions: Bool {
             switch self {
@@ -470,6 +470,5 @@ extension FeatureRepository {
 extension Notification.Name {
 
     public static let featureDidChangeNotification = Notification.Name("FeatureDidChangeNotification")
-    public static let storeGracePeriodNotification = Notification.Name("StoreGracePeriodNotification")
 
 }

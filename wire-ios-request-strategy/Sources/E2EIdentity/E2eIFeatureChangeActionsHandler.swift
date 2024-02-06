@@ -16,9 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-protocol RecurringActionServiceInterface {
-    func performActionsIfNeeded()
-    func registerAction(_ action: RecurringAction)
-    func forcePerformAction(id: String)
+import Foundation
+
+public protocol FeatureChangeActions {
+
+    func enrollCertificate()
+
+    func postponeReminder()
+
+}
+
+public class E2eIFeatureChangeActionsHandler: NSObject, FeatureChangeActions {
+
+    // MARK: - Properties
+
+    private var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface?
+
+    // MARK: - Life cycle
+
+    public init(enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface?) {
+        self.enrollE2eICertificate = enrollE2eICertificate
+    }
+
+    public func enrollCertificate() {
+    /// TODO: https://wearezeta.atlassian.net/browse/WPB-6060
+    }
+
+    public func postponeReminder() {
+    /// TODO: https://wearezeta.atlassian.net/browse/WPB-6060
+    }
+
 }

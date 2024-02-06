@@ -36,7 +36,6 @@
 		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		0622D6A2265B38DE00D759DB /* UserBlockingReasonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */; };
-		062BC8A52B71093A00692DF7 /* FeatureChangeActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062BC8A42B71093A00692DF7 /* FeatureChangeActions.swift */; };
 		0630E4C42580469300C75BFB /* AppLockChangeWarningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */; };
 		063796852963A78A00674AAA /* ConversationListTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063796842963A78A00674AAA /* ConversationListTabBar.swift */; };
 		06379687296491C000674AAA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06379686296491C000674AAA /* Images.xcassets */; };
@@ -77,7 +76,7 @@
 		06C412AC238FCAA80018866F /* Int+Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AB238FCAA80018866F /* Int+Const.swift */; };
 		06C412B0239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */; };
 		06CDC6F62A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CDC6F52A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift */; };
-		06D93B472B56F64F00A0A512 /* E2eIFeatureChange+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D93B462B56F64F00A0A512 /* E2eIFeatureChange+Alert.swift */; };
+		06D93B472B56F64F00A0A512 /* E2eIFeatureChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D93B462B56F64F00A0A512 /* E2eIFeatureChange.swift */; };
 		06D93B492B56F9F400A0A512 /* MockE2eIFeatureChangeActionsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D93B482B56F9F400A0A512 /* MockE2eIFeatureChangeActionsHandler.swift */; };
 		06D93B4A2B56FB5400A0A512 /* MockE2eIFeatureChangeActionsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D93B482B56F9F400A0A512 /* MockE2eIFeatureChangeActionsHandler.swift */; };
 		06DF42D12757DA56009C8A99 /* GuestLinkInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */; };
@@ -2041,7 +2040,6 @@
 		061EF88E2797F74800584C53 /* SettingsCopyButtonCellDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCopyButtonCellDescriptor.swift; sourceTree = "<group>"; };
 		061F34152B1A4F360099CBAB /* OAuthUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthUseCase.swift; sourceTree = "<group>"; };
 		0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBlockingReasonCell.swift; sourceTree = "<group>"; };
-		062BC8A42B71093A00692DF7 /* FeatureChangeActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureChangeActions.swift; sourceTree = "<group>"; };
 		0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockChangeWarningViewController.swift; sourceTree = "<group>"; };
 		063796842963A78A00674AAA /* ConversationListTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListTabBar.swift; sourceTree = "<group>"; };
 		06379686296491C000674AAA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -2097,7 +2095,7 @@
 		06C412AB238FCAA80018866F /* Int+Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Const.swift"; sourceTree = "<group>"; };
 		06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+DragAndDrop.swift"; sourceTree = "<group>"; };
 		06CDC6F52A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailedUsersSystemMessageCell.swift; sourceTree = "<group>"; };
-		06D93B462B56F64F00A0A512 /* E2eIFeatureChange+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "E2eIFeatureChange+Alert.swift"; sourceTree = "<group>"; };
+		06D93B462B56F64F00A0A512 /* E2eIFeatureChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIFeatureChange.swift; sourceTree = "<group>"; };
 		06D93B482B56F9F400A0A512 /* MockE2eIFeatureChangeActionsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockE2eIFeatureChangeActionsHandler.swift; sourceTree = "<group>"; };
 		06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestLinkInfoCell.swift; sourceTree = "<group>"; };
 		06E097972A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+IncompleteMetadata.swift"; sourceTree = "<group>"; };
@@ -4095,8 +4093,7 @@
 			isa = PBXGroup;
 			children = (
 				061F34152B1A4F360099CBAB /* OAuthUseCase.swift */,
-				06D93B462B56F64F00A0A512 /* E2eIFeatureChange+Alert.swift */,
-				062BC8A42B71093A00692DF7 /* FeatureChangeActions.swift */,
+				06D93B462B56F64F00A0A512 /* E2eIFeatureChange.swift */,
 			);
 			path = E2EIdentity;
 			sourceTree = "<group>";
@@ -9236,7 +9233,6 @@
 				5E8C38BA212FE106002AE12B /* AuthenticationStateController.swift in Sources */,
 				EF1EE76F2253AE2800E7B6E3 /* ConversationViewController+Constraints.swift in Sources */,
 				7C17ECA81F7508980056600C /* PreviewHeightCalculator.swift in Sources */,
-				062BC8A52B71093A00692DF7 /* FeatureChangeActions.swift in Sources */,
 				5E769C5C21AEA3CB00785EB7 /* MessageDetailsContentViewController.swift in Sources */,
 				EF33204C21496A0D0079E832 /* AVPlayerViewController+StatusBarAndNotification.swift in Sources */,
 				A9806A3C23E209FC00691DFE /* AudioTrack.swift in Sources */,
@@ -9604,7 +9600,7 @@
 				010497D92940F4F40046124D /* TextFieldWrapper.swift in Sources */,
 				A9A3B1F324D9A009001AF38E /* WipeCompletionViewController.swift in Sources */,
 				BFC0673D2099DD7D00204179 /* CallInfoViewController.swift in Sources */,
-				06D93B472B56F64F00A0A512 /* E2eIFeatureChange+Alert.swift in Sources */,
+				06D93B472B56F64F00A0A512 /* E2eIFeatureChange.swift in Sources */,
 				EF2E2F6F223BB6560038D7D9 /* ScreenCurtain.RootViewController.swift in Sources */,
 				EFEE97C1232271FF007A4702 /* ConversationViewController+ViewLifeCycle.swift in Sources */,
 				EE742AB6284DE57900A6B5F3 /* DeveloperToolsView.swift in Sources */,

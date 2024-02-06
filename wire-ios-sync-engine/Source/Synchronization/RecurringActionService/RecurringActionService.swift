@@ -20,7 +20,7 @@ import Foundation
 import WireSystem
 import WireUtilities
 
-public final class RecurringActionService: RecurringActionServiceInterface {
+final class RecurringActionService: RecurringActionServiceInterface {
 
     // MARK: - Properties
 
@@ -60,10 +60,6 @@ public final class RecurringActionService: RecurringActionServiceInterface {
         guard let action = actionsByID[id] else { return }
         action()
         persistLastCheckDate(for: id)
-    }
-
-    public func removeAction(id: String) {
-        actionsByID.removeValue(forKey: id)
     }
 
     // MARK: - Helpers
