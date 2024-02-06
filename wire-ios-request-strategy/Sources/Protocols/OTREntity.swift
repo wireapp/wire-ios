@@ -94,9 +94,9 @@ extension OTREntity {
         }
 
         if (conversation.conversationType == .oneOnOne || conversation.conversationType == .connection)
-            && conversation.connection?.needsToBeUpdatedFromBackend == true {
+            && conversation.oneOnOneUser?.connection?.needsToBeUpdatedFromBackend == true {
             zmLog.debug("connection needs to be update from backend")
-            return conversation.connection
+            return conversation.oneOnOneUser?.connection
         }
 
         return dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: conversation.localParticipants)
@@ -146,7 +146,7 @@ extension OTREntity {
                 in: context
             )
 
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             guard let payload = Payload.MessageSendingStatus(response) else {
                 return (missingClients: Set(), deletedClients: Set())
             }

@@ -21,7 +21,9 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// swiftlint:disable todo_requires_jira_link
 // TODO: this class is the same tests as ClientMessageTests_OTR_legacy but with proteusViaCoreCrypto true
+// swiftlint:enable todo_requires_jira_link
 // + mockProteusService setup
 // as a cleanup we should remove the duplication and refactor this - WPB-5980
 final class ClientMessageTests_OTR: BaseZMClientMessageTests {
@@ -275,7 +277,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         await syncMOC.perform {
             switch payloadAndStrategy.strategy {
             case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, Set(arrayLiteral: self.syncSelfUser, self.syncUser1))
+                XCTAssertEqual(users, [self.syncSelfUser, self.syncUser1])
             default:
                 XCTFail()
             }
@@ -327,7 +329,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             guard let payloadAndStrategy = payload else { return XCTFail() }
             switch payloadAndStrategy.strategy {
             case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, Set(arrayLiteral: self.syncSelfUser))
+                XCTAssertEqual(users, [self.syncSelfUser])
             default:
                 XCTFail()
             }
@@ -403,7 +405,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.syncUser1
             connection.status = .accepted
-            conversation.connection = connection
+            self.syncUser1.oneOnOneConversation = conversation
             conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
 
             self.syncMOC.saveOrRollback()
@@ -427,7 +429,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             // Then
             switch unWrappedPayloadAndStrategy.strategy {
             case .ignoreAllMissingClientsNotFromUsers(let users):
-                XCTAssertEqual(users, Set(arrayLiteral: self.syncUser1))
+                XCTAssertEqual(users, [self.syncUser1])
             default:
                 XCTFail()
             }
@@ -453,7 +455,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.syncUser1
             connection.status = .accepted
-            conversation.connection = connection
+            self.syncUser1.oneOnOneConversation = conversation
             conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
 
             self.syncMOC.saveOrRollback()
@@ -486,7 +488,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.syncUser1
             connection.status = .accepted
-            conversation.connection = connection
+            self.syncUser1.oneOnOneConversation = conversation
 
             let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
@@ -607,7 +609,7 @@ extension DatabaseBaseTest {
         let selfUser = ZMUser.selfUser(in: moc)
 
         let selfClient = UserClient.insertNewObject(in: moc)
-        selfClient.remoteIdentifier = NSString.createAlphanumerical()
+        selfClient.remoteIdentifier = .randomRemoteIdentifier()
         selfClient.user = selfUser
 
         moc.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)

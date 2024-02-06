@@ -25,7 +25,9 @@ extension IntegrationTest {
     @objc
     public func searchAndConnectToUser(withName name: String, searchQuery: String) {
         createSharedSearchDirectory()
+        // swiftlint:disable todo_requires_jira_link
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
+        // swiftlint:enable todo_requires_jira_link
         self.overrideAPIVersion(.v2)
 
         let searchCompleted = customExpectation(description: "Search result arrived")
@@ -33,7 +35,7 @@ extension IntegrationTest {
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
 
-        task?.onResult { (result, completed) in
+        task?.addResultHandler { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
@@ -61,14 +63,16 @@ extension IntegrationTest {
     public func searchForDirectoryUser(withName name: String, searchQuery: String) -> ZMSearchUser? {
         createSharedSearchDirectory()
         // this only work for v2 and above
+        // swiftlint:disable todo_requires_jira_link
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
+        // swiftlint:enable todo_requires_jira_link
         setCurrentAPIVersion(.v2)
         let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
 
-        task?.onResult { (result, completed) in
+        task?.addResultHandler { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
@@ -92,7 +96,7 @@ extension IntegrationTest {
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
 
-        task?.onResult { (result, completed) in
+        task?.addResultHandler { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()

@@ -48,9 +48,18 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
         self.removalTimeout = removalTimeout
     }
 
+    deinit {
+        stopSubscribing()
+    }
+    private var subscription: Subscription?
     // MARK: - Subscriber implementation
+    func stopSubscribing() {
+        subscription?.cancel()
+        subscription = nil
+    }
 
     func receive(subscription: Subscription) {
+        self.subscription = subscription
         subscription.request(.unlimited)
     }
 

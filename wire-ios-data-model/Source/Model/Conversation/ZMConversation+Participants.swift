@@ -64,12 +64,13 @@ extension ZMConversation {
 
     @objc
     public class func keyPathsForValuesAffectingDisplayName() -> Set<String> {
-        return Set([ZMConversationConversationTypeKey,
-                    "participantRoles.user.name",
-                    "connection.to.name",
-                    "connection.to.availability",
-                    ZMConversationUserDefinedNameKey] +
-                   ZMConversation.participantRolesKeys)
+        .init([
+            ZMConversationConversationTypeKey,
+            "participantRoles.user.name",
+            #keyPath(ZMConversation.oneOnOneUser.name),
+            #keyPath(ZMConversation.oneOnOneUser.availability),
+            ZMConversationUserDefinedNameKey
+        ] + ZMConversation.participantRolesKeys)
     }
 
     @objc
@@ -285,7 +286,7 @@ extension ZMConversation {
     /// status, etc.
     @objc
     public func removeParticipantAndUpdateConversationState(user: ZMUser, initiatingUser: ZMUser? = nil) {
-        self.removeParticipantsAndUpdateConversationState(users: Set(arrayLiteral: user), initiatingUser: initiatingUser)
+        self.removeParticipantsAndUpdateConversationState(users: [user], initiatingUser: initiatingUser)
     }
 
     private func checkIfArchivedStatusChanged(removedSelfUser: Bool, initiatingUser: ZMUser?) {

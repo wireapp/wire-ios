@@ -17,9 +17,13 @@
 //
 
 import Foundation
+import WireDataModel
+import WireTesting
 import XCTest
 
-class ZMHotFixTests_Integration: MessagingTest {
+@testable import WireSyncEngine
+
+final class ZMHotFixTests_Integration: MessagingTest {
 
     func testThatAllConversationsAreUpdated_198_0_0() {
         var g1: ZMConversation!
@@ -242,13 +246,12 @@ class ZMHotFixTests_Integration: MessagingTest {
     }
 
     func testThatItUpdatesAccessRolesForConversations_432_1_0() {
-        var g1: ZMConversation!
         syncMOC.performAndWait {
             // GIVEN
             self.syncMOC.setPersistentStoreMetadata("432.0.1", key: "lastSavedVersion")
             self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
 
-            g1 = ZMConversation.insertNewObject(in: self.syncMOC)
+            let g1 = ZMConversation.insertNewObject(in: self.syncMOC)
             g1.conversationType = .group
             g1.team = nil
             g1.updateAccessStatus(accessModes: ConversationAccessMode.teamOnly.stringValue,

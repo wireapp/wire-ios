@@ -187,7 +187,9 @@ class BaseAccountView: UIView {
             iconWidth = CGFloat.AccountView.iconWidth
         }
 
-        [self, dotView, selectionView, imageViewContainer].prepareForLayout()
+        [self, dotView, selectionView, imageViewContainer].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate(
             dotConstraints +
@@ -250,7 +252,7 @@ extension BaseAccountView: ZMConversationListObserver {
     }
 }
 
-extension BaseAccountView: ZMUserObserver {
+extension BaseAccountView: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
             updateAppearance()
@@ -323,7 +325,7 @@ final class PersonalAccountView: AccountView {
     func createDotConstraints() -> [NSLayoutConstraint] {
         let dotSize: CGFloat = 9
 
-        [dotView, imageViewContainer].prepareForLayout()
+        [dotView, imageViewContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         return [ dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -3),
                                       dotView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor, constant: -6),

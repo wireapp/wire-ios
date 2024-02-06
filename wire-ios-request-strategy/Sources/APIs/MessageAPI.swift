@@ -63,7 +63,7 @@ class MessageAPIV0: MessageAPI {
     func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/otr/messages"
 
-        // FIXME: [jacob] move encryption out of the API WPB-5499
+        // FIXME: [WPB-5499] move encryption out of the API - [jacob]
         guard let encryptedPayload = await
             message.encryptForTransport()
         else {
@@ -101,7 +101,7 @@ class MessageAPIV0: MessageAPI {
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"].joined(separator: "/")
 
-        // FIXME: [jacob] move encryption out of the API WPB-5499
+        // FIXME: [WPB-5499] move encryption out of the API - [jacob]
         guard let encryptedPayload = await message.encryptForTransport()
         else {
             WireLogger.messaging.error("failed to encrypt message for transport")
@@ -285,5 +285,11 @@ class MessageAPIV5: MessageAPIV4 {
         let payload: Payload.MLSMessageSendingStatus = try mapResponse(response)
 
         return (payload, response)
+    }
+}
+
+class MessageAPIV6: MessageAPIV5 {
+    override var apiVersion: APIVersion {
+        .v6
     }
 }

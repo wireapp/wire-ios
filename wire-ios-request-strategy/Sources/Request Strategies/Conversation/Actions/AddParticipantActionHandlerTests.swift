@@ -16,9 +16,11 @@
 //
 
 import XCTest
-@testable import WireRequestStrategy
 
-class AddParticipantActionHandlerTests: MessagingTestBase {
+@testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
+
+final class AddParticipantActionHandlerTests: MessagingTestBase {
 
     typealias ErrorResponse = AddParticipantActionHandler.ErrorResponse
 
@@ -56,7 +58,8 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             context: syncMOC,
             eventProcessor: ConversationEventProcessor(
                 context: syncMOC,
-                conversationService: mockConversationService
+                conversationService: mockConversationService,
+                mlsEventProcessor: MockMLSEventProcessing()
             )
         )
     }

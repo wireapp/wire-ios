@@ -217,7 +217,9 @@ final class ProfileViewControllerViewModel: NSObject {
     // MARK: - Factories
 
     func makeUserNameDetailViewModel() -> UserNameDetailViewModel {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: add addressBookEntry to ZMUser
+        // swiftlint:enable todo_requires_jira_link
         return UserNameDetailViewModel(user: user, fallbackName: user.name ?? "", addressBookName: (user as? ZMUser)?.addressBookEntry?.cachedName)
     }
 
@@ -238,7 +240,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func acceptConnectionRequest() {
         user.accept { [weak self] error in
-            if let error = error as? ConnectToUserError {
+            if let error = error as? LocalizedError {
                 self?.viewModelDelegate?.presentError(error)
             } else {
                 self?.user.refreshData()
@@ -259,7 +261,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
 }
 
-extension ProfileViewControllerViewModel: ZMUserObserver {
+extension ProfileViewControllerViewModel: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
         if note.trustLevelChanged {
             viewModelDelegate?.updateShowVerifiedShield()

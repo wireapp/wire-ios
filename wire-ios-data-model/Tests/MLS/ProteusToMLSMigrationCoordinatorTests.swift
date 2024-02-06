@@ -138,6 +138,45 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(startedMigration)
     }
 
+    func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfAPIV5NotSupported() async throws {
+        try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isAPIV5Supported: false)
+    }
+
+    func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfClientNotSupportingMLS() async throws {
+        try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isClientSupportingMLS: false)
+    }
+
+    func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfBackendNotSupportingMLS() async throws {
+        try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isBackendSupportingMLS: false)
+    }
+
+    private func internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(
+        isAPIV5Supported: Bool = true,
+        isClientSupportingMLS: Bool = true,
+        isBackendSupportingMLS: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+
+        setMockValues(
+            isAPIV5Supported: isAPIV5Supported,
+            isClientSupportingMLS: isClientSupportingMLS,
+            isBackendSupportingMLS: isBackendSupportingMLS,
+            isMLSProtocolSupported: true,
+            isMLSMigrationFeatureEnabled: true,
+            hasStartTimeBeenReached: true
+        )
+        mockStorage.underlyingMigrationStatus = .notStarted
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0, file: file, line: line)
+    }
+
     // MARK: - Migration finalisation
 
     func test_ItSyncsUsers_IfFinalisationTimeHasNotBeenReached() async throws {
@@ -220,8 +259,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        // TODO: Assert we update the conversation protocol
-        // https://wearezeta.atlassian.net/browse/WPB-542
+        // TODO: [WPB-542] Assert we update the conversation protocol
     }
 
     func test_ItUpdatesConversationProtocolToMLS_IfFinalisationTimeHasBeenReached() async throws {
@@ -237,8 +275,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        // TODO: Assert we update the conversation protocol
-        // https://wearezeta.atlassian.net/browse/WPB-542
+        // TODO: [WPB-542] Assert we update the conversation protocol
     }
 
     func test_ItDoesntUpdateProtocolToMLS_IfParticipantsDontSupportMLS_AndFinalisationTimeHasNotBeenReached() async throws {
@@ -254,8 +291,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        // TODO: Assert we don't update the conversation protocol
-        // https://wearezeta.atlassian.net/browse/WPB-542
+        // TODO: [WPB-542] Assert we update the conversation protocol
     }
 
     // MARK: - Helpers
@@ -273,7 +309,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await syncMOC.perform { [syncMOC] in
             let user = ZMUser.insertNewObject(in: syncMOC)
 
-            // TODO: Set supported protocols on the users
+            // TODO: [WPB-542] Set supported protocols on the users
             // https://wearezeta.atlassian.net/browse/WPB-542
             //
             // user.supportedProtocols = [protocol]

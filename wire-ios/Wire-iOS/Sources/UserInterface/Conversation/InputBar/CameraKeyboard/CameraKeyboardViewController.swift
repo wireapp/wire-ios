@@ -196,9 +196,11 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
     }
 
     private func createConstraints() {
-        [collectionView,
-         goBackButton,
-         cameraRollButton].prepareForLayout()
+        [
+            collectionView,
+            goBackButton,
+            cameraRollButton
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -481,7 +483,9 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
         }
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // TODO: a protocol for this for testing
+    // swiftlint:enable todo_requires_jira_link
     @objc
     var shouldBlockCallingRelatedActions: Bool {
         return ZMUserSession.shared()?.isCallOngoing ?? false
@@ -587,7 +591,9 @@ extension CameraKeyboardViewController: AssetLibraryDelegate {
 
 extension CameraKeyboardViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: fix undesired camera keyboard openings here
+        // swiftlint:enable todo_requires_jira_link
         self.collectionView.reloadItems(at: [IndexPath(item: 0, section: 0)])
     }
 }
@@ -607,7 +613,7 @@ extension PHAsset {
         options.deliveryMode = .highQualityFormat
         options.isNetworkAccessAllowed = true
 
-        PHImageManager.default().requestAVAsset(forVideo: self, options: options, resultHandler: {(asset: AVAsset?, _: AVAudioMix?, _: [AnyHashable: Any]?) -> Void in
+        PHImageManager.default().requestAVAsset(forVideo: self, options: options, resultHandler: { (asset: AVAsset?, _: AVAudioMix?, _: [AnyHashable: Any]?) in
             if let urlAsset = asset as? AVURLAsset {
                 let localVideoUrl: URL = urlAsset.url as URL
                 completionHandler(localVideoUrl)

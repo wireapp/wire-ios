@@ -23,7 +23,7 @@ import WireCoreCrypto
 // This file is not member of any target!
 
 // sourcery: AutoMockable
-protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
+public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func addClientsToConversation(conversationId: Data, keyPackages: [Data]) async throws -> WireCoreCrypto.MemberAddedMessages
 
@@ -61,19 +61,19 @@ protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func e2eiIsEnabled(ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> Bool
 
-    func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws
+    func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws -> [String]?
 
-    func e2eiNewActivationEnrollment(displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
+    func e2eiNewActivationEnrollment(displayName: String, handle: String, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
 
-    func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
+    func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
 
-    func e2eiNewRotateEnrollment(displayName: String?, handle: String?, team: String?, expiryDays: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
+    func e2eiNewRotateEnrollment(displayName: String?, handle: String?, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
 
     func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws
 
     func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration
 
-    func e2eiRegisterIntermediateCa(certPem: String) async throws
+    func e2eiRegisterIntermediateCa(certPem: String) async throws -> [String]?
 
     func e2eiRotateAll(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, newKeyPackagesCount: UInt32) async throws -> WireCoreCrypto.RotateBundle
 
@@ -109,7 +109,7 @@ protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func newUpdateProposal(conversationId: Data) async throws -> WireCoreCrypto.ProposalBundle
 
-    func processWelcomeMessage(welcomeMessage: Data, customConfiguration: WireCoreCrypto.CustomConfiguration) async throws -> Data
+    func processWelcomeMessage(welcomeMessage: Data, customConfiguration: WireCoreCrypto.CustomConfiguration) async throws -> WireCoreCrypto.WelcomeBundle
 
     func proteusCryptoboxMigrate(path: String) async throws
 

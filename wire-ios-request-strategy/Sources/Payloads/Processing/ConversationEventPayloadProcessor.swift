@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,17 +19,26 @@
 import Foundation
 import WireDataModel
 
-final class ConversationEventPayloadProcessor {
+struct ConversationEventPayloadProcessor {
 
     enum Source {
         case slowSync
         case eventStream
     }
 
+    // MARK: - Properties
+
+    private let mlsEventProcessor: MLSEventProcessing
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
-    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil) {
-        self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
+    // MARK: - Life cycle
+
+    init(
+        mlsEventProcessor: MLSEventProcessing,
+        removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+    ) {
+        self.mlsEventProcessor = mlsEventProcessor
+        self.removeLocalConversation = removeLocalConversation
     }
 
     // MARK: - Conversation creation
@@ -110,41 +119,70 @@ final class ConversationEventPayloadProcessor {
         _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
-    ) {
-        guard
+    ) async {
+        let (conversation, removedUsers) = await context.perform {
             let conversation = fetchOrCreateConversation(
                 from: payload,
                 in: context
-            ),
+            )
             let removedUsers = fetchRemovedUsers(
                 from: payload.data,
                 in: context
             )
-        else {
-            Logging.eventProcessing.error("Member leave update missing conversation or users, aborting...")
-            return
+            return (conversation, removedUsers)
+        }
+        guard let conversation, let removedUsers else {
+            return Logging.eventProcessing.error("Member leave update missing conversation or users, aborting...")
         }
 
-        if !conversation.localParticipants.isDisjoint(with: removedUsers) {
-            // TODO jacob refactor to append method on conversation
-            _ = ZMSystemMessage.createOrUpdate(
-                from: originalEvent,
+        let (isSelfUserRemoved, messageProtocol) = await context.perform {
+            if !conversation.localParticipants.isDisjoint(with: removedUsers) {
+                // TODO jacob refactor to append method on conversation
+                _ = ZMSystemMessage.createOrUpdate(
+                    from: originalEvent,
+                    in: context
+                )
+            }
+
+            let initiatingUser = fetchOrCreateSender(
+                from: payload,
                 in: context
             )
+
+            // Idea for improvement, return removed users from this call to benefit from
+            // checking that the participants are in the conversation before being removed
+            conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: initiatingUser)
+
+            let isSelfUserRemoved = removedUsers.contains(where: \.isSelfUser)
+            return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        let sender = fetchOrCreateSender(
-            from: payload,
-            in: context
-        )
+        if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
+            await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
+        }
 
-        // Idea for improvement, return removed users from this call to benefit from
-        // checking that the participants are in the conversation before being removed
-        conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
+        await context.perform {
+            if payload.data.reason == .userDeleted {
+                // delete the users locally and/or logout if the self user is affected
+                let removedUsers = removedUsers.sorted { !$0.isSelfUser && $1.isSelfUser }
+                for user in removedUsers {
+                    // only delete users that had been members
+                    guard let membership = user.membership else {
+                        WireLogger.updateEvent.error("Trying to delete non existent membership of \(user)")
+                        continue
+                    }
 
-        if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
-            WaitingGroupTask(context: context) {
-                await MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+                    context.delete(membership)
+                    if user.isSelfUser {
+                        // should actually be handled by the "user.delete" event, this is just a fallback
+                        DispatchQueue.main.async {
+                            AccountDeletedNotification(context: context)
+                                .post(in: context.notificationContext)
+                        }
+                    } else {
+                        user.markAccountAsDeleted(at: originalEvent.timestamp ?? Date())
+                    }
+                }
             }
         }
     }
@@ -175,7 +213,7 @@ final class ConversationEventPayloadProcessor {
             let users = Set(usersAndRoles.map { $0.0 })
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if users.contains(selfUser) || newUsers {
+            if (users.contains(selfUser) || newUsers) && conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
@@ -187,7 +225,7 @@ final class ConversationEventPayloadProcessor {
             let users = Set(users)
             let selfUser = ZMUser.selfUser(in: context)
 
-            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
+            if (!users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser)) && conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
@@ -395,7 +433,21 @@ final class ConversationEventPayloadProcessor {
                 source: source
             )
 
-        case .connection, .oneOnOne:
+        case .connection:
+            // Conversations are of type `connection` while the connection
+            // is pending.
+            return await context.perform {
+                self.updateOrCreateConnectionConversation(
+                    from: payload,
+                    in: context,
+                    serverTimestamp: serverTimestamp,
+                    source: source
+                )
+            }
+
+        case .oneOnOne:
+            // Conversations are of type `oneOnOne` when the connection
+            // is accepted.
             return await context.perform {
                 self.updateOrCreateOneToOneConversation(
                     from: payload,
@@ -459,9 +511,24 @@ final class ConversationEventPayloadProcessor {
                     conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
                 }
             }
+
+            // If we discover this group is actually a fake one on one,
+            // then we should link the one on one user.
+            linkOneOnOneUserIfNeeded(for: conversation)
         }
 
         return conversation
+    }
+
+    private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
+        guard
+            conversation.conversationType == .oneOnOne,
+            let otherUser = conversation.localParticipantsExcludingSelf.first
+        else {
+            return
+        }
+
+        conversation.oneOnOneUser = otherUser
     }
 
     @discardableResult
@@ -530,6 +597,30 @@ final class ConversationEventPayloadProcessor {
     }
 
     @discardableResult
+    func updateOrCreateConnectionConversation(
+        from payload: Payload.Conversation,
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date,
+        source: Source
+    ) -> ZMConversation? {
+        guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
+            Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+            return nil
+        }
+
+        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
+        conversation.conversationType = .connection
+        updateAttributes(from: payload, for: conversation, context: context)
+        updateMessageProtocol(from: payload, for: conversation, in: context)
+        updateMetadata(from: payload, for: conversation, context: context)
+        updateMembers(from: payload, for: conversation, context: context)
+        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+        updateConversationStatus(from: payload, for: conversation)
+        conversation.needsToBeUpdatedFromBackend = false
+        return conversation
+    }
+
+    @discardableResult
     func updateOrCreateOneToOneConversation(
         from payload: Payload.Conversation,
         in context: NSManagedObjectContext,
@@ -538,46 +629,30 @@ final class ConversationEventPayloadProcessor {
     ) -> ZMConversation? {
         guard
             let conversationID = payload.id ?? payload.qualifiedID?.uuid,
-            let rawConversationType = payload.type
+            let conversationType = payload.type.map(BackendConversationType.clientConversationType)
         else {
             Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
 
-        let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: payload.qualifiedID?.domain,
+            in: context
+        )
 
-        guard
-            let otherMember = payload.members?.others.first,
-            let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid
-        else {
-            let conversation = ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-            conversation?.conversationType = self.conversationType(for: conversation, from: conversationType)
-            conversation?.needsToBeUpdatedFromBackend = false
-            return conversation
-        }
-
-        let otherUser = ZMUser.fetchOrCreate(with: otherUserID, domain: otherMember.qualifiedID?.domain, in: context)
-
-        var conversation: ZMConversation
-        if let existingConversation = otherUser.connection?.conversation {
-            existingConversation.mergeWithExistingConversation(withRemoteID: conversationID)
-            conversation = existingConversation
-        } else {
-            conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-            otherUser.connection?.conversation = conversation
-        }
-
-        conversation.remoteIdentifier = conversationID
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
-
+        updateAttributes(from: payload, for: conversation, context: context)
+        updateMessageProtocol(from: payload, for: conversation, in: context)
         updateMetadata(from: payload, for: conversation, context: context)
         updateMembers(from: payload, for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(from: payload, for: conversation)
-
         conversation.needsToBeUpdatedFromBackend = false
-        conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+
+        if let otherUser = conversation.localParticipantsExcludingSelf.first {
+            conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+        }
 
         return conversation
     }
@@ -589,8 +664,17 @@ final class ConversationEventPayloadProcessor {
     ) {
         conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
-        conversation.epoch = UInt64(payload.epoch ?? 0)
-        conversation.mlsGroupID = payload.mlsGroupID.flatMap { MLSGroupID(base64Encoded: $0) }
+
+        if let epoch = payload.epoch {
+            conversation.epoch = UInt64(epoch)
+        }
+
+        if
+            let base64String = payload.mlsGroupID,
+            let mlsGroupID = MLSGroupID(base64Encoded: base64String)
+        {
+            conversation.mlsGroupID = mlsGroupID
+        }
     }
 
     func updateMetadata(
@@ -740,11 +824,9 @@ final class ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
-        let mlsEventProcessor = MLSEventProcessor.shared
-
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
-            groupID: payload.mlsGroupID,
+            fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,
             context: context
         )
     }
@@ -775,7 +857,7 @@ final class ConversationEventPayloadProcessor {
 
         // The backend can't distinguish between one-to-one and connection conversation
         // types across federated enviroments so check locally if it's a connection.
-        if conversation.connection?.status == .sent {
+        if conversation.oneOnOneUser?.connection?.status == .sent {
             return .connection
         } else {
             return type

@@ -2101,6 +2101,14 @@ internal enum L10n {
           internal static let joinAfterwards = L10n.tr("Localizable", "content.system.mls_migration.join_afterwards", fallback: "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.")
           /// Learn more about MLS
           internal static let learnMore = L10n.tr("Localizable", "content.system.mls_migration.learn_more", fallback: "Learn more about MLS")
+          /// You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.
+          internal static func mlsNotSupportedByOtherUser(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_otherUser", String(describing: p1), String(describing: p2), fallback: "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.")
+          }
+          /// You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.
+          internal static func mlsNotSupportedByYou(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_you", String(describing: p1), String(describing: p2), fallback: "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.")
+          }
           /// Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.
           internal static let ongoingCall = L10n.tr("Localizable", "content.system.mls_migration.ongoing_call", fallback: "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.")
           /// You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.
@@ -4738,6 +4746,26 @@ internal enum L10n {
           internal enum SignOutButton {
             /// Log out
             internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.sign_out_button.title", fallback: "Log out")
+          }
+        }
+        internal enum Username {
+          /// Enter your username. It helps others to find you in Wire and connect with you.
+          internal static let message = L10n.tr("Localizable", "registration.signin.username.message", fallback: "Enter your username. It helps others to find you in Wire and connect with you.")
+          /// username
+          internal static let placeholder = L10n.tr("Localizable", "registration.signin.username.placeholder", fallback: "username")
+          /// Your username
+          internal static let title = L10n.tr("Localizable", "registration.signin.username.title", fallback: "Your username")
+          internal enum AlreadyTakenError {
+            /// The username is already taken, please try another one
+            internal static let message = L10n.tr("Localizable", "registration.signin.username.already_taken_error.message", fallback: "The username is already taken, please try another one")
+            /// Username is already taken
+            internal static let title = L10n.tr("Localizable", "registration.signin.username.already_taken_error.title", fallback: "Username is already taken")
+          }
+          internal enum UnknownError {
+            /// Please try again later.
+            internal static let message = L10n.tr("Localizable", "registration.signin.username.unknown_error.message", fallback: "Please try again later.")
+            /// Couldn't update username
+            internal static let title = L10n.tr("Localizable", "registration.signin.username.unknown_error.title", fallback: "Couldn't update username")
           }
         }
       }

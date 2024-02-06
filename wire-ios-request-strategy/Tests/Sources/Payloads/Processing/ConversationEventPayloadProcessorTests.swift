@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import WireDataModelSupport
 import XCTest
 
 @testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
@@ -30,15 +31,14 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-
-        mockMLSService = .init()
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
+        mockMLSService = MockMLSServiceInterface()
         mockMLSEventProcessor = .init()
-        mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_MockMethod = { _, _, _ in }
-
-        MLSEventProcessor.setMock(mockMLSEventProcessor)
+        mockMLSEventProcessor.updateConversationIfNeededConversationFallbackGroupIDContext_MockMethod = { _, _, _ in }
+        mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in }
 
         sut = ConversationEventPayloadProcessor(
+            mlsEventProcessor: mockMLSEventProcessor,
             removeLocalConversation: mockRemoveLocalConversation
         )
 
@@ -50,10 +50,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     override func tearDown() {
         sut = nil
         mockMLSService = nil
+        mockMLSEventProcessor = nil
         mockRemoveLocalConversation = nil
         mockMLSEventProcessor = nil
         BackendInfo.isFederationEnabled = false
-        MLSEventProcessor.reset()
         super.tearDown()
     }
 
@@ -604,26 +604,26 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    // MARK: 1:1 / Connection Conversations
-
-    func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
-        // given
-        BackendInfo.isFederationEnabled = true
-        let conversationID = UUID()
-        let (payload, otherUserSet) = await syncMOC.perform {
-            self.otherUser.connection?.conversation = nil
-
+    func testUpdateOrCreateConversation_Group_OneOnOneUser() async throws {
+        let (teamID, qualifiedID, members) = await syncMOC.perform {
+            // given
+            let teamID = UUID.create()
+            let team = Team.insertNewObject(in: self.syncMOC)
+            team.remoteIdentifier = teamID
+            let qualifiedID = self.groupConversation.qualifiedID!
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            let qualifiedID = QualifiedID(uuid: conversationID, domain: self.owningDomain)
-            let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                               type: BackendConversationType.oneOnOne.rawValue,
-                                               members: members)
-            let otherUserSet: Set<ZMUser> = [selfUser, self.otherUser]
-            return (payload, otherUserSet)
+            return (teamID, qualifiedID, members)
         }
+
+        let payload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            members: members,
+            teamID: teamID
+        )
 
         // when
         await sut.updateOrCreateConversation(
@@ -633,29 +633,67 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         await syncMOC.perform {
-            XCTAssertEqual(self.otherUser.connection?.conversation?.remoteIdentifier, conversationID)
-            XCTAssertEqual(self.otherUser.connection?.conversation?.domain, self.owningDomain)
-            XCTAssertEqual(self.otherUser.connection?.conversation?.conversationType, .oneOnOne)
-            XCTAssertEqual(self.otherUser.connection?.conversation?.localParticipants, otherUserSet)
+            XCTAssertEqual(self.groupConversation.conversationType, .oneOnOne)
+            XCTAssertEqual(self.groupConversation.oneOnOneUser, self.otherUser)
+        }
+    }
+
+    // MARK: 1:1 / Connection Conversations
+
+    func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
+        // given
+        BackendInfo.isFederationEnabled = true
+        let qualifiedID =  QualifiedID(uuid: .create(), domain: owningDomain)
+
+        let (payload, selfUser) = await syncMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
+            let otherMember = Payload.ConversationMember(qualifiedID: otherUser.qualifiedID!)
+            let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
+
+            let payload = Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: members
+            )
+
+            return (payload, selfUser)
+        }
+
+        // when
+        await sut.updateOrCreateConversation(
+            from: payload,
+            in: syncMOC
+        )
+
+        // then
+        try await syncMOC.perform { [self] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID, in: syncMOC))
+            XCTAssertEqual(conversation.remoteIdentifier, qualifiedID.uuid)
+            XCTAssertEqual(conversation.domain, owningDomain)
+            XCTAssertEqual(conversation.conversationType, ZMConversationType.oneOnOne)
+            XCTAssertEqual(conversation.localParticipants, [selfUser, otherUser])
         }
     }
 
     func testUpdateOrCreateConversation_OneToOne_DoesntAssignDomain_WhenFederationIsDisabled() async throws {
         // given
         BackendInfo.isFederationEnabled = false
-        let conversationID = UUID()
-        let payload = await syncMOC.perform {
-            self.otherUser.connection?.conversation = nil
+        let qualifiedID =  QualifiedID(uuid: .create(), domain: owningDomain)
 
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+        let (payload, selfUser) = await syncMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
-            let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
+            let otherMember = Payload.ConversationMember(qualifiedID: otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            let qualifiedID = QualifiedID(uuid: conversationID, domain: self.owningDomain)
-            let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                               type: BackendConversationType.oneOnOne.rawValue,
-                                               members: members)
-            return payload
+
+            let payload = Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: members
+            )
+
+            return (payload, selfUser)
         }
 
         // when
@@ -665,9 +703,12 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        await syncMOC.perform {
-            XCTAssertEqual(self.otherUser.connection?.conversation?.remoteIdentifier, conversationID)
-            XCTAssertNil(self.otherUser.connection?.conversation?.domain)
+        try await syncMOC.perform { [self] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID, in: syncMOC))
+            XCTAssertEqual(conversation.remoteIdentifier, qualifiedID.uuid)
+            XCTAssertNil(conversation.domain)
+            XCTAssertEqual(conversation.conversationType, .oneOnOne)
+            XCTAssertEqual(conversation.localParticipants, [selfUser, otherUser])
         }
     }
 
@@ -747,48 +788,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testUpdateOrCreateConversation_OneToOne_MergesWithExistingConversation() async throws {
-        // given
-        let existingTextMessage = "Hello World"
-        let (existingConversation, payload) = try await syncMOC.perform {
-
-            // We already have a local 1:1 conversation
-            self.otherUser.connection?.conversation.remoteIdentifier = nil
-            self.otherUser.connection?.conversation.domain = nil
-
-            // The remote 1:1 conversation also exists but it's not linked to the connection
-            let existingConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            existingConversation.remoteIdentifier = UUID()
-            existingConversation.domain = self.owningDomain
-            try existingConversation.appendText(content: existingTextMessage)
-
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
-            let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
-            let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            let payload = Payload.Conversation(qualifiedID: existingConversation.qualifiedID!,
-                                        type: BackendConversationType.connection.rawValue,
-                                        members: members)
-            return (existingConversation, payload)
-        }
-
-        // when
-        await sut.updateOrCreateConversation(
-            from: payload,
-            in: syncMOC
-        )
-
-        // then
-        await syncMOC.perform {
-            XCTAssertTrue(existingConversation.isZombieObject)
-            XCTAssertEqual(self.otherUser.connection?.conversation?.lastMessage?.textMessageData?.messageText, existingTextMessage)
-        }
-    }
-
     func testUpdateOrCreateConversation_OneToOne_UpdatesMutedStatus() async throws {
         // given
         let mutedMessageTypes: MutedMessageTypes = .all
         let payload = await syncMOC.perform {
+
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!,
                                                         mutedStatus: Int(mutedMessageTypes.rawValue),
@@ -964,9 +968,12 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         let qualifiedID = await syncMOC.perform {
             self.groupConversation.qualifiedID!
         }
-        let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                           type: BackendConversationType.group.rawValue,
-                                           messageProtocol: "mls")
+        let payload = Payload.Conversation(
+            qualifiedID: qualifiedID,
+            type: BackendConversationType.group.rawValue,
+            messageProtocol: "mls"
+        )
+
         // when
         await sut.updateOrCreateConversation(
             from: payload,
@@ -975,7 +982,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         await syncMOC.perform { [self] in
-            let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationGroupIDContext_Invocations
+            let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationFallbackGroupIDContext_Invocations
             XCTAssertEqual(updateConversationCalls.count, 1)
             XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
         }
@@ -1080,4 +1087,293 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    // MARK: - MLS conversation member leave
+
+    func test_UpdateConversationMemberLeave_WipesMLSGroup() async {
+        // Given
+        let wipeGroupExpectation = XCTestExpectation(description: "it wipes group")
+        mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in
+            wipeGroupExpectation.fulfill()
+        }
+
+        let (payload, updateEvent) = await syncMOC.perform { [self] in
+            // Create self user
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID.create()
+            selfUser.domain = groupConversation.domain
+
+            // Set message protocol
+            groupConversation.messageProtocol = .mls
+
+            // Create the event
+            let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
+                userIDs: [selfUser.remoteIdentifier],
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .userDeleted
+            )
+
+            let payload = self.conversationEventPayload(
+                from: memberLeaveEvent,
+                conversationID: groupConversation.qualifiedID,
+                senderID: selfUser.qualifiedID,
+                timestamp: nil
+            )
+
+            let updateEvent = self.updateEvent(from: payload.payloadData()!)
+            return (payload, updateEvent)
+        }
+
+        // When
+        await sut.processPayload(
+            payload,
+            originalEvent: updateEvent,
+            in: syncMOC
+        )
+        await fulfillment(of: [wipeGroupExpectation], timeout: 0.5)
+
+        // Then
+        let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations
+        XCTAssertEqual(wipeGroupInvocations.count, 1)
+        XCTAssertEqual(wipeGroupInvocations.first?.conversation, groupConversation)
+    }
+
+    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() async {
+        let (payload, updateEvent) = await syncMOC.perform { [self] in
+            // Given
+            // create user
+            let user = ZMUser.insertNewObject(in: syncMOC)
+            user.remoteIdentifier = UUID.create()
+            user.domain = groupConversation.domain
+
+            // set message protocol
+            groupConversation.messageProtocol = .mls
+
+            // create the event
+            let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
+                userIDs: [user.remoteIdentifier],
+                qualifiedUserIDs: [user.qualifiedID!],
+                reason: .userDeleted
+            )
+
+            let payload = self.conversationEventPayload(
+                from: memberLeaveEvent,
+                conversationID: groupConversation.qualifiedID,
+                senderID: user.qualifiedID,
+                timestamp: nil
+            )
+
+            let updateEvent = self.updateEvent(from: payload.payloadData()!)
+            return (payload, updateEvent)
+        }
+
+        // When
+        await sut.processPayload(
+            payload,
+            originalEvent: updateEvent,
+            in: syncMOC
+        )
+
+        // Then
+        XCTAssert(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.isEmpty)
+    }
+
+    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenProtocolIsNotMLS() async {
+        let (payload, updateEvent) = await syncMOC.perform { [self] in
+            // Given
+            // create self user
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID.create()
+            selfUser.domain = groupConversation.domain
+
+            // set message protocol
+            groupConversation.messageProtocol = .proteus
+
+            // create the event
+            let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
+                userIDs: [selfUser.remoteIdentifier],
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .userDeleted
+            )
+
+            let payload = self.conversationEventPayload(
+                from: memberLeaveEvent,
+                conversationID: groupConversation.qualifiedID,
+                senderID: selfUser.qualifiedID,
+                timestamp: nil
+            )
+
+            let updateEvent = self.updateEvent(from: payload.payloadData()!)
+            return (payload, updateEvent)
+        }
+
+        // When
+        await sut.processPayload(
+            payload,
+            originalEvent: updateEvent,
+            in: syncMOC
+        )
+
+        // Then
+        XCTAssertEqual(mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations.count, 0)
+    }
+
+    // MARK: - Handle User Removed
+
+    func testProcessingConverationMemberLeave_SelfUserTriggersAccountDeletedNotification() async {
+        // Given
+        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
+            selfUserLeaves: true
+        )
+        let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
+        expectation.handler = { notification in
+            notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil
+        }
+
+        // When
+        await sut.processPayload(
+            conversationEvent,
+            originalEvent: originalEvent,
+            in: syncMOC
+        )
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 1)
+        await syncMOC.perform { [self] in
+            ensureLastMessage(
+                in: conversation,
+                is: .participantsRemoved,
+                for: users[0],
+                at: originalEvent.timestamp
+            )
+        }
+    }
+
+    func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() async {
+        // Given
+        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
+            selfUserLeaves: false
+        )
+
+        // When
+        await sut.processPayload(
+            conversationEvent,
+            originalEvent: originalEvent,
+            in: syncMOC
+        )
+
+        // Then
+        await syncMOC.perform { [self] in
+            XCTAssertTrue(users[1].isAccountDeleted)
+            XCTAssertFalse(conversation.localParticipants.contains(users[1]))
+
+            ensureLastMessage(
+                in: conversation,
+                is: .participantsRemoved,
+                for: users[1],
+                at: originalEvent.timestamp
+            )
+        }
+    }
+
+    private func setupForProcessingConverationMemberLeaveTests(
+        selfUserLeaves: Bool
+    ) -> (
+        conversation: ZMConversation,
+        users: [ZMUser],
+        conversationEvent: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
+        originalEvent: ZMUpdateEvent
+    ) {
+        syncMOC.performAndWait {
+            let team = Team.fetchOrCreate(with: .init(), create: true, in: syncMOC, created: .none)
+
+            let users: [ZMUser] = [.selfUser(in: syncMOC), .insertNewObject(in: syncMOC)]
+            users.forEach { user in
+                user.remoteIdentifier = .init()
+                user.domain = owningDomain
+                let membership = Member.insertNewObject(in: syncMOC)
+                membership.user = user
+                membership.team = team
+            }
+            let userIndex = selfUserLeaves ? 0 : 1
+
+            let conversation = ZMConversation.insertGroupConversation(moc: syncMOC, participants: users)!
+            conversation.remoteIdentifier = .init(uuidString: "ee8824c5-95d0-4e59-9862-e9bb0fc6e921")
+            conversation.conversationType = .group
+            conversation.domain = owningDomain
+
+            let memberLeavePayload = Payload.UpdateConverationMemberLeave(
+                userIDs: .none,
+                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap { $0 },
+                reason: .userDeleted
+            )
+            let conversationEvent = Payload.ConversationEvent(
+                id: nil,
+                data: memberLeavePayload,
+                from: nil,
+                qualifiedID: groupConversation.qualifiedID,
+                qualifiedFrom: nil,
+                timestamp: nil,
+                type: nil
+            )
+            let originalEvent = ZMUpdateEvent(
+                uuid: .init(),
+                payload: [
+                    "id": "cf51e6b1-39a6-11ed-8005-520924331b82",
+                    "time": Date().addingTimeInterval(5).transportString(),
+                    "type": "conversation.member-leave",
+                    "from": "f76c1c7a-7278-4b70-9df7-eca7980f3a5d",
+                    "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
+                    "data": [
+                        "qualified_user_ids": [
+                            ["id": users[userIndex].remoteIdentifier.transportString(), "domain": owningDomain]
+                        ],
+                        "reason": "user-delete"
+                    ]
+                ],
+                transient: false,
+                decrypted: true,
+                source: .webSocket
+            )!
+
+            return (conversation, users, conversationEvent, originalEvent)
+        }
+    }
+
+    private func ensureLastMessage(
+        in conversation: ZMConversation,
+        is systemMessageType: ZMSystemMessageType,
+        for user: ZMUser,
+        at timestamp: Date?,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else {
+            return XCTFail(
+                "Last message is not system message",
+                file: file,
+                line: line
+            )
+        }
+        guard lastMessage.systemMessageType == systemMessageType else {
+            return XCTFail(
+                "System message is not \(systemMessageType), but '\(lastMessage.systemMessageType)'",
+                file: file,
+                line: line
+            )
+        }
+        guard let serverTimestamp = lastMessage.serverTimestamp else {
+            return XCTFail(
+                "System message should have timestamp",
+                file: file,
+                line: line
+            )
+        }
+        XCTAssertEqual(
+            serverTimestamp.timeIntervalSince1970,
+            (timestamp ?? .distantPast).timeIntervalSince1970,
+            accuracy: 0.1,
+            file: file,
+            line: line
+        )
+    }
 }

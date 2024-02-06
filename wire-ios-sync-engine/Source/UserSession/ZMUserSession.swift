@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSystem
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -54,8 +55,6 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 
 @objcMembers
 public class ZMUserSession: NSObject {
-
-    private static let logger = Logger(subsystem: "VoIP Push", category: "ZMUserSession")
 
     private let appVersion: String
     private var tokens: [Any] = []
@@ -261,6 +260,10 @@ public class ZMUserSession: NSObject {
                                         proteusProvider: proteusProvider)
     }()
 
+    public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
+        ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
+    }()
+
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
@@ -376,7 +379,7 @@ public class ZMUserSession: NSObject {
                                                        contextProvider: self,
                                                        callNotificationStyleProvider: self)
 
-            // FIXME: [jacob] inject instead of storing on context WPB-5827
+            // FIXME: [WPB-5827] inject instead of storing on context - [jacob]
             self.syncManagedObjectContext.proteusService = self.proteusService
             self.syncManagedObjectContext.mlsService = self.mlsService
 
@@ -399,6 +402,26 @@ public class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+        updateSupportedProtocolsIfNeeded()
+    }
+
+    private func updateSupportedProtocolsIfNeeded() {
+        let recurringAction = RecurringAction(
+            id: "\(account.userIdentifier).updateSupportedProtocols",
+            interval: .oneDay
+        ) { [weak self] in
+            guard let context = self?.syncContext else { return }
+
+            context.perform {
+                let service = SupportedProtocolsService(context: context)
+                service.updateSupportedProtocols()
+            }
+        }
+
+        recurringActionService.registerAction(recurringAction)
+
+        // The action should run once on every launch, then each 24 hours thereafter.
+        recurringActionService.forcePerformAction(id: recurringAction.id)
     }
 
     private func configureTransportSession() {
@@ -443,7 +466,8 @@ public class ZMUserSession: NSObject {
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: self.proteusProvider,
-            mlsService: mlsService
+            mlsService: mlsService,
+            coreCryptoProvider: coreCryptoProvider
         )
     }
 
@@ -487,9 +511,10 @@ public class ZMUserSession: NSObject {
     }
 
     private func configureRecurringActions() {
-        recurringActionService.registerAction(refreshUsersMissingMetadata())
-        recurringActionService.registerAction(refreshConversationsMissingMetadata())
-        recurringActionService.registerAction(updateProteusToMLSMigrationStatus())
+        recurringActionService.registerAction(refreshUsersMissingMetadataAction)
+        recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
+        recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
+        recurringActionService.registerAction(refreshTeamMetadataAction)
     }
 
     func startRequestLoopTracker() {
@@ -538,6 +563,7 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
+        // TODO: [WPB-6198] refactor out - [jacob]
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
@@ -659,8 +685,9 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
 }
-
+// swiftlint:disable todo_requires_jira_link
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
+// swiftlint:enable todo_requires_jira_link
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         await updateEventProcessor?.bufferEvents(events)
@@ -704,7 +731,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didStartQuickSync() {
-        Self.logger.trace("did start quick sync")
+        WireLogger.sync.debug("did start quick sync")
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
@@ -712,7 +739,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didFinishQuickSync() {
-        Self.logger.trace("did finish quick sync")
+        WireLogger.sync.debug("did finish quick sync")
         processEvents()
 
         NotificationInContext(
@@ -797,7 +824,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    // // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
+    // swiftlint:disable todo_requires_jira_link
+    // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
+    // swiftlint:enable todo_requires_jira_link
     private func commitPendingProposalsIfNeeded() {
         Task {
             do {
@@ -818,15 +847,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         action.send(in: syncContext.notificationContext)
     }
 
-    public func didRegisterMLSClient(_ userClient: UserClient) {
-        Task {
-            await mlsService.uploadKeyPackagesIfNeeded()
-        }
-    }
-
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
-        createMLSClientIfNeeded()
-
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier

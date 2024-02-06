@@ -513,12 +513,16 @@ public final class MLSService: MLSServiceInterface {
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
             let keyPackages = try await claimKeyPackages(for: users)
 
-            guard keyPackages.count > 0 else {
-                throw MLSAddMembersError.noInviteesToAdd
+            let events = if keyPackages.isEmpty {
+                // CC does not accept empty keypackages in addMembers, but
+                // when creating a group we still need to send a commit to backend
+                // to inform we are in the group
+                try await mlsActionExecutor.updateKeyMaterial(for: groupID)
+            } else {
+                try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
             }
-
-            let events = try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
             await conversationEventProcessor.processConversationEvents(events)
+
         } catch {
             logger.warn("failed to add members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
@@ -638,8 +642,6 @@ public final class MLSService: MLSServiceInterface {
             let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
-            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
-
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
                 logger.info("no need to upload new key packages yet")
                 return
@@ -648,6 +650,7 @@ public final class MLSService: MLSServiceInterface {
             let amount = UInt32(targetUnclaimedKeyPackageCount)
             let keyPackages = try await generateKeyPackages(amountRequested: amount)
             try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
+            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
             logger.info("success: uploaded key packages for client \(clientID)")
         } catch let error {
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
@@ -754,7 +757,9 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func conversationExists(groupID: MLSGroupID) async -> Bool {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [jacob] let it throw
+        // swiftlint:enable todo_requires_jira_link
         let result = (try? await coreCrypto.perform { await $0.conversationExists(conversationId: groupID.data) }) ?? false
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
@@ -769,13 +774,13 @@ public final class MLSService: MLSServiceInterface {
         }
 
         do {
-            let groupIDData = try await coreCrypto.perform {
+            let welcomeBundle = try await coreCrypto.perform {
                 try await $0.processWelcomeMessage(
                     welcomeMessage: messageData,
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
                 )
             }
-            let groupID = MLSGroupID(groupIDData)
+            let groupID = MLSGroupID(welcomeBundle.id)
             await uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             return groupID
@@ -1018,9 +1023,9 @@ public final class MLSService: MLSServiceInterface {
                     coreCrypto: coreCrypto,
                     context: context
                 ) == true
-            }
+            } // swiftlint:disable todo_requires_jira_link
         }) ?? [] // TODO: [jacob] let it throw
-
+        // swiftlint:enable todo_requires_jira_link
         return await context.perform { conversations.compactMap {
             if let groupId = $0.mlsGroupID {
                 return (groupId, $0)
@@ -1072,9 +1077,9 @@ public final class MLSService: MLSServiceInterface {
                 subgroup: subgroup,
                 coreCrypto: $0,
                 context: context
-            )
+            ) // swiftlint:disable todo_requires_jira_link
         }) ?? false // TODO: [jacob] let it throw
-    }
+    } // swiftlint: enable todo_requires_jira_link
 
     // MARK: - External Proposals
 
@@ -1296,7 +1301,9 @@ public final class MLSService: MLSServiceInterface {
                 try await commitPendingProposals(in: groupID)
             } else {
                 logger.info("commit scheduled in the future, waiting...")
+                // swiftlint:disable todo_requires_jira_link
                 // FIXME: change logic not to wait for all commits
+                // swiftlint:enable todo_requires_jira_link
                 try await Task.sleep(nanoseconds: timestamp.timeIntervalSinceNow.nanoseconds)
                 logger.info("scheduled commit is ready, committing...")
                 try await commitPendingProposals(in: groupID)
@@ -1427,7 +1434,9 @@ public final class MLSService: MLSServiceInterface {
 
         } catch CommitError.failedToSendCommit(recovery: .giveUp) {
             logger.warn("failed to send commit, giving up...")
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] inform user
+            // swiftlint:enable todo_requires_jira_link
             throw CommitError.failedToSendCommit(recovery: .giveUp)
 
         } catch ExternalCommitError.failedToSendCommit(recovery: .retry) {
@@ -1794,14 +1803,6 @@ private extension TimeInterval {
 
     var nanoseconds: UInt64 {
         UInt64(self * 1_000_000_000)
-    }
-
-}
-
-private extension Date {
-
-    var isInThePast: Bool {
-        return compare(Date()) != .orderedDescending
     }
 
 }

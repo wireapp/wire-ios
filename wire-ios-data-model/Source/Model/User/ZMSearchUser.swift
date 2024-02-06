@@ -173,7 +173,7 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.initials ?? internalInitials
     }
 
-    public var availability: AvailabilityKind {
+    public var availability: Availability {
         get { return user?.availability ?? .none }
         set { user?.availability = newValue }
     }

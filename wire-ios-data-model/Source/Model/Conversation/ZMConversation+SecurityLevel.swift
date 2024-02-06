@@ -281,7 +281,7 @@ extension ZMConversation {
     @objc(appendDecryptionFailedSystemMessageAtTime:sender:client:errorCode:)
     public func appendDecryptionFailedSystemMessage(at date: Date?, sender: ZMUser, client: UserClient?, errorCode: Int) {
         let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
-        let clients = client.flatMap { Set(arrayLiteral: $0) } ?? Set<UserClient>()
+        let clients = client.flatMap { [$0] } ?? Set<UserClient>()
         let serverTimestamp = date ?? timestampAfterLastMessage()
         let systemMessage = appendSystemMessage(type: type,
                                                sender: sender,
@@ -290,7 +290,7 @@ extension ZMConversation {
                                                timestamp: serverTimestamp)
 
         systemMessage.senderClientID = client?.remoteIdentifier
-        systemMessage.decryptionErrorCode = NSNumber(integerLiteral: errorCode)
+        systemMessage.decryptionErrorCode = NSNumber(value: errorCode)
     }
 
     /// Adds the user to the list of participants if not already present and inserts a .participantsAdded system message
@@ -298,23 +298,41 @@ extension ZMConversation {
     /// - Parameters:
     ///   - user: the participant to add
     ///   - dateOptional: if provide a nil, current date will be used
-    public func addParticipantAndSystemMessageIfMissing(_ user: ZMUser, date dateOptional: Date?) {
-        let date = dateOptional ?? Date()
-
-        guard !user.isSelfUser, !localParticipants.contains(user) else { return }
+    ///
+    public func addParticipantAndSystemMessageIfMissing(
+        _ user: ZMUser,
+        date: Date = .now
+    ) {
+        guard
+            !user.isSelfUser,
+            !localParticipants.contains(user)
+        else {
+            return
+        }
 
         zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier})")
 
         switch conversationType {
         case .group:
-            appendSystemMessage(type: .participantsAdded, sender: user, users: Set(arrayLiteral: user), clients: nil, timestamp: date)
+            appendSystemMessage(
+                type: .participantsAdded,
+                sender: user,
+                users: [user],
+                clients: nil,
+                timestamp: date
+            )
+
         case .oneOnOne, .connection:
-            if user.connection == nil {
-                user.connection = connection ?? ZMConnection.insertNewObject(in: managedObjectContext!)
-            } else if connection == nil {
-                connection = user.connection
+            if
+                user.connection == nil,
+                let context = managedObjectContext,
+                !user.isOnSameTeam(otherUser: ZMUser.selfUser(in: context)) {
+                user.connection = ZMConnection.insertNewObject(in: managedObjectContext!)
             }
+
             user.connection?.needsToBeUpdatedFromBackend = true
+            user.oneOnOneConversation = self
+
         default:
             break
         }
@@ -672,8 +690,7 @@ extension ZMConversation {
                 return false
             } else if $0.isWirelessUser {
                 return false
-            }
-            else {
+            } else {
                 return selfUser.team == nil || $0.team != selfUser.team
             }
         } != nil
