@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import Wire
 
-final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
+final class ConversationListAccessoryViewSnapshotTests: BaseSnapshotTestCase {
 
     var sut: ConversationListAccessoryView!
     var userSession: UserSessionMock!
