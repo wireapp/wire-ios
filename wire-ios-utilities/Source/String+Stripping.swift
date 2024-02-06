@@ -18,7 +18,7 @@
 
 import Foundation
 
-public extension String {
+extension String {
 
     mutating func stripPrefix(_ prefix: String) {
         guard hasPrefix(prefix) else { return }
@@ -31,7 +31,7 @@ public extension String {
         return modified
     }
 
-    func strippingLeadingAtSign() -> String {
+    public func strippingLeadingAtSign() -> String {
         return strippingPrefix("@")
     }
 

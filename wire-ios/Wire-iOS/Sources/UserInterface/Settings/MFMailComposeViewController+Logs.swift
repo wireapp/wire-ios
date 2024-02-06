@@ -23,6 +23,17 @@ import WireSystem
 extension MFMailComposeViewController {
 
     func attachLogs() {
+
+        if let crashLog = ZMLastAssertionFile(),
+           FileManager.default.fileExists(atPath: crashLog.path) {
+            do {
+                let data = try Data(contentsOf: crashLog)
+                addAttachmentData(data, mimeType: "text/plain", fileName: "last_crash.log")
+            } catch {
+                // ignore error for now, it's possible a file does not exist.
+            }
+        }
+
         if let currentLog = ZMSLog.currentZipLog {
             addAttachmentData(currentLog, mimeType: "application/zip", fileName: "current.log.zip")
         }

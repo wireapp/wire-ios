@@ -49,12 +49,15 @@ extension ZMUserSession {
     }
 
     static func initDebugCommands() -> [String: DebugCommand] {
-        return [
+        let commands = [
             DebugCommandLogEncryption(),
             DebugCommandShowIdentifiers(),
             DebugCommandHelp(),
             DebugCommandVariables()
-        ].dictionary { (key: $0.keyword, value: $0) }
+        ]
+        return commands.reduce(into: [:]) { partialResult, command in
+            partialResult[command.keyword] = command
+        }
     }
 
     func restoreDebugCommandsState() {

@@ -21,11 +21,22 @@ import Foundation
 @objc public extension ZMTransportRequest {
 
     var URL: URL {
-        return Foundation.URL(string: self.path)!
+        Foundation.URL(string: path)!
     }
 
+    // It would be better to use `queryItems: [URLQueryItem]`, 
+    // because an array is sorted (compared to dictionary here).
+    // It can make a difference in the final call,
+    // e.g. for caching requests and have them equal with other platforms.
     var queryParameters: [String: Any] {
-        return ((self.URL as NSURL).zm_queryComponents() as? [String: Any]) ?? [:]
+        queryItems.reduce(into: [:]) { partialResult, queryItem in
+            partialResult[queryItem.name] = queryItem.value
+        }
+    }
+
+    var queryItems: [URLQueryItem] {
+        let urlComponents = URLComponents(string: path)
+        return urlComponents?.queryItems ?? []
     }
 
     var multipartBodyItemsFromRequestOrFile: [ZMMultipartBodyItem] {
@@ -42,14 +53,8 @@ import Foundation
         return ((multipartData as NSData).multipartDataItemsSeparated(withBoundary: "frontier") as? [ZMMultipartBodyItem]) ?? []
     }
 
-    var binaryDataTypeAsMIME: String? {
-        guard let dataType = self.binaryDataType else {
-            return nil
-        }
-        return MockTransportSession.binaryDataType(asMIME: dataType)
-    }
-
-    @objc(RESTComponentAtIndex:) func RESTComponents(index: Int) -> String? {
+    @objc(RESTComponentAtIndex:)
+    func RESTComponents(index: Int) -> String? {
         guard self.pathComponents.count > index, index > 0 else {
             return nil
         }
@@ -58,7 +63,13 @@ import Foundation
 
     fileprivate var pathComponents: [String] {
         var components = self.URL.path.components(separatedBy: "/").filter { !$0.isEmpty }
-        components.removeAPIVersionComponent()
+
+        // remove api version from path components
+        let versions = APIVersion.allCases.map { "v\($0.rawValue)" }
+        if let version = components.first, versions.contains(version) {
+            components.removeFirst()
+        }
+
         return components
     }
 
@@ -93,14 +104,5 @@ public extension ZMTransportRequest {
 
     static func ~= (path: String, request: ZMTransportRequest) -> Bool {
         return request.matches(path: path)
-    }
-}
-
-private extension Array where Element == String {
-    mutating func removeAPIVersionComponent() {
-        let versions = APIVersion.allCases.map { "v\($0.rawValue)" }
-        if let version = self.first, versions.contains(version) {
-            self.removeFirst()
-        }
     }
 }

@@ -38,9 +38,11 @@
         mockMame = conversation.name;
         mockCreatorIdentifier = conversation.creator.identifier;
         mockIdentifier = conversation.identifier;
-        mockActiveUsersUUID = [NSMutableSet setWithArray:[conversation.activeUsers mapWithBlock:^id(MockUser *activeUser) {
-            return activeUser.identifier;
-        }].array];
+
+        mockActiveUsersUUID = [NSMutableSet new];
+        for (MockUser *user in conversation.activeUsers) {
+            [mockActiveUsersUUID addObject:user.identifier];
+        }
         [mockActiveUsersUUID removeObject:conversation.selfIdentifier];
     }];
     

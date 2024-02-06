@@ -39,7 +39,10 @@ public enum MessageDestructionTimerError: Error {
 
 extension ZMTransportResponse {
     var updateEvent: ZMUpdateEvent? {
-        return payload.flatMap(papply(flip(ZMUpdateEvent.init), nil))
+        guard let payload else {
+            return nil
+        }
+        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
     }
 }
 
