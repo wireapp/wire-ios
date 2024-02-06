@@ -26,11 +26,12 @@ typealias SelfUserType = UserType & SelfLegalHoldSubject
 final class ConversationListTopBarViewController: UIViewController {
 
     private var observerToken: Any?
-    private var availabilityViewController: UserStatusViewController?
+    private var userStatusViewController: UserStatusViewController?
     private var account: Account
     private let selfUser: SelfUserType
     private var userSession: UserSession
-    private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    private let isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol
+    private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
 
     var topBar: TopBar? {
         return view as? TopBar
@@ -45,12 +46,14 @@ final class ConversationListTopBarViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+        isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol,
+        hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
     ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
-        self.getSelfUserVerificationStatusUseCase = getSelfUserVerificationStatusUseCase
+        self.isSelfUserVerifiedUseCase = isSelfUserVerifiedUseCase
+        self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
         super.init(nibName: nil, bundle: nil)
 
         observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
@@ -72,7 +75,7 @@ final class ConversationListTopBarViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
 
-        availabilityViewController?.didMove(toParent: self)
+        userStatusViewController?.didMove(toParent: self)
 
         updateTitleView()
         updateAccountView()
@@ -91,10 +94,11 @@ final class ConversationListTopBarViewController: UIViewController {
                 user: selfUser,
                 options: .header,
                 userSession: userSession,
-                getSelfUserVerificationStatusUseCase: getSelfUserVerificationStatusUseCase
+                isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+                hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
             )
             addChild(userStatusViewController)
-            self.availabilityViewController = userStatusViewController
+            self.userStatusViewController = userStatusViewController
 
             return userStatusViewController.view
         } else {

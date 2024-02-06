@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -25,13 +26,24 @@ final class ProfileViewTests: BaseSnapshotTestCase {
 
     var userSession: UserSessionMock!
 
+    var isSelfUserVerifiedUseCase: MockIsSelfUserVerifiedUseCaseProtocol!
+    var hasSelfUserValidE2EICertificatesForAllClientsUseCase: MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol!
+
     override func setUp() {
         super.setUp()
+
         userSession = UserSessionMock()
+        isSelfUserVerifiedUseCase = .init()
+        isSelfUserVerifiedUseCase.invoke_MockValue = false
+        hasSelfUserValidE2EICertificatesForAllClientsUseCase = .init()
+        hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke_MockValue = false
     }
 
     override func tearDown() {
+        isSelfUserVerifiedUseCase = nil
+        hasSelfUserValidE2EICertificatesForAllClientsUseCase = nil
         userSession = nil
+
         super.tearDown()
     }
 
@@ -84,10 +96,8 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: [],
             userSession: userSession,
-            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase(
-                isMLSCertified: false,
-                isProteusVerified: false
-            )
+            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
 
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
@@ -126,16 +136,12 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: options,
             userSession: userSession,
-            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase(
-                isMLSCertified: false,
-                isProteusVerified: false
-            )
+            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
         sut.overrideUserInterfaceStyle = .dark
-
         return sut
     }
-
 }

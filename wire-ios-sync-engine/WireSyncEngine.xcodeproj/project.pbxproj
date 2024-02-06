@@ -372,7 +372,6 @@
 		54FEAAA91BC7BB9C002DE521 /* ZMBlacklistDownloader+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FEAAA81BC7BB9C002DE521 /* ZMBlacklistDownloader+Testing.h */; };
 		54FF64291F73D00C00787EF2 /* NSManagedObjectContext+AuthenticationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FF64281F73D00C00787EF2 /* NSManagedObjectContext+AuthenticationStatus.swift */; };
 		554FEE2122AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554FEE2022AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift */; };
-		595902C92B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595902C82B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
 		59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
 		59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */; };
@@ -1048,7 +1047,6 @@
 		54FF64281F73D00C00787EF2 /* NSManagedObjectContext+AuthenticationStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+AuthenticationStatus.swift"; sourceTree = "<group>"; };
 		5502C6E922B7D4DA000684B7 /* ZMUserSessionLegalHoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUserSessionLegalHoldTests.swift; sourceTree = "<group>"; };
 		554FEE2022AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+LegalHold.swift"; sourceTree = "<group>"; };
-		595902C82B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGetSelfUserVerificationStatusUseCase.swift; sourceTree = "<group>"; };
 		597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DeveloperMenu.swift"; sourceTree = "<group>"; };
 		59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringAction.swift; sourceTree = "<group>"; };
@@ -1499,7 +1497,6 @@
 			children = (
 				0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */,
 				59E6A9112B4EE57000DBCC6B /* Synchronization */,
-				595902C72B6906B400A17782 /* UseCases */,
 			);
 			path = WireSyncEngineSupport;
 			sourceTree = "<group>";
@@ -2312,14 +2309,6 @@
 			path = Integration;
 			sourceTree = "<group>";
 		};
-		595902C72B6906B400A17782 /* UseCases */ = {
-			isa = PBXGroup;
-			children = (
-				595902C82B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift */,
-			);
-			path = UseCases;
-			sourceTree = "<group>";
-		};
 		59E6A9112B4EE57000DBCC6B /* Synchronization */ = {
 			isa = PBXGroup;
 			children = (
@@ -3121,7 +3110,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				595902C92B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift in Sources */,
 				59E6A91A2B4EE62100DBCC6B /* RecurringAction+dummy.swift in Sources */,
 				0145AE882B11551C0097E3B8 /* AutoMockable.generated.swift in Sources */,
 				0145AE892B11551C0097E3B8 /* AutoMockable.manual.swift in Sources */,

@@ -31,7 +31,8 @@ final class ConversationListViewController: UIViewController {
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
-    private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    private let isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol
+    private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
 
     /// internal View Model
     var state: ConversationListState = .conversationList
@@ -87,13 +88,15 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+        isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol,
+        hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
 
         self.init(
             viewModel: viewModel,
-            getSelfUserVerificationStatusUseCase: getSelfUserVerificationStatusUseCase
+            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
 
         viewModel.viewController = self
@@ -105,25 +108,24 @@ final class ConversationListViewController: UIViewController {
 
     required init(
         viewModel: ViewModel,
-        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+        isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol,
+        hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
     ) {
         self.viewModel = viewModel
-        self.getSelfUserVerificationStatusUseCase = getSelfUserVerificationStatusUseCase
+        self.isSelfUserVerifiedUseCase = isSelfUserVerifiedUseCase
+        self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession,
-            getSelfUserVerificationStatusUseCase: getSelfUserVerificationStatusUseCase
+            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
 
+        let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
-        listContentController.collectionView.contentInset = UIEdgeInsets(
-            top: 0,
-            left: 0,
-            bottom: ConversationListViewController.contentControllerBottomInset,
-            right: 0
-        )
+        listContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
 

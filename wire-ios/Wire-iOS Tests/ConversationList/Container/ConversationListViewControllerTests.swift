@@ -17,6 +17,7 @@
 //
 
 import SnapshotTesting
+import WireDataModelSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -71,12 +72,16 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, conversationListType: MockConversationList.self, userSession: userSession)
+
+        let isSelfUserVerifiedUseCase = MockIsSelfUserVerifiedUseCaseProtocol()
+        isSelfUserVerifiedUseCase.invoke_MockValue = false
+        let hasSelfUserValidE2EICertificatesForAllClientsUseCase = MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol()
+        hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke_MockValue = false
+
         sut = ConversationListViewController(
             viewModel: viewModel,
-            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase(
-                isMLSCertified: false,
-                isProteusVerified: false
-            )
+            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
         viewModel.viewController = sut
         sut.onboardingHint.arrowPointToView = sut.tabBar

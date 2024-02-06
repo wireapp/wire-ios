@@ -61,18 +61,18 @@ final class ZClientViewController: UIViewController {
         userSession: UserSession
     ) {
         self.userSession = userSession
+
         backgroundViewController = BackgroundViewController(
             user: userSession.selfUser,
             userSession: userSession as? ZMUserSession
         )
-
         conversationListViewController = ConversationListViewController(
             account: account,
             selfUser: userSession.selfLegalHoldSubject,
             userSession: userSession,
-            getSelfUserVerificationStatusUseCase: userSession.getSelfUserVerificationStatusUseCase
+            isSelfUserVerifiedUseCase: userSession.isSelfUserVerifiedUseCase,
+            hasSelfUserValidE2EICertificatesForAllClientsUseCase: userSession.hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
-
         colorSchemeController = ColorSchemeController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)

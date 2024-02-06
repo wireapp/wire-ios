@@ -267,13 +267,6 @@ public class ZMUserSession: NSObject {
         )
     }
 
-    public var getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol {
-        GetSelfUserVerificationStatusUseCase(
-            context: syncContext,
-            coreCryptoProvider: coreCryptoProvider
-        )
-    }
-
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)

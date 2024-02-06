@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireSyncEngineSupport
 import SnapshotTesting
+import WireDataModelSupport
+import WireSyncEngineSupport
+import XCTest
 
 @testable import Wire
 
@@ -46,14 +47,16 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
     }
 
     func setupSut() {
+        let isSelfUserVerifiedUseCase = MockIsSelfUserVerifiedUseCaseProtocol()
+        isSelfUserVerifiedUseCase.invoke_MockValue = false
+        let hasSelfUserValidE2EICertificatesForAllClientsUseCase = MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol()
+        hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke_MockValue = false
         sut = ConversationListTopBarViewController(
             account: mockAccount,
             selfUser: mockSelfUser,
             userSession: userSession,
-            getSelfUserVerificationStatusUseCase: MockGetSelfUserVerificationStatusUseCase(
-                isMLSCertified: false,
-                isProteusVerified: false
-            )
+            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
         sut.view.backgroundColor = .black

@@ -27,7 +27,8 @@ final class UserStatusViewController: UIViewController {
     private let options: UserStatusView.Options
     private let user: UserType
     private let userSession: UserSession
-    private let getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+    private let isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol
+    private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
 
     /// Used to update the `UserStatusView` on changes of a user.
     private var userChangeObservation: NSObjectProtocol?
@@ -40,12 +41,14 @@ final class UserStatusViewController: UIViewController {
         user: UserType,
         options: UserStatusView.Options,
         userSession: UserSession,
-        getSelfUserVerificationStatusUseCase: GetSelfUserVerificationStatusUseCaseProtocol
+        isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol,
+        hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
     ) {
         self.user = user
         self.options = options
         self.userSession = userSession
-        self.getSelfUserVerificationStatusUseCase = getSelfUserVerificationStatusUseCase
+        self.isSelfUserVerifiedUseCase = isSelfUserVerifiedUseCase
+        self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
         super.init(nibName: nil, bundle: nil)
     }
 
