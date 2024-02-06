@@ -70,7 +70,8 @@ final class SessionManagerTests: IntegrationTest {
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            deleteUserLogs: {}
         )
 
         sessionManager.start(launchOptions: launchOptions)
@@ -171,7 +172,8 @@ final class SessionManagerTests: IntegrationTest {
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         let environment = MockEnvironment()
@@ -263,7 +265,8 @@ final class SessionManagerTests: IntegrationTest {
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         let environment = MockEnvironment()
@@ -326,7 +329,8 @@ final class SessionManagerTests: IntegrationTest {
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         XCTAssertTrue(self.delegate.jailbroken)
@@ -1122,7 +1126,8 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         let environment = MockEnvironment()
@@ -1180,7 +1185,8 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         let environment = MockEnvironment()

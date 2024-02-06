@@ -51,4 +51,12 @@ public enum LogFileDestination: CaseIterable, FileLoggerDestination {
             return Self.cachesDirectory?.appendingPathComponent(filename)
         }
     }
+
+    public static func deleteAllLogs() {
+        LogFileDestination.allCases.forEach { destination in
+            if let logURL = destination.log {
+                try? FileManager.default.removeItem(at: logURL)
+            }
+        }
+    }
 }

@@ -304,7 +304,8 @@ private extension AppDelegate {
             callKitManager: voIPPushManager.callKitManager,
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
-            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+            deleteUserLogs: LogFileDestination.deleteAllLogs
         )
 
         voIPPushManager.delegate = sessionManager

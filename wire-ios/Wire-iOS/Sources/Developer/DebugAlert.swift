@@ -122,7 +122,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     }
 
     static var areDebugLogsPresent: Bool {
-        return debugLogs.filter { FileManager.default.fileExists(atPath: $0.path) }.isNonEmpty
+        return !debugLogs.filter { FileManager.default.fileExists(atPath: $0.path) }.isEmpty
     }
 
     /// Sends recorded logs by email

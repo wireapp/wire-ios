@@ -24,7 +24,13 @@ import WireCommonComponents
 extension MFMailComposeViewController {
 
     func attachLogs() async {
-
+        defer {
+            // because we don't rotate file for this one, we clean it once sent
+            // this regenerated from os_log anyway
+            if let url = LogFileDestination.main.log {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
         // save current logs to file in order to send them
         await WireLogger.provider?.persist(fileDestination: LogFileDestination.main)
 
@@ -36,6 +42,7 @@ extension MFMailComposeViewController {
             }
         }
         
+
         if let crashLog = ZMLastAssertionFile(),
            FileManager.default.fileExists(atPath: crashLog.path) {
             do {
