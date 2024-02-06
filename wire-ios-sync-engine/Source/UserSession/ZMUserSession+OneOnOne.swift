@@ -35,39 +35,38 @@ extension ZMUserSession {
             return
         }
 
-        syncContext.perform {
-            guard let syncUser = try? self.syncContext.existingObject(with: viewUser.objectID) as? ZMUser else {
-                self.viewContext.perform {
-                    completion(.failure(.userDoesNotExist))
-                }
-                return
-            }
+        Task {
+            do {
+                let (useCase, syncUser) = try await self.syncContext.perform {
+                    guard let syncUser = try? self.syncContext.existingObject(with: viewUser.objectID) as? ZMUser else {
+                        throw CreateTeamOneOnOneConversationError.userDoesNotExist
+                    }
 
-            let useCase = CreateTeamOneOnOneConversationUseCase(
-                protocolSelector: OneOnOneProtocolSelector(),
-                migrator: self.syncContext.mlsService.map(OneOnOneMigrator.init),
-                service: ConversationService(context: self.syncContext)
-            )
-
-            Task {
-                do {
-                    let objectID = try await useCase.invoke(
-                        with: syncUser,
-                        syncContext: self.syncContext
+                    let useCase = CreateTeamOneOnOneConversationUseCase(
+                        protocolSelector: OneOnOneProtocolSelector(),
+                        migrator: self.syncContext.mlsService.map(OneOnOneMigrator.init),
+                        service: ConversationService(context: self.syncContext)
                     )
 
-                    try await self.viewContext.perform {
-                        guard let conversation = try? self.viewContext.existingObject(with: objectID) as? ZMConversation else {
-                            throw CreateTeamOneOnOneConversationError.conversationNotFound
-                        }
+                    return (useCase, syncUser)
+                }
 
-                        completion(.success(conversation))
+                let objectID = try await useCase.invoke(
+                    with: syncUser,
+                    syncContext: self.syncContext
+                )
+
+                try await self.viewContext.perform {
+                    guard let conversation = try? self.viewContext.existingObject(with: objectID) as? ZMConversation else {
+                        throw CreateTeamOneOnOneConversationError.conversationNotFound
                     }
 
-                } catch let error as CreateTeamOneOnOneConversationError {
-                    await self.viewContext.perform {
-                        completion(.failure(error))
-                    }
+                    completion(.success(conversation))
+                }
+
+            } catch let error as CreateTeamOneOnOneConversationError {
+                await self.viewContext.perform {
+                    completion(.failure(error))
                 }
             }
         }
