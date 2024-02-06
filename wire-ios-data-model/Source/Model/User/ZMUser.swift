@@ -77,6 +77,13 @@ extension ZMUser: UserType {
         return selfUser.isFederating(with: self)
     }
 
+    // MARK: - One on one conversation
+
+    /// The one on one conversation with this user.
+
+    @NSManaged
+    public var oneOnOneConversation: ZMConversation?
+
     // MARK: - Conversation Roles
 
     public func canManagedGroupRole(of user: UserType, conversation: ZMConversation) -> Bool {
@@ -196,7 +203,7 @@ public struct AssetKey {
 }
 
 extension ProfileImageSize: CustomDebugStringConvertible {
-     public var debugDescription: String {
+    public var debugDescription: String {
         switch self {
         case .preview:
             return "ProfileImageSize.preview"
@@ -413,7 +420,6 @@ extension ZMUser: UserConnections {
     public enum AcceptConnectionError: Error {
 
         case invalidState
-        case unableToResolveConversation
         case unableToSwitchToMLS
 
     }
@@ -445,11 +451,7 @@ extension ZMUser: UserConnections {
             case .success:
                 Task {
                     do {
-                        guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
-                            completion(AcceptConnectionError.unableToResolveConversation)
-                            return
-                        }
-
+                        let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
                         try await resolver.resolveOneOnOneConversation(
                             with: QualifiedID(uuid: userID, domain: domain),
                             in: context
@@ -462,7 +464,6 @@ extension ZMUser: UserConnections {
                             completion(error)
                         }
                     }
-
                 }
 
             case .failure(let error):

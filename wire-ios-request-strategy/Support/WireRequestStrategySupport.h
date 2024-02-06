@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
+#import <Foundation/Foundation.h>
 
-extension ZMUser {
-    func updateAvailability(_ newValue: AvailabilityKind) {
-        self.willChangeValue(forKey: AvailabilityKey)
-        self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
-        self.didChangeValue(forKey: AvailabilityKey)
-    }
-}
+//! Project version number for WireRequestStrategySupport.
+FOUNDATION_EXPORT double WireRequestStrategySupportVersionNumber;
+
+//! Project version string for WireRequestStrategySupport.
+FOUNDATION_EXPORT const unsigned char WireRequestStrategySupportVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <WireRequestStrategySupport/PublicHeader.h>
+
+

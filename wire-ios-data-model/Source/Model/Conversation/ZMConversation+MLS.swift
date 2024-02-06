@@ -33,6 +33,9 @@ extension ZMConversation {
     static let mlsStatusKey = "mlsStatus"
 
     @objc
+    static let mlsVerificationStatusKey = "mlsVerificationStatus"
+
+    @objc
     static let commitPendingProposalDateKey = "commitPendingProposalDate"
 
     @objc
@@ -133,6 +136,29 @@ extension ZMConversation {
     /// to commit.
     @NSManaged public var commitPendingProposalDate: Date?
 
+    /// The mls verification status.
+    ///
+    /// If this conversation is an mls group (which it should be if the
+    /// `messageProtocol` is `mls`), then this identifier should exist.
+
+    public var mlsVerificationStatus: MLSVerificationStatus? {
+        get {
+            willAccessValue(forKey: Self.mlsVerificationStatusKey)
+            let value = primitiveValue(forKey: Self.mlsVerificationStatusKey) as? MLSVerificationStatus.RawValue
+            didAccessValue(forKey: Self.mlsVerificationStatusKey)
+
+            guard let value = value else { return nil }
+            guard let status = MLSVerificationStatus(rawValue: value) else {
+                fatalError("failed to init MLSVerificationStatus from rawValue: \(value)")
+            }
+            return status
+        }
+        set {
+            willChangeValue(forKey: Self.mlsVerificationStatusKey)
+            setPrimitiveValue(newValue?.rawValue, forKey: Self.mlsVerificationStatusKey)
+            didChangeValue(forKey: Self.mlsVerificationStatusKey)
+        }
+    }
 }
 
 // MARK: - Fetch by group id
