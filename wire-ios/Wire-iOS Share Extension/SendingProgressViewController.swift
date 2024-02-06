@@ -54,11 +54,11 @@ final class SendingProgressViewController: UIViewController {
         switch mode {
         case .sending:
             circularProgress.deterministic = true
-            self.title = "share_extension.sending_progress.title".localized
+            self.title = L10n.ShareExtension.SendingProgress.title
         case .preparing:
             circularProgress.deterministic = false
             circularProgress.setProgress(minimumProgress, animated: false)
-            self.title = "share_extension.preparing.title".localized
+            self.title = L10n.ShareExtension.Preparing.title
         }
     }
 
@@ -91,7 +91,7 @@ final class SendingProgressViewController: UIViewController {
         connectionStatusLabel.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
         connectionStatusLabel.textAlignment = .center
         connectionStatusLabel.isHidden = true
-        connectionStatusLabel.text = "share_extension.no_internet_connection.title".localized
+        connectionStatusLabel.text = L10n.ShareExtension.NoInternetConnection.title
 
         view.addSubview(circularShadow)
         view.addSubview(circularProgress)
