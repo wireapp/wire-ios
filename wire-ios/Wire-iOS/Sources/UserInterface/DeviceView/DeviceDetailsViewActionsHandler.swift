@@ -53,12 +53,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     }
 
     func updateCertificate() async -> E2eIdentityCertificate? {
-        // TODO: after this task https://wearezeta.atlassian.net/browse/WPB-6039
+        // TODO: [WPB-6439]
         return nil
     }
 
     func enrollClient() async -> E2eIdentityCertificate? {
-        // TODO: after this task https://wearezeta.atlassian.net/browse/WPB-6039
+        // TODO: [WPB-6439]
         return nil
     }
 
