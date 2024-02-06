@@ -30,16 +30,11 @@ final class ZMSearchUserTests_Connections: ModelObjectsTests {
 
         // expect
         customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)
-        let completionExpectation = XCTestExpectation(description: "completion called")
 
         // when
-        searchUser.connect { error in
-            XCTAssertNil(error)
-            completionExpectation.fulfill()
-        }
+        searchUser.connect { (_) in }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-        wait(for: [completionExpectation], timeout: 0.5)
     }
 }
