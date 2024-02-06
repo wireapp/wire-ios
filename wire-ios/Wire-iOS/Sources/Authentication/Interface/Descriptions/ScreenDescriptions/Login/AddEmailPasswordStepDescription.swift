@@ -20,7 +20,7 @@ import Foundation
 import WireUtilities
 import UIKit
 
-class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
+final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
 
     let backButton: BackButtonDescription?
     var mainView: ViewDescriptor & ValueSubmission {
