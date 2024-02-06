@@ -25,7 +25,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
 
         var conversation = self.conversation(for: mockConversation)
         let selfUserSet: Set<AnyHashable> = [self.selfUser]
-        let otherUser = mockConversation.activeUsers.firstObjectNot(in: selfUserSet) as! MockUser
+        let otherUser = mockConversation.activeUsers.first { ($0 as? MockUser) != self.selfUser } as! MockUser
 
         // given
         let fromClient = otherUser.clients.anyObject() as! MockUserClient
