@@ -27,7 +27,7 @@ public enum IconStringsBuilder {
         trailingIcons: [NSTextAttachment],
         interactive: Bool,
         color: UIColor,
-        titleFont: UIFont?
+        titleFont: UIFont? = nil
     ) -> NSAttributedString {
 
         var components: [NSAttributedString] = [

@@ -22,13 +22,22 @@ import WireDataModel
 public struct UserStatus {
 
     /// The name of the users.
-    var name: String
+    var name = ""
 
-    var availability: Availability
+    var availability = Availability.none
 
     /// `true` if the user has a valid certificate (MLS), `false` otherwise.
-    var isCertified: Bool
+    var isCertified = false
 
     /// `true` if the user has been verified (Proteus), `false` otherwise.
-    var isVerified: Bool
+    var isVerified = false
+
+    public init(name: String, availability: Availability, isCertified: Bool, isVerified: Bool) {
+        self.name = name
+        self.availability = availability
+        self.isCertified = isCertified
+        self.isVerified = isVerified
+    }
+
+    public init() {}
 }

@@ -22,34 +22,6 @@ import WireCommonComponents
 
 final class ProfileHeaderViewController: UIViewController {
 
-    /**
-     * The options to customize the appearance and behavior of the view.
-     */
-
-    struct Options: OptionSet {
-
-        let rawValue: Int
-
-        /// Whether to hide the username of the user.
-        static let hideUsername = Options(rawValue: 1 << 0)
-
-        /// Whether to hide the handle of the user.
-        static let hideHandle = Options(rawValue: 1 << 1)
-
-        /// Whether to hide the availability status of the user.
-        static let hideAvailability = Options(rawValue: 1 << 2)
-
-        /// Whether to hide the team name of the user.
-        static let hideTeamName = Options(rawValue: 1 << 3)
-
-        /// Whether to allow the user to change their availability.
-        static let allowEditingAvailability = Options(rawValue: 1 << 4)
-
-        /// Whether to allow the user to change their availability.
-        static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
-
-    }
-
     /// The options to customize the appearance and behavior of the view.
     var options: Options {
         didSet {
@@ -61,7 +33,8 @@ final class ProfileHeaderViewController: UIViewController {
     let conversation: ZMConversation?
 
     /// The user that is displayed.
-    let user: UserType
+    private let user: UserType
+    private var userStatus = UserStatus()
 
     private let userSession: UserSession
     private let isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol
@@ -76,9 +49,6 @@ final class ProfileHeaderViewController: UIViewController {
             groupRoleIndicator.isHidden = !self.isAdminRole
         }
     }
-
-    private var isMLSCertified = false
-    private var isProteusVerified = false
 
     var stackView: CustomSpacingStackView!
 
@@ -198,7 +168,8 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        updateNameLabel(user.name ?? "")
+        userStatus.name = user.name ?? ""
+        updateNameLabel()
 
         let remainingTimeString = user.expirationDisplayString
         remainingTimeLabel.text = remainingTimeString
@@ -264,8 +235,9 @@ final class ProfileHeaderViewController: UIViewController {
 
         Task {
             do {
-                isMLSCertified = try await hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke()
-                isProteusVerified = isSelfUserVerifiedUseCase.invoke()
+                userStatus.isCertified = try await hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke()
+                userStatus.isVerified = isSelfUserVerifiedUseCase.invoke()
+                updateNameLabel()
             } catch {
                 WireLogger.sync.error("failed to get self user's verification status: \(String(reflecting: error))")
             }
@@ -325,20 +297,16 @@ final class ProfileHeaderViewController: UIViewController {
         warningView.update(withUser: user)
     }
 
-    private func updateNameLabel(_ name: String) {
+    private func updateNameLabel() {
         defer { nameLabel.accessibilityValue = nameLabel.text }
-        guard !name.isEmpty else { return nameLabel.text = "" }
+        guard !userStatus.name.isEmpty else { return nameLabel.text = "" }
 
         nameLabel.attributedText = [
-
-            .init(string: name),
-
+            .init(string: userStatus.name),
             // MLS verified shield
-            !isMLSCertified ? nil : .init(attachment: .init(image: Asset.Images.certificateValid.image)),
-
+            !userStatus.isCertified ? nil : .init(attachment: .init(image: Asset.Images.certificateValid.image)),
             // Proteus verified shield
-            !isProteusVerified ? nil : .init(attachment: .init(image: Asset.Images.verifiedShield.image))
-
+            !userStatus.isVerified ? nil : .init(attachment: .init(image: Asset.Images.verifiedShield.image))
         ].compactMap { $0 }.joined(separator: .init(string: " "))
     }
 
@@ -385,14 +353,13 @@ final class ProfileHeaderViewController: UIViewController {
 extension ProfileHeaderViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         if changeInfo.nameChanged {
-            updateNameLabel(changeInfo.user.name ?? "")
+            userStatus.name = changeInfo.user.name ?? ""
+            updateNameLabel()
         }
         if changeInfo.handleChanged {
             updateHandleLabel()
         }
-
         if changeInfo.availabilityChanged {
             updateAvailabilityVisibility()
         }
@@ -402,9 +369,39 @@ extension ProfileHeaderViewController: UserObserving {
 // MARK: - TeamObserver
 
 extension ProfileHeaderViewController: TeamObserver {
+
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
         if changeInfo.nameChanged {
             updateTeamLabel()
         }
+    }
+}
+
+// MARK: - ProfileHeaderViewController + Options
+
+extension ProfileHeaderViewController {
+
+    /// The options to customize the appearance and behavior of the view.
+    struct Options: OptionSet {
+
+        let rawValue: Int
+
+        /// Whether to hide the username of the user.
+        static let hideUsername = Options(rawValue: 1 << 0)
+
+        /// Whether to hide the handle of the user.
+        static let hideHandle = Options(rawValue: 1 << 1)
+
+        /// Whether to hide the availability status of the user.
+        static let hideAvailability = Options(rawValue: 1 << 2)
+
+        /// Whether to hide the team name of the user.
+        static let hideTeamName = Options(rawValue: 1 << 3)
+
+        /// Whether to allow the user to change their availability.
+        static let allowEditingAvailability = Options(rawValue: 1 << 4)
+
+        /// Whether to allow the user to change their availability.
+        static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
     }
 }

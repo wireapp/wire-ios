@@ -63,8 +63,7 @@ final class AvailabilityStringBuilder: NSObject {
             title: title,
             trailingIcons: [],
             interactive: false,
-            color: textColor,
-            titleFont: nil
+            color: textColor
         )
         return attributedText
     }
