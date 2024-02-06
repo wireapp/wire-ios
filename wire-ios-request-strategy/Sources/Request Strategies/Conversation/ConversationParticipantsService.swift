@@ -172,8 +172,6 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                     Array(users.subtracting(failedUsers)),
                     to: conversation
                 )
-                // TODO: maybe we have an issueif this fails again
-                // system message is not inserted for first failedUsers!
                 Flow.addParticipants.checkpoint(description: "retrying failedUsers end")
             }
 
