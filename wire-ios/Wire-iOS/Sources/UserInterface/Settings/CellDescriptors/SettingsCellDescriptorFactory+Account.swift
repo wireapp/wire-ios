@@ -221,12 +221,16 @@ extension SettingsCellDescriptorFactory {
             }
 
             if let selfUser = ZMUser.selfUser(), nil != selfUser.handle {
+
                 let preview: PreviewGeneratorType = { _ in
                     guard let handleDisplayString = selfUser.handleDisplayString(withDomain: federationEnabled) else {
                         return .none
                     }
                     return .text(handleDisplayString)
                 }
+
+                let copiableText = selfUser.handleDisplayString(withDomain: federationEnabled)
+
                 return SettingsExternalScreenCellDescriptor(
                     title: AccountSection.Handle.title,
                     isDestructive: false,
@@ -234,7 +238,7 @@ extension SettingsCellDescriptorFactory {
                     presentationAction: presentation,
                     previewGenerator: preview,
                     accessoryViewMode: .alwaysHide,
-                    canCopy: true
+                    copiableText: copiableText
                 )
             }
 

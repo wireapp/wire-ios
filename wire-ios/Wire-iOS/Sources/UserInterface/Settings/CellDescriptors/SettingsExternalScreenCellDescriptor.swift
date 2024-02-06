@@ -40,7 +40,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     let presentationStyle: PresentationStyle
     let identifier: String?
     let icon: StyleKitIcon?
-    var canCopy: Bool
+    var copiableText: String?
 
     private let accessoryViewMode: AccessoryViewMode
 
@@ -60,7 +60,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             presentationAction: presentationAction,
             previewGenerator: nil,
             icon: .none,
-            canCopy: false
+            copiableText: nil
         )
     }
 
@@ -71,7 +71,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
                      previewGenerator: PreviewGeneratorType? = .none,
                      icon: StyleKitIcon? = nil,
                      accessoryViewMode: AccessoryViewMode = .default,
-                     canCopy: Bool = false) {
+                     copiableText: String? = nil) {
         self.init(
             title: title,
             isDestructive: isDestructive,
@@ -81,7 +81,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             previewGenerator: previewGenerator,
             icon: icon,
             accessoryViewMode: accessoryViewMode,
-            canCopy: canCopy
+            copiableText: copiableText
         )
     }
 
@@ -93,7 +93,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
          previewGenerator: PreviewGeneratorType? = .none,
          icon: StyleKitIcon? = nil,
          accessoryViewMode: AccessoryViewMode = .default,
-         canCopy: Bool) {
+         copiableText: String?) {
 
         self.title = title
         self.destructive = isDestructive
@@ -103,7 +103,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.previewGenerator = previewGenerator
         self.icon = icon
         self.accessoryViewMode = accessoryViewMode
-        self.canCopy = canCopy
+        self.copiableText = copiableText
     }
 
     func select(_ value: SettingsPropertyValue?) {

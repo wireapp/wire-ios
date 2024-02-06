@@ -64,7 +64,7 @@ class SettingsCellDescriptorFactory {
                                                     previewGenerator: nil,
                                                     icon: .team,
                                                     accessoryViewMode: .alwaysHide,
-                                                    canCopy: false)
+                                                    copiableText: nil)
     }
 
     func addAccountOrTeamCell() -> SettingsCellDescriptorType {
@@ -94,7 +94,7 @@ class SettingsCellDescriptorFactory {
                                                     previewGenerator: nil,
                                                     icon: .plus,
                                                     accessoryViewMode: .alwaysHide,
-                                                    canCopy: false)
+                                                    copiableText: nil)
     }
 
     func settingsGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
@@ -137,8 +137,7 @@ class SettingsCellDescriptorFactory {
             previewGenerator: { _ -> SettingsCellPreview in
                 return SettingsCellPreview.badge(ZMUser.selfUser()?.clients.count ?? 0)
             },
-           icon: .devices,
-                                                    canCopy: false)
+           icon: .devices, copiableText: nil)
     }
 
     func soundGroupForSetting(_ settingsProperty: SettingsProperty, title: String, customSounds: [ZMSound], defaultSound: ZMSound) -> SettingsCellDescriptorType {

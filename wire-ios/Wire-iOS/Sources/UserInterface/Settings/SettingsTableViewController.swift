@@ -258,29 +258,21 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
         let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
         let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
-        return cellDescriptor.canCopy
+        return cellDescriptor.copiableText != nil
     }
 
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
         let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
 
-        guard cellDescriptor.canCopy else {
+        guard let copiableText = cellDescriptor.copiableText else {
             return nil
         }
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-          let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
-            if let cell = tableView.cellForRow(at: indexPath) as? SettingsCellType {
-              let pasteboard = UIPasteboard.general
-                switch cell.preview {
-                case .text(let value):
-                    pasteboard.string = value
-                default:
-                    assertionFailure("this is not handle, please implement support")
-                }
-
-            }
+            let copy = UIAction(title: L10n.Localizable.Content.Message.copy, image: UIImage(systemName: "doc.on.doc")) { _ in
+            let pasteboard = UIPasteboard.general
+            pasteboard.string = copiableText
           }
           return UIMenu(children: [copy])
         }
