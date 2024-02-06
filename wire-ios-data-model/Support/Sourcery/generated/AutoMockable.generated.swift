@@ -2697,6 +2697,65 @@ class MockFileManagerInterface: FileManagerInterface {
 
 }
 
+public class MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> Bool)?
+    public var invoke_MockValue: Bool?
+
+    public func invoke() async throws -> Bool {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
+public class MockIsSelfUserVerifiedUseCaseProtocol: IsSelfUserVerifiedUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() -> Bool)?
+    public var invoke_MockValue: Bool?
+
+    public func invoke() -> Bool {
+        invoke_Invocations.append(())
+
+        if let mock = invoke_MockMethod {
+            return mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - Life cycle

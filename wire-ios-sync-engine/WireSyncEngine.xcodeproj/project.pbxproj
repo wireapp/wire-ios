@@ -375,7 +375,6 @@
 		595902C92B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595902C82B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
 		59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
-		59D985F22B60146D009B99F0 /* GetSelfUserVerificationStatusUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D985F12B60146D009B99F0 /* GetSelfUserVerificationStatusUseCase.swift */; };
 		59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */; };
 		59E6A9162B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */; };
 		59E6A91A2B4EE62100DBCC6B /* RecurringAction+dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9192B4EE62100DBCC6B /* RecurringAction+dummy.swift */; };
@@ -1052,7 +1051,6 @@
 		595902C82B6906C000A17782 /* MockGetSelfUserVerificationStatusUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGetSelfUserVerificationStatusUseCase.swift; sourceTree = "<group>"; };
 		597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DeveloperMenu.swift"; sourceTree = "<group>"; };
 		59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		59D985F12B60146D009B99F0 /* GetSelfUserVerificationStatusUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetSelfUserVerificationStatusUseCase.swift; sourceTree = "<group>"; };
 		59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringAction.swift; sourceTree = "<group>"; };
 		59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringActionServiceInterface.swift; sourceTree = "<group>"; };
 		59E6A9192B4EE62100DBCC6B /* RecurringAction+dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecurringAction+dummy.swift"; sourceTree = "<group>"; };
@@ -2618,7 +2616,6 @@
 			isa = PBXGroup;
 			children = (
 				EEE46E5628C5EF56005F48D7 /* FetchUserClientsUseCase.swift */,
-				59D985F12B60146D009B99F0 /* GetSelfUserVerificationStatusUseCase.swift */,
 				018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */,
 				25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift */,
 				25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */,
@@ -3667,7 +3664,6 @@
 				63497702268A20EC00824A05 /* AVSParticipantsChange.swift in Sources */,
 				8717DFA71F6EF44E0087EFE4 /* SessionManager+Push.swift in Sources */,
 				D52257232062637500562561 /* DeletableAssetIdentifierProvider.swift in Sources */,
-				59D985F22B60146D009B99F0 /* GetSelfUserVerificationStatusUseCase.swift in Sources */,
 				70355A7327AAE62E00F02C76 /* ZMUserSession+SecurityClassification.swift in Sources */,
 				25E11B0B2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift in Sources */,
 				D5225720206261AA00562561 /* AssetDeletionStatus.swift in Sources */,

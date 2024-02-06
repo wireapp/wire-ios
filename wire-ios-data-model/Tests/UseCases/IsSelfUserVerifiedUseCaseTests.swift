@@ -16,65 +16,52 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCoreCrypto
 import XCTest
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-final class HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests: ZMBaseManagedObjectTest {
+final class IsSelfUserVerifiedUseCaseTests: ZMBaseManagedObjectTest {
 
-    private var sut: HasSelfUserValidE2EICertificatesForAllClientsUseCase!
-    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockSafeCoreCrypto: MockSafeCoreCrypto!
-
+    private var sut: IsSelfUserVerifiedUseCase!
     private var context: NSManagedObjectContext { syncMOC }
 
     override func setUp() {
         super.setUp()
 
         setupUsersClientsAndConversation()
-        let mockCoreCrypto = MockCoreCryptoProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
-        sut = .init(context: context, coreCryptoProvider: mockCoreCryptoProvider)
+        sut = .init(context: context)
     }
 
     override func tearDown() {
         sut = nil
-        mockCoreCryptoProvider = nil
-        mockSafeCoreCrypto = nil
 
         super.tearDown()
     }
 
-    func testExpiredCertificateResultsToFalse() async throws {
+    func testResultIsVerified() {
         // Given
-        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { conversationID, userIDs in
-            XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
-            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d@example.com"])
-            return [userIDs[0]: [.withStatus(.valid), .withStatus(.expired)]]
-        }
+        //
 
         // When
-        let isCertified = try await sut.invoke()
+        let isVerified = sut.invoke()
 
         // Then
-        XCTAssertFalse(isCertified)
+        XCTAssertTrue(isVerified)
     }
 
-    func testRevokedCertificateResultsToFalse() async throws {
+    func testResultIsNotVerified() throws {
         // Given
-        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
-            [userIDs[0]: [.withStatus(.valid), .withStatus(.revoked)]]
+        try context.performAndWait {
+            let selfClient = try XCTUnwrap(ZMUser.selfUser(in: context).selfClient())
+            selfClient.trustedClients = [selfClient]
         }
 
         // When
-        let isCertified = try await sut.invoke()
+        let isVerified = sut.invoke()
 
         // Then
-        XCTAssertFalse(isCertified)
+        XCTAssertFalse(isVerified)
     }
 
     // MARK: - Helpers
@@ -111,20 +98,7 @@ final class HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests: ZMBaseMan
         let otherClient = UserClient.insertNewObject(in: context)
         otherClient.remoteIdentifier = UUID.create().uuidString
         otherClient.user = .selfUser(in: context)
-    }
-}
 
-extension WireIdentity {
-
-    fileprivate static func withStatus(_ status: DeviceStatus) -> Self {
-        .init(
-            clientId: "A",
-            handle: "B",
-            displayName: "C",
-            domain: "D",
-            certificate: "E",
-            status: status,
-            thumbprint: "F"
-        )
+        selfClient.trustedClients = [selfClient, otherClient]
     }
 }

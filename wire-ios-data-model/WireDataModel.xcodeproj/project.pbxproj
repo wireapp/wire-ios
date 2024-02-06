@@ -256,6 +256,8 @@
 		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
 		597B70C72B03C6A5006C2121 /* UpdateConversationProtocolAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */; };
 		598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */; };
+		59A6971D2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */; };
+		59A6971F2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
 		59C9149F2B72730800CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C9149D2B7272F100CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift */; };
 		59C914A12B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C914A02B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */; };
@@ -1122,6 +1124,8 @@
 		597A3BB62B6418170020E337 /* Availability+WireProtos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Availability+WireProtos.swift"; sourceTree = "<group>"; };
 		597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolAction.swift; sourceTree = "<group>"; };
 		5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+allTypes.swift"; sourceTree = "<group>"; };
+		59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserVerifiedUseCase.swift; sourceTree = "<group>"; };
+		59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserVerifiedUseCaseTests.swift; sourceTree = "<group>"; };
 		59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolTests.swift; sourceTree = "<group>"; };
 		59C9149D2B7272F100CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift; sourceTree = "<group>"; };
 		59C914A02B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift; sourceTree = "<group>"; };
@@ -2123,22 +2127,25 @@
 			path = ButtonState;
 			sourceTree = "<group>";
 		};
-		638941EC2AF4FD170051ABFD /* Use cases */ = {
+		638941EC2AF4FD170051ABFD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
 				59C9149D2B7272F100CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift */,
+				59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */,
 				638941ED2AF4FD4B0051ABFD /* RemoveLocalConversationUseCase.swift */,
 			);
-			path = "Use cases";
+			name = UseCases;
+			path = Source/UseCases;
 			sourceTree = "<group>";
 		};
-		638941F42AF521050051ABFD /* Use cases */ = {
+		638941F42AF521050051ABFD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
 				59C914A02B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */,
+				59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */,
 				638941F52AF5211D0051ABFD /* RemoveLocalConversationUseCaseTests.swift */,
 			);
-			path = "Use cases";
+			path = UseCases;
 			sourceTree = "<group>";
 		};
 		63B1333629A503D000009D84 /* Proteus */ = {
@@ -3308,7 +3315,7 @@
 			isa = PBXGroup;
 			children = (
 				069BCC4F2B30945500DF4EC2 /* E2EIdentity */,
-				638941EC2AF4FD170051ABFD /* Use cases */,
+				638941EC2AF4FD170051ABFD /* UseCases */,
 				1639A81122608FEB00868AB9 /* Patches */,
 				F9A705C91CAEE01D00C2F5FE /* ManagedObjectContext */,
 				63B1333929A503D000009D84 /* MLS */,
@@ -3425,7 +3432,7 @@
 			isa = PBXGroup;
 			children = (
 				069BCC632B3098F500DF4EC2 /* E2EIdentity */,
-				638941F42AF521050051ABFD /* Use cases */,
+				638941F42AF521050051ABFD /* UseCases */,
 				EE91911829F0196600514A2D /* EAR */,
 				54FB03AB1E41F6C2000E13DC /* Utils */,
 				F9A7085D1CAEEF4700C2F5FE /* Helper */,
@@ -4127,6 +4134,7 @@
 				EEAAD75E252C711800E6A44E /* ZMManagedObject+ClassIdentifier.swift in Sources */,
 				064F8E08255E04800040371D /* Feature.swift in Sources */,
 				54FB03A31E41E64A000E13DC /* UserClient+Patches.swift in Sources */,
+				59A6971D2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift in Sources */,
 				F9A706971CAEE01D00C2F5FE /* UserClientTypes.m in Sources */,
 				5E0FB215205176B400FD9867 /* Set+ServiceUser.swift in Sources */,
 				F9A706A81CAEE01D00C2F5FE /* DependentObjectsKeysForObservedObjectKeysCache.swift in Sources */,
@@ -4401,6 +4409,7 @@
 				F920AE3B1E3B844E001BC14F /* SearchUserObserverCenterTests.swift in Sources */,
 				F9B71FA81CB2BF37001DB03F /* ZMConversationTests+Validation.m in Sources */,
 				F9B71FA11CB2BF37001DB03F /* ZMConversation+Testing.m in Sources */,
+				59A6971F2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift in Sources */,
 				59C914A12B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift in Sources */,
 				1600D944267BC5A100970F99 /* ZMManagedObjectFetchingTests.swift in Sources */,
 				F9A708531CAEEB7500C2F5FE /* ZMManagedObjectTests.m in Sources */,
