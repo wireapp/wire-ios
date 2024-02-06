@@ -418,13 +418,13 @@ extension ZMLogTests {
 
         // GIVEN
         let sut = ZMSLog(tag: "foo")
-        let currentLog = ZMSLog.currentZipLog
+        let currentLog = ZMSLog.currentLog
 
         // WHEN
         sut.error("PANIC")
 
         // THEN
-        XCTAssertEqual(ZMSLog.currentZipLog, currentLog)
+        XCTAssertEqual(ZMSLog.currentLog, currentLog)
 
     }
 
@@ -465,7 +465,7 @@ extension ZMLogTests {
         sut.safePublic("Item: \(item)")
 
         // THEN
-        let currentLog = ZMSLog.currentZipLog
+        let currentLog = ZMSLog.currentLog
         XCTAssertNil(currentLog)
     }
 
@@ -507,7 +507,7 @@ extension ZMLogTests {
         ZMSLog.stopRecording()
 
         // THEN
-        XCTAssertNil(ZMSLog.currentZipLog)
+        XCTAssertNil(ZMSLog.currentLog)
 
         try ZMSLog.previousZipLogURLs.forEach { url in
             XCTAssertThrowsError(try Data(contentsOf: url))
@@ -531,10 +531,10 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        XCTAssertNotNil(ZMSLog.currentZipLog)
+        XCTAssertNotNil(ZMSLog.currentLog)
     }
 
-    func testThatSwitchesCurrentLogToPrevious() throws {
+    func testThatSwitchesCurrentLogToPrevious() {
 
         // given
         let sut = ZMSLog(tag: "foo")
@@ -551,8 +551,7 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        let path = try XCTUnwrap(ZMSLog.currentLogURL?.path)
-        XCTAssertFalse(FileManager.default.fileExists(atPath: path))
+        XCTAssertNil(ZMSLog.currentLog)
     }
 
     func testThatSwitchesCurrentLogToPrevious_multipleFiles() throws {
@@ -582,7 +581,7 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        XCTAssertNil(ZMSLog.currentZipLog)
+        XCTAssertNil(ZMSLog.currentLog)
 
         try ZMSLog.previousZipLogURLs.forEach {
             let data = try Data(contentsOf: $0, options: [.uncached])
@@ -681,9 +680,8 @@ extension ZMLogTests {
 
     func getLinesFromCurrentLog(file: StaticString = #file, line: UInt = #line) -> [String] {
 
-        guard let currentLog = ZMSLog.currentLogURL,
-              let data = FileManager.default.contents(atPath: currentLog.path),
-            let logContent = String(data: data, encoding: .utf8) else {
+        guard let currentLog = ZMSLog.currentLog,
+            let logContent = String(data: currentLog, encoding: .utf8) else {
                 XCTFail(file: file, line: line)
                 return []
         }

@@ -23,7 +23,6 @@ public func fatal(_ message: String,
                   file: StaticString = #file,
                   line: UInt = #line) -> Never {
     ZMAssertionDump_NSString("Swift assertion", "\(file)", Int32(line), message)
-    WireLogger.system.critical("Swift assertion at \(file) - \(Int32(line)): \(message)")
     fatalError(message, file: file, line: line)
 }
 
@@ -35,13 +34,14 @@ public func require(_ condition: Bool, _ message: String = "", file: StaticStrin
 }
 
 @objc public enum AppBuild: UInt8 {
-    case appStore, debug, develop, unknown
+    case appStore, `internal`, debug, develop, unknown
 
     static var current: AppBuild {
         guard let identifier = Bundle.main.bundleIdentifier else { return .unknown }
         switch identifier {
         case "com.wearezeta.zclient.ios": return .appStore
         case "com.wearezeta.zclient.alpha": return .debug
+        case "com.wearezeta.zclient.internal": return .internal
         case "com.wearezeta.zclient.development": return .develop
         default: return .unknown
         }
@@ -49,7 +49,7 @@ public func require(_ condition: Bool, _ message: String = "", file: StaticStrin
 
     var canFatalError: Bool {
         switch self {
-        case .debug, .develop:
+        case .debug, .internal, .develop:
             return true
         case .appStore, .unknown:
             return false
@@ -64,7 +64,7 @@ public func requireInternal(_ condition: Bool, _ message: @autoclosure () -> Str
     if AppBuild.current.canFatalError {
         fatal(errorMessage, file: file, line: line)
     } else {
-        WireLogger.system.critical("requireInternal: \(errorMessage)")
+        WireLogger(tag: "system").error("requireInternal: \(errorMessage)")
     }
 }
 
@@ -74,6 +74,6 @@ public func requireInternalFailure(_ message: @autoclosure () -> String, file: S
     if AppBuild.current.canFatalError {
         fatal(errorMessage, file: file, line: line)
     } else {
-        WireLogger.system.critical("requireInternalFailure: \(errorMessage)")
+        WireLogger(tag: "system").error("requireInternalFailure: \(errorMessage)")
     }
 }

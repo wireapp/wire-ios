@@ -93,12 +93,7 @@ public class DatadogWrapper {
             .build()
 
         datadogUserId = UIDevice.current.identifierForVendor?.uuidString.sha256String ?? "none"
-
-        if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
-            aggregatedLogger.addLogger(self)
-        } else {
-            WireLogger.provider = self
-        }
+        WireLogger.provider = self
     }
 
     public func startMonitoring() {

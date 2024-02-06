@@ -21,7 +21,6 @@ import MessageUI
 import WireDataModel
 import UIKit
 import WireSystem
-import WireCommonComponents
 
 /// Presents debug alerts
 final class DebugAlert {
@@ -114,23 +113,12 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     private var mailViewController: MFMailComposeViewController?
     static private var senderInstance: DebugLogSender?
 
-    static var debugLogs: [URL] {
-        let oslogs = LogFileDestination.allCases.compactMap { $0.log }
-        let currentLog = [ZMSLog.currentLogURL].compactMap { $0 }
-
-        return ZMSLog.previousZipLogURLs + oslogs + currentLog
-    }
-
-    static var areDebugLogsPresent: Bool {
-        return debugLogs.filter { FileManager.default.fileExists(atPath: $0.path) }.isNonEmpty
-    }
-
     /// Sends recorded logs by email
     static func sendLogsByEmail(message: String, shareWithAVS: Bool = false) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         guard self.senderInstance == nil else { return }
 
-        guard areDebugLogsPresent else {
+        guard ZMSLog.currentLog != nil else {
             DebugAlert.showGeneric(message: "There are no logs to send, have you enabled them from the debug menu > log settings BEFORE the issue happened?\nWARNING: restarting the app will discard all collected logs")
             return
         }
@@ -144,8 +132,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-
-            DebugAlert.displayFallbackActivityController(logPaths: debugLogs, email: mail, from: controller)
+            DebugAlert.displayFallbackActivityController(logPaths: ZMSLog.pathsForExistingLogs, email: mail, from: controller)
             return
         }
 
@@ -157,18 +144,12 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         mailVC.setToRecipients([mail])
         mailVC.setSubject("iOS logs from \(userDescription)")
         mailVC.setMessageBody(message, isHTML: false)
-
+        mailVC.attachLogs()
         mailVC.mailComposeDelegate = alert
         alert.mailViewController = mailVC
 
         self.senderInstance = alert
-
-        Task {
-            await mailVC.attachLogs()
-            await MainActor.run {
-                controller.present(mailVC, animated: true, completion: nil)
-            }
-        }
+        controller.present(mailVC, animated: true, completion: nil)
     }
 
     public func mailComposeController(_ controller: MFMailComposeViewController,
