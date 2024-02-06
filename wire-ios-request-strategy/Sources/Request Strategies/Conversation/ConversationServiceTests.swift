@@ -17,17 +17,24 @@
 //
 
 import XCTest
+import WireDataModelSupport
+
 @testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 final class ConversationServiceTests: MessagingTestBase {
 
     var sut: ConversationService!
+    var mockConversationParticipantsService: MockConversationParticipantsServiceInterface!
     var user1: ZMUser!
     var user2: ZMUser!
 
     override func setUp() {
         super.setUp()
-        sut = ConversationService(context: uiMOC)
+        mockConversationParticipantsService = MockConversationParticipantsServiceInterface()
+        sut = ConversationService(context: uiMOC, participantsServiceBuilder: { _ in
+            self.mockConversationParticipantsService
+        })
         user1 = createUser(alsoCreateClient: true, in: uiMOC)
         user2 = createUser(alsoCreateClient: true, in: uiMOC)
     }
@@ -159,6 +166,9 @@ final class ConversationServiceTests: MessagingTestBase {
             in: uiMOC
         )
 
+        XCTAssertNil(oneToOneConversation.oneOnOneUser)
+        XCTAssertNil(user1.oneOnOneConversation)
+
         let didFinish = customExpectation(description: "didFinish")
 
         // Mock
@@ -173,6 +183,10 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success(let conversation):
                 // Then we got back newly created conversation.
                 XCTAssertEqual(conversation, oneToOneConversation)
+
+                // Then the conversation relatioship is set.
+                XCTAssertEqual(oneToOneConversation.oneOnOneUser, self.user1)
+                XCTAssertEqual(self.user1.oneOnOneConversation, conversation)
                 didFinish.fulfill()
 
             case .failure(let error):
@@ -260,6 +274,124 @@ final class ConversationServiceTests: MessagingTestBase {
         // Then we got the expected failure.
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(mockActionHandler.performedActions.count, 1)
+    }
+
+    func test_CreateGroupConversation_CreatesMLSGroup() {
+        // Given
+        syncMOC.performAndWait {
+            groupConversation.messageProtocol = .mls
+            groupConversation.mlsGroupID = .random()
+            syncMOC.saveOrRollback()
+        }
+
+        let objectID = groupConversation.objectID
+        let didFinish = customExpectation(description: "didFinish")
+
+        let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
+            result: .success(objectID),
+            context: uiMOC.notificationContext
+        )
+
+        mockConversationParticipantsService.addParticipantsTo_MockMethod = { users, conversation in
+            self.syncMOC.performAndWait {
+                XCTAssertEqual(conversation.remoteIdentifier, self.groupConversation.remoteIdentifier)
+            }
+            XCTAssertEqual(self.user1.objectID, users.first?.objectID)
+        }
+
+        let mlsService = MockMLSServiceInterface()
+        mlsService.createGroupForWith_MockMethod = { groupId, users in
+            XCTAssertTrue(users.isEmpty)
+            self.syncMOC.performAndWait {
+                XCTAssertEqual(groupId, self.groupConversation.mlsGroupID)
+            }
+        }
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        // When
+        sut.createGroupConversation(
+            name: nil,
+            users: [user1],
+            allowGuests: true,
+            allowServices: true,
+            enableReceipts: true,
+            messageProtocol: .mls
+        ) {
+            switch $0 {
+            case .success:
+                didFinish.fulfill()
+
+            case .failure(let error):
+                XCTFail("unexpected error: \(error)")
+            }
+        }
+
+        // Then we got the expected failure.
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertEqual(mockActionHandler.performedActions.count, 1)
+    }
+
+    func test_CreateGroupConversation_WithUsersWithNoPackages_IsSuccessful() {
+        // Given
+        syncMOC.performAndWait {
+            groupConversation.messageProtocol = .mls
+            groupConversation.mlsGroupID = .random()
+            syncMOC.saveOrRollback()
+        }
+
+        let objectID = groupConversation.objectID
+        let didFinish = customExpectation(description: "didFinish")
+
+        let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
+            result: .success(objectID),
+            context: uiMOC.notificationContext
+        )
+
+        mockConversationParticipantsService.addParticipantsTo_MockMethod = { users, conversation in
+            self.syncMOC.performAndWait {
+                XCTAssertEqual(conversation.remoteIdentifier, self.groupConversation.remoteIdentifier)
+            }
+            XCTAssertEqual(self.user1.objectID, users.first?.objectID)
+
+            throw ConversationParticipantsError.failedToAddSomeUsers(users: Set(users))
+        }
+
+        let mlsService = MockMLSServiceInterface()
+        mlsService.createGroupForWith_MockMethod = { groupId, users in
+            XCTAssertTrue(users.isEmpty)
+            self.syncMOC.performAndWait {
+                XCTAssertEqual(groupId, self.groupConversation.mlsGroupID)
+            }
+        }
+
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        // When
+        sut.createGroupConversation(
+            name: nil,
+            users: [user1],
+            allowGuests: true,
+            allowServices: true,
+            enableReceipts: true,
+            messageProtocol: .mls
+        ) {
+            switch $0 {
+            case .success:
+                didFinish.fulfill()
+
+            case .failure(let error):
+                XCTFail("unexpected error: \(error)")
+            }
+        }
+
+        // Then we got the expected failure.
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertEqual(mockActionHandler.performedActions.count, 1)
+        XCTAssertEqual(mockConversationParticipantsService.addParticipantsTo_Invocations.count, 1)
     }
 
     func test_CreateGroupConversation_NetworkErrorFailure() throws {
@@ -393,7 +525,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let didSync = customExpectation(description: "didSync")
 
         // Mock
-        let mockActionHandler = MockActionHandler<SyncConversationAction>(
+        _ = MockActionHandler<SyncConversationAction>(
             result: .success(()),
             context: uiMOC.notificationContext
         )

@@ -100,7 +100,7 @@ final class UnlockViewController: UIViewController {
         let label = UILabel()
         label.text = " "
         label.font = UIFont.systemFont(ofSize: 10)
-        label.textColor = UIColor.PasscodeUnlock.error
+        label.textColor = SemanticColors.Label.textErrorDefault
 
         return label
     }()
@@ -136,18 +136,22 @@ extension UnlockViewController {
         stackView.distribution = .fill
         contentView.addSubview(stackView)
 
-        [titleLabel,
-         hintLabel,
-         passcodeTextField,
-         errorLabel,
-         unlockButton].forEach(stackView.addArrangedSubview)
+        [
+            titleLabel,
+            hintLabel,
+            passcodeTextField,
+            errorLabel,
+            unlockButton
+        ].forEach(stackView.addArrangedSubview)
 
         createConstraints()
     }
 
     private func createConstraints() {
-        [contentView,
-         stackView].forEach { (view) in
+        [
+            contentView,
+            stackView
+        ].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -199,7 +203,7 @@ extension UnlockViewController {
     }
 
     func showWrongPasscodeMessage() {
-        let textAttachment = NSTextAttachment.textAttachment(for: .exclamationMarkCircle, with: UIColor.PasscodeUnlock.error, iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize, verticalCorrection: -1, insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4))
+        let textAttachment = NSTextAttachment.textAttachment(for: .exclamationMarkCircle, with: SemanticColors.Label.textErrorDefault, iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize, verticalCorrection: -1, insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4))
 
         let attributedString = NSAttributedString(string: L10n.ShareExtension.Unlock.errorLabel) && hintFont
 

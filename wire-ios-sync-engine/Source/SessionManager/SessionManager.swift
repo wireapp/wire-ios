@@ -46,7 +46,7 @@ public protocol SessionActivationObserver: AnyObject {
     func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
 
-public protocol SessionManagerDelegate: SessionActivationObserver {
+public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLogin(error: Error?)
     func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
     func sessionManagerWillOpenAccount(_ account: Account,
@@ -591,9 +591,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func start(launchOptions: LaunchOptions) {
         if let account = accountManager.selectedAccount {
             selectInitialAccount(account, launchOptions: launchOptions)
+            // swiftlint:disable todo_requires_jira_link
             // TODO: this might need to happen with a completion handler.
             // TODO: register as voip delegate?
             // TODO: process voip actions pending actions
+            // swiftlint:enable todo_requires_jira_link
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerDidFailToLogin(error: nil)
@@ -728,7 +730,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteTemporaryData() {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [F] replace with TemporaryFileServiceInterface
+        // swiftlint:enable todo_requires_jira_link
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
         try? manager
@@ -932,12 +936,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             self?.delegate?.sessionManagerDidReportLockChange(forSession: session)
         }
 
-        accountTokens[account.userIdentifier] = [teamObserver,
-                                                 selfObserver!,
-                                                 conversationListObserver,
-                                                 connectionRequestObserver,
-                                                 unreadCountObserver,
-                                                 databaseEncryptionObserverToken
+        accountTokens[account.userIdentifier] = [
+            teamObserver,
+            selfObserver!,
+            conversationListObserver,
+            connectionRequestObserver,
+            unreadCountObserver,
+            databaseEncryptionObserverToken
         ]
     }
 
@@ -1176,9 +1181,9 @@ extension SessionManager: TeamObserver {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
-extension SessionManager: ZMUserObserver {
+extension SessionManager: UserObserving {
     public func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.teamsChanged || changeInfo.nameChanged || changeInfo.imageSmallProfileDataChanged {
             guard let user = changeInfo.user as? ZMUser,

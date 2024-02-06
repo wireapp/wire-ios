@@ -206,7 +206,9 @@ final class ProfileViewController: UIViewController {
     }
 
     private func setupProfileDetailsViewController() -> ProfileDetailsViewController {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Pass the whole view Model/stuct/context
+        // swiftlint:enable todo_requires_jira_link
         let profileDetailsViewController = ProfileDetailsViewController(user: viewModel.user,
                                                                         viewer: viewModel.viewer,
                                                                         conversation: viewModel.conversation,
@@ -251,7 +253,9 @@ final class ProfileViewController: UIViewController {
 
         let securityBannerHeight: CGFloat = securityLevelView.isHidden ? 0 : 24
 
-        [usernameDetailsView, securityLevelView, tabsView, profileFooterView, incomingRequestFooter].prepareForLayout()
+        [usernameDetailsView, securityLevelView, tabsView, profileFooterView, incomingRequestFooter].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         let incomingRequestFooterBottomConstraint = incomingRequestFooter.bottomAnchor.constraint(equalTo: view.bottomAnchor).withPriority(.defaultLow)
 
         NSLayoutConstraint.activate([

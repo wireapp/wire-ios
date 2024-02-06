@@ -37,10 +37,6 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         )
     }
 
-    let successPayload: ZMTransportData = [
-
-    ] as ZMTransportData
-
     // MARK: - Request generation
 
     func test_ItGeneratesARequest() throws {
@@ -59,10 +55,13 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
     // MARK: - Response handling
 
     func test_ItHandlesResponse_200() throws {
-        syncMOC.performGroupedBlock {
+        try syncMOC.performAndWait {
             // Given
             let sut = GetFeatureConfigsActionHandler(context: self.syncMOC)
             var action = GetFeatureConfigsAction()
+
+            let mlsMigrationStartDate = Date()
+            let mlsMigrationFinaliseDate = Date()
 
             // Expectation
             let gotResult = self.customExpectation(description: "gotResult")
@@ -87,10 +86,17 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 digitalSignatures: .init(status: .enabled),
                 fileSharing: .init(status: .enabled),
                 mls: .init(status: .enabled, config: .init(defaultProtocol: .mls)),
-                selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
+                selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22)),
+                mlsMigration: .init(
+                    status: .enabled,
+                    config: .init(
+                        startTime: mlsMigrationStartDate,
+                        finaliseRegardlessAfter: mlsMigrationFinaliseDate
+                    )
+                )
             )
 
-            guard let payloadData = try? JSONEncoder().encode(payload),
+            guard let payloadData = try? JSONEncoder.defaultEncoder.encode(payload),
                   let payloadString = String(data: payloadData, encoding: .utf8) else {
                 XCTFail("failed to encode payload")
                 return
@@ -131,6 +137,17 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
+
+            let mlsMigration = featureRepository.fetchMLSMigration()
+            XCTAssertEqual(mlsMigration.status, .enabled)
+            XCTAssertEqual(
+                String(describing: try XCTUnwrap(mlsMigration.config.startTime)),
+                String(describing: mlsMigrationStartDate)
+            )
+            XCTAssertEqual(
+                String(describing: try XCTUnwrap(mlsMigration.config.finaliseRegardlessAfter)),
+                String(describing: mlsMigrationFinaliseDate)
+            )
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -165,7 +182,8 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 digitalSignatures: nil,
                 fileSharing: nil,
                 mls: nil,
-                selfDeletingMessages: nil
+                selfDeletingMessages: nil,
+                mlsMigration: nil
             )
 
             guard let payloadData = try? JSONEncoder().encode(payload),
@@ -208,6 +226,10 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
+
+            let mlsMigration = featureRepository.fetchMLSMigration()
+            XCTAssertEqual(mlsMigration.status, .disabled)
+            XCTAssertEqual(mlsMigration.config, .init())
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

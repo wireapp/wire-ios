@@ -89,7 +89,9 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
     }
 
     private func createConstraints() {
-        [tableView, topSeparator, footerContainer, footerSeparator].prepareForLayout()
+        [tableView, topSeparator, footerContainer, footerSeparator].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         let footerContainerHeightConstraint = footerContainer.heightAnchor.constraint(equalToConstant: 0)
         footerContainerHeightConstraint.priority = .defaultHigh
@@ -120,7 +122,7 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
         footerSeparator.isHidden = newFooter == nil
         guard let newFooter = newFooter else { return }
         footerContainer.addSubview(newFooter)
-        [footerContainer, newFooter].prepareForLayout()
+        [footerContainer, newFooter].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             newFooter.topAnchor.constraint(equalTo: footerContainer.topAnchor),
             newFooter.bottomAnchor.constraint(equalTo: footerContainer.bottomAnchor),
@@ -298,7 +300,7 @@ extension SettingsTableViewController {
 
 }
 
-extension SettingsTableViewController: ZMUserObserver {
+extension SettingsTableViewController: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
         if note.accentColorValueChanged {
             refreshData()

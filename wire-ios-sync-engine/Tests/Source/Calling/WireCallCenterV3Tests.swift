@@ -30,7 +30,7 @@ class WireCallCenterTransportMock: WireCallCenterTransport {
 
     }
 
-    func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data>) -> Void)) {
+    func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data, Error>) -> Void)) {
 
     }
 
@@ -123,6 +123,7 @@ class WireCallCenterV3Tests: MessagingTest {
         mockTransport = nil
         mockAVSWrapper = nil
         conferenceCalling = nil
+        BackendInfo.storage = .standard
 
         super.tearDown()
     }
@@ -481,8 +482,8 @@ class WireCallCenterV3Tests: MessagingTest {
 
         let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
         mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { parentID, parentGroupID, subconversationType in
-            XCTAssertEqual(parentID, self.groupConversation.qualifiedID)
-            XCTAssertEqual(parentGroupID, self.groupConversation.mlsGroupID)
+            XCTAssertEqual(parentID, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }))
+            XCTAssertEqual(parentGroupID, self.uiMOC.performAndWait({ self.groupConversation.mlsGroupID }))
             XCTAssertEqual(subconversationType, .conference)
             didLeaveSubconversation.fulfill()
         }
@@ -511,8 +512,8 @@ class WireCallCenterV3Tests: MessagingTest {
 
         let didLeaveSubconversationIfNeeded = customExpectation(description: "didLeaveSubconversationIfNeeded")
         mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
-            XCTAssertEqual($0, self.groupConversation.qualifiedID)
-            XCTAssertEqual($1, self.groupConversation.mlsGroupID)
+            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }))
+            XCTAssertEqual($1, self.uiMOC.performAndWait({ self.groupConversation.mlsGroupID }))
             XCTAssertEqual($2, .conference)
             XCTAssertEqual($3, selfClientID)
             didLeaveSubconversationIfNeeded.fulfill()
@@ -552,8 +553,8 @@ class WireCallCenterV3Tests: MessagingTest {
 
         let didLeaveSubconversationIfNeeded = customExpectation(description: "didLeaveSubconversationIfNeeded")
         mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
-            XCTAssertEqual($0, self.groupConversation.qualifiedID)
-            XCTAssertEqual($1, self.groupConversation.mlsGroupID)
+            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }))
+            XCTAssertEqual($1, self.uiMOC.performAndWait({ self.groupConversation.mlsGroupID }))
             XCTAssertEqual($2, .conference)
             XCTAssertEqual($3, selfClientID)
             didLeaveSubconversationIfNeeded.fulfill()
@@ -588,8 +589,8 @@ class WireCallCenterV3Tests: MessagingTest {
 
         let didLeaveSubconversationIfNeeded = customExpectation(description: "didLeaveSubconversationIfNeeded")
         mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
-            XCTAssertEqual($0, self.groupConversation.qualifiedID)
-            XCTAssertEqual($1, self.groupConversation.mlsGroupID)
+            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }))
+            XCTAssertEqual($1, self.uiMOC.performAndWait({ self.groupConversation.mlsGroupID }))
             XCTAssertEqual($2, .conference)
             XCTAssertEqual($3, selfClientID)
             didLeaveSubconversationIfNeeded.fulfill()
@@ -841,7 +842,7 @@ class WireCallCenterV3Tests: MessagingTest {
         let didJoinSubgroup = customExpectation(description: "didJoinSubgroup")
         mlsService.createOrJoinSubgroupParentQualifiedIDParentID_MockMethod = {
             defer { didJoinSubgroup.fulfill() }
-            XCTAssertEqual($0, self.groupConversation.qualifiedID)
+            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }))
             XCTAssertEqual($1, parentGroupID)
             return subconversationGroupID
         }
@@ -856,7 +857,7 @@ class WireCallCenterV3Tests: MessagingTest {
 
         let didSetConferenceInfo1 = customExpectation(description: "didSetConferenceInfo1")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
-            XCTAssertEqual($0, self.groupConversation.avsIdentifier)
+            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.avsIdentifier }))
             XCTAssertEqual($1, conferenceInfo1)
             didSetConferenceInfo1.fulfill()
         }
@@ -888,7 +889,7 @@ class WireCallCenterV3Tests: MessagingTest {
 
         let didSetConferenceInfo2 = customExpectation(description: "didSetConferenceInfo2")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
-            XCTAssertEqual($0, self.groupConversation.avsIdentifier)
+            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.avsIdentifier }))
             XCTAssertEqual($1, conferenceInfo2)
             didSetConferenceInfo2.fulfill()
         }
@@ -1193,10 +1194,8 @@ class WireCallCenterV3Tests: MessagingTest {
         // then
         XCTAssertFalse(sut.isMuted)
     }
-}
 
-// MARK: - CBR
-extension WireCallCenterV3Tests {
+    // MARK: - CBR
 
     func testThatCBRIsEnabledOnAudioCBRChangeHandler_whenCallIsEstablished() {
         // given
@@ -1307,11 +1306,9 @@ extension WireCallCenterV3Tests {
         // then
         XCTAssertFalse(sut.isContantBitRate(conversationId: oneOnOneConversationID))
     }
-}
 
-// MARK: - Network quality
+    // MARK: - Network quality
 
-extension WireCallCenterV3Tests {
     func testThatNetworkQualityIsNormalInitially() {
         // given
         sut.handleIncomingCall(conversationId: oneOnOneConversationID,
@@ -1421,11 +1418,7 @@ extension WireCallCenterV3Tests {
         XCTAssertFalse(sut.isMuted)
     }
 
-}
-
-// MARK: - Ignoring Calls
-
-extension WireCallCenterV3Tests {
+    // MARK: - Ignoring Calls
 
     func testThatItWhenIgnoringACallItWillSetsTheCallStateToIncomingInactive() {
         // given
@@ -1499,11 +1492,7 @@ extension WireCallCenterV3Tests {
         XCTAssertNotEqual(sut.callState(conversationId: oneOnOneConversationID), .incoming(video: false, shouldRing: false, degraded: false))
     }
 
-}
-
-// MARK: - Participants
-
-extension WireCallCenterV3Tests {
+    // MARK: - Participants
 
     func testThatItCreatesAParticipantSnapshotForAnIncomingCall() {
         // when
@@ -1584,11 +1573,8 @@ extension WireCallCenterV3Tests {
         expected = [CallParticipant(user: otherUser, clientId: otherUserClientID, state: .connected(videoState: .stopped, microphoneState: .unmuted), activeSpeakerState: .inactive)]
         XCTAssertEqual(actual, expected)
     }
-}
 
-// MARK: - Call Config
-
-extension WireCallCenterV3Tests {
+    // MARK: - Call Config
 
     func testThatCallConfigRequestsAreForwaredToTransportAndAVS() {
         // given
@@ -1602,11 +1588,7 @@ extension WireCallCenterV3Tests {
         XCTAssertTrue(mockAVSWrapper.didUpdateCallConfig)
     }
 
-}
-
-// MARK: - Clients Request Handler
-
-extension WireCallCenterV3Tests {
+    // MARK: - Clients Request Handler
 
     func testThatClientsRequestHandlerSuccessfullyReturnsClientList() {
         // given
@@ -1650,11 +1632,9 @@ extension WireCallCenterV3Tests {
             return client
         }
     }
-}
 
-// MARK: - Call Degradation
+    // MARK: - Call Degradation
 
-extension WireCallCenterV3Tests {
     func testThatCallDidDegradeEndsCall() {
         // When
         sut.callDidDegrade(conversationId: AVSIdentifier.stub,
@@ -1825,10 +1805,9 @@ extension WireCallCenterV3Tests {
             XCTAssertEqual(activeSpeakerAmount, 0)
         }
     }
-}
 
-// MARK: - Request Video Streams
-extension WireCallCenterV3Tests {
+    // MARK: - Request Video Streams
+
     func testThatRequestVideoStreams_SendsCorrectParameters() {
         // given
         let clientId1 = UUID().transportString()
@@ -1849,11 +1828,8 @@ extension WireCallCenterV3Tests {
         XCTAssertEqual(mockAVSWrapper.requestVideoStreamsArguments?.uuid, conversationId)
         XCTAssertEqual(mockAVSWrapper.requestVideoStreamsArguments?.videoStreams, expectedResult)
     }
-}
 
 // MARK: - Request new epoch
-
-extension WireCallCenterV3Tests {
 
     func testHandleNewEpochRequest() throws {
         // Given
@@ -1870,7 +1846,9 @@ extension WireCallCenterV3Tests {
         )
 
         let mlsService = MockMLSServiceInterface()
-        uiMOC.zm_sync.mlsService = mlsService
+        uiMOC.zm_sync.performAndWait {
+            uiMOC.zm_sync.mlsService = mlsService
+        }
 
         let didGenereateNewEpoch = customExpectation(description: "didGenerateNewEpoch")
         mlsService.generateNewEpochGroupID_MockMethod = {

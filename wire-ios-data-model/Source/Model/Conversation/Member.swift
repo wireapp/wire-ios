@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public typealias TeamMembership = Member
 @objcMembers public class Member: ZMManagedObject {
 
     @NSManaged public var team: Team?
@@ -62,8 +63,7 @@
 
         if let existing = user.membership {
             return existing
-        }
-        else if let userId = user.remoteIdentifier, let existing = Member.fetch(with: userId, in: context) {
+        } else if let userId = user.remoteIdentifier, let existing = Member.fetch(with: userId, in: context) {
             return existing
         }
 

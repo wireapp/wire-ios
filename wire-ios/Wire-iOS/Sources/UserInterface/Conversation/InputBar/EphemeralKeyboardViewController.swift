@@ -69,7 +69,7 @@ extension UIAlertController {
 
     /// We call this method when user decides to add a custom timeout for their messages
     static func requestCustomTimeInterval(over controller: UIViewController,
-                                          with completion: @escaping (Result<TimeInterval>) -> Void) {
+                                          with completion: @escaping (Result<TimeInterval, Error>) -> Void) {
         let alertController = UIAlertController(title: "Custom timer", message: nil, preferredStyle: .alert)
         alertController.addTextField { (textField: UITextField) in
             textField.keyboardType = .decimalPad
@@ -172,7 +172,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [picker, titleLabel].prepareForLayout()
+        [picker, titleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),

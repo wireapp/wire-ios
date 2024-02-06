@@ -218,7 +218,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.textMessageData?.requestLinkPreviewImageDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.2), line: line)
         }
     }

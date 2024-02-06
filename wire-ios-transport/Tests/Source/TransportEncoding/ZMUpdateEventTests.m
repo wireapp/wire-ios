@@ -64,7 +64,6 @@
              @"user.client-remove" : @(ZMUpdateEventTypeUserClientRemove),
              @"team.create" : @(ZMUpdateEventTypeTeamCreate),
              @"team.delete" : @(ZMUpdateEventTypeTeamDelete),
-             @"team.update" : @(ZMUpdateEventTypeTeamUpdate),
              @"team.member-leave" : @(ZMUpdateEventTypeTeamMemberLeave),
              @"team.member-update" : @(ZMUpdateEventTypeTeamMemberUpdate),
              @"team.conversation-create" : @(ZMUpdateEventTypeTeamConversationCreate),

@@ -29,7 +29,7 @@ class CryptoBoxTest: OtrBaseTest {
         let keyStore = UserClientKeysStore(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
 
         // then
-        guard let values = try? keyStore.cryptoboxDirectory.resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey)) else {return XCTFail()}
+        guard let values = try? keyStore.cryptoboxDirectory.resourceValues(forKeys: [.isExcludedFromBackupKey]) else {return XCTFail()}
 
         XCTAssertTrue(values.isExcludedFromBackup!)
     }

@@ -23,15 +23,14 @@ import XCTest
 
 class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>>: MessagingTestBase {
 
-    typealias Result = Action.Result
-    typealias Failure = Action.Failure
-    typealias ValidationBlock = (Swift.Result<Result, Failure>) -> Bool
+    typealias ValidationBlock = (Result<Action.Result, Action.Failure>) -> Bool
 
     var action: Action!
     var handler: Handler!
 
     override func tearDown() {
         action = nil
+        handler = nil
         super.tearDown()
     }
 
@@ -68,18 +67,20 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         for action: Action,
         expectedPath: String,
         expectedMethod: ZMTransportRequestMethod,
-        expectedData: Data,
-        expectedContentType: String,
-        apiVersion: APIVersion = .v1
+        expectedData: Data?,
+        expectedContentType: String?,
+        apiVersion: APIVersion = .v1,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) throws {
         // When
         let request = try XCTUnwrap(handler.request(for: action, apiVersion: apiVersion))
 
         // Then
-        XCTAssertEqual(request.path, expectedPath)
-        XCTAssertEqual(request.method, expectedMethod)
-        XCTAssertEqual(request.binaryData, expectedData)
-        XCTAssertEqual(request.binaryDataType, expectedContentType)
+        XCTAssertEqual(request.path, expectedPath, file: file, line: line)
+        XCTAssertEqual(request.method, expectedMethod, file: file, line: line)
+        XCTAssertEqual(request.binaryData, expectedData, file: file, line: line)
+        XCTAssertEqual(request.binaryDataType, expectedContentType, file: file, line: line)
     }
 
     func test_itDoesntGenerateARequest(
@@ -134,7 +135,9 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
             label: label,
             apiVersion: apiVersion
         )
-        handler.handleResponse(response, action: action)
+        syncMOC.performGroupedBlockAndWait {
+            self.handler.handleResponse(response, action: action)
+        }
 
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5), file: file, line: line)
@@ -167,6 +170,7 @@ extension ActionHandlerTestBase {
         status: Int,
         payload: ZMTransportData? = nil,
         label: String? = nil,
+        apiVersion: APIVersion = .v1,
         file: StaticString = #file,
         line: UInt = #line,
         validation: @escaping ValidationBlock
@@ -180,6 +184,7 @@ extension ActionHandlerTestBase {
             status: status,
             payload: payload,
             label: label,
+            apiVersion: apiVersion,
             file: file,
             line: line,
             validation: validation
@@ -190,14 +195,16 @@ extension ActionHandlerTestBase {
     func test_itHandlesSuccess(
         status: Int,
         payload: ZMTransportData? = nil,
+        apiVersion: APIVersion = .v1,
         file: StaticString = #file,
         line: UInt = #line
-    ) -> Result? {
-        var result: Result?
+    ) -> Action.Result? {
+        var result: Action.Result?
 
         test_itHandlesResponse(
             status: status,
             payload: payload,
+            apiVersion: apiVersion,
             file: file,
             line: line
         ) {
@@ -210,14 +217,14 @@ extension ActionHandlerTestBase {
     }
 }
 
-extension ActionHandlerTestBase where Failure: Equatable {
+extension ActionHandlerTestBase where Action.Failure: Equatable {
 
     // MARK: Failures Assessment
 
     func test_itDoesntGenerateARequest(
         action: Action,
         apiVersion: APIVersion,
-        expectedError: Failure
+        expectedError: Action.Failure
     ) {
         test_itDoesntGenerateARequest(action: action, apiVersion: apiVersion, validation: {
             guard case .failure(let error) = $0 else { return false}
@@ -228,11 +235,15 @@ extension ActionHandlerTestBase where Failure: Equatable {
     func test_itHandlesFailure(
         status: Int,
         payload: ZMTransportData? = nil,
-        expectedError: Failure
+        expectedError: Action.Failure,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) {
         test_itHandlesResponse(
             status: status,
-            payload: payload
+            payload: payload,
+            file: file,
+            line: line
         ) {
             guard case .failure(let error) = $0 else { return false }
             return error == expectedError
@@ -242,9 +253,10 @@ extension ActionHandlerTestBase where Failure: Equatable {
     func test_itHandlesFailure(
         status: Int,
         label: String? = nil,
-        expectedError: Failure
+        apiVersion: APIVersion = .v1,
+        expectedError: Action.Failure
     ) {
-        test_itHandlesResponse(status: status, label: label) {
+        test_itHandlesResponse(status: status, label: label, apiVersion: apiVersion) {
             guard case .failure(let error) = $0 else { return false }
             return error == expectedError
         }
@@ -260,10 +272,10 @@ extension ActionHandlerTestBase where Failure: Equatable {
 
     struct FailureCase {
         let status: Int
-        let error: Failure
+        let error: Action.Failure
         let label: String?
 
-        static func failure(status: Int, error: Failure, label: String? = nil) -> Self {
+        static func failure(status: Int, error: Action.Failure, label: String? = nil) -> Self {
             return .init(status: status, error: error, label: label)
         }
     }

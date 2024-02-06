@@ -400,7 +400,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         }
     }
 
-    public func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data>) -> Void)) {
+    public func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data, Error>) -> Void)) {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -456,7 +456,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             }
 
             switch conversation.messageProtocol {
-            case .proteus:
+            case .proteus, .mixed:
                 // With proteus, we discover clients by posting an otr message to no-one,
                 // then parse the error response that contains the list of all clients.
                 self.clientDiscoveryRequest = ClientDiscoveryRequest(
@@ -608,7 +608,7 @@ extension CallingRequestStrategy {
             case .v0:
                 // `nestedContainer` contains all the user ids with no notion of domain, we can extract clients directly
                allClients = try extractClientsFromContainer(nestedContainer, nil)
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 // `nestedContainer` has further nested containers each dynamically keyed by a domain name.
                 // we need to loop over each container to extract the clients.
                 try nestedContainer.allKeys.forEach { domainKey in

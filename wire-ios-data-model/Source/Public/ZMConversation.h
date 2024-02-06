@@ -40,7 +40,6 @@
 
 typedef NS_CLOSED_ENUM(int16_t, ZMConversationType) {
     ZMConversationTypeInvalid = 0,
-
     ZMConversationTypeSelf,
     ZMConversationTypeOneOnOne,
     ZMConversationTypeGroup,
@@ -61,9 +60,6 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
     ZMConversationListIndicatorInactiveCall, ///< Other people are having a call but you are not in it.
     ZMConversationListIndicatorPending
 };
-
-
-extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a range in an attributed string should be displayed dimmed.
 
 @interface ZMConversation : ZMManagedObject
 

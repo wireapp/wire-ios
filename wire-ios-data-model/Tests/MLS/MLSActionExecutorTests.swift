@@ -129,7 +129,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 senderClientId: nil,
                 hasEpochChanged: false,
                 identity: nil,
-                bufferedMessages: nil
+                bufferedMessages: nil,
+                crlNewDistributionPoints: nil
             )
         }
 
@@ -192,7 +193,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 senderClientId: nil,
                 hasEpochChanged: false,
                 identity: nil,
-                bufferedMessages: nil
+                bufferedMessages: nil,
+                crlNewDistributionPoints: nil
             )
         }
 
@@ -229,7 +231,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockMemberAddedMessages = MemberAddedMessages(
             welcome: mockWelcome,
             commit: mockCommit,
-            groupInfo: mockGroupInfo
+            groupInfo: mockGroupInfo,
+            crlNewDistributionPoints: nil
         )
 
         // Mock add clients.
@@ -432,7 +435,9 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             commit: mockCommit,
             groupInfo: mockGroupInfoBundle
         )
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Mock properly
+        // swiftlint:enable todo_requires_jira_link
         let mockUpdateEvents = [ZMUpdateEvent]()
 
         // Mock join by external commit
@@ -443,7 +448,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             return .init(
                 conversationId: groupID.data,
                 commit: mockCommit,
-                groupInfo: mockGroupInfoBundle
+                groupInfo: mockGroupInfoBundle,
+                crlNewDistributionPoints: nil
             )
         }
 
@@ -482,7 +488,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             senderClientId: nil,
             hasEpochChanged: false,
             identity: nil,
-            bufferedMessages: nil
+            bufferedMessages: nil,
+            crlNewDistributionPoints: nil
         )
 
         mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
