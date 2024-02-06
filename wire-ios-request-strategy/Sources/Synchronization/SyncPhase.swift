@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import Foundation
 
 @objc public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
 
+    // start here for slow sync
     case fetchingLastUpdateEventID
     case fetchingTeams
     case fetchingTeamRoles
@@ -29,23 +30,23 @@ import Foundation
     case fetchingSelfUser
     case fetchingLegalHoldStatus
     case fetchingLabels
+    case evaluate1on1ConversationsForMLS
+    // following is quick sync only
     case fetchingMissedEvents
     case done
 
+    static let lastSlowSyncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
+
     public var isLastSlowSyncPhase: Bool {
-        return self == Self.lastSlowSyncPhase
+        self == Self.lastSlowSyncPhase
     }
 
     public var isSyncing: Bool {
-        return self != .done
+        self != .done
     }
 
     public var nextPhase: SyncPhase {
-        return SyncPhase(rawValue: rawValue + 1) ?? .done
-    }
-
-    public static var lastSlowSyncPhase: SyncPhase {
-        return .fetchingLabels
+        SyncPhase(rawValue: rawValue + 1) ?? .done
     }
 
     public var description: String {
@@ -68,20 +69,12 @@ import Foundation
             return "fetchingLegalHoldStatus"
         case .fetchingLabels:
             return "fetchingLabels"
+        case .evaluate1on1ConversationsForMLS:
+            return "evaluate1on1ConversationsForMLS"
         case .fetchingMissedEvents:
             return "fetchingMissedEvents"
         case .done:
             return "done"
         }
     }
-}
-
-@objc
-public protocol SyncProgress {
-
-    var currentSyncPhase: SyncPhase { get }
-
-    func finishCurrentSyncPhase(phase: SyncPhase)
-    func failCurrentSyncPhase(phase: SyncPhase)
-
 }

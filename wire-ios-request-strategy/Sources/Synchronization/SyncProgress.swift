@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,11 @@
 
 import Foundation
 
-@objc(ZMApplicationStatus)
-public protocol ApplicationStatus: AnyObject {
-    var synchronizationState: SynchronizationState { get }
-    var operationState: OperationState { get }
-    var clientRegistrationDelegate: ClientRegistrationDelegate { get }
-    var requestCancellation: ZMRequestCancellation { get }
+public protocol SyncProgress {
 
-    func requestSlowSync()
+    var currentSyncPhase: SyncPhase { get }
+
+    func finishCurrentSyncPhase(phase: SyncPhase)
+    func failCurrentSyncPhase(phase: SyncPhase)
 
 }
