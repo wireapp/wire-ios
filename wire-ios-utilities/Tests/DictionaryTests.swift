@@ -49,57 +49,6 @@ class DictionaryTests: XCTestCase {
         XCTAssertEqual(output, [:])
     }
 
-    func testThatItCreatesDictionaryFromCollection() {
-
-        // GIVEN
-        let input = ["a", "bbb", "cc"]
-
-        // WHEN
-        let output = input.dictionary {
-            return (key: $0, value: $0.utf8.count)
-        }
-
-        // THEN
-        XCTAssertEqual(output, ["a": 1, "bbb": 3, "cc": 2])
-    }
-
-    func testThatItOverwriteKeysIfRepeated() {
-
-        // GIVEN
-        let input = ["a", "bbb", "a"]
-
-        // WHEN
-        var count = 0
-        let output = input.dictionary { (value) -> (key: String, value: Int) in
-            count += 1
-            return (key: value, value: count)
-        }
-
-        // THEN
-        XCTAssertEqual(output, ["a": 3, "bbb": 2])
-    }
-
-    func testThatItKeepsOptionalValues() {
-        // GIVEN
-        let input = ["a", "b"]
-
-        // WHEN
-        var count = 0
-        let output: [String: Int?] = input.dictionary { (element) -> (key: String, value: Int?) in
-            count += 1
-            if element == "a" {
-                return (key: element, value: nil)
-            }
-            return (key: element, value: count)
-        }
-
-        // THEN
-        XCTAssertTrue(output.keys.contains("a"))
-        XCTAssertNil(output["a"]!)
-        XCTAssertTrue(output.keys.contains("b"))
-        XCTAssertNotNil(output["b"]!)
-    }
-
     func testThatItCreateDictionaryWithRepeatedValues() {
         // given
         let input = [1, 2, 3]

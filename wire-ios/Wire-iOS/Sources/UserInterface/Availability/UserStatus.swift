@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-public extension NSOrderedSet {
+/// The status of the user, consisting of its name and availability.
+public struct UserStatus {
 
-    func subtracting(orderedSet: NSOrderedSet) -> NSOrderedSet {
-        let mutableSelf = mutableCopy() as! NSMutableOrderedSet
-        mutableSelf.minus(orderedSet)
-        return NSOrderedSet(orderedSet: mutableSelf)
-    }
+    /// The name of the users.
+    var name: String
 
-    func adding(orderedSet: NSOrderedSet) -> NSOrderedSet {
-        let mutableSelf = mutableCopy() as! NSMutableOrderedSet
-        mutableSelf.union(orderedSet)
-        return NSOrderedSet(orderedSet: mutableSelf)
-    }
+    var availability: Availability
+
+    /// `true` if the user has a valid certificate (MLS), `false` otherwise.
+    var isCertified: Bool
+
+    /// `true` if the user has been verified (Proteus), `false` otherwise.
+    var isVerified: Bool
 }

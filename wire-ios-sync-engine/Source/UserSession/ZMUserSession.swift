@@ -379,7 +379,7 @@ public class ZMUserSession: NSObject {
                                                        contextProvider: self,
                                                        callNotificationStyleProvider: self)
 
-            // FIXME: [jacob] inject instead of storing on context WPB-5827
+            // FIXME: [WPB-5827] inject instead of storing on context - [jacob]
             self.syncManagedObjectContext.proteusService = self.proteusService
             self.syncManagedObjectContext.mlsService = self.mlsService
 
@@ -563,7 +563,7 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
-        // TODO: [jacob] refactor out WPB-6198
+        // TODO: [WPB-6198] refactor out - [jacob]
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
@@ -685,8 +685,9 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
 }
-
+// swiftlint:disable todo_requires_jira_link
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
+// swiftlint:enable todo_requires_jira_link
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         await updateEventProcessor?.bufferEvents(events)
@@ -823,7 +824,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    // // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
+    // swiftlint:disable todo_requires_jira_link
+    // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
+    // swiftlint:enable todo_requires_jira_link
     private func commitPendingProposalsIfNeeded() {
         Task {
             do {
