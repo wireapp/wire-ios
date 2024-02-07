@@ -51,9 +51,9 @@ final class DeepLinksViewModel: ObservableObject {
     // MARK: - Actions
 
     func openLink(urlString: String) {
-        guard 
+        guard
             let url = URL(string: urlString),
-            let _ = try? URLAction(url: url)
+            (try? URLAction(url: url)) != nil
         else {
             error = .invalidLink
             isShowingAlert = true
