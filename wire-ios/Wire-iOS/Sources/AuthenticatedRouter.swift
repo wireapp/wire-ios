@@ -144,7 +144,10 @@ struct AuthenticatedWireFrame {
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, userSession: userSession)
+        let viewController = ZClientViewController(
+            account: account,
+            userSession: userSession
+        )
         viewController.isComingFromRegistration = isComingFromRegistration
         viewController.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
         viewController.router = router
