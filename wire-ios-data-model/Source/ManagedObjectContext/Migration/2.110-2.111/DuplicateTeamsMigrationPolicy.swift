@@ -25,11 +25,8 @@ class DuplicateTeamsMigrationPolicy: NSEntityMigrationPolicy {
         case needsToBeUpdatedFromBackend
     }
 
-    private let zmLog = ZMSLog(tag: "core-data")
-
     override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
-        zmLog.safePublic("beginning duplicate teams migration", level: .info)
-        WireLogger.localStorage.info("beginning duplicate teams migration")
+        WireLogger.localStorage.info("beginning duplicate teams migration", attributes: .safePublic)
 
         let context = manager.sourceContext
 
@@ -38,8 +35,7 @@ class DuplicateTeamsMigrationPolicy: NSEntityMigrationPolicy {
             by: Team.remoteIdentifierDataKey()!
         )
 
-        zmLog.safePublic(SanitizedString(stringLiteral: "found (\(duplicates.count)) occurences of duplicate teams"), level: .info)
-        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate teams")
+        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate teams", attributes: .safePublic)
 
         duplicates.forEach { (_, teams: [NSManagedObject]) in
             guard teams.count > 1 else {
@@ -50,8 +46,7 @@ class DuplicateTeamsMigrationPolicy: NSEntityMigrationPolicy {
             teams.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             teams.dropFirst().forEach(context.delete)
 
-            zmLog.safePublic("removed 1 occurence of duplicate teams", level: .warn)
-            WireLogger.localStorage.info("removed 1 occurence of duplicate teams")
+            WireLogger.localStorage.warn("removed 1 occurence of duplicate teams", attributes: .safePublic)
         }
     }
 

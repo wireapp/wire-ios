@@ -26,11 +26,8 @@ class DuplicateConversationsMigrationPolicy: NSEntityMigrationPolicy {
         case primaryKey
     }
 
-    private let zmLog = ZMSLog(tag: "core-data")
-
     override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
-        zmLog.safePublic("beginning duplicate conversations migration", level: .info)
-        WireLogger.localStorage.info("beginning duplicate conversations migration")
+        WireLogger.localStorage.info("beginning duplicate conversations migration", attributes: .safePublic)
 
         let context = manager.sourceContext
 
@@ -52,22 +49,20 @@ class DuplicateConversationsMigrationPolicy: NSEntityMigrationPolicy {
             }
         }
 
-        zmLog.safePublic(SanitizedString(stringLiteral: "found (\(duplicates.count)) occurences of duplicate conversations"), level: .info)
-        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate conversations")
+        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate conversations", attributes: .safePublic)
 
         duplicates.forEach { (key, conversations: [NSManagedObject]) in
             guard conversations.count > 1 else {
-                WireLogger.localStorage.info("skipping user with different domain: \(key)")
+                WireLogger.localStorage.info("skipping user with different domain: \(key)", attributes: .safePublic)
                 return
             }
-            WireLogger.localStorage.debug("processing \(key)")
+            WireLogger.localStorage.debug("processing \(key)", attributes: .safePublic)
             // for now we just keep one user and mark to sync and drop the rest.
             // Marking needsToBeUpdatedFromBackend supposes we recover the data from backend
             conversations.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             conversations.dropFirst().forEach(context.delete)
 
-            zmLog.safePublic("removed 1 occurence of duplicate conversations", level: .warn)
-            WireLogger.localStorage.info("removed  \(conversations.count - 1) occurence of duplicate conversations")
+             WireLogger.localStorage.info("removed  \(conversations.count - 1) occurence of duplicate conversations", attributes: .safePublic)
         }
     }
 
