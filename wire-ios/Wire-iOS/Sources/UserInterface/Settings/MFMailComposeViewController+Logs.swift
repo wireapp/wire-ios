@@ -19,10 +19,29 @@
 import Foundation
 import MessageUI
 import WireSystem
+import WireCommonComponents
 
 extension MFMailComposeViewController {
 
-    func attachLogs() {
+    func attachLogs() async {
+        defer {
+            // because we don't rotate file for this one, we clean it once sent
+            // this regenerated from os_log anyway
+            if let url = LogFileDestination.main.log {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
+        // save current logs to file in order to send them
+        await WireLogger.provider?.persist(fileDestination: LogFileDestination.main)
+
+        for destination in LogFileDestination.allCases {
+            if let data = FileManager.default.zipData(from: destination.log) {
+                addAttachmentData(data, mimeType: "application/zip", fileName: "\(destination.filename).zip")
+            } else {
+                WireLogger.system.debug("no logs for WireLogger to send \(destination.filename)")
+            }
+        }
+        
 
         if let crashLog = ZMLastAssertionFile(),
            FileManager.default.fileExists(atPath: crashLog.path) {
