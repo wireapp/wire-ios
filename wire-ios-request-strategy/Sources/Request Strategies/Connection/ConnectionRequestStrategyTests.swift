@@ -263,7 +263,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
             mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
                 return OneOnOneConversationResolution.noAction
-             }
+            }
 
             sut.oneOnOneResolutionDelay = 0.3
 
@@ -275,8 +275,34 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
         // THEN
         XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
+    }
 
-}
+    func testThatOneOnOneResolverIsNotInvokedWithinTimeout_WhenDelayIsLongerThanTimeout() throws {
+
+        try syncMOC.performAndWait {
+            // GIVEN
+            let connection = createConnectionPayload(self.oneToOneConnection, status: .accepted)
+            let eventType = try XCTUnwrap(ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType), "eventType is nil")
+            let eventPayload = Payload.UserConnectionEvent(connection: connection, type: eventType)
+            let payloadData = try XCTUnwrap(eventPayload.payloadData(), "payloadData is nil")
+            let event = updateEvent(from: payloadData)
+
+            mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
+                return OneOnOneConversationResolution.noAction
+            }
+
+            sut.oneOnOneResolutionDelay = 1.0
+
+            // WHEN
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        }
+
+        let didTimeout = !waitForAllGroupsToBeEmpty(withTimeout: 0.5)
+
+        // THEN
+        XCTAssertTrue(didTimeout, "Expected to timeout but did not.")
+        XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 0, "Expected no invocation due to timeout.")
+    }
 
     // MARK: Helpers
 
@@ -323,8 +349,8 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
                             connections: [Payload.Connection]) -> ZMTransportResponse {
 
         let payload = Payload.PaginatedConnectionList(connections: connections,
-                                        pagingState: "",
-                                        hasMore: false)
+                                                      pagingState: "",
+                                                      hasMore: false)
 
         let payloadData = payload.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
