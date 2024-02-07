@@ -251,14 +251,15 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatOneOnOneResolverIsInvoked_WhenConnectionRequestIsAccepted() {
+    func testThatOneOnOneResolverIsInvoked_WhenConnectionRequestIsAccepted() throws {
 
-        syncMOC.performAndWait {
+        try syncMOC.performAndWait {
             // GIVEN
             let connection = createConnectionPayload(self.oneToOneConnection, status: .accepted)
-            let eventType = ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType)!
+            let eventType = try XCTUnwrap(ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType), "eventType is nil")
             let eventPayload = Payload.UserConnectionEvent(connection: connection, type: eventType)
-            let event = updateEvent(from: eventPayload.payloadData()!)
+            let payloadData = try XCTUnwrap(eventPayload.payloadData(), "payloadData is nil")
+            let event = updateEvent(from: payloadData)
 
             mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
                 return OneOnOneConversationResolution.noAction
