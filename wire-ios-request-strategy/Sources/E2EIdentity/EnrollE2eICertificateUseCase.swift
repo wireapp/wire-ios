@@ -36,7 +36,8 @@ public protocol EnrollE2eICertificateUseCaseInterface {
 /// This class provides an interface to issue an E2EI certificate.
 public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInterface {
 
-    var e2eiRepository: E2eIRepositoryInterface
+    private let logger = WireLogger.e2ei
+    private let e2eiRepository: E2eIRepositoryInterface
 
     public init(e2eiRepository: E2eIRepositoryInterface) {
         self.e2eiRepository = e2eiRepository
@@ -47,7 +48,11 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                        userHandle: String,
                        team: UUID,
                        authenticate: OAuthBlock) async throws {
-        try await e2eiRepository.fetchTrustAnchor()
+        do {
+            try await e2eiRepository.fetchTrustAnchor()
+        } catch {
+            logger.warn("failed to register trust anchor: \(error.localizedDescription)")
+        }
 
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId,
                                                                    userName: userName,
@@ -101,8 +106,8 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
                 throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
             }
             try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
-        } catch is DecodingError {
-            throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
+        } catch {
+            throw EnrollE2EICertificateUseCaseFailure.failedToEnrollCertificate(error)
         }
 
     }
@@ -123,5 +128,6 @@ enum EnrollE2EICertificateUseCaseFailure: Error {
     case missingIdentityProvider
     case missingClientId
     case failedToDecodeCertificate
+    case failedToEnrollCertificate(_ underlyingError: Error)
 
 }

@@ -130,10 +130,11 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
     }
 
     private func migrateConversation(with groupID: String, commit: CommitBundle) async throws {
-        guard let groupID = MLSGroupID(base64Encoded: groupID) else {
+        guard let groupData = groupID.zmHexDecodedData() else {
             throw Error.invalidGroupID
         }
 
+        let groupID = MLSGroupID(groupData)
         let events = try await commitSender.sendCommitBundle(
             commit,
             for: groupID
