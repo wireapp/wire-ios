@@ -32,7 +32,7 @@ protocol CallInfoConfigurationObserver: AnyObject {
     func didUpdateConfiguration(configuration: CallInfoConfiguration)
 }
 
-class CallingBottomSheetViewController: BottomSheetContainerViewController {
+final class CallingBottomSheetViewController: BottomSheetContainerViewController {
     private let bottomSheetMaxHeight = UIScreen.main.bounds.height * 0.7
 
     weak var delegate: ActiveCallViewControllerDelegate?
