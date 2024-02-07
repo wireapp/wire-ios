@@ -40,7 +40,7 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
         let expiresAfter: TimeInterval = isEphemeral ? 200 : 0
 
-        let mention = mentionedUser.map(papply(Mention.init, NSRange(location: 0, length: 8)))
+        let mention = mentionedUser.map { Mention(range: NSRange(location: 0, length: 8), user: $0) }
         let mentions = mention.map { [$0] } ?? []
 
         var quotedMessage: ZMClientMessage?
