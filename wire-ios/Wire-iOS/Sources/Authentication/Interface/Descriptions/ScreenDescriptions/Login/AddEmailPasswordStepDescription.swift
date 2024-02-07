@@ -79,7 +79,7 @@ extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
 
 // MARK: - CTAFooterDescription
 
-private class CTAFooterDescription: ViewDescriptor, AuthenticationSecondaryViewDescription {
+private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondaryViewDescription {
     var views: [ViewDescriptor] {
         [self]
     }

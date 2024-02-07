@@ -23,7 +23,7 @@ protocol PulsingIconImageStyle {
     var shouldPulse: Bool { get }
 }
 
-class PulsingIconImageView: IconImageView {
+final class PulsingIconImageView: IconImageView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)

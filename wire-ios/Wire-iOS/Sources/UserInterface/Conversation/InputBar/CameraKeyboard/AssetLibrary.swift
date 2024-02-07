@@ -23,7 +23,7 @@ protocol AssetLibraryDelegate: AnyObject {
     func assetLibraryDidChange(_ library: AssetLibrary)
 }
 
-class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
+final class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     weak var delegate: AssetLibraryDelegate?
     fileprivate var fetchingAssets = false
     public let synchronous: Bool

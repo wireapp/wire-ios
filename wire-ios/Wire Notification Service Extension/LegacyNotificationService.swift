@@ -44,7 +44,7 @@ class CallEventHandler: CallEventHandlerProtocol {
 
 }
 
-public class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
+public final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
 
     // MARK: - Properties
 

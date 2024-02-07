@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-class BaseMessageRestrictionView: UIView {
+final class BaseMessageRestrictionView: UIView {
 
     // MARK: - Properties
 

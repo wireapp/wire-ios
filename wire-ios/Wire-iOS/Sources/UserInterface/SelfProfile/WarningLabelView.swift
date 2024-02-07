@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
-class WarningLabelView: UIView {
+final class WarningLabelView: UIView {
     private let stackView = UIStackView(axis: .horizontal)
     private let imageView = UIImageView(image: UIImage(named: "Info"))
     private let label = DynamicFontLabel(fontSpec: .mediumSemiboldFont,

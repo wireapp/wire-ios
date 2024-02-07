@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-class ConversationRenamedSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationRenamedSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationRenamedSystemMessageCell
     typealias LabelColors = SemanticColors.Label

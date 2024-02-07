@@ -55,7 +55,7 @@ extension CallStateMock {
     }
 }
 
-class CallActionsViewTests: ZMSnapshotTestCase {
+final class CallActionsViewTests: ZMSnapshotTestCase {
 
     private var sut: CallActionsView!
     private var widthConstraint: NSLayoutConstraint!

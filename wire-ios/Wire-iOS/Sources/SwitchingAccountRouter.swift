@@ -24,7 +24,7 @@ protocol SwitchingAccountAlertPresenter {
     func presentSwitchAccountAlert(completion: @escaping (Bool) -> Void)
 }
 
-class SwitchingAccountRouter: SwitchingAccountRouterProtocol {
+final class SwitchingAccountRouter: SwitchingAccountRouterProtocol {
     // MARK: - SessionManagerSwitchingDelegate
     func confirmSwitchingAccount(completion: @escaping (Bool) -> Void) {
         presentSwitchAccountAlert(completion: completion)
