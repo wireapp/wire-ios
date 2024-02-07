@@ -115,25 +115,25 @@ extension SessionManager: APIVersionResolverDelegate {
             }
 
             // The migration above will call enter() / leave() on the dispatch group
-            dispatchGroup?.wait(forInterval: 5)
+            dispatchGroup.wait(forInterval: 5)
 
             // 3. Reload sessions
             self.accountManager.accounts.forEach { account in
-                dispatchGroup?.enter()
+                dispatchGroup.enter()
 
                 if account == self.accountManager.selectedAccount {
                     // When completed, this should trigger an AppState change through the SessionManagerDelegate
                     self.loadSession(for: account) { _ in
-                        dispatchGroup?.leave()
+                        dispatchGroup.leave()
                     }
                 } else {
                     self.withSession(for: account) { _ in
-                        dispatchGroup?.leave()
+                        dispatchGroup.leave()
                     }
                 }
             }
 
-            dispatchGroup?.wait(forInterval: 1)
+            dispatchGroup.wait(forInterval: 1)
             self.delegate?.sessionManagerDidPerformFederationMigration(activeSession: activeUserSession)
         }
     }
