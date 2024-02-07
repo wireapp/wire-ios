@@ -261,6 +261,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    // closure injected to remove all user related logs
+    var deleteUserLogs: (() -> Void)?
+
     let sharedContainerURL: URL
     let dispatchGroup: ZMSDispatchGroup?
     let jailbreakDetector: JailbreakDetectorProtocol?
@@ -325,7 +328,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         isDeveloperModeEnabled: Bool = false,
         isUnauthenticatedTransportSessionReady: Bool = false,
         sharedUserDefaults: UserDefaults,
-        minTLSVersion: String?
+        minTLSVersion: String?,
+        deleteUserLogs: @escaping () -> Void
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -377,7 +381,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             proxyCredentials: proxyCredentials,
             isUnauthenticatedTransportSessionReady: isUnauthenticatedTransportSessionReady,
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: minTLSVersion
+            minTLSVersion: minTLSVersion,
+            deleteUserLogs: deleteUserLogs
         )
 
         configureBlacklistDownload()
@@ -440,7 +445,8 @@ public final class SessionManager: NSObject, SessionManagerType {
          proxyCredentials: ProxyCredentials?,
          isUnauthenticatedTransportSessionReady: Bool = false,
          sharedUserDefaults: UserDefaults,
-         minTLSVersion: String? = nil
+         minTLSVersion: String? = nil,
+         deleteUserLogs: (() -> Void)? = nil
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -457,7 +463,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.isUnauthenticatedTransportSessionReady = isUnauthenticatedTransportSessionReady
         self.sharedUserDefaults = sharedUserDefaults
         self.minTLSVersion = minTLSVersion
-
+        self.deleteUserLogs = deleteUserLogs
+        
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
         }
@@ -763,8 +770,10 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             if deleteAccount {
                 self?.deleteAccountData(for: account)
+                self?.deleteUserLogs?()
             }
 
+            // also deletes ZMSLogs from cache
             self?.clearCacheDirectory()
 
             // Clear tmp directory when the user logout from the session.

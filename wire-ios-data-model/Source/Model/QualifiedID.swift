@@ -34,6 +34,12 @@ public struct QualifiedID: Codable, Hashable {
     public let domain: String
 }
 
+extension QualifiedID: SafeForLoggingStringConvertible {
+    public var safeForLoggingDescription: String {
+        "\(self.uuid.safeForLoggingDescription) - \(self.domain.redactedAndTruncated(maxVisibleCharacters: 4, length: 7))"
+    }
+}
+
 public extension ZMUser {
 
     var qualifiedID: QualifiedID? {

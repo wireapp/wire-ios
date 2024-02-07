@@ -36,6 +36,8 @@ enum ProfileAction: Equatable {
     case connect
     case cancelConnectionRequest
     case openSelfProfile
+    case duplicateUser
+    case duplicateTeam
 
     /// The text of the button for this action.
     var buttonText: String {
@@ -55,6 +57,9 @@ enum ProfileAction: Equatable {
         case .connect: return "profile.connection_request_dialog.button_connect".localized
         case .cancelConnectionRequest: return "meta.menu.cancel_connection_request".localized
         case .openSelfProfile: return "meta.menu.open_self_profile".localized
+        case .duplicateUser: return "⚠️ DEBUG - Duplicate User"
+        case .duplicateTeam: return "⚠️ DEBUG - Duplicate Team"
+
         }
     }
 
@@ -71,6 +76,8 @@ enum ProfileAction: Equatable {
         case .connect: return .plus
         case .cancelConnectionRequest: return .undo
         case .openSelfProfile: return .personalProfile
+        case .duplicateUser: return nil
+        case .duplicateTeam: return nil
         }
     }
 
@@ -173,6 +180,14 @@ final class ProfileActionsFactory {
             // If the viewer is not on the same team as the other user, allow blocking
             if !viewer.canAccessCompanyInformation(of: user) && !user.isWirelessUser {
                 actions.append(.block(isBlocked: false))
+            }
+
+            // only for debug
+            if DeveloperFlag.debugDuplicateObjects.isOn {
+                actions.append(.duplicateUser)
+                if user.isTeamMember {
+                    actions.append(.duplicateTeam)
+                }
             }
 
         case (.profileViewer, .none),

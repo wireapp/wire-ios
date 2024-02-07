@@ -97,7 +97,7 @@ final class SettingsTechnicalReportViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let label = UILabel()
-        label.text = "self.settings.technical_report.privacy_warning".localized
+        label.text = L10n.Localizable.Self.Settings.TechnicalReport.privacyWarning
         label.textColor = SemanticColors.Label.textSectionFooter
         label.backgroundColor = .clear
         label.font = FontSpec(.small, .light).font!
@@ -142,32 +142,43 @@ protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
     func presentMailComposer(withLogs logsIncluded: Bool)
 }
 
-
 extension SettingsTechnicalReportViewController: SendTechnicalReportPresenter {}
 
-
 extension SendTechnicalReportPresenter where Self: UIViewController {
+    @MainActor
     func presentMailComposer(withLogs logsIncluded: Bool) {
         presentMailComposer(withLogs: logsIncluded, sourceView: nil)
     }
 
-    func presentMailComposer(withLogs logsIncluded: Bool, sourceView: UIView?, fallback: ((Bool) -> Void)? = nil) {
+    @MainActor
+    func presentMailComposer(withLogs logsIncluded: Bool, sourceView: UIView?) {
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-            DebugAlert.displayFallbackActivityController(logPaths: ZMSLog.pathsForExistingLogs, email: mailRecipient, from: self, sourceView: sourceView)
+            DebugAlert.displayFallbackActivityController(logPaths: DebugLogSender.debugLogs, email: mailRecipient, from: self, sourceView: sourceView)
             return
         }
 
         let mailComposeViewController = MFMailComposeViewController()
         mailComposeViewController.mailComposeDelegate = self
         mailComposeViewController.setToRecipients([mailRecipient])
-        mailComposeViewController.setSubject(NSLocalizedString("self.settings.technical_report.mail.subject", comment: ""))
+        mailComposeViewController.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
+        mailComposeViewController.setMessageBody("Debug report", isHTML: false)
 
         if logsIncluded {
-            mailComposeViewController.attachLogs()
+            let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
+            topMostViewController?.isLoadingViewVisible = true
+
+            Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
+                await mailComposeViewController.attachLogs()
+
+                await self.present(mailComposeViewController, animated: true, completion: nil)
+                await MainActor.run {
+                    topMostViewController?.isLoadingViewVisible = false
+                }
+            })
+        } else {
+            self.present(mailComposeViewController, animated: true, completion: nil)
         }
-        mailComposeViewController.setMessageBody("Debug report", isHTML: false)
-        self.present(mailComposeViewController, animated: true, completion: nil)
     }
 }
