@@ -61,12 +61,7 @@ public struct HasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserV
         }
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
-        // try await coreCrypto.perform { cc in
-        //     let isEnabled = try await cc.e2eiIsEnabled(ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue)
-        //     print("isEnabled:", isEnabled)
-        // }
         let identities = try await coreCrypto.perform { coreCrypto in
-            // print("coreCrypto.getUserIdentities(\n    conversationId: \(conversationID.data.base64String())\n    userIds: [\(userID)]\n)")
             let result = try await coreCrypto.getUserIdentities(
                 conversationId: conversationID.data,
                 userIds: [userID]

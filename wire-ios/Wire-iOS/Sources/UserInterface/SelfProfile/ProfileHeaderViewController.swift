@@ -239,7 +239,7 @@ final class ProfileHeaderViewController: UIViewController {
                 userStatus.isVerified = isSelfUserVerifiedUseCase.invoke()
                 updateNameLabel()
             } catch {
-                WireLogger.sync.error("failed to get self user's verification status: \(String(reflecting: error))")
+                WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
             }
         }
     }
