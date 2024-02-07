@@ -66,7 +66,7 @@ public struct HasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserV
                 conversationId: conversationID.data,
                 userIds: [userID]
             )
-            guard let identities = result[userID], identities.count > 0 else {
+            guard let identities = result[userID], !identities.isEmpty else {
                 throw Error.failedToGetIdentitiesFromCoreCryptoResult(result, userID)
             }
             return identities
