@@ -105,16 +105,6 @@ final class BackupActionCell: UITableViewCell {
     }
 }
 
-protocol BackupSource {
-    func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void)
-}
-
-extension SessionManager: BackupSource {
-    func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void) {
-        backupActiveAccount(password: password.value, completion: completion)
-    }
-}
-
 final class BackupViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
@@ -205,7 +195,7 @@ private extension BackupViewController {
             guard let `self` = self, let password = result else { return }
             self.loadingHostController.isLoadingViewVisible = true
 
-            self.backupSource.backupActiveAccount(password: password) { backupResult in
+            self.backupSource.backupActiveAccount(password: password.value) { backupResult in
                 self.loadingHostController.isLoadingViewVisible = false
 
                 switch backupResult {
