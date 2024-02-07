@@ -105,7 +105,7 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
             self.createSelfClient()
         }
 
-            // when
+        // when
         syncMOC.performGroupedBlock { [self] in
             sut.didRegisterSelfUserClient(userClient)
         }
