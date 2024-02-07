@@ -115,6 +115,11 @@ public class MLSEventProcessor: MLSEventProcessing {
     ) async {
         WireLogger.mls.info("MLS event processor is processing welcome message")
 
+        guard DeveloperFlag.migrateMLSOnlyOnNavigation.isOn else {
+            WireLogger.mls.notice("ignore welcome message due to developer flag 'migrateMLSOnlyOnNavigation'!")
+            return
+        }
+
         guard let mlsService = await context.perform({ context.mlsService }) else {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
