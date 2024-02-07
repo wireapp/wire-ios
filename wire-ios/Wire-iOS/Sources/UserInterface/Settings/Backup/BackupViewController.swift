@@ -192,7 +192,7 @@ private extension BackupViewController {
 
     func backupActiveAccount(indexPath: IndexPath) {
         requestBackupPassword { [weak self] result in
-            guard let `self` = self, let password = result else { return }
+            guard let self, let password = result else { return }
             self.loadingHostController.isLoadingViewVisible = true
 
             self.backupSource.backupActiveAccount(password: password) { backupResult in
