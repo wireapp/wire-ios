@@ -18,14 +18,9 @@
 
 import Foundation
 import WireDataModel
-<<<<<<<< HEAD:wire-ios-data-model/Support/Sources/CoreData/CoreDataStackHelper.swift
-
-public struct CoreDataStackHelper {
-========
 
 public struct CoreDataStackHelper {
 
->>>>>>>> origin/develop:wire-ios-data-model/Support/Sources/CoreDataStackHelper.swift
     private let fileManager = FileManager.default
 
     public var storageDirectory: URL {
@@ -38,13 +33,9 @@ public struct CoreDataStackHelper {
         return path
     }
 
-<<<<<<<< HEAD:wire-ios-data-model/Support/Sources/CoreData/CoreDataStackHelper.swift
-    public init() { }
-========
     public init() {
 
     }
->>>>>>>> origin/develop:wire-ios-data-model/Support/Sources/CoreDataStackHelper.swift
 
     public func createStack() async throws -> CoreDataStack {
         try await createStack(at: storageDirectory)
