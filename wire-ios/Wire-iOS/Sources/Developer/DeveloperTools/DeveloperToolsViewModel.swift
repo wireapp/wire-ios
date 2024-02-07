@@ -122,6 +122,9 @@ final class DeveloperToolsViewModel: ObservableObject {
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
+                })),
+                .destination(DestinationItem(title: "Deep links", makeView: {
+                    AnyView(DeepLinksView(viewModel: DeepLinksViewModel(onDismiss: self.onDismiss)))
                 }))
             ]
         ))
