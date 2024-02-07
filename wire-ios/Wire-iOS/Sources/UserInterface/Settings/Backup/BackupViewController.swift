@@ -17,9 +17,6 @@
 //
 
 import UIKit
-import Foundation
-import WireSyncEngine
-import WireCommonComponents
 
 private typealias LabelColors = SemanticColors.Label
 private typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup

@@ -17,8 +17,7 @@
 //
 
 import UIKit
-import WireUtilities
-import WireCommonComponents
+import struct WireCommonComponents.FontSpec
 
 final class BackupPasswordViewController: UIViewController {
 
