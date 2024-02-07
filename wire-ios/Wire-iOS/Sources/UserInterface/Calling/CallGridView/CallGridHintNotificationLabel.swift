@@ -41,7 +41,7 @@ enum CallGridHintKind {
     }
 }
 
-final class CallGridHintNotificationLabel: NotificationLabel {
+class CallGridHintNotificationLabel: NotificationLabel {
     func show(hint: CallGridHintKind) {
         show(message: hint.message, hideAfter: 5)
     }
