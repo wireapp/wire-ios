@@ -1,0 +1,79 @@
+//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Share Extension
+// General
+
+
+
+"general.ok" = "හරි";
+
+// Conversation Selection
+"share_extension.conversation_selection.account" = "ගිණුම:";
+"share_extension.conversation_selection.title" = "සංවාදය:";
+"share_extension.conversation_selection.empty.value" = "තෝරන්න";
+
+"share_extension.send_button.title" = "යවන්න";
+"share_extension.input.placeholder" = "පණිවිඩයක් ලියන්න";
+"share_extension.sending_progress.title" = "යවමින්…";
+"share_extension.preparing.title" = "සූදානම් වෙමින්...";
+"share_extension.no_internet_connection.title" = "අන්තර්ජාල සම්බන්ධතාවයක් නැත";
+"share_extension.not_signed_in.title" = "You need to sign into Wire before you can share anything";
+"share_extension.not_signed_in.close_button" = "වසන්න";
+
+// Custom app lock - unlock
+"share_extension.unlock.title_label" = "වයර් අගුළු හැරීමට මුරකේතය යොදන්න";
+"share_extension.unlock.submit_button.title" = "අගුළු හරින්න";
+"share_extension.unlock.textfield.placeholder" = "ඔබගේ මුරකේතය යොදන්න";
+"share_extension.unlock.hint_label" = "මුරකේතය";
+"share_extension.unlock.error_label" = "වැරදි මුරකේතයකි";
+"share_extension.unlock.alert.message" = "මුරකේතයක් සෑදීමට වයර් අරින්න";
+"share_extension.unlock.reveal_passcode" = "මුරකේතය පෙන්වන්න";
+
+// Timeout
+"share_extension.timeout.title" = "සම්බන්ධතාවය කල් ඉකුත් විය.";
+"share_extension.timeout.message" = "Check your Internet connection and try again. The attachments were saved in the conversation.";
+
+// Content
+"share_extension.content.file.too_big" = "You can send files up to %@";
+"share_extension.content.file.unsupported_attachment" = "Unsupported attachment";
+
+"share_extension.error.conversation_does_not_exist.message" = "Please select a conversation for sharing";
+
+"share_extension.privacy_security.lock_app.description" = "වයර් අගුළු හරින්න";
+"share_extension.logged_out.title" = "You've been logged out from this account.";
+"share_extension.logged_out.message" = "Please choose another account.";
+
+// Conversation Degraded (security level lowered)
+"share_extension.conversation.displayname.emptygroup" = "Empty group conversation";
+"share_extension.meta.degraded.degradation_reason_message.singular" = "%@ started using a new device.";
+"share_extension.meta.degraded.degradation_reason_message.plural" = "%@ started using new devices.";
+"share_extension.meta.degraded.dialog_message" = "Do you still want to send your message?";
+"share_extension.meta.degraded.cancel_sending_button" = "Do not send";
+"share_extension.meta.degraded.send_anyway_button" = "Send anyway";
+
+"share_extension.meta.legalhold.send_alert_title" = "The conversation is now subject to legal hold.";
+
+//Feature flag - File sharing
+"share_extension.feature.flag.file_sharing.alert.title" = "File sharing restrictions";
+"share_extension.feature.flag.file_sharing.alert.message" = "You can not share this file because this feature is disabled.";
+
+// Share Extension - Voice Over
+"share_extension.voiceover.conversation_under_legal_hold" = "Under legal hold.";
+"share_extension.voiceover.conversation_secure" = "All clients verified.";
+"share_extension.voiceover.conversation_secure_with_ignored" = "Not all clients verified.";
