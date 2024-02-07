@@ -7499,11 +7499,11 @@
 		E666EDD42B73E5F500C03E2B /* Backup */ = {
 			isa = PBXGroup;
 			children = (
-				D5D65A10207509F300D7F3C3 /* BackupPasswordViewController.swift */,
-				8751BA432069455E00DF8667 /* BackupViewController.swift */,
 				E666EDD52B73E62800C03E2B /* BackupSource.swift */,
-				E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */,
 				E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */,
+				E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */,
+				8751BA432069455E00DF8667 /* BackupViewController.swift */,
+				D5D65A10207509F300D7F3C3 /* BackupPasswordViewController.swift */,
 			);
 			path = Backup;
 			sourceTree = "<group>";
