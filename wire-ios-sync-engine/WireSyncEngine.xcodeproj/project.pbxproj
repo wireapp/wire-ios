@@ -20,6 +20,7 @@
 		01D33D8129B8ED97009E94F3 /* SyncStatusLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */; };
 		0601900B2678750D0043F8F8 /* DeepLinkURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161ACB3E23F6E4C200ABFF33 /* DeepLinkURLActionProcessorTests.swift */; };
 		06025664248E5BC700E060E1 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		060C06632B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06622B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift */; };
 		06239126274DB73A0065A72D /* StartLoginURLActionProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */; };
 		063AF985264B2DF800DCBCED /* CallClosedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625690E264AE6560041C17B /* CallClosedReason.swift */; };
 		0640C26D26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0640C26C26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift */; };
@@ -735,6 +736,7 @@
 		018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCase.swift; sourceTree = "<group>"; };
 		018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCaseTests.swift; sourceTree = "<group>"; };
 		01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatusLog.swift; sourceTree = "<group>"; };
+		060C06622B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeCertificateEnrollmentUseCase.swift; sourceTree = "<group>"; };
 		06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessor.swift; sourceTree = "<group>"; };
 		0625690E264AE6560041C17B /* CallClosedReason.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallClosedReason.swift; sourceTree = "<group>"; };
 		063AFA3E264B30C400DCBCED /* BuildType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildType.swift; sourceTree = "<group>"; };
@@ -2622,6 +2624,7 @@
 				25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */,
 				16D74BF32B59670B00160298 /* ChangeUsernameUseCase.swift */,
 				EE8584DA2B6938390045EAD4 /* CreateTeamOneOnOneConversationUseCase.swift */,
+				060C06622B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -3526,6 +3529,7 @@
 				06E0979C2A261E5D00B38C4A /* ZMUserSession+RecurringAction.swift in Sources */,
 				5EFE9C15212AB138007932A6 /* UnregisteredUser+Payload.swift in Sources */,
 				161ACB2D23F5BA0200ABFF33 /* DeepLinkURLActionProcessor.swift in Sources */,
+				060C06632B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift in Sources */,
 				54131BCE25C7FFCA00CE2CA2 /* SessionManager+AuthenticationStatusDelegate.swift in Sources */,
 				160C31271E6434500012E4BC /* OperationStatus.swift in Sources */,
 				165911531DEF38EC007FA847 /* CallStateObserver.swift in Sources */,

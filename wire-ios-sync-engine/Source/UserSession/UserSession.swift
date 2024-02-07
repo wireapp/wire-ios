@@ -216,8 +216,6 @@ public protocol UserSession: AnyObject {
 
     var selfUserClient: UserClient? { get }
 
-    var featureChangeActionsHandler: FeatureChangeActions { get }
-
     var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
 
     var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }

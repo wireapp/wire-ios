@@ -17,33 +17,36 @@
 //
 
 import Foundation
+import WireSyncEngine
 
-public protocol FeatureChangeActions {
+public protocol E2eINotificationActions {
 
     func enrollCertificate()
-
-    func postponeReminder()
+    func snoozeReminder(during gracePeriod: TimeInterval)
 
 }
 
-public class E2eIFeatureChangeActionsHandler: NSObject, FeatureChangeActions {
+final class E2eINotificationActionsHandler: E2eINotificationActions {
 
     // MARK: - Properties
 
-    private var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface?
+    private var enrollCertificateUseCase: EnrollE2eICertificateUseCaseInterface?
+    private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol?
 
     // MARK: - Life cycle
 
-    public init(enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface?) {
-        self.enrollE2eICertificate = enrollE2eICertificate
+    init(enrollCertificateUseCase: EnrollE2eICertificateUseCaseInterface?,
+         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol?) {
+        self.enrollCertificateUseCase = enrollCertificateUseCase
+        self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
     }
 
     public func enrollCertificate() {
-    /// TODO: https://wearezeta.atlassian.net/browse/WPB-6060
+        // TODO: [WPB-5496]
     }
 
-    public func postponeReminder() {
-    /// TODO: https://wearezeta.atlassian.net/browse/WPB-6060
+    public func snoozeReminder(during gracePeriod: TimeInterval) {
+        snoozeCertificateEnrollmentUseCase?.start(with: gracePeriod)
     }
 
 }

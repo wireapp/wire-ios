@@ -140,6 +140,13 @@ public class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
+    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol? = {
+        return SnoozeCertificateEnrollmentUseCase(e2eiFeature: e2eiFeature,
+                                                  gracePeriodRepository: gracePeriodRepository,
+                                                  recurringActionService: recurringActionService,
+                                                  accountId: account.userIdentifier)
+    }()
+
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
@@ -319,12 +326,9 @@ public class ZMUserSession: NSObject {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
 
-    public lazy var featureChangeActionsHandler: FeatureChangeActions = {
-        return E2eIFeatureChangeActionsHandler(enrollE2eICertificate: enrollE2eICertificate)
-    }()
-
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
+    let gracePeriodRepository: GracePeriodRepository
 
     public init(
         userId: UUID,
@@ -377,6 +381,9 @@ public class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
+        self.gracePeriodRepository = GracePeriodRepository(
+            userID: userId,
+            sharedUserDefaults: sharedUserDefaults)
         self.applicationStatusDirectory = ApplicationStatusDirectory(
             withManagedObjectContext: self.coreDataStack.syncContext,
             cookieStorage: transportSession.cookieStorage,
