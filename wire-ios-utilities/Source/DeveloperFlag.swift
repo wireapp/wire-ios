@@ -28,6 +28,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case nseV2
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
+    case migrateMLSOnlyOnNavigation
 
     public var description: String {
         switch self {
@@ -48,6 +49,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .ignoreIncomingEvents:
             return "Turn on to ignore incoming update events"
+
+        case .migrateMLSOnlyOnNavigation:
+            return "Turn off default MLS migration of 1-1 conversations execept on navigation to the conversation"
         }
     }
 
@@ -74,7 +78,7 @@ public enum DeveloperFlag: String, CaseIterable {
         }
     }
 
-    var bundleKey: String? {
+    private var bundleKey: String? {
         switch self {
         case .enableMLSSupport:
             return "MLSEnabled"
@@ -84,10 +88,10 @@ public enum DeveloperFlag: String, CaseIterable {
             return "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             return "ForceDatabaseLoadingFailure"
-        case .nseV2:
-            return nil
         case .ignoreIncomingEvents:
             return "IgnoreIncomingEventsEnabled"
+        case .nseV2, .migrateMLSOnlyOnNavigation:
+            return nil
         }
     }
 
