@@ -506,7 +506,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             guard let original = Team.existingObject(for: team.objectID, in: context) else { return }
             let duplicate = Team.insertNewObject(in: context)
             duplicate.remoteIdentifier = original.remoteIdentifier
-            duplicate.name = "duplicate user \(original.name ?? "<nil>")"
+            duplicate.name = "duplicate team \(original.name ?? "<nil>")"
             duplicate.conversations = original.conversations
             duplicate.members = original.members
             duplicate.roles = original.roles
