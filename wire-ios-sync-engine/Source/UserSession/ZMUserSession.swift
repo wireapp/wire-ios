@@ -266,7 +266,9 @@ public class ZMUserSession: NSObject {
     }()
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
-        let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl
+        guard let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl else {
+            return nil
+        }
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
