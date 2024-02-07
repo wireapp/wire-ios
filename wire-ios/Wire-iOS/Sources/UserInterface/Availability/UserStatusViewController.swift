@@ -69,6 +69,19 @@ final class UserStatusViewController: UIViewController {
         setupNotificationObservation()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        Task {
+            do {
+                userStatusView.userStatus.isCertified = try await hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke()
+                userStatusView.userStatus.isVerified = isSelfUserVerifiedUseCase.invoke()
+            } catch {
+                WireLogger.sync.error("failed to get self user's verification status: \(String(reflecting: error))")
+            }
+        }
+    }
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
@@ -120,12 +133,8 @@ final class UserStatusViewController: UIViewController {
 
     @objc
     private func updateUserStatusView() {
-        userStatusView.userStatus = .init(
-            name: user.name ?? "",
-            availability: user.availability,
-            isCertified: false,
-            isVerified: false
-        )
+        userStatusView.userStatus.name = user.name ?? ""
+        userStatusView.userStatus.availability = user.availability
     }
 }
 

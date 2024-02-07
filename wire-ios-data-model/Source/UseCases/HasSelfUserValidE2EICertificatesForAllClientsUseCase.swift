@@ -52,7 +52,8 @@ public struct HasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserV
             let selfUser = ZMUser.selfUser(in: context)
             guard
                 let qualifiedID = selfUser.qualifiedID,
-                let userID = MLSUserID(userID: qualifiedID.uuid.transportString(), domain: qualifiedID.domain)
+                let userID = Optional(qualifiedID.uuid.transportString()) // TODO: [WPB-765]: workaround for a bug in core crypto, should be fixed mid february 2024, no JIRA ticket
+                // let userID = MLSUserID(userID: qualifiedID.uuid.transportString(), domain: qualifiedID.domain).rawValue
             else {
                 throw Error.failedToGetSelfUserID
             }
@@ -60,13 +61,18 @@ public struct HasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserV
         }
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        // try await coreCrypto.perform { cc in
+        //     let isEnabled = try await cc.e2eiIsEnabled(ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue)
+        //     print("isEnabled:", isEnabled)
+        // }
         let identities = try await coreCrypto.perform { coreCrypto in
+            // print("coreCrypto.getUserIdentities(\n    conversationId: \(conversationID.data.base64String())\n    userIds: [\(userID)]\n)")
             let result = try await coreCrypto.getUserIdentities(
                 conversationId: conversationID.data,
-                userIds: [userID.rawValue]
+                userIds: [userID]
             )
-            guard let identities = result[userID.rawValue], identities.count > 0 else {
-                throw Error.failedToGetIdentitiesFromCoreCryptoResult(result, userID.rawValue)
+            guard let identities = result[userID], identities.count > 0 else {
+                throw Error.failedToGetIdentitiesFromCoreCryptoResult(result, userID)
             }
             return identities
         }
