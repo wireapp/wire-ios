@@ -2902,8 +2902,9 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
-    
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
+
     // then
     XCTAssertFalse([sut evaluateWithObject:conversation]);
 }
@@ -2924,8 +2925,9 @@
     XCTAssertNil(conversation.clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
-    
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
+
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
 }
@@ -2950,8 +2952,9 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
-    
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
+
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
 }
@@ -2974,8 +2977,9 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
 
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
-    
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
+
     // then
     XCTAssertFalse([sut evaluateWithObject:conversation]);
 }
@@ -2998,7 +3002,8 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
     
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
