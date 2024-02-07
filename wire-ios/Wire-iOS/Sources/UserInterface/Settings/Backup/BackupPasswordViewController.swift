@@ -21,13 +21,14 @@ import struct WireCommonComponents.FontSpec
 
 final class BackupPasswordViewController: UIViewController {
 
-    typealias Completion = (BackupPasswordViewController, String?) -> Void
+    typealias Password = String
+    typealias Completion = (BackupPasswordViewController, Password?) -> Void
     typealias LabelColors = SemanticColors.Label
     typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
     typealias ViewColors = SemanticColors.View
     var completion: Completion?
 
-    private var password: String?
+    private var password: Password?
     private let passwordView = SimpleTextField()
 
     private let subtitleLabel: DynamicFontLabel = {
