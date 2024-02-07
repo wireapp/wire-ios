@@ -209,6 +209,17 @@ private extension BackupViewController {
         }
     }
 
+    private func requestBackupPassword(completion: @escaping (String?) -> Void) {
+        let passwordController = BackupPasswordViewController { controller, password in
+            controller.dismiss(animated: true) {
+                completion(password)
+            }
+        }
+        let navigationController = KeyboardAvoidingViewController(viewController: passwordController).wrapInNavigationController()
+        navigationController.modalPresentationStyle = .formSheet
+        present(navigationController, animated: true)
+    }
+
     private func presentAlert(for error: Error) {
         let alert = UIAlertController(
             title: HistoryBackup.Error.title,

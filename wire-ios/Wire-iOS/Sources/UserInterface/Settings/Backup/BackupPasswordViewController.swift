@@ -20,19 +20,6 @@ import UIKit
 import WireUtilities
 import WireCommonComponents
 
-extension BackupViewController {
-    func requestBackupPassword(completion: @escaping (String?) -> Void) {
-        let passwordController = BackupPasswordViewController { controller, password in
-            controller.dismiss(animated: true) {
-                completion(password)
-            }
-        }
-        let navigationController = KeyboardAvoidingViewController(viewController: passwordController).wrapInNavigationController()
-        navigationController.modalPresentationStyle = .formSheet
-        present(navigationController, animated: true, completion: nil)
-    }
-}
-
 final class BackupPasswordViewController: UIViewController {
 
     typealias Completion = (BackupPasswordViewController, String?) -> Void
