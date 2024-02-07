@@ -478,9 +478,6 @@ public class ZMUserSession: NSObject {
         }
 
         recurringActionService.registerAction(recurringAction)
-
-        // The action should run once on every launch, then each 24 hours thereafter.
-        recurringActionService.forcePerformAction(id: recurringAction.id)
     }
 
     private func configureTransportSession() {
@@ -896,8 +893,19 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func fetchFeatureConfigs() {
-        let action = GetFeatureConfigsAction { result in
-            if case let .failure(reason) = result {
+        let action = GetFeatureConfigsAction { [weak self] result in
+            switch result {
+            case .success:
+                guard let context = self?.syncContext else {
+                    return
+                }
+
+                context.perform {
+                    let service = SupportedProtocolsService(context: context)
+                    service.updateSupportedProtocols()
+                }
+
+            case .failure(let reason):
                 Logging.network.error("Failed to fetch feature configs: \(String(describing: reason))")
             }
         }

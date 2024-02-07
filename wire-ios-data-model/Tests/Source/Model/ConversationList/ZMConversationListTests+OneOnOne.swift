@@ -54,10 +54,12 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
 
         try uiMOC.save()
 
+        let predicateFactory = ConversationPredicateFactory(selfTeam: team)
+
         // When
         let sut = ZMConversationList(
             allConversations: [oneOnOneConversation, fakeOneOnOne, unconnectedConversation],
-            filteringPredicate: ZMConversation.predicateForOneToOneConversations(),
+            filteringPredicate: predicateFactory.predicateForOneToOneConversations(),
             moc: uiMOC,
             description: "oneToOneConversations"
         )
@@ -86,10 +88,12 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
 
         try uiMOC.save()
 
+        let predicateFactory = ConversationPredicateFactory(selfTeam: nil)
+
         // When
         let sut = ZMConversationList(
             allConversations: [groupConversation, invalidOneOnOneConversation],
-            filteringPredicate: ZMConversation.predicateForOneToOneConversations(),
+            filteringPredicate: predicateFactory.predicateForOneToOneConversations(),
             moc: uiMOC,
             description: "oneToOneConversations"
         )

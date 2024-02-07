@@ -20,7 +20,7 @@ import XCTest
 
 final class ZMSearchUserTests_Connections: ModelObjectsTests {
 
-    func testThatConnectSendsAConnectToUserAction() {
+    func testThatConnectSendsAConnectToUserNotification() {
         // given
         let searchUser = ZMSearchUser(contextProvider: coreDataStack,
                                       name: "John Doe",
@@ -32,7 +32,7 @@ final class ZMSearchUserTests_Connections: ModelObjectsTests {
         customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)
 
         // when
-        searchUser.connect { (_) in }
+        searchUser.connect { _ in }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
