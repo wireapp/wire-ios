@@ -165,9 +165,8 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
 
         Task {
             await mailVC.attachLogs()
-            await MainActor.run {
-                controller.present(mailVC, animated: true, completion: nil)
-            }
+            // as UIViewController is marked @MainActor, this will be executed on mainThread automatically
+            await controller.present(mailVC, animated: true, completion: nil)
         }
     }
 

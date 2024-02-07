@@ -145,10 +145,12 @@ protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
 extension SettingsTechnicalReportViewController: SendTechnicalReportPresenter {}
 
 extension SendTechnicalReportPresenter where Self: UIViewController {
+    @MainActor
     func presentMailComposer(withLogs logsIncluded: Bool) {
         presentMailComposer(withLogs: logsIncluded, sourceView: nil)
     }
 
+    @MainActor
     func presentMailComposer(withLogs logsIncluded: Bool, sourceView: UIView?) {
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
@@ -174,8 +176,9 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
                     // Fallback on earlier versions
                 }
                 await mailComposeViewController.attachLogs()
+
+                await self.present(mailComposeViewController, animated: true, completion: nil)
                 await MainActor.run {
-                    self.present(mailComposeViewController, animated: true, completion: nil)
                     topMostViewController?.isLoadingViewVisible = false
                 }
             })
