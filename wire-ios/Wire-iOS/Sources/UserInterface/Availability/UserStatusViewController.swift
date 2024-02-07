@@ -72,10 +72,10 @@ final class UserStatusViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        userStatusView.userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
         Task {
             do {
                 userStatusView.userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
-                userStatusView.userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
             }
