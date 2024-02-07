@@ -211,11 +211,11 @@
 		16D4932C203DD480008DDFFA /* UserCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D4932B203DD480008DDFFA /* UserCellTests.swift */; };
 		16D68E9B1CEF99C7003AB9E0 /* WaveformProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D68E9A1CEF99C7003AB9E0 /* WaveformProgressView.swift */; };
 		16D74BE82B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BE72B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift */; };
-		16D74BF82B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BF72B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift */; };
 		16D74BEA2B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BE92B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift */; };
 		16D74BEC2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */; };
 		16D74BEE2B5933D000160298 /* AddUsernameStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BED2B5933D000160298 /* AddUsernameStepDescription.swift */; };
 		16D74BF22B5960F000160298 /* AuthenticationAddUsernameInputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BF12B5960F000160298 /* AuthenticationAddUsernameInputHandler.swift */; };
+		16D74BF82B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D74BF72B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift */; };
 		16DD6E95228304B70090A74C /* LegalHoldDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DD6E94228304B70090A74C /* LegalHoldDetailsViewController.swift */; };
 		16DD6E982283102D0090A74C /* LegalHoldParticipantsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DD6E972283102D0090A74C /* LegalHoldParticipantsSectionController.swift */; };
 		16DD6EB8228431030090A74C /* LegalHoldHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DD6EB7228431030090A74C /* LegalHoldHeaderView.swift */; };
@@ -304,6 +304,7 @@
 		55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */; };
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
+		59A697212B728F6C00961E68 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59A697202B728F6C00961E68 /* WireDataModelSupport.framework */; };
 		5E001FA7229813FA00F22CDD /* ConversationStateAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */; };
 		5E001FA82298152200F22CDD /* UIColor+AccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAB0218B62D200AFCC4D /* UIColor+AccentColor.swift */; };
 		5E001FD3229BD2F600F22CDD /* TargetConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FC8229BD2F200F22CDD /* TargetConversationCell.swift */; };
@@ -2231,11 +2232,11 @@
 		16D4932B203DD480008DDFFA /* UserCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCellTests.swift; sourceTree = "<group>"; };
 		16D68E9A1CEF99C7003AB9E0 /* WaveformProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformProgressView.swift; sourceTree = "<group>"; };
 		16D74BE72B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationE2EIdentityMissingErrorHandler.swift; sourceTree = "<group>"; };
-		16D74BF72B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollE2EIdentityStepDescription.swift; sourceTree = "<group>"; };
 		16D74BE92B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationMissingUsernameErrorHandler.swift; sourceTree = "<group>"; };
 		16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStartMissingUsernameErrorHandler.swift; sourceTree = "<group>"; };
 		16D74BED2B5933D000160298 /* AddUsernameStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUsernameStepDescription.swift; sourceTree = "<group>"; };
 		16D74BF12B5960F000160298 /* AuthenticationAddUsernameInputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationAddUsernameInputHandler.swift; sourceTree = "<group>"; };
+		16D74BF72B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollE2EIdentityStepDescription.swift; sourceTree = "<group>"; };
 		16DD6E94228304B70090A74C /* LegalHoldDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldDetailsViewController.swift; sourceTree = "<group>"; };
 		16DD6E972283102D0090A74C /* LegalHoldParticipantsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldParticipantsSectionController.swift; sourceTree = "<group>"; };
 		16DD6EB7228431030090A74C /* LegalHoldHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldHeaderView.swift; sourceTree = "<group>"; };
@@ -2331,6 +2332,7 @@
 		55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallQualityController+Budget.swift"; sourceTree = "<group>"; };
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
+		59A697202B728F6C00961E68 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStateAccessoryView.swift; sourceTree = "<group>"; };
 		5E001FC8229BD2F200F22CDD /* TargetConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetConversationCell.swift; sourceTree = "<group>"; };
 		5E028DEB21F883DF00E5512A /* EmailPasswordTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPasswordTextFieldCell.swift; sourceTree = "<group>"; };
@@ -4026,6 +4028,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EEE25B0C2970C0980008B894 /* WireTesting.framework in Frameworks */,
+				59A697212B728F6C00961E68 /* WireDataModelSupport.framework in Frameworks */,
 				EEE25B04297036410008B894 /* FBSnapshotTestCase.xcframework in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
 				0145AE962B1156F40097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
@@ -5315,6 +5318,7 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59A697202B728F6C00961E68 /* WireDataModelSupport.framework */,
 				0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */,
 				0145AE952B1156F40097E3B8 /* WireSyncEngineSupport.framework */,
 				E6C25FC42AFFAAC300406A1C /* WireTesting.framework */,

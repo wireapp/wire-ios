@@ -16,20 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
+import WireSyncEngineSupport
 import XCTest
+
 @testable import Wire
 
 final class ProfileViewTests: BaseSnapshotTestCase {
 
     var userSession: UserSessionMock!
 
+    var isSelfUserProteusVerifiedUseCase: MockIsSelfUserProteusVerifiedUseCaseProtocol!
+    var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+
     override func setUp() {
         super.setUp()
+
         userSession = UserSessionMock()
+        isSelfUserProteusVerifiedUseCase = .init()
+        isSelfUserProteusVerifiedUseCase.invoke_MockValue = false
+        isSelfUserE2EICertifiedUseCase = .init()
+        isSelfUserE2EICertifiedUseCase.invoke_MockValue = false
     }
 
     override func tearDown() {
+        isSelfUserProteusVerifiedUseCase = nil
+        isSelfUserE2EICertifiedUseCase = nil
         userSession = nil
+
         super.tearDown()
     }
 
@@ -79,8 +93,11 @@ final class ProfileViewTests: BaseSnapshotTestCase {
         let sut = ProfileHeaderViewController(
             user: testUser,
             viewer: selfUser,
+            conversation: nil,
             options: [],
-            userSession: userSession
+            userSession: userSession,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
 
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
@@ -116,14 +133,15 @@ final class ProfileViewTests: BaseSnapshotTestCase {
         let sut = ProfileHeaderViewController(
             user: user,
             viewer: viewer,
+            conversation: nil,
             options: options,
-            userSession: userSession
+            userSession: userSession,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
         sut.overrideUserInterfaceStyle = .dark
-
         return sut
     }
-
 }

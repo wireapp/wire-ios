@@ -213,6 +213,8 @@ public protocol UserSession: AnyObject {
     var networkState: ZMNetworkState { get }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
+    var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol { get }
+    var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
 
@@ -497,6 +499,14 @@ extension ZMUserSession: UserSession {
         }
 
         return isClassified ? .classified : .notClassified
+    }
+
+    public var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol {
+        IsSelfUserProteusVerifiedUseCase(context: syncContext)
+    }
+
+    public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
+        IsSelfUserE2EICertifiedUseCase(context: syncContext, coreCryptoProvider: coreCryptoProvider)
     }
 }
 
