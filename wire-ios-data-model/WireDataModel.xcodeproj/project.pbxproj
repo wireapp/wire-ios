@@ -260,7 +260,7 @@
 		59A6971F2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
 		59C9149F2B72730800CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C9149D2B7272F100CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
-		59C914A12B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C914A02B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */; };
+		59C914A12B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C914A02B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D1C3072B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1130,7 +1130,7 @@
 		59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserVerifiedUseCaseTests.swift; sourceTree = "<group>"; };
 		59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolTests.swift; sourceTree = "<group>"; };
 		59C9149D2B7272F100CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCase.swift; sourceTree = "<group>"; };
-		59C914A02B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift; sourceTree = "<group>"; };
+		59C914A02B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCaseTests.swift; sourceTree = "<group>"; };
 		59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireDataModelSupport.h; sourceTree = "<group>"; };
 		5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Set+ServiceUser.swift"; sourceTree = "<group>"; };
@@ -2147,7 +2147,7 @@
 		638941F42AF521050051ABFD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
-				59C914A02B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */,
+				59C914A02B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */,
 				59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */,
 				638941F52AF5211D0051ABFD /* RemoveLocalConversationUseCaseTests.swift */,
 			);
@@ -4419,7 +4419,7 @@
 				F9B71FA81CB2BF37001DB03F /* ZMConversationTests+Validation.m in Sources */,
 				F9B71FA11CB2BF37001DB03F /* ZMConversation+Testing.m in Sources */,
 				59A6971F2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift in Sources */,
-				59C914A12B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift in Sources */,
+				59C914A12B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */,
 				1600D944267BC5A100970F99 /* ZMManagedObjectFetchingTests.swift in Sources */,
 				F9A708531CAEEB7500C2F5FE /* ZMManagedObjectTests.m in Sources */,
 				F92C992D1DAFC5AC0034AFDD /* ZMConversationTests+Ephemeral.swift in Sources */,
