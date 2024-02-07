@@ -32,11 +32,11 @@ public enum LogFileDestination: CaseIterable, FileLoggerDestination {
     public var filename: String {
         switch self {
         case .main:
-            "oslog_dump.log"
+            return "oslog_dump.log"
         case .nse:
-            "oslog_NSE_dump.log"
+            return "oslog_NSE_dump.log"
         case .shareExtension:
-            "oslog_share_dump.log"
+            return "oslog_share_dump.log"
         }
     }
 
