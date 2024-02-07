@@ -42,9 +42,16 @@ protocol SettingsCellDescriptorType: AnyObject {
     var title: String {get}
     var identifier: String? {get}
     var group: SettingsGroupCellDescriptorType? {get}
+    var copiableText: String? { get }
 
     func select(_: SettingsPropertyValue?)
     func featureCell(_: SettingsCellType)
+}
+
+extension SettingsCellDescriptorType {
+    var copiableText: String? {
+        return nil
+    }
 }
 
 func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) -> Bool {

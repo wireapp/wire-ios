@@ -32,7 +32,8 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
                    presentationAction: { return nil },
                    previewGenerator: nil,
                    icon: nil,
-                   accessoryViewMode: .default)
+                   accessoryViewMode: .default,
+                   copiableText: nil)
 
     }
 
