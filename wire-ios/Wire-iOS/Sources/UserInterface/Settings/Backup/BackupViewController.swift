@@ -195,7 +195,7 @@ private extension BackupViewController {
             guard let `self` = self, let password = result else { return }
             self.loadingHostController.isLoadingViewVisible = true
 
-            self.backupSource.backupActiveAccount(password: password.value) { backupResult in
+            self.backupSource.backupActiveAccount(password: password) { backupResult in
                 self.loadingHostController.isLoadingViewVisible = false
 
                 switch backupResult {

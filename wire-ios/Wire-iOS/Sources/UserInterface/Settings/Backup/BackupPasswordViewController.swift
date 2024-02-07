@@ -20,20 +20,8 @@ import UIKit
 import WireUtilities
 import WireCommonComponents
 
-struct Password {
-    let value: String
-
-    init?(_ value: String) {
-        if case PasswordValidationResult.valid = PasswordRuleSet.shared.validatePassword(value) {
-            self.value = value
-        } else {
-            return nil
-        }
-    }
-}
-
 extension BackupViewController {
-    func requestBackupPassword(completion: @escaping (Password?) -> Void) {
+    func requestBackupPassword(completion: @escaping (String?) -> Void) {
         let passwordController = BackupPasswordViewController { controller, password in
             controller.dismiss(animated: true) {
                 completion(password)
@@ -47,13 +35,13 @@ extension BackupViewController {
 
 final class BackupPasswordViewController: UIViewController {
 
-    typealias Completion = (BackupPasswordViewController, Password?) -> Void
+    typealias Completion = (BackupPasswordViewController, String?) -> Void
     typealias LabelColors = SemanticColors.Label
     typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
     typealias ViewColors = SemanticColors.View
     var completion: Completion?
 
-    private var password: Password?
+    private var password: String?
     private let passwordView = SimpleTextField()
 
     private let subtitleLabel: DynamicFontLabel = {
@@ -164,8 +152,14 @@ final class BackupPasswordViewController: UIViewController {
     }
 
     private func updateState(with text: String) {
-        password = Password(text)
-        navigationItem.rightBarButtonItem?.isEnabled = nil != password
+        switch PasswordRuleSet.shared.validatePassword(text) {
+        case .valid:
+            password = text
+            navigationItem.rightBarButtonItem?.isEnabled = true
+        case .invalid:
+            password = nil
+            navigationItem.rightBarButtonItem?.isEnabled = false
+        }
     }
 
     @objc dynamic private func cancel() {
