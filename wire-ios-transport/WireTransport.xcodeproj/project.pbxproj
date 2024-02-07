@@ -218,7 +218,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		014DD8CE2B6D1ECE007ECFD1 /* QualifiedId+Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "QualifiedId+Logging.swift"; path = "../../../wire-ios-data-model/Source/Utilis/QualifiedId+Logging.swift"; sourceTree = "<group>"; };
 		01C83761292CC75F009BB0BF /* ProxyCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCredentials.swift; sourceTree = "<group>"; };
 		01C83763292CC8DA009BB0BF /* ProxyCredentialsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsTests.swift; sourceTree = "<group>"; };
 		01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLogTests.swift; sourceTree = "<group>"; };
@@ -707,7 +706,6 @@
 				54CAD7081BB54097006FF8E9 /* ZMTLogging.h */,
 				01D97B0F294CB921001A04BD /* RequestLog.swift */,
 				01D97B11294CB98F001A04BD /* ResponseLog.swift */,
-				014DD8CE2B6D1ECE007ECFD1 /* QualifiedId+Logging.swift */,
 			);
 			path = Logging;
 			sourceTree = "<group>";
