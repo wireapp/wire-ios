@@ -38,7 +38,7 @@ protocol CameraKeyboardViewControllerDelegate: AnyObject {
 
 // MARK: - CameraKeyboardViewController
 
-final class CameraKeyboardViewController: UIViewController, SpinnerCapable {
+class CameraKeyboardViewController: UIViewController, SpinnerCapable {
 
     // MARK: - Properties
 

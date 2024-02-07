@@ -40,7 +40,7 @@ protocol URLActionRouterProtocol {
 private let zmLog = ZMSLog(tag: "UI")
 
 // MARK: - URLActionRouter
-final class URLActionRouter: URLActionRouterProtocol {
+class URLActionRouter: URLActionRouterProtocol {
 
     // MARK: - Public Property
     var sessionManager: SessionManager?

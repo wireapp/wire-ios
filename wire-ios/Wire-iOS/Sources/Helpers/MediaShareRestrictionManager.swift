@@ -36,7 +36,7 @@ enum MediaShareRestrictionLevel {
     case APIFlag
 }
 
-final class MediaShareRestrictionManager {
+class MediaShareRestrictionManager {
 
     // MARK: - Private Properties
 

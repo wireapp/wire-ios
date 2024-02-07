@@ -39,7 +39,7 @@ func XCTAssertArrayEqual(_ descriptions: [Any], _ expectedDescriptions: [Any], f
     XCTAssertEqual(classes, expectedClasses, file: file, line: line)
 }
 
-final class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
+class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     var userSession: UserSessionMock!
 
