@@ -31,6 +31,9 @@ final class ConversationListViewController: UIViewController {
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
+    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+
     /// internal View Model
     var state: ConversationListState = .conversationList
 
@@ -81,10 +84,20 @@ final class ConversationListViewController: UIViewController {
         return conversationListOnboardingHint
     }()
 
-    convenience init(account: Account, selfUser: SelfUserType, userSession: UserSession) {
+    convenience init(
+        account: Account,
+        selfUser: SelfUserType,
+        userSession: UserSession,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    ) {
         let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
 
-        self.init(viewModel: viewModel)
+        self.init(
+            viewModel: viewModel,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+        )
 
         viewModel.viewController = self
 
@@ -93,21 +106,26 @@ final class ConversationListViewController: UIViewController {
         onboardingHint.arrowPointToView = tabBar
     }
 
-    required init(viewModel: ViewModel) {
-
+    required init(
+        viewModel: ViewModel,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    ) {
         self.viewModel = viewModel
+        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
+        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
 
-        topBarViewController = ConversationListTopBarViewController(account: viewModel.account,
-                                                                    selfUser: viewModel.selfUser,
-                                                                    userSession: viewModel.userSession)
-
-        listContentController = ConversationListContentController(userSession: viewModel.userSession)
-        listContentController.collectionView.contentInset = UIEdgeInsets(
-            top: 0,
-            left: 0,
-            bottom: ConversationListViewController.contentControllerBottomInset,
-            right: 0
+        topBarViewController = ConversationListTopBarViewController(
+            account: viewModel.account,
+            selfUser: viewModel.selfUser,
+            userSession: viewModel.userSession,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
+
+        let bottomInset = ConversationListViewController.contentControllerBottomInset
+        listContentController = ConversationListContentController(userSession: viewModel.userSession)
+        listContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
 
 final class UserStatusViewController: UIViewController {
 
-    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    private lazy var feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+
     private let options: UserStatusView.Options
     private let user: UserType
-    let userSession: UserSession
+    private let userSession: UserSession
+    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
     /// Used to update the `UserStatusView` on changes of a user.
     private var userChangeObservation: NSObjectProtocol?
@@ -35,10 +37,18 @@ final class UserStatusViewController: UIViewController {
         view as! UserStatusView
     }
 
-    init(user: UserType, options: UserStatusView.Options, userSession: UserSession) {
+    init(
+        user: UserType,
+        options: UserStatusView.Options,
+        userSession: UserSession,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    ) {
         self.user = user
         self.options = options
         self.userSession = userSession
+        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
+        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -52,13 +62,24 @@ final class UserStatusViewController: UIViewController {
             options: options,
             userSession: userSession
         )
-        view.tapHandler = { [weak self] _ in
-            self?.presentAvailabilityPicker()
-        }
+        view.tapHandler = { [weak self] _ in self?.presentAvailabilityPicker() }
         self.view = view
 
         updateUserStatusView()
         setupNotificationObservation()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        Task {
+            do {
+                userStatusView.userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+                userStatusView.userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
+            } catch {
+                WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
+            }
+        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -69,7 +90,7 @@ final class UserStatusViewController: UIViewController {
         }
     }
 
-    func presentAvailabilityPicker() {
+    private func presentAvailabilityPicker() {
         let alertViewController = UIAlertController.availabilityPicker { [weak self] availability in
             self?.didSelectAvailability(availability)
         }
@@ -80,7 +101,7 @@ final class UserStatusViewController: UIViewController {
     private func didSelectAvailability(_ availability: Availability) {
         let changes = { [weak self] in
             self?.user.availability = availability
-            self?.provideHapticFeedback()
+            self?.feedbackGenerator.impactOccurred()
         }
 
         userSession.perform(changes)
@@ -112,12 +133,8 @@ final class UserStatusViewController: UIViewController {
 
     @objc
     private func updateUserStatusView() {
-        userStatusView.userStatus = .init(
-            name: user.name ?? "",
-            availability: user.availability,
-            isCertified: false,
-            isVerified: false
-        )
+        userStatusView.userStatus.name = user.name ?? ""
+        userStatusView.userStatus.availability = user.availability
     }
 }
 

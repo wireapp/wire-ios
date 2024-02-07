@@ -16,28 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import Foundation
 
-/// The status of the user, consisting of its name and availability.
-public struct UserStatus {
+extension Sequence where Iterator.Element == NSAttributedString {
 
-    /// The name of the users.
-    var name = ""
+    public func joined(separator: NSAttributedString? = .none) -> NSAttributedString {
+        let result = Array(self)
+        guard result.count > 1 else { return result.first ?? .init() }
 
-    var availability = Availability.none
-
-    /// `true` if the user has a valid certificate (MLS), `false` otherwise.
-    var isCertified = false
-
-    /// `true` if the user has been verified (Proteus), `false` otherwise.
-    var isVerified = false
-
-    public init(name: String, availability: Availability, isCertified: Bool, isVerified: Bool) {
-        self.name = name
-        self.availability = availability
-        self.isCertified = isCertified
-        self.isVerified = isVerified
+        let string = NSMutableAttributedString(attributedString: result[0])
+        for i in result.indices[1...] {
+            separator.map { string.append($0) }
+            string.append(result[i])
+        }
+        return string
     }
-
-    public init() {}
 }

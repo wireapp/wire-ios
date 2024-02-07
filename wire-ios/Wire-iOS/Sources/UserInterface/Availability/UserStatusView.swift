@@ -21,8 +21,6 @@ import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
 
-typealias AvailabilityTitleView = UserStatusView
-
 /// A title view subclass that displays the availability of the user.
 final class UserStatusView: TitleView {
 
@@ -75,16 +73,29 @@ final class UserStatusView: TitleView {
 
         let availability = userStatus.availability
         let fontStyle: FontSize = options.contains(.useLargeFont) ? .normal : .small
-        let icon = AvailabilityStringBuilder.icon(
-            for: availability,
-            with: AvailabilityStringBuilder.color(for: availability),
-            and: fontStyle
-        )
+        let leadingIcons = [
+            AvailabilityStringBuilder.icon(
+                for: availability,
+                with: AvailabilityStringBuilder.color(for: availability),
+                and: fontStyle
+            )
+        ]
+        var trailingIcons = [NSTextAttachment?]()
         let isInteractive = options.contains(.allowSettingStatus)
         var title = ""
 
         if options.contains(.displayUserName) {
             title = userStatus.name
+            if userStatus.isVerified {
+                let attachment = NSTextAttachment(image: Asset.Images.verifiedShield.image)
+                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
+                trailingIcons.insert(attachment, at: 0)
+            }
+            if userStatus.isCertified {
+                let attachment = NSTextAttachment(image: Asset.Images.certificateValid.image)
+                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
+                trailingIcons.insert(attachment, at: 0)
+            }
             accessibilityLabel = title
         } else if availability == .none && options.contains(.allowSettingStatus) {
             title = L10n.Localizable.Availability.Message.setStatus
@@ -95,7 +106,14 @@ final class UserStatusView: TitleView {
         }
 
         let showInteractiveIcon = isInteractive && !options.contains(.hideActionHint)
-        super.configure(icon: icon, title: title, interactive: isInteractive, showInteractiveIcon: showInteractiveIcon)
+        configure(
+            leadingIcons: leadingIcons.compactMap { $0 },
+            title: title,
+            trailingIcons: trailingIcons.compactMap { $0 },
+            subtitle: nil,
+            interactive: isInteractive,
+            showInteractiveIcon: showInteractiveIcon
+        )
 
         accessibilityValue = availability != .none ? availability.localizedName : ""
         if options.contains(.allowSettingStatus) {

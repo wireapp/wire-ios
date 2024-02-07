@@ -18,8 +18,10 @@
 
 import Foundation
 import LocalAuthentication
-@testable import Wire
 import WireSyncEngineSupport
+import WireDataModelSupport
+
+@testable import Wire
 
 final class UserSessionMock: UserSession {
     var isE2eIdentityEnabled  = false
@@ -251,6 +253,9 @@ final class UserSessionMock: UserSession {
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         mockGetUserClientFingerprintUseCaseProtocol
     }
+
+    lazy var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol = MockIsSelfUserProteusVerifiedUseCaseProtocol()
+    lazy var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol = MockIsSelfUserE2EICertifiedUseCaseProtocol()
 
     var selfUserClient: UserClient? {
         return nil

@@ -25,7 +25,6 @@ typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
 
 protocol ConversationListContainerViewModelDelegate: AnyObject {
-    init(viewModel: ConversationListViewController.ViewModel)
 
     func scrollViewDidScroll(scrollView: UIScrollView!)
 
