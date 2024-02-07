@@ -175,7 +175,7 @@ final class ConversationActionController {
     }
 
     private func duplicateConversation() {
-        guard Bundle.developerModeEnabled else { return }
+        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
 
         guard let context = (userSession as? ZMUserSession)?.syncContext,
             let conversation = conversation as? ZMConversation else {
