@@ -18,90 +18,6 @@
 
 import UIKit
 
-private typealias LabelColors = SemanticColors.Label
-private typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
-
-final class BackupStatusCell: UITableViewCell {
-
-    let descriptionLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .normalRegularFont,
-                                     color: LabelColors.textDefault)
-        label.textAlignment = .left
-        label.numberOfLines = 0
-        return label
-    }()
-    let iconView = UIImageView()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        selectionStyle = .none
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
-
-        iconView.setTemplateIcon(.restore, size: .large)
-        iconView.tintColor = LabelColors.textDefault
-        iconView.contentMode = .center
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(iconView)
-
-        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(descriptionLabel)
-
-        NSLayoutConstraint.activate([
-            iconView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-            iconView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            iconView.heightAnchor.constraint(equalTo: iconView.widthAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 48),
-            descriptionLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 24),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
-        ])
-
-        descriptionLabel.attributedText = HistoryBackup.description && .paragraphSpacing(2)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-final class BackupActionCell: UITableViewCell {
-    let actionTitleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: HistoryBackup.action,
-                                     fontSpec: .normalRegularFont,
-                                     color: LabelColors.textDefault)
-        label.textAlignment = .left
-        return label
-    }()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .none
-        backgroundColor = SemanticColors.View.backgroundUserCell
-        accessibilityTraits = .button
-        contentView.backgroundColor = .clear
-
-        actionTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(actionTitleLabel)
-        NSLayoutConstraint.activate([
-            actionTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            actionTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            actionTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            actionTitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0)
-        ])
-        actionTitleLabel.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        addBorder(for: .bottom)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
 final class BackupViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
@@ -153,7 +69,8 @@ final class BackupViewController: UIViewController, SpinnerCapable {
     }
 
     private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: HistoryBackup.title.capitalized)
+        let title = L10n.Localizable.Self.Settings.HistoryBackup.title.capitalized
+        navigationItem.setupNavigationBarTitle(title: title)
     }
 
     var loadingHostController: SpinnerCapableViewController {
@@ -219,9 +136,11 @@ private extension BackupViewController {
 
     private func presentAlert(for error: Error) {
         let alert = UIAlertController(
-            title: HistoryBackup.Error.title,
+            title: L10n.Localizable.Self.Settings.HistoryBackup.Error.title,
             message: error.localizedDescription,
-            alertAction: .ok(style: .cancel))
+            alertAction: .ok(style: .cancel)
+        )
+
         present(alert, animated: true)
     }
 
