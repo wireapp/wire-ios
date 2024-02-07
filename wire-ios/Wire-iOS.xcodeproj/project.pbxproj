@@ -400,7 +400,6 @@
 		5E8FFC2221EF86000052DF03 /* EmailLinkVerificationStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2121EF86000052DF03 /* EmailLinkVerificationStepDescription.swift */; };
 		5E8FFC2421F086240052DF03 /* AuthenticationReauthenticateInputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2321F086230052DF03 /* AuthenticationReauthenticateInputHandler.swift */; };
 		5E8FFC2621F0879B0052DF03 /* ReauthenticateWithCompanyLoginStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2521F0879B0052DF03 /* ReauthenticateWithCompanyLoginStepDescription.swift */; };
-		5E8FFC2B21F08D5B0052DF03 /* PhoneNumberInputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2A21F08D5B0052DF03 /* PhoneNumberInputCell.swift */; };
 		5E8FFC2F21F0941C0052DF03 /* AccessoryTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2E21F0941C0052DF03 /* AccessoryTextFieldCell.swift */; };
 		5E8FFC3121F098E00052DF03 /* ConfirmationCodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC3021F098E00052DF03 /* ConfirmationCodeCell.swift */; };
 		5E90418921F230A900C3B413 /* AuthenticationCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E90418821F230A900C3B413 /* AuthenticationCredentialsViewController.swift */; };
@@ -2397,7 +2396,6 @@
 		5E8FFC2121EF86000052DF03 /* EmailLinkVerificationStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailLinkVerificationStepDescription.swift; sourceTree = "<group>"; };
 		5E8FFC2321F086230052DF03 /* AuthenticationReauthenticateInputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationReauthenticateInputHandler.swift; sourceTree = "<group>"; };
 		5E8FFC2521F0879B0052DF03 /* ReauthenticateWithCompanyLoginStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReauthenticateWithCompanyLoginStepDescription.swift; sourceTree = "<group>"; };
-		5E8FFC2A21F08D5B0052DF03 /* PhoneNumberInputCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberInputCell.swift; sourceTree = "<group>"; };
 		5E8FFC2E21F0941C0052DF03 /* AccessoryTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessoryTextFieldCell.swift; sourceTree = "<group>"; };
 		5E8FFC3021F098E00052DF03 /* ConfirmationCodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationCodeCell.swift; sourceTree = "<group>"; };
 		5E90418821F230A900C3B413 /* AuthenticationCredentialsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationCredentialsViewController.swift; sourceTree = "<group>"; };
@@ -8127,7 +8125,6 @@
 			isa = PBXGroup;
 			children = (
 				F12CDAEA1E43886A00CEFCEB /* DecriptionHeaderView.swift */,
-				5E8FFC2A21F08D5B0052DF03 /* PhoneNumberInputCell.swift */,
 				5E8FFC2E21F0941C0052DF03 /* AccessoryTextFieldCell.swift */,
 				5E028DEB21F883DF00E5512A /* EmailPasswordTextFieldCell.swift */,
 				5E39FC62225CCEFA00C682B8 /* ValueValidationCell.swift */,
@@ -9824,7 +9821,6 @@
 				16595CFF20BEE5E000E1340E /* Analytics+CallEvents.swift in Sources */,
 				A92CB35723CDF6D100F12797 /* ConversationContentViewControllerDelegate.swift in Sources */,
 				BFAF4CB51CECEF3C00780537 /* WaveFormView.swift in Sources */,
-				5E8FFC2B21F08D5B0052DF03 /* PhoneNumberInputCell.swift in Sources */,
 				A956554E23ED9D460004720E /* TokenizedTextView.swift in Sources */,
 				A9806A3B23E2024E00691DFE /* AudioTrackPlayer.swift in Sources */,
 				A9A3B1EB24D823CC001AF38E /* UnlockViewController.swift in Sources */,

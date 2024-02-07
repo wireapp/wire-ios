@@ -47,9 +47,7 @@ extension ConversationInputBarViewController {
 
         let alert = UIAlertController.alertWithOKButton(
             title: L10n.Localizable.Conversation.InputBar.MessageTooLong.title,
-            message: L10n.Localizable.Conversation.InputBar.MessageTooLong.message(
-                SharedConstants.maximumMessageLength
-            )
+            message: L10n.Localizable.Conversation.InputBar.MessageTooLong.message(maximumMessageLength)
         )
 
         present(alert, animated: true)
