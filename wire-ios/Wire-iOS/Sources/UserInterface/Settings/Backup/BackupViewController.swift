@@ -23,7 +23,7 @@ final class BackupViewController: UIViewController, SpinnerCapable {
 
     private let tableView = UITableView(frame: .zero)
     private var cells: [UITableViewCell.Type] = []
-    let backupSource: BackupSource
+    private let backupSource: BackupSource
 
     init(backupSource: BackupSource) {
         self.backupSource = backupSource

@@ -27,6 +27,7 @@ final class BackupStatusCell: UITableViewCell {
         label.numberOfLines = 0
         return label
     }()
+
     let iconView = UIImageView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
