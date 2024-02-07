@@ -6559,6 +6559,7 @@
 		8FC852B3199245760008B66B /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				E666EDD42B73E5F500C03E2B /* Backup */,
 				87B8C33A1DF9788B0015EC89 /* LinkOpening */,
 				873C5FE21C10426A00D5132A /* DeviceManagement */,
 				871067351C0DC5570035603B /* CellDescriptors */,
@@ -6574,8 +6575,6 @@
 				87D21AD61D8A98620075AB7A /* AccentColorPickerController.swift */,
 				87C1A7BA1D8FDFD8002630BB /* VersionInfoViewController.swift */,
 				F19C3A8E20513532004387E4 /* DatabaseStatisticsController.swift */,
-				8751BA432069455E00DF8667 /* BackupViewController.swift */,
-				D5D65A10207509F300D7F3C3 /* BackupPasswordViewController.swift */,
 				EF2388852211A67900331C07 /* UserRight.swift */,
 				A93B528824FE98200061255E /* DebugActions.swift */,
 				067F605C28B8EC8000FCC334 /* DebugCommand.swift */,
@@ -7489,6 +7488,15 @@
 				E66258932B4D661900C23E79 /* DeveloperDebugActionsViewModelTests.swift */,
 			);
 			path = DebugActions;
+			sourceTree = "<group>";
+		};
+		E666EDD42B73E5F500C03E2B /* Backup */ = {
+			isa = PBXGroup;
+			children = (
+				8751BA432069455E00DF8667 /* BackupViewController.swift */,
+				D5D65A10207509F300D7F3C3 /* BackupPasswordViewController.swift */,
+			);
+			path = Backup;
 			sourceTree = "<group>";
 		};
 		E6C25FCC2AFFAC1C00406A1C /* Fixture */ = {
