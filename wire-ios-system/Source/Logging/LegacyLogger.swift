@@ -18,7 +18,7 @@
 
 import Foundation
 
-/// Logger to write logs tro fileSystem via ZMSLog
+/// Logger to write logs to fileSystem via ZMSLog
 public class LegacyLogger: LoggerProtocol {
 
     private var loggers = [String: ZMSLog]()
