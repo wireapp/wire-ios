@@ -166,15 +166,10 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         mailComposeViewController.setMessageBody("Debug report", isHTML: false)
 
         if logsIncluded {
-            var topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
+            let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
             topMostViewController?.isLoadingViewVisible = true
 
             Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
-                if #available(iOS 16.0, *) {
-                    try await Task.sleep(for: .seconds(3))
-                } else {
-                    // Fallback on earlier versions
-                }
                 await mailComposeViewController.attachLogs()
 
                 await self.present(mailComposeViewController, animated: true, completion: nil)
