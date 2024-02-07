@@ -70,7 +70,7 @@ final class ZClientViewController: UIViewController {
             account: account,
             selfUser: userSession.selfLegalHoldSubject,
             userSession: userSession,
-            isSelfUserVerifiedUseCase: userSession.isSelfUserVerifiedUseCase,
+            isSelfUserProteusVerifiedUseCase: userSession.isSelfUserProteusVerifiedUseCase,
             hasSelfUserValidE2EICertificatesForAllClientsUseCase: userSession.hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
         colorSchemeController = ColorSchemeController(userSession: userSession)

@@ -27,7 +27,7 @@ final class UserStatusViewController: UIViewController {
     private let options: UserStatusView.Options
     private let user: UserType
     private let userSession: UserSession
-    private let isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol
+    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
     private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
 
     /// Used to update the `UserStatusView` on changes of a user.
@@ -41,13 +41,13 @@ final class UserStatusViewController: UIViewController {
         user: UserType,
         options: UserStatusView.Options,
         userSession: UserSession,
-        isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
     ) {
         self.user = user
         self.options = options
         self.userSession = userSession
-        self.isSelfUserVerifiedUseCase = isSelfUserVerifiedUseCase
+        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
         self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
         super.init(nibName: nil, bundle: nil)
     }
@@ -75,7 +75,7 @@ final class UserStatusViewController: UIViewController {
         Task {
             do {
                 userStatusView.userStatus.isCertified = try await hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke()
-                userStatusView.userStatus.isVerified = isSelfUserVerifiedUseCase.invoke()
+                userStatusView.userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
             }

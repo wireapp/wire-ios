@@ -2729,7 +2729,7 @@ public class MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol: H
 
 }
 
-public class MockIsSelfUserVerifiedUseCaseProtocol: IsSelfUserVerifiedUseCaseProtocol {
+public class MockIsSelfUserProteusVerifiedUseCaseProtocol: IsSelfUserProteusVerifiedUseCaseProtocol {
 
     // MARK: - Life cycle
 

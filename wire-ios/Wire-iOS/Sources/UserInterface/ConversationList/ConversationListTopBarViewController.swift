@@ -30,7 +30,7 @@ final class ConversationListTopBarViewController: UIViewController {
     private var account: Account
     private let selfUser: SelfUserType
     private var userSession: UserSession
-    private let isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol
+    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
     private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
 
     var topBar: TopBar? {
@@ -46,13 +46,13 @@ final class ConversationListTopBarViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
     ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
-        self.isSelfUserVerifiedUseCase = isSelfUserVerifiedUseCase
+        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
         self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
         super.init(nibName: nil, bundle: nil)
 
@@ -94,7 +94,7 @@ final class ConversationListTopBarViewController: UIViewController {
                 user: selfUser,
                 options: .header,
                 userSession: userSession,
-                isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+                isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
                 hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
             )
             addChild(userStatusViewController)

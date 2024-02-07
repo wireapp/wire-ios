@@ -20,12 +20,12 @@ import Foundation
 
 // sourcery: AutoMockable
 /// Determines if the self user has is Proteus verified.
-public protocol IsSelfUserVerifiedUseCaseProtocol {
+public protocol IsSelfUserProteusVerifiedUseCaseProtocol {
     /// Returns `true` if the self user is verified, `false` otherwise.
     func invoke() -> Bool
 }
 
-public struct IsSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol {
+public struct IsSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
 

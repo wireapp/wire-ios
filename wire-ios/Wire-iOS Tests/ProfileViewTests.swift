@@ -26,21 +26,21 @@ final class ProfileViewTests: BaseSnapshotTestCase {
 
     var userSession: UserSessionMock!
 
-    var isSelfUserVerifiedUseCase: MockIsSelfUserVerifiedUseCaseProtocol!
+    var isSelfUserProteusVerifiedUseCase: MockIsSelfUserProteusVerifiedUseCaseProtocol!
     var hasSelfUserValidE2EICertificatesForAllClientsUseCase: MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
 
         userSession = UserSessionMock()
-        isSelfUserVerifiedUseCase = .init()
-        isSelfUserVerifiedUseCase.invoke_MockValue = false
+        isSelfUserProteusVerifiedUseCase = .init()
+        isSelfUserProteusVerifiedUseCase.invoke_MockValue = false
         hasSelfUserValidE2EICertificatesForAllClientsUseCase = .init()
         hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke_MockValue = false
     }
 
     override func tearDown() {
-        isSelfUserVerifiedUseCase = nil
+        isSelfUserProteusVerifiedUseCase = nil
         hasSelfUserValidE2EICertificatesForAllClientsUseCase = nil
         userSession = nil
 
@@ -96,7 +96,7 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: [],
             userSession: userSession,
-            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
 
@@ -136,7 +136,7 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: options,
             userSession: userSession,
-            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)

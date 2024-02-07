@@ -90,7 +90,7 @@ final class SelfProfileViewController: UIViewController {
             conversation: .none,
             options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability],
             userSession: userSession,
-            isSelfUserVerifiedUseCase: userSession.isSelfUserVerifiedUseCase,
+            isSelfUserProteusVerifiedUseCase: userSession.isSelfUserProteusVerifiedUseCase,
             hasSelfUserValidE2EICertificatesForAllClientsUseCase: userSession.hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
 

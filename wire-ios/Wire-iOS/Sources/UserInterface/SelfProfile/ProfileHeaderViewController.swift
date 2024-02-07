@@ -37,7 +37,7 @@ final class ProfileHeaderViewController: UIViewController {
     private var userStatus = UserStatus()
 
     private let userSession: UserSession
-    private let isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol
+    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
     private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
 
     /// The user who is viewing this view
@@ -101,7 +101,7 @@ final class ProfileHeaderViewController: UIViewController {
     /// - parameter conversation: The conversation.
     /// - parameter options: The options for the appearance and behavior of the view.
     /// - parameter userSession: The user session.
-    /// - parameter isSelfUserVerifiedUseCase: Use case for getting the self user's Proteus verification status.
+    /// - parameter isSelfUserProteusVerifiedUseCase: Use case for getting the self user's Proteus verification status.
     /// - parameter hasSelfUserValidE2EICertificatesForAllClientsUseCase: Use case for getting the self user's MLS verification status.
     /// Note: You can change the options later through the `options` property.
     init(
@@ -110,12 +110,12 @@ final class ProfileHeaderViewController: UIViewController {
         conversation: ZMConversation?,
         options: Options,
         userSession: UserSession,
-        isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
     ) {
         self.user = user
         self.userSession = userSession
-        self.isSelfUserVerifiedUseCase = isSelfUserVerifiedUseCase
+        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
         self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
@@ -125,7 +125,7 @@ final class ProfileHeaderViewController: UIViewController {
             user: user,
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             userSession: userSession,
-            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
 
@@ -236,7 +236,7 @@ final class ProfileHeaderViewController: UIViewController {
         Task {
             do {
                 userStatus.isCertified = try await hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke()
-                userStatus.isVerified = isSelfUserVerifiedUseCase.invoke()
+                userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
                 updateNameLabel()
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")

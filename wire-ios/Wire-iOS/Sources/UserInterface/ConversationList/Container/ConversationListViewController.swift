@@ -31,7 +31,7 @@ final class ConversationListViewController: UIViewController {
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
-    private let isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol
+    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
     private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
 
     /// internal View Model
@@ -88,14 +88,14 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
 
         self.init(
             viewModel: viewModel,
-            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
 
@@ -108,18 +108,18 @@ final class ConversationListViewController: UIViewController {
 
     required init(
         viewModel: ViewModel,
-        isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
     ) {
         self.viewModel = viewModel
-        self.isSelfUserVerifiedUseCase = isSelfUserVerifiedUseCase
+        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
         self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession,
-            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
 

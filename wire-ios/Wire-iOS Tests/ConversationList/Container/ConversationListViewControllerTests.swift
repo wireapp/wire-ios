@@ -73,14 +73,14 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, conversationListType: MockConversationList.self, userSession: userSession)
 
-        let isSelfUserVerifiedUseCase = MockIsSelfUserVerifiedUseCaseProtocol()
-        isSelfUserVerifiedUseCase.invoke_MockValue = false
+        let isSelfUserProteusVerifiedUseCase = MockIsSelfUserProteusVerifiedUseCaseProtocol()
+        isSelfUserProteusVerifiedUseCase.invoke_MockValue = false
         let hasSelfUserValidE2EICertificatesForAllClientsUseCase = MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol()
         hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke_MockValue = false
 
         sut = ConversationListViewController(
             viewModel: viewModel,
-            isSelfUserVerifiedUseCase: isSelfUserVerifiedUseCase,
+            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
         )
         viewModel.viewController = sut

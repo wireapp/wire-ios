@@ -80,7 +80,7 @@ final class UserStatusView: TitleView {
                 and: fontStyle
             )
         ]
-        var trailingIcons =  [NSTextAttachment?]()
+        var trailingIcons = [NSTextAttachment?]()
         let isInteractive = options.contains(.allowSettingStatus)
         var title = ""
 

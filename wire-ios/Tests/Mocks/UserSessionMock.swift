@@ -254,7 +254,7 @@ final class UserSessionMock: UserSession {
         mockGetUserClientFingerprintUseCaseProtocol
     }
 
-    lazy var isSelfUserVerifiedUseCase: IsSelfUserVerifiedUseCaseProtocol = MockIsSelfUserVerifiedUseCaseProtocol()
+    lazy var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol = MockIsSelfUserProteusVerifiedUseCaseProtocol()
     lazy var hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol = MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol()
 
     var selfUserClient: UserClient? {

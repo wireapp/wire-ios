@@ -21,9 +21,9 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-final class IsSelfUserVerifiedUseCaseTests: ZMBaseManagedObjectTest {
+final class IsSelfUserProteusVerifiedUseCaseTests: ZMBaseManagedObjectTest {
 
-    private var sut: IsSelfUserVerifiedUseCase!
+    private var sut: IsSelfUserProteusVerifiedUseCase!
     private var context: NSManagedObjectContext { syncMOC }
 
     override func setUp() {
