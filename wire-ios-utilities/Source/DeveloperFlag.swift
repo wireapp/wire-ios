@@ -27,6 +27,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case proteusViaCoreCrypto
     case nseV2
     case forceDatabaseLoadingFailure
+    case debugDuplicateObjects
 
     public var description: String {
         switch self {
@@ -43,6 +44,8 @@ public enum DeveloperFlag: String, CaseIterable {
             return "Turn on to use the new implementation of the notification service extension."
         case .forceDatabaseLoadingFailure:
             return "Turn on to force database loading failure in the process of database migration"
+        case .debugDuplicateObjects:
+            return "Turn on to have actions to insert duplicate users, conversations, teams"
         }
     }
 
@@ -79,7 +82,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             return "ForceDatabaseLoadingFailure"
-        case .nseV2:
+        case .nseV2, .debugDuplicateObjects:
             return nil
         }
     }

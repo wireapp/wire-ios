@@ -470,6 +470,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     }
 
     private func duplicateUser() {
+        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
         guard let user = viewModel.user as? ZMUser, let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext else {
             assertionFailure("couldn't get context to duplicateUser")
             return

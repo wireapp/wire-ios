@@ -122,7 +122,7 @@ extension ZMConversation {
             }
         }
 
-        if Bundle.developerModeEnabled {
+        if DeveloperFlag.debugDuplicateObjects.isOn {
             actions.append(.duplicateConversation)
         }
         return actions

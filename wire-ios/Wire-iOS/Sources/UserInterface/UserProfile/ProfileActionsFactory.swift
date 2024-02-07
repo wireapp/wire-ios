@@ -183,7 +183,7 @@ final class ProfileActionsFactory {
             }
 
             // only for debug
-            if Bundle.developerModeEnabled {
+            if DeveloperFlag.debugDuplicateObjects.isOn {
                 actions.append(.duplicateUser)
                 if user.isTeamMember {
                     actions.append(.duplicateTeam)
