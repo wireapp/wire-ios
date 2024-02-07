@@ -21,14 +21,12 @@ import struct WireCommonComponents.FontSpec
 
 final class BackupPasswordViewController: UIViewController {
 
-    typealias Password = String
-    typealias Completion = (BackupPasswordViewController, Password?) -> Void
     typealias LabelColors = SemanticColors.Label
     typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
     typealias ViewColors = SemanticColors.View
-    var completion: Completion?
+    var onCompletion: ((_ password: String?) -> Void)?
 
-    private var password: Password?
+    private var password: String?
     private let passwordView = SimpleTextField()
 
     private let subtitleLabel: DynamicFontLabel = {
@@ -46,9 +44,9 @@ final class BackupPasswordViewController: UIViewController {
         return label
     }()
 
-    init(completion: @escaping Completion) {
-        self.completion = completion
+    init() {
         super.init(nibName: nil, bundle: nil)
+
         setupViews()
         createConstraints()
     }
@@ -150,11 +148,11 @@ final class BackupPasswordViewController: UIViewController {
     }
 
     @objc dynamic private func cancel() {
-        completion?(self, nil)
+        onCompletion?(nil)
     }
 
     @objc dynamic private func completeWithCurrentResult() {
-        completion?(self, password)
+        onCompletion?(password)
     }
 }
 

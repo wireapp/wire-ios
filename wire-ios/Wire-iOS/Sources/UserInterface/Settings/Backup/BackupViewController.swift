@@ -124,8 +124,9 @@ private extension BackupViewController {
     }
 
     private func requestBackupPassword(completion: @escaping (String?) -> Void) {
-        let passwordController = BackupPasswordViewController { controller, password in
-            controller.dismiss(animated: true) {
+        let passwordController = BackupPasswordViewController()
+        passwordController.onCompletion = { [weak passwordController] password in
+            passwordController?.dismiss(animated: true) {
                 completion(password)
             }
         }

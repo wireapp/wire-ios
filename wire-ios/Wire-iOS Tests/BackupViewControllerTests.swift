@@ -20,11 +20,13 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class MockBackupSource: BackupSource {
-    func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void) { }
+final class MockBackupSource: BackupSource {
+    func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) { }
+
+    func clearPreviousBackups() { }
 }
 
-class BackupViewControllerTests: ZMSnapshotTestCase {
+final class BackupViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
@@ -33,17 +35,26 @@ class BackupViewControllerTests: ZMSnapshotTestCase {
 
     func testInitialState() {
         // GIVEN
-        let sut = BackupViewController(backupSource: MockBackupSource())
+        let sut = makeViewController()
+
         // WHEN && THEN
         self.verifyInIPhoneSize(view: sut.view)
     }
 
     func testLoading() {
         // GIVEN
-        let sut = BackupViewController(backupSource: MockBackupSource())
+        let sut = makeViewController()
         sut.view.layer.speed = 0
         sut.tableView(UITableView(), didSelectRowAt: IndexPath(row: 1, section: 0))
+
         // WHEN && THEN
         self.verifyInIPhoneSize(view: sut.view)
+    }
+
+    // MARK: - Helpers
+
+    private func makeViewController() -> BackupViewController {
+        let backupSource = MockBackupSource()
+        return BackupViewController(backupSource: backupSource)
     }
 }
