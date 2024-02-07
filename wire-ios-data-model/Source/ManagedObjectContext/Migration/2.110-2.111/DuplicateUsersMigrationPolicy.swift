@@ -26,11 +26,8 @@ class DuplicateUsersMigrationPolicy: NSEntityMigrationPolicy {
         case primaryKey
     }
 
-    private let zmLog = ZMSLog(tag: "core-data")
-
     override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
-        zmLog.safePublic("beginning duplicate users migration", level: .info)
-        WireLogger.localStorage.info("beginning duplicate users migration")
+        WireLogger.localStorage.info("beginning duplicate users migration", attributes: .safePublic)
 
         let context = manager.sourceContext
 
@@ -52,22 +49,19 @@ class DuplicateUsersMigrationPolicy: NSEntityMigrationPolicy {
             }
         }
 
-        zmLog.safePublic(SanitizedString(stringLiteral: "found (\(duplicates.count)) occurences of duplicate users"), level: .info)
-        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate users")
-
+        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate users", attributes: .safePublic)
         duplicates.forEach { (key, users: [NSManagedObject]) in
             guard users.count > 1 else {
-                WireLogger.localStorage.info("skipping user with different domain: \(key)")
+                WireLogger.localStorage.info("skipping user with different domain: \(key)", attributes: .safePublic)
                 return
             }
-            WireLogger.localStorage.debug("processing \(key)")
+            WireLogger.localStorage.debug("processing \(key)", attributes: .safePublic)
             // for now we just keep one user and mark to sync and drop the rest.
             // Marking needsToBeUpdatedFromBackend supposes we recover the data from backend
             users.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             users.dropFirst().forEach(context.delete)
 
-            zmLog.safePublic("removed 1 occurence of duplicate users", level: .warn)
-            WireLogger.localStorage.info("removed  \(users.count - 1) occurence of duplicate users")
+            WireLogger.localStorage.info("removed  \(users.count - 1) occurence of duplicate users", attributes: .safePublic)
         }
     }
 
