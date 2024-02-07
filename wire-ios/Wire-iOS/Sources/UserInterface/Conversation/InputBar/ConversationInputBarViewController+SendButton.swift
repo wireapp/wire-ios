@@ -41,7 +41,9 @@ extension ConversationInputBarViewController {
     }
 
     func showAlertIfTextIsTooLong(text: String) -> Bool {
-        guard text.count > SharedConstants.maximumMessageLength else { return false }
+        let maximumMessageLength = 8000
+
+        guard text.count > maximumMessageLength else { return false }
 
         let alert = UIAlertController.alertWithOKButton(
             title: L10n.Localizable.Conversation.InputBar.MessageTooLong.title,

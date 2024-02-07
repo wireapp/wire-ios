@@ -289,7 +289,7 @@ extension VoiceChannel {
     }
 }
 
-private class PassThroughOpaqueView: UIView {
+private final class PassThroughOpaqueView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
             return false
     }
