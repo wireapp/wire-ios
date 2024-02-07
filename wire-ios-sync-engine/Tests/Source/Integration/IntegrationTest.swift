@@ -497,8 +497,11 @@ extension IntegrationTest {
 
             self.userSession.map { userSession in
                 WaitingGroupTask(context: userSession.syncManagedObjectContext) {
-                    for client in mockUser.clients {
-                        await self.establishSessionFromSelf(toRemote: client as! MockUserClient)
+                    let clients = await self.mockTransportSession.managedObjectContext.perform {
+                        mockUser.clients.map { $0 as! MockUserClient }
+                    }
+                    for client in clients {
+                        await self.establishSessionFromSelf(toRemote: client)
                     }
                 }
             }

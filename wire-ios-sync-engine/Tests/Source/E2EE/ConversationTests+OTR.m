@@ -54,9 +54,12 @@
     XCTAssertEqual(lastEventType, ZMUpdateEventTypeConversationOtrMessageAdd);
     XCTAssertEqual(message.deliveryState, ZMDeliveryStateSent);
     
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext];
-    UserClient *selfClient = selfUser.selfClient;
-    XCTAssertEqual(selfClient.missingClients.count, 0u);
+    [self.userSession.syncManagedObjectContext performBlockAndWait:^{
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext];
+        UserClient *selfClient = selfUser.selfClient;
+        XCTAssertEqual(selfClient.missingClients.count, 0u);
+    }];
+
     XCTAssertFalse([message hasLocalModificationsForKey:@"uploadState"]);
     XCTAssertEqual(message.transferState, AssetTransferStateUploaded);
 }
@@ -111,9 +114,11 @@
     XCTAssertEqual(lastEventType, ZMUpdateEventTypeConversationOtrMessageAdd);
     XCTAssertEqual(message.deliveryState, ZMDeliveryStateSent);
     
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext];
-    UserClient *selfClient = selfUser.selfClient;
-    XCTAssertEqual(selfClient.missingClients.count, 0u);
+    [self.userSession.syncManagedObjectContext performBlockAndWait:^{
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext];
+        UserClient *selfClient = selfUser.selfClient;
+        XCTAssertEqual(selfClient.missingClients.count, 0u);
+    }];
 }
 
 
@@ -284,10 +289,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
-@end
-
-#pragma mark - Trust
-@implementation ConversationTestsOTR (Trust)
+// MARK: - Trust
 
 - (ZMClientMessage *)sendOtrMessageWithInitialSecurityLevel:(ZMConversationSecurityLevel)securityLevel
                                            numberOfMessages:(NSUInteger)numberOfMessages
@@ -1233,11 +1235,7 @@
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 0u);
 }
 
-@end
-
-#pragma mark - Unable to decrypt message
-@implementation ConversationTestsOTR (UnableToDecrypt)
-
+// MARK: - Unable to decrypt message
 
 - (void)testThatItInsertsASystemMessageWhenItCanNotDecryptAMessage {
     
