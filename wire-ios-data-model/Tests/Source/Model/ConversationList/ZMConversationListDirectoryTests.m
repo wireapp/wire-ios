@@ -54,7 +54,7 @@
     ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conv.lastServerTimeStamp = [NSDate date];
     conv.lastReadServerTimeStamp = conv.lastServerTimeStamp;
-    conv.remoteIdentifier = [NSUUID createUUID];
+    conv.remoteIdentifier = [NSUUID new];
     return conv;
 }
 
@@ -63,48 +63,56 @@
     [super setUp];
 
     Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
-    team.remoteIdentifier = [NSUUID createUUID];
+    team.remoteIdentifier = [NSUUID new];
+
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = [NSUUID new];
+
+    Member *selfUserMembership = [Member insertNewObjectInManagedObjectContext:self.uiMOC];
+    selfUserMembership.user = selfUser;
+    selfUserMembership.team = team;
 
     ZMUser *teamUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    teamUser.remoteIdentifier = [NSUUID createUUID];
+    teamUser.remoteIdentifier = [NSUUID new];
+
+    Member *teamUserMembership = [Member insertNewObjectInManagedObjectContext:self.uiMOC];
+    teamUserMembership.user = teamUser;
+    teamUserMembership.team = team;
 
     ZMUser *otherUser1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    otherUser1.remoteIdentifier = [NSUUID createUUID];
+    otherUser1.remoteIdentifier = [NSUUID new];
     otherUser1.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser1.connection.status = ZMConnectionStatusAccepted;
 
     ZMUser *otherUser2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    otherUser2.remoteIdentifier = [NSUUID createUUID];
+    otherUser2.remoteIdentifier = [NSUUID new];
     otherUser2.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser2.connection.status = ZMConnectionStatusAccepted;
 
     ZMUser *otherUser3 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    otherUser3.remoteIdentifier = [NSUUID createUUID];
+    otherUser3.remoteIdentifier = [NSUUID new];
     otherUser3.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser3.connection.status = ZMConnectionStatusAccepted;
 
     ZMUser *otherUser4 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    otherUser4.remoteIdentifier = [NSUUID createUUID];
+    otherUser4.remoteIdentifier = [NSUUID new];
     otherUser4.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser4.connection.status = ZMConnectionStatusAccepted;
 
     ZMUser *incomingPendingUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    incomingPendingUser.remoteIdentifier = [NSUUID createUUID];
+    incomingPendingUser.remoteIdentifier = [NSUUID new];
     incomingPendingUser.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     incomingPendingUser.connection.status = ZMConnectionStatusPending;
 
     ZMUser *outgoingPendingUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    outgoingPendingUser.remoteIdentifier = [NSUUID createUUID];
+    outgoingPendingUser.remoteIdentifier = [NSUUID new];
     outgoingPendingUser.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     outgoingPendingUser.connection.status = ZMConnectionStatusSent;
-
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    selfUser.remoteIdentifier = [NSUUID createUUID];
 
     ZMUser *serviceUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     serviceUser.serviceIdentifier = @"serviceA";
     serviceUser.providerIdentifier = @"providerA";
-    serviceUser.remoteIdentifier = [NSUUID createUUID];
+    serviceUser.remoteIdentifier = [NSUUID new];
 
     Label *folder = [Label insertNewObjectInManagedObjectContext:self.uiMOC];
     folder.name = @"folder A";
