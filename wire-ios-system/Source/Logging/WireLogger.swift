@@ -20,7 +20,11 @@ import Foundation
 
 public struct WireLogger: LoggerProtocol {
 
+<<<<<<< HEAD
   public static var provider: LoggerProtocol? = SystemLogger()
+=======
+  public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
+>>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
 
   public let tag: String
 
@@ -86,11 +90,9 @@ public struct WireLogger: LoggerProtocol {
     attributes: LogAttributes? = nil
   ) {
     var attributes = attributes ?? .init()
-    var message = message.logDescription
 
     if !tag.isEmpty {
       attributes["tag"] = tag
-      message = "[\(tag)] \(message)"
     }
 
     switch level {
@@ -129,6 +131,10 @@ public struct WireLogger: LoggerProtocol {
 
 public typealias LogAttributes = [String: Encodable]
 
+public extension LogAttributes {
+    static var safePublic = ["public": true]
+}
+
 public protocol LoggerProtocol {
 
   func debug(_ message: LogConvertible, attributes: LogAttributes?)
@@ -138,6 +144,12 @@ public protocol LoggerProtocol {
   func error(_ message: LogConvertible, attributes: LogAttributes?)
   func critical(_ message: LogConvertible, attributes: LogAttributes?)
 
+  func persist(fileDestination: FileLoggerDestination) async
+}
+
+extension LoggerProtocol {
+
+    public func persist(fileDestination: FileLoggerDestination) async {}
 }
 
 public protocol LogConvertible {
@@ -176,4 +188,8 @@ public extension WireLogger {
     static let authentication = WireLogger(tag: "authentication")
     static let session = WireLogger(tag: "session")
     static let sync = WireLogger(tag: "sync")
+<<<<<<< HEAD
+=======
+    static let system = WireLogger(tag: "system")
+>>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
 }

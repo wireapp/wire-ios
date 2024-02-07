@@ -19,7 +19,55 @@
 import Foundation
 import OSLog
 
+<<<<<<< HEAD
 struct SystemLogger: LoggerProtocol {
+=======
+public protocol FileLoggerDestination {
+    var log: URL? { get }
+}
+
+struct SystemLogger: LoggerProtocol {
+
+    let persistQueue = DispatchQueue(label: "persistQueue")
+
+    var lastReportTime: Date? {
+        get {
+            guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval else { return nil }
+            return Date(timeIntervalSince1970: interval)
+        }
+        set {
+            UserDefaults.standard.set(newValue?.timeIntervalSince1970, forKey: "com.wire.log.lastReportTime")
+        }
+    }
+
+    var fileLogger = FileLogger()
+
+    func persist(fileDestination: FileLoggerDestination) async {
+        var entries: [String] = []
+
+        if #available(iOSApplicationExtension 15.0, *) {
+            do {
+                let store = try OSLogStore(scope: .currentProcessIdentifier)
+                let position: OSLogPosition
+                if let lastReportTime {
+                    position = store.position(date: lastReportTime)
+                } else {
+                    position = store.position(timeIntervalSinceLatestBoot: 0)
+                }
+                entries = try store
+                    .getEntries(at: position)
+                    .compactMap { $0 as? OSLogEntryLog }
+                    .filter { $0.subsystem == Bundle.main.bundleIdentifier! }
+                    .map { "[\($0.date.formatted(.iso8601))] [\($0.category)] \($0.composedMessage)" }
+            } catch {
+                warn(error.localizedDescription, attributes: .safePublic)
+            }
+
+            fileLogger.write(entries: entries, to: fileDestination.log)
+        }
+    }
+
+>>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
     func debug(_ message: LogConvertible, attributes: LogAttributes?) {
         log(message, attributes: attributes, osLogType: .debug)
     }
@@ -45,11 +93,79 @@ struct SystemLogger: LoggerProtocol {
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {
+<<<<<<< HEAD
 
         #if DEBUG
             os_log(osLogType, log: .default, "%{public}@", "\(message.logDescription)")
         #else
             os_log(osLogType, log: .default, "\(message.logDescription)")
         #endif
+=======
+        var logger: OSLog = OSLog.default
+        if let tag = attributes?["tag"] as? String {
+
+            logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
+        }
+
+        if attributes?["public"] as? Bool == true {
+            if #available(iOSApplicationExtension 14.0, *) {
+                os_log(osLogType, log: logger, "%{public}@", "\(message.logDescription)")
+            } else {
+                print("\(message.logDescription)")
+            }
+
+        } else {
+            if #available(iOSApplicationExtension 14.0, *) {
+                os_log(osLogType, log: logger, "\(message.logDescription)")
+            } else {
+                print("\(message.logDescription)")
+            }
+        }
+    }
+}
+
+private var loggers: [String: OSLog] = [:]
+
+public class FileLogger {
+
+    var updatingHandle: FileHandle?
+
+    func write(entries: [String], to url: URL?) {
+        guard let currentLogPath = url?.path else { return }
+
+        let manager = FileManager.default
+
+        if !manager.fileExists(atPath: currentLogPath) {
+            manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
+            // if there was no file, force to recreate the fileHandle
+            updatingHandle = nil
+        }
+
+        if updatingHandle == nil {
+            updatingHandle = FileHandle(forUpdatingAtPath: currentLogPath)
+            updatingHandle?.seekToEndOfFile()
+        }
+
+        do {
+            if let data = entries.joined(separator: "\n").data(using: .utf8) {
+                if #available(iOSApplicationExtension 13.4, *) {
+                    try updatingHandle?.write(contentsOf: data)
+                } else {
+                    // do nothing
+                }
+            }
+        } catch {
+            updatingHandle = nil
+        }
+    }
+
+    func closeFile() {
+        updatingHandle?.closeFile()
+        updatingHandle = nil
+    }
+
+    deinit {
+        closeFile()
+>>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
     }
 }

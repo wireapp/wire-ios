@@ -145,15 +145,17 @@ protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
 extension SettingsTechnicalReportViewController: SendTechnicalReportPresenter {}
 
 extension SendTechnicalReportPresenter where Self: UIViewController {
+    @MainActor
     func presentMailComposer(withLogs logsIncluded: Bool) {
         presentMailComposer(withLogs: logsIncluded, sourceView: nil)
     }
 
-    func presentMailComposer(withLogs logsIncluded: Bool, sourceView: UIView?, fallback: ((Bool) -> Void)? = nil) {
+    @MainActor
+    func presentMailComposer(withLogs logsIncluded: Bool, sourceView: UIView?) {
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-            DebugAlert.displayFallbackActivityController(logPaths: ZMSLog.pathsForExistingLogs, email: mailRecipient, from: self, sourceView: sourceView)
+            DebugAlert.displayFallbackActivityController(logPaths: DebugLogSender.debugLogs, email: mailRecipient, from: self, sourceView: sourceView)
             return
         }
 
@@ -161,11 +163,25 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         mailComposeViewController.mailComposeDelegate = self
         mailComposeViewController.setToRecipients([mailRecipient])
         mailComposeViewController.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
+<<<<<<< HEAD
+=======
+        mailComposeViewController.setMessageBody("Debug report", isHTML: false)
+>>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
 
         if logsIncluded {
-            mailComposeViewController.attachLogs()
+            let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
+            topMostViewController?.isLoadingViewVisible = true
+
+            Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
+                await mailComposeViewController.attachLogs()
+
+                await self.present(mailComposeViewController, animated: true, completion: nil)
+                await MainActor.run {
+                    topMostViewController?.isLoadingViewVisible = false
+                }
+            })
+        } else {
+            self.present(mailComposeViewController, animated: true, completion: nil)
         }
-        mailComposeViewController.setMessageBody("Debug report", isHTML: false)
-        self.present(mailComposeViewController, animated: true, completion: nil)
     }
 }

@@ -56,7 +56,8 @@ final class SessionManagerTests_Proxy: IntegrationTest {
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: false,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            deleteUserLogs: {}
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete
