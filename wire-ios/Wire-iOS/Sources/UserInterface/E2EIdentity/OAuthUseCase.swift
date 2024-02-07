@@ -114,6 +114,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         return [CodingKeys.claims.rawValue: idTokenString]
     }
 
+    @MainActor
     private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> (idToken: String, refreshToken: String) {
         guard let userAgent = OIDExternalUserAgentIOS(presenting: rootViewController) else {
             throw OAuthError.missingOIDExternalUserAgent
