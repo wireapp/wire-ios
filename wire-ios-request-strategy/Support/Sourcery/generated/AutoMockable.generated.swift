@@ -187,6 +187,21 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
     }
 
+    // MARK: - createTeamOneOnOneProteusConversation
+
+    public var createTeamOneOnOneProteusConversationUserCompletion_Invocations: [(user: ZMUser, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
+    public var createTeamOneOnOneProteusConversationUserCompletion_MockMethod: ((ZMUser, @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
+
+    public func createTeamOneOnOneProteusConversation(user: ZMUser, completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        createTeamOneOnOneProteusConversationUserCompletion_Invocations.append((user: user, completion: completion))
+
+        guard let mock = createTeamOneOnOneProteusConversationUserCompletion_MockMethod else {
+            fatalError("no mock for `createTeamOneOnOneProteusConversationUserCompletion`")
+        }
+
+        mock(user, completion)
+    }
+
     // MARK: - syncConversation
 
     public var syncConversationQualifiedIDCompletion_Invocations: [(qualifiedID: QualifiedID, completion: () -> Void)] = []

@@ -178,7 +178,7 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         // When
-        sut.createTeamOneToOneConversation(user: user1) {
+        sut.createTeamOneOnOneProteusConversation(user: user1) {
             switch $0 {
             case .success(let conversation):
                 // Then we got back newly created conversation.
@@ -278,9 +278,11 @@ final class ConversationServiceTests: MessagingTestBase {
 
     func test_CreateGroupConversation_CreatesMLSGroup() {
         // Given
+        let groupID = MLSGroupID.random()
+
         syncMOC.performAndWait {
             groupConversation.messageProtocol = .mls
-            groupConversation.mlsGroupID = .random()
+            groupConversation.mlsGroupID = groupID
             syncMOC.saveOrRollback()
         }
 
@@ -292,22 +294,17 @@ final class ConversationServiceTests: MessagingTestBase {
             context: uiMOC.notificationContext
         )
 
-        mockConversationParticipantsService.addParticipantsTo_MockMethod = { users, conversation in
-            self.syncMOC.performAndWait {
-                XCTAssertEqual(conversation.remoteIdentifier, self.groupConversation.remoteIdentifier)
-            }
-            XCTAssertEqual(self.user1.objectID, users.first?.objectID)
+        let mlsService = MockMLSServiceInterface()
+        mlsService.createGroupForWith_MockMethod = { _, _ in
+            // no op
         }
 
-        let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForWith_MockMethod = { groupId, users in
-            XCTAssertTrue(users.isEmpty)
-            self.syncMOC.performAndWait {
-                XCTAssertEqual(groupId, self.groupConversation.mlsGroupID)
-            }
-        }
         syncMOC.performAndWait {
             syncMOC.mlsService = mlsService
+        }
+
+        mockConversationParticipantsService.addParticipantsTo_MockMethod = { _, _ in
+            // no op
         }
 
         // When
@@ -328,9 +325,94 @@ final class ConversationServiceTests: MessagingTestBase {
             }
         }
 
-        // Then we got the expected failure.
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then we created the group via the action..
         XCTAssertEqual(mockActionHandler.performedActions.count, 1)
+
+        // Then we created the mls group once with no users.
+        let createGroupCalls = mlsService.createGroupForWith_Invocations
+        XCTAssertEqual(createGroupCalls.count, 1)
+        XCTAssertEqual(createGroupCalls.first?.groupID, groupID)
+        XCTAssertEqual(createGroupCalls.first?.users, [])
+
+        // Then we only added the user.
+        let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
+        XCTAssertEqual(addParticipantCalls.count, 1)
+        XCTAssertEqual(addParticipantCalls.first?.conversation, groupConversation)
+        XCTAssertEqual(addParticipantCalls.first?.users, [user1])
+    }
+
+    func test_CreateGroupConversation_CreatesMLSGroup_WithOnlyReachableUsers() {
+        // Given
+        let groupID = MLSGroupID.random()
+        let unreachableDomain = "foma.wire.link"
+
+        syncMOC.performAndWait {
+            groupConversation.messageProtocol = .mls
+            groupConversation.mlsGroupID = groupID
+            user2.domain = unreachableDomain
+            syncMOC.saveOrRollback()
+        }
+
+        let objectID = groupConversation.objectID
+        let didFinish = customExpectation(description: "didFinish")
+
+        let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
+            results: [
+                .failure(.unreachableDomains([unreachableDomain])),
+                .success(objectID)
+            ],
+            context: uiMOC.notificationContext
+        )
+
+        let mlsService = MockMLSServiceInterface()
+        mlsService.createGroupForWith_MockMethod = { _, _ in
+            // no op
+        }
+
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        mockConversationParticipantsService.addParticipantsTo_MockMethod = { _, _ in
+            // no op
+        }
+
+        // When
+        sut.createGroupConversation(
+            name: nil,
+            users: [user1, user2],
+            allowGuests: true,
+            allowServices: true,
+            enableReceipts: true,
+            messageProtocol: .mls
+        ) {
+            switch $0 {
+            case .success:
+                didFinish.fulfill()
+
+            case .failure(let error):
+                XCTFail("unexpected error: \(error)")
+            }
+        }
+
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then we tried to create the group twice.
+        XCTAssertEqual(mockActionHandler.performedActions.count, 2)
+
+        // Then we created the mls group once with no users.
+        let createGroupCalls = mlsService.createGroupForWith_Invocations
+        XCTAssertEqual(createGroupCalls.count, 1)
+        XCTAssertEqual(createGroupCalls.first?.groupID, groupID)
+        XCTAssertEqual(createGroupCalls.first?.users, [])
+
+        // Then we only added the reachable user.
+        let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
+        XCTAssertEqual(addParticipantCalls.count, 1)
+        XCTAssertEqual(addParticipantCalls.first?.conversation, groupConversation)
+        XCTAssertEqual(addParticipantCalls.first?.users, [user1])
     }
 
     func test_CreateGroupConversation_WithUsersWithNoPackages_IsSuccessful() {
@@ -453,7 +535,7 @@ final class ConversationServiceTests: MessagingTestBase {
             allowGuests: true,
             allowServices: true,
             enableReceipts: true,
-            messageProtocol: .proteus
+            messageProtocol: .mls
         ) {
             defer { didFinish.fulfill() }
 
