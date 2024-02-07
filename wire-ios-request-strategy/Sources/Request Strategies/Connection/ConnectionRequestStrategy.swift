@@ -214,9 +214,9 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
 
                         WaitingGroupTask(context: managedObjectContext) { [self] in
                             do {
-                                // After connection is accepted (we evaluate only a single conversation that has changed its state.
-                                // The client who did the accept the request will re-evaluate immediately,
-                                // other clients will do it with a delay (3 seconds) in order to avoid race conditions.
+                                // The client who accepts the connection resolves the conversation immediately.
+                                // Other clients (from self and other user) resolve after a delay to avoid a race condition,
+                                // but also to re-attempt resolution in case of failure.
                                 try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
                                 try await self.oneOnOneResolver.resolveOneOnOneConversation(with: conversationID, in: self.managedObjectContext)
                             } catch {
