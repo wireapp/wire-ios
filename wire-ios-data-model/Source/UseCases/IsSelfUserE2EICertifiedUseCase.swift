@@ -21,12 +21,12 @@ import WireCoreCrypto
 
 // sourcery: AutoMockable
 /// Determines if the self user has a valid E2EI certificate on all clients.
-public protocol HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol {
+public protocol IsSelfUserE2EICertifiedUseCaseProtocol {
     /// Returns `true` if all clients of the self user have valid E2EI certificates.
     func invoke() async throws -> Bool
 }
 
-public struct HasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol {
+public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
@@ -76,7 +76,7 @@ public struct HasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserV
     }
 }
 
-extension HasSelfUserValidE2EICertificatesForAllClientsUseCase {
+extension IsSelfUserE2EICertifiedUseCase {
 
     enum Error: Swift.Error {
         case failedToGetSelfUserID

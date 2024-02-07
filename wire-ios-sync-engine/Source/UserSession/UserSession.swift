@@ -214,7 +214,7 @@ public protocol UserSession: AnyObject {
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
     var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol { get }
-    var hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol { get }
+    var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
 
@@ -505,8 +505,8 @@ extension ZMUserSession: UserSession {
         IsSelfUserProteusVerifiedUseCase(context: syncContext)
     }
 
-    public var hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol {
-        HasSelfUserValidE2EICertificatesForAllClientsUseCase(context: syncContext, coreCryptoProvider: coreCryptoProvider)
+    public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
+        IsSelfUserE2EICertifiedUseCase(context: syncContext, coreCryptoProvider: coreCryptoProvider)
     }
 }
 

@@ -38,7 +38,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     private let userSession: UserSession
     private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
-    private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
     /// The user who is viewing this view
     let viewer: UserType
@@ -102,7 +102,7 @@ final class ProfileHeaderViewController: UIViewController {
     /// - parameter options: The options for the appearance and behavior of the view.
     /// - parameter userSession: The user session.
     /// - parameter isSelfUserProteusVerifiedUseCase: Use case for getting the self user's Proteus verification status.
-    /// - parameter hasSelfUserValidE2EICertificatesForAllClientsUseCase: Use case for getting the self user's MLS verification status.
+    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status.
     /// Note: You can change the options later through the `options` property.
     init(
         user: UserType,
@@ -111,12 +111,12 @@ final class ProfileHeaderViewController: UIViewController {
         options: Options,
         userSession: UserSession,
         isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
-        hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
         self.user = user
         self.userSession = userSession
         self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
-        self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
+        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
@@ -126,7 +126,7 @@ final class ProfileHeaderViewController: UIViewController {
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             userSession: userSession,
             isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
-            hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
 
         super.init(nibName: nil, bundle: nil)
@@ -235,7 +235,7 @@ final class ProfileHeaderViewController: UIViewController {
 
         Task {
             do {
-                userStatus.isCertified = try await hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke()
+                userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
                 userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
                 updateNameLabel()
             } catch {

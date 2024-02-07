@@ -91,7 +91,7 @@ final class SelfProfileViewController: UIViewController {
             options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability],
             userSession: userSession,
             isSelfUserProteusVerifiedUseCase: userSession.isSelfUserProteusVerifiedUseCase,
-            hasSelfUserValidE2EICertificatesForAllClientsUseCase: userSession.hasSelfUserValidE2EICertificatesForAllClientsUseCase
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
 
         self.userRightInterfaceType = userRightInterfaceType

@@ -75,13 +75,13 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
         let isSelfUserProteusVerifiedUseCase = MockIsSelfUserProteusVerifiedUseCaseProtocol()
         isSelfUserProteusVerifiedUseCase.invoke_MockValue = false
-        let hasSelfUserValidE2EICertificatesForAllClientsUseCase = MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol()
-        hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke_MockValue = false
+        let isSelfUserE2EICertifiedUseCase = MockIsSelfUserE2EICertifiedUseCaseProtocol()
+        isSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
         sut = ConversationListViewController(
             viewModel: viewModel,
             isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
-            hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         viewModel.viewController = sut
         sut.onboardingHint.arrowPointToView = sut.tabBar

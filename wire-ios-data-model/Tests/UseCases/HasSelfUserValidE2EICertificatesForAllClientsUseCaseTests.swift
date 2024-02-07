@@ -22,9 +22,9 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-final class HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests: ZMBaseManagedObjectTest {
+final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
-    private var sut: HasSelfUserValidE2EICertificatesForAllClientsUseCase!
+    private var sut: IsSelfUserE2EICertifiedUseCase!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockSafeCoreCrypto: MockSafeCoreCrypto!
 

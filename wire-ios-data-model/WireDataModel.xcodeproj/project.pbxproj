@@ -259,7 +259,7 @@
 		59A6971D2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */; };
 		59A6971F2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
-		59C9149F2B72730800CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C9149D2B7272F100CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift */; };
+		59C9149F2B72730800CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C9149D2B7272F100CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		59C914A12B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C914A02B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */; };
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
@@ -1129,7 +1129,7 @@
 		59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserVerifiedUseCase.swift; sourceTree = "<group>"; };
 		59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserVerifiedUseCaseTests.swift; sourceTree = "<group>"; };
 		59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolTests.swift; sourceTree = "<group>"; };
-		59C9149D2B7272F100CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift; sourceTree = "<group>"; };
+		59C9149D2B7272F100CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCase.swift; sourceTree = "<group>"; };
 		59C914A02B72731E00CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HasSelfUserValidE2EICertificatesForAllClientsUseCaseTests.swift; sourceTree = "<group>"; };
 		59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireDataModelSupport.h; sourceTree = "<group>"; };
@@ -2136,7 +2136,7 @@
 		638941EC2AF4FD170051ABFD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
-				59C9149D2B7272F100CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift */,
+				59C9149D2B7272F100CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift */,
 				59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */,
 				638941ED2AF4FD4B0051ABFD /* RemoveLocalConversationUseCase.swift */,
 			);
@@ -3835,7 +3835,6 @@
 				0125F73D2B28A31C00D989AB /* MockProteusProvider.swift in Sources */,
 				6398545C2B3346F700AA10DE /* MockSafeCoreCrypto.swift in Sources */,
 				EEA58F132B7115A1006DEE32 /* ModelHelper.swift in Sources */,
-				0140A0D12B31028D004D8B40 /* MockSafeCoreCrypto.swift in Sources */,
 				EEA58F112B70E89B006DEE32 /* CoreDataStackHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4270,7 +4269,7 @@
 				1626344B20D935C0000D4063 /* ZMConversation+Timestamps.swift in Sources */,
 				87C125F71EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift in Sources */,
 				F9A706B21CAEE01D00C2F5FE /* NewUnreadMessageChangeInfos.swift in Sources */,
-				59C9149F2B72730800CEFFF6 /* HasSelfUserValidE2EICertificatesForAllClientsUseCase.swift in Sources */,
+				59C9149F2B72730800CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */,
 				EE8B09AF25B86BB20057E85C /* AppLockPasscodePreference.swift in Sources */,
 				7C8BFFDF22FC5E1600B3C8A5 /* ZMUser+Validation.swift in Sources */,
 				63C2EAC12A93B244008A0AB7 /* SyncConversationAction.swift in Sources */,

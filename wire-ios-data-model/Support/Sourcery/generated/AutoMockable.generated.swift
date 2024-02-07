@@ -2697,7 +2697,7 @@ class MockFileManagerInterface: FileManagerInterface {
 
 }
 
-public class MockHasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol {
+public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     // MARK: - Life cycle
 

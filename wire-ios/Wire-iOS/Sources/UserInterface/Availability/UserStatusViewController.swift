@@ -28,7 +28,7 @@ final class UserStatusViewController: UIViewController {
     private let user: UserType
     private let userSession: UserSession
     private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
-    private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
     /// Used to update the `UserStatusView` on changes of a user.
     private var userChangeObservation: NSObjectProtocol?
@@ -42,13 +42,13 @@ final class UserStatusViewController: UIViewController {
         options: UserStatusView.Options,
         userSession: UserSession,
         isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
-        hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
         self.user = user
         self.options = options
         self.userSession = userSession
         self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
-        self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
+        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -74,7 +74,7 @@ final class UserStatusViewController: UIViewController {
 
         Task {
             do {
-                userStatusView.userStatus.isCertified = try await hasSelfUserValidE2EICertificatesForAllClientsUseCase.invoke()
+                userStatusView.userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
                 userStatusView.userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")

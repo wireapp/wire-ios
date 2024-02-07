@@ -40,9 +40,6 @@ final class IsSelfUserProteusVerifiedUseCaseTests: ZMBaseManagedObjectTest {
     }
 
     func testResultIsVerified() {
-        // Given
-        //
-
         // When
         let isVerified = sut.invoke()
 

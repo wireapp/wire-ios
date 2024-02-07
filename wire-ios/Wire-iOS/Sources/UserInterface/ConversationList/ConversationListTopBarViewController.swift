@@ -31,7 +31,7 @@ final class ConversationListTopBarViewController: UIViewController {
     private let selfUser: SelfUserType
     private var userSession: UserSession
     private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
-    private let hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
     var topBar: TopBar? {
         return view as? TopBar
@@ -47,13 +47,13 @@ final class ConversationListTopBarViewController: UIViewController {
         selfUser: SelfUserType,
         userSession: UserSession,
         isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
-        hasSelfUserValidE2EICertificatesForAllClientsUseCase: HasSelfUserValidE2EICertificatesForAllClientsUseCaseProtocol
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
         self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
-        self.hasSelfUserValidE2EICertificatesForAllClientsUseCase = hasSelfUserValidE2EICertificatesForAllClientsUseCase
+        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         super.init(nibName: nil, bundle: nil)
 
         observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
@@ -95,7 +95,7 @@ final class ConversationListTopBarViewController: UIViewController {
                 options: .header,
                 userSession: userSession,
                 isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
-                hasSelfUserValidE2EICertificatesForAllClientsUseCase: hasSelfUserValidE2EICertificatesForAllClientsUseCase
+                isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
             )
             addChild(userStatusViewController)
             self.userStatusViewController = userStatusViewController

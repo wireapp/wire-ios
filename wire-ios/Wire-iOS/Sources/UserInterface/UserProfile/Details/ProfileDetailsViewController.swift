@@ -90,7 +90,7 @@ final class ProfileDetailsViewController: UIViewController {
             options: profileHeaderOptions,
             userSession: userSession,
             isSelfUserProteusVerifiedUseCase: userSession.isSelfUserProteusVerifiedUseCase,
-            hasSelfUserValidE2EICertificatesForAllClientsUseCase: userSession.hasSelfUserValidE2EICertificatesForAllClientsUseCase
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
         contentController = .init(
             user: user,
