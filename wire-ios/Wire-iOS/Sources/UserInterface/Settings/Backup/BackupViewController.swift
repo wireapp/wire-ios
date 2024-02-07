@@ -147,8 +147,8 @@ private extension BackupViewController {
 
     private func presentShareSheet(with url: URL, from indexPath: IndexPath) {
         let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        activityController.completionWithItemsHandler = { _, _, _, _ in
-            SessionManager.clearPreviousBackups()
+        activityController.completionWithItemsHandler = { [weak self] _, _, _, _ in
+            self?.backupSource.clearPreviousBackups()
         }
         activityController.popoverPresentationController.apply {
             $0.sourceView = tableView
