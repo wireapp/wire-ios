@@ -51,6 +51,11 @@ extension Date: TransportCoding {
 
 extension NSDate {
 
+    @objc(transportString)
+    public var transportString: String {
+        (self as Date).transportString()
+    }
+
     @objc(initWithTransportString:)
     public convenience init?(transportString: String) {
         self.init(transportString: transportString)
