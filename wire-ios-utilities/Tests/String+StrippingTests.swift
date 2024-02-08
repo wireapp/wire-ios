@@ -17,6 +17,7 @@
 //
 
 import XCTest
+@testable import WireUtilities
 
 class String_StrippingTests: XCTestCase {
 

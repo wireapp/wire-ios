@@ -93,7 +93,7 @@ final class ProfileViewTests: BaseSnapshotTestCase {
 
     func verifyProfile(
         options: ProfileHeaderViewController.Options,
-        availability: AvailabilityKind = .available,
+        availability: Availability = .available,
         file: StaticString = #file,
         testName: String = #function,
         line: UInt = #line

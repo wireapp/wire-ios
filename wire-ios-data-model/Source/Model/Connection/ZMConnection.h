@@ -39,6 +39,5 @@ typedef NS_ENUM(int16_t, ZMConnectionStatus) {
 @property (nonatomic, copy) NSString *message;
 @property (nonatomic) ZMConnectionStatus status;
 @property (readonly, nonatomic) ZMUser *to;
-@property (nonatomic,readonly) BOOL hasValidConversation;
 
 @end

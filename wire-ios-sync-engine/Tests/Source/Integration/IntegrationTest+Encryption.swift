@@ -32,13 +32,15 @@ extension IntegrationTest {
             selfClient.user!.remoteIdentifier = UUID()
         }
         if selfClient.remoteIdentifier == nil {
-            selfClient.remoteIdentifier = NSString.createAlphanumerical() as String
+            selfClient.remoteIdentifier = .randomRemoteIdentifier()
         }
 
         var cypherText: Data?
         self.encryptionContext(for: sender).perform { (session) in
             if !session.hasSession(for: selfClient.sessionIdentifier!) {
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: [John] use flag here
+                // swiftlint:enable todo_requires_jira_link
                 guard let lastPrekey = try? userSession!.syncContext.zm_cryptKeyStore.lastPreKey() else {
                     fatalError("Can't get prekey for self user")
                 }
@@ -84,7 +86,9 @@ extension IntegrationTest {
                 }
             }
 
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             context.zm_cryptKeyStore.encryptionContext.perform { session in
                 do {
                     try session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
@@ -132,7 +136,9 @@ extension IntegrationTest {
         }
 
         if !hasSessionWithLocalClient {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { (session) in
                 try! session.createClientSession(localClient.sessionIdentifier!, base64PreKeyString: lastPrekey!)
             }
@@ -180,7 +186,7 @@ extension IntegrationTest {
     /// If the client has no remote identifier, it will create one
     fileprivate func encryptionContext(for client: UserClient) -> EncryptionContext {
         if client.remoteIdentifier == nil {
-            client.remoteIdentifier = NSString.createAlphanumerical() as String
+            client.remoteIdentifier = .randomRemoteIdentifier()
         }
         let url =  self.otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])

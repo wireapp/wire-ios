@@ -160,7 +160,7 @@ extension XCTestCase {
     }
 
     public func assertSuccess<Value, Failure>(
-        result: Swift.Result<Value, Failure>,
+        result: Result<Value, Failure>,
         message: (Failure) -> String = { "Expected to be a success but got a failure with \($0) "},
         file: StaticString = #filePath,
         line: UInt = #line) {
@@ -173,7 +173,7 @@ extension XCTestCase {
         }
 
     public func assertFailure<Value, Failure: Equatable>(
-        result: Swift.Result<Value, Failure>,
+        result: Result<Value, Failure>,
         expectedFailure: Failure,
         file: StaticString = #filePath,
         line: UInt = #line) {

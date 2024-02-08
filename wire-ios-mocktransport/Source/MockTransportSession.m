@@ -293,11 +293,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return [ZMTransportResponse responseWithPayload:payload HTTPStatus:code transportSessionError:nil apiVersion:apiVersion];
 }
 
-+ (NSString *)binaryDataTypeAsMIME:(NSString *)type;
-{
-    return [[UTType typeWithIdentifier:type] preferredMIMEType];
-}
-
 - (BOOL)waitForAllRequestsToCompleteWithTimeout:(NSTimeInterval)timeout;
 {
     __block BOOL didComplete = NO;

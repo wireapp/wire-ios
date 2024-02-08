@@ -63,7 +63,8 @@ class SettingsCellDescriptorFactory {
                                                     },
                                                     previewGenerator: nil,
                                                     icon: .team,
-                                                    accessoryViewMode: .alwaysHide)
+                                                    accessoryViewMode: .alwaysHide,
+                                                    copiableText: nil)
     }
 
     func addAccountOrTeamCell() -> SettingsCellDescriptorType {
@@ -92,7 +93,8 @@ class SettingsCellDescriptorFactory {
                                                     presentationAction: presentationAction,
                                                     previewGenerator: nil,
                                                     icon: .plus,
-                                                    accessoryViewMode: .alwaysHide)
+                                                    accessoryViewMode: .alwaysHide,
+                                                    copiableText: nil)
     }
 
     func settingsGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
@@ -135,7 +137,7 @@ class SettingsCellDescriptorFactory {
             previewGenerator: { _ -> SettingsCellPreview in
                 return SettingsCellPreview.badge(ZMUser.selfUser()?.clients.count ?? 0)
             },
-           icon: .devices)
+           icon: .devices, copiableText: nil)
     }
 
     func soundGroupForSetting(_ settingsProperty: SettingsProperty, title: String, customSounds: [ZMSound], defaultSound: ZMSound) -> SettingsCellDescriptorType {

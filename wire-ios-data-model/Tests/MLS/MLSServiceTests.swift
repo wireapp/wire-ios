@@ -259,7 +259,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = "foo"
         let groupID = MLSGroupID.random()
         let subconversationType = SubgroupType.conference
-        let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
+        let mockResult = MLSDecryptResult.message(.random(), .randomAlphanumerical(length: 3))
 
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
@@ -287,7 +287,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
         let subconversationType = SubgroupType.conference
 
-        let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
+        let mockResult = MLSDecryptResult.message(.random(), .randomAlphanumerical(length: 3))
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
         // When
@@ -421,16 +421,18 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             removal: .init(ed25519: removalKey)
         )
 
-        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            return []
-        }
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in [] }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in [] }
 
-        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            return []
-        }
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { (_, _, _, _) in
-            return users.map {
-                KeyPackage(client: .random(length: 4), domain: $0.domain, keyPackage: .random(length: 3), keyPackageRef: .random(length: 6), userID: $0.id)
+            users.map {
+                KeyPackage(
+                    client: .randomAlphanumerical(length: 4),
+                    domain: $0.domain,
+                    keyPackage: .randomAlphanumerical(length: 3),
+                    keyPackageRef: .randomAlphanumerical(length: 6),
+                    userID: $0.id
+                )
             }
         }
         var mockAddMembersCalled = false
@@ -1109,7 +1111,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return conversation
         }
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Mock properly
+        // swiftlint:enable todo_requires_jira_link
         let mockUpdateEvents = [ZMUpdateEvent]()
 
         // expectation

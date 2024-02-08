@@ -208,7 +208,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     private static func extractUpdateEvent(
         from storedEvent: StoredUpdateEvent,
         privateKeys: EARPrivateKeys?
-    ) -> Swift.Result<ZMUpdateEvent, ExtractionFailure> {
+    ) -> Result<ZMUpdateEvent, ExtractionFailure> {
         do {
             guard
                 let payload = try decryptPayloadIfNeeded(

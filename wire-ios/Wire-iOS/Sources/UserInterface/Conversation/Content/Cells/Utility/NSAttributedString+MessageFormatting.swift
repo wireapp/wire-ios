@@ -220,7 +220,7 @@ extension NSMutableAttributedString {
 
 }
 
-fileprivate extension String {
+private extension String {
 
     mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
         return mentions.sorted(by: {
@@ -235,6 +235,21 @@ fileprivate extension String {
 
             return textObject
         })
+    }
+
+}
+
+private extension IndexSet {
+
+    init(integersIn range: Range<IndexSet.Element>, excluding: [Range<IndexSet.Element>]) {
+
+        var excludedIndexSet = IndexSet()
+        var includedIndexSet = IndexSet()
+
+        excluding.forEach({ excludedIndexSet.insert(integersIn: $0) })
+        includedIndexSet.insert(integersIn: range)
+
+        self = includedIndexSet.subtracting(excludedIndexSet)
     }
 
 }

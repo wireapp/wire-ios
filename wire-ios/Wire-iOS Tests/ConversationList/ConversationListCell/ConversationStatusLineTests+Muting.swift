@@ -52,11 +52,13 @@ extension ConversationStatusLineTests_Muting {
         XCTAssertEqual(status.string, "Replied to your message")
     }
 
-    /// TODO: move this test to SE
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: move this test to SE
+    // swiftlint:enable todo_requires_jira_link
     func testStatusShowSpecialSummaryForSingleEphemeralReplyWhenOnlyReplies_group() {
         // GIVEN
         let sut = self.createGroupConversation()
-        sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"), date: nil)
+        sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"))
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
 
         let selfMessage = appendSelfMessage(to: sut)
@@ -217,7 +219,7 @@ extension ConversationStatusLineTests_Muting {
     func testStatusShowSpecialSummaryForSingleEphemeralMentionWhenOnlyMentions_group() {
         // GIVEN
         let sut = self.createGroupConversation()
-        sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"), date: nil)
+        sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"))
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
         appendMention(to: sut)
         markAllMessagesAsUnread(in: sut)

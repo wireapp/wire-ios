@@ -17,7 +17,9 @@
 //
 
 import XCTest
+
 @testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, SyncUsersActionHandler> {
 

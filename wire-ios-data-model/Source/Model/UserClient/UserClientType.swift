@@ -37,6 +37,8 @@ import Foundation
     /// True if the self user has verfied the client
     var verified: Bool { get }
 
+    var needsToNotifyUser: Bool { get set }
+
     /// Delete any existing session with client and establish a new one.
     func resetSession()
 

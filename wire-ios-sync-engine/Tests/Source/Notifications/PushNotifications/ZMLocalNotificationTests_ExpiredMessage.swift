@@ -145,8 +145,8 @@ class ZMLocalNotificationTests_ExpiredMessage: MessagingTest {
             let message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             self.oneOnOneConversation.mutableMessages.add(message)
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
-            connection.conversation = self.oneOnOneConversation
             connection.to = self.userWithName
+            self.userWithName.oneOnOneConversation = self.oneOnOneConversation
 
             // when
             let note = ZMLocalNotification(expiredMessage: message, moc: self.syncMOC)
@@ -165,8 +165,8 @@ class ZMLocalNotificationTests_ExpiredMessage: MessagingTest {
             let message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             self.oneOnOneConversation.mutableMessages.add(message)
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
-            connection.conversation = self.oneOnOneConversation
             connection.to = self.userWithNoName
+            self.userWithNoName.oneOnOneConversation = self.oneOnOneConversation
 
             // when
             let note = ZMLocalNotification(expiredMessage: message, moc: self.syncMOC)

@@ -30,7 +30,7 @@ public enum DigitalSignatureVerificationError: Error {
 
 class DigitalSignatureVerificationViewController: UIViewController {
 
-    typealias DigitalSignatureCompletion = ((_ result: Swift.Result<Void, Error>) -> Void)
+    typealias DigitalSignatureCompletion = ((_ result: Result<Void, Error>) -> Void)
 
     // MARK: - Private Property
     private var completion: DigitalSignatureCompletion?
@@ -111,7 +111,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         }
     }
 
-    func parseVerificationURL(_ url: URL) -> Swift.Result<Void, Error>? {
+    func parseVerificationURL(_ url: URL) -> Result<Void, Error>? {
         let urlComponents = URLComponents(string: url.absoluteString)
         let postCode = urlComponents?.queryItems?
             .first(where: { $0.name == "postCode" })

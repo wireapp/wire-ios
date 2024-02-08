@@ -1321,7 +1321,10 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
 
     func testThatItActivatesTheAccountForPushReaction() {
         // GIVEN
-        let session = self.setupSession() // TODO: crash at RequireString([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue],
+        // swiftlint:disable todo_requires_jira_link
+        // TODO: crash at RequireString([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue],
+        // swiftlint:enable todo_requires_jira_link
+        let session = self.setupSession()
 //        "Must call be called on the main queue.");
         session.isPerformingSync = false
         application?.applicationState = .background
@@ -1559,7 +1562,7 @@ extension NSManagedObjectContext {
 
 extension SessionManagerTests {
 
-    // FIXME: [jacob] this test will hang WPB-5638
+    // FIXME: [WPB-5638] this test will hang - [jacob]
     //
     // Since markAllConversationsAsRead() will schedule read up update message
     // which are never sent because the user sessions are not logged in. Refactor

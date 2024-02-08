@@ -212,7 +212,9 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(didEstablishSession)
 
         syncMOC.performGroupedBlockAndWait {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             let otrURL = self.syncMOC.zm_cryptKeyStore.cryptoboxDirectory
             self.syncMOC.saveOrRollback()
 

@@ -25,6 +25,7 @@ class MessagingTestBase: ZMTBaseTest {
 
     var groupConversation: ZMConversation!
     fileprivate(set) var oneToOneConversation: ZMConversation!
+    fileprivate(set) var oneToOneConnection: ZMConnection!
     fileprivate(set) var selfClient: UserClient!
     fileprivate(set) var otherUser: ZMUser!
     fileprivate(set) var thirdUser: ZMUser!
@@ -77,6 +78,7 @@ class MessagingTestBase: ZMTBaseTest {
             self.setupUsersAndClients()
             self.groupConversation = self.createGroupConversation(with: self.otherUser)
             self.oneToOneConversation = self.setupOneToOneConversation(with: self.otherUser)
+            self.oneToOneConnection = self.otherUser.connection
             self.syncMOC.saveOrRollback()
         }
     }
@@ -315,9 +317,9 @@ extension MessagingTestBase {
         conversation.domain = owningDomain
         conversation.conversationType = .oneOnOne
         conversation.remoteIdentifier = UUID.create()
-        conversation.connection = ZMConnection.insertNewObject(in: self.syncMOC)
-        conversation.connection?.to = user
-        conversation.connection?.status = .accepted
+        user.connection = ZMConnection.insertNewObject(in: self.syncMOC)
+        user.connection?.status = .accepted
+        user.oneOnOneConversation = conversation
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         self.syncMOC.saveOrRollback()
         return conversation
@@ -401,9 +403,8 @@ extension MessagingTestBase {
         conversation.conversationType = .oneOnOne
         conversation.domain = owningDomain
         conversation.remoteIdentifier = UUID.create()
-        conversation.connection = ZMConnection.insertNewObject(in: context)
-        conversation.connection?.to = user
-        conversation.connection?.status = .accepted
+        user.connection = ZMConnection.insertNewObject(in: context)
+        user.connection?.status = .accepted
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         return conversation
     }

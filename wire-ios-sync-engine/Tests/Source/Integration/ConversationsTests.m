@@ -627,7 +627,7 @@
     
     // then the conversation should not be in the active list anymore
     XCTAssertTrue(user1.isBlocked);
-    XCTAssertEqual(conversation.connection.status, ZMConnectionStatusBlocked);
+    XCTAssertEqual(user1.connection.status, ZMConnectionStatusBlocked);
 
     XCTAssertEqual(active.count, 4u);
     XCTAssertFalse([active containsObject:conversation]);

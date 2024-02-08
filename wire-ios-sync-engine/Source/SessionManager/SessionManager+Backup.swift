@@ -26,9 +26,6 @@ private let zmLog = ZMSLog(tag: "SessionManager")
 
 extension SessionManager {
 
-    public typealias BackupResultClosure = (Result<URL>) -> Void
-    public typealias RestoreResultClosure = (Swift.Result<Void, Error>) -> Void
-
     static private let workerQueue = DispatchQueue(label: "history-backup")
 
     // MARK: - Export
@@ -43,7 +40,7 @@ extension SessionManager {
         case unknown
     }
 
-    public func backupActiveAccount(password: String, completion: @escaping BackupResultClosure) {
+    public func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) {
         guard
             let userId = accountManager.selectedAccount?.userIdentifier,
             let clientId = activeUserSession?.selfUserClient?.remoteIdentifier,
@@ -60,33 +57,39 @@ extension SessionManager {
             dispatchGroup: dispatchGroup,
             databaseKey: activeUserSession.managedObjectContext.databaseKey,
             completion: { [dispatchGroup] in
-                SessionManager.handle(result: $0,
-                                      password: password,
-                                      accountId: userId,
-                                      dispatchGroup: dispatchGroup,
-                                      completion: completion,
-                                      handle: handle)
+                SessionManager.handle(
+                    result: $0,
+                    password: password,
+                    accountId: userId,
+                    dispatchGroup: dispatchGroup,
+                    completion: completion,
+                    handle: handle
+                )
             }
         )
     }
 
     private static func handle(
-        result: Result<CoreDataStack.BackupInfo>,
+        result: Result<CoreDataStack.BackupInfo, Error>,
         password: String,
         accountId: UUID,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        completion: @escaping BackupResultClosure,
+        completion: @escaping (Result<URL, Error>) -> Void,
         handle: String
         ) {
         workerQueue.async(group: dispatchGroup) {
-            let encrypted: Result<URL> = result.map { info in
-                // 1. Compress the backup
-                let compressed = try compress(backup: info)
+            let encrypted = result.flatMap { info in
+                do {
+                    // 1. Compress the backup
+                    let compressed = try compress(backup: info)
 
-                // 2. Encrypt the backup
-                let url = targetBackupURL(for: info, handle: handle)
-                try encrypt(from: compressed, to: url, password: password, accountId: accountId)
-                return url
+                    // 2. Encrypt the backup
+                    let url = targetBackupURL(for: info, handle: handle)
+                    try encrypt(from: compressed, to: url, password: password, accountId: accountId)
+                    return .success(url)
+                } catch {
+                    return .failure(error)
+                }
             }
 
             DispatchQueue.main.async(group: dispatchGroup) {
@@ -100,8 +103,8 @@ extension SessionManager {
     /// Restores the account database from the Wire iOS database back up file.
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
     /// is called.
-    public func restoreFromBackup(at location: URL, password: String, completion: @escaping RestoreResultClosure) {
-        func complete(_ result: Swift.Result<Void, Error>) {
+    public func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        func complete(_ result: Result<Void, Error>) {
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(result)
             }

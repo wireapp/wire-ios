@@ -106,11 +106,11 @@ final class BackupActionCell: UITableViewCell {
 }
 
 protocol BackupSource {
-    func backupActiveAccount(password: Password, completion: @escaping SessionManager.BackupResultClosure)
+    func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void)
 }
 
 extension SessionManager: BackupSource {
-    func backupActiveAccount(password: Password, completion: @escaping SessionManager.BackupResultClosure) {
+    func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void) {
         backupActiveAccount(password: password.value, completion: completion)
     }
 }

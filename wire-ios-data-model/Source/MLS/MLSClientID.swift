@@ -113,7 +113,7 @@ public extension MLSClientID {
     static func random() -> MLSClientID {
         return MLSClientID(
             userID: UUID().transportString(),
-            clientID: .random(length: 8),
+            clientID: .randomAlphanumerical(length: 8),
             domain: .randomDomain()
         )
     }

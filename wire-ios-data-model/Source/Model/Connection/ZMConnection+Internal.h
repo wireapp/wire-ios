@@ -27,7 +27,6 @@ extern NSString * const ZMConnectionStatusKey;
 
 @interface ZMConnection (Internal)
 
-@property (nonatomic) ZMConversation *conversation;
 @property (nonatomic) ZMUser *to;
 @property (nonatomic) BOOL existsOnBackend;
 @property (nonatomic) NSDate *lastUpdateDateInGMT;

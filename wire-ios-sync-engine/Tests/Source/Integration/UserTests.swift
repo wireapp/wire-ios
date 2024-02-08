@@ -47,7 +47,7 @@ final class UserTests_swift: IntegrationTest {
 
         // initialize observers
 
-        let userObserver = UserChangeObserver(user: selfUser)
+        let userObserver = UserObserver(user: selfUser)
 
         // when
         // add new user to groupConversation remotely

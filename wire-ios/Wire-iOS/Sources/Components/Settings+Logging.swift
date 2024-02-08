@@ -57,7 +57,6 @@ extension Settings {
             "cryptobox",
             "backend-environment",
             "Backup",
-            "mls",
             // added to defaults
             "TokenField",
             "FileManager",

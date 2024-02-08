@@ -456,6 +456,19 @@
 // Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
 "content.system.missing_messages.users_added_and_removed.plural" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время были добавлены %1$@, были удалены %2$@.";
 
+// MLS Migration
+"content.system.mls_migration.started.description" = "Стандартный протокол обмена сообщениями меняется с Proteus на новый Messaging Layer Security (MLS).";
+"content.system.mls_migration.started.update_latest_version" = "Убедитесь, что вы используете последнюю версию Wire, чтобы быть готовым к MLS и обеспечить бесперебойное общение.";
+"content.system.mls_migration.started.update_with_date" = "Обновите Wire до %@, чтобы быть готовым к MLS и продолжить бесперебойное общение.";
+
+"content.system.mls_migration.finalized.done" = "Теперь в этой беседе используется новый протокол Messaging Layer Security (MLS). Для обеспечения надежной связи всегда используйте последнюю версию Wire на своих устройствах.";
+"content.system.mls_migration.join_afterwards" = "Вы давно не обновляли это устройство. За это время стандартный протокол обмена сообщениями изменился с Proteus на Messaging Layer Security (MLS). В связи с этим некоторые сообщения могут не отображаться.";
+"content.system.mls_migration.ongoing_call" = "При переходе на MLS могут возникнуть проблемы с текущим вызовом. В этом случае прервите разговор и позвоните снова.";
+"content.system.mls_migration.learn_more" = "Узнайте больше о MLS";
+"content.system.mls_migration.potentialGap" = "Вы давно не обновляли это устройство. За это время стандартный протокол обмена сообщениями изменился с Proteus на Messaging Layer Security (MLS). В связи с этим некоторые сообщения могут не отображаться.";
+"content.system.mls_migration.mls_not_supported_by_otherUser" = "Общение с %@ больше невозможно, поскольку теперь вы используете разные протоколы. Когда %@ обновится, вы снова сможете звонить, отправлять сообщения и файлы.";
+"content.system.mls_migration.mls_not_supported_by_you" = "Общение с %@ больше невозможно, поскольку ваше устройство не поддерживает необходимый протокол. [**Скачайте последнюю версию MLS Wire**](%@), чтобы снова звонить, отправлять сообщения и файлы.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "Предварительный просмотр видео с YouTube";
@@ -517,7 +530,6 @@
 "content.system.ephemeral_time_remaining" = "осталось %@";
 
 "content.system.self_user_new_client" = "Вы начали использовать [новое устройство](%@)";
-"content.system.self_user_new_self_client" = "Вы начали использовать [это устройство](%@)";
 
 "content.system.you_started" = "Вы";
 
@@ -568,8 +580,6 @@
 "content.system.message_legal_hold.learn_more" = "Подробнее";
 
 //
-
-"content.system.reactivated_device" = "Вы снова начали использовать [это устройство]%@. Сообщения, отправленные ранее, не будут отображаться здесь.";
 
 "content.system.is_verified" = "Все отпечатки верифицированы";
 
@@ -1575,6 +1585,14 @@
 
 "registration.signin.alert.password_needed.title" = "Введите пароль";
 "registration.signin.alert.password_needed.message" = "Для входа необходимо ввести пароль.";
+
+"registration.signin.username.title" = "Ваш псевдоним";
+"registration.signin.username.message" = "Введите свой псевдоним. Это поможет другим найти вас в Wire и связаться.";
+"registration.signin.username.placeholder" = "псевдоним";
+"registration.signin.username.unknown_error.title" = "Не удалось обновить псевдоним";
+"registration.signin.username.unknown_error.message" = "Пожалуйста, повторите попытку позже.";
+"registration.signin.username.already_taken_error.title" = "Псевдоним уже занят";
+"registration.signin.username.already_taken_error.message" = "Псевдоним уже занят, выберите другой";
 
 "registration.devices.title" = "Устройства";
 "registration.devices.active_list_header" = "Активные";

@@ -265,7 +265,7 @@ private extension ProteusSessionID {
         ProteusSessionID(
             domain: .randomDomain(),
             userID: UUID.create().uuidString,
-            clientID: .random(length: 6)
+            clientID: .randomAlphanumerical(length: 6)
         )
     }
 

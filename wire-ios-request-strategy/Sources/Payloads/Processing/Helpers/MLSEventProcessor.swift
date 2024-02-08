@@ -80,7 +80,6 @@ public class MLSEventProcessor: MLSEventProcessing {
         guard let mlsGroupID = mlsGroupID ?? fallbackGroupID else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
-
         await context.perform {
             if conversation.mlsGroupID == nil {
                 conversation.mlsGroupID = mlsGroupID
@@ -99,6 +98,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         await context.perform {
             conversation.mlsStatus = newStatus
             context.saveOrRollback()
+            Flow.createGroup.checkpoint(description: "saved ZMConversation for MLS")
 
             if newStatus != previousStatus {
                 WireLogger.mls.debug("conversation \(String(describing: conversation.qualifiedID)) status changed: \(String(describing: previousStatus)) -> \(newStatus))")

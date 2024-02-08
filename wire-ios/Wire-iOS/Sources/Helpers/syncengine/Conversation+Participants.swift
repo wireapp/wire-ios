@@ -39,10 +39,12 @@ extension ZMConversation {
     }
 
     func addOrShowError(participants: [UserType]) {
+        Flow.addParticipants.start()
         guard
             let session = ZMUserSession.shared(),
             session.networkState != .offline
         else {
+            Flow.addParticipants.fail(ConversationError.offline)
             return showAlertForAdding(for: ConversationError.offline)
         }
 
@@ -64,14 +66,16 @@ extension ZMConversation {
 
                 try await service.addParticipants(users, to: conversation)
             } catch {
+                Flow.addParticipants.fail(error)
                 await MainActor.run {
                     self.showAlertForAdding(for: error)
                 }
             }
+            Flow.addParticipants.succeed()
         }
     }
 
-    func removeOrShowError(participant user: UserType, completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
+    func removeOrShowError(participant user: UserType, completion: ((Result<Void, Error>) -> Void)? = nil) {
 
         @Sendable func fail(with error: Error) {
             showAlertForRemoval(for: error)

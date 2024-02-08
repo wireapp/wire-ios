@@ -32,6 +32,7 @@ struct DatabaseMigrationHelper {
             forResource: dataModelName,
             withExtension: "momd"
         ))
+
         let modelBundle = try XCTUnwrap(Bundle(url: modelURL))
 
         // Create the url for the given datamodel version
@@ -58,6 +59,67 @@ struct DatabaseMigrationHelper {
         )
 
         return container
+    }
+
+    // MARK: - Migration
+
+    typealias MigrationAction = (NSManagedObjectContext) throws -> Void
+
+    func migrateStore(
+        sourceVersion: String,
+        destinationVersion: String,
+        mappingModel: NSMappingModel,
+        storeDirectory: URL,
+        preMigrationAction: MigrationAction,
+        postMigrationAction: MigrationAction,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        // GIVEN
+
+        // create versions models
+        let sourceModel = try createObjectModel(version: sourceVersion)
+        let destinationModel = try createObjectModel(version: destinationVersion)
+
+        let sourceStoreURL = storeDirectory.appendingPathComponent("\(sourceVersion).sqlite")
+        let destinationStoreURL = storeDirectory.appendingPathComponent("\(destinationVersion).sqlite")
+
+        // create container for initial version
+        let container = try createStore(model: sourceModel, at: sourceStoreURL)
+
+        // perform pre-migration action
+        try preMigrationAction(container.viewContext)
+
+        // create migration manager and mapping model
+        let migrationManager = NSMigrationManager(
+            sourceModel: sourceModel,
+            destinationModel: destinationModel
+        )
+
+        // WHEN
+
+        // perform migration
+        do {
+            try migrationManager.migrateStore(
+                from: sourceStoreURL,
+                sourceType: NSSQLiteStoreType,
+                options: nil,
+                with: mappingModel,
+                toDestinationURL: destinationStoreURL,
+                destinationType: NSSQLiteStoreType,
+                destinationOptions: nil
+            )
+        } catch {
+            XCTFail("Migration failed: \(error)", file: file, line: line)
+        }
+
+        // THEN
+
+        // create store
+        let migratedContainer = try createStore(model: destinationModel, at: destinationStoreURL)
+
+        // perform post migration action
+        try postMigrationAction(migratedContainer.viewContext)
     }
 
     // MARK: Fixture

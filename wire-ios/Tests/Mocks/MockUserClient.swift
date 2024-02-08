@@ -37,6 +37,8 @@ final class MockUserClient: NSObject, UserClientType {
 
     var user: ZMUser?
 
+    var needsToNotifyUser: Bool = false
+
     var deviceClass: DeviceClass? = .phone
 
     func isSelfClient() -> Bool {

@@ -205,22 +205,31 @@ extension ZMUser: SelfLegalHoldSubject {
      */
 
     public func userDidAcceptLegalHoldRequest(_ request: LegalHoldRequest) {
-        guard request == self.legalHoldRequest else {
-            // The request must match the current request to avoid nil-ing it out by mistake
+        guard
+            // The request must match the current request to avoid nil-ing it out by mistake.
+            request == self.legalHoldRequest,
+            isSelfUser,
+            let context = managedObjectContext
+        else {
             return
         }
 
         legalHoldRequest = nil
 
-        // Add the legal hold enabled system message locally
-        if let legalHoldClient = clients.filter(\.isLegalHoldDevice).first {
-            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-            fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()
-            let conversations = managedObjectContext!.fetchOrAssert(request: fetchRequest)
+        guard let legalHoldClient = clients.filter(\.isLegalHoldDevice).first else {
+            return
+        }
 
-            conversations.forEach {
-                $0.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [legalHoldClient], causedBy: [self])
-            }
+        let predicateFactory = ConversationPredicateFactory(selfTeam: team)
+        let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        fetchRequest.predicate = predicateFactory.predicateForConversationsIncludingArchived()
+
+        for conversation in context.fetchOrAssert(request: fetchRequest) {
+            // Add the legal hold enabled system message locally.
+            conversation.decreaseSecurityLevelIfNeededAfterDiscovering(
+                clients: [legalHoldClient],
+                causedBy: [self]
+            )
         }
     }
 

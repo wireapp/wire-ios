@@ -61,7 +61,7 @@ extension ZMConversation {
     /// Fetches the link to access the conversation.
     /// @param completion called when the operation is ended. Called with .success and the link fetched. If the link
     ///        was not generated yet, it is called with .success(nil).
-    public func fetchWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String?>) -> Void) {
+    public func fetchWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String?, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -92,7 +92,7 @@ extension ZMConversation {
     }
 
     /// Updates the conversation access mode if necessary and creates the link to access the conversation.
-    public func updateAccessAndCreateWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String>) -> Void) {
+    public func updateAccessAndCreateWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String, Error>) -> Void) {
         // Legacy access mode: access and access_mode have to be updated in order to create the link.
         if isLegacyAccessMode {
             setAllowGuests(true, in: userSession) { result in
@@ -108,7 +108,7 @@ extension ZMConversation {
         }
     }
 
-    func createWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String>) -> Void) {
+    func createWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -128,7 +128,9 @@ extension ZMConversation {
 
                 if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                     // Process `conversation.code-update` event
+                    // swiftlint:disable todo_requires_jira_link
                     // FIXME: [jacob] replace with ConversationEventProcessor
+                    // swiftlint:enable todo_requires_jira_link
                     userSession.processUpdateEvents([event])
                 }
             } else if response.httpStatus == 200,
@@ -146,7 +148,7 @@ extension ZMConversation {
     }
 
     /// Checks if a guest link can be generated or not
-    public func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Bool>) -> Void) {
+    public func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Bool, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
@@ -179,7 +181,7 @@ extension ZMConversation {
     }
 
     /// Deletes the existing wireless link.
-    public func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    public func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -204,7 +206,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow guests.
-    public func setAllowGuests(_ allowGuests: Bool, in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    public func setAllowGuests(_ allowGuests: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -217,7 +219,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow services.
-    public func setAllowServices(_ allowServices: Bool, in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    public func setAllowServices(_ allowServices: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(SetAllowServicesError.invalidOperation))
         }
@@ -231,7 +233,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow services.
-    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (Result<Void, Error>) -> Void) {
         let request = WirelessRequestFactory.setAccessRoles(allowGuests: allowGuests, allowServices: allowServices, for: self, apiVersion: apiVersion)
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in

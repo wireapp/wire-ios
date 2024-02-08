@@ -21,9 +21,7 @@ import XCTest
 @testable import Wire
 
 class MockBackupSource: BackupSource {
-    func backupActiveAccount(password: Password, completion: @escaping SessionManager.BackupResultClosure) {
-
-    }
+    func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void) { }
 }
 
 class BackupViewControllerTests: ZMSnapshotTestCase {

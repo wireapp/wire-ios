@@ -89,7 +89,9 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
         let message = systemMessage(missed: type == .missedCall, in: .insertNewObject(in: uiMOC), from: fromSelf ? selfUser : otherUser, inGroup: inGroup)
         let cell = createCell(for: message, missed: type == .missedCall)
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Check for expanded state
+        // swiftlint:enable todo_requires_jira_link
 //        if expanded {
 //            cell.setSelected(true, animated: false)
 //        }

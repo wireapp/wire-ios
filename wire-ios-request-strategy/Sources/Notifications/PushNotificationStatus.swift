@@ -32,7 +32,7 @@ open class PushNotificationStatus: NSObject {
 
     }
 
-    public typealias FetchCompletion = (Swift.Result<Void, FetchError>) -> Void
+    public typealias FetchCompletion = (Result<Void, FetchError>) -> Void
 
     private var eventIdRanking = NSMutableOrderedSet()
     private var completionHandlers: [UUID: FetchCompletion] = [:]

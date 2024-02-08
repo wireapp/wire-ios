@@ -67,8 +67,8 @@ extension ZMConversation {
         .init([
             ZMConversationConversationTypeKey,
             "participantRoles.user.name",
-            "connection.to.name",
-            "connection.to.availability",
+            #keyPath(ZMConversation.oneOnOneUser.name),
+            #keyPath(ZMConversation.oneOnOneUser.availability),
             ZMConversationUserDefinedNameKey
         ] + ZMConversation.participantRolesKeys)
     }

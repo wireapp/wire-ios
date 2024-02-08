@@ -221,13 +221,14 @@ extension MockUser {
 
             return payload
         } else {
-            let pictureData = pictures.map(with: #selector(getter: transportData)) ?? []
+            let pictureData = pictures.compactMap { ($0 as? MockPicture)?.transportData }
+
             var payload: [String: Any?] = [
                 "accent_id": accentID,
                 "name": name,
                 "id": identifier,
                 "handle": handle,
-                "picture": pictureData.array,
+                "picture": pictureData,
                 "assets": assetData
             ]
 

@@ -39,8 +39,8 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     func testThatItCreatesARequestForUpdatingConnection_APIV0() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
-            let userID = self.oneToOneConversation.connection!.to.remoteIdentifier!
-            let action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
+            let userID = self.oneToOneConnection.to.remoteIdentifier!
+            let action = UpdateConnectionAction(connection: self.oneToOneConnection,
                                                 newStatus: .cancelled)
 
             // when
@@ -57,8 +57,8 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     func testThatItCreatesARequestForUpdatingConnection_APIV1() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
-            let userID = self.oneToOneConversation.connection!.to.qualifiedID!
-            let action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
+            let userID = self.oneToOneConnection.to.qualifiedID!
+            let action = UpdateConnectionAction(connection: self.oneToOneConnection,
                                                 newStatus: .cancelled)
 
             // when
@@ -93,9 +93,9 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] _ in
             // given
             let newStatus: ZMConnectionStatus = .blocked
-            let action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
+            let action = UpdateConnectionAction(connection: self.oneToOneConnection,
                                                 newStatus: newStatus)
-            let connection = createConnectionPayload(self.oneToOneConversation.connection!,
+            let connection = createConnectionPayload(self.oneToOneConnection,
                                                      status: .blocked)
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
@@ -107,16 +107,16 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             self.sut.handleResponse(response, action: action)
 
             // then
-            XCTAssertEqual(self.oneToOneConversation.connection?.status, newStatus)
+            XCTAssertEqual(self.oneToOneConnection.status, newStatus)
         }
     }
 
     func testThatItCallsResultHandler_On200() {
         syncMOC.performGroupedAndWait { [self] _ in
             // given
-            var action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
+            var action = UpdateConnectionAction(connection: self.oneToOneConnection,
                                                 newStatus: .blocked)
-            let connection = createConnectionPayload(self.oneToOneConversation.connection!,
+            let connection = createConnectionPayload(self.oneToOneConnection,
                                                      status: .blocked)
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
@@ -142,7 +142,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     func testThatItCallsResultHandler_OnError() {
         syncMOC.performGroupedAndWait { [self] _ in
             // given
-            var action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
+            var action = UpdateConnectionAction(connection: self.oneToOneConnection,
                                                 newStatus: .blocked)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
@@ -170,7 +170,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     func assertFailure(_ expectedError: UpdateConnectionAction.Failure, on response: ZMTransportResponse) {
         syncMOC.performGroupedBlockAndWait {
             // given
-            var action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!, newStatus: .accepted)
+            var action = UpdateConnectionAction(connection: self.oneToOneConnection, newStatus: .accepted)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in

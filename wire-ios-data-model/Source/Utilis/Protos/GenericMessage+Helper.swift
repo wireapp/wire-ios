@@ -652,25 +652,6 @@ public extension WireDataModel.Mention {
     }
 }
 
-// MARK: - Availability
-
-extension WireProtos.Availability {
-    public init(_ availability: AvailabilityKind) {
-        self = WireProtos.Availability.with {
-            switch availability {
-            case .none:
-                $0.type = .none
-            case .available:
-                $0.type = .available
-            case .away:
-                $0.type = .away
-            case .busy:
-                $0.type = .busy
-            }
-        }
-    }
-}
-
 // MARK: - LinkPreview
 
 public extension LinkPreview {

@@ -37,8 +37,10 @@ public extension NSData {
         swiftMetadataProperties[String(kCGImagePropertyIPTCDictionary)] = kCFNull
         swiftMetadataProperties[String(kCGImagePropertyCIFFDictionary)] = kCFNull
         swiftMetadataProperties[String(kCGImagePropertyMakerAppleDictionary)] = kCFNull
+        // swiftlint:disable todo_requires_jira_link
         // TODO: iOS8 is crashing when the following symbols are imported from ImageIO.
         // It looks like a linker issue, since the symbols are marked as available from iOS4.
+        // swiftlint:enable todo_requires_jira_link
         swiftMetadataProperties["{MakerCanon}"]   = kCFNull // kCGImagePropertyMakerCanonDictionary
         swiftMetadataProperties["{MakerNikon}"]   = kCFNull // kCGImagePropertyMakerNikonDictionary
         swiftMetadataProperties["{MakerMinolta}"] = kCFNull // kCGImagePropertyMakerMinoltaDictionary

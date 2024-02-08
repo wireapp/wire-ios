@@ -26,7 +26,6 @@
 #import "ZMMessageTests.h"
 #import "ZMBaseManagedObjectTest.h"
 #import "MessagingTest+EventFactory.h"
-#import "NSString+RandomString.h"
 #import "ZMConversationTests.h"
 #import "ZMUserTests.h"
 #import "MockModelObjectContextFactory.h"
