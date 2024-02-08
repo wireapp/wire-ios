@@ -277,13 +277,13 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
     }
 
-    func testThatOneOnOneResolverIsNotInvokedWithinTimeout_WhenDelayIsLongerThanTimeout() throws {
-
-        let expectation = XCTestExpectation(description: "OneOnOneResolver should not be invoked within the specified timeout")
-        expectation.isInverted = true // We expect this expectation to not be fulfilled within the timeout
+    func testOneOnOneResolverInvocationTiming() throws {
+        // GIVEN
+        let expectation1 = XCTestExpectation(description: "OneOnOneResolver should not be invoked within the specified timeout")
+        let expectation2 = XCTestExpectation(description: "OneOnOneResolver should be invoked within the specified timeout")
+        expectation1.isInverted = true // We expect this expectation to not be fulfilled within the timeout
 
         try syncMOC.performAndWait {
-            // GIVEN
             let connection = createConnectionPayload(self.oneToOneConnection, status: .accepted)
             let eventType = try XCTUnwrap(ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType), "eventType is nil")
             let eventPayload = Payload.UserConnectionEvent(connection: connection, type: eventType)
@@ -291,17 +291,25 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
             let event = updateEvent(from: payloadData)
 
             mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
-                expectation.fulfill()
+                expectation1.fulfill() // Attempt to fulfill the first expectation
+                expectation2.fulfill() // Fulfill the second expectation
                 return OneOnOneConversationResolution.noAction
             }
 
-            sut.oneOnOneResolutionDelay = 2
+            sut.oneOnOneResolutionDelay = 1
 
             // WHEN
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
         }
 
-        XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 0, "Expected no invocation due to timeout.")
+        // THEN
+        // Wait for the first expectation with a timeout of 0.5 seconds, expecting it to fail (not to be fulfilled)
+        wait(for: [expectation1], timeout: 0.5)
+        XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 0, "Expected no invocation due to the first timeout.")
+
+        // Wait for the second expectation with a timeout of 1 second, expecting it to succeed (to be fulfilled)
+        wait(for: [expectation2], timeout: 1)
+        XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1, "Expected one invocation after the second timeout.")
     }
 
     // MARK: Helpers
