@@ -164,7 +164,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     private func processRemovedMember(with event: ZMUpdateEvent) {
         guard let identifier = event.teamId, let data = event.dataPayload else { return }
         guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
+        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
         guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else { return }
         if let member = user.membership {
             if user.isSelfUser {
@@ -180,7 +180,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
     private func processUpdatedMember(with event: ZMUpdateEvent) {
         guard nil != event.teamId, let data = event.dataPayload else { return }
-        guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
+        guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
         guard let member = Member.fetch(with: userId, in: managedObjectContext) else { return }
         member.needsToBeUpdatedFromBackend = true
     }
@@ -274,7 +274,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 fileprivate extension ZMUpdateEvent {
 
     var teamId: UUID? {
-        return(payload[TeamEventPayloadKey.team.rawValue] as? String).flatMap(UUID.init)
+        (payload[TeamEventPayloadKey.team.rawValue] as? String).flatMap(UUID.init(transportString:))
     }
 
     var dataPayload: [String: Any]? {

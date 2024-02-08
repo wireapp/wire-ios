@@ -322,7 +322,7 @@
 "conversation.create.receipts.title" = "Lesebestätigungen";
 "conversation.create.receipts.subtitle" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
 "conversation.create.mls.title" = "Protokoll";
-"conversation.create.mls.subtitle" = "Wählen Sie MLS, um eine Gruppe mit dem Messaging-Layer-Security-Protokoll zu erstellen (Beta-Version).";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Protokoll wählen";
 "conversation.create.mls.cancel" = "Abbrechen";
 "conversation.create.non_federating_domains_error.title" = "Gruppe kann nicht erstellt werden";
@@ -992,7 +992,7 @@
 "group_details.receipt_options_cell.title" = "Lesebestätigungen";
 "group_details.receipt_options_cell.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
 
-"group_details.message_protocol.section_tile" = "Details zum Protokoll (Beta)";
+"group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protokoll";
 "group_details.message_protocol.cipher_suite" = "Cipher-Suite";
 

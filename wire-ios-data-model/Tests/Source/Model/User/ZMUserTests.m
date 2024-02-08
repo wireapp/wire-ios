@@ -893,7 +893,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [user updateWithTransportData:payload authoritative:YES];
 
     // then
-    XCTAssertEqualObjects(user.remoteIdentifier, [payload[@"id"] UUID]);
+    XCTAssertEqualObjects(user.remoteIdentifier, [NSUUID uuidWithTransportString:payload[@"id"]]);
 }
 
 - (void)testThatItAssignsQualifiedIDIfTheUserDoesNotHaveOne
@@ -915,7 +915,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [user updateWithTransportData:payload authoritative:YES];
 
     // then
-    XCTAssertEqualObjects(user.remoteIdentifier, [qualifedIDPayload[@"id"] UUID]);
+    XCTAssertEqualObjects(user.remoteIdentifier, [NSUUID uuidWithTransportString:qualifedIDPayload[@"id"]]);
     XCTAssertEqualObjects(user.domain, qualifedIDPayload[@"domain"]);
 }
 

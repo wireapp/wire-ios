@@ -65,7 +65,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 {
     NSDictionary *dictionary = [transportData asDictionary];
     
-    NSUUID *uuid = [[dictionary stringForKey:@"id"] UUID];
+    NSUUID *uuid = [NSUUID uuidWithTransportString:[dictionary stringForKey:@"id"]];
     NSArray *payloadArray = [dictionary arrayForKey:@"payload"];
     BOOL transient = [dictionary optionalNumberForKey:@"transient"].boolValue;
     

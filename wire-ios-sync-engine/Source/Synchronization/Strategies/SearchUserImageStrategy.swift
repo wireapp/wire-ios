@@ -209,7 +209,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
                 guard let userProfilePayloads = response.payload as? [[String: Any]] else { return }
 
                 for userProfilePayload in userProfilePayloads {
-                    guard let userId = (userProfilePayload["id"] as? String).flatMap(UUID.init),
+                    guard let userId = (userProfilePayload["id"] as? String).flatMap(UUID.init(transportString:)),
                           let searchUser = self.uiContext.zm_searchUserCache?.object(forKey: userId as NSUUID) else { continue }
 
                     searchUser.update(from: userProfilePayload)

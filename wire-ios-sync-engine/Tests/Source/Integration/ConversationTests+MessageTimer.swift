@@ -31,7 +31,7 @@ class ConversationMessageTimerTests: IntegrationTest {
         var payload: [String: Any] = [
             "from": user1.identifier,
             "conversation": conversation.remoteIdentifier!.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "type": "conversation.message-timer-update"
         ]
 

@@ -20,7 +20,7 @@ import Foundation
 
 enum ExternalCommitError: Error, Equatable {
 
-    case failedToSendCommit(recovery: RecoveryStrategy)
+    case failedToSendCommit(recovery: RecoveryStrategy, cause: SendCommitBundleAction.Failure)
     case failedToMergePendingGroup
     case failedToClearPendingGroup
 
