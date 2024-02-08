@@ -104,6 +104,9 @@
 		54CAD7091BB5411F006FF8E9 /* ZMTLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CAD7081BB54097006FF8E9 /* ZMTLogging.h */; };
 		54EA3E6D1BEA65B80071592B /* Fakes.m in Sources */ = {isa = PBXBuildFile; fileRef = 54EA3E6C1BEA65B80071592B /* Fakes.m */; };
 		596090D52B14C91D0007583F /* ZMUpdateEventTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */; };
+		59FFFB762B74E100008F0E1B /* Date+transportString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB752B74E100008F0E1B /* Date+transportString.swift */; };
+		59FFFB782B74E17C008F0E1B /* TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB772B74E17C008F0E1B /* TransportCoding.swift */; };
+		59FFFB7A2B74E539008F0E1B /* Date+transportStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB792B74E539008F0E1B /* Date+transportStringTests.swift */; };
 		5E2C351021A554610034F1EE /* BackgroundActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C350F21A554610034F1EE /* BackgroundActivityManager.swift */; };
 		5E2C352621A567600034F1EE /* MockBackgroundActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C352421A567240034F1EE /* MockBackgroundActivityManager.swift */; };
 		5E2C352821A56FD50034F1EE /* BackgroundActivityFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C352721A56FD50034F1EE /* BackgroundActivityFactoryTests.swift */; };
@@ -334,6 +337,9 @@
 		54EA3E6B1BEA65B80071592B /* Fakes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fakes.h; sourceTree = "<group>"; };
 		54EA3E6C1BEA65B80071592B /* Fakes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Fakes.m; sourceTree = "<group>"; };
 		596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUpdateEventTypeTests.swift; sourceTree = "<group>"; };
+		59FFFB752B74E100008F0E1B /* Date+transportString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+transportString.swift"; sourceTree = "<group>"; };
+		59FFFB772B74E17C008F0E1B /* TransportCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportCoding.swift; sourceTree = "<group>"; };
+		59FFFB792B74E539008F0E1B /* Date+transportStringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+transportStringTests.swift"; sourceTree = "<group>"; };
 		5E2C350F21A554610034F1EE /* BackgroundActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundActivityManager.swift; sourceTree = "<group>"; };
 		5E2C352421A567240034F1EE /* MockBackgroundActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBackgroundActivityManager.swift; sourceTree = "<group>"; };
 		5E2C352721A56FD50034F1EE /* BackgroundActivityFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactoryTests.swift; sourceTree = "<group>"; };
@@ -592,11 +598,12 @@
 		546E89D41B33015000DD1042 /* TransportEncoding */ = {
 			isa = PBXGroup;
 			children = (
-				F9331C661CB3D47E00139ECC /* ZMUpdateEventTests.m */,
-				546E89D51B33015000DD1042 /* NSObject_ZMTransportEncodingTests.m */,
-				546E89D61B33015000DD1042 /* ZMTransportCodecTests.m */,
 				5451EFA21B7A1458002F503B /* Collections+ZMTSafeTypesTests.m */,
 				0928E2041BA023A30057232E /* NSData_MultipartTests.m */,
+				546E89D51B33015000DD1042 /* NSObject_ZMTransportEncodingTests.m */,
+				546E89D61B33015000DD1042 /* ZMTransportCodecTests.m */,
+				F9331C661CB3D47E00139ECC /* ZMUpdateEventTests.m */,
+				59FFFB792B74E539008F0E1B /* Date+transportStringTests.swift */,
 			);
 			path = TransportEncoding;
 			sourceTree = "<group>";
@@ -784,11 +791,13 @@
 			isa = PBXGroup;
 			children = (
 				5451EF9F1B7A138B002F503B /* Collections+ZMTSafeTypes.m */,
+				0958401E1B9591F1004555F9 /* NSData+Multipart.m */,
 				54CA153C1B32F2C1008D3787 /* NSObject+ZMTransportEncoding.m */,
 				54CA153D1B32F2C1008D3787 /* NSString+UUID.m */,
 				54CA153E1B32F2C1008D3787 /* ZMTransportCodec.m */,
 				54CA153F1B32F2C1008D3787 /* ZMTransportData.m */,
-				0958401E1B9591F1004555F9 /* NSData+Multipart.m */,
+				59FFFB752B74E100008F0E1B /* Date+transportString.swift */,
+				59FFFB772B74E17C008F0E1B /* TransportCoding.swift */,
 			);
 			path = TransportEncoding;
 			sourceTree = "<group>";
@@ -1116,6 +1125,7 @@
 				F1D1280221C020470090045E /* MockEnvironment.swift in Sources */,
 				8756C44A2178C97A00627F1F /* BackendEnvironment.swift in Sources */,
 				54B4D9E11E840C7E00F2892B /* NSURLSessionConfiguration+Debugging.swift in Sources */,
+				59FFFB782B74E17C008F0E1B /* TransportCoding.swift in Sources */,
 				54CA15CB1B32F2C1008D3787 /* ZMTransportSession.m in Sources */,
 				F19E555D22B27915005C792D /* ZMTransportResponse.swift in Sources */,
 				16F900E226C2CBE6002794B5 /* StarscreamPushChannel.swift in Sources */,
@@ -1139,6 +1149,7 @@
 				BF3A7A641D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift in Sources */,
 				BF453F1E1CC63C4800403E1C /* ZMTaskIdentifier.m in Sources */,
 				BF3EDB251F2619820015D158 /* ZMPersistentCookieStorage+Label.swift in Sources */,
+				59FFFB762B74E100008F0E1B /* Date+transportString.swift in Sources */,
 				5431ABFF1DB4C35B0040343C /* RequestLoopDetection.swift in Sources */,
 				5499FFDE1B31C66D00835C8B /* ZMWebSocketHandshake.m in Sources */,
 				54CA15B91B32F2C1008D3787 /* ZMTransportResponse.m in Sources */,
@@ -1185,6 +1196,7 @@
 				54EA3E6D1BEA65B80071592B /* Fakes.m in Sources */,
 				546E8A031B33015000DD1042 /* ZMTransportSessionTests.m in Sources */,
 				5E2C352821A56FD50034F1EE /* BackgroundActivityFactoryTests.swift in Sources */,
+				59FFFB7A2B74E539008F0E1B /* Date+transportStringTests.swift in Sources */,
 				54C3EC6F243E3517000B9230 /* RequestAvailableNotificationTests.swift in Sources */,
 				546E89EB1B33015000DD1042 /* ZMNetworkSocketTest.m in Sources */,
 				1650EBDD21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift in Sources */,
