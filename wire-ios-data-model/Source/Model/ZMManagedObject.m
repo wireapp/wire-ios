@@ -620,32 +620,6 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 @implementation ZMManagedObject (Debugging)
 
-- (id)debugQuickLookObject
-{
-    ZMQuickLookString *quickLook = [[ZMQuickLookString alloc] init];
-    
-    // First off some basic info:
-    // <ZMImageMessage: 0x107bad5f0> (entity: ImageMessage; id: 0x107bb1b70 <x-coredata:///ImageMessage/t7EAE7A86-7CA2-49E5-BA5F-BA4AFB35897B581>
-    [quickLook appendLabel:@"self" textWithFormat:@"<%@: %p>", self.class, self];
-    [quickLook appendLabel:@"entity" text:self.entity.name];
-    [quickLook appendLabel:@"ID" textWithFormat:@"%@", self.objectID.URIRepresentation];
-    
-    if (self.isFault) {
-        [quickLook appendLabel:@"fault" text:@"YES"];
-    } else {
-        NSEntityDescription *entity = self.entity;
-        NSArray *attributes = [entity.attributesByName.allKeys sortedArrayUsingComparator:^NSComparisonResult(NSString *str1, NSString *str2) {
-            return [str1 compare:str2];
-        }];
-        attributes = [attributes filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"not self contains \"_\""]];
-        for (NSString *key in attributes) {
-            [quickLook appendLabel:key textWithFormat:@"%@", [self valueForKey:key]];
-        }
-    }
-    
-    return quickLook.text;
-}
-
 - (NSString *)debugDescription;
 {
     // N.B.: In overriding this, we need to be very carefull not to fire any faults.

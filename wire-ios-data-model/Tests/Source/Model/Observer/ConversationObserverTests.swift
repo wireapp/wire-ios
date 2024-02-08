@@ -931,7 +931,9 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // TODO: [jacob] re-enable WPB-5917 and fix calling `legalHoldClient.deleteClientAndEndSession()`
+    // swiftlint:enable todo_requires_jira_link
     func testThatItNotifiesOfLegalHoldChanges_Disabled() {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group

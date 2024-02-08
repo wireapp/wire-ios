@@ -322,7 +322,7 @@
 "conversation.create.receipts.title" = "Lesebestätigungen";
 "conversation.create.receipts.subtitle" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
 "conversation.create.mls.title" = "Protokoll";
-"conversation.create.mls.subtitle" = "Wählen Sie MLS, um eine Gruppe mit dem Messaging-Layer-Security-Protokoll zu erstellen (Beta-Version).";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Protokoll wählen";
 "conversation.create.mls.cancel" = "Abbrechen";
 "conversation.create.non_federating_domains_error.title" = "Gruppe kann nicht erstellt werden";
@@ -456,6 +456,19 @@
 // Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
 "content.system.missing_messages.users_added_and_removed.plural" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurden %1$@ hinzugefügt. %2$@ wurden entfernt.";
 
+// MLS Migration
+"content.system.mls_migration.started.description" = "Das Standard-Nachrichtenprotokoll wird von Proteus auf Messaging-Layer-Security (MLS) umgestellt.";
+"content.system.mls_migration.started.update_latest_version" = "Stellen Sie sicher, dass Sie die neueste Version von Wire verwenden, um für MLS bereit zu sein und weiterhin nahtlos zu kommunizieren.";
+"content.system.mls_migration.started.update_with_date" = "Aktualisieren Sie Wire bis %@, um für MLS bereit zu sein und weiterhin nahtlos zu kommunizieren.";
+
+"content.system.mls_migration.finalized.done" = "Diese Unterhaltung verwendet jetzt das neue Protokoll namens Messaging-Layer-Security (MLS). Um eine reibungslose Kommunikation zu gewährleisten, verwenden Sie immer die neueste Wire-Version auf Ihren Geräten.";
+"content.system.mls_migration.join_afterwards" = "Sie haben dieses Gerät schon seit einiger Zeit nicht mehr aktualisiert. In der Zwischenzeit wurde das Standard-Nachrichtenprotokoll von Proteus auf Messaging-Layer-Security (MLS) umgestellt. Aufgrund dieser Änderung werden einige Nachrichten hier möglicherweise nicht angezeigt.";
+"content.system.mls_migration.ongoing_call" = "Aufgrund der Umstellung auf MLS haben Sie möglicherweise Probleme mit Ihrem aktuellen Anruf. Wenn das der Fall ist, legen Sie auf und rufen Sie erneut an.";
+"content.system.mls_migration.learn_more" = "Erfahren Sie mehr über MLS";
+"content.system.mls_migration.potentialGap" = "Sie haben dieses Gerät schon seit einiger Zeit nicht mehr aktualisiert. In der Zwischenzeit wurde das Standard-Nachrichtenprotokoll von Proteus auf Messaging-Layer-Security (MLS) umgestellt. Aufgrund dieser Änderung werden einige Nachrichten hier möglicherweise nicht angezeigt.";
+"content.system.mls_migration.mls_not_supported_by_otherUser" = "Sie können nicht mehr mit %@ kommunizieren, da Sie beide jetzt unterschiedliche Protokolle verwenden. Wenn %@ ein Update erhält, können Sie wieder anrufen sowie Nachrichten und Dateien senden.";
+"content.system.mls_migration.mls_not_supported_by_you" = "Sie können nicht mehr mit %@ kommunizieren, da Ihr Gerät das entsprechende Protokoll nicht unterstützt. [**Laden Sie die neueste MLS-Wire-Version herunter**](%@), um wieder zu telefonieren und Nachrichten und Dateien zu senden.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "YouTube Video-Vorschau";
@@ -517,7 +530,6 @@
 "content.system.ephemeral_time_remaining" = "%@ verbleibend";
 
 "content.system.self_user_new_client" = "Sie haben begonnen, [ein neues Gerät](%@) zu nutzen";
-"content.system.self_user_new_self_client" = "Sie haben begonnen, [dieses Gerät](%@) zu nutzen";
 
 "content.system.you_started" = "Sie";
 
@@ -568,8 +580,6 @@
 "content.system.message_legal_hold.learn_more" = "Mehr erfahren";
 
 //
-
-"content.system.reactivated_device" = "Sie haben begonnen, [dieses Gerät](%@) wieder zu nutzen. Nachrichten, die in der Zwischenzeit gesendet wurden, werden nicht angezeigt.";
 
 "content.system.is_verified" = "Alle Fingerabdrücke sind überprüft";
 
@@ -982,7 +992,7 @@
 "group_details.receipt_options_cell.title" = "Lesebestätigungen";
 "group_details.receipt_options_cell.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
 
-"group_details.message_protocol.section_tile" = "Details zum Protokoll (Beta)";
+"group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protokoll";
 "group_details.message_protocol.cipher_suite" = "Cipher-Suite";
 
@@ -1575,6 +1585,14 @@
 
 "registration.signin.alert.password_needed.title" = "Passwort erforderlich";
 "registration.signin.alert.password_needed.message" = "Bitte zum Anmelden Passwort eingeben.";
+
+"registration.signin.username.title" = "Ihr Benutzername";
+"registration.signin.username.message" = "Geben Sie Ihren Benutzernamen ein. Andere können Sie so leichter in Wire finden und sich mit Ihnen verbinden.";
+"registration.signin.username.placeholder" = "Benutzername";
+"registration.signin.username.unknown_error.title" = "Benutzername konnte nicht aktualisiert werden";
+"registration.signin.username.unknown_error.message" = "Bitte später nochmal versuchen.";
+"registration.signin.username.already_taken_error.title" = "Benutzername ist bereits vergeben";
+"registration.signin.username.already_taken_error.message" = "Der Benutzername ist bereits vergeben, bitte versuchen Sie es mit einem anderen";
 
 "registration.devices.title" = "Geräte";
 "registration.devices.active_list_header" = "Aktiv";
