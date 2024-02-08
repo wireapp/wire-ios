@@ -86,7 +86,7 @@
 
 - (void)testThatItReadsADate {
     NSString *key = @"date";
-    XCTAssertEqualObjects([NSDate dateWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary dateFor:key]);
+    XCTAssertEqualObjects([[NSDate alloc] initWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary dateFor:key]);
     XCTAssertNil([self.sampleDictionary dateFor:@"baz"]);
     XCTAssertNil([self.sampleDictionary dateFor:@"string"]);
 }
@@ -386,7 +386,7 @@
 {
     // given
     NSString *dateString = @"2014-04-30T16:30:16.625Z";
-    NSDate *testValue = [NSDate dateWithTransportString:dateString];
+    NSDate *testValue = [[NSDate alloc] initWithTransportString:dateString];
     NSDictionary *dict = @{ @"foo" : dateString };
     
     // when
@@ -404,7 +404,7 @@
 {
     // given
     NSString *dateString = @"2014-04-30T16:30:16.625Z";
-    NSDate *testValue = [NSDate dateWithTransportString:dateString];
+    NSDate *testValue = [[NSDate alloc] initWithTransportString:dateString];
     NSDictionary *dict = @{ @"foo" : testValue };
     
     // when
