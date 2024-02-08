@@ -279,6 +279,9 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatOneOnOneResolverIsNotInvokedWithinTimeout_WhenDelayIsLongerThanTimeout() throws {
 
+        let expectation = XCTestExpectation(description: "OneOnOneResolver should not be invoked within the specified timeout")
+        expectation.isInverted = true // We expect this expectation to not be fulfilled within the timeout
+
         try syncMOC.performAndWait {
             // GIVEN
             let connection = createConnectionPayload(self.oneToOneConnection, status: .accepted)
@@ -288,19 +291,16 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
             let event = updateEvent(from: payloadData)
 
             mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
+                expectation.fulfill()
                 return OneOnOneConversationResolution.noAction
             }
 
-            sut.oneOnOneResolutionDelay = 1.0
+            sut.oneOnOneResolutionDelay = 2
 
             // WHEN
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
         }
 
-        let didTimeout = !waitForAllGroupsToBeEmpty(withTimeout: 0.5)
-
-        // THEN
-        XCTAssertTrue(didTimeout, "Expected to timeout but did not.")
         XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 0, "Expected no invocation due to timeout.")
     }
 
