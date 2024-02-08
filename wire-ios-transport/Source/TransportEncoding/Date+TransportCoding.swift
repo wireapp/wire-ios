@@ -56,8 +56,8 @@ extension NSDate {
         (self as Date).transportString()
     }
 
-    @objc(initWithTransportString:)
-    public convenience init?(transportString: String) {
-        self.init(transportString: transportString)
+    @objc(dateWithTransportString:)
+    public static func date(transportString: String) -> NSDate? {
+        Date(transportString: transportString) as NSDate?
     }
 }

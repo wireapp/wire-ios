@@ -37,9 +37,9 @@
 
 - (void)testThatWeCanCreateUUIDs;
 {
-    XCTAssertEqualObjects([NSUUID createUUID], [[NSUUID alloc] initWithTransportString:@"7BDA726A-13DC-4E46-A95D-2C872D340001"]);
-    XCTAssertEqualObjects([NSUUID createUUID], [[NSUUID alloc] initWithTransportString:@"7BDA726A-13DC-4E46-A95D-2C872D340002"]);
-    XCTAssertEqualObjects([NSUUID createUUID], [[NSUUID alloc] initWithTransportString:@"7BDA726A-13DC-4E46-A95D-2C872D340003"]);
+    XCTAssertEqualObjects([NSUUID createUUID], [NSUUID uuidWithTransportString:@"7BDA726A-13DC-4E46-A95D-2C872D340001"]);
+    XCTAssertEqualObjects([NSUUID createUUID], [NSUUID uuidWithTransportString:@"7BDA726A-13DC-4E46-A95D-2C872D340002"]);
+    XCTAssertEqualObjects([NSUUID createUUID], [NSUUID uuidWithTransportString:@"7BDA726A-13DC-4E46-A95D-2C872D340003"]);
 }
 
 - (void)testArrayDifference

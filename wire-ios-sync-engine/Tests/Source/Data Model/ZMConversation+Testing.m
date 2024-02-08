@@ -50,7 +50,7 @@
         [failureRecorder recordFailure:@"Name doesn't match '%@' != '%@'",
          self.userDefinedName, mockMame];
     }
-    if (!([self.creator.remoteIdentifier isEqual:[[NSUUID alloc] initWithTransportString: mockCreatorIdentifier]])) {
+    if (!([self.creator.remoteIdentifier isEqual:[NSUUID uuidWithTransportString: mockCreatorIdentifier]])) {
         [failureRecorder recordFailure:@"Creator doesn't match '%@' != '%@'",
                        self.creator.remoteIdentifier.transportString, mockCreatorIdentifier];
     }
@@ -66,7 +66,7 @@
          [[mockActiveUsersUUID.allObjects valueForKey:@"transportString"] componentsJoinedByString:@", "]];
     }
     
-    if (![self.remoteIdentifier isEqual:[[NSUUID alloc] initWithTransportString:mockIdentifier]]) {
+    if (![self.remoteIdentifier isEqual:[NSUUID uuidWithTransportString:mockIdentifier]]) {
         [failureRecorder recordFailure:@"Remote ID doesn't match '%@' != '%@'",
          self.remoteIdentifier.transportString, mockIdentifier];
     }
