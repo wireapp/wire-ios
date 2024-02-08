@@ -44,8 +44,8 @@
     NSUUID *expected = [[NSUUID alloc] initWithUUIDString:@"E3F77380-A03E-45BB-A598-D361E3220001"];
     
     // when
-    NSUUID *sut = [NSUUID uuidWithTransportString:string];
-    
+    NSUUID *sut = [[NSUUID alloc] initWithTransportString:string];
+
     // then
     XCTAssertNotNil(sut);
     XCTAssertEqualObjects(sut, expected);
@@ -59,8 +59,8 @@
     NSUUID *expected = [[NSUUID alloc] initWithUUIDString:@"E3F77380-A03E-45BB-A598-D361E3220001"];
     
     // when
-    NSUUID *sut = [NSUUID uuidWithTransportString:string];
-    
+    NSUUID *sut = [[NSUUID alloc] initWithTransportString:string];
+
     // then
     XCTAssertNotNil(sut);
     XCTAssertEqualObjects(sut, expected);
@@ -71,7 +71,7 @@
 {
     // given
     NSString *string = @"E3F77380-A03E-45BB-A598-D361E3220001";
-    NSUUID *sut = [NSUUID uuidWithTransportString:string];
+    NSUUID *sut = [[NSUUID alloc] initWithTransportString:string];
     
     // when
     NSString *transportString = [sut transportString];

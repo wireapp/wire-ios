@@ -500,9 +500,9 @@
 - (void)testThatItSetsTheSourceToPushForUUIDsEqualOrGreaterThanTheThresholdUUID
 {
     // Given
-    NSUUID *threshold = [NSUUID uuidWithTransportString:@"864FA306-99D1-11E6-Bfff-22000A79A0F0"];
-    NSUUID *older = [NSUUID uuidWithTransportString:@"6f83DAd4-99D1-11E6-BFFF-22000A79A0f0"];
-    NSUUID *newer = [NSUUID uuidWithTransportString:@"937DC35A-99D1-11E6-BFFF-22000A79A0F0"];
+    NSUUID *threshold = [[NSUUID alloc] initWithTransportString:@"864FA306-99D1-11E6-Bfff-22000A79A0F0"];
+    NSUUID *older = [[NSUUID alloc] initWithTransportString:@"6f83DAd4-99D1-11E6-BFFF-22000A79A0f0"];
+    NSUUID *newer = [[NSUUID alloc] initWithTransportString:@"937DC35A-99D1-11E6-BFFF-22000A79A0F0"];
 
     XCTAssertEqual([threshold compareWithType1UUID:older], NSOrderedDescending);
     XCTAssertEqual([threshold compareWithType1UUID:newer], NSOrderedAscending);
