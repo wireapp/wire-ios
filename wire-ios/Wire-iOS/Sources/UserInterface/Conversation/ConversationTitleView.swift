@@ -57,10 +57,14 @@ final class ConversationTitleView: TitleView {
             subtitle = user.handleDisplayString(withDomain: true)
         }
 
-        super.configure(icons: attachments,
-                        title: conversation.displayNameWithFallback,
-                        subtitle: subtitle,
-                        interactive: self.interactive && conversation.relatedConnectionState != .sent)
+        super.configure(
+            leadingIcons: attachments,
+            title: conversation.displayNameWithFallback,
+            trailingIcons: [],
+            subtitle: subtitle,
+            interactive: interactive && conversation.relatedConnectionState != .sent,
+            showInteractiveIcon: true
+        )
 
         setupAccessibility()
     }
@@ -108,7 +112,7 @@ final class ConversationTitleView: TitleView {
 }
 
 extension NSTextAttachment {
-    static func proteusVerifiedShield() -> NSTextAttachment {
+    fileprivate static func proteusVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = Asset.Images.verifiedShield.image
         attachment.image = shield
@@ -118,7 +122,7 @@ extension NSTextAttachment {
         return attachment
     }
 
-    static func e2eiVerifiedShield() -> NSTextAttachment {
+    fileprivate static func e2eiVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = Asset.Images.certificateValid.image
         attachment.image = shield
@@ -126,7 +130,7 @@ extension NSTextAttachment {
         return attachment
     }
 
-    static func legalHold() -> NSTextAttachment {
+    fileprivate static func legalHold() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let legalHold = StyleKitIcon.legalholdactive.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultRed)
         attachment.image = legalHold
@@ -140,7 +144,7 @@ extension NSTextAttachment {
 extension ConversationLike {
 
     var displayNameWithFallback: String {
-        return displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
+        displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
     }
 
 }

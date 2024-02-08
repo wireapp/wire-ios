@@ -314,40 +314,6 @@ extension ZMSnapshotTestCase {
                        line: line)
     }
 
-    func verifyInAllPhoneWidths(view: UIView,
-                                extraLayoutPass: Bool = false,
-                                tolerance: CGFloat = tolerance,
-                                configuration: ((UIView) -> Swift.Void)? = nil,
-                                file: StaticString = #file,
-                                line: UInt = #line) {
-        assertAmbigousLayout(view, file: file, line: line)
-        for width in phoneWidths() {
-            verifyView(view: view,
-                       extraLayoutPass: extraLayoutPass,
-                       width: width,
-                       tolerance: tolerance,
-                       configuration: configuration,
-                       file: file,
-                       line: line)
-        }
-    }
-
-    func verifyInAllTabletWidths(view: UIView,
-                                 extraLayoutPass: Bool = false,
-                                 configuration: ((UIView) -> Swift.Void)? = nil,
-                                 file: StaticString = #file,
-                                 line: UInt = #line) {
-        assertAmbigousLayout(view, file: file, line: line)
-        for width in tabletWidths() {
-            verifyView(view: view,
-                       extraLayoutPass: extraLayoutPass,
-                       width: width,
-                       configuration: configuration,
-                       file: file,
-                       line: line)
-        }
-    }
-
     /// verify the snapshot with default iphone size
     ///
     /// - Parameters:

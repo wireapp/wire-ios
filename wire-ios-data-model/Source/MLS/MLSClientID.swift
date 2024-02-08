@@ -40,7 +40,7 @@ public struct MLSClientID: Equatable, Hashable {
         self.init(userClient: selfClient)
     }
 
-    public init?(userClient: UserClient) {
+    public init?(userClient: UserClientType) {
         guard
             let userID = userClient.user?.remoteIdentifier.transportString(),
             let clientID = userClient.remoteIdentifier,
