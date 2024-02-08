@@ -34,6 +34,7 @@ final class DeepLinksViewModel: ObservableObject {
 
     }
 
+    let router: AppRootRouter?
     let onDismiss: (() -> Void)?
 
     @Published
@@ -44,7 +45,11 @@ final class DeepLinksViewModel: ObservableObject {
 
     // MARK: - Life cycle
 
-    init(onDismiss: (() -> Void)? = nil) {
+    init(
+        router: AppRootRouter? = nil,
+        onDismiss: (() -> Void)? = nil
+    ) {
+        self.router = router
         self.onDismiss = onDismiss
     }
 
@@ -61,6 +66,6 @@ final class DeepLinksViewModel: ObservableObject {
         }
 
         onDismiss?()
-        _ = AppDelegate.shared.appRootRouter?.openDeepLinkURL(url)
+        _ = router?.openDeepLinkURL(url)
     }
 }
