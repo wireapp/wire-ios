@@ -23,6 +23,7 @@ struct SessionManagerHelper {
 
     func createManager(
         maxNumberAccounts: Int = SessionManager.defaultMaxNumberAccounts,
+        jailbreakDetector: JailbreakDetectorProtocol = MockJailbreakDetector(),
         dispatchGroup: ZMSDispatchGroup
     ) -> SessionManager {
         let application = ApplicationMock()
@@ -60,7 +61,7 @@ struct SessionManagerHelper {
             dispatchGroup: dispatchGroup,
             environment: environment,
             configuration: .defaultConfiguration,
-            detector: MockJailbreakDetector(),
+            detector: jailbreakDetector,
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,

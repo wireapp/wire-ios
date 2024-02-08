@@ -298,8 +298,12 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatJailbrokenDeviceDeletesAccount() {
         // GIVEN
-        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
-        (sut.jailbreakDetector as! MockJailbreakDetector).jailbroken = true
+        let jailbreakDetector = MockJailbreakDetector()
+        jailbreakDetector.jailbroken = true
+        let sut = sessionManagerHelper.createManager(
+            jailbreakDetector: jailbreakDetector,
+            dispatchGroup: dispatchGroup
+        )
         sut.configuration.wipeOnJailbreakOrRoot = true
         sut.delegate = mockDelegate
 
