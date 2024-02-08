@@ -421,6 +421,7 @@ public extension UserClient {
         client.model = model
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
+        client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
         if let mlsEd25519 = mlsEd25519 {
             client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519)
