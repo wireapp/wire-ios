@@ -322,7 +322,7 @@
 "conversation.create.receipts.title" = "Отчеты о прочтении";
 "conversation.create.receipts.subtitle" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "conversation.create.mls.title" = "Протокол";
-"conversation.create.mls.subtitle" = "Выберите MLS, чтобы создать группу с использованием протокола Messaging Layer Security (бета-версия).";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
 "conversation.create.mls.cancel" = "Отмена";
 "conversation.create.non_federating_domains_error.title" = "Невозможно создать группу";
@@ -992,7 +992,7 @@
 "group_details.receipt_options_cell.title" = "Отчеты о прочтении";
 "group_details.receipt_options_cell.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 
-"group_details.message_protocol.section_tile" = "Сведения о протоколе (beta)";
+"group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Протокол";
 "group_details.message_protocol.cipher_suite" = "Набор шифров";
 
