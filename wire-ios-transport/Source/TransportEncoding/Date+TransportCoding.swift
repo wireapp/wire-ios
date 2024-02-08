@@ -34,7 +34,7 @@ private let alternativeISO8601DateFormatter = {
 
 extension Date: TransportCoding {
 
-    public var transportString: String {
+    public func transportString() -> String {
         iso8601DateFormatter.string(from: self)
     }
 

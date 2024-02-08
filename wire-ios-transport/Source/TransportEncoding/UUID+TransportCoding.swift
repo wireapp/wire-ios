@@ -20,7 +20,7 @@ import Foundation
 
 extension UUID: TransportCoding {
 
-    public var transportString: String {
+    public func transportString() -> String {
         uuidString.lowercased()
     }
 
@@ -33,7 +33,7 @@ extension NSUUID {
 
     @objc(transportString)
     public var transportString: String {
-        (self as UUID).transportString
+        (self as UUID).transportString()
     }
 
     @objc(initWithTransportString:)

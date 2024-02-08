@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// @objc(ZMTransportCoding)
 public protocol TransportCoding {
 
     /// String representation of a value which can be sent to the API.
-    var transportString: String { get }
+    func transportString() -> String
 
     /// Initializer based on a String value which is received from the API.
     init?(transportString: String)

@@ -18,7 +18,7 @@
 
 import XCTest
 
-final class Date_transportStringTests: XCTestCase {
+final class Date_TransportCodingTests: XCTestCase {
 
     func testThatTransportDatesCanBeParsed_0() throws {
         let date = try XCTUnwrap(Date(transportString: "2014-03-14T16:47:37.573Z"))
@@ -92,8 +92,8 @@ final class Date_transportStringTests: XCTestCase {
     }
 
     func testEncodedValues() {
-        XCTAssertEqual(Date(timeIntervalSinceReferenceDate: 416508457.573).transportString, "2014-03-14T16:47:37.573Z")
-        XCTAssertEqual(Date(timeIntervalSinceReferenceDate: 419244304.502).transportString, "2014-04-15T08:45:04.502Z")
+        XCTAssertEqual(Date(timeIntervalSinceReferenceDate: 416508457.573).transportString(), "2014-03-14T16:47:37.573Z")
+        XCTAssertEqual(Date(timeIntervalSinceReferenceDate: 419244304.502).transportString(), "2014-04-15T08:45:04.502Z")
     }
 
     var gmt: TimeZone {

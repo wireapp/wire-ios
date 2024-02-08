@@ -117,7 +117,7 @@ class ZMTransportSessionTests_Initialization: ZMTBaseTest {
 
     func testThatItConfiguresSessionsCorrectly() {
         // given
-        let userID = userIdentifier.transportString
+        let userID = userIdentifier.transportString()
         let foregroundSession = sut.sessionsDirectory.foregroundSession
         let backgroundSession = sut.sessionsDirectory.backgroundSession
 

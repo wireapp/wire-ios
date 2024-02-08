@@ -118,6 +118,7 @@ public extension ZMTransportSession {
         prefix: String,
         userIdentifier: UUID
     ) -> String {
-        "\(prefix)-\(userIdentifier.transportString)"
+        return "\(prefix)-\(userIdentifier.transportString())"
     }
+
 }
