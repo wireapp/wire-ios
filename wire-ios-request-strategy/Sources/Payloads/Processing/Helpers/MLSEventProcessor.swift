@@ -115,7 +115,7 @@ public class MLSEventProcessor: MLSEventProcessing {
     ) async {
         WireLogger.mls.info("MLS event processor is processing welcome message")
 
-        guard DeveloperFlag.migrateMLSOnlyOnNavigation.isOn else {
+        if DeveloperFlag.migrateMLSOnlyOnNavigation.isOn {
             WireLogger.mls.notice("ignore welcome message due to developer flag 'migrateMLSOnlyOnNavigation'!")
             return
         }

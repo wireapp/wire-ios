@@ -449,7 +449,7 @@ extension ZMUser: UserConnections {
         connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                guard DeveloperFlag.migrateMLSOnlyOnNavigation.isOn else {
+                if DeveloperFlag.migrateMLSOnlyOnNavigation.isOn {
                     WireLogger.mls.notice("skip mls migration after accept connection, due to developer flag 'migrateMLSOnlyOnNavigation'!")
                     completion(nil)
                     return
