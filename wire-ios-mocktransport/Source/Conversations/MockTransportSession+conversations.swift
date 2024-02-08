@@ -46,7 +46,7 @@ extension MockTransportSession {
         let responsePayload = [
             "conversation": conversation.identifier,
             "type": "conversation.receipt-mode-update",
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "from": selfUser.identifier,
             "data": ["receipt_mode": receiptMode]] as ZMTransportData
 
@@ -77,7 +77,7 @@ extension MockTransportSession {
         let responsePayload = [
             "conversation": conversation.identifier,
             "type": "conversation.access-update",
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "from": selfUser.identifier,
             "data": [
                 "access_role": conversation.accessRole,
@@ -150,7 +150,7 @@ extension MockTransportSession {
                         "code": "test-code"
                     ],
                     "type": "conversation.code-update",
-                    "time": NSDate().transportString(),
+                    "time": Date().transportString(),
                     "from": selfUser.identifier
             ] as ZMTransportData
             return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: apiVersion.rawValue)
@@ -217,7 +217,7 @@ extension MockTransportSession {
             let responsePayload = [
                 "conversation": conversation.identifier,
                 "type": "conversation.member-join",
-                "time": NSDate().transportString(),
+                "time": Date().transportString(),
                 "data": [
                     "users": [
                         [
