@@ -38,7 +38,7 @@ extension UIAlertController {
     class func fromFeatureChange(_ change: FeatureRepository.FeatureChange,
                                  acknowledger: FeatureChangeAcknowledger) -> UIAlertController? {
         switch change {
-        case .conferenceCallingIsAvailable:
+        case .conferenceCallingIsAvailable, .e2eIEnabled:
             // Handled elsewhere.
             return nil
 
@@ -72,8 +72,27 @@ extension UIAlertController {
         case .conversationGuestLinksDisabled:
             return alertForFeatureChange(message: Strings.Alert.ConversationGuestLinks.Message.disabled,
                                          onOK: { acknowledger.acknowledgeChange(for: .conversationGuestLinks) })
-
         }
+    }
+
+    class func fromFeatureChangeWithActions(_ change: FeatureRepository.FeatureChange,
+                                            actionsHandler: FeatureChangeActions) -> UIAlertController? {
+        switch change {
+        case .e2eIEnabled:
+            return alertForE2eIChangeWithActions { action in
+                switch action {
+                case .getCertificate:
+                    actionsHandler.enrollCertificate()
+                case .remindLater:
+                    actionsHandler.postponeReminder()
+                }
+            }
+
+        default:
+            // Handled elsewhere.
+            return nil
+        }
+
     }
 
 }

@@ -323,12 +323,21 @@ public class FeatureRepository: FeatureRepositoryInterface {
         return .init(status: feature.status, config: config)
     }
 
-    public func storeE2EI(_ e2eid: Feature.E2EI) {
-        let config = try! JSONEncoder().encode(e2eid.config)
+    public func storeE2EI(_ e2ei: Feature.E2EI) {
+        let config = try! JSONEncoder().encode(e2ei.config)
 
         Feature.updateOrCreate(havingName: .e2ei, in: context) {
-            $0.status = e2eid.status
+            $0.status = e2ei.status
             $0.config = config
+        }
+        guard needsToNotifyUser(for: .e2ei) else { return }
+
+        switch e2ei.status {
+        case .enabled:
+            notifyChange(.e2eIEnabled)
+
+        case .disabled:
+            return
         }
     }
 
@@ -444,7 +453,16 @@ extension FeatureRepository {
         case fileSharingDisabled
         case conversationGuestLinksEnabled
         case conversationGuestLinksDisabled
+        case e2eIEnabled
 
+        public var hasFurtherActions: Bool {
+            switch self {
+            case .e2eIEnabled:
+                return true
+            default:
+                return false
+            }
+        }
     }
 
 }
