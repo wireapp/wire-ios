@@ -36,8 +36,8 @@ extension NSUUID {
         (self as UUID).transportString()
     }
 
-    @objc(initWithTransportString:)
-    public convenience init?(transportString: String) {
-        self.init(transportString: transportString)
+    @objc(uuidWithTransportString:)
+    public static func uuid(transportString: String) -> NSUUID? {
+        Foundation.UUID(transportString: transportString) as NSUUID?
     }
 }
