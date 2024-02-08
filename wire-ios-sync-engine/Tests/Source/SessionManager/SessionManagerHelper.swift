@@ -47,7 +47,8 @@ struct SessionManagerHelper {
             enabled: true,
             reachabilityClosure: { reachability }
         )
-        let sessionManager = SessionManager(
+
+        return SessionManager(
             maxNumberAccounts: maxNumberAccounts,
             appVersion: "0.0.0",
             authenticatedSessionFactory: authenticatedSessionFactory,
@@ -66,9 +67,5 @@ struct SessionManagerHelper {
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: .temporary()
         )
-
-        sessionManager.start(launchOptions: [:])
-
-        return sessionManager
     }
 }
