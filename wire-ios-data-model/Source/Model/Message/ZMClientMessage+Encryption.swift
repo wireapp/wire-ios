@@ -941,7 +941,7 @@ extension GenericMessage {
 
             func mentionedServices() -> Set<ZMUser> {
                 return services.filter { service in
-                    self.textData?.mentions.contains { $0.userID == service.remoteIdentifier?.transportString } ?? false
+                    self.textData?.mentions.contains { $0.userID == service.remoteIdentifier?.transportString() } ?? false
                 }
             }
 

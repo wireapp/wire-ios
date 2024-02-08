@@ -84,7 +84,7 @@ public struct SearchUserAssetKeys {
 extension ZMSearchUser: SearchServiceUser {
 
     public var serviceIdentifier: String? {
-        return remoteIdentifier?.transportString
+        return remoteIdentifier?.transportString()
     }
 
 }
@@ -555,7 +555,7 @@ public class ZMSearchUser: NSObject, UserType {
         if let user = user {
             return user.smallProfileImageCacheKey
         } else if let remoteIdentifier = remoteIdentifier {
-            return "\(remoteIdentifier.transportString)_preview"
+            return "\(remoteIdentifier.transportString())_preview"
         }
 
         return nil
@@ -565,7 +565,7 @@ public class ZMSearchUser: NSObject, UserType {
         if let user = user {
             return user.mediumProfileImageCacheKey
         } else if let remoteIdentifier = remoteIdentifier {
-            return "\(remoteIdentifier.transportString)_complete"
+            return "\(remoteIdentifier.transportString())_complete"
         }
 
         return nil

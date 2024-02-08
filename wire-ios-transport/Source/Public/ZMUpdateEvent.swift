@@ -346,7 +346,7 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
 
 extension ZMUpdateEvent {
     open override var description: String {
-        let uuidDescription = uuid?.transportString ?? "<no uuid>"
+        let uuidDescription = uuid?.transportString() ?? "<no uuid>"
         return "<\(Swift.type(of: self))> \(uuidDescription) \(payload) \n \(debugInformation)"
     }
 }
