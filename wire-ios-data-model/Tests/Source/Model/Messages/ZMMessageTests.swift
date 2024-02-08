@@ -69,8 +69,7 @@ extension ZMMessageTests {
         sender.remoteIdentifier = UUID()
 
         // add selfUser to the conversation
-        let userIDs: [ZMTransportEncoding] = [sender.remoteIdentifier as NSUUID,
-                                              user.remoteIdentifier as NSUUID]
+        let userIDs: [TransportCoding] = [sender.remoteIdentifier, user.remoteIdentifier]
         var message: ZMSystemMessage?
         performPretendingUiMocIsSyncMoc { [weak self] in
             message = self?.createSystemMessage(from: .conversationMemberJoin, in: conversation, withUsersIDs: userIDs, senderID: sender.remoteIdentifier)
@@ -82,5 +81,4 @@ extension ZMMessageTests {
         // then
         XCTAssertFalse(message!.userIsTheSender)
     }
-
 }
