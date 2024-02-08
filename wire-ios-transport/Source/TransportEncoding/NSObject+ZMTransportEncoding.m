@@ -45,7 +45,20 @@ static NSDateFormatter* iso8601DateFormatter;
 
 + (instancetype)dateWithTransportString:(NSString *)transportString;
 {
-    return [[self ISO8601DateFormatter] dateFromString:transportString];
+    NSDate *date = [[self ISO8601DateFormatter] dateFromString:transportString];
+    if (date) {
+        return date;
+    }
+
+    NSISO8601DateFormatter *alternativeDateFormatter = [[NSISO8601DateFormatter alloc] init];
+    alternativeDateFormatter.formatOptions = NSISO8601DateFormatWithInternetDateTime;
+    date = [alternativeDateFormatter dateFromString:transportString];
+    if (date) {
+        return date;
+    }
+
+    alternativeDateFormatter.formatOptions |= NSISO8601DateFormatWithFractionalSeconds;
+    return [alternativeDateFormatter dateFromString:transportString];
 }
 
 - (NSString *)transportString;
