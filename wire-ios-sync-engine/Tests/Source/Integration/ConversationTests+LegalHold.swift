@@ -118,8 +118,18 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let legalHoldUser = self.user(for: user1)!
-        let groupConversation = try XCTUnwrap(self.conversation(for: self.groupConversation))
+        let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform({
+            return (
+                self.user(for: self.user1),
+                self.conversation(for: self.groupConversation)
+            )
+        })
+
+        guard let legalHoldUser, let groupConversation else {
+            XCTFail("expect legalHoldUser and groupConversation")
+            return
+        }
+
         let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
 
         mockTransportSession.performRemoteChanges { (session) in
@@ -130,16 +140,20 @@ class ConversationTests_LegalHold: ConversationTestsBase {
 
         try await conversationParticipantsService.addParticipants([legalHoldUser], to: groupConversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(groupConversation.legalHoldStatus, .pendingApproval)
+        await self.userSession!.managedObjectContext.perform {
+            XCTAssertEqual(groupConversation.legalHoldStatus, .pendingApproval)
+        }
 
         // when
         try await conversationParticipantsService.removeParticipant(legalHoldUser, from: groupConversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let lastMessage = groupConversation.lastMessage as? ZMSystemMessage
-        XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldDisabled)
-        XCTAssertEqual(groupConversation.legalHoldStatus, .disabled)
+        await self.userSession!.managedObjectContext.perform {
+            let lastMessage = groupConversation.lastMessage as? ZMSystemMessage
+            XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldDisabled)
+            XCTAssertEqual(groupConversation.legalHoldStatus, .disabled)
+        }
     }
 
     // MARK: Legal hold status flag

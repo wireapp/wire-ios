@@ -27,7 +27,7 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
         let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
-        let connectedUser = user(for: self.user2)!
+        let connectedUser = await userSession!.managedObjectContext.perform { self.user(for: self.user2)! }
 
         let observer = ConversationChangeObserver(conversation: conversation)
         observer?.clearNotifications()
@@ -67,23 +67,27 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
         let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
-        let connectedUser = user(for: self.user2)!
+        let connectedUser = await userSession!.managedObjectContext.perform { self.user(for: self.user2)! }
 
-        XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
-
+        await userSession!.managedObjectContext.perform {
+            XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
+        }
         // when
         try await conversationParticipantsService.addParticipants([connectedUser], to: conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
-
+        await userSession!.managedObjectContext.perform {
+            XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
+        }
         // Tear down & recreate contexts
-        recreateSessionManagerAndDeleteLocalData()
+        self.recreateSessionManagerAndDeleteLocalData()
         XCTAssertTrue(login())
 
         // then
-        XCTAssertTrue(self.conversation(for: emptyGroupConversation)!.localParticipants.contains(user(for: self.user2)!))
+        await userSession!.managedObjectContext.perform { [self] in
+            XCTAssertTrue(self.conversation(for: emptyGroupConversation)!.localParticipants.contains(user(for: self.user2)!))
+        }
     }
 
     func testThatRemovingParticipantsFromAConversationIsSynchronizedWithBackend() async throws {
@@ -92,23 +96,29 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         let conversation = try XCTUnwrap(self.conversation(for: self.groupConversation))
         let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
-        let connectedUser = user(for: self.user2)!
+        let connectedUser = await userSession!.managedObjectContext.perform { self.user(for: self.user2)! }
 
-        XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
+        await userSession!.managedObjectContext.perform {
+            XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
+        }
 
         // when
         try await conversationParticipantsService.removeParticipant(connectedUser, from: conversation)
         XCTAssertTrue( waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // then
-        XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
+        await userSession!.managedObjectContext.perform {
+            // then
+            XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
+        }
 
         // Tear down & recreate contexts
-        recreateSessionManagerAndDeleteLocalData()
+        self.recreateSessionManagerAndDeleteLocalData()
         XCTAssertTrue(login())
 
         // then
-        XCTAssertFalse(self.conversation(for: groupConversation)!.localParticipants.contains(user(for: self.user2)!))
+        await userSession!.managedObjectContext.perform { [self] in
+            XCTAssertFalse(self.conversation(for: groupConversation)!.localParticipants.contains(user(for: self.user2)!))
+        }
     }
 
     func testThatNotificationsAreReceivedWhenConversationsAreFaulted() throws {

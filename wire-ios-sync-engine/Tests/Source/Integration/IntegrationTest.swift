@@ -137,7 +137,9 @@ extension IntegrationTest {
         userSession?.syncManagedObjectContext.performGroupedAndWait {
             $0.zm_teardownMessageObfuscationTimer()
         }
-        userSession?.managedObjectContext.zm_teardownMessageDeletionTimer()
+        userSession?.managedObjectContext.performGroupedAndWait {
+            $0.zm_teardownMessageDeletionTimer()
+        }
     }
 
     @objc
@@ -182,7 +184,9 @@ extension IntegrationTest {
     @objc
     func destroySessionManager() {
         destroyTimers()
-        userSession?.tearDown()
+        userSession?.managedObjectContext.performGroupedAndWait { _ in
+            self.userSession?.tearDown()
+        }
         userSession = nil
         sessionManager = nil
 
@@ -479,7 +483,9 @@ extension IntegrationTest {
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMConversation.sortedFetchRequest(with: predicate)
-        let result = userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMConversation]
+
+        let result = userSession?.managedObjectContext.performAndWait { userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMConversation]
+        }
 
         if let conversation = result?.first {
             return conversation
