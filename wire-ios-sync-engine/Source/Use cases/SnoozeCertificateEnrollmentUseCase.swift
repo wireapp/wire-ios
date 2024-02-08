@@ -32,6 +32,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     private let gracePeriodRepository: GracePeriodRepository
     private let recurringActionService: RecurringActionServiceInterface
     private let actionId: String
+
     // MARK: - Life cycle
 
     init(e2eiFeature: Feature.E2EI,
@@ -72,8 +73,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     private func registerRecurringActionIfNeeded(interval: TimeInterval, gracePeriod: TimeInterval) {
 
-        /// TODO: check if the self client doesn't have a certificate
-        /// https://wearezeta.atlassian.net/browse/WPB-765
+        // TODO: [WPB-6504] check if the self client doesn't have a certificate
         guard e2eiFeature.isEnabled else {
             return
         }

@@ -42,7 +42,8 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
     }
 
     public func enrollCertificate() {
-        // TODO: [WPB-5496]
+        // TODO: [WPB-5496] enroll certificate
+        snoozeCertificateEnrollmentUseCase?.remove()
     }
 
     public func snoozeReminder(during gracePeriod: TimeInterval) {

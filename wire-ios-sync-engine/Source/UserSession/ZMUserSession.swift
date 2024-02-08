@@ -303,7 +303,7 @@ public class ZMUserSession: NSObject {
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 
-    public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol =  {
+    public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
         return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
     }()
 
