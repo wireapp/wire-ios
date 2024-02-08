@@ -42,7 +42,7 @@ extension ZMUser {
                 return value
             } else {
                 let identifier = UUID()
-                let identifierString = identifier.transportString()
+                let identifierString = identifier.transportString
                 self.analyticsIdentifier = identifierString
                 broadcast(identifier: identifier)
                 return identifierString

@@ -310,7 +310,7 @@ extension ZMConversation {
             return
         }
 
-        zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier})")
+        zmLog.debug("Sender: \(user.remoteIdentifier?.transportString ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier})")
 
         switch conversationType {
         case .group:
@@ -465,7 +465,7 @@ extension ZMConversation {
                 // Delivery receipt: just expire it
                 message.expire()
             } else {
-                WireLogger.messaging.warn("expiring message due to security degradation " + String(describing: message.nonce?.transportString().readableHash))
+                WireLogger.messaging.warn("expiring message due to security degradation " + String(describing: message.nonce?.transportString.readableHash))
                 // All other messages: expire and mark that it caused security degradation
                 message.expire()
                 message.causedSecurityLevelDegradation = true

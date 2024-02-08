@@ -53,7 +53,7 @@ extension ZMUser {
         var remainingSlots = maxCount - recipients.count
 
         let sortByIdentifer: (ZMUser, ZMUser) -> Bool = {
-            $0.remoteIdentifier.transportString() < $1.remoteIdentifier.transportString()
+            $0.remoteIdentifier.transportString < $1.remoteIdentifier.transportString
         }
 
         let teamMembers = knownTeamMembers(in: context)

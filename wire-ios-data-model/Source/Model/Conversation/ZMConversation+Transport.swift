@@ -206,7 +206,7 @@ extension ZMConversation {
 extension Dictionary where Key == String, Value == Any {
 
     func UUID(fromKey key: String) -> UUID? {
-        return (self[key] as? String).flatMap(Foundation.UUID.init)
+        return (self[key] as? String).flatMap(Foundation.UUID.init(transportString:))
     }
 
     func date(fromKey key: String) -> Date? {
@@ -221,7 +221,7 @@ extension Dictionary where Key == String, Value == Any {
 extension Dictionary where Key == String, Value == Any? {
 
     func UUID(fromKey key: String) -> UUID? {
-        return (self[key] as? String).flatMap(Foundation.UUID.init)
+        return (self[key] as? String).flatMap(Foundation.UUID.init(transportString:))
     }
 
     func date(fromKey key: String) -> Date? {

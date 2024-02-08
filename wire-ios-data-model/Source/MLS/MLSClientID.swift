@@ -42,7 +42,7 @@ public struct MLSClientID: Equatable, Hashable {
 
     public init?(userClient: UserClientType) {
         guard
-            let userID = userClient.user?.remoteIdentifier.transportString(),
+            let userID = userClient.user?.remoteIdentifier.transportString,
             let clientID = userClient.remoteIdentifier,
             let domain = userClient.user?.domain ?? BackendInfo.domain
         else {
@@ -58,7 +58,7 @@ public struct MLSClientID: Equatable, Hashable {
 
     public init(qualifiedClientID: QualifiedClientID) {
         self.init(
-            userID: qualifiedClientID.userID.transportString(),
+            userID: qualifiedClientID.userID.transportString,
             clientID: qualifiedClientID.clientID,
             domain: qualifiedClientID.domain
         )
@@ -112,7 +112,7 @@ public extension MLSClientID {
 
     static func random() -> MLSClientID {
         return MLSClientID(
-            userID: UUID().transportString(),
+            userID: UUID().transportString,
             clientID: .randomAlphanumerical(length: 8),
             domain: .randomDomain()
         )
