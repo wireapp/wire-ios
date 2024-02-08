@@ -87,10 +87,10 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             (conversation.qualifiedID, conversation.mlsGroupID)
         }
 
-        Logging.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
+        WireLogger.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
 
         guard let groupID else {
-            Logging.mls.warn("failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID")
+            WireLogger.mls.warn("failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID")
             throw MLSConversationParticipantsError.invalidOperation
         }
 
@@ -109,7 +109,7 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             throw MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set(failedUsers))
 
         } catch {
-            Logging.mls.warn("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
+            WireLogger.mls.warn("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
             throw error
         }
     }
@@ -123,10 +123,10 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             (conversation.qualifiedID, conversation.mlsGroupID, user.qualifiedID)
         }
 
-        Logging.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
+        WireLogger.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
 
         guard let groupID, let userID else {
-            Logging.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation")
+            WireLogger.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation")
             throw MLSConversationParticipantsError.invalidOperation
         }
 
@@ -141,7 +141,7 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
                 for: groupID
             )
         } catch {
-            Logging.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
+            WireLogger.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
             throw error
         }
     }

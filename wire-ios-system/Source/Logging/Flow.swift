@@ -55,7 +55,7 @@ open class Flow {
   /// Report the start of the flow.
 
   public func start() {
-    logger.info(FlowLog(name: name, event: .start))
+    logger.info(FlowLog(name: name, event: .init(type: .start, description: nil, outcome: .success)))
   }
 
   /// Report a checkpoint in the flow.
@@ -63,14 +63,14 @@ open class Flow {
   /// - Parameters:
   ///   - description: A short single line string describing a point of interest.
 
-  public func checkpoint(description: String) {
-    logger.info(FlowLog(name: name, event: .checkpoint(description: description)))
+  public func checkpoint(description: LogConvertible) {
+      logger.info(FlowLog(name: name, event: .init(type: .checkpoint, description: description.logDescription, outcome: .success)))
   }
 
   /// Report a successful end to the flow.
 
   public func succeed() {
-    logger.info(FlowLog(name: name, event: .completion(.success(()))))
+      logger.info(FlowLog(name: name, event: .init(type: .end, description: nil, outcome: .success)))
   }
 
   /// Report a failed end to the flow.
@@ -79,7 +79,7 @@ open class Flow {
   ///   - error: The failure reason.
 
   public func fail(_ error: Error) {
-    logger.error(FlowLog(name: name, event: .completion(.failure(error))))
+      logger.error(FlowLog(name: name, event: .init(type: .end, description: String(describing: error), outcome: .failure)))
   }
 
   /// Report a failed end to the flow.
@@ -87,8 +87,8 @@ open class Flow {
   /// - Parameters:
   ///   - reason: The failure reason.
 
-  public func fail(_ reason: String) {
-    logger.error(FlowLog(name: name, event: .completion(.failure(GenericError(reason: reason)))))
+  public func fail(_ reason: LogConvertible) {
+      logger.error(FlowLog(name: name, event: .init(type: .end, description: reason.logDescription, outcome: .failure)))
   }
 
   struct GenericError: Error {
@@ -105,8 +105,10 @@ struct FlowLog: LogConvertible, Encodable {
   let event: Event
 
   var logDescription: String {
-    guard
-      let data = try? JSONEncoder().encode(self),
+      let encoder = JSONEncoder()
+      encoder.outputFormatting = .sortedKeys
+      guard
+        let data = try? encoder.encode(self),
       let string = String(data: data, encoding: .utf8)
     else {
       return "FLOW: \(name) ENCODING ERROR"
@@ -118,31 +120,29 @@ struct FlowLog: LogConvertible, Encodable {
 }
 
 extension FlowLog {
-
-  enum Event: Encodable {
-
-    case start
-    case checkpoint(description: String)
-    case completion(Result<Void, Error>)
-
-    func encode(to encoder: Encoder) throws {
-      var container = encoder.singleValueContainer()
-
-      switch self {
-      case .start:
-        try container.encode("start")
-
-      case .checkpoint(let description):
-        try container.encode("checkpoint - \(description)")
-
-      case .completion(.success):
-        try container.encode("success")
-
-      case .completion(.failure(let error)):
-        try container.encode("failure - \(String(describing: error))")
+  struct Event: Encodable {
+      enum StepType: String, Encodable {
+          case start
+          case checkpoint
+          case end
       }
-    }
 
+      enum StepOutcome: String, Encodable {
+          case failure
+          case success
+      }
+
+      var type: StepType
+      var description: String?
+      var outcome: StepOutcome
   }
+}
 
+public extension Flow {
+    static var createGroup: Flow {
+        Flow(tag: WireLogger.conversation.tag, name: "CreateGroup")
+    }
+    static var addParticipants: Flow {
+        Flow(tag: WireLogger.conversation.tag, name: "AddParticipants")
+    }
 }
