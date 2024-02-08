@@ -35,7 +35,7 @@ extension ZMMessage {
             syncMoc.performGroupedBlock {
                 guard let message = (try? syncMoc.existingObject(with: self.objectID)) as? ZMOTRMessage else { return }
                 message.causedSecurityLevelDegradation = true
-                WireLogger.messaging.warn("expiring message because inserting into degraded conversation " + String(describing: message.nonce?.transportString().readableHash))
+                WireLogger.messaging.warn("expiring message because inserting into degraded conversation " + String(describing: message.nonce?.transportString.readableHash))
                 message.expire()
                 syncMoc.saveOrRollback()
                 NotificationDispatcher.notifyNonCoreDataChanges(objectID: conversation.objectID, changedKeys: [#keyPath(ZMConversation.securityLevel)], uiContext: uiMoc)
