@@ -53,7 +53,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { conversationID, userIDs in
             XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
-            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"]) // TODO [WPB-765]: after CC update it should have the prefix "@example.com"
+            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"]) // TODO [WPB-765]: after CC update it should have the suffix "@example.com"
             return [userIDs[0]: [.withStatus(.valid), .withStatus(.expired)]]
         }
 
