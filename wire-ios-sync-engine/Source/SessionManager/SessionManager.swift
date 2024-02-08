@@ -897,12 +897,18 @@ public final class SessionManager: NSObject, SessionManagerType {
 
                 // for some migrations we need to slow sync
                 if coreDataStack.needsToTriggerSlowSync {
-                    userSession.syncStatus?.forceSlowSync()
+                    triggerSlowSync(for: userSession)
                 }
 
                 onCompletion(userSession)
             }
         )
+    }
+
+    private func triggerSlowSync(for userSession: ZMUserSession) {
+        userSession.syncContext.perform {
+            userSession.syncStatus?.forceSlowSync()
+        }
     }
 
     private func clearCacheDirectory() {
