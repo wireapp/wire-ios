@@ -427,32 +427,6 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssertEqual(fileCount, 0)
         XCTAssertFalse(FileManager.default.fileExists(atPath: tempUrl.path))
     }
-}
-
-extension IntegrationTest {
-    func createAccount() -> Account {
-        return createAccount(with: currentUserIdentifier)
-    }
-
-    func createAccount(with id: UUID) -> Account {
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
-            XCTFail()
-            fatalError()
-        }
-
-        let manager = AccountManager(sharedDirectory: sharedContainer)
-        let account = Account(userName: "Test Account", userIdentifier: id)
-        manager.addOrUpdate(account)
-
-        return account
-    }
-
-    func createSelfClient(_ context: NSManagedObjectContext) -> UserClient {
-        let selfClient = UserClient.insertNewObject(in: context)
-        selfClient.remoteIdentifier = nil
-        selfClient.user = ZMUser.selfUser(in: context)
-        return selfClient
-    }
 
     // FIXME: [WPB-5638] this test will hang - [jacob]
     //
@@ -548,6 +522,26 @@ extension IntegrationTest {
 
         let selfConversation = ZMConversation.insertNewObject(in: context)
         selfConversation.remoteIdentifier = ZMConversation.selfConversationIdentifier(in: context)
+    }
+}
+
+extension IntegrationTest {
+
+    func createAccount() -> Account {
+        return createAccount(with: currentUserIdentifier)
+    }
+
+    func createAccount(with id: UUID) -> Account {
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
+            XCTFail()
+            fatalError()
+        }
+
+        let manager = AccountManager(sharedDirectory: sharedContainer)
+        let account = Account(userName: "Test Account", userIdentifier: id)
+        manager.addOrUpdate(account)
+
+        return account
     }
 }
 

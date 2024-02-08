@@ -520,4 +520,13 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
         // THEN
         XCTAssertNotNil(activity)
     }
+
+    // MARK: - Helpers
+
+    private func createSelfClient(_ context: NSManagedObjectContext) -> UserClient {
+        let selfClient = UserClient.insertNewObject(in: context)
+        selfClient.remoteIdentifier = nil
+        selfClient.user = ZMUser.selfUser(in: context)
+        return selfClient
+    }
 }
