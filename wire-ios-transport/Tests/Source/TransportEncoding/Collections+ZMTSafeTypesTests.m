@@ -93,8 +93,8 @@
 
 - (void)testThatItReadsAUUID {
     NSString *key = @"uuid";
-    XCTAssertEqualObjects([NSUUID uuidWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary uuidForKey:key]);
-    XCTAssertEqualObjects([NSUUID uuidWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary optionalUuidForKey:key]);
+    XCTAssertEqualObjects([[NSUUID alloc] initWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary uuidForKey:key]);
+    XCTAssertEqualObjects([[NSUUID alloc] initWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary optionalUuidForKey:key]);
     XCTAssertNil([self.sampleDictionary uuidForKey:@"baz"]);
     XCTAssertNil([self.sampleDictionary optionalUuidForKey:@"baz"]);
     XCTAssertNil([self.sampleDictionary uuidForKey:@"string"]);

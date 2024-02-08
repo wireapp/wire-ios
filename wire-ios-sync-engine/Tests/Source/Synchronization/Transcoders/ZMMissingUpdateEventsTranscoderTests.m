@@ -110,11 +110,11 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 @implementation ZMMissingUpdateEventsTranscoderTests (MissingNotifications)
 
 - (NSUUID *)olderNotificationID {
-    return [NSUUID uuidWithTransportString:@"a6526b00-000a-11e5-a837-0800200c9a66"];
+    return [[NSUUID alloc] initWithTransportString:@"a6526b00-000a-11e5-a837-0800200c9a66"];
 }
 
 - (NSUUID *)newNotificationID {
-    return [NSUUID uuidWithTransportString:@"54ad4672-be09-11e5-9912-ba0be0483c18"];
+    return [[NSUUID alloc] initWithTransportString:@"54ad4672-be09-11e5-9912-ba0be0483c18"];
 }
 
 - (void)testThatItGenerateARequestToFetchNotificationStreamWhenSyncing
