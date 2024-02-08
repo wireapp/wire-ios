@@ -518,6 +518,7 @@
 		E666EDE82B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE72B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift */; };
 		E666EDEA2B74E9EF00C03E2B /* SessionManagerTests+Teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE92B74E9EF00C03E2B /* SessionManagerTests+Teams.swift */; };
 		E666EDEC2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */; };
+		E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
 		EE01E0391F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */; };
 		EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
@@ -1260,6 +1261,7 @@
 		E666EDE72B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+EncryptionAtRestDefaults.swift"; sourceTree = "<group>"; };
 		E666EDE92B74E9EF00C03E2B /* SessionManagerTests+Teams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Teams.swift"; sourceTree = "<group>"; };
 		E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+MultiUserSession.swift"; sourceTree = "<group>"; };
+		E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AppLock.swift"; sourceTree = "<group>"; };
 		EBD7B55754FDA4E74F1006FD /* ZMOperationLoopTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMOperationLoopTests.h; sourceTree = "<group>"; };
 		EE01E0361F90DABC001AA33C /* audio.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = audio.m4a; sourceTree = "<group>"; };
 		EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_ExpiredMessage.swift; sourceTree = "<group>"; };
@@ -2644,6 +2646,7 @@
 				F159F4131F1E3134001B7D80 /* SessionManagerTests.swift */,
 				EEC0A2D229433D360032C1C9 /* SessionManagerTests+PushToken.swift */,
 				E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */,
+				E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */,
 				E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */,
 				E666EDE52B74E85300C03E2B /* SessionManagerTests+EncryptionAtRestMigration.swift */,
 				E666EDE72B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift */,
@@ -3191,6 +3194,7 @@
 				169BA24925EF743F00374343 /* SessionManagerTests+Backup.swift in Sources */,
 				169BA26225EFA32000374343 /* ZMUser+Testing.m in Sources */,
 				169BA22D25ED0FEF00374343 /* AvailabilityTests.swift in Sources */,
+				E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */,
 				169BA1F025ECEB0E00374343 /* SessionManagerTests.swift in Sources */,
 				EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */,
 				EECE27C729436CF900419A8B /* MockPushTokenService.swift in Sources */,
