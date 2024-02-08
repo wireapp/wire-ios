@@ -278,7 +278,7 @@ extension NSManagedObjectContext {
 
         guard
             let selfClient = selfUser.selfClient(),
-            let selfUserId = selfUser.remoteIdentifier?.transportString,
+            let selfUserId = selfUser.remoteIdentifier?.transportString(),
             let selfClientId = selfClient.remoteIdentifier,
             let context = (selfUserId + selfClientId).data(using: .utf8)
         else {

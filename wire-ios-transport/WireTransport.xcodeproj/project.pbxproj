@@ -102,7 +102,7 @@
 		596090D52B14C91D0007583F /* ZMUpdateEventTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */; };
 		59FFFB762B74E100008F0E1B /* Date+TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB752B74E100008F0E1B /* Date+TransportCoding.swift */; };
 		59FFFB782B74E17C008F0E1B /* TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB772B74E17C008F0E1B /* TransportCoding.swift */; };
-		59FFFB7A2B74E539008F0E1B /* Date+transportStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB792B74E539008F0E1B /* Date+transportStringTests.swift */; };
+		59FFFB7A2B74E539008F0E1B /* Date+TransportCodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB792B74E539008F0E1B /* Date+TransportCodingTests.swift */; };
 		59FFFB7C2B74F19F008F0E1B /* UUID+TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB7B2B74F19F008F0E1B /* UUID+TransportCoding.swift */; };
 		5E2C351021A554610034F1EE /* BackgroundActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C350F21A554610034F1EE /* BackgroundActivityManager.swift */; };
 		5E2C352621A567600034F1EE /* MockBackgroundActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C352421A567240034F1EE /* MockBackgroundActivityManager.swift */; };
@@ -331,7 +331,7 @@
 		596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUpdateEventTypeTests.swift; sourceTree = "<group>"; };
 		59FFFB752B74E100008F0E1B /* Date+TransportCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+TransportCoding.swift"; sourceTree = "<group>"; };
 		59FFFB772B74E17C008F0E1B /* TransportCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportCoding.swift; sourceTree = "<group>"; };
-		59FFFB792B74E539008F0E1B /* Date+transportStringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+transportStringTests.swift"; sourceTree = "<group>"; };
+		59FFFB792B74E539008F0E1B /* Date+TransportCodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+TransportCodingTests.swift"; sourceTree = "<group>"; };
 		59FFFB7B2B74F19F008F0E1B /* UUID+TransportCoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UUID+TransportCoding.swift"; sourceTree = "<group>"; };
 		5E2C350F21A554610034F1EE /* BackgroundActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundActivityManager.swift; sourceTree = "<group>"; };
 		5E2C352421A567240034F1EE /* MockBackgroundActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBackgroundActivityManager.swift; sourceTree = "<group>"; };
@@ -595,7 +595,7 @@
 				546E89D51B33015000DD1042 /* NSObject_ZMTransportEncodingTests.m */,
 				546E89D61B33015000DD1042 /* ZMTransportCodecTests.m */,
 				F9331C661CB3D47E00139ECC /* ZMUpdateEventTests.m */,
-				59FFFB792B74E539008F0E1B /* Date+transportStringTests.swift */,
+				59FFFB792B74E539008F0E1B /* Date+TransportCodingTests.swift */,
 			);
 			path = TransportEncoding;
 			sourceTree = "<group>";
@@ -1180,7 +1180,7 @@
 				54EA3E6D1BEA65B80071592B /* Fakes.m in Sources */,
 				546E8A031B33015000DD1042 /* ZMTransportSessionTests.m in Sources */,
 				5E2C352821A56FD50034F1EE /* BackgroundActivityFactoryTests.swift in Sources */,
-				59FFFB7A2B74E539008F0E1B /* Date+transportStringTests.swift in Sources */,
+				59FFFB7A2B74E539008F0E1B /* Date+TransportCodingTests.swift in Sources */,
 				54C3EC6F243E3517000B9230 /* RequestAvailableNotificationTests.swift in Sources */,
 				546E89EB1B33015000DD1042 /* ZMNetworkSocketTest.m in Sources */,
 				1650EBDD21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift in Sources */,
