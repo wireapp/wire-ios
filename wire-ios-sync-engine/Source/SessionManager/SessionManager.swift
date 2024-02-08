@@ -890,11 +890,16 @@ public final class SessionManager: NSObject, SessionManagerType {
                     return
                 }
 
-
                 let userSession = self.startBackgroundSession(
                     for: account,
                     with: coreDataStack
                 )
+
+                // for some migrations we need to slow sync
+                if coreDataStack.needsToTriggerSlowSync {
+                    userSession.syncStatus?.forceSlowSync()
+                }
+
                 onCompletion(userSession)
             }
         )

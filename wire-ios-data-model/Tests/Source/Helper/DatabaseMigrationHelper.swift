@@ -151,16 +151,19 @@ struct DatabaseMigrationHelper {
         sourceContainer = nil
 
         // WHEN
-        let stack = try testCase.createStorageStackAndWaitForCompletion(
+        var stack: CoreDataStack? = try testCase.createStorageStackAndWaitForCompletion(
             userID: accountIdentifier,
             applicationContainer: applicationContainer
         )
 
         // THEN
         // perform post migration action
-        try postMigrationAction(stack.syncContext)
-
-
+        if let stack {
+            try postMigrationAction(stack.syncContext)
+        }
+        
+        // remove complete stack before removing files
+        stack = nil
         try? FileManager.default.removeItem(at: applicationContainer)
     }
 }

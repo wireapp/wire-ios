@@ -19,35 +19,11 @@
 import Foundation
 import WireSystem
 
-class DuplicateTeamsMigrationPolicy: NSEntityMigrationPolicy {
+class DuplicateTeamsMigrationPolicy: DuplicateObjectsMigrationPolicy {
 
-    private enum Keys: String {
-        case needsToBeUpdatedFromBackend
+    // Key used to compare duplicate occurences of Team
+    override func primaryKey(fromSourceInstance sInstance: NSManagedObject) -> String {
+        let remoteIdentifierData = sInstance.value(forKey: ZMManagedObject.remoteIdentifierDataKey()!) as? Data
+        return remoteIdentifierData.flatMap { UUID(data: $0)?.uuidString } ?? "<nil>"
     }
-
-    override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
-        WireLogger.localStorage.info("beginning duplicate teams migration", attributes: .safePublic)
-
-        let context = manager.sourceContext
-
-        let duplicates: [Data: [NSManagedObject]] = context.findDuplicated(
-            entityName: Team.entityName(),
-            by: Team.remoteIdentifierDataKey()!
-        )
-
-        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate teams", attributes: .safePublic)
-
-        duplicates.forEach { (_, teams: [NSManagedObject]) in
-            guard teams.count > 1 else {
-                return
-            }
-           
-            // for now we just keep one team and mark to sync and drop the rest.
-            teams.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
-            teams.dropFirst().forEach(context.delete)
-
-            WireLogger.localStorage.warn("removed 1 occurence of duplicate teams", attributes: .safePublic)
-        }
-    }
-
 }

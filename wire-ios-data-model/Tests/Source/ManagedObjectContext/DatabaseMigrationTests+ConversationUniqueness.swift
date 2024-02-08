@@ -20,6 +20,7 @@ import XCTest
 import Foundation
 @testable import WireDataModel
 
+@available(iOS 15.0, *)
 final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
 
     private let bundle = Bundle(for: ZMManagedObject.self)
@@ -99,9 +100,14 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
     }
 
     func testThatItPerformsMigrationFrom110Version_ToCurrentModelVersion() throws {
-        // With version 107 and later we can not insert duplicated keys anymore!
-
         let initialVersion = "2.110.0"
+        
+        CoreDataStack.migrationUserDefaults = .random()!
+        defer {
+            // verify duplicates need a slowSync
+            XCTAssertTrue(CoreDataStack.migrationUserDefaults.bool(forKey: "migrationsNeedToSlowSync"))
+            CoreDataStack.migrationUserDefaults = .standard
+        }
 
         try helper.migrateStoreToCurrentVersion(
             sourceVersion: initialVersion,
@@ -114,7 +120,7 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
             },
             postMigrationAction: { context in
                 // we need to use syncContext here because of `setInternalEstimatedUnreadCount` being tiggered on save
-                try context.performGroupedAndWait { [self] context in
+                try context.performAndWait { [self] in
                     // verify it deleted duplicates
                     var conversations = try fetchConversations(with: conversationId, domain: domain, in: context)
 

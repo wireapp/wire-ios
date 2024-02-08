@@ -488,6 +488,28 @@ class PersistentContainer: NSPersistentContainer {
 
 }
 
+// MARK: - Migrations helpers
+
+extension CoreDataStack {
+    static var migrationUserDefaults = UserDefaults.standard
+    static private var migrationsNeedToSlowSyncKey: String {
+        "migrationsNeedToSlowSync"
+    }
+    /// use to trigger slow sync after some CoreData migrations
+    static func setMigrationNeedsSlowSync() {
+        migrationUserDefaults.setValue(true, forKey: migrationsNeedToSlowSyncKey)
+        WireLogger.localStorage.info("needs slow sync after migration")
+    }
+
+    /// checks if we need a slowSync after migrations
+    /// - Note: this cleans up after reading the value
+    public var needsToTriggerSlowSync: Bool {
+        let value = Self.migrationUserDefaults.bool(forKey: Self.migrationsNeedToSlowSyncKey)
+        Self.migrationUserDefaults.removeObject(forKey: Self.migrationsNeedToSlowSyncKey)
+        return value
+    }
+}
+
 extension NSPersistentStoreCoordinator {
 
     /// Returns the set of options that need to be passed to the persistent sotre
@@ -505,3 +527,4 @@ extension NSPersistentStoreCoordinator {
     }
 
 }
+

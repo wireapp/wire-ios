@@ -70,15 +70,15 @@
         <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING" idrefs="z235"></relationship>
     </object>
     <object type="XDDEVENTITYMAPPING" id="z106">
-        <attribute name="migrationpolicyclassname" type="string">WireDataModel.DuplicateConversationsMigrationPolicy</attribute>
+        <attribute name="migrationpolicyclassname" type="string">WireDataModel.DuplicateObjectsMigrationPolicy</attribute>
         <attribute name="sourcename" type="string">Conversation</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">18</attribute>
         <attribute name="destinationname" type="string">Conversation</attribute>
         <attribute name="autogenerateexpression" type="bool">1</attribute>
         <relationship name="mappingmodel" type="1/1" destination="XDDEVMAPPINGMODEL" idrefs="z136"></relationship>
-        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z199 z460 z251 z459 z468 z412 z170 z187 z165 z246 z457 z429 z179 z396 z466 z243 z434 z334 z234 z292 z456 z349 z493 z358 z201 z417 z333 z435 z256 z263 z158 z454 z217 z343 z319 z451 z359 z345 z465 z286 z272 z311 z386 z303 z131 z108"></relationship>
-        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z377 z204 z132 z141 z193 z361 z513 z441 z278"></relationship>
+        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z359 z456 z187 z108 z412 z243 z451 z170 z349 z345 z493 z454 z459 z460 z131 z343 z429 z417 z199 z466 z333 z263 z435 z165 z465 z201 z158 z179 z234 z292 z434 z334 z217 z256 z286 z246 z311 z251 z358 z396 z386 z457 z303 z272 z319 z468"></relationship>
+        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z193 z441 z204 z377 z513 z132 z141 z361 z278"></relationship>
     </object>
     <object type="XDDEVATTRIBUTEMAPPING" id="z107">
         <attribute name="name" type="string">remoteIdentifier_data</attribute>
@@ -1413,15 +1413,15 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGvEBgLDBcYHR4mLDEyNTY6P0BDR0tQU1daW11VJG51bGzV
         <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING" idrefs="z296"></relationship>
     </object>
     <object type="XDDEVENTITYMAPPING" id="z389">
-        <attribute name="migrationpolicyclassname" type="string">WireDataModel.DuplicateUsersMigrationPolicy</attribute>
+        <attribute name="migrationpolicyclassname" type="string">WireDataModel.DuplicateObjectsMigrationPolicy</attribute>
         <attribute name="sourcename" type="string">User</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">14</attribute>
         <attribute name="destinationname" type="string">User</attribute>
         <attribute name="autogenerateexpression" type="bool">1</attribute>
         <relationship name="mappingmodel" type="1/1" destination="XDDEVMAPPINGMODEL" idrefs="z136"></relationship>
-        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z242 z226 z151 z355 z232 z510 z330 z240 z336 z517 z253 z155 z436 z507 z453 z499 z157 z255 z486 z164 z210 z410 z111 z455 z129 z307 z387 z523 z188 z419 z332 z177"></relationship>
-        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z353 z192 z287 z244 z408 z520 z229 z371 z248 z385 z265 z492 z360 z186"></relationship>
+        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z499 z517 z332 z129 z242 z255 z419 z226 z155 z455 z111 z253 z177 z240 z507 z336 z330 z453 z436 z164 z232 z510 z157 z307 z210 z387 z151 z486 z355 z410 z188 z523"></relationship>
+        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z248 z408 z287 z371 z360 z192 z385 z186 z265 z492 z244 z353 z229 z520"></relationship>
     </object>
     <object type="XDDEVRELATIONSHIPMAPPING" id="z390">
         <attribute name="autogenerateexpression" type="bool">1</attribute>

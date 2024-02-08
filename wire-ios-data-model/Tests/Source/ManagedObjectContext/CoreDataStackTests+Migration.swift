@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 import XCTest
+@testable import WireDataModel
 
 class CoreDataStackTests_Migration: DatabaseBaseTest {
 
@@ -135,6 +136,19 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result else { return XCTFail() }
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
+    }
+
+    func testNeedsToTriggerSlowSync_ClearsValueAfterRead() {
+        // GIVEN
+        CoreDataStack.migrationUserDefaults = .random()!
+        let uuid = UUID()
+        let stack = createStorageStackAndWaitForCompletion(userID: uuid)
+        CoreDataStack.setMigrationNeedsSlowSync()
+
+        // WHEN | THEN
+        XCTAssertTrue(stack.needsToTriggerSlowSync)
+
+        XCTAssertFalse(stack.needsToTriggerSlowSync)
     }
 
 }

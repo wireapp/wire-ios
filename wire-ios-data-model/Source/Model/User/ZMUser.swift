@@ -291,9 +291,6 @@ extension ZMUser {
         primaryKey = Self.primaryKey(from: remoteIdentifier, domain: domain)
     }
 
-    static func primaryKey(from remoteIdentifier: UUID?, domain: String?) -> String {
-        return "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
-    }
     
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
