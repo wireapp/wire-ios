@@ -77,7 +77,8 @@ class ProfileFooterViewTests: BaseSnapshotTestCase {
     }
 
     func testThatItUpdates() {
-        sut = setupProfileFooterView(configureProfileActions: [.openOneToOne, .archive, .createGroup])
+        sut = setupProfileFooterView(configureProfileActions: [.openOneToOne, .archive])
+        sut.configure(with: [.createGroup])
         verify(matching: sut)
     }
 
