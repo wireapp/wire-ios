@@ -34,7 +34,7 @@
     }
     
     FHAssertEqualObjects(failureRecorder, self.name, user.name);
-    FHAssertEqualObjects(failureRecorder, self.remoteIdentifier, [[NSUUID alloc] initWithTransportString:user.identifier]);
+    FHAssertEqualObjects(failureRecorder, self.remoteIdentifier, [NSUUID uuidWithTransportString:user.identifier]);
     FHAssertEqualObjects(failureRecorder, self.completeProfileAssetIdentifier, user.completeProfileAssetIdentifier);
 }
 

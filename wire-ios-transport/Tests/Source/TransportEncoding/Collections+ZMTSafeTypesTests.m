@@ -86,15 +86,15 @@
 
 - (void)testThatItReadsADate {
     NSString *key = @"date";
-    XCTAssertEqualObjects([[NSDate alloc] initWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary dateFor:key]);
+    XCTAssertEqualObjects([NSDate dateWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary dateFor:key]);
     XCTAssertNil([self.sampleDictionary dateFor:@"baz"]);
     XCTAssertNil([self.sampleDictionary dateFor:@"string"]);
 }
 
 - (void)testThatItReadsAUUID {
     NSString *key = @"uuid";
-    XCTAssertEqualObjects([[NSUUID alloc] initWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary uuidForKey:key]);
-    XCTAssertEqualObjects([[NSUUID alloc] initWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary optionalUuidForKey:key]);
+    XCTAssertEqualObjects([NSUUID uuidWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary uuidForKey:key]);
+    XCTAssertEqualObjects([NSUUID uuidWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary optionalUuidForKey:key]);
     XCTAssertNil([self.sampleDictionary uuidForKey:@"baz"]);
     XCTAssertNil([self.sampleDictionary optionalUuidForKey:@"baz"]);
     XCTAssertNil([self.sampleDictionary uuidForKey:@"string"]);
@@ -386,7 +386,7 @@
 {
     // given
     NSString *dateString = @"2014-04-30T16:30:16.625Z";
-    NSDate *testValue = [[NSDate alloc] initWithTransportString:dateString];
+    NSDate *testValue = [NSDate dateWithTransportString:dateString];
     NSDictionary *dict = @{ @"foo" : dateString };
     
     // when
@@ -404,7 +404,7 @@
 {
     // given
     NSString *dateString = @"2014-04-30T16:30:16.625Z";
-    NSDate *testValue = [[NSDate alloc] initWithTransportString:dateString];
+    NSDate *testValue = [NSDate dateWithTransportString:dateString];
     NSDictionary *dict = @{ @"foo" : testValue };
     
     // when

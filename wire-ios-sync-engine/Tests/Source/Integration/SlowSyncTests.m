@@ -122,7 +122,7 @@
     
 
 
-    ZMConversation *actualSelfConversation = [ZMConversation fetchWith:[[NSUUID alloc] initWithTransportString:selfConversationIdentifier] in:self.userSession.managedObjectContext];
+    ZMConversation *actualSelfConversation = [ZMConversation fetchWith:[NSUUID uuidWithTransportString:selfConversationIdentifier] in:self.userSession.managedObjectContext];
     [actualSelfConversation assertMatchesConversation:self.selfConversation failureRecorder:NewFailureRecorder()];
     
     ZMConversation *actualSelfToUser1Conversation = [self findConversationWithIdentifier:selfToUser1ConversationIdentifier inMoc:self.userSession.managedObjectContext];
@@ -191,7 +191,7 @@
 }
 
 - (ZMUser *)findUserWithUUID:(NSString *)UUIDString inMoc:(NSManagedObjectContext *)moc {
-    ZMUser *user = [ZMUser fetchWith:[[NSUUID alloc] initWithTransportString:UUIDString] in:moc];
+    ZMUser *user = [ZMUser fetchWith:[NSUUID uuidWithTransportString:UUIDString] in:moc];
     XCTAssertNotNil(user);
     return user;
 }
@@ -222,7 +222,7 @@
 - (ZMConversation *)findConversationWithIdentifier:(NSString *)identifier inMoc:(NSManagedObjectContext *)moc
 {
 
-    ZMConversation *conversation = [ZMConversation fetchWith:[[NSUUID alloc] initWithTransportString:identifier] in:moc];
+    ZMConversation *conversation = [ZMConversation fetchWith:[NSUUID uuidWithTransportString:identifier] in:moc];
     XCTAssertNotNil(conversation);
     return conversation;
 }
