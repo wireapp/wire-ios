@@ -321,6 +321,10 @@ public class ZMUserSession: NSObject {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
 
+    public lazy var featureChangeActionsHandler: FeatureChangeActions = {
+        return E2eIFeatureChangeActionsHandler(enrollE2eICertificate: enrollE2eICertificate)
+    }()
+
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 

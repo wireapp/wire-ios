@@ -31,6 +31,7 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
         deleteFeatureIfNeeded(name: .fileSharing)
         deleteFeatureIfNeeded(name: .mls)
         deleteFeatureIfNeeded(name: .selfDeletingMessages)
+        deleteFeatureIfNeeded(name: .e2ei)
     }
 
     // MARK: - Helpers
@@ -719,6 +720,112 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
+    // MARK: - End-to-end Identity
+
+    func testThatItFetchesE2eI() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = FeatureRepository(context: self.syncMOC)
+            let config = Feature.E2EI.Config(
+                acmeDiscoveryUrl: "http://acme",
+                verificationExpiration: 12345)
+
+            Feature.updateOrCreate(havingName: .e2ei, in: self.syncMOC) { feature in
+                feature.status = .disabled
+                feature.config = try! JSONEncoder().encode(config)
+            }
+
+            // When
+            let result = sut.fetchE2EI()
+
+            // Then
+            XCTAssertEqual(result.status, .disabled)
+            XCTAssertEqual(result.config, config)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func testThatItFetchesE2eI_ItReturnsADefaultConfigWhenConfigDoesNotExist() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = FeatureRepository(context: self.syncMOC)
+
+            Feature.updateOrCreate(havingName: .e2ei, in: self.syncMOC) { feature in
+                feature.status = .disabled
+                feature.config = nil
+            }
+
+            // When
+            let result = sut.fetchE2EI()
+
+            // Then
+            XCTAssertEqual(result.status, .disabled)
+            XCTAssertEqual(result.config, .init())
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func testThatItFetchesE2eI_ItReturnsADefaultConfigWhenObjectDoesNotExist() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = FeatureRepository(context: self.syncMOC)
+            self.assertFeatureDoesNotExist(name: .e2ei)
+
+            // When
+            let result = sut.fetchE2EI()
+
+            // Then
+            XCTAssertEqual(result.status, .disabled)
+            XCTAssertEqual(result.config, .init())
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func testThatItStoresE2eI() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = FeatureRepository(context: self.syncMOC)
+
+            let config = Feature.E2EI.Config(
+                acmeDiscoveryUrl: "http://acme",
+                verificationExpiration: 12345)
+
+            let e2ei = Feature.E2EI(
+                status: .enabled,
+                config: config
+            )
+
+            self.assertFeatureDoesNotExist(name: .e2ei)
+
+            // When
+            sut.storeE2EI(e2ei)
+
+            // Then
+            guard let feature = Feature.fetch(name: .e2ei, context: self.syncMOC) else {
+                XCTFail("feature not found")
+                return
+            }
+
+            guard let configData = feature.config else {
+                XCTFail("expected config data")
+                return
+            }
+
+            guard let featureConfig = configData.decode(as: Feature.E2EI.Config.self) else {
+                XCTFail("failed to decode config data")
+                return
+            }
+
+            XCTAssertEqual(feature.status, .enabled)
+            XCTAssertEqual(featureConfig, config)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
     // MARK: - Other
 
     func testItCreatesDefaultInstances() throws {
@@ -734,6 +841,7 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             self.assertFeatureDoesNotExist(name: .fileSharing)
             self.assertFeatureDoesNotExist(name: .mls)
             self.assertFeatureDoesNotExist(name: .selfDeletingMessages)
+            self.assertFeatureDoesNotExist(name: .e2ei)
 
             // When
             sut.createDefaultConfigsIfNeeded()
@@ -748,6 +856,7 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             self.assertFeatureExists(name: .fileSharing)
             self.assertFeatureExists(name: .mls)
             self.assertFeatureExists(name: .selfDeletingMessages)
+            self.assertFeatureExists(name: .e2ei)
 
         }
 

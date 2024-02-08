@@ -41,6 +41,7 @@ class AuthenticatedRouter: NSObject {
     private let activeCallRouter: ActiveCallRouter
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: FeatureRepositoryProvider
+    private let featureChangeActionsHandler: FeatureChangeActions
 
     // MARK: - Public Property
 
@@ -71,6 +72,7 @@ class AuthenticatedRouter: NSObject {
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
+        self.featureChangeActionsHandler = userSession.featureChangeActionsHandler
 
         super.init()
 
@@ -86,7 +88,9 @@ class AuthenticatedRouter: NSObject {
     private func notifyFeatureChange(_ note: Notification) {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
-            let alert = UIAlertController.fromFeatureChange(change, acknowledger: featureRepositoryProvider.featureRepository)
+            let alert = change.hasFurtherActions
+                ? UIAlertController.fromFeatureChangeWithActions(change, actionsHandler: featureChangeActionsHandler)
+                : UIAlertController.fromFeatureChange(change, acknowledger: featureRepositoryProvider.featureRepository)
         else {
             return
         }
