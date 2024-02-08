@@ -203,7 +203,7 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
     func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
         guard updateEvent.type == .userDelete else { return }
 
-        guard let userId = (updateEvent.payload["id"] as? String).flatMap(UUID.init),
+        guard let userId = (updateEvent.payload["id"] as? String).flatMap(UUID.init(transportString:)),
               let user = ZMUser.fetch(with: userId, in: managedObjectContext)
         else {
             return Logging.eventProcessing.error("Malformed user.delete update event, skipping...")
