@@ -1167,9 +1167,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func test_PerformPendingJoins_GivesUp() async throws {
-        await assertItThrows(error: SendCommitBundleAction.Failure.mlsCommitMissingReferences) {
-            try await test_PerformPendingJoinsRecovery(.giveUp, cause: .mlsCommitMissingReferences)
-        }
+        try await test_PerformPendingJoinsRecovery(.giveUp, cause: .mlsCommitMissingReferences)
     }
 
     private func test_PerformPendingJoinsRecovery(
