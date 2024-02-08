@@ -453,21 +453,6 @@ extension IntegrationTest {
         selfClient.user = ZMUser.selfUser(in: context)
         return selfClient
     }
-}
-
-// MARK: - Account Deletion
-
-extension NSManagedObjectContext {
-    func createSelfUserAndSelfConversation() {
-        let selfUser = ZMUser.selfUser(in: self)
-        selfUser.remoteIdentifier = UUID()
-
-        let selfConversation = ZMConversation.insertNewObject(in: self)
-        selfConversation.remoteIdentifier = ZMConversation.selfConversationIdentifier(in: self)
-    }
-}
-
-extension SessionManagerTests {
 
     // FIXME: [WPB-5638] this test will hang - [jacob]
     //
@@ -488,9 +473,10 @@ extension SessionManagerTests {
         let conversation1CreatedExpectation = self.customExpectation(description: "Conversation 1 created")
 
         self.sessionManager?.withSession(for: account1, perform: { createdSession in
-            createdSession.syncContext.performAndWait {
-                createdSession.syncContext.createSelfUserAndSelfConversation()
-                createdSession.syncContext.saveOrRollback()
+            let syncContext = createdSession.syncContext
+            syncContext.performAndWait {
+                self.createSelfUserAndSelfConversation(in: syncContext)
+                syncContext.saveOrRollback()
             }
 
             let conversation1 = createdSession.insertConversationWithUnreadMessage()
@@ -503,9 +489,10 @@ extension SessionManagerTests {
         let conversation2CreatedExpectation = self.customExpectation(description: "Conversation 2 created")
 
         self.sessionManager?.withSession(for: account2, perform: { createdSession in
-            createdSession.syncContext.performAndWait {
-                createdSession.syncContext.createSelfUserAndSelfConversation()
-                createdSession.syncContext.saveOrRollback()
+            let syncContext = createdSession.syncContext
+            syncContext.performAndWait {
+                self.createSelfUserAndSelfConversation(in: syncContext)
+                syncContext.saveOrRollback()
             }
 
             let conversation2 = createdSession.insertConversationWithUnreadMessage()
@@ -534,9 +521,6 @@ extension SessionManagerTests {
         // cleanup
         self.sessionManager!.tearDownAllBackgroundSessions()
     }
-}
-
-extension SessionManagerTests {
 
     func testThatItLogsOutWithCompanyLoginURL() throws {
         // GIVEN
@@ -556,6 +540,15 @@ extension SessionManagerTests {
         XCTAssertNil(userSession)
     }
 
+    // MARK: - Helpers
+
+    private func createSelfUserAndSelfConversation(in context: NSManagedObjectContext) {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = UUID()
+
+        let selfConversation = ZMConversation.insertNewObject(in: context)
+        selfConversation.remoteIdentifier = ZMConversation.selfConversationIdentifier(in: context)
+    }
 }
 
 // MARK: - Mocks
