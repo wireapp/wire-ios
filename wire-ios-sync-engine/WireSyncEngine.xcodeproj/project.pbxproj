@@ -511,6 +511,7 @@
 		D55272EA2062732100F542BE /* AssetDeletionStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272E92062732100F542BE /* AssetDeletionStatusTests.swift */; };
 		D55272EC2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */; };
 		D5D10DA4203AE43200145497 /* Conversation+AccessMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */; };
+		E666EDDF2B74CEE600C03E2B /* SessionManagerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDD2B74CEE000C03E2B /* SessionManagerHelper.swift */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
 		EE01E0391F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */; };
 		EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
@@ -1246,6 +1247,7 @@
 		D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeletionRequestStrategyTests.swift; sourceTree = "<group>"; };
 		D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Backup.swift"; sourceTree = "<group>"; };
 		D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+AccessMode.swift"; sourceTree = "<group>"; };
+		E666EDDD2B74CEE000C03E2B /* SessionManagerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerHelper.swift; sourceTree = "<group>"; };
 		EBD7B55754FDA4E74F1006FD /* ZMOperationLoopTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMOperationLoopTests.h; sourceTree = "<group>"; };
 		EE01E0361F90DABC001AA33C /* audio.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = audio.m4a; sourceTree = "<group>"; };
 		EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_ExpiredMessage.swift; sourceTree = "<group>"; };
@@ -2626,6 +2628,7 @@
 		F159F4121F1E310C001B7D80 /* SessionManager */ = {
 			isa = PBXGroup;
 			children = (
+				E666EDDD2B74CEE000C03E2B /* SessionManagerHelper.swift */,
 				F159F4131F1E3134001B7D80 /* SessionManagerTests.swift */,
 				EEC0A2D229433D360032C1C9 /* SessionManager+PushTokenTests.swift */,
 				166D191C231569DD001288CD /* SessionManagerTests+MessageRetention.swift */,
@@ -3213,6 +3216,7 @@
 				169BA24A25EF744400374343 /* SessionManagerTests+URLActions.swift in Sources */,
 				169BA22325ED0FC400374343 /* ConversationTests+Archiving.swift in Sources */,
 				169BA20B25ED0F5400374343 /* ConnectionTests.m in Sources */,
+				E666EDDF2B74CEE600C03E2B /* SessionManagerHelper.swift in Sources */,
 				169BA23425ED101300374343 /* SlowSyncTests+ExistingData.swift in Sources */,
 				169BA24525EF6FFA00374343 /* MockAnalytics.swift in Sources */,
 				169BA23225ED100B00374343 /* SlowSyncTests+Swift.swift in Sources */,

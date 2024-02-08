@@ -24,74 +24,31 @@ import LocalAuthentication
 
 final class SessionManagerTests: IntegrationTest {
 
-    var delegate: SessionManagerTestDelegate!
-    var sut: SessionManager?
+    private var sessionManagerHelper = SessionManagerHelper()
+
+    private var tmpDirectoryPath: URL { URL(fileURLWithPath: NSTemporaryDirectory()) }
+
+    private var cachesDirectoryPath: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    }
+
+    var mockDelegate: SessionManagerTestDelegate!
 
     override func setUp() {
         super.setUp()
-        delegate = SessionManagerTestDelegate()
+        mockDelegate = SessionManagerTestDelegate()
         createSelfUserAndConversation()
     }
 
-    func createManager(
-        launchOptions: LaunchOptions = [:],
-        maxNumberAccounts: Int = SessionManager.defaultMaxNumberAccounts,
-        requiredTokenType: PushToken.TokenType = .standard
-    ) -> SessionManager? {
-        guard let application = application else { return nil }
-        let environment = MockEnvironment()
-        let reachability = MockReachability()
-        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: mockTransportSession, environment: environment, reachability: reachability)
-        let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
-            application: application,
-            mediaManager: mockMediaManager,
-            flowManager: FlowManagerMock(),
-            transportSession: mockTransportSession,
-            environment: environment,
-            reachability: reachability
-        )
-        let reachabilityWrapper = ReachabilityWrapper(enabled: true, reachabilityClosure: {
-            reachability
-        })
-        let sessionManager = SessionManager(
-            maxNumberAccounts: maxNumberAccounts,
-            appVersion: "0.0.0",
-            authenticatedSessionFactory: authenticatedSessionFactory,
-            unauthenticatedSessionFactory: unauthenticatedSessionFactory,
-            reachability: reachabilityWrapper,
-            delegate: delegate,
-            application: application,
-            pushRegistry: pushRegistry,
-            dispatchGroup: dispatchGroup,
-            environment: environment,
-            configuration: sessionManagerConfiguration,
-            detector: jailbreakDetector,
-            requiredPushTokenType: requiredTokenType,
-            callKitManager: MockCallKitManager(),
-            proxyCredentials: nil,
-            isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
-        )
-
-        sessionManager.start(launchOptions: launchOptions)
-
-        return sessionManager
-    }
-
     override func tearDown() {
-        delegate = nil
-        sut = nil
+        mockDelegate = nil
         super.tearDown()
-    }
-
-    private var cachesDirectoryPath: URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }
 
     // MARK: max account number
     func testThatDefaultMaxAccountNumberIs3_whenDefaultValueIsUsed() {
         // given and when
-        let sut = createManager()!
+        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
 
         // then
         XCTAssertEqual(sut.maxNumberAccounts, 3)
@@ -99,7 +56,7 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatMaxAccountNumberIs2_whenInitWithMaxAccountNumberAs2() {
         // given and when
-        let sut = createManager(maxNumberAccounts: 2)!
+        let sut = sessionManagerHelper.createManager(maxNumberAccounts: 2, dispatchGroup: dispatchGroup)
 
         // then
         XCTAssertEqual(sut.maxNumberAccounts, 2)
@@ -108,16 +65,19 @@ final class SessionManagerTests: IntegrationTest {
     func testThatItCreatesUnauthenticatedSessionAndNotifiesDelegateIfStoreIsNotAvailable() {
 
         // given
+        var sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        sut.delegate = mockDelegate
         let observer = SessionManagerObserverMock()
-        let token = sut?.addSessionManagerCreatedSessionObserver(observer)
+        let token = sut.addSessionManagerCreatedSessionObserver(observer)
 
         // when
-        sut = createManager()
+        sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        sut.delegate = mockDelegate
 
         // then
-        XCTAssertNil(delegate.userSession)
-        XCTAssertTrue(delegate.sessionManagerDidFailToLogin)
-        XCTAssertNotNil(sut?.unauthenticatedSession)
+        XCTAssertNil(mockDelegate.userSession)
+        XCTAssertTrue(mockDelegate.sessionManagerDidFailToLogin)
+        XCTAssertNotNil(sut.unauthenticatedSession)
         withExtendedLifetime(token) {
             XCTAssertEqual([], observer.createdUserSession)
         }
@@ -125,23 +85,26 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatItCreatesUserSessionAndNotifiesDelegateIfStoreIsAvailable() {
         // given
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
+            return XCTFail()
+        }
         let manager = AccountManager(sharedDirectory: sharedContainer)
         let account = Account(userName: "", userIdentifier: currentUserIdentifier)
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
         manager.addAndSelect(account)
 
         // when
-        sut = createManager()
+        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        sut.delegate = mockDelegate
         let observer = SessionManagerObserverMock()
-        let token = sut?.addSessionManagerCreatedSessionObserver(observer)
+        let token = sut.addSessionManagerCreatedSessionObserver(observer)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        XCTAssertNotNil(delegate.userSession)
-        XCTAssertNil(sut?.unauthenticatedSession)
+        XCTAssertNotNil(mockDelegate.userSession)
+        XCTAssertNil(sut.unauthenticatedSession)
         withExtendedLifetime(token) {
-            XCTAssertEqual([delegate.userSession].compactMap { $0 }, observer.createdUserSession)
+            XCTAssertEqual([mockDelegate.userSession].compactMap { $0 }, observer.createdUserSession)
         }
     }
 
@@ -254,7 +217,7 @@ final class SessionManagerTests: IntegrationTest {
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
             analytics: nil,
-            delegate: self.delegate,
+            delegate: self.mockDelegate,
             application: application,
             environment: sessionManager!.environment,
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
@@ -317,7 +280,7 @@ final class SessionManagerTests: IntegrationTest {
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
             analytics: nil,
-            delegate: self.delegate,
+            delegate: self.mockDelegate,
             application: application,
             environment: sessionManager!.environment,
             configuration: configuration,
@@ -329,7 +292,7 @@ final class SessionManagerTests: IntegrationTest {
             minTLSVersion: nil
         )
 
-        XCTAssertTrue(self.delegate.jailbroken)
+        XCTAssertTrue(self.mockDelegate.jailbroken)
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
 
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
@@ -337,40 +300,42 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatJailbrokenDeviceDeletesAccount() {
         // GIVEN
-        sut = createManager()
-        (sut?.jailbreakDetector as! MockJailbreakDetector).jailbroken = true
-        sut?.configuration.wipeOnJailbreakOrRoot = true
+        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        (sut.jailbreakDetector as! MockJailbreakDetector).jailbroken = true
+        sut.configuration.wipeOnJailbreakOrRoot = true
+        sut.delegate = mockDelegate
 
         // WHEN
-        sut?.accountManager.addAndSelect(createAccount())
-        XCTAssertEqual(sut?.accountManager.accounts.count, 1)
+        sut.accountManager.addAndSelect(createAccount())
+        XCTAssertEqual(sut.accountManager.accounts.count, 1)
 
         // THEN
         performIgnoringZMLogError {
-            self.sut!.checkJailbreakIfNeeded()
+            sut.checkJailbreakIfNeeded()
         }
-        XCTAssertEqual(self.sut?.accountManager.accounts.count, 0)
+        XCTAssertEqual(sut.accountManager.accounts.count, 0)
     }
 
     func testAuthenticationAfterReboot() {
         // GIVEN
-        sut = createManager()
+        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        sut.delegate = mockDelegate
 
         // WHEN
-        sut?.accountManager.addAndSelect(createAccount())
-        XCTAssertEqual(sut?.accountManager.accounts.count, 1)
+        sut.accountManager.addAndSelect(createAccount())
+        XCTAssertEqual(sut.accountManager.accounts.count, 1)
 
         // THEN
         let logoutExpectation = customExpectation(description: "Authentication after reboot")
 
-        delegate.onLogout = { error in
-            XCTAssertNil(self.sut?.activeUserSession)
+        mockDelegate.onLogout = { error in
+            XCTAssertNil(sut.activeUserSession)
             XCTAssertEqual(error?.userSessionErrorCode, .needsAuthenticationAfterReboot)
             logoutExpectation.fulfill()
         }
 
         performIgnoringZMLogError {
-            self.sut!.performPostRebootLogout()
+            sut.performPostRebootLogout()
         }
 
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 2))
@@ -378,32 +343,32 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatShouldPerformPostRebootLogoutReturnsFalseIfNotRebooted() {
         // GIVEN
-        sut = createManager()
-        sut?.configuration.authenticateAfterReboot = true
-        sut?.accountManager.addAndSelect(createAccount())
+        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        sut.configuration.authenticateAfterReboot = true
+        sut.accountManager.addAndSelect(createAccount())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(sut?.accountManager.accounts.count, 1)
+        XCTAssertEqual(sut.accountManager.accounts.count, 1)
         SessionManager.previousSystemBootTime = ProcessInfo.processInfo.bootTime()
 
         // WHEN/THEN
         performIgnoringZMLogError {
-            XCTAssertFalse(self.sut!.shouldPerformPostRebootLogout())
+            XCTAssertFalse(sut.shouldPerformPostRebootLogout())
         }
     }
 
     func testThatShouldPerformPostRebootLogoutReturnsFalseIfNoPreviousBootTimeExists() {
 
         // GIVEN
-        sut = createManager()
-        sut?.configuration.authenticateAfterReboot = true
-        sut?.accountManager.addAndSelect(createAccount())
+        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        sut.configuration.authenticateAfterReboot = true
+        sut.accountManager.addAndSelect(createAccount())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(sut?.accountManager.accounts.count, 1)
+        XCTAssertEqual(sut.accountManager.accounts.count, 1)
         ZMKeychain.deleteAllKeychainItems(withAccountName: SessionManager.previousSystemBootTimeContainer)
 
         // WHEN/THEN
         performIgnoringZMLogError {
-            XCTAssertFalse(self.sut!.shouldPerformPostRebootLogout())
+            XCTAssertFalse(sut.shouldPerformPostRebootLogout())
         }
     }
 
@@ -428,20 +393,16 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssertFalse(FileManager.default.fileExists(atPath: self.cachesDirectoryPath.path))
     }
 
-    func tmpDirectoryPath() -> URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory())
-    }
-
     func testThatItDestroyedTmpDirectoryAfterLoggedOut() throws {
 
         // GIVEN
         XCTAssertTrue(login())
         let observer = SessionManagerObserverMock()
         let token = sessionManager?.addSessionManagerDestroyedSessionObserver(observer)
-        let tempUrl = self.tmpDirectoryPath().appendingPathComponent("testFile.txt")
+        let tempUrl = tmpDirectoryPath.appendingPathComponent("testFile.txt")
         let testData = "Test Message"
         try testData.write(to: tempUrl, atomically: true, encoding: .utf8)
-        let fCount = try FileManager.default.contentsOfDirectory(atPath: tmpDirectoryPath().path).count
+        let fCount = try FileManager.default.contentsOfDirectory(atPath: tmpDirectoryPath.path).count
         XCTAssertEqual(fCount, 1)
         XCTAssertTrue(FileManager.default.fileExists(atPath: tempUrl.path))
 
@@ -450,7 +411,7 @@ final class SessionManagerTests: IntegrationTest {
             sessionManager?.logoutCurrentSession()
         }
 
-        let fileCount = try FileManager.default.contentsOfDirectory(atPath: self.tmpDirectoryPath().path).count
+        let fileCount = try FileManager.default.contentsOfDirectory(atPath: tmpDirectoryPath.path).count
 
         // THEN
         XCTAssertEqual(fileCount, 0)
@@ -483,6 +444,8 @@ extension IntegrationTest {
         return selfClient
     }
 }
+
+// MARK: - Account Deletion
 
 class SessionManagertests_AccountDeletion: IntegrationTest {
 
