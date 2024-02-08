@@ -408,7 +408,7 @@ public extension UserClient {
         let model = payloadAsDictionary.optionalString(forKey: "model")?.removingExtremeCombiningCharacters
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
-        let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active") // is this even used?
+        let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
 
         let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
         let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
@@ -421,6 +421,7 @@ public extension UserClient {
         client.model = model
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
+        client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
         if let mlsEd25519 = mlsEd25519 {
             client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519)
