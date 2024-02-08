@@ -42,7 +42,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 syncProgress: SyncProgress,
-                resolver: OneOnOneResolverInterface? = nil) {
+                oneOneOneResolver: OneOnOneResolverInterface? = nil) {
 
         self.syncProgress = syncProgress
         self.localConnectionListSync =
@@ -71,7 +71,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
             updateConnectionActionHandler
         ])
 
-        self.oneOnOneResolver = resolver ?? OneOnOneResolver(syncContext: managedObjectContext)
+        self.oneOnOneResolver = oneOneOneResolver ?? OneOnOneResolver(syncContext: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
