@@ -19,9 +19,6 @@
 import Foundation
 import OSLog
 
-<<<<<<< HEAD
-struct SystemLogger: LoggerProtocol {
-=======
 public protocol FileLoggerDestination {
     var log: URL? { get }
 }
@@ -67,7 +64,6 @@ struct SystemLogger: LoggerProtocol {
         }
     }
 
->>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
     func debug(_ message: LogConvertible, attributes: LogAttributes?) {
         log(message, attributes: attributes, osLogType: .debug)
     }
@@ -93,33 +89,15 @@ struct SystemLogger: LoggerProtocol {
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {
-<<<<<<< HEAD
-
-        #if DEBUG
-            os_log(osLogType, log: .default, "%{public}@", "\(message.logDescription)")
-        #else
-            os_log(osLogType, log: .default, "\(message.logDescription)")
-        #endif
-=======
         var logger: OSLog = OSLog.default
         if let tag = attributes?["tag"] as? String {
-
             logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }
 
         if attributes?["public"] as? Bool == true {
-            if #available(iOSApplicationExtension 14.0, *) {
-                os_log(osLogType, log: logger, "%{public}@", "\(message.logDescription)")
-            } else {
-                print("\(message.logDescription)")
-            }
-
+            os_log(osLogType, log: logger, "%{public}@", "\(message.logDescription)")
         } else {
-            if #available(iOSApplicationExtension 14.0, *) {
-                os_log(osLogType, log: logger, "\(message.logDescription)")
-            } else {
-                print("\(message.logDescription)")
-            }
+            os_log(osLogType, log: logger, "\(message.logDescription)")
         }
     }
 }
@@ -148,11 +126,7 @@ public class FileLogger {
 
         do {
             if let data = entries.joined(separator: "\n").data(using: .utf8) {
-                if #available(iOSApplicationExtension 13.4, *) {
-                    try updatingHandle?.write(contentsOf: data)
-                } else {
-                    // do nothing
-                }
+                try updatingHandle?.write(contentsOf: data)
             }
         } catch {
             updatingHandle = nil
@@ -166,6 +140,5 @@ public class FileLogger {
 
     deinit {
         closeFile()
->>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
     }
 }

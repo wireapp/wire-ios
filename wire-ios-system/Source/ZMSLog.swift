@@ -258,30 +258,7 @@ extension ZMSLog {
     @objc static public let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
     @objc static public var currentZipLog: Data? {
-<<<<<<< HEAD
-        let manager = FileManager.default
-
-        guard
-            let currentLogURL,
-            manager.fileExists(atPath: currentLogURL.path)
-        else {
-            return nil
-        }
-
-        var tmpURL = currentLogURL.deletingLastPathComponent()
-        tmpURL.appendPathComponent("current.log.zip")
-
-        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: [currentLogURL.path])
-
-        defer {
-            // clean up
-            try? manager.removeItem(at: tmpURL)
-        }
-
-        return try? Data(contentsOf: tmpURL, options: [.uncached])
-=======
         FileManager.default.zipData(from: currentLogURL)
->>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
     }
 
     @objc static public let previousZipLogURLs: [URL] = {

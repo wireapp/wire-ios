@@ -20,11 +20,7 @@ import Foundation
 
 public struct WireLogger: LoggerProtocol {
 
-<<<<<<< HEAD
-  public static var provider: LoggerProtocol? = SystemLogger()
-=======
   public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
->>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
 
   public let tag: String
 
@@ -188,8 +184,5 @@ public extension WireLogger {
     static let authentication = WireLogger(tag: "authentication")
     static let session = WireLogger(tag: "session")
     static let sync = WireLogger(tag: "sync")
-<<<<<<< HEAD
-=======
     static let system = WireLogger(tag: "system")
->>>>>>> c22ccf8732 (chore: unify logging - WPB-6231 (#943))
 }
