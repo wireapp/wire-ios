@@ -64,7 +64,7 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatItCreatesUnauthenticatedSessionAndNotifiesDelegateIfStoreIsNotAvailable() {
         // given
-        let observer = SessionManagerObserverMock()
+        let observer = MockSessionManagerObserver()
         let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
         sut.delegate = mockDelegate
 
@@ -94,7 +94,7 @@ final class SessionManagerTests: IntegrationTest {
         // when
         sut.start(launchOptions: [:])
 
-        let observer = SessionManagerObserverMock()
+        let observer = MockSessionManagerObserver()
         let token = sut.addSessionManagerCreatedSessionObserver(observer)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
@@ -116,7 +116,7 @@ final class SessionManagerTests: IntegrationTest {
 
         let sessionManagerExpectation = self.customExpectation(description: "Session manager and session is loaded")
 
-        let observer = SessionManagerObserverMock()
+        let observer = MockSessionManagerObserver()
         var createToken: Any?
         var destroyToken: Any?
 
@@ -178,7 +178,7 @@ final class SessionManagerTests: IntegrationTest {
         // GIVEN
         XCTAssertTrue(login())
         let account = sessionManager!.accountManager.selectedAccount!
-        let observer = SessionManagerObserverMock()
+        let observer = MockSessionManagerObserver()
         let token = sessionManager?.addSessionManagerDestroyedSessionObserver(observer)
 
         // WHEN
@@ -207,7 +207,7 @@ final class SessionManagerTests: IntegrationTest {
         guard let application = application else { return XCTFail() }
 
         let sessionManagerExpectation = self.customExpectation(description: "Session manager and sessions are loaded")
-        let observer = SessionManagerObserverMock()
+        let observer = MockSessionManagerObserver()
 
         var destroyToken: Any?
 
@@ -387,7 +387,7 @@ final class SessionManagerTests: IntegrationTest {
         // GIVEN
         XCTAssertTrue(login())
         let sessionManager = try XCTUnwrap(sessionManager)
-        let observer = SessionManagerObserverMock()
+        let observer = MockSessionManagerObserver()
         let token = sessionManager.addSessionManagerDestroyedSessionObserver(observer)
         let tempUrl = self.cachesDirectoryPath.appendingPathComponent("testFile.txt")
         let testData = "Test Message"
@@ -407,7 +407,7 @@ final class SessionManagerTests: IntegrationTest {
 
         // GIVEN
         XCTAssertTrue(login())
-        let observer = SessionManagerObserverMock()
+        let observer = MockSessionManagerObserver()
         let token = sessionManager?.addSessionManagerDestroyedSessionObserver(observer)
         let tempUrl = tmpDirectoryPath.appendingPathComponent("testFile.txt")
         let testData = "Test Message"
@@ -552,26 +552,6 @@ extension IntegrationTest {
 }
 
 // MARK: - Mocks
-
-class SessionManagerObserverMock: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver {
-
-    var createdUserSession: [ZMUserSession] = []
-    var createdUnauthenticatedSession: [UnauthenticatedSession] = []
-    var destroyedUserSessions: [UUID] = []
-
-    func sessionManagerCreated(userSession: ZMUserSession) {
-        createdUserSession.append(userSession)
-    }
-
-    func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
-        createdUnauthenticatedSession.append(unauthenticatedSession)
-    }
-
-    func sessionManagerDestroyedUserSession(for accountId: UUID) {
-        destroyedUserSessions.append(accountId)
-    }
-
-}
 
 class MockForegroundNotificationResponder: NSObject, ForegroundNotificationResponder {
 
