@@ -474,8 +474,8 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
     NSDictionary *qualifiedID = [transportData optionalDictionaryForKey:@"qualified_id"];
     if (qualifiedID != nil) {
         NSString *domain = [qualifiedID stringForKey:@"domain"];
-        NSUUID *remoteIdentifier = [qualifiedID[@"id"] UUID];
-        
+        NSUUID *remoteIdentifier = [NSUUID uuidWithTransportString:qualifiedID[@"id"]];
+
         if (self.domain == nil) {
             self.domain = domain;
         } else {
@@ -493,7 +493,7 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
         }
         
     } else {
-        NSUUID *remoteID = [transportData[@"id"] UUID];
+        NSUUID *remoteID = [NSUUID uuidWithTransportString:transportData[@"id"]];
         if (self.remoteIdentifier == nil) {
             self.remoteIdentifier = remoteID;
         } else {
