@@ -251,32 +251,6 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatOneOnOneResolverIsInvoked_WhenConnectionRequestIsAccepted() throws {
-
-        try syncMOC.performAndWait {
-            // GIVEN
-            let connection = createConnectionPayload(self.oneToOneConnection, status: .accepted)
-            let eventType = try XCTUnwrap(ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType), "eventType is nil")
-            let eventPayload = Payload.UserConnectionEvent(connection: connection, type: eventType)
-            let payloadData = try XCTUnwrap(eventPayload.payloadData(), "payloadData is nil")
-            let event = updateEvent(from: payloadData)
-
-            mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
-                return OneOnOneConversationResolution.noAction
-            }
-
-            sut.oneOnOneResolutionDelay = 0.3
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
-    }
-
     func testOneOnOneResolverInvocationTiming() throws {
         // GIVEN
         let expectation1 = XCTestExpectation(description: "OneOnOneResolver should not be invoked within the specified timeout")
