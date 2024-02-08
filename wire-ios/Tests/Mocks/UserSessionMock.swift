@@ -59,6 +59,7 @@ final class UserSessionMock: UserSession {
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
     var mockConversationList: ZMConversationList?
+    var featureChangeActionsHandler: FeatureChangeActions = MockE2eIFeatureChangeActionsHandler()
 
     convenience init(mockUser: MockZMEditableUser) {
         self.init(
