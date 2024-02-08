@@ -19,24 +19,28 @@
 import XCTest
 @testable import Wire
 
-final class ConversationListTabBarTests: ZMSnapshotTestCase {
+final class ConversationListTabBarTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: ConversationListTabBar!
 
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
-
-        snapshotBackgroundColor = UIColor(white: 0.2, alpha: 1) // In order to make the separator more visible
         accentColor = .brightYellow
         UIView.performWithoutAnimation({
             self.sut = ConversationListTabBar()
-
+            sut.backgroundColor = UIColor(white: 0.2, alpha: 1) // In order to make the separator more visible
             // SUT has a priority 750 height constraint. fix its height first
             NSLayoutConstraint.activate([
                 sut.heightAnchor.constraint(equalToConstant: 56)
-                ])
+            ])
         })
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
@@ -44,33 +48,32 @@ final class ConversationListTabBarTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    func testThatItRendersTheBottomBarCorrectlyInInitialState() throws {
-        throw XCTSkip("disable temporarly because of background color")
+    // MARK: - Snapshot Tests
 
-        // then
-        verifyInAllPhoneWidths(view: sut)
+    func testThatItRendersTheBottomBarCorrectlyInInitialState() throws {
+        // THEN
+        verifyInAllPhoneWidths(matching: sut)
     }
 
     func testThatItHidesTheContactsTitleAndShowsArchivedButtonWhen_ShowArchived_IsSetToYes() throws {
-        throw XCTSkip("disable temporarly because of background color")
-        // when
+        // GIVEN && WHEN
         sut.showArchived = true
 
         // then
-        verifyInAllPhoneWidths(view: sut)
+        verifyInAllPhoneWidths(matching: sut)
     }
 
     func testThatItShowsTheContactsTitleAndHidesTheArchivedButtonWhen_ShowArchived_WasSetToYesAndIsSetToNo() throws {
-        throw XCTSkip("disable temporarly because of background color")
-        // given
-        accentColor = .strongBlue // To make the snapshot distinguishable from the inital state
+        // GIVEN
+        // To make the snapshot distinguishable from the inital state
+        accentColor = .strongBlue
         sut.showArchived = true
 
-        // when
+        // WHEN
         sut.showArchived = false
 
-        // then
-        verifyInAllPhoneWidths(view: sut)
+        // THEN
+        verifyInAllPhoneWidths(matching: sut)
     }
 
 }

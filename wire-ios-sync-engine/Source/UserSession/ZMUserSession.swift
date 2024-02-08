@@ -817,13 +817,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
                     // rework implementation of following method - WPB-6053
                     try await mlsService.performPendingJoins()
                 } catch {
-                    Logging.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
+                    WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
                 }
 
                 do {
                     try await mlsService.commitPendingProposals()
                 } catch {
-                    Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
+                    WireLogger.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
                 }
                 await mlsService.uploadKeyPackagesIfNeeded()
                 await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
@@ -880,7 +880,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                     completionHandler()
                 }
             } catch {
-                Logging.mls.error("Failed to process pending call events: \(String(reflecting: error))")
+                WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }
@@ -893,7 +893,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             do {
                 try await mlsService.commitPendingProposals()
             } catch {
-                Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+                WireLogger.mls.error("Failed to commit pending proposals: \(String(describing: error))")
             }
         }
     }

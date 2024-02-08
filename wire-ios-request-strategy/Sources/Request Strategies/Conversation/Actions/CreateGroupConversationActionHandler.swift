@@ -36,7 +36,7 @@ public final class CreateGroupConversationAction: EntityAction {
         case accessDenied
         case unreachableDomains(Set<String>)
         case nonFederatingDomains(Set<String>)
-        case proccessingError
+        case proccessingError(String?)
         case unknown(code: Int, label: String, message: String)
 
     }
@@ -166,7 +166,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 let payload = ErrorResponse(response),
                 let nonFederatingDomains = payload.non_federating_backends
             else {
-                return action.fail(with: .proccessingError)
+                return action.fail(with: .proccessingError(nil))
             }
 
             if nonFederatingDomains.isEmpty {
@@ -182,7 +182,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 let payload = ErrorResponse(response),
                 let unreachableDomains = payload.unreachable_backends
             else {
-                return action.fail(with: .proccessingError)
+                return action.fail(with: .proccessingError(nil))
             }
 
             if unreachableDomains.isEmpty {
@@ -208,7 +208,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         action: CreateGroupConversationAction
     ) async {
         var action = action
-
+        Flow.createGroup.checkpoint(description: "handle response from server")
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
@@ -220,11 +220,10 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         else {
             Logging.network.warn("Can't process response, aborting.")
             await context.perform {
-                action.fail(with: .proccessingError)
+                action.fail(with: .proccessingError("Can't process response, aborting."))
             }
             return
         }
-
         await context.perform {
             self.context.saveOrRollback()
 
