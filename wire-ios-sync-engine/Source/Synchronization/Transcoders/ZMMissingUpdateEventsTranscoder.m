@@ -149,7 +149,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 }
 
 - (void)updateServerTimeDeltaWithTimestamp:(NSString *)timestamp {
-    NSDate *serverTime = [NSDate dateWithTransportString:timestamp];
+    NSDate *serverTime = [[NSDate alloc] initWithTransportString:timestamp];
     NSTimeInterval serverTimeDelta = [serverTime timeIntervalSinceNow];
     self.managedObjectContext.serverTimeDelta = serverTimeDelta;
 }

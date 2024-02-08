@@ -191,7 +191,7 @@
 }
 
 - (ZMUser *)findUserWithUUID:(NSString *)UUIDString inMoc:(NSManagedObjectContext *)moc {
-    ZMUser *user = [ZMUser fetchWith:[UUIDString UUID] in:moc];
+    ZMUser *user = [ZMUser fetchWith:[[NSUUID alloc] initWithTransportString:UUIDString] in:moc];
     XCTAssertNotNil(user);
     return user;
 }

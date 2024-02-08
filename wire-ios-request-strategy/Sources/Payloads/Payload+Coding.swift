@@ -27,7 +27,7 @@ extension JSONDecoder {
             let container = try decoder.singleValueContainer()
             let rawDate = try container.decode(String.self)
 
-            guard let date = NSDate(transport: rawDate) else {
+            guard let date = Date(transportString: rawDate) else {
                 throw DecodingError.dataCorruptedError(
                     in: container,
                     debugDescription: "Expected date string to be ISO8601-formatted with fractional seconds"
@@ -51,7 +51,7 @@ extension JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .custom({ (date, encoder) in
             var container = encoder.singleValueContainer()
-            try container.encode((date as NSDate).transportString())
+            try container.encode(date.transportString())
         })
 
         return encoder
