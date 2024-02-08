@@ -43,7 +43,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         sut = ConnectionRequestStrategy(withManagedObjectContext: syncMOC,
                                         applicationStatus: mockApplicationStatus,
                                         syncProgress: mockSyncProgress,
-                                        resolver: mockOneOnOneResolver)
+                                        oneOneOneResolver: mockOneOnOneResolver)
 
         apiVersion = .v0
     }
