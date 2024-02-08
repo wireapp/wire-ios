@@ -32,11 +32,11 @@ final class SessionManagerTests: IntegrationTest {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }
 
-    var mockDelegate: SessionManagerTestDelegate!
+    var mockDelegate: MockSessionManagerDelegate!
 
     override func setUp() {
         super.setUp()
-        mockDelegate = SessionManagerTestDelegate()
+        mockDelegate = MockSessionManagerDelegate()
         createSelfUserAndConversation()
     }
 
@@ -552,70 +552,6 @@ extension IntegrationTest {
 }
 
 // MARK: - Mocks
-class SessionManagerTestDelegate: SessionManagerDelegate {
-    var onLogout: ((NSError?) -> Void)?
-    var appState = "authenticated"
-    var isInAuthenticatedAppState: Bool {
-        return appState == "authenticated"
-    }
-    var isInUnathenticatedAppState: Bool {
-        return appState == "unauthenticated"
-    }
-    func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?) {
-        onLogout?(error as NSError?)
-        userSessionCanBeTornDown?()
-    }
-
-    var sessionManagerDidFailToLogin: Bool = false
-    func sessionManagerDidFailToLogin(error: Error?) {
-        sessionManagerDidFailToLogin = true
-    }
-
-    func sessionManagerWillOpenAccount(_ account: Account,
-                                       from selectedAccount: Account?,
-                                       userSessionCanBeTornDown: @escaping () -> Void) {
-        userSessionCanBeTornDown()
-    }
-
-    func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason) {
-        // no op
-    }
-
-    func sessionManagerDidFailToLoadDatabase(error: Error) {
-        // no op
-    }
-
-    var jailbroken = false
-    func sessionManagerDidBlacklistJailbrokenDevice() {
-        jailbroken = true
-    }
-
-    var userSession: ZMUserSession?
-    func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
-        self.userSession = userSession
-    }
-
-    func sessionManagerDidReportLockChange(forSession session: UserSession) {
-        // No op
-    }
-
-    var startedMigrationCalled = false
-    func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void) {
-        startedMigrationCalled = true
-    }
-
-    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
-        // no op
-    }
-
-    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
-        // no op
-    }
-
-    public func sessionManagerAsksToRetryStart() {
-        // no op
-    }
-}
 
 class SessionManagerObserverMock: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver {
 
