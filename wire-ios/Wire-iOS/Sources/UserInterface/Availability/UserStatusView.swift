@@ -29,10 +29,8 @@ final class UserStatusView: TitleView {
     // MARK: - Properties
 
     private let options: Options
-    public var userStatus = UserStatus(name: "", availability: .none, isCertified: false, isVerified: false) {
-        didSet {
-            updateConfiguration()
-        }
+    public var userStatus = UserStatus() {
+        didSet { updateConfiguration() }
     }
 
     // MARK: - Initialization

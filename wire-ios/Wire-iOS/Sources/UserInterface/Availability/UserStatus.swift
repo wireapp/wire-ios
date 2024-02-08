@@ -31,4 +31,16 @@ public struct UserStatus {
 
     /// `true` if the user has been verified (Proteus), `false` otherwise.
     var isVerified: Bool
+
+    public init(
+        name: String = "",
+        availability: Availability = Availability.none,
+        isCertified: Bool = false,
+        isVerified: Bool = false
+    ) {
+        self.name = name
+        self.availability = availability
+        self.isCertified = isCertified
+        self.isVerified = isVerified
+    }
 }
