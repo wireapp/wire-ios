@@ -92,6 +92,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Properties
 
+    let router: AppRootRouter?
     var onDismiss: (() -> Void)?
 
     // MARK: - State
@@ -106,7 +107,11 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Life cycle
 
-    init(onDismiss: (() -> Void)? = nil) {
+    init(
+        router: AppRootRouter? = nil,
+        onDismiss: (() -> Void)? = nil
+    ) {
+        self.router = router
         self.onDismiss = onDismiss
         sections = []
 
@@ -117,11 +122,17 @@ final class DeveloperToolsViewModel: ObservableObject {
         sections.append(Section(
             header: "Actions",
             items: [
-                .destination(DestinationItem(title: "Debug actions", makeView: {
-                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self.selfClient)))
+                .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
+                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
+                })),
+                .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
+                    AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
+                        router: self?.router,
+                        onDismiss: self?.onDismiss
+                    )))
                 }))
             ]
         ))
