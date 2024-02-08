@@ -20,7 +20,7 @@ import XCTest
 import WireTesting
 @testable import WireSyncEngine
 
-class SessionManagerPushTokenTests: IntegrationTest {
+final class SessionManagerTests_PushToken: IntegrationTest {
 
     override func setUp() {
         mockPushTokenService = MockPushTokenService()
