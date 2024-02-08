@@ -41,7 +41,6 @@ extension MFMailComposeViewController {
                 WireLogger.system.debug("no logs for WireLogger to send \(destination.filename)")
             }
         }
-        
 
         if let crashLog = ZMLastAssertionFile(),
            FileManager.default.fileExists(atPath: crashLog.path) {
