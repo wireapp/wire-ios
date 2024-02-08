@@ -45,6 +45,23 @@ public enum BackendConversationType: Int {
     }
 }
 
+extension ZMConversationType: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .group:
+            return "group"
+        case .oneOnOne:
+            return "oneOnOne"
+        case .connection:
+            return "connection"
+        case .`self`:
+            return "self"
+        case .invalid:
+            return "invalid"
+        }
+    }
+}
+
 extension ZMConversation {
 
     public struct PayloadKeys {
