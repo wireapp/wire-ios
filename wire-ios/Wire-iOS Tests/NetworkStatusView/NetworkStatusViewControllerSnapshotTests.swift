@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - MockContainerViewController
+
 class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin = CGFloat.NetworkStatusBar.bottomMargin
 
@@ -29,12 +31,18 @@ class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
     var shouldAnimateNetworkStatusView: Bool = true
 }
 
-/// Snapshot tests for differnt margin and size of NetworkStatusViewController.view for all value of ZMNetworkState with other UIView at the bottom.
+// MARK: - NetworkStatusViewControllerSnapshotTests
+
+/// Snapshot tests for different margin and size of NetworkStatusViewController.view for all value of ZMNetworkState with other UIView at the bottom.
 final class NetworkStatusViewControllerSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: NetworkStatusViewController!
     var mockContainerViewController: MockContainerViewController!
     var mockContentView: UIView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -67,6 +75,8 @@ final class NetworkStatusViewControllerSnapshotTests: BaseSnapshotTestCase {
         ])
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         mockContainerViewController = nil
@@ -75,7 +85,14 @@ final class NetworkStatusViewControllerSnapshotTests: BaseSnapshotTestCase {
         super.tearDown()
     }
 
-    private func verify(for newState: ZMNetworkState, file: StaticString = #file, line: UInt = #line, testName: String = #function) {
+    // MARK: Helper Method for snapshot testing
+
+    private func verify(
+        for newState: ZMNetworkState,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         // GIVEN
         sut.didChangeAvailability(newState: newState)
 
@@ -84,8 +101,15 @@ final class NetworkStatusViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut.view.layer.speed = 0 // freeze animations for deterministic tests
 
         // THEN
-        verify(matching: mockContainerViewController.view, file: file, testName: testName, line: line)
+        verify(
+            matching: mockContainerViewController.view,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
+
+    // MARK: Helper Method for snapshot testing
 
     func testOnlineState() {
         verify(for: .online)
