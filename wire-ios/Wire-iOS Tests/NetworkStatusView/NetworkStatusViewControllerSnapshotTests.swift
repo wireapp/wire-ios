@@ -75,7 +75,7 @@ final class NetworkStatusViewControllerSnapshotTests: BaseSnapshotTestCase {
         super.tearDown()
     }
 
-    private func verify(for newState: ZMNetworkState, file: StaticString = #file, line: UInt = #line) {
+    private func verify(for newState: ZMNetworkState, file: StaticString = #file, line: UInt = #line, testName: String = #function) {
         // GIVEN
         sut.didChangeAvailability(newState: newState)
 
@@ -84,7 +84,7 @@ final class NetworkStatusViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut.view.layer.speed = 0 // freeze animations for deterministic tests
 
         // THEN
-        verify(matching: mockContainerViewController.view, file: file, line: line)
+        verify(matching: mockContainerViewController.view, file: file, testName: testName, line: line)
     }
 
     func testOnlineState() {
