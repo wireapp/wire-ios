@@ -29,7 +29,7 @@ extension UIImageView {
     }
 }
 
-class UserCell: SeparatorCollectionViewCell, SectionListCellType {
+final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Properties
 
