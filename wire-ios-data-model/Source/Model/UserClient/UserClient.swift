@@ -405,7 +405,7 @@ public extension UserClient {
         let model = payloadAsDictionary.optionalString(forKey: "model")?.removingExtremeCombiningCharacters
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
-        let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active") // is this even used?
+        let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
 
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
@@ -416,6 +416,7 @@ public extension UserClient {
         client.model = model
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
+        client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
 
         let selfUser = ZMUser.selfUser(in: context)
