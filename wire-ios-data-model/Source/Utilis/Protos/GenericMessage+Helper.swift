@@ -37,7 +37,7 @@ public extension GenericMessage {
 
     init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfterTimeInterval timeout: TimeInterval? = nil) {
         self = GenericMessage.with {
-            $0.messageID = nonce.transportString()
+            $0.messageID = nonce.transportString
             let messageContent: MessageCapable
             if let timeout = timeout, timeout > 0 {
                 messageContent = Ephemeral(content: content, expiresAfter: timeout)
@@ -50,7 +50,7 @@ public extension GenericMessage {
 
     init(content: MessageCapable, nonce: UUID = UUID()) {
         self = GenericMessage.with {
-            $0.messageID = nonce.transportString()
+            $0.messageID = nonce.transportString
             let messageContent = content
             messageContent.setContent(on: &$0)
         }
@@ -58,7 +58,7 @@ public extension GenericMessage {
 
     init(clientAction action: ClientAction, nonce: UUID = UUID()) {
         self = GenericMessage.with {
-            $0.messageID = nonce.transportString()
+            $0.messageID = nonce.transportString
             $0.clientAction = action
         }
     }
@@ -299,7 +299,7 @@ extension Ephemeral {
 public extension Proteus_QualifiedUserId {
     init(with uuid: UUID, domain: String) {
         self = Proteus_QualifiedUserId.with {
-            $0.id = uuid.transportString()
+            $0.id = uuid.transportString
             $0.domain = domain
         }
     }
@@ -407,7 +407,7 @@ extension ButtonAction {
     init(buttonId: String, referenceMessageId: UUID) {
         self = ButtonAction.with {
             $0.buttonID = buttonId
-            $0.referenceMessageID = referenceMessageId.transportString()
+            $0.referenceMessageID = referenceMessageId.transportString
         }
     }
 }
@@ -436,7 +436,7 @@ extension Text {
                let quotedMessageNonce = quotedMessage.nonce,
                let quotedMessageHash = quotedMessage.hashOfContent {
                 $0.quote = Quote.with {
-                    $0.quotedMessageID = quotedMessageNonce.transportString()
+                    $0.quotedMessageID = quotedMessageNonce.transportString
                     $0.quotedMessageSha256 = quotedMessageHash
                 }
             }
@@ -486,7 +486,7 @@ extension WireProtos.Reaction {
 
         return WireProtos.Reaction.with {
             $0.emoji = transportString
-            $0.messageID = messageID.transportString()
+            $0.messageID = messageID.transportString
         }
     }
 
@@ -521,10 +521,10 @@ public enum ProtosReactionFactory {
 extension LastRead {
     public init(conversationID: QualifiedID, lastReadTimestamp: Date) {
         self = LastRead.with {
-            $0.conversationID = conversationID.uuid.transportString()
+            $0.conversationID = conversationID.uuid.transportString
             $0.lastReadTimestamp = Int64(lastReadTimestamp.timeIntervalSince1970 * 1000)
             $0.qualifiedConversationID = WireProtos.QualifiedConversationId.with {
-                $0.id = conversationID.uuid.transportString()
+                $0.id = conversationID.uuid.transportString
                 $0.domain = conversationID.domain
             }
         }
@@ -539,7 +539,7 @@ extension Calling {
             $0.content = content
             $0.qualifiedConversationID = QualifiedConversationId.with {
                 $0.domain = conversationId.domain
-                $0.id = conversationId.uuid.transportString()
+                $0.id = conversationId.uuid.transportString
             }
         }
     }
@@ -550,7 +550,7 @@ extension Calling {
 extension WireProtos.MessageEdit {
     public init(replacingMessageID: UUID, text: Text) {
         self = MessageEdit.with {
-            $0.replacingMessageID = replacingMessageID.transportString()
+            $0.replacingMessageID = replacingMessageID.transportString
             $0.text = text
         }
     }
@@ -562,7 +562,7 @@ extension Cleared {
     public init(timestamp: Date, conversationID: UUID) {
         self = Cleared.with {
             $0.clearedTimestamp = Int64(timestamp.timeIntervalSince1970 * 1000)
-            $0.conversationID = conversationID.transportString()
+            $0.conversationID = conversationID.transportString
         }
     }
 }
@@ -572,8 +572,8 @@ extension Cleared {
 extension MessageHide {
     public init(conversationId: UUID, messageId: UUID) {
         self = MessageHide.with {
-            $0.conversationID = conversationId.transportString()
-            $0.messageID = messageId.transportString()
+            $0.conversationID = conversationId.transportString
+            $0.messageID = messageId.transportString
         }
     }
 }
@@ -583,7 +583,7 @@ extension MessageHide {
 extension MessageDelete {
     public init(messageId: UUID) {
         self = MessageDelete.with {
-            $0.messageID = messageId.transportString()
+            $0.messageID = messageId.transportString
         }
     }
 }
@@ -597,15 +597,15 @@ extension WireProtos.Confirmation {
         }
         let moreMessageIds = Array(messageIds.dropFirst())
         self = WireProtos.Confirmation.with({
-            $0.firstMessageID = firstMessageID.transportString()
-            $0.moreMessageIds = moreMessageIds.map { $0.transportString() }
+            $0.firstMessageID = firstMessageID.transportString
+            $0.moreMessageIds = moreMessageIds.map { $0.transportString }
             $0.type = type
         })
     }
 
     public init(messageId: UUID, type: Confirmation.TypeEnum = .delivered) {
         self = WireProtos.Confirmation.with {
-            $0.firstMessageID = messageId.transportString()
+            $0.firstMessageID = messageId.transportString
             $0.type = type
         }
     }
@@ -635,7 +635,7 @@ public extension WireProtos.Mention {
 
 public extension WireDataModel.Mention {
     func convertToProtosMention() -> WireProtos.Mention? {
-        guard let userID = (user as? ZMUser)?.remoteIdentifier.transportString() else { return nil }
+        guard let userID = (user as? ZMUser)?.remoteIdentifier.transportString else { return nil }
 
         return WireProtos.Mention.with {
             $0.start = Int32(range.location)
@@ -803,7 +803,7 @@ extension DataTransfer {
 extension TrackingIdentifier {
     init(_ uuid: UUID) {
         self = TrackingIdentifier.with {
-            $0.identifier = uuid.transportString()
+            $0.identifier = uuid.transportString
         }
     }
 }

@@ -362,9 +362,9 @@ private struct FileCache: Cache {
     }
 
     public static func cacheKeyForAsset(_ message: ZMConversationMessage, identifier: String? = nil, encrypted: Bool = false) -> String? {
-        guard let messageId = message.nonce?.transportString(),
-              let senderId = message.sender?.remoteIdentifier?.transportString(),
-              let conversationId = message.conversation?.remoteIdentifier?.transportString()
+        guard let messageId = message.nonce?.transportString,
+              let senderId = message.sender?.remoteIdentifier?.transportString,
+              let conversationId = message.conversation?.remoteIdentifier?.transportString
         else {
             return nil
         }

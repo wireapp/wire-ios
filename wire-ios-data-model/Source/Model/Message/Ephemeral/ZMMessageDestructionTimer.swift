@@ -109,7 +109,7 @@ enum MessageDestructionType: String {
               let type = userInfo[MessageDestructionType.UserInfoKey] as? String
         else { return }
 
-        log.debug("message timer did fire for \(message.nonce?.transportString() ?? ""), \(type)")
+        log.debug("message timer did fire for \(message.nonce?.transportString ?? ""), \(type)")
         switch MessageDestructionType(rawValue: type) {
         case .some(.obfuscation):
             message.obfuscate()
@@ -122,7 +122,7 @@ enum MessageDestructionType: String {
     }
 
     public func startObfuscationTimer(message: ZMMessage, timeout: TimeInterval) {
-        log.debug("starting obfuscation timer for \(message.nonce?.transportString() ?? "") timeout in \(timeout)")
+        log.debug("starting obfuscation timer for \(message.nonce?.transportString ?? "") timeout in \(timeout)")
         let fireDate = Date().addingTimeInterval(timeout)
         start(forMessageIfNeeded: message,
               fire: fireDate,
@@ -130,7 +130,7 @@ enum MessageDestructionType: String {
     }
 
     public func startDeletionTimer(message: ZMMessage, timeout: TimeInterval) -> TimeInterval {
-        log.debug("starting deletion timer for \(message.nonce?.transportString() ?? "") timeout in \(timeout)")
+        log.debug("starting deletion timer for \(message.nonce?.transportString ?? "") timeout in \(timeout)")
         let fireDate = Date().addingTimeInterval(timeout)
         start(forMessageIfNeeded: message,
               fire: fireDate,
