@@ -571,10 +571,9 @@
              };
 }
 
-@end
 
+#pragma mark - Transient
 
-@implementation ZMUpdateEventTests (Transient)
 
 - (void)testThatAnEventIsNotTransientIfNotSpecified_Stream
 {
