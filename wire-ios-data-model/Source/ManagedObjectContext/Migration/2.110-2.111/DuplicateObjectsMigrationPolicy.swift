@@ -68,10 +68,6 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
     }
 
     override func endInstanceCreation(forMapping mapping: NSEntityMapping, manager: NSMigrationManager) throws {
-//        <#code#>
-//    }
-//    override func end(_ mapping: NSEntityMapping, manager: NSMigrationManager) throws {
-//        WireLogger.localStorage.info("end Policy for \(mapping.sourceEntityName ?? "<nil>")")
         for (key, count) in duplicateOccurences {
             WireLogger.localStorage.info("Dropped \(count) occurences of type \(mapping.sourceEntityName ?? "<nil>") for id: \(key)")
         }
