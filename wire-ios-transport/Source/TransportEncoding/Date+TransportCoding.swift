@@ -19,14 +19,14 @@
 import Foundation
 
 /// ISO8601 (.withInternetDateTime, .withFractionalSeconds)
-private let iso8601DateFormatter = {
+private let iso8601DateWithFractionalSecondsFormatter = {
     let dateFormatter = ISO8601DateFormatter()
     dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
     return dateFormatter
 }()
 
 /// Covers the cases where no fractional seconds are provided.
-private let alternativeISO8601DateFormatter = {
+private let iso8601DateFormatter = {
     let dateFormatter = ISO8601DateFormatter()
     dateFormatter.formatOptions = [.withInternetDateTime]
     return dateFormatter
@@ -35,13 +35,13 @@ private let alternativeISO8601DateFormatter = {
 extension Date: TransportCoding {
 
     public func transportString() -> String {
-        iso8601DateFormatter.string(from: self)
+        iso8601DateWithFractionalSecondsFormatter.string(from: self)
     }
 
     public init?(transportString: String) {
-        if let date = iso8601DateFormatter.date(from: transportString) {
+        if let date = iso8601DateWithFractionalSecondsFormatter.date(from: transportString) {
             self = date
-        } else if let date = alternativeISO8601DateFormatter.date(from: transportString) {
+        } else if let date = iso8601DateFormatter.date(from: transportString) {
             self = date
         } else {
             return nil
