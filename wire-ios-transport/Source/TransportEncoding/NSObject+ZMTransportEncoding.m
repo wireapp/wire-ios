@@ -21,56 +21,6 @@
 
 #import "NSObject+ZMTransportEncoding.h"
 
-// MARK: - ISO8601 Dates
-
-/// ISO8601 (.withInternetDateTime, .withFractionalSeconds)
-static NSISO8601DateFormatter* iso8601DateFormatter;
-/// Covers the cases where no fractional seconds are provided.
-static NSISO8601DateFormatter* alternativeISO8601DateFormatter;
-
-@implementation NSDate (ZMTransportEncoding)
-
-+ (instancetype)dateWithTransportString:(NSString *)transportString;
-{
-    NSDate *date = [[self ISO8601DateFormatter] dateFromString:transportString];
-    if (date) {
-        return date;
-    } else {
-        return [[self alternativeISO8601DateFormatter] dateFromString:transportString];
-    }
-}
-
-- (NSString *)transportString;
-{
-    return [[NSDate ISO8601DateFormatter] stringFromDate:self];
-}
-
-+ (NSISO8601DateFormatter *)ISO8601DateFormatter
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSISO8601DateFormatter *dateFormatter = [[NSISO8601DateFormatter alloc] init];
-        dateFormatter.formatOptions = NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithFractionalSeconds;
-        iso8601DateFormatter = dateFormatter;
-    });
-    return iso8601DateFormatter;
-}
-
-+ (NSISO8601DateFormatter *)alternativeISO8601DateFormatter
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSISO8601DateFormatter *alternativeDateFormatter = [[NSISO8601DateFormatter alloc] init];
-        alternativeDateFormatter.formatOptions = NSISO8601DateFormatWithInternetDateTime;
-        alternativeISO8601DateFormatter = alternativeDateFormatter;
-    });
-    return alternativeISO8601DateFormatter;
-}
-
-@end
-
-// MARK: - UUID
-
 @implementation NSUUID (ZMTransportEncoding)
 
 + (instancetype)uuidWithTransportString:(NSString *)transportString;

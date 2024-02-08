@@ -20,17 +20,10 @@
 #import <Foundation/Foundation.h>
 
 
+// TODO []: remove
 @protocol ZMTransportEncoding <NSObject>
 
 - (nonnull NSString *)transportString;
-
-@end
-
-
-
-@interface NSDate (ZMTransportEncoding) <ZMTransportEncoding>
-
-+ (nullable instancetype)dateWithTransportString:(nonnull NSString *)transportString;
 
 @end
 
