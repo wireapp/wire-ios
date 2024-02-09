@@ -28,8 +28,4 @@ protocol BackupSource {
     func clearPreviousBackups()
 }
 
-extension SessionManager: BackupSource {
-    func clearPreviousBackups() {
-        SessionManager.clearPreviousBackups(dispatchGroup: nil)
-    }
-}
+extension SessionManager: BackupSource { }
