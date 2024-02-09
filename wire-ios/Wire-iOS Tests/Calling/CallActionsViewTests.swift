@@ -55,7 +55,7 @@ extension CallStateMock {
     }
 }
 
-class CallActionsViewTests: ZMSnapshotTestCase {
+class CallActionsViewTests: BaseSnapshotTestCase {
 
     private var sut: CallActionsView!
     private var widthConstraint: NSLayoutConstraint!
@@ -83,7 +83,7 @@ class CallActionsViewTests: ZMSnapshotTestCase {
     }
 
     func testCallActionsView_Compact() {
-        // Given
+        // GIVEN
        createSut(for: .compact)
 
         let input = CallActionsViewInput(
@@ -98,18 +98,18 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.ongoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.compact)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     // MARK: - Call State: Incoming
 
     func testCallActionsView_StateIncoming_Audio() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -124,16 +124,16 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.incoming
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     func testCallActionsView_StateIncoming_Video() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -148,18 +148,18 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.incoming
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     // MARK: - Call State: Outgoing
 
     func testCallActionsView_StateOutgoing_Audio() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -174,16 +174,16 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.outgoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     func testCallActionsView_StateOutgoing_Video() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -198,18 +198,18 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.outgoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     // MARK: Call State: - Ongoing
 
     func testCallActionsView_StateOngoing_Audio() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -224,16 +224,16 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.ongoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Audio_Muted() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -248,16 +248,16 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.ongoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Audio_SpeakerUnavailable() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -272,16 +272,16 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.ongoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Video() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -296,16 +296,16 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.ongoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Video_PresentationMode_AllVideoStreams() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -320,16 +320,16 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.ongoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Video_PresentationMode_ActiveSpeakers() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -344,18 +344,18 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.ongoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     // MARK: Call State: - Terminating
 
     func testCallActionsView_StateTerminating_Audio() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -370,16 +370,16 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.terminating
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     func testCallActionsView_StateTerminating_Video() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -394,18 +394,18 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.terminating
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     // MARK: - Permissions
 
     func testCallActionsView_Permissions_NotDetermined() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -420,16 +420,16 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.ongoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
     func testCallActionsView_Permissions_NotAllowed() {
-        // Given
+        // GIVEN
         createSut(for: .regular)
 
         let input = CallActionsViewInput(
@@ -444,11 +444,11 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             callState: CallStateMock.ongoing
         )
 
-        // When
+        // WHEN
         sut.update(with: input)
         sut.updateToLayoutSize(.regular)
 
-        // Then
+        // THEN
         verify(matching: sut)
     }
 
