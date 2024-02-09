@@ -261,8 +261,8 @@ extension ZMTransportResponse {
 
     private func extractUserIdentifier() -> UUID? {
         guard let data = payload as? [String: Any] else { return nil }
-        return (data[UserKey.user.rawValue] as? String).flatMap(UUID.init)
-            ?? (data[UserKey.id.rawValue] as? String).flatMap(UUID.init)
+        return (data[UserKey.user.rawValue] as? String).flatMap(UUID.init(transportString:))
+            ?? (data[UserKey.id.rawValue] as? String).flatMap(UUID.init(transportString:))
     }
 
     @objc public func extractUserInfo() -> UserInfo? {
