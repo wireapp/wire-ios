@@ -22,19 +22,24 @@ import Foundation
 /// Determines if the self user has is Proteus verified.
 public protocol IsSelfUserProteusVerifiedUseCaseProtocol {
     /// Returns `true` if the self user is verified, `false` otherwise.
-    func invoke() -> Bool
+    func invoke() async -> Bool
 }
 
 public struct IsSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
+    private let schedule: NSManagedObjectContext.ScheduledTaskType
 
-    public init(context: NSManagedObjectContext) {
+    public init(
+        context: NSManagedObjectContext,
+        schedule: NSManagedObjectContext.ScheduledTaskType
+    ) {
         self.context = context
+        self.schedule = schedule
     }
 
-    public func invoke() -> Bool {
-        context.performAndWait {
+    public func invoke() async -> Bool {
+        await context.perform(schedule: schedule) {
             ZMUser.selfUser(in: context)
                 .allClients
                 .allSatisfy(\.verified)

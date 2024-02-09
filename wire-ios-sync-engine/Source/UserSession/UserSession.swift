@@ -505,11 +505,11 @@ extension ZMUserSession: UserSession {
     }
 
     public var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol {
-        IsSelfUserProteusVerifiedUseCase(context: syncContext)
+        IsSelfUserProteusVerifiedUseCase(context: syncContext, schedule: .immediate)
     }
 
     public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
-        IsSelfUserE2EICertifiedUseCase(context: syncContext, coreCryptoProvider: coreCryptoProvider)
+        IsSelfUserE2EICertifiedUseCase(context: syncContext, schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
     }
 }
 

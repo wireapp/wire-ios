@@ -2739,14 +2739,14 @@ public class MockIsSelfUserProteusVerifiedUseCaseProtocol: IsSelfUserProteusVeri
     // MARK: - invoke
 
     public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() -> Bool)?
+    public var invoke_MockMethod: (() async -> Bool)?
     public var invoke_MockValue: Bool?
 
-    public func invoke() -> Bool {
+    public func invoke() async -> Bool {
         invoke_Invocations.append(())
 
         if let mock = invoke_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = invoke_MockValue {
             return mock
         } else {

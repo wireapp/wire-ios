@@ -30,7 +30,7 @@ final class IsSelfUserProteusVerifiedUseCaseTests: ZMBaseManagedObjectTest {
         super.setUp()
 
         setupUsersClientsAndConversation()
-        sut = .init(context: context)
+        sut = .init(context: context, schedule: .immediate)
     }
 
     override func tearDown() {
@@ -39,15 +39,15 @@ final class IsSelfUserProteusVerifiedUseCaseTests: ZMBaseManagedObjectTest {
         super.tearDown()
     }
 
-    func testResultIsVerified() {
+    func testResultIsVerified() async {
         // When
-        let isVerified = sut.invoke()
+        let isVerified = await sut.invoke()
 
         // Then
         XCTAssertTrue(isVerified)
     }
 
-    func testResultIsNotVerified() throws {
+    func testResultIsNotVerified() async throws {
         // Given
         try context.performAndWait {
             let selfClient = try XCTUnwrap(ZMUser.selfUser(in: context).selfClient())
@@ -55,7 +55,7 @@ final class IsSelfUserProteusVerifiedUseCaseTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let isVerified = sut.invoke()
+        let isVerified = await sut.invoke()
 
         // Then
         XCTAssertFalse(isVerified)
