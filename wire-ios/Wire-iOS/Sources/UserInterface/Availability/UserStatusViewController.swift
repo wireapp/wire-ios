@@ -75,7 +75,7 @@ final class UserStatusViewController: UIViewController {
         Task {
             do {
                 userStatusView.userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
-                userStatusView.userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
+                userStatusView.userStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
             }

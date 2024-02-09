@@ -236,7 +236,7 @@ final class ProfileHeaderViewController: UIViewController {
         Task {
             do {
                 userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
-                userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
+                userStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
             }

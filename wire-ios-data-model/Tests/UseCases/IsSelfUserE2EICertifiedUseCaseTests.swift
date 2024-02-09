@@ -38,7 +38,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
-        sut = .init(context: context, coreCryptoProvider: mockCoreCryptoProvider)
+        sut = .init(context: context, schedule: .immediate, coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {

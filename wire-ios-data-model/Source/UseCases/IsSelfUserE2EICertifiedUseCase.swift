@@ -29,18 +29,21 @@ public protocol IsSelfUserE2EICertifiedUseCaseProtocol {
 public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
+    private let schedule: NSManagedObjectContext.ScheduledTaskType
     private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     public init(
         context: NSManagedObjectContext,
+        schedule: NSManagedObjectContext.ScheduledTaskType,
         coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
         self.context = context
+        self.schedule = schedule
         self.coreCryptoProvider = coreCryptoProvider
     }
 
     public func invoke() async throws -> Bool {
-        let (conversationID, userID) = try await context.perform {
+        let (conversationID, userID) = try await context.perform(schedule: schedule) {
             // conversationID
             guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context) else {
                 throw Error.couldNotFetchMLSSelfConversation
