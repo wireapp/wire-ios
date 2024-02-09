@@ -145,7 +145,8 @@ final class SessionManagerTests: IntegrationTest {
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         let environment = MockEnvironment()
@@ -239,7 +240,8 @@ final class SessionManagerTests: IntegrationTest {
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         let environment = MockEnvironment()
@@ -303,7 +305,8 @@ final class SessionManagerTests: IntegrationTest {
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         XCTAssertEqual(mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_Invocations.count, 1)

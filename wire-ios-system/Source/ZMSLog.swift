@@ -87,10 +87,11 @@ extension ZMSLog {
 
     public func safePublic(_ message: @autoclosure () -> SanitizedString,
                            level: ZMLogLevel_t = .info,
+                           osLogOn: Bool = true,
                            file: String = #file,
                            line: UInt = #line) {
         let entry = ZMSLogEntry(text: message().value, timestamp: Date())
-        ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, file: file, line: line)
+        ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, osLogOn: osLogOn, file: file, line: line)
     }
 
     public func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
@@ -215,6 +216,7 @@ extension ZMSLog {
         level: ZMLogLevel_t,
         isSafe: Bool,
         tag: String?,
+        osLogOn: Bool = true,
         file: String = #file,
         line: UInt = #line) {
         logQueue.async {
@@ -234,7 +236,9 @@ extension ZMSLog {
             }
 
             register(tag: tag)
-            os_log("%{public}@", log: self.logger(tag: tag), type: logLevel, entry.text)
+            if osLogOn {
+                os_log("%{public}@", log: self.logger(tag: tag), type: logLevel, entry.text)
+            }
             notifyHooks(level: level, tag: tag, entry: entry, isSafe: isSafe)
         }
     }
@@ -253,32 +257,8 @@ extension ZMSLog {
 
     @objc static public let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
-    @objc static public var currentLog: Data? {
-        guard let currentLogURL else { return nil }
-        return try? Data(contentsOf: currentLogURL, options: [.uncached])
-    }
-
     @objc static public var currentZipLog: Data? {
-        let manager = FileManager.default
-
-        guard
-            let currentLogURL,
-            manager.fileExists(atPath: currentLogURL.path)
-        else {
-            return nil
-        }
-
-        var tmpURL = currentLogURL.deletingLastPathComponent()
-        tmpURL.appendPathComponent("current.log.zip")
-
-        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: [currentLogURL.path])
-
-        defer {
-            // clean up
-            try? manager.removeItem(at: tmpURL)
-        }
-
-        return try? Data(contentsOf: tmpURL, options: [.uncached])
+        FileManager.default.zipData(from: currentLogURL)
     }
 
     @objc static public let previousZipLogURLs: [URL] = {
@@ -350,7 +330,10 @@ extension ZMSLog {
 
     static public var pathsForExistingLogs: [URL] {
         var paths: [URL] = previousZipLogURLs
-        if let currentPath = currentLogURL, currentLog != nil {
+        if let assertionFile = ZMLastAssertionFile(), FileManager.default.fileExists(atPath: assertionFile.path) {
+            paths.append(assertionFile)
+        }
+        if let currentPath = currentLogURL, FileManager.default.fileExists(atPath: currentPath.path) {
             paths.append(currentPath)
         }
         return paths
@@ -387,3 +370,39 @@ extension ZMSLog {
 
 /// Synchronization queue
 let logQueue = DispatchQueue(label: "ZMSLog")
+
+public extension FileManager {
+    func zipData(from url: URL?) -> Data? {
+        guard
+            let url,
+            self.fileExists(atPath: url.path)
+        else {
+            return nil
+        }
+
+        var tmpURL = url.deletingLastPathComponent()
+        tmpURL.appendPathComponent("\(UUID().uuidString).zip")
+
+        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: [url.path])
+        defer {
+            // clean up
+            try? self.removeItem(at: tmpURL)
+        }
+
+        return try? Data(contentsOf: tmpURL, options: [.uncached])
+    }
+
+    func zipData(from urls: [URL]) -> Data? {
+        var tmpURL = URL(fileURLWithPath: NSTemporaryDirectory(),
+                                        isDirectory: false)
+        tmpURL.appendPathComponent("\(UUID().uuidString).zip")
+
+        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: urls.map { $0.path })
+        defer {
+            // clean up
+            try? self.removeItem(at: tmpURL)
+        }
+
+        return try? Data(contentsOf: tmpURL, options: [.uncached])
+    }
+}

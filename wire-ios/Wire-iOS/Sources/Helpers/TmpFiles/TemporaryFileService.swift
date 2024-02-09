@@ -36,6 +36,5 @@ final class TemporaryFileService: TemporaryFileServiceInterface {
                 try? manager.removeItem(atPath: file.path)
             }
         WireLogger.localStorage.debug("clearing temp directory!!")
-        zmLog.safePublic("clearing temp directory!!", level: .debug)
     }
 }
