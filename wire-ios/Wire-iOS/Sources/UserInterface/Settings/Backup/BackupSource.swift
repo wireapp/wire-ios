@@ -19,6 +19,7 @@
 import Foundation
 import class WireSyncEngine.SessionManager
 
+// sourcery: AutoMockable
 protocol BackupSource {
     func backupActiveAccount(
         password: String,

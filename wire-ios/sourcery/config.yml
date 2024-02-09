@@ -1,0 +1,9 @@
+sources:
+  - ../Wire-iOS/Sources
+templates:
+  - ./AutoMockable.stencil
+output:
+  ./generated
+args:
+  autoMockableTestableImports: ["Wire"]
+  autoMockableImports: []

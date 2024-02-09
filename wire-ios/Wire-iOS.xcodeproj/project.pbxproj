@@ -1269,6 +1269,8 @@
 		E6C25FF62B03550A00406A1C /* AppLockModulePresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF32B03550A00406A1C /* AppLockModulePresenterTests.swift */; };
 		E6C25FF72B0355AD00406A1C /* AppLockModuleViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF22B03550A00406A1C /* AppLockModuleViewTests.swift */; };
 		E6DC00652B10A5AF003ECF53 /* MLSMigrationCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */; };
+		E6DDA96E2B76743B003B7431 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DDA96C2B76740E003B7431 /* AutoMockable.generated.swift */; };
+		E6DDA96F2B76743B003B7431 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DDA96C2B76740E003B7431 /* AutoMockable.generated.swift */; };
 		E6F442FD2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */; };
 		E6F443032B1601BA00D2B08A /* MLSMigrationCellDescriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F443022B1601BA00D2B08A /* MLSMigrationCellDescriptionTests.swift */; };
 		E902B3B429ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */; };
@@ -3314,6 +3316,7 @@
 		E6C25FF22B03550A00406A1C /* AppLockModuleViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModuleViewTests.swift; sourceTree = "<group>"; };
 		E6C25FF32B03550A00406A1C /* AppLockModulePresenterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModulePresenterTests.swift; sourceTree = "<group>"; };
 		E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationCellDescription.swift; sourceTree = "<group>"; };
+		E6DDA96C2B76740E003B7431 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AutoMockable.generated.swift; path = sourcery/generated/AutoMockable.generated.swift; sourceTree = SOURCE_ROOT; };
 		E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageCellSnapshotTests.swift; sourceTree = "<group>"; };
 		E6F443022B1601BA00D2B08A /* MLSMigrationCellDescriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationCellDescriptionTests.swift; sourceTree = "<group>"; };
 		E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUIButton+HapticFeedback.swift"; sourceTree = "<group>"; };
@@ -7732,6 +7735,7 @@
 		EEA65C2525D27A8300AA7519 /* Generated */ = {
 			isa = PBXGroup;
 			children = (
+				E6DDA96C2B76740E003B7431 /* AutoMockable.generated.swift */,
 				0637968E2964E2FE00674AAA /* Assets+Generated.swift */,
 				EEA65C2625D27A8300AA7519 /* Strings+Generated.swift */,
 			);
@@ -8346,6 +8350,7 @@
 			buildConfigurationList = 8F42C558199244A700288E4D /* Build configuration list for PBXNativeTarget "Wire-iOS" */;
 			buildPhases = (
 				EEF9786E25D2923A00F7333E /* Run SwiftGen */,
+				E6DDA96B2B767382003B7431 /* Run Sourcery */,
 				8F42C534199244A700288E4D /* Sources */,
 				8F42C535199244A700288E4D /* Frameworks */,
 				8F42C536199244A700288E4D /* Resources */,
@@ -8727,6 +8732,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "rm -rf \"${SOURCE_ROOT}\"/SnapshotResults/*\n";
+		};
+		E6DDA96B2B767382003B7431 /* Run Sourcery */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Sourcery";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-sourcery.sh --config ./sourcery/config.yml\n";
 		};
 		E96301B82B4EDFE700726CDB /* Run SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10209,6 +10232,7 @@
 				A9FAF4AC2723017F00C96AF4 /* SkeletonViewControllerTests.swift in Sources */,
 				EF27CD9F20C161500077FE55 /* ProfileClientViewControllerTests.swift in Sources */,
 				EF2A8DE7214A816D002C9058 /* StartUIViewControllerSnapshotTests.swift in Sources */,
+				E6DDA96E2B76743B003B7431 /* AutoMockable.generated.swift in Sources */,
 				164B533C20A0A5E800EC8265 /* CallInfoConfigurationTests.swift in Sources */,
 				5EA73D9220D903BC0001D106 /* CheckmarkCellTests.swift in Sources */,
 				D38BC97628BF8AA700EB928F /* NotificationServiceError.swift in Sources */,
@@ -10431,6 +10455,7 @@
 				E6579E772AFFA36D004E7FD8 /* AppLockModule.MockSession.swift in Sources */,
 				E6579E4C2AFFA024004E7FD8 /* MockServiceUserType+Creation.swift in Sources */,
 				E6C25FDB2AFFAFB100406A1C /* NSAttributedString+Attachments.swift in Sources */,
+				E6DDA96F2B76743B003B7431 /* AutoMockable.generated.swift in Sources */,
 				E6C25FCF2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */,
 				E6579E5D2AFFA024004E7FD8 /* MockUserClient.swift in Sources */,
 				E6579E6B2AFFA024004E7FD8 /* MockUser+Service.swift in Sources */,
