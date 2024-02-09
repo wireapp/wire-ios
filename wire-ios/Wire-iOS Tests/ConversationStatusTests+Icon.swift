@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class ConversationStatusTests_Icon: CoreDataSnapshotTestCase {
+final class ConversationStatusTests_Icon: CoreDataSnapshotTestCase {
 
     override func setUp() {
         selfUserInTeam = true

@@ -27,7 +27,7 @@ protocol ContactsDataSourceDelegate: AnyObject {
 
 }
 
-class ContactsDataSource: NSObject {
+final class ContactsDataSource: NSObject {
 
     static let MinimumNumberOfContactsToDisplaySections: UInt = 15
 

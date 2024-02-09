@@ -20,7 +20,7 @@ import Foundation
 
 /// In memory cache with support for generics.
 
-public class Cache<Key: Hashable, Value> {
+public final class Cache<Key: Hashable, Value> {
     private var cache: [Key: EntryMetadata] = [:]
     private var cacheBuffer: CircularArray<Key>
     private let maxCost: Int

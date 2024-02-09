@@ -20,7 +20,7 @@ import Foundation
 import Starscream
 
 @objcMembers
-class StarscreamPushChannel: NSObject, PushChannelType {
+final class StarscreamPushChannel: NSObject, PushChannelType {
 
     var webSocket: WebSocket?
     var workQueue: OperationQueue
@@ -259,7 +259,7 @@ extension StarscreamPushChannel: WebSocketDelegate {
 
 }
 
-class StarscreamCertificatePinning: CertificatePinning {
+final class StarscreamCertificatePinning: CertificatePinning {
 
     let environment: BackendEnvironmentProvider
 

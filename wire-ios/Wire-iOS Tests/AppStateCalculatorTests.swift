@@ -265,7 +265,7 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 }
 
-class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
+final class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
     var wasNotified: Bool = false
     func appStateCalculator(_: AppStateCalculator,
                             didCalculate appState: AppState,

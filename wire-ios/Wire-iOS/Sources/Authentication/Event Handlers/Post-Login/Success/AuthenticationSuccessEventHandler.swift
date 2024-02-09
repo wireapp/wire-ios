@@ -23,7 +23,7 @@ import WireSyncEngine
  * Handles the notification informing that the client has been registered after the client signed in.
  */
 
-class AuthenticationClientRegistrationSuccessHandler: AuthenticationEventHandler {
+final class AuthenticationClientRegistrationSuccessHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

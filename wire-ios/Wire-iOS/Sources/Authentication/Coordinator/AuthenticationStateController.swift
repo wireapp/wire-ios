@@ -43,7 +43,7 @@ protocol AuthenticationStateControllerDelegate: AnyObject {
  * and unwinding functionality.
  */
 
-class AuthenticationStateController {
+final class AuthenticationStateController {
 
     enum RewindMilestone: Equatable {
         case createCredentials(_ user: UnregisteredUser)

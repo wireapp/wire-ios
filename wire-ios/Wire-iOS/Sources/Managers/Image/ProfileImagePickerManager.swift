@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-class ProfileImagePickerManager: ImagePickerManager {
+final class ProfileImagePickerManager: ImagePickerManager {
 
     func selectProfileImage() -> UIAlertController {
         let actionSheet = showActionSheet { image in

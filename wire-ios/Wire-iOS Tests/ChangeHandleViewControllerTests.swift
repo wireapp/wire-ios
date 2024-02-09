@@ -20,7 +20,7 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-class ChangeHandleViewControllerTests: BaseSnapshotTestCase {
+final class ChangeHandleViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()

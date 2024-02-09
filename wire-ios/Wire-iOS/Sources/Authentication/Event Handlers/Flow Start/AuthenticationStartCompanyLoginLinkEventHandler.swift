@@ -23,7 +23,7 @@ import WireSyncEngine
  * Handles the case where the app is opened from an SSO link.
  */
 
-class AuthenticationStartCompanyLoginLinkEventHandler: AuthenticationEventHandler {
+final class AuthenticationStartCompanyLoginLinkEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

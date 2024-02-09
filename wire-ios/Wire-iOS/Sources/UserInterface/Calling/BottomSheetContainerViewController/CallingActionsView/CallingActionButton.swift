@@ -52,7 +52,7 @@ class CallingActionButton: IconLabelButton {
 
 }
 
-class EndCallButton: CallingActionButton {
+final class EndCallButton: CallingActionButton {
 
     override func apply(_ configuration: CallActionAppearance) {
         let redColor = SemanticColors.Button.backgroundLikeHighlighted
@@ -62,7 +62,7 @@ class EndCallButton: CallingActionButton {
     }
 }
 
-class PickUpButton: CallingActionButton {
+final class PickUpButton: CallingActionButton {
 
     override func apply(_ configuration: CallActionAppearance) {
         let greenColor = SemanticColors.Button.backgroundPickUp

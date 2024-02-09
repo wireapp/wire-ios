@@ -20,7 +20,7 @@ import Foundation
 
 // TODO-SWIFT: convert to struct
 @objc(ZMAccessToken) @objcMembers
-public class AccessToken: NSObject {
+public final class AccessToken: NSObject {
 
     public let token: String
     public let type: String

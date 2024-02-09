@@ -45,6 +45,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     typealias ShareExtensionConversationLocale = L10n.ShareExtension.ConversationSelection
 
+    let maximumMessageLength = 8000
+
     lazy var accountItem: SLComposeSheetConfigurationItem = { [weak self] in
         let item = SLComposeSheetConfigurationItem()!
         let accountName = self?.currentAccount?.shareExtensionDisplayName
@@ -212,7 +214,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     override func isContentValid() -> Bool {
         // Do validation of contentText and/or NSExtensionContext attachments here
         let textLength = self.contentText.trimmingCharacters(in: .whitespaces).count
-        let remaining = SharedConstants.maximumMessageLength - textLength
+        let remaining = maximumMessageLength - textLength
         let remainingCharactersThreshold = 30
 
         if remaining <= remainingCharactersThreshold {

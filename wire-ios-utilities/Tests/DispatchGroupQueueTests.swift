@@ -19,7 +19,7 @@
 import WireTesting
 @testable import WireUtilities
 
-class DispatchGroupQueueTests: ZMTBaseTest {
+final class DispatchGroupQueueTests: ZMTBaseTest {
 
     var sut: DispatchGroupQueue!
 

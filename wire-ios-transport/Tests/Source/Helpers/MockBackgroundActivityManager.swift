@@ -24,7 +24,7 @@ import WireTesting
  * A controllable objects that mocks the behavior of UIApplication regarding background tasks.
  */
 
-@objc class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
+@objc final class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
 
     var backgroundTimeRemaining: TimeInterval = 10
 

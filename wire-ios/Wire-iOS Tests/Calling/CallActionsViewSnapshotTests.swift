@@ -61,7 +61,7 @@ extension CallStateMock {
 
 // MARK: - CallActionsViewSnapshotTests
 
-class CallActionsViewSnapshotTests: BaseSnapshotTestCase {
+final class CallActionsViewSnapshotTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 

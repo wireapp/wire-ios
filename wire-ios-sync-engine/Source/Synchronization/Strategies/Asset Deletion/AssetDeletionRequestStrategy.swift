@@ -40,7 +40,7 @@ fileprivate extension AssetRequestFactory {
     }
 }
 
-final public class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
+public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
 
     private var requestSync: ZMSingleRequestSync!
     private let identifierProvider: AssetDeletionIdentifierProviderType

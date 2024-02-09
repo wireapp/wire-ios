@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class TestUserProfileUpdateObserver: NSObject, UserProfileUpdateObserver {
+final class TestUserProfileUpdateObserver: NSObject, UserProfileUpdateObserver {
 
     var invokedCallbacks: [WireSyncEngine.UserProfileUpdateNotificationType] = []
 

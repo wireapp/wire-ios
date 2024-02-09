@@ -29,7 +29,7 @@ protocol UserSelectionObserver: AnyObject {
 
 }
 
-class UserSelection: NSObject {
+final class UserSelection: NSObject {
 
     private(set) var users = UserSet()
     private var observers: [UnownedObject<UserSelectionObserver>] = []

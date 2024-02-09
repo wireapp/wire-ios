@@ -23,7 +23,7 @@ import WireCommonComponents
  * The view that displays the restore from backup button.
  */
 
-class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
+final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
 
     let views: [ViewDescriptor]
     weak var actioner: AuthenticationActioner?
@@ -44,7 +44,7 @@ class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescriptio
  * The step that displays information about the history.
  */
 
-class BackupRestoreStepDescription: AuthenticationStepDescription {
+final class BackupRestoreStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String

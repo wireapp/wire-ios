@@ -21,7 +21,7 @@ import Foundation
 private typealias HandleChange = L10n.Localizable.Self.Settings.AccountSection.Handle.Change
 private typealias Username = L10n.Localizable.Registration.Signin.Username
 
-class AddUsernameStepDescription: DefaultValidatingStepDescription {
+final class AddUsernameStepDescription: DefaultValidatingStepDescription {
 
     let backButton: BackButtonDescription?
     var mainView: ViewDescriptor & ValueSubmission

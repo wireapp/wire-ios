@@ -190,7 +190,7 @@ extension CallQualityControllerTests {
 }
 
 // MARK: - ActiveCallRouterMock
-class CallQualityRouterProtocolMock: CallQualityRouterProtocol {
+final class CallQualityRouterProtocolMock: CallQualityRouterProtocol {
 
     var presentCallQualitySurveyIsCalled: Bool = false
     func presentCallQualitySurvey(with callDuration: TimeInterval) {
@@ -211,7 +211,7 @@ class CallQualityRouterProtocolMock: CallQualityRouterProtocol {
 }
 
 // MARK: - ActiveCallRouterMock
-class MockCallQualityController: CallQualityController {
+final class MockCallQualityController: CallQualityController {
     override var canPresentCallQualitySurvey: Bool {
         return true
     }

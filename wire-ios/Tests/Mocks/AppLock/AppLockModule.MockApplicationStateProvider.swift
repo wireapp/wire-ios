@@ -21,7 +21,7 @@ import Foundation
 
 extension AppLockModule {
 
-    class MockApplicationStateProvider: ApplicationStateProvider {
+    final class MockApplicationStateProvider: ApplicationStateProvider {
 
         var applicationState = UIApplication.State.active
 

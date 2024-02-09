@@ -18,7 +18,7 @@
 
 import Foundation
 
-class DeviceConfigurationEventHandler: AuthenticationEventHandler {
+final class DeviceConfigurationEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

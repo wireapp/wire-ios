@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class DeepLinkURLActionProcessorTests: DatabaseTest {
+final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
     var presentationDelegate: MockPresentationDelegate!
     var sut: WireSyncEngine.DeepLinkURLActionProcessor!

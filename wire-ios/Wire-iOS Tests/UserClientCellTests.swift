@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-class UserClientCellTests: BaseSnapshotTestCase {
+final class UserClientCellTests: BaseSnapshotTestCase {
 
     func cell(_ configuration: (UserClientCell) -> Void) -> UserClientCell {
         let cell = UserClientCell(frame: CGRect(x: 0, y: 0, width: 320, height: 64))

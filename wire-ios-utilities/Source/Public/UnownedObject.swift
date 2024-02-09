@@ -29,12 +29,12 @@ public final class UnownedObject<T: AnyObject> {
 }
 
 @objcMembers
-public class UnownedNSObject: NSObject {
+public final class UnownedNSObject: NSObject {
     public weak var unbox: NSObject?
 
     public init(_ unbox: NSObject) {
         self.unbox = unbox
     }
 
-    open var isValid: Bool { return self.unbox != nil }
+    public var isValid: Bool { return self.unbox != nil }
 }

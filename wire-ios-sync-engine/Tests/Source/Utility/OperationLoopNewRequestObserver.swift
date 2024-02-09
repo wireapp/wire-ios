@@ -18,7 +18,7 @@
 
 import Foundation
 
-class OperationLoopNewRequestObserver {
+final class OperationLoopNewRequestObserver {
 
     var token: NSObjectProtocol?
     var notifications = [Notification]()

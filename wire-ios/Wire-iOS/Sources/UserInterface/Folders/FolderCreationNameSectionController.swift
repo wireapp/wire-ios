@@ -19,7 +19,7 @@
 import UIKit
 import Foundation
 
-class FolderCreationNameSectionController: NSObject, CollectionViewSectionController {
+final class FolderCreationNameSectionController: NSObject, CollectionViewSectionController {
 
     typealias Cell = FolderCreationNameCell
 

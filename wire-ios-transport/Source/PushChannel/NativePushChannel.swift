@@ -19,7 +19,7 @@
 import Foundation
 
 @objcMembers
-class NativePushChannel: NSObject, PushChannelType {
+final class NativePushChannel: NSObject, PushChannelType {
 
     var clientID: String? {
         didSet {

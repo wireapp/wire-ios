@@ -142,7 +142,7 @@ extension FileManagerProtectionTests {
 
 /// This helper class is needed as the default file system will not report the value
 /// of the `FileAttributeKey.protectionKey` when reading file attributes
-class FileManagerThatRecordsFileProtectionAttributes: FileManager {
+final class FileManagerThatRecordsFileProtectionAttributes: FileManager {
 
     var recordedAttributes: [String: FileProtectionType] = [:]
 

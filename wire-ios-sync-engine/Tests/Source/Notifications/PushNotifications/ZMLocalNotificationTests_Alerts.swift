@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-class ZMLocalNotificationTests_Alerts: ZMLocalNotificationTests {
+final class ZMLocalNotificationTests_Alerts: ZMLocalNotificationTests {
 
     func addSelfUserToTeam() {
 

@@ -23,7 +23,7 @@ import WireSyncEngineSupport
 import WireTesting
 @testable import WireSyncEngine
 
-class GetUserClientFingerprintUseCaseTests: MessagingTest {
+final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     var sut: GetUserClientFingerprintUseCase!
 
     var mockProteusService: MockProteusServiceInterface!

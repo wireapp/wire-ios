@@ -27,7 +27,7 @@ private typealias LabelColors = SemanticColors.Label
 
 // MARK: - ConversationSystemMessageCell
 
-class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     struct Configuration: Equatable {
         let icon: UIImage?

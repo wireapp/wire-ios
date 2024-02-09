@@ -28,7 +28,7 @@ import Datadog
 import DatadogCrashReporting
 import UIKit
 
-public class DatadogWrapper {
+public final class DatadogWrapper {
 
     /// Get shared instance only if Developer Flag is on.
 
@@ -180,7 +180,7 @@ public enum LogLevel {
     case critical
 
 }
-public class DatadogWrapper {
+public final class DatadogWrapper {
 
     public static let shared: DatadogWrapper? = nil
 

@@ -32,7 +32,7 @@ extension ParticipantRole: ObjectInSnapshot {
 }
 
 @objcMembers
-final public class ParticipantRoleChangeInfo: ObjectChangeInfo {
+public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
 
     static let ParticipantRoleChangeInfoKey = "participantRoleChanges"
 

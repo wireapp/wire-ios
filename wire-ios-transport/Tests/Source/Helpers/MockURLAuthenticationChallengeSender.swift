@@ -19,7 +19,7 @@
 import Foundation
 
 @objc
-class MockURLAuthenticationChallengeSender: NSObject, URLAuthenticationChallengeSender {
+final class MockURLAuthenticationChallengeSender: NSObject, URLAuthenticationChallengeSender {
 
     func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {
 

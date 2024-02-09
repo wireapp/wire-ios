@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-class ConversationCallSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationCallSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias IconColors = SemanticColors.Icon

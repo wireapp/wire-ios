@@ -26,7 +26,7 @@ final class MockBackupSource: BackupSource {
     func clearPreviousBackups() { }
 }
 
-class BackupViewControllerTests: ZMSnapshotTestCase {
+final class BackupViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()

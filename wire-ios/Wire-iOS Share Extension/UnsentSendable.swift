@@ -90,7 +90,7 @@ class UnsentSendableBase {
 }
 
 /// `UnsentSendable` implementation to send text messages
-class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
+final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
     private var text: String
     private let attachment: NSItemProvider?

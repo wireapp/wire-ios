@@ -18,7 +18,7 @@
 
 import Foundation
 
-class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEventHandler {
+final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class ConfirmationCodeCell: UITableViewCell {
+final class ConfirmationCodeCell: UITableViewCell {
 
     let textField: CharacterInputField = {
         let textField = CharacterInputField(maxLength: 6, characterSet: .decimalDigits, size: CGSize(width: 375, height: 56))

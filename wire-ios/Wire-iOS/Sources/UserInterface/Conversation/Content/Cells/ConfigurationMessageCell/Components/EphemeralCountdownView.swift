@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 import WireDataModel
 
-class EphemeralCountdownView: UIView {
+final class EphemeralCountdownView: UIView {
 
     fileprivate let destructionCountdownView: DestructionCountdownView = DestructionCountdownView()
     fileprivate var timer: Timer?

@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitioning {
+final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
     let reverse: Bool
     let visualEffectView: UIVisualEffectView

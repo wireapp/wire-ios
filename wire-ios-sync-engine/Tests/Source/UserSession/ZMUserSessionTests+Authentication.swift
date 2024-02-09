@@ -20,7 +20,7 @@ import Foundation
 @testable import WireSyncEngine
 import XCTest
 
-class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
 
     var previousApiVersion: APIVersion?
 

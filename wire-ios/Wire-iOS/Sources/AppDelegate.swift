@@ -40,7 +40,7 @@ extension Notification.Name {
 private let zmLog = ZMSLog(tag: "AppDelegate")
 private let pushLog = ZMSLog(tag: "Push")
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Private Property
 

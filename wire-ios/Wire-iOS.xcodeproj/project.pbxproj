@@ -400,7 +400,6 @@
 		5E8FFC2221EF86000052DF03 /* EmailLinkVerificationStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2121EF86000052DF03 /* EmailLinkVerificationStepDescription.swift */; };
 		5E8FFC2421F086240052DF03 /* AuthenticationReauthenticateInputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2321F086230052DF03 /* AuthenticationReauthenticateInputHandler.swift */; };
 		5E8FFC2621F0879B0052DF03 /* ReauthenticateWithCompanyLoginStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2521F0879B0052DF03 /* ReauthenticateWithCompanyLoginStepDescription.swift */; };
-		5E8FFC2B21F08D5B0052DF03 /* PhoneNumberInputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2A21F08D5B0052DF03 /* PhoneNumberInputCell.swift */; };
 		5E8FFC2F21F0941C0052DF03 /* AccessoryTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC2E21F0941C0052DF03 /* AccessoryTextFieldCell.swift */; };
 		5E8FFC3121F098E00052DF03 /* ConfirmationCodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC3021F098E00052DF03 /* ConfirmationCodeCell.swift */; };
 		5E90418921F230A900C3B413 /* AuthenticationCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E90418821F230A900C3B413 /* AuthenticationCredentialsViewController.swift */; };
@@ -1805,7 +1804,6 @@
 		F15650A221DCF60E00210504 /* FileMetaDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */; };
 		F15650A321DCF63300210504 /* FilePreviewGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8E4FAA1DF066750009F437 /* FilePreviewGenerator.swift */; };
 		F15650A421DCF66600210504 /* AudioProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8E4FB21DF066EE0009F437 /* AudioProcessing.swift */; };
-		F15650AC21DCFBC000210504 /* SharedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCBE24C1FC72FE500CBD55D /* SharedConstants.swift */; };
 		F15650AD21DCFC8700210504 /* AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8778AAEC1F6BC6AD0022F53F /* AppLock.swift */; };
 		F15650AE21DCFCED00210504 /* SettingsPropertyName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C98DCFF1FC32F41005C0042 /* SettingsPropertyName.swift */; };
 		F15650AF21DCFE5200210504 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161541BB1E28FFAE00AC2FFB /* CircularProgressView.swift */; };
@@ -2399,7 +2397,6 @@
 		5E8FFC2121EF86000052DF03 /* EmailLinkVerificationStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailLinkVerificationStepDescription.swift; sourceTree = "<group>"; };
 		5E8FFC2321F086230052DF03 /* AuthenticationReauthenticateInputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationReauthenticateInputHandler.swift; sourceTree = "<group>"; };
 		5E8FFC2521F0879B0052DF03 /* ReauthenticateWithCompanyLoginStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReauthenticateWithCompanyLoginStepDescription.swift; sourceTree = "<group>"; };
-		5E8FFC2A21F08D5B0052DF03 /* PhoneNumberInputCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberInputCell.swift; sourceTree = "<group>"; };
 		5E8FFC2E21F0941C0052DF03 /* AccessoryTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessoryTextFieldCell.swift; sourceTree = "<group>"; };
 		5E8FFC3021F098E00052DF03 /* ConfirmationCodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationCodeCell.swift; sourceTree = "<group>"; };
 		5E90418821F230A900C3B413 /* AuthenticationCredentialsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationCredentialsViewController.swift; sourceTree = "<group>"; };
@@ -2595,7 +2592,6 @@
 		7CCA7CC1221AEC7B00A7CA2A /* ConversationDetailFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDetailFooterView.swift; sourceTree = "<group>"; };
 		7CCA7CC3221AF55300A7CA2A /* ProfileFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFooterView.swift; sourceTree = "<group>"; };
 		7CCB8F7E229D67BD005BBC10 /* URL+WireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+WireTests.swift"; sourceTree = "<group>"; };
-		7CCBE24C1FC72FE500CBD55D /* SharedConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConstants.swift; sourceTree = "<group>"; };
 		7CCFC10E228AFCC0007C365B /* ConversationLegalHoldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLegalHoldCell.swift; sourceTree = "<group>"; };
 		7CCFC110228B1E8D007C365B /* WireStyleKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WireStyleKit.swift; sourceTree = "<group>"; };
 		7CEB45271F8FAAC400D772D5 /* UINavigationBarContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationBarContainer.swift; sourceTree = "<group>"; };
@@ -8140,7 +8136,6 @@
 			isa = PBXGroup;
 			children = (
 				F12CDAEA1E43886A00CEFCEB /* DecriptionHeaderView.swift */,
-				5E8FFC2A21F08D5B0052DF03 /* PhoneNumberInputCell.swift */,
 				5E8FFC2E21F0941C0052DF03 /* AccessoryTextFieldCell.swift */,
 				5E028DEB21F883DF00E5512A /* EmailPasswordTextFieldCell.swift */,
 				5E39FC62225CCEFA00C682B8 /* ValueValidationCell.swift */,
@@ -8229,7 +8224,6 @@
 				CE06C93E1DF5C3D900497685 /* AVAsset+VideoConvert.swift */,
 				8778AAEC1F6BC6AD0022F53F /* AppLock.swift */,
 				7C98DCFF1FC32F41005C0042 /* SettingsPropertyName.swift */,
-				7CCBE24C1FC72FE500CBD55D /* SharedConstants.swift */,
 				BFB332671E3A2D95003B0CD2 /* ExtensionSettings.swift */,
 				161541BB1E28FFAE00AC2FFB /* CircularProgressView.swift */,
 				63F65EF92464426200534A69 /* TimedCircularProgressView.swift */,
@@ -9839,7 +9833,6 @@
 				16595CFF20BEE5E000E1340E /* Analytics+CallEvents.swift in Sources */,
 				A92CB35723CDF6D100F12797 /* ConversationContentViewControllerDelegate.swift in Sources */,
 				BFAF4CB51CECEF3C00780537 /* WaveFormView.swift in Sources */,
-				5E8FFC2B21F08D5B0052DF03 /* PhoneNumberInputCell.swift in Sources */,
 				A956554E23ED9D460004720E /* TokenizedTextView.swift in Sources */,
 				A9806A3B23E2024E00691DFE /* AudioTrackPlayer.swift in Sources */,
 				A9A3B1EB24D823CC001AF38E /* UnlockViewController.swift in Sources */,
@@ -10471,7 +10464,6 @@
 				160782E023C8ED960065392B /* UserDefaults+ApplicationGroup.swift in Sources */,
 				A95B63F024250DA8008A2974 /* FileManager+TempDirectory.swift in Sources */,
 				F15650BF21DD08F100210504 /* AVAsset+VideoConvert.swift in Sources */,
-				F15650AC21DCFBC000210504 /* SharedConstants.swift in Sources */,
 				F15650C421DD0AB200210504 /* UIApplication+ShareExtension.swift in Sources */,
 				7C525EBF23603C9100396C42 /* Bundle+SSO.swift in Sources */,
 				F15650C321DD0A9B00210504 /* Bundle+Backend.swift in Sources */,

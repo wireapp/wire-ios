@@ -21,7 +21,7 @@ import UIKit
 final class EphemeralTimeoutFormatter {
 
     /// A formatter to produce a string with day in full style and hour/minute in positional style
-    fileprivate class DayFormatter {
+    fileprivate final class DayFormatter {
 
         /// hour formatter with no second unit
         private let hourFormatter: DateComponentsFormatter = {

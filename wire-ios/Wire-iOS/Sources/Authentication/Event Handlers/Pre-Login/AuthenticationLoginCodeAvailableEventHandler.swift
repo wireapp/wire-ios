@@ -22,7 +22,7 @@ import Foundation
  * Handles the event that informs the app when the phone login code is available.
  */
 
-class AuthenticationLoginCodeAvailableEventHandler: AuthenticationEventHandler {
+final class AuthenticationLoginCodeAvailableEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

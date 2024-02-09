@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class ConversationCreateNameCell: UICollectionViewCell {
+final class ConversationCreateNameCell: UICollectionViewCell {
 
     let textField = SimpleTextField()
 
