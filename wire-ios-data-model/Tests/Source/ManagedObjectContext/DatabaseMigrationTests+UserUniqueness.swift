@@ -152,7 +152,7 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
 
         if let identifier {
             predicates.append(
-                NSPredicate(format: "%K == %@", ZMUser.remoteIdentifierDataKey()!, identifier.uuidData as CVarArg)
+                NSPredicate(format: "%K == %@", ZMUser.remoteIdentifierDataKey(), identifier.uuidData as CVarArg)
             )
         }
 

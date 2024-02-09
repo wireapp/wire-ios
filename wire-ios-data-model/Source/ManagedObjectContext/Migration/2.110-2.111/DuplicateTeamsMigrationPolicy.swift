@@ -23,7 +23,7 @@ class DuplicateTeamsMigrationPolicy: DuplicateObjectsMigrationPolicy {
 
     // Key used to compare duplicate occurences of Team
     override func primaryKey(fromSourceInstance sInstance: NSManagedObject) -> String {
-        let remoteIdentifierData = sInstance.value(forKey: ZMManagedObject.remoteIdentifierDataKey()!) as? Data
+        let remoteIdentifierData = sInstance.value(forKey: ZMManagedObject.remoteIdentifierDataKey()) as? Data
         return remoteIdentifierData.flatMap { UUID(data: $0)?.uuidString } ?? "<nil>"
     }
 }

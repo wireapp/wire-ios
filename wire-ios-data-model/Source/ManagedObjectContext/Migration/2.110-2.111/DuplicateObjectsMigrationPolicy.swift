@@ -28,7 +28,7 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
     }
 
     private var keyCache = Set<String>()
-    private var duplicateOccurences: [String: Int] = [:]
+    private var duplicateOccurrences: [String: Int] = [:]
 
     // method to populate primaryKey called after createDestinationInstances on all occurences of ZMUser or ZMConversation
     @objc(primaryKey::)
@@ -45,8 +45,8 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
         let primaryKey = self.primaryKey(fromSourceInstance: sInstance)
 
         if keyCache.contains(primaryKey) {
-            duplicateOccurences[primaryKey] = (duplicateOccurences[primaryKey] ?? 0) + 1
-            WireLogger.localStorage.debug("skips the duplicate instance \(duplicateOccurences)")
+            duplicateOccurrences[primaryKey, default: 0] += 1
+            WireLogger.localStorage.debug("skips the duplicate instance \(duplicateOccurrences)")
             // skips the duplicate instance
             return
         } else {
@@ -60,19 +60,19 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
     }
 
     override func endInstanceCreation(forMapping mapping: NSEntityMapping, manager: NSMigrationManager) throws {
-        for (key, count) in duplicateOccurences {
-            WireLogger.localStorage.info("Dropped \(count) occurences of type \(mapping.sourceEntityName ?? "<nil>") for id: \(key)")
+        for (key, count) in duplicateOccurrences {
+            WireLogger.localStorage.info("Dropped \(count) occurrences of type \(mapping.sourceEntityName ?? "<nil>") for id: \(key)")
         }
 
-        if duplicateOccurences.count > 0 {
+        if duplicateOccurrences.count > 0 {
             markNeedsSlowSync(manager: manager,
                               forEntityName: mapping.sourceEntityName ?? "<nil>")
         }
     }
 
     func primaryKey(fromSourceInstance sInstance: NSManagedObject) -> String {
-        let uuidData = sInstance.value(forKey: ZMManagedObject.remoteIdentifierDataKey()!) as? Data
-        let domain = sInstance.value(forKey: ZMManagedObject.domainKey()!) as? String
+        let uuidData = sInstance.value(forKey: ZMManagedObject.remoteIdentifierDataKey()) as? Data
+        let domain = sInstance.value(forKey: ZMManagedObject.domainKey()) as? String
         return self.primaryKey(uuidData, domain: domain)
     }
 
