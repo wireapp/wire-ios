@@ -203,11 +203,13 @@ final class SessionManagerTests: IntegrationTest {
     }
 
     func testThatItNotifiesDestroyedSessionObserverWhenMemoryWarningReceived() {
-
         // GIVEN
         // Mock transport doesn't support multiple accounts at the moment so we pretend to be offline
         // in order to avoid the user session's getting stuck in a request loop.
         mockTransportSession.doNotRespondToRequests = true
+
+        mockDelegate.sessionManagerDidFailToLoginError_MockMethod = { _ in }
+        mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_MockMethod = { _ in }
 
         let account1 = self.createAccount()
         sessionManager!.environment.cookieStorage(for: account1).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
@@ -307,6 +309,12 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatJailbrokenDeviceDeletesAccount() {
         // GIVEN
+        mockDelegate.sessionManagerDidFailToLoginError_MockMethod = { _ in }
+        mockDelegate.sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { _, userSessionCanBeTornDown in
+            userSessionCanBeTornDown?()
+        }
+        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = { }
+
         let jailbreakDetector = MockJailbreakDetector()
         jailbreakDetector.jailbroken = true
         sessionManagerBuilder.jailbreakDetector = jailbreakDetector
