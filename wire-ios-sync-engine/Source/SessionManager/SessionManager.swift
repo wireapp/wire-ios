@@ -895,19 +895,19 @@ public final class SessionManager: NSObject, SessionManagerType {
                     with: coreDataStack
                 )
 
-                // for some migrations we need to slow sync
-                if coreDataStack.needsToTriggerSlowSync {
-                    triggerSlowSync(for: userSession)
-                }
+                triggerSlowSyncIfNeeded(with: userSession)
 
                 onCompletion(userSession)
             }
         )
     }
 
-    private func triggerSlowSync(for userSession: ZMUserSession) {
-        userSession.syncContext.perform {
-            userSession.syncStatus?.forceSlowSync()
+    private func triggerSlowSyncIfNeeded(with userSession: ZMUserSession) {
+        let context = userSession.syncContext
+        context.perform {
+            if context.needsToTriggerSlowSync {
+                userSession.syncStatus?.forceSlowSync()
+            }
         }
     }
 

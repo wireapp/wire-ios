@@ -110,7 +110,6 @@ struct DatabaseMigrationHelper {
         return name
     }
 
-
     // MARK: - Migration Helpers
 
     func migrateStoreToCurrentVersion(
@@ -180,10 +179,6 @@ extension XCTestCase {
         line: UInt = #line
     ) throws -> CoreDataStack {
 
-        // we use backgroundActivity suring the setup so we need to mock for tests
-        let manager = MockBackgroundActivityManager()
-        BackgroundActivityFactory.shared.activityManager = manager
-
         let account = Account(
             userName: "",
             userIdentifier: userID
@@ -204,14 +199,11 @@ extension XCTestCase {
         }, onCompletion: { _ in
             exp.fulfill()
         })
-        waitForExpectations(timeout: 5.0)
+        wait(for: [exp], timeout: 5)
 
         if let setupError {
             throw setupError
         }
-
-        BackgroundActivityFactory.shared.activityManager = nil
-        XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
 
         return stack
     }

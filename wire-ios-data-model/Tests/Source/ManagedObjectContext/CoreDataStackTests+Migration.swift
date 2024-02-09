@@ -137,18 +137,4 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
-
-    func testNeedsToTriggerSlowSync_ClearsValueAfterRead() {
-        // GIVEN
-        CoreDataStack.migrationUserDefaults = .random()!
-        let uuid = UUID()
-        let stack = createStorageStackAndWaitForCompletion(userID: uuid)
-        CoreDataStack.setMigrationNeedsSlowSync()
-
-        // WHEN | THEN
-        XCTAssertTrue(stack.needsToTriggerSlowSync)
-
-        XCTAssertFalse(stack.needsToTriggerSlowSync)
-    }
-
 }

@@ -41,13 +41,6 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
     func testThatItPerformsMigrationFrom110Version_ToCurrentModelVersion() throws {
         let initialVersion = "2.110.0"
         
-        CoreDataStack.migrationUserDefaults = .random()!
-        defer {
-            // verify duplicates need a slowSync
-            XCTAssertTrue(CoreDataStack.migrationUserDefaults.bool(forKey: "migrationsNeedToSlowSync"))
-            CoreDataStack.migrationUserDefaults = .standard
-        }
-
         try helper.migrateStoreToCurrentVersion(
             sourceVersion: initialVersion,
             preMigrationAction: { context in
@@ -71,6 +64,11 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
 
                     teams = try fetchTeams(with: teamId, in: context)
                     XCTAssertEqual(teams.count, 1)
+
+                    XCTAssertTrue(context.needsToTriggerSlowSync)
+                    // the flag has been consumed
+                    XCTAssertFalse(context.needsToTriggerSlowSync)
+
                 }
             },
             for: self

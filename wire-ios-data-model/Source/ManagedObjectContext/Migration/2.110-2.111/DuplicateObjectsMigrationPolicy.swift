@@ -30,14 +30,6 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
     private var keyCache = Set<String>()
     private var duplicateOccurences: [String: Int] = [:]
 
-    var needsSlowSync: Bool = false {
-        didSet {
-            if needsSlowSync {
-                CoreDataStack.setMigrationNeedsSlowSync()
-            }
-        }
-    }
-
     // method to populate primaryKey called after createDestinationInstances on all occurences of ZMUser or ZMConversation
     @objc(primaryKey::)
     func primaryKey(_ remoteIdentifierData: Data?, domain: String?) -> String {
@@ -72,12 +64,23 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
             WireLogger.localStorage.info("Dropped \(count) occurences of type \(mapping.sourceEntityName ?? "<nil>") for id: \(key)")
         }
 
-        needsSlowSync = duplicateOccurences.count > 0
+        if duplicateOccurences.count > 0 {
+            markNeedsSlowSync(manager: manager,
+                              forEntityName: mapping.sourceEntityName ?? "<nil>")
+        }
     }
 
     func primaryKey(fromSourceInstance sInstance: NSManagedObject) -> String {
         let uuidData = sInstance.value(forKey: ZMManagedObject.remoteIdentifierDataKey()!) as? Data
         let domain = sInstance.value(forKey: ZMManagedObject.domainKey()!) as? String
         return self.primaryKey(uuidData, domain: domain)
+    }
+
+    private func markNeedsSlowSync(manager: NSMigrationManager, forEntityName entityName: String) {
+        do {
+            try manager.destinationContext.setMigrationNeedsSlowSync()
+        } catch {
+            WireLogger.localStorage.error("Failed to trigger slow sync on migration \(entityName): \(error.localizedDescription)")
+        }
     }
 }

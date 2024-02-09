@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		010328512B7634FA00BDB140 /* NSManagedObjectContext+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010328502B7634F900BDB140 /* NSManagedObjectContext+Migration.swift */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
 		014DD8BA2B6930B4007ECFD1 /* DuplicateTeamsMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8B92B6930B4007ECFD1 /* DuplicateTeamsMigrationPolicy.swift */; };
@@ -791,6 +792,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		010328502B7634F900BDB140 /* NSManagedObjectContext+Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Migration.swift"; sourceTree = "<group>"; };
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
 		014DD8B92B6930B4007ECFD1 /* DuplicateTeamsMigrationPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DuplicateTeamsMigrationPolicy.swift; sourceTree = "<group>"; };
@@ -2254,6 +2256,7 @@
 				544E8C101E2F76B400F9B8B8 /* NSManagedObjectContext+UserInfoMerge.swift */,
 				87D9CCE81F27606200AA4388 /* NSManagedObjectContext+TearDown.swift */,
 				16460A43206515370096B616 /* NSManagedObjectContext+BackupImport.swift */,
+				010328502B7634F900BDB140 /* NSManagedObjectContext+Migration.swift */,
 				16E6F24724B36D550015B249 /* NSManagedObjectContext+EncryptionAtRest.swift */,
 				0630E4B5257F888600C75BFB /* NSManagedObjectContext+AppLock.swift */,
 				16AD86B91F75426C00E4C797 /* NSManagedObjectContext+NotificationContext.swift */,
@@ -3437,6 +3440,7 @@
 				EEBACDAB25B9C4B0000210AC /* AppLockAuthenticationResult.swift in Sources */,
 				638805652410FE920043B641 /* ButtonState.swift in Sources */,
 				63B1335A29A503D100009D84 /* MLSActionExecutor.swift in Sources */,
+				010328512B7634FA00BDB140 /* NSManagedObjectContext+Migration.swift in Sources */,
 				63B1335829A503D100009D84 /* Bytes+Random.swift in Sources */,
 				16460A46206544B00096B616 /* PersistentMetadataKeys.swift in Sources */,
 				5E67168E2174B9AF00522E61 /* LoginCredentials.swift in Sources */,
