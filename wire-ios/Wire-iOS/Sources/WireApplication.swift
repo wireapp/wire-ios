@@ -29,9 +29,12 @@ final class WireApplication: UIApplication {
         if Bundle.developerModeEnabled {
             let developerTools = UIHostingController(
                 rootView: NavigationView {
-                    DeveloperToolsView(viewModel: DeveloperToolsViewModel(onDismiss: { [weak self] in
-                        self?.topmostViewController()?.dismissIfNeeded()
-                    }))
+                    DeveloperToolsView(viewModel: DeveloperToolsViewModel(
+                        router: AppDelegate.shared.appRootRouter,
+                        onDismiss: { [weak self] in
+                            self?.topmostViewController()?.dismissIfNeeded()
+                        }
+                    ))
                 }
             )
 
