@@ -23,5 +23,4 @@ xcassets:
     templateName: swift5
     params:
        forceProvidesNamespaces: true
-       forceFileNameEnum: true
     output: Assets+Generated.swift
