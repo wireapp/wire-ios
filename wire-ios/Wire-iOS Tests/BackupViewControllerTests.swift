@@ -22,6 +22,8 @@ import XCTest
 
 final class MockBackupSource: BackupSource {
     func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void) { }
+
+    func clearPreviousBackups() { }
 }
 
 final class BackupViewControllerTests: ZMSnapshotTestCase {

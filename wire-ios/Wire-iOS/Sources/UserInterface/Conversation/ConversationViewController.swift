@@ -369,10 +369,10 @@ final class ConversationViewController: UIViewController {
     // MARK: Resolve 1-1 conversations
 
     private func resolveConversationIfOneOnOne() {
-        let isOneOnOneConversation = conversation.conversationType == .oneOnOne
-            || conversation.conversationType == .group && (conversation.localParticipants.count == 2)
-
-        guard isOneOnOneConversation && conversation.messageProtocol == .proteus else {
+        guard
+            conversation.conversationType == .oneOnOne,
+            conversation.messageProtocol == .proteus
+        else {
             return
         }
 

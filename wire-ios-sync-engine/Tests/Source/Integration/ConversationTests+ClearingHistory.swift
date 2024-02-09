@@ -24,7 +24,6 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertTrue(login())
 
         var conversation = self.conversation(for: mockConversation)
-        let selfUserSet: Set<AnyHashable> = [self.selfUser]
         let otherUser = mockConversation.activeUsers.first { ($0 as? MockUser) != self.selfUser } as! MockUser
 
         // given

@@ -419,9 +419,6 @@ public final class ZMUserSession: NSObject {
         }
 
         recurringActionService.registerAction(recurringAction)
-
-        // The action should run once on every launch, then each 24 hours thereafter.
-        recurringActionService.forcePerformAction(id: recurringAction.id)
     }
 
     private func configureTransportSession() {
@@ -631,7 +628,7 @@ public final class ZMUserSession: NSObject {
             let group = ZMSDispatchGroup(label: "enqueueDelayedChanges")
             self?.managedObjectContext.enqueueDelayedSave(with: group)
 
-            group?.notify(on: DispatchQueue.global(qos: .background), block: {
+            group.notify(on: DispatchQueue.global(qos: .background), block: {
                 self?.managedObjectContext.performGroupedBlock {
                     completionHandler?()
                 }
@@ -756,13 +753,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
                     // rework implementation of following method - WPB-6053
                     try await mlsService.performPendingJoins()
                 } catch {
-                    Logging.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
+                    WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
                 }
 
                 do {
                     try await mlsService.commitPendingProposals()
                 } catch {
-                    Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
+                    WireLogger.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
                 }
                 await mlsService.uploadKeyPackagesIfNeeded()
                 await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
@@ -819,7 +816,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                     completionHandler()
                 }
             } catch {
-                Logging.mls.error("Failed to process pending call events: \(String(reflecting: error))")
+                WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }
@@ -832,14 +829,25 @@ extension ZMUserSession: ZMSyncStateDelegate {
             do {
                 try await mlsService.commitPendingProposals()
             } catch {
-                Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+                WireLogger.mls.error("Failed to commit pending proposals: \(String(describing: error))")
             }
         }
     }
 
     private func fetchFeatureConfigs() {
-        let action = GetFeatureConfigsAction { result in
-            if case let .failure(reason) = result {
+        let action = GetFeatureConfigsAction { [weak self] result in
+            switch result {
+            case .success:
+                guard let context = self?.syncContext else {
+                    return
+                }
+
+                context.perform {
+                    let service = SupportedProtocolsService(context: context)
+                    service.updateSupportedProtocols()
+                }
+
+            case .failure(let reason):
                 Logging.network.error("Failed to fetch feature configs: \(String(describing: reason))")
             }
         }
