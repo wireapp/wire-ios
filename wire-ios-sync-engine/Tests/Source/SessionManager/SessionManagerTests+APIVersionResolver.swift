@@ -38,14 +38,19 @@ class SessionManagerTests_APIVersionResolver: IntegrationTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
+        let userRemoteIdentifier = UUID()
+        let conversationRemoteIdentifier = UUID()
         // Create user and conversation
-        let user = ZMUser.insertNewObject(in: session.syncContext)
-        let conversation = ZMConversation.insertNewObject(in: session.syncContext)
-        user.remoteIdentifier = UUID()
-        conversation.remoteIdentifier = UUID()
+        let (user, conversation) = session.syncContext.performAndWait {
+            let user = ZMUser.insertNewObject(in: session.syncContext)
+            let conversation = ZMConversation.insertNewObject(in: session.syncContext)
+            user.remoteIdentifier = userRemoteIdentifier
+            conversation.remoteIdentifier = conversationRemoteIdentifier
 
-        XCTAssertNil(user.domain)
-        XCTAssertNil(conversation.domain)
+            XCTAssertNil(user.domain)
+            XCTAssertNil(conversation.domain)
+            return (user, conversation)
+        }
 
         // Setup domain
         let domain = "example.domain.com"
@@ -69,14 +74,17 @@ class SessionManagerTests_APIVersionResolver: IntegrationTest {
         XCTAssertTrue(delegate.didCallDidChangeActiveUserSession)
         let newSession = try XCTUnwrap(delegate.session)
 
-        let migratedUser = ZMUser.fetch(with: user.remoteIdentifier, domain: domain, in: newSession.syncContext)
-        XCTAssertNotNil(migratedUser)
-        XCTAssertEqual(migratedUser?.domain, domain)
+        newSession.syncContext.performAndWait {
+            let migratedUser = ZMUser.fetch(with: userRemoteIdentifier, domain: domain, in: newSession.syncContext)
+            XCTAssertNotNil(migratedUser)
+            XCTAssertEqual(migratedUser?.domain, domain)
+        }
 
-        let migratedConversation = ZMConversation.fetch(with: conversation.remoteIdentifier!, domain: domain, in: newSession.syncContext)
-        XCTAssertNotNil(migratedConversation)
-        XCTAssertEqual(migratedConversation?.domain, domain)
-
+        newSession.syncContext.performAndWait {
+            let migratedConversation = ZMConversation.fetch(with: conversationRemoteIdentifier, domain: domain, in: newSession.syncContext)
+            XCTAssertNotNil(migratedConversation)
+            XCTAssertEqual(migratedConversation?.domain, domain)
+        }
         userSession = nil
     }
 }

@@ -33,7 +33,7 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         XCTAssertFalse(conversation.isDeletedRemotely)
 
         // WHEN
-        performSlowSync()
+        self.performSlowSync()
 
         // THEN
         XCTAssertTrue(conversation.isDeletedRemotely)
@@ -52,7 +52,7 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         XCTAssertTrue(conversation.isSelfAnActiveMember)
 
         // WHEN
-        performSlowSync()
+        self.performSlowSync()
 
         // THEN
         XCTAssertFalse(conversation.isSelfAnActiveMember)

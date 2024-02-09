@@ -592,13 +592,18 @@ extension IntegrationTest {
     }
 
     func performSlowSync() {
-        userSession?.applicationStatusDirectory.syncStatus.forceSlowSync()
+        userSession?.syncContext.performAndWait {
+            self.userSession?.applicationStatusDirectory.syncStatus.forceSlowSync()
+        }
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func performQuickSync() {
-        userSession?.applicationStatusDirectory.syncStatus.forceQuickSync()
+        // just for safety make sure syncStatus is modified on syncContext (avoid data races)
+        userSession?.syncContext.performAndWait {
+            userSession?.applicationStatusDirectory.syncStatus.forceQuickSync()
+        }
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
