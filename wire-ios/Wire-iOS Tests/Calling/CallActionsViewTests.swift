@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSyncEngine
 import XCTest
 @testable import Wire
-import WireSyncEngine
+
+// MARK: - CallActionsViewInput
 
 private struct CallActionsViewInput: CallActionsViewInputType {
     var allowPresentationModeUpdates: Bool
@@ -30,6 +32,8 @@ private struct CallActionsViewInput: CallActionsViewInputType {
     let networkQuality: NetworkQuality = .normal
     let callState: CallStateExtending
 }
+
+// MARK: - CallStateMock
 
 struct CallStateMock: CallStateExtending {
     var isConnected: Bool
@@ -55,16 +59,24 @@ extension CallStateMock {
     }
 }
 
+// MARK: - CallActionsViewTests
+
 class CallActionsViewTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     private var sut: CallActionsView!
     private var widthConstraint: NSLayoutConstraint!
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         widthConstraint = nil
         super.tearDown()
     }
+
+    // MARK: - Helper method
 
     private func createSut(for layoutSize: CallActionsView.LayoutSize) {
         sut = CallActionsView()
@@ -81,6 +93,8 @@ class CallActionsViewTests: BaseSnapshotTestCase {
             sut.layoutIfNeeded()
         }
     }
+
+    // MARK: - Snapshot Tests
 
     func testCallActionsView_Compact() {
         // GIVEN
