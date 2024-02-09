@@ -256,7 +256,7 @@
     // then
     XCTAssertEqual(events.count, 1u);
     ZMUpdateEvent *event = events[0];
-    XCTAssertEqualObjects(event.uuid, [data[@"id"] UUID]);
+    XCTAssertEqualObjects(event.uuid, [NSUUID uuidWithTransportString:data[@"id"]]);
 }
 
 
@@ -571,10 +571,9 @@
              };
 }
 
-@end
 
+#pragma mark - Transient
 
-@implementation ZMUpdateEventTests (Transient)
 
 - (void)testThatAnEventIsNotTransientIfNotSpecified_Stream
 {

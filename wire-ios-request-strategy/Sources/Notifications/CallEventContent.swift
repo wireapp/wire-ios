@@ -87,7 +87,7 @@ public struct CallEventContent: Codable {
     // MARK: - Methods
 
     public var callerID: UUID? {
-        return callerUserID.flatMap(UUID.init)
+        callerUserID.flatMap(UUID.init(transportString:))
     }
 
     public var callState: LocalNotificationType.CallState? {

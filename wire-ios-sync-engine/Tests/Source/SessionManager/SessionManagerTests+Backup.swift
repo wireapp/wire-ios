@@ -196,6 +196,7 @@ final class SessionManagerBackupTests: IntegrationTest {
 
     func testThatItDeletesABackup() throws {
         // Given
+        let sessionManager = try XCTUnwrap(sessionManager)
         XCTAssert(login())
 
         let result = backupActiveAcount(password: "idontneednopassword")
@@ -205,7 +206,7 @@ final class SessionManagerBackupTests: IntegrationTest {
         XCTAssert(FileManager.default.fileExists(atPath: CoreDataStack.importsDirectory.path))
 
         // When
-        SessionManager.clearPreviousBackups(dispatchGroup: dispatchGroup)
+        sessionManager.clearPreviousBackups()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // Then

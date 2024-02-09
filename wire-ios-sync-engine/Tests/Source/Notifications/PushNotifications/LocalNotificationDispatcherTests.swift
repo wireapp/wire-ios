@@ -346,7 +346,7 @@ extension LocalNotificationDispatcherTests {
             payload = [
                 "from": self.user1.remoteIdentifier.transportString(),
                 "conversation": self.conversation1.remoteIdentifier!.transportString(),
-                "time": NSDate().transportString(),
+                "time": Date().transportString(),
                 "data": [
                     "user_ids": [self.selfUser.remoteIdentifier.transportString()],
                     "users": ["id": self.selfUser.remoteIdentifier.transportString(),
@@ -377,7 +377,7 @@ extension LocalNotificationDispatcherTests {
             let payload: [String: Any] = [
                 "from": self.user1.remoteIdentifier.transportString(),
                 "conversation": self.conversation1.remoteIdentifier!.transportString(),
-                "time": NSDate().transportString(),
+                "time": Date().transportString(),
                 "data": [
                     "user_ids": [self.user2.remoteIdentifier.transportString()],
                     "users": ["id": self.user2.remoteIdentifier.transportString(),
