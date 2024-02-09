@@ -32,6 +32,7 @@ public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterfa
     // MARK: - Properties
 
     private let storage: PrivateUserDefaults<Key>
+
     // MARK: - Types
 
     private enum Key: String, DefaultsKey {
@@ -40,7 +41,6 @@ public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterfa
 
     // MARK: - Life cycle
 
-    @objc
     public init(
         userID: UUID,
         sharedUserDefaults: UserDefaults
