@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class SessionManagerTests_EncryptionAtRestIsEnabledByDefault_Option: IntegrationTest {
+final class SessionManagerEncryptionAtRestDefaultsTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()

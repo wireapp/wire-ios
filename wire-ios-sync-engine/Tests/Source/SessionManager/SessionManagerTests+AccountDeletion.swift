@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-final class SessionManagertests_AccountDeletion: IntegrationTest {
+final class SessionManagerAccountDeletionTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()

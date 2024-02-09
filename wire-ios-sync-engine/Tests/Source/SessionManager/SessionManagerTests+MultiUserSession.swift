@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-final class SessionManagerTests_MultiUserSession: IntegrationTest {
+final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()

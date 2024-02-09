@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-final class SessionManagerTests_Teams: IntegrationTest {
+final class SessionManagerTeamsTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()

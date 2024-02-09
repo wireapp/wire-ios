@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-final class SessionManagerTests_AppLock: IntegrationTest {
+final class SessionManagerAppLockTests: IntegrationTest {
 
     private var appLock: MockAppLock!
 

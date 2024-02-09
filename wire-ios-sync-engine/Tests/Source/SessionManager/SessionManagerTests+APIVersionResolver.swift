@@ -20,7 +20,7 @@ import XCTest
 import WireTesting
 @testable import WireSyncEngine
 
-class SessionManagerTests_APIVersionResolver: IntegrationTest {
+final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 
     func testThatDatabaseIsMigrated_WhenFederationIsEnabled() throws {
         // GIVEN
