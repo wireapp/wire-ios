@@ -18,20 +18,8 @@
 
 import UIKit
 
-/**
- * A view that displays the avatar of a user, either as text initials or as an image.
- */
-
+/// A view that displays the avatar of a user, either as text initials or as an image.
 class AvatarImageView: UIControl {
-
-    /**
-     * The different, mutually-exclusive forms of avatars
-     */
-
-    enum Avatar: Equatable {
-        case image(UIImage)
-        case text(String)
-    }
 
     /**
      * The different shapes of avatars.
@@ -44,7 +32,7 @@ class AvatarImageView: UIControl {
     // MARK: - Properties
 
     /// The avatar to display.
-    var avatar: Avatar? {
+    var avatar = UserStatus.Avatar() {
         didSet {
             if avatar != oldValue {
                 updateAvatar()
@@ -62,7 +50,7 @@ class AvatarImageView: UIControl {
     }
 
     /// Whether to allow initials.
-    var allowsInitials: Bool = true {
+    var allowsInitials = true {
         didSet {
             if allowsInitials != oldValue {
                 updateAvatar()
@@ -183,25 +171,27 @@ class AvatarImageView: UIControl {
     /// Updates the displayed avatar.
     private func updateAvatar() {
         switch avatar {
-        case .image(let image)?:
+
+        case .text where !allowsInitials:
+            fallthrough
+        case .init():
+            // empty state
+            imageView.image = nil
+            initialsLabel.text = nil
+            imageView.isHidden = true
+            initialsLabel.isHidden = true
+
+        case .image(let image):
             imageView.image = image
             initialsLabel.text = nil
             imageView.isHidden = false
             initialsLabel.isHidden = true
 
-        case .text(let text)?:
-            guard allowsInitials else { fallthrough }
-
+        case .text(let text):
             imageView.image = nil
             initialsLabel.text = text
             imageView.isHidden = true
             initialsLabel.isHidden = false
-
-        case .none:
-            imageView.image = nil
-            initialsLabel.text = nil
-            imageView.isHidden = true
-            initialsLabel.isHidden = true
         }
     }
 
