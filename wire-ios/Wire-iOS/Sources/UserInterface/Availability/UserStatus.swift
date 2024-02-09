@@ -23,6 +23,8 @@ public struct UserStatus {
 
     public var avatar: Avatar
 
+    public var handle: String
+
     /// The name of the users.
     public var name: String
 
@@ -36,12 +38,14 @@ public struct UserStatus {
 
     public init(
         avatar: Avatar = .text(""),
+        handle: String = "",
         name: String = "",
         availability: Availability = Availability.none,
         isCertified: Bool = false,
         isVerified: Bool = false
     ) {
         self.avatar = avatar
+        self.handle = handle
         self.name = name
         self.availability = availability
         self.isCertified = isCertified
@@ -57,7 +61,11 @@ public struct UserStatus {
         case text(String)
 
         public init() {
-            self = .image(.init(resource: .unavailableUser))
+            self = .image(resource: .unavailableUser)
+        }
+
+        static func image(resource: ImageResource) -> Self {
+            .image(.init(resource: resource))
         }
     }
 }

@@ -20,16 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
-extension UIImageView {
-    func setUpIconImageView(accessibilityIdentifier: String? = nil) {
-        translatesAutoresizingMaskIntoConstraints = false
-        contentMode = .center
-        self.accessibilityIdentifier = accessibilityIdentifier
-        isHidden = true
-    }
-}
-
-class UserCell: SeparatorCollectionViewCell, SectionListCellType {
+final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Properties
 
@@ -46,7 +37,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     let connectButton = IconButton()
     let accessoryIconView = UIImageView()
     let userTypeIconView = IconImageView()
-    let verifiedIconView = UIImageView()
+    let verifiedIconView = UIImageView() // TODO [WPB-765]: remove (attributed string will hold shields)
     let videoIconView = IconImageView()
 
     lazy var connectingLabel: DynamicFontLabel = {
@@ -142,20 +133,32 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         super.setUp()
 
         // userTypeIconView
-        userTypeIconView.setUpIconImageView()
+        userTypeIconView.translatesAutoresizingMaskIntoConstraints = false
+        userTypeIconView.contentMode = .center
+        userTypeIconView.accessibilityIdentifier = nil
+        userTypeIconView.isHidden = true
         userTypeIconView.set(size: .tiny, color: iconColor)
 
         // videoIconView
-        videoIconView.setUpIconImageView()
+        videoIconView.translatesAutoresizingMaskIntoConstraints = false
+        videoIconView.contentMode = .center
+        videoIconView.accessibilityIdentifier = nil
+        videoIconView.isHidden = true
         videoIconView.set(size: .tiny, color: iconColor)
 
         // microphoneIconView
-        microphoneIconView.setUpIconImageView()
+        microphoneIconView.translatesAutoresizingMaskIntoConstraints = false
+        microphoneIconView.contentMode = .center
+        microphoneIconView.accessibilityIdentifier = nil
+        microphoneIconView.isHidden = true
         microphoneIconView.set(size: .tiny, color: iconColor)
 
         // verifiedIconView
         verifiedIconView.image = WireStyleKit.imageOfShieldverified
-        verifiedIconView.setUpIconImageView(accessibilityIdentifier: "img.shield")
+        verifiedIconView.translatesAutoresizingMaskIntoConstraints = false
+        verifiedIconView.contentMode = .center
+        verifiedIconView.accessibilityIdentifier = "img.shield"
+        verifiedIconView.isHidden = true
 
         // connectButton
         connectButton.setIcon(.plusCircled, size: .tiny, for: .normal)
@@ -174,7 +177,15 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         connectingLabel.text = L10n.Localizable.Call.Status.connecting
 
         // accessoryIconView
-        accessoryIconView.setUpIconImageView()
+
+        print(accessoryIconView.accessibilityIdentifier)
+        accessoryIconView.accessibilityIdentifier = nil
+        print(accessoryIconView.accessibilityIdentifier)
+
+        accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
+        accessoryIconView.contentMode = .center
+        accessoryIconView.accessibilityIdentifier = nil
+        accessoryIconView.isHidden = true
         accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
         accessoryIconView.tintColor = IconColors.foregroundDefault
 
@@ -332,6 +343,8 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Update and configure methods
 
+    // TODO [WPB-765]: why is selfUser needed? inject primitive value instead?
+
     private func updateTitleLabel(selfUser: UserType? = nil) {
         guard let user = user,
               let selfUser = selfUser else {
@@ -387,7 +400,7 @@ extension UserCell: UserCellSubtitleProtocol {}
 
 extension UserCell {
 
-    func subtitle(for user: UserType) -> NSAttributedString? {
+    private func subtitle(for user: UserType) -> NSAttributedString? {
         if user.isServiceUser, let service = user as? SearchServiceUser {
             return subtitle(forServiceUser: service)
         } else {
@@ -407,11 +420,13 @@ extension UserCell {
 
 extension UserType {
 
+    // TODO [WPB-765]: move to other place
+
     func nameIncludingAvailability(color: UIColor, selfUser: UserType) -> NSAttributedString? {
         if selfUser.isTeamMember {
             return AvailabilityStringBuilder.string(for: self, with: .list, color: color)
         } else if let name = name {
-            return name && color
+            return name && color // TODO [WPB-765]: don't use &&
         } else {
             let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
             let fallbackColor = SemanticColors.Label.textCollectionSecondary
