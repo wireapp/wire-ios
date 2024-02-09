@@ -588,12 +588,16 @@ struct ConversationEventPayloadProcessor {
         guard let context = conversation.managedObjectContext else {
             return WireLogger.mls.warn("conversation.managedObjectContext is nil")
         }
-        let (groupID, mlsService) = await context.perform {
-            (conversation.mlsGroupID, conversation.managedObjectContext?.mlsService)
+        let (groupID, mlsService, hasRegisteredMLSClient) = await context.perform {
+            (
+                conversation.mlsGroupID,
+                context.mlsService,
+                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true
+            )
         }
 
-        guard let groupID, let mlsService else {
-            WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
+        guard let groupID, let mlsService, hasRegisteredMLSClient else {
+            WireLogger.mls.warn("no mlsService or not registered mls client to createOrJoinSelfConversation")
             return
         }
 
