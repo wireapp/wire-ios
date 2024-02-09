@@ -693,7 +693,7 @@ public class ZMUserSession: NSObject {
             let group = ZMSDispatchGroup(label: "enqueueDelayedChanges")
             self?.managedObjectContext.enqueueDelayedSave(with: group)
 
-            group?.notify(on: DispatchQueue.global(qos: .background), block: {
+            group.notify(on: DispatchQueue.global(qos: .background), block: {
                 self?.managedObjectContext.performGroupedBlock {
                     completionHandler?()
                 }

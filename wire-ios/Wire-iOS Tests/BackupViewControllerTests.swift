@@ -20,8 +20,10 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class MockBackupSource: BackupSource {
+final class MockBackupSource: BackupSource {
     func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void) { }
+
+    func clearPreviousBackups() { }
 }
 
 class BackupViewControllerTests: ZMSnapshotTestCase {
