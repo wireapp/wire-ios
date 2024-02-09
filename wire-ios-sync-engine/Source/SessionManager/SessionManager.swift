@@ -46,6 +46,7 @@ public protocol SessionActivationObserver: AnyObject {
     func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
 
+// sourcery: AutoMockable
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLogin(error: Error?)
     func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
