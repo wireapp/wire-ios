@@ -233,10 +233,10 @@ final class ProfileHeaderViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        userStatus.isVerified = isSelfUserProteusVerifiedUseCase.invoke()
         Task {
             do {
                 userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+                userStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
             }

@@ -29,18 +29,21 @@ public protocol IsSelfUserE2EICertifiedUseCaseProtocol {
 public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
+    private let schedule: NSManagedObjectContext.ScheduledTaskType
     private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     public init(
         context: NSManagedObjectContext,
+        schedule: NSManagedObjectContext.ScheduledTaskType,
         coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
         self.context = context
+        self.schedule = schedule
         self.coreCryptoProvider = coreCryptoProvider
     }
 
     public func invoke() async throws -> Bool {
-        let (conversationID, userID) = try await context.perform {
+        let (conversationID, userID) = try await context.perform(schedule: schedule) {
             // conversationID
             guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context) else {
                 throw Error.couldNotFetchMLSSelfConversation
@@ -66,13 +69,14 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
                 conversationId: conversationID.data,
                 userIds: [userID]
             )
-            guard let identities = result[userID], !identities.isEmpty else {
+            guard !result.isEmpty else { return [WireIdentity]() }
+            guard let identities = result[userID] else {
                 throw Error.failedToGetIdentitiesFromCoreCryptoResult(result, userID)
             }
             return identities
         }
 
-        return identities.allSatisfy { $0.status == .valid }
+        return !identities.isEmpty && identities.allSatisfy { $0.status == .valid }
     }
 }
 
@@ -82,6 +86,7 @@ extension IsSelfUserE2EICertifiedUseCase {
         case failedToGetSelfUserID
         case couldNotFetchMLSSelfConversation
         case failedToGetMLSGroupID(_ conversation: Conversation)
+        /// The list of identities cannot be retrieved from the result.
         case failedToGetIdentitiesFromCoreCryptoResult(_ result: [String: [WireIdentity]], _ userID: String)
     }
 }

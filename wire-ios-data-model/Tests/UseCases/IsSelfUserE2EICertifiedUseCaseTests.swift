@@ -38,7 +38,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
-        sut = .init(context: context, coreCryptoProvider: mockCoreCryptoProvider)
+        sut = .init(context: context, schedule: .immediate, coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
@@ -49,11 +49,11 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         super.tearDown()
     }
 
-    func testExpiredCertificateResultsToFalse() async throws {
+    func testExpiredCertificateResultsInFalse() async throws {
         // Given
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { conversationID, userIDs in
             XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
-            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"]) // TODO [WPB-765]: after CC update it should have the prefix "@example.com"
+            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"]) // TODO [WPB-765]: after CC update it should have the suffix "@example.com"
             return [userIDs[0]: [.withStatus(.valid), .withStatus(.expired)]]
         }
 
@@ -64,7 +64,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(isCertified)
     }
 
-    func testRevokedCertificateResultsToFalse() async throws {
+    func testRevokedCertificateResultsInFalse() async throws {
         // Given
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
             [userIDs[0]: [.withStatus(.valid), .withStatus(.revoked)]]
@@ -77,7 +77,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(isCertified)
     }
 
-    func testValidCertificatesResultsToTrue() async throws {
+    func testValidCertificatesResultsInTrue() async throws {
         // Given
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
             [userIDs[0]: [.withStatus(.valid), .withStatus(.valid)]]
@@ -88,6 +88,32 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
         // Then
         XCTAssertTrue(isCertified)
+    }
+
+    func testEmptyResultEvaluatesToFalse() async throws {
+        // Given
+        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, _ in
+            [:]
+        }
+
+        // When
+        let isCertified = try await sut.invoke()
+
+        // Then
+        XCTAssertFalse(isCertified)
+    }
+
+    func testEmptyIdentitiesEvaluatesToFalse() async throws {
+        // Given
+        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
+            [userIDs[0]: []]
+        }
+
+        // When
+        let isCertified = try await sut.invoke()
+
+        // Then
+        XCTAssertFalse(isCertified)
     }
 
     // MARK: - Helpers
