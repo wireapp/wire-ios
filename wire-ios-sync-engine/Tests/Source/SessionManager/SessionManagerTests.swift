@@ -48,6 +48,8 @@ final class SessionManagerTests: IntegrationTest {
 
     override func tearDown() {
         mockDelegate = nil
+        sessionManagerBuilder = nil
+
         super.tearDown()
     }
 
