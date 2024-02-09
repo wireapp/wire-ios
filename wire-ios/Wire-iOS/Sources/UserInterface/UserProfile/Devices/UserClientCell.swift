@@ -23,131 +23,156 @@ import WireDataModel
 
 final class UserClientCell: SeparatorCollectionViewCell {
 
-    typealias IconColors = SemanticColors.Icon
-    typealias ViewColors = SemanticColors.View
+    enum EdgeInsetConstants {
+        static let small: CGFloat = 2.0
+        static let medium: CGFloat = 4.0
+        static let normal: CGFloat = 8.0
+        static let `default`: CGFloat = 16.0
+    }
+
     typealias LabelColors = SemanticColors.Label
+    typealias IconColors = SemanticColors.Icon
 
-    private let titleLabel = DynamicFontLabel(fontSpec: .bodyTwoSemibold,
-                                              color: LabelColors.textDefault)
-    private let subtitleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                                 color: LabelColors.textCellSubtitle)
+    // MARK: - Properties
+    let nameLabel = DynamicFontLabel(style: .headline,
+                                     color: LabelColors.textDefault)
+    let labelLabel = DynamicFontLabel(style: .subheadline,
+                                      color: LabelColors.textDefault)
+    let mlsThumbprintLabel = DynamicFontLabel(style: .caption1,
+                                        color: LabelColors.textCellSubtitle)
+    let proteusIdLabel = DynamicFontLabel(style: .caption1,
+                                            color: LabelColors.textCellSubtitle)
 
-    private let deviceTypeIconView = UIImageView()
+    private let statusStackView = UIStackView()
+    private let contentWrapView = UIView()
+    private let contentStackView = UIStackView()
     private let accessoryIconView = UIImageView()
-    private let verifiedIconView = UIImageView()
 
-    private var contentStackView: UIStackView!
-    private var titleStackView: UIStackView!
-    private var iconStackView: UIStackView!
+    var showLabel: Bool = false {
+        didSet {
+            updateLabel()
+        }
+    }
 
-    private let boldFingerprintFont: UIFont = .smallSemiboldFont
-    private let fingerprintFont: UIFont = .smallFont
+    var viewModel: ClientTableViewCellModel? {
+        didSet {
+            nameLabel.text = viewModel?.title
+            proteusIdLabel.text = viewModel?.proteusLabelText
+            mlsThumbprintLabel.text = viewModel?.mlsThumbprintLabelText
+            statusStackView.removeArrangedSubviews()
+            if let e2eIdentityStatusImage = viewModel?.e2eIdentityStatus?.uiImage {
+                statusStackView.addArrangedSubview(UIImageView(image: e2eIdentityStatusImage))
+            }
+            if viewModel?.isProteusVerified ?? false {
+                statusStackView.addArrangedSubview(UIImageView(image: verifiedImage))
+            }
+            updateLabel()
+            setupAccessibility()
+        }
+    }
 
-    private weak var client: UserClientType?
+    private let verifiedImage = Asset.Images.verifiedShield.image.resizableImage(withCapInsets: .zero)
+    private var mlsInfoHeighConstraint: NSLayoutConstraint { mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 0)
+    }
 
-    override func setUp() {
-        super.setUp()
+    // MARK: - Initialization
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        createConstraints()
+        setupStyle()
+    }
 
-        accessibilityIdentifier = "device_cell"
+    @available(*, unavailable)
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
-        setUpDeviceIconView()
-
-        deviceTypeIconView.translatesAutoresizingMaskIntoConstraints = false
-        deviceTypeIconView.contentMode = .center
-
-        verifiedIconView.image = WireStyleKit.imageOfShieldverified
-        verifiedIconView.translatesAutoresizingMaskIntoConstraints = false
-        verifiedIconView.contentMode = .center
-        verifiedIconView.isAccessibilityElement = true
-        verifiedIconView.accessibilityIdentifier = "device_cell.verifiedShield"
-
+    // MARK: - Methods
+    func setupStyle() {
+        nameLabel.accessibilityIdentifier = "device name"
+        labelLabel.accessibilityIdentifier = "device label"
+        proteusIdLabel.accessibilityIdentifier = "device proteus ID"
+        mlsThumbprintLabel.accessibilityIdentifier = "device mls thumbprint"
+        mlsThumbprintLabel.numberOfLines = 1
+        proteusIdLabel.numberOfLines = 1
+        backgroundColor = SemanticColors.View.backgroundUserCell
+        addBorder(for: .bottom)
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
         accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
         accessoryIconView.tintColor = IconColors.foregroundDefault
-
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.accessibilityIdentifier = "device_cell.name"
-
-        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        subtitleLabel.accessibilityIdentifier = "device_cell.identifier"
-
-        iconStackView = UIStackView(arrangedSubviews: [verifiedIconView, accessoryIconView])
-        iconStackView.spacing = 16
-        iconStackView.axis = .horizontal
-        iconStackView.distribution = .fill
-        iconStackView.alignment = .center
-        iconStackView.translatesAutoresizingMaskIntoConstraints = false
-        iconStackView.setContentHuggingPriority(.required, for: .horizontal)
-
-        titleStackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
-        titleStackView.spacing = 4
-        titleStackView.axis = .vertical
-        titleStackView.distribution = .equalSpacing
-        titleStackView.alignment = .leading
-        titleStackView.translatesAutoresizingMaskIntoConstraints = false
-
-        contentStackView = UIStackView(arrangedSubviews: [deviceTypeIconView, titleStackView, iconStackView])
-        contentStackView.axis = .horizontal
-        contentStackView.distribution = .fill
-        contentStackView.alignment = .center
-        contentStackView.translatesAutoresizingMaskIntoConstraints = false
-
-        contentView.addSubview(contentStackView)
-
-        createConstraints()
-    }
-
-    private func setUpDeviceIconView() {
-        deviceTypeIconView.setTemplateIcon(.devices, size: .tiny)
-        deviceTypeIconView.tintColor = IconColors.foregroundDefault
     }
 
     private func createConstraints() {
+        [
+            nameLabel,
+            labelLabel,
+            proteusIdLabel,
+            mlsThumbprintLabel,
+            statusStackView
+        ].forEach { view in
+            view.translatesAutoresizingMaskIntoConstraints = false
+            contentWrapView.addSubview(view)
+        }
+        contentWrapView.translatesAutoresizingMaskIntoConstraints = false
+
+        statusStackView.axis = .horizontal
+        contentStackView.addArrangedSubview(contentWrapView)
+        contentStackView.addArrangedSubview(accessoryIconView)
+        contentStackView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(contentStackView)
+        // Setting the constraints for the view
         NSLayoutConstraint.activate([
-            deviceTypeIconView.widthAnchor.constraint(equalToConstant: 64),
-            deviceTypeIconView.heightAnchor.constraint(equalToConstant: 64),
-            contentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            nameLabel.topAnchor.constraint(equalTo: contentWrapView.topAnchor, constant: EdgeInsetConstants.default),
+            nameLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor, constant: EdgeInsetConstants.default),
+            nameLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
+
+            labelLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: EdgeInsetConstants.small),
+            labelLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor, constant: EdgeInsetConstants.default),
+            labelLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
+
+            statusStackView.topAnchor.constraint(equalTo: nameLabel.topAnchor, constant: EdgeInsetConstants.small),
+            statusStackView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: EdgeInsetConstants.medium),
+            statusStackView.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
+
+            mlsThumbprintLabel.topAnchor.constraint(equalTo: labelLabel.bottomAnchor, constant: EdgeInsetConstants.medium),
+            mlsThumbprintLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor, constant: EdgeInsetConstants.default),
+            mlsThumbprintLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
+
+            proteusIdLabel.topAnchor.constraint(equalTo: mlsThumbprintLabel.bottomAnchor),
+            proteusIdLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor, constant: EdgeInsetConstants.default),
+            proteusIdLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
+            proteusIdLabel.bottomAnchor.constraint(equalTo: contentWrapView.bottomAnchor, constant: -EdgeInsetConstants.default),
+
+            contentStackView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            contentStackView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -EdgeInsetConstants.default),
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+            contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
 
-    func configure(with client: UserClientType) {
-        self.client = client
-
-        let attributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.font: fingerprintFont.monospaced()]
-        let boldAttributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.font: boldFingerprintFont.monospaced()]
-
-        verifiedIconView.image = client.verified ? WireStyleKit.imageOfShieldverified : WireStyleKit.imageOfShieldnotverified
-
-        titleLabel.text = client.deviceClass?.localizedDescription.localizedCapitalized ?? client.type.localizedDescription.localizedCapitalized
-        subtitleLabel.attributedText = client.attributedRemoteIdentifier(attributes,
-                                                                         boldAttributes: boldAttributes,
-                                                                         uppercase: true)
-
-        updateDeviceIcon()
-        setupAccessibility(isDeviceVerified: client.verified)
-    }
-
-    private func updateDeviceIcon() {
-        switch client?.deviceClass {
-        case .legalHold?:
-            deviceTypeIconView.setTemplateIcon(.legalholdactive, size: .tiny)
-            deviceTypeIconView.tintColor = IconColors.foregroundDefaultRed
-            deviceTypeIconView.accessibilityIdentifier = "img.device_class.legalhold"
-        default:
-            setUpDeviceIconView()
-            deviceTypeIconView.accessibilityIdentifier = client?.deviceClass == .desktop ? "img.device_class.desktop" : "img.device_class.phone"
+    private func updateLabel() {
+        if let userClientLabel = viewModel?.label, showLabel {
+            labelLabel.text = userClientLabel
+        } else {
+            labelLabel.text = ""
         }
     }
 
-    private func setupAccessibility(isDeviceVerified: Bool) {
+    func redrawFont() {
+        updateLabel()
+    }
+
+    override func prepareForReuse() {
+        viewModel = nil
+        super.prepareForReuse()
+    }
+
+    private func setupAccessibility() {
         typealias ClientListStrings = L10n.Accessibility.ClientsList
 
-        guard let deviceName = titleLabel.text,
-              let deviceId = subtitleLabel.text else {
+        guard let deviceName = nameLabel.text,
+              let deviceId = proteusIdLabel.text else {
                   isAccessibilityElement = false
                   return
               }
@@ -155,10 +180,17 @@ final class UserClientCell: SeparatorCollectionViewCell {
         isAccessibilityElement = true
         accessibilityTraits = .button
 
-        let verificationStatus = isDeviceVerified
+        let proteusVerificationStatus = viewModel?.isProteusVerified ?? false
                                     ? ClientListStrings.DeviceVerified.description
                                     : ClientListStrings.DeviceNotVerified.description
-        accessibilityLabel = "\(deviceName), \(deviceId), \(verificationStatus)"
+        let mlsThumbprintLabelText = viewModel?.mlsThumbprintLabelText ?? ""
+        let e2eIdentityStatus = viewModel?.e2eIdentityStatus?.title ?? ""
+        var accessbilityContent = deviceName
+        accessbilityContent += ", " + mlsThumbprintLabelText
+        accessbilityContent += ", " + deviceId
+        accessbilityContent += ", " + e2eIdentityStatus
+        accessbilityContent += ", " + proteusVerificationStatus
+        accessibilityLabel = accessbilityContent
         accessibilityHint = ClientListStrings.DeviceDetails.hint
     }
 }

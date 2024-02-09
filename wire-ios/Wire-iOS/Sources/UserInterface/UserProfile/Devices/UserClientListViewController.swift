@@ -48,6 +48,10 @@ final class UserClientListViewController: UIViewController,
         self.headerView.delegate = self
 
         title = L10n.Localizable.Profile.Devices.title
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+            layout.estimatedItemSize = CGSize(width: UIScreen.main.bounds.width, height: 1)
+        }
     }
 
     @available(*, unavailable)
@@ -122,8 +126,7 @@ final class UserClientListViewController: UIViewController,
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserClientCell.self, for: indexPath)
         let client = clients[indexPath.row]
-
-        cell.configure(with: client)
+        cell.viewModel = .from(userClient: client)
 
         return cell
     }
@@ -138,10 +141,6 @@ final class UserClientListViewController: UIViewController,
         profileClientViewController.showBackButton = false
 
         show(profileClientViewController, sender: nil)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return .init(width: view.bounds.size.width, height: 64)
     }
 }
 

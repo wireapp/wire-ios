@@ -93,7 +93,6 @@ final class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
         mlsThumbprintLabel.accessibilityIdentifier = "device mls thumbprint"
         mlsThumbprintLabel.numberOfLines = 1
         proteusIdLabel.numberOfLines = 1
-
         backgroundColor = SemanticColors.View.backgroundUserCell
 
         addBorder(for: .bottom)
@@ -159,14 +158,13 @@ extension ClientTableViewCellModel {
 
     private typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
 
-    static func from(userClient: UserClient) -> ClientTableViewCellModel {
-        let title = userClient.isLegalHoldDevice ?  L10n.Localizable.Device.Class.legalhold : (userClient.model ?? "")
-
+    static func from(userClient: UserClientType) -> ClientTableViewCellModel {
+        let title = userClient.deviceClass == .legalHold ?  L10n.Localizable.Device.Class.legalhold : (userClient.deviceClass?.localizedDescription.capitalized ?? userClient.type.localizedDescription.capitalized)
         let proteusId = userClient.displayIdentifier.fingerprintStringWithSpaces.uppercased()
         let proteusIdLabelText = DeviceDetailsSection.Proteus.value(proteusId)
         let isProteusVerified = userClient.verified
 
-        let mlsThumbPrint = userClient.mlsPublicKeys.ed25519?.fingerprintStringWithSpaces ?? ""
+        let mlsThumbPrint = userClient.mlsThumbPrint?.fingerprintStringWithSpaces ?? ""
         let mlsThumbprintLabelText = mlsThumbPrint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
 
         return .init(title: title,

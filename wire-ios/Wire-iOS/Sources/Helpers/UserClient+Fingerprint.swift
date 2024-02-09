@@ -52,7 +52,7 @@ extension UserClientType {
         let identifierPrefixString = L10n.Localizable.Registration.Devices.id + " "
         let identifierString = NSMutableAttributedString(string: identifierPrefixString, attributes: attributes)
         let identifier = uppercase ? displayIdentifier.localizedUppercase : displayIdentifier
-        let attributedRemoteIdentifier = identifier.fingerprintStringWithSpaces.fingerprintString(attributes: attributes, boldAttributes: boldAttributes)
+        let attributedRemoteIdentifier = identifier.fingerprintStringWithSpaces.fingerprintString(attributes: attributes, boldAttributes: [:])
 
         identifierString.append(attributedRemoteIdentifier)
 
