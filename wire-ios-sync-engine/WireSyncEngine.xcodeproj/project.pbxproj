@@ -520,7 +520,7 @@
 		E666EDEC2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */; };
 		E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */; };
 		E666EDF02B74ECD400C03E2B /* MockSessionManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDEF2B74ECD400C03E2B /* MockSessionManagerDelegate.swift */; };
-		E666EDF22B74ED2F00C03E2B /* SessionManagerObserverMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDF12B74ED2F00C03E2B /* SessionManagerObserverMock.swift */; };
+		E666EDF22B74ED2F00C03E2B /* MockSessionManagerObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
 		EE01E0391F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */; };
 		EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
@@ -1265,7 +1265,7 @@
 		E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+MultiUserSession.swift"; sourceTree = "<group>"; };
 		E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AppLock.swift"; sourceTree = "<group>"; };
 		E666EDEF2B74ECD400C03E2B /* MockSessionManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSessionManagerDelegate.swift; sourceTree = "<group>"; };
-		E666EDF12B74ED2F00C03E2B /* SessionManagerObserverMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerObserverMock.swift; sourceTree = "<group>"; };
+		E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSessionManagerObserver.swift; sourceTree = "<group>"; };
 		EBD7B55754FDA4E74F1006FD /* ZMOperationLoopTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMOperationLoopTests.h; sourceTree = "<group>"; };
 		EE01E0361F90DABC001AA33C /* audio.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = audio.m4a; sourceTree = "<group>"; };
 		EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_ExpiredMessage.swift; sourceTree = "<group>"; };
@@ -2615,6 +2615,16 @@
 			path = "Asset Deletion";
 			sourceTree = "<group>";
 		};
+		E6A55E2B2B762ED80020818D /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */,
+				E666EDEF2B74ECD400C03E2B /* MockSessionManagerDelegate.swift */,
+				E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		EE7F02232A80D82500FE5695 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -2646,31 +2656,29 @@
 		F159F4121F1E310C001B7D80 /* SessionManager */ = {
 			isa = PBXGroup;
 			children = (
-				E666EDDD2B74CEE000C03E2B /* SessionManagerHelper.swift */,
-				F159F4131F1E3134001B7D80 /* SessionManagerTests.swift */,
-				EEC0A2D229433D360032C1C9 /* SessionManagerTests+PushToken.swift */,
-				E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */,
-				E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */,
-				E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */,
-				E666EDE52B74E85300C03E2B /* SessionManagerTests+EncryptionAtRestMigration.swift */,
-				E666EDE72B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift */,
-				166D191C231569DD001288CD /* SessionManagerTests+MessageRetention.swift */,
-				E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */,
-				D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */,
-				E666EDE92B74E9EF00C03E2B /* SessionManagerTests+Teams.swift */,
-				161ACB3B23F6BE7F00ABFF33 /* SessionManagerTests+URLActions.swift */,
-				63F376DF283519CC00FE1F05 /* SessionManagerTests+APIVersionResolver.swift */,
-				01300E61296838CE00D18B2E /* SessionManagerTests+Proxy.swift */,
+				E6A55E2B2B762ED80020818D /* Mocks */,
+				63CD59542964332B00385037 /* AccessTokenMigrationTests.swift */,
+				636826FB2954550900D904C2 /* APIMigrationManagerTests.swift */,
+				EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */,
+				87DF28C61F680495007E1702 /* PushDispatcherTests.swift */,
 				162A81D5202B5BC600F6200C /* SessionManagerAVSTests.swift */,
 				EE95DECC247C0049001EA010 /* SessionManagerConfigurationTests.swift */,
-				EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */,
-				87DF28C61F680495007E1702 /* PushDispatcherTests.swift */,
+				E666EDDD2B74CEE000C03E2B /* SessionManagerHelper.swift */,
+				F159F4131F1E3134001B7D80 /* SessionManagerTests.swift */,
+				E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */,
+				63F376DF283519CC00FE1F05 /* SessionManagerTests+APIVersionResolver.swift */,
+				E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */,
+				E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */,
+				D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */,
+				E666EDE72B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift */,
+				E666EDE52B74E85300C03E2B /* SessionManagerTests+EncryptionAtRestMigration.swift */,
+				166D191C231569DD001288CD /* SessionManagerTests+MessageRetention.swift */,
+				E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */,
+				01300E61296838CE00D18B2E /* SessionManagerTests+Proxy.swift */,
+				EEC0A2D229433D360032C1C9 /* SessionManagerTests+PushToken.swift */,
+				E666EDE92B74E9EF00C03E2B /* SessionManagerTests+Teams.swift */,
+				161ACB3B23F6BE7F00ABFF33 /* SessionManagerTests+URLActions.swift */,
 				161ACB3923F6BAFE00ABFF33 /* URLActionTests.swift */,
-				EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */,
-				636826FB2954550900D904C2 /* APIMigrationManagerTests.swift */,
-				63CD59542964332B00385037 /* AccessTokenMigrationTests.swift */,
-				E666EDEF2B74ECD400C03E2B /* MockSessionManagerDelegate.swift */,
-				E666EDF12B74ED2F00C03E2B /* SessionManagerObserverMock.swift */,
 			);
 			path = SessionManager;
 			sourceTree = "<group>";
@@ -3193,7 +3201,7 @@
 				169BA20125ED0EFE00374343 /* ZMUserSessionLegalHoldTests.swift in Sources */,
 				169BA21925ED0F9900374343 /* SendAndReceiveMessagesTests.m in Sources */,
 				169BA22625ED0FD300374343 /* ConversationTests+ReceiptMode.swift in Sources */,
-				E666EDF22B74ED2F00C03E2B /* SessionManagerObserverMock.swift in Sources */,
+				E666EDF22B74ED2F00C03E2B /* MockSessionManagerObserver.swift in Sources */,
 				E666EDE22B74E78C00C03E2B /* SessionManagerTests+AccountDeletion.swift in Sources */,
 				169BA21625ED0F8900374343 /* UserProfileTests.m in Sources */,
 				169BA20D25ED0F5E00374343 /* APNSTests+Swift.swift in Sources */,
