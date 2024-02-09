@@ -20,7 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
-    func start(with gracePeriod: TimeInterval)
+    func start(with gracePeriod: TimeInterval) async
     func remove()
 }
 
@@ -31,6 +31,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     private let e2eiFeature: Feature.E2EI
     private let gracePeriodRepository: GracePeriodRepository
     private let recurringActionService: RecurringActionServiceInterface
+    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private let actionId: String
 
     // MARK: - Life cycle
@@ -38,31 +39,23 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     init(e2eiFeature: Feature.E2EI,
          gracePeriodRepository: GracePeriodRepository,
          recurringActionService: RecurringActionServiceInterface,
+         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
          accountId: UUID) {
         self.e2eiFeature = e2eiFeature
         self.gracePeriodRepository = gracePeriodRepository
         self.recurringActionService = recurringActionService
+        self.selfClientCertificateProvider = selfClientCertificateProvider
         self.actionId = "\(accountId).enrollCertificate"
     }
 
     // MARK: - Methods
 
-    func start(with gracePeriod: TimeInterval) {
+    func start(with gracePeriod: TimeInterval) async {
         let timeProvider = SnoozeTimeProvider()
-
-        /// The grace period end date should be saved once and not overwritten
-        /// because it depends on when the user receives the grace period info.
-        guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
-            let newEndOfGracePeriod = Date.now.addingTimeInterval(gracePeriod)
-            gracePeriodRepository.storeEndGracePeriodDate(newEndOfGracePeriod)
-
-            let interval = timeProvider.getSnoozeTime(endOfPeriod: newEndOfGracePeriod)
-            registerRecurringActionIfNeeded(interval: interval, gracePeriod: gracePeriod)
-            return
-        }
-
+        let endOfGracePeriod = fetchEndOfGracePeriod(gracePeriod)
         let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfGracePeriod)
-        registerRecurringActionIfNeeded(interval: interval, gracePeriod: gracePeriod)
+
+        await registerRecurringActionIfNeeded(interval: interval, gracePeriod: gracePeriod)
     }
 
     func remove() {
@@ -71,10 +64,21 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     // MARK: - Helpers
 
-    private func registerRecurringActionIfNeeded(interval: TimeInterval, gracePeriod: TimeInterval) {
+    private func fetchEndOfGracePeriod(_ gracePeriod: TimeInterval) -> Date {
+        /// The grace period end date should be saved once and not overwritten
+        /// because it depends on when the user receives the grace period info.
+        guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
+            let newEndOfGracePeriod = Date.now.addingTimeInterval(gracePeriod)
+            gracePeriodRepository.storeEndGracePeriodDate(newEndOfGracePeriod)
 
-        // TODO: [WPB-6504] check if the self client doesn't have a certificate
-        guard e2eiFeature.isEnabled else {
+            return newEndOfGracePeriod
+        }
+        return endOfGracePeriod
+    }
+
+    private func registerRecurringActionIfNeeded(interval: TimeInterval, gracePeriod: TimeInterval) async {
+        guard e2eiFeature.isEnabled,
+              await !selfClientCertificateProvider.hasCertificate else {
             return
         }
 

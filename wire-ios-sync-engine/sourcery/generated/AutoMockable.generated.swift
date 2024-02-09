@@ -213,6 +213,57 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
 
 }
 
+class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - hasCertificate
+
+    var hasCertificateCallsCount = 0
+    var hasCertificateCalled: Bool {
+        return hasCertificateCallsCount > 0
+    }
+
+    var hasCertificate: Bool {
+        get async {
+            hasCertificateCallsCount += 1
+            if let hasCertificateClosure = hasCertificateClosure {
+                return await hasCertificateClosure()
+            } else {
+                return underlyingHasCertificate
+            }
+        }
+    }
+    var underlyingHasCertificate: Bool!
+    var hasCertificateClosure: (() async -> Bool)?
+
+
+    // MARK: - getCertificate
+
+    var getCertificate_Invocations: [Void] = []
+    var getCertificate_MockError: Error?
+    var getCertificate_MockMethod: (() async throws -> E2eIdentityCertificate?)?
+    var getCertificate_MockValue: E2eIdentityCertificate??
+
+    func getCertificate() async throws -> E2eIdentityCertificate? {
+        getCertificate_Invocations.append(())
+
+        if let error = getCertificate_MockError {
+            throw error
+        }
+
+        if let mock = getCertificate_MockMethod {
+            return try await mock()
+        } else if let mock = getCertificate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getCertificate`")
+        }
+    }
+
+}
+
 public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -223,16 +274,16 @@ public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEn
     // MARK: - start
 
     public var startWith_Invocations: [TimeInterval] = []
-    public var startWith_MockMethod: ((TimeInterval) -> Void)?
+    public var startWith_MockMethod: ((TimeInterval) async -> Void)?
 
-    public func start(with gracePeriod: TimeInterval) {
+    public func start(with gracePeriod: TimeInterval) async {
         startWith_Invocations.append(gracePeriod)
 
         guard let mock = startWith_MockMethod else {
             fatalError("no mock for `startWith`")
         }
 
-        mock(gracePeriod)
+        await mock(gracePeriod)
     }
 
     // MARK: - remove
