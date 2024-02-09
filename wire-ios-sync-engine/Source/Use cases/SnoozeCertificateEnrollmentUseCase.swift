@@ -20,8 +20,8 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
-    func start(with gracePeriod: TimeInterval) async
-    func remove()
+    func start() async
+    func stop()
 }
 
 final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol {
@@ -50,33 +50,23 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     // MARK: - Methods
 
-    func start(with gracePeriod: TimeInterval) async {
+    func start() async {
+        guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
+            return
+        }
         let timeProvider = SnoozeTimeProvider()
-        let endOfGracePeriod = fetchEndOfGracePeriod(gracePeriod)
         let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfGracePeriod)
 
-        await registerRecurringActionIfNeeded(interval: interval, gracePeriod: gracePeriod)
+        await registerRecurringActionIfNeeded(interval: interval)
     }
 
-    func remove() {
+    func stop() {
         recurringActionService.removeAction(id: actionId)
     }
 
     // MARK: - Helpers
 
-    private func fetchEndOfGracePeriod(_ gracePeriod: TimeInterval) -> Date {
-        /// The grace period end date should be saved once and not overwritten
-        /// because it depends on when the user receives the grace period info.
-        guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
-            let newEndOfGracePeriod = Date.now.addingTimeInterval(gracePeriod)
-            gracePeriodRepository.storeEndGracePeriodDate(newEndOfGracePeriod)
-
-            return newEndOfGracePeriod
-        }
-        return endOfGracePeriod
-    }
-
-    private func registerRecurringActionIfNeeded(interval: TimeInterval, gracePeriod: TimeInterval) async {
+    private func registerRecurringActionIfNeeded(interval: TimeInterval) async {
         guard e2eiFeature.isEnabled,
               await !selfClientCertificateProvider.hasCertificate else {
             return
@@ -86,7 +76,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             id: actionId,
             interval: interval
         ) {
-            let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled(gracePeriod: gracePeriod)
+            let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled(gracePeriod: nil)
             NotificationCenter.default.post(name: .featureDidChangeNotification,
                                             object: notificationObject)
         }
@@ -115,16 +105,18 @@ final class SnoozeTimeProvider {
         let fifteenMinutes = .fiveMinutes * 3
 
         switch timeLeft {
+        case _ where timeLeft < fifteenMinutes:
+            return .fiveMinutes
+        case fifteenMinutes ..< .oneHour:
+            return fifteenMinutes
+        case .oneHour ..< fourHours:
+            return .oneHour
+        case fourHours ..< .oneDay:
+            return fourHours
         case _ where timeLeft > .oneDay:
             return .oneDay
-        case .oneDay ..< fourHours:
-            return fourHours
-        case fourHours ..< .oneHour:
-            return .oneHour
-        case .oneHour ..< fifteenMinutes:
-            return fifteenMinutes
         default:
-            return .fiveMinutes
+            return .oneDay
         }
     }
 

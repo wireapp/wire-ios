@@ -273,29 +273,29 @@ public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEn
 
     // MARK: - start
 
-    public var startWith_Invocations: [TimeInterval] = []
-    public var startWith_MockMethod: ((TimeInterval) async -> Void)?
+    public var start_Invocations: [Void] = []
+    public var start_MockMethod: (() async -> Void)?
 
-    public func start(with gracePeriod: TimeInterval) async {
-        startWith_Invocations.append(gracePeriod)
+    public func start() async {
+        start_Invocations.append(())
 
-        guard let mock = startWith_MockMethod else {
-            fatalError("no mock for `startWith`")
+        guard let mock = start_MockMethod else {
+            fatalError("no mock for `start`")
         }
 
-        await mock(gracePeriod)
+        await mock()
     }
 
-    // MARK: - remove
+    // MARK: - stop
 
-    public var remove_Invocations: [Void] = []
-    public var remove_MockMethod: (() -> Void)?
+    public var stop_Invocations: [Void] = []
+    public var stop_MockMethod: (() -> Void)?
 
-    public func remove() {
-        remove_Invocations.append(())
+    public func stop() {
+        stop_Invocations.append(())
 
-        guard let mock = remove_MockMethod else {
-            fatalError("no mock for `remove`")
+        guard let mock = stop_MockMethod else {
+            fatalError("no mock for `stop`")
         }
 
         mock()

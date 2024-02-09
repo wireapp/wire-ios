@@ -87,7 +87,7 @@ extension UIAlertController {
                     actionsHandler.enrollCertificate()
                 case .remindLater:
                     Task {
-                        await actionsHandler.snoozeReminder(during: gracePeriod)
+                        await actionsHandler.snoozeReminder()
                     }
                 }
             }

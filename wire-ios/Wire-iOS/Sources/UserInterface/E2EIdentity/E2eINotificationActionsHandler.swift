@@ -22,7 +22,7 @@ import WireSyncEngine
 public protocol E2eINotificationActions {
 
     func enrollCertificate()
-    func snoozeReminder(during gracePeriod: TimeInterval) async
+    func snoozeReminder() async
 
 }
 
@@ -43,11 +43,11 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
 
     public func enrollCertificate() {
         // TODO: [WPB-5496] enroll certificate
-        snoozeCertificateEnrollmentUseCase?.remove()
+        snoozeCertificateEnrollmentUseCase?.stop()
     }
 
-    public func snoozeReminder(during gracePeriod: TimeInterval) async {
-        await snoozeCertificateEnrollmentUseCase?.start(with: gracePeriod)
+    public func snoozeReminder() async {
+        await snoozeCertificateEnrollmentUseCase?.start()
     }
 
 }

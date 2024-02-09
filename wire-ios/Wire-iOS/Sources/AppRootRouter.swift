@@ -443,7 +443,8 @@ extension AppRootRouter {
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2eINotificationActionsHandler(
                 enrollCertificateUseCase: userSession.enrollE2eICertificate,
-                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase)
+                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase),
+            gracePeriodRepository: userSession.gracePeriodRepository
         )
     }
 }

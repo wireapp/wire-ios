@@ -454,7 +454,7 @@ extension FeatureRepository {
         case fileSharingDisabled
         case conversationGuestLinksEnabled
         case conversationGuestLinksDisabled
-        case e2eIEnabled(gracePeriod: TimeInterval)
+        case e2eIEnabled(gracePeriod: TimeInterval?)
 
         public var hasFurtherActions: Bool {
             switch self {

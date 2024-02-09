@@ -331,10 +331,10 @@ public class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
+    public let gracePeriodRepository: GracePeriodRepository
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
-    let gracePeriodRepository: GracePeriodRepository
 
     public init(
         userId: UUID,
