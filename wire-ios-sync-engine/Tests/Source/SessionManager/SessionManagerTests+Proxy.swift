@@ -9,7 +9,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-final class SessionManagerTests_Proxy: IntegrationTest {
+final class SessionManagerProxyTests: IntegrationTest {
     var reachabilityWrapper: ReachabilityWrapper!
     var unauthenticatedSessionFactory: MockUnauthenticatedSessionFactory!
     var authenticatedSessionFactory: MockAuthenticatedSessionFactory!

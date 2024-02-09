@@ -100,7 +100,7 @@ public actor CommitSender: CommitSending {
                 try await discardPendingCommit(in: groupID)
             }
 
-            throw CommitError.failedToSendCommit(recovery: recoveryStrategy)
+            throw CommitError.failedToSendCommit(recovery: recoveryStrategy, cause: error)
         }
     }
 
@@ -127,7 +127,7 @@ public actor CommitSender: CommitSending {
                 try await clearPendingGroup(in: groupID)
             }
 
-            throw ExternalCommitError.failedToSendCommit(recovery: recoveryStrategy)
+            throw ExternalCommitError.failedToSendCommit(recovery: recoveryStrategy, cause: error)
         }
     }
 

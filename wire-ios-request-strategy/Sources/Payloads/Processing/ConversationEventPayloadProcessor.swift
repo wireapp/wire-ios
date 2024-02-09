@@ -19,6 +19,10 @@
 import Foundation
 import WireDataModel
 
+enum ConversationEventPayloadProcessorError: Error {
+    case noBackendConversationId
+}
+
 struct ConversationEventPayloadProcessor {
 
     enum Source {
@@ -416,6 +420,7 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
+        Flow.createGroup.checkpoint(description: "create ZMConversation of type \(conversationType))")
         switch conversationType {
         case .group:
             return await updateOrCreateGroupConversation(
@@ -470,6 +475,7 @@ struct ConversationEventPayloadProcessor {
         source: Source
     ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
+            Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
             Logging.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
             return nil
         }
@@ -494,8 +500,11 @@ struct ConversationEventPayloadProcessor {
             self.updateConversationStatus(from: payload, for: conversation)
             self.updateMessageProtocol(from: payload, for: conversation, in: context)
 
+            Flow.createGroup.checkpoint(description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
+
             return conversation
         }
+
         await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
         await context.perform {
 
@@ -510,6 +519,7 @@ struct ConversationEventPayloadProcessor {
                     // Slow synced conversations should be considered read from the start
                     conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
                 }
+                Flow.createGroup.checkpoint(description: "new system message for conversation inserted")
             }
 
             // If we discover this group is actually a fake one on one,
@@ -578,12 +588,16 @@ struct ConversationEventPayloadProcessor {
         guard let context = conversation.managedObjectContext else {
             return WireLogger.mls.warn("conversation.managedObjectContext is nil")
         }
-        let (groupID, mlsService) = await context.perform {
-            (conversation.mlsGroupID, conversation.managedObjectContext?.mlsService)
+        let (groupID, mlsService, hasRegisteredMLSClient) = await context.perform {
+            (
+                conversation.mlsGroupID,
+                context.mlsService,
+                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true
+            )
         }
 
-        guard let groupID, let mlsService else {
-            WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
+        guard let groupID, let mlsService, hasRegisteredMLSClient else {
+            WireLogger.mls.warn("no mlsService or not registered mls client to createOrJoinSelfConversation")
             return
         }
 
