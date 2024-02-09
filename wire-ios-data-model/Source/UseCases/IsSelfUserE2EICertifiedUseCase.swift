@@ -66,13 +66,14 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
                 conversationId: conversationID.data,
                 userIds: [userID]
             )
-            guard let identities = result[userID], !identities.isEmpty else {
+            guard !result.isEmpty else { return [WireIdentity]() }
+            guard let identities = result[userID] else {
                 throw Error.failedToGetIdentitiesFromCoreCryptoResult(result, userID)
             }
             return identities
         }
 
-        return identities.allSatisfy { $0.status == .valid }
+        return !identities.isEmpty && identities.allSatisfy { $0.status == .valid }
     }
 }
 
@@ -82,6 +83,7 @@ extension IsSelfUserE2EICertifiedUseCase {
         case failedToGetSelfUserID
         case couldNotFetchMLSSelfConversation
         case failedToGetMLSGroupID(_ conversation: Conversation)
+        /// The list of identities cannot be retrieved from the result.
         case failedToGetIdentitiesFromCoreCryptoResult(_ result: [String: [WireIdentity]], _ userID: String)
     }
 }
