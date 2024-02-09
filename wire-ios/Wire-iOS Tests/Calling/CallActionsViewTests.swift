@@ -60,11 +60,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
     private var sut: CallActionsView!
     private var widthConstraint: NSLayoutConstraint!
 
-    override func setUp() {
-        super.setUp()
-        snapshotBackgroundColor = .black
-    }
-
     override func tearDown() {
         sut = nil
         widthConstraint = nil
@@ -73,6 +68,7 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
     private func createSut(for layoutSize: CallActionsView.LayoutSize) {
         sut = CallActionsView()
+        sut.backgroundColor = .black
 
         switch layoutSize {
         case .compact:
@@ -107,7 +103,7 @@ class CallActionsViewTests: ZMSnapshotTestCase {
         sut.updateToLayoutSize(.compact)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     // MARK: - Call State: Incoming
@@ -130,9 +126,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testCallActionsView_StateIncoming_Video() {
@@ -153,9 +150,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     // MARK: - Call State: Outgoing
@@ -178,9 +176,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testCallActionsView_StateOutgoing_Video() {
@@ -201,9 +200,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     // MARK: Call State: - Ongoing
@@ -226,9 +226,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Audio_Muted() {
@@ -249,9 +250,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Audio_SpeakerUnavailable() {
@@ -272,9 +274,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Video() {
@@ -295,9 +298,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Video_PresentationMode_AllVideoStreams() {
@@ -318,9 +322,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Video_PresentationMode_ActiveSpeakers() {
@@ -341,9 +346,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     // MARK: Call State: - Terminating
@@ -366,9 +372,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testCallActionsView_StateTerminating_Video() {
@@ -389,9 +396,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     // MARK: - Permissions
@@ -414,9 +422,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testCallActionsView_Permissions_NotAllowed() {
@@ -437,9 +446,10 @@ class CallActionsViewTests: ZMSnapshotTestCase {
 
         // When
         sut.update(with: input)
+        sut.updateToLayoutSize(.regular)
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
 }
