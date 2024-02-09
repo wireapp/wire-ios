@@ -511,6 +511,15 @@
 		D55272EA2062732100F542BE /* AssetDeletionStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272E92062732100F542BE /* AssetDeletionStatusTests.swift */; };
 		D55272EC2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */; };
 		D5D10DA4203AE43200145497 /* Conversation+AccessMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */; };
+		E666EDDF2B74CEE600C03E2B /* SessionManagerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */; };
+		E666EDE22B74E78C00C03E2B /* SessionManagerTests+AccountDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */; };
+		E666EDE42B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */; };
+		E666EDE62B74E85300C03E2B /* SessionManagerTests+EncryptionAtRestMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE52B74E85300C03E2B /* SessionManagerTests+EncryptionAtRestMigration.swift */; };
+		E666EDE82B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE72B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift */; };
+		E666EDEA2B74E9EF00C03E2B /* SessionManagerTests+Teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE92B74E9EF00C03E2B /* SessionManagerTests+Teams.swift */; };
+		E666EDEC2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */; };
+		E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */; };
+		E666EDF22B74ED2F00C03E2B /* MockSessionManagerObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */; };
 		E62F31C52B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */; };
 		E62F31C72B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
@@ -567,7 +576,7 @@
 		EECE27C429435FFE00419A8B /* PushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE27C329435FFE00419A8B /* PushTokenService.swift */; };
 		EECE27C6294362F100419A8B /* MockPushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE27C5294362F100419A8B /* MockPushTokenService.swift */; };
 		EECE27C729436CF900419A8B /* MockPushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE27C5294362F100419A8B /* MockPushTokenService.swift */; };
-		EECE27C829436DC000419A8B /* SessionManager+PushTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC0A2D229433D360032C1C9 /* SessionManager+PushTokenTests.swift */; };
+		EECE27C829436DC000419A8B /* SessionManagerTests+PushToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC0A2D229433D360032C1C9 /* SessionManagerTests+PushToken.swift */; };
 		EEE186B4259CC92D008707CA /* ZMUserSession+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE186B3259CC92D008707CA /* ZMUserSession+AppLock.swift */; };
 		EEE186B6259CCA14008707CA /* SessionManager+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE186B5259CCA14008707CA /* SessionManager+AppLock.swift */; };
 		EEE46E5728C5EF56005F48D7 /* FetchUserClientsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE46E5628C5EF56005F48D7 /* FetchUserClientsUseCase.swift */; };
@@ -1248,6 +1257,15 @@
 		D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeletionRequestStrategyTests.swift; sourceTree = "<group>"; };
 		D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Backup.swift"; sourceTree = "<group>"; };
 		D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+AccessMode.swift"; sourceTree = "<group>"; };
+		E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerBuilder.swift; sourceTree = "<group>"; };
+		E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AccountDeletion.swift"; sourceTree = "<group>"; };
+		E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AuthenticationFailure.swift"; sourceTree = "<group>"; };
+		E666EDE52B74E85300C03E2B /* SessionManagerTests+EncryptionAtRestMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+EncryptionAtRestMigration.swift"; sourceTree = "<group>"; };
+		E666EDE72B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+EncryptionAtRestDefaults.swift"; sourceTree = "<group>"; };
+		E666EDE92B74E9EF00C03E2B /* SessionManagerTests+Teams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Teams.swift"; sourceTree = "<group>"; };
+		E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+MultiUserSession.swift"; sourceTree = "<group>"; };
+		E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AppLock.swift"; sourceTree = "<group>"; };
+		E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSessionManagerObserver.swift; sourceTree = "<group>"; };
 		E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategy.swift; sourceTree = "<group>"; };
 		E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategyTests.swift; sourceTree = "<group>"; };
 		EBD7B55754FDA4E74F1006FD /* ZMOperationLoopTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMOperationLoopTests.h; sourceTree = "<group>"; };
@@ -1300,7 +1318,7 @@
 		EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIVersionResolverTests.swift; sourceTree = "<group>"; };
 		EEA1ED4025BEBABF006D07D3 /* AppLockIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockIntegrationTests.swift; sourceTree = "<group>"; };
 		EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTeamOneOnOneConversationUseCaseTests.swift; sourceTree = "<group>"; };
-		EEC0A2D229433D360032C1C9 /* SessionManager+PushTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+PushTokenTests.swift"; sourceTree = "<group>"; };
+		EEC0A2D229433D360032C1C9 /* SessionManagerTests+PushToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+PushToken.swift"; sourceTree = "<group>"; };
 		EEC7AB0B2A08F3DF005614BE /* OperationStateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationStateProvider.swift; sourceTree = "<group>"; };
 		EECE27C329435FFE00419A8B /* PushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenService.swift; sourceTree = "<group>"; };
 		EECE27C5294362F100419A8B /* MockPushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPushTokenService.swift; sourceTree = "<group>"; };
@@ -2601,6 +2619,15 @@
 			path = "Asset Deletion";
 			sourceTree = "<group>";
 		};
+		E6A55E2B2B762ED80020818D /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */,
+				E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		EE7F02232A80D82500FE5695 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -2632,21 +2659,29 @@
 		F159F4121F1E310C001B7D80 /* SessionManager */ = {
 			isa = PBXGroup;
 			children = (
-				F159F4131F1E3134001B7D80 /* SessionManagerTests.swift */,
-				EEC0A2D229433D360032C1C9 /* SessionManager+PushTokenTests.swift */,
-				166D191C231569DD001288CD /* SessionManagerTests+MessageRetention.swift */,
-				D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */,
-				161ACB3B23F6BE7F00ABFF33 /* SessionManagerTests+URLActions.swift */,
-				63F376DF283519CC00FE1F05 /* SessionManagerTests+APIVersionResolver.swift */,
+				E6A55E2B2B762ED80020818D /* Mocks */,
+				63CD59542964332B00385037 /* AccessTokenMigrationTests.swift */,
+				636826FB2954550900D904C2 /* APIMigrationManagerTests.swift */,
+				EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */,
+				87DF28C61F680495007E1702 /* PushDispatcherTests.swift */,
 				162A81D5202B5BC600F6200C /* SessionManagerAVSTests.swift */,
 				EE95DECC247C0049001EA010 /* SessionManagerConfigurationTests.swift */,
-				EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */,
-				87DF28C61F680495007E1702 /* PushDispatcherTests.swift */,
-				161ACB3923F6BAFE00ABFF33 /* URLActionTests.swift */,
-				EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */,
-				636826FB2954550900D904C2 /* APIMigrationManagerTests.swift */,
-				63CD59542964332B00385037 /* AccessTokenMigrationTests.swift */,
+				E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */,
+				F159F4131F1E3134001B7D80 /* SessionManagerTests.swift */,
+				E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */,
+				63F376DF283519CC00FE1F05 /* SessionManagerTests+APIVersionResolver.swift */,
+				E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */,
+				E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */,
+				D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */,
+				E666EDE72B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift */,
+				E666EDE52B74E85300C03E2B /* SessionManagerTests+EncryptionAtRestMigration.swift */,
+				166D191C231569DD001288CD /* SessionManagerTests+MessageRetention.swift */,
+				E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */,
 				01300E61296838CE00D18B2E /* SessionManagerTests+Proxy.swift */,
+				EEC0A2D229433D360032C1C9 /* SessionManagerTests+PushToken.swift */,
+				E666EDE92B74E9EF00C03E2B /* SessionManagerTests+Teams.swift */,
+				161ACB3B23F6BE7F00ABFF33 /* SessionManagerTests+URLActions.swift */,
+				161ACB3923F6BAFE00ABFF33 /* URLActionTests.swift */,
 			);
 			path = SessionManager;
 			sourceTree = "<group>";
@@ -3125,6 +3160,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E666EDE82B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift in Sources */,
 				169BA23A25EF6D4F00374343 /* MockLinkPreviewDetector.swift in Sources */,
 				169BA23025ED100100374343 /* ConversationsTests.m in Sources */,
 				169BA24E25EF765D00374343 /* ConnectToBotURLActionProcessorTests.swift in Sources */,
@@ -3149,6 +3185,7 @@
 				169BA24625EF73B100374343 /* EventProcessingPerformanceTests.swift in Sources */,
 				169BA23625ED101C00374343 /* LoginFlowTests.m in Sources */,
 				169BA21225ED0F7600374343 /* UserTests+AccountDeletion.swift in Sources */,
+				E666EDEA2B74E9EF00C03E2B /* SessionManagerTests+Teams.swift in Sources */,
 				169BA1DF25ECE4D000374343 /* IntegrationTest.m in Sources */,
 				169BA1F125ECEB2900374343 /* FlowManagerMock.swift in Sources */,
 				169BA21C25ED0FA700374343 /* ConversationTests+LegalHold.swift in Sources */,
@@ -3167,11 +3204,15 @@
 				169BA20125ED0EFE00374343 /* ZMUserSessionLegalHoldTests.swift in Sources */,
 				169BA21925ED0F9900374343 /* SendAndReceiveMessagesTests.m in Sources */,
 				169BA22625ED0FD300374343 /* ConversationTests+ReceiptMode.swift in Sources */,
+				E666EDF22B74ED2F00C03E2B /* MockSessionManagerObserver.swift in Sources */,
+				E666EDE22B74E78C00C03E2B /* SessionManagerTests+AccountDeletion.swift in Sources */,
 				169BA21625ED0F8900374343 /* UserProfileTests.m in Sources */,
 				169BA20D25ED0F5E00374343 /* APNSTests+Swift.swift in Sources */,
+				E666EDEC2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift in Sources */,
 				169BA24925EF743F00374343 /* SessionManagerTests+Backup.swift in Sources */,
 				169BA26225EFA32000374343 /* ZMUser+Testing.m in Sources */,
 				169BA22D25ED0FEF00374343 /* AvailabilityTests.swift in Sources */,
+				E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */,
 				169BA1F025ECEB0E00374343 /* SessionManagerTests.swift in Sources */,
 				EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */,
 				EECE27C729436CF900419A8B /* MockPushTokenService.swift in Sources */,
@@ -3193,6 +3234,7 @@
 				169BA1EA25ECEA5400374343 /* ApplicationMock.swift in Sources */,
 				169BA24725EF73DD00374343 /* ServiceUserTests.swift in Sources */,
 				169BA23525ED101700374343 /* SlowSyncTests.m in Sources */,
+				E666EDE62B74E85300C03E2B /* SessionManagerTests+EncryptionAtRestMigration.swift in Sources */,
 				169BA22125ED0FBD00374343 /* ConversationTests+LastRead.swift in Sources */,
 				169BA1E925ECEA1C00374343 /* PushRegistryMock.swift in Sources */,
 				169BA1EF25ECEAD200374343 /* WireCallCenterV3Mock.swift in Sources */,
@@ -3200,6 +3242,7 @@
 				169BA22B25ED0FE700374343 /* ConversationTests+MessageEditing.swift in Sources */,
 				169BA1FD25ED0CCD00374343 /* MockStrategyDirectory.swift in Sources */,
 				169BA20E25ED0F6200374343 /* APNSTests.m in Sources */,
+				E666EDE42B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift in Sources */,
 				169BA1F425ECEFB400374343 /* MockPresentationDelegate.swift in Sources */,
 				169BA22525ED0FCE00374343 /* ConversationTests+List.swift in Sources */,
 				169BA21525ED0F8500374343 /* UserProfileImageV3Tests.swift in Sources */,
@@ -3215,10 +3258,11 @@
 				169BA1ED25ECEA9A00374343 /* OperationLoopNewRequestObserver.swift in Sources */,
 				169BA1FB25ED0CB200374343 /* MockPushChannel.swift in Sources */,
 				169BA20625ED0F3800374343 /* ClientManagementTests.m in Sources */,
-				EECE27C829436DC000419A8B /* SessionManager+PushTokenTests.swift in Sources */,
+				EECE27C829436DC000419A8B /* SessionManagerTests+PushToken.swift in Sources */,
 				169BA24A25EF744400374343 /* SessionManagerTests+URLActions.swift in Sources */,
 				169BA22325ED0FC400374343 /* ConversationTests+Archiving.swift in Sources */,
 				169BA20B25ED0F5400374343 /* ConnectionTests.m in Sources */,
+				E666EDDF2B74CEE600C03E2B /* SessionManagerBuilder.swift in Sources */,
 				169BA23425ED101300374343 /* SlowSyncTests+ExistingData.swift in Sources */,
 				169BA24525EF6FFA00374343 /* MockAnalytics.swift in Sources */,
 				169BA23225ED100B00374343 /* SlowSyncTests+Swift.swift in Sources */,

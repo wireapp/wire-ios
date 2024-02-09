@@ -1414,38 +1414,35 @@ public final class MLSService: MLSServiceInterface {
         do {
             try await operation()
 
-        } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
+        } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync, _) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
-        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync) {
+        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, _) {
             logger.warn("failed to send commit, syncing then retrying operation...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, retying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch CommitError.failedToSendCommit(recovery: .retryAfterRepairingGroup) {
+        } catch CommitError.failedToSendCommit(recovery: .retryAfterRepairingGroup, _) {
             logger.warn("failed to send commit, repairing group then retrying operation...")
             await fetchAndRepairGroup(with: groupID)
             logger.info("repair finished, retrying operation...")
             try await operation()
 
-        } catch CommitError.failedToSendCommit(recovery: .giveUp) {
+        } catch CommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
             logger.warn("failed to send commit, giving up...")
-            // swiftlint:disable todo_requires_jira_link
-            // TODO: [John] inform user
-            // swiftlint:enable todo_requires_jira_link
-            throw CommitError.failedToSendCommit(recovery: .giveUp)
+            throw error
 
-        } catch ExternalCommitError.failedToSendCommit(recovery: .retry) {
+        } catch ExternalCommitError.failedToSendCommit(recovery: .retry, _) {
             logger.warn("failed to send external commit, retrying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp) {
+        } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
             logger.warn("failed to send external commit, giving up...")
-            throw ExternalCommitError.failedToSendCommit(recovery: .giveUp)
+            throw error
 
         }
     }
