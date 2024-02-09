@@ -298,7 +298,9 @@ public final class ConversationService: ConversationServiceInterface {
                 case .success(let objectID):
                     Task {
                         do {
-                            try await self.handleMLSConversationIfNeeded(for: objectID, participants: usersExcludingSelfUser)
+                            try await self.handleMLSConversationIfNeeded(
+                                for: objectID,
+                                participantObjectIDs: Set(usersExcludingSelfUser.map(\.objectID)))
                         } catch {
                             if error.isFailedToAddSomeUsersError {
                                 // we ignore the error a system message is inserted
@@ -332,7 +334,8 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
-    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID, participants: Set<ZMUser>) async throws {
+    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID,
+                                               participantObjectIDs: Set<NSManagedObjectID>) async throws {
         guard let syncContext = await context.perform({ self.context.zm_sync }) else {
             assertionFailure("handleMLSConversationIfNeeded must be done on syncContext")
             return
@@ -346,6 +349,12 @@ public final class ConversationService: ConversationServiceInterface {
                 return ZMConversation?.none
             }
             return conversation
+        }) else {
+            return
+        }
+
+        guard let syncParticipants: [ZMUser] = await syncContext.perform({
+            return participantObjectIDs.existingObjects(in: syncContext)
         }) else {
             return
         }
@@ -368,9 +377,9 @@ public final class ConversationService: ConversationServiceInterface {
         try await mlsService.createGroup(for: mlsGroupID, with: [])
 
         let participantsService = participantsServiceBuilder(syncContext)
-        if !participants.isEmpty {
-            self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: Array(participants), groupId: mlsGroupID))
-            try await participantsService.addParticipants(Array(participants), to: syncConversation)
+        if !syncParticipants.isEmpty {
+            self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
+            try await participantsService.addParticipants(syncParticipants, to: syncConversation)
         }
     }
 
