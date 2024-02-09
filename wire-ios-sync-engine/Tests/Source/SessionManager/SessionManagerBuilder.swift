@@ -19,13 +19,13 @@
 import Foundation
 @testable import WireSyncEngine
 
-struct SessionManagerHelper {
+struct SessionManagerBuilder {
 
-    func createManager(
-        maxNumberAccounts: Int = SessionManager.defaultMaxNumberAccounts,
-        jailbreakDetector: JailbreakDetectorProtocol = MockJailbreakDetector(),
-        dispatchGroup: ZMSDispatchGroup
-    ) -> SessionManager {
+    var maxNumberAccounts: Int = SessionManager.defaultMaxNumberAccounts
+    var jailbreakDetector: JailbreakDetectorProtocol = MockJailbreakDetector()
+    var dispatchGroup: ZMSDispatchGroup = ZMSDispatchGroup(label: "SessionManagerBuilder.internal")
+
+    func build() -> SessionManager {
         let application = ApplicationMock()
         let environment = MockEnvironment()
         let reachability = MockReachability()

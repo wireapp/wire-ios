@@ -24,7 +24,7 @@ import LocalAuthentication
 
 final class SessionManagerTests: IntegrationTest {
 
-    private var sessionManagerHelper = SessionManagerHelper()
+    private var sessionManagerBuilder: SessionManagerBuilder!
 
     private var tmpDirectoryPath: URL { URL(fileURLWithPath: NSTemporaryDirectory()) }
 
@@ -36,7 +36,12 @@ final class SessionManagerTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()
+
+        sessionManagerBuilder = SessionManagerBuilder()
+        sessionManagerBuilder.dispatchGroup = dispatchGroup
+
         mockDelegate = MockSessionManagerDelegate()
+
         createSelfUserAndConversation()
     }
 
@@ -48,7 +53,7 @@ final class SessionManagerTests: IntegrationTest {
     // MARK: max account number
     func testThatDefaultMaxAccountNumberIs3_whenDefaultValueIsUsed() {
         // given and when
-        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        let sut = sessionManagerBuilder.build()
 
         // then
         XCTAssertEqual(sut.maxNumberAccounts, 3)
@@ -56,7 +61,8 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatMaxAccountNumberIs2_whenInitWithMaxAccountNumberAs2() {
         // given and when
-        let sut = sessionManagerHelper.createManager(maxNumberAccounts: 2, dispatchGroup: dispatchGroup)
+        sessionManagerBuilder.maxNumberAccounts = 2
+        let sut = sessionManagerBuilder.build()
 
         // then
         XCTAssertEqual(sut.maxNumberAccounts, 2)
@@ -65,7 +71,7 @@ final class SessionManagerTests: IntegrationTest {
     func testThatItCreatesUnauthenticatedSessionAndNotifiesDelegateIfStoreIsNotAvailable() {
         // given
         let observer = MockSessionManagerObserver()
-        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        let sut = sessionManagerBuilder.build()
         sut.delegate = mockDelegate
 
         // when
@@ -88,7 +94,7 @@ final class SessionManagerTests: IntegrationTest {
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
         manager.addAndSelect(account)
 
-        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        let sut = sessionManagerBuilder.build()
         sut.delegate = mockDelegate
 
         // when
@@ -300,10 +306,9 @@ final class SessionManagerTests: IntegrationTest {
         // GIVEN
         let jailbreakDetector = MockJailbreakDetector()
         jailbreakDetector.jailbroken = true
-        let sut = sessionManagerHelper.createManager(
-            jailbreakDetector: jailbreakDetector,
-            dispatchGroup: dispatchGroup
-        )
+        sessionManagerBuilder.jailbreakDetector = jailbreakDetector
+
+        let sut = sessionManagerBuilder.build()
         sut.configuration.wipeOnJailbreakOrRoot = true
         sut.delegate = mockDelegate
 
@@ -321,7 +326,7 @@ final class SessionManagerTests: IntegrationTest {
 
     func testAuthenticationAfterReboot() {
         // GIVEN
-        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        let sut = sessionManagerBuilder.build()
         sut.delegate = mockDelegate
 
         // WHEN
@@ -347,7 +352,7 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatShouldPerformPostRebootLogoutReturnsFalseIfNotRebooted() {
         // GIVEN
-        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        let sut = sessionManagerBuilder.build()
         sut.configuration.authenticateAfterReboot = true
         sut.accountManager.addAndSelect(createAccount())
         sut.start(launchOptions: [:])
@@ -365,7 +370,7 @@ final class SessionManagerTests: IntegrationTest {
     func testThatShouldPerformPostRebootLogoutReturnsFalseIfNoPreviousBootTimeExists() {
 
         // GIVEN
-        let sut = sessionManagerHelper.createManager(dispatchGroup: dispatchGroup)
+        let sut = sessionManagerBuilder.build()
         sut.configuration.authenticateAfterReboot = true
         sut.accountManager.addAndSelect(createAccount())
 
