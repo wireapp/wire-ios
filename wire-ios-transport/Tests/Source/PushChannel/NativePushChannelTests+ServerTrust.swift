@@ -46,7 +46,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         mockSchedulerSession = FakeSchedulerSession()
         mockEnvironment = MockEnvironment()
 
-        let dispatchGroup = ZMSDispatchGroup(label: "scheduler")!
+        let dispatchGroup = ZMSDispatchGroup(label: "scheduler")
         let scheduler = ZMTransportRequestScheduler(session: mockSchedulerSession,
                                     operationQueue: .main,
                                     group: dispatchGroup,
