@@ -18,10 +18,7 @@
 
 import WireSyncEngine
 
-/**
- * A view that displays the avatar for a remote user.
- */
-
+/// A view that displays the avatar for a remote user.
 class UserImageView: AvatarImageView, UserObserving {
 
     /**
@@ -140,21 +137,21 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Returns the placeholder background color for the user.
     private func containerBackgroundColor(for user: UserType) -> UIColor? {
-        switch self.avatar {
-        case .image?, nil:
-            return user.isServiceUser ? .white : .clear
-        case .text?:
+        switch avatar {
+        case .image:
+            user.isServiceUser ? .white : .clear
+        case .text:
             if user.isConnected || user.isSelfUser || user.isTeamMember || user.isWirelessUser {
-                return user.accentColor
+                user.accentColor
             } else {
-                return UIColor(white: 0.8, alpha: 1)
+                .init(white: 0.8, alpha: 1)
             }
         }
     }
 
     /// Returns the appropriate avatar shape for the user.
     private func shape(for user: UserType) -> AvatarImageView.Shape {
-        return user.isServiceUser ? .relative : .circle
+        user.isServiceUser ? .relative : .circle
     }
 
     // MARK: - Changing the Content
@@ -166,7 +163,7 @@ class UserImageView: AvatarImageView, UserObserving {
      * - parameter animated: Whether to animate the change.
      */
 
-    func setAvatar(_ avatar: Avatar, user: UserType, animated: Bool) {
+    func setAvatar(_ avatar: UserStatus.Avatar, user: UserType, animated: Bool) {
         let updateBlock = {
             self.avatar = avatar
             self.container.backgroundColor = self.containerBackgroundColor(for: user)
@@ -230,7 +227,7 @@ class UserImageView: AvatarImageView, UserObserving {
             return
         }
 
-        let defaultAvatar = initials.isEmpty ? Avatar.image(Asset.Images.unavailableUser.image) : Avatar.text(initials.localizedUppercase)
+        let defaultAvatar: UserStatus.Avatar = initials.isEmpty ? .init() : .text(initials.localizedUppercase)
         setAvatar(defaultAvatar, user: user, animated: false)
         if !ProcessInfo.processInfo.isRunningTests,
            let userSession = userSession as? ZMUserSession {

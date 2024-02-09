@@ -57,7 +57,7 @@ public struct UserStatus {
         case text(String)
 
         public init() {
-            self = .text("")
+            self = .image(.init(resource: .unavailableUser))
         }
     }
 }
