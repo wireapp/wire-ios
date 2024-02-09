@@ -20,6 +20,7 @@ import XCTest
 import WireTesting
 import PushKit
 import LocalAuthentication
+import WireSyncEngineSupport
 @testable import WireSyncEngine
 
 final class SessionManagerTests: IntegrationTest {
@@ -70,6 +71,8 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatItCreatesUnauthenticatedSessionAndNotifiesDelegateIfStoreIsNotAvailable() {
         // given
+        mockDelegate.sessionManagerDidFailToLoginError_MockMethod = { _ in }
+
         let observer = MockSessionManagerObserver()
         let sut = sessionManagerBuilder.build()
         sut.delegate = mockDelegate
@@ -78,14 +81,16 @@ final class SessionManagerTests: IntegrationTest {
         sut.start(launchOptions: [:])
 
         // then
-        XCTAssertNil(mockDelegate.userSession)
-        XCTAssertTrue(mockDelegate.sessionManagerDidFailToLogin)
+        XCTAssert(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations.isEmpty)
+        XCTAssertEqual(mockDelegate.sessionManagerDidFailToLoginError_Invocations.count, 1)
         XCTAssertNotNil(sut.unauthenticatedSession)
         XCTAssertEqual([], observer.createdUserSession)
     }
 
     func testThatItCreatesUserSessionAndNotifiesDelegateIfStoreIsAvailable() {
         // given
+        mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_MockMethod = { _ in }
+
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             return XCTFail()
         }
@@ -105,10 +110,10 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        XCTAssertNotNil(mockDelegate.userSession)
+        XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations.count, 1)
         XCTAssertNil(sut.unauthenticatedSession)
         withExtendedLifetime(token) {
-            XCTAssertEqual([mockDelegate.userSession].compactMap { $0 }, observer.createdUserSession)
+            XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations, observer.createdUserSession)
         }
     }
 
@@ -273,8 +278,9 @@ final class SessionManagerTests: IntegrationTest {
     }
 
     func testThatJailbrokenDeviceCallsDelegateMethod() {
-
         // GIVEN
+        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = { }
+
         guard let application = application else { return XCTFail() }
         let jailbreakDetector = MockJailbreakDetector(jailbroken: true)
         let configuration = SessionManagerConfiguration(blockOnJailbreakOrRoot: true)
@@ -296,10 +302,7 @@ final class SessionManagerTests: IntegrationTest {
             minTLSVersion: nil
         )
 
-        XCTAssertTrue(self.mockDelegate.jailbroken)
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
-
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertEqual(mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_Invocations.count, 1)
     }
 
     func testThatJailbrokenDeviceDeletesAccount() {
@@ -329,25 +332,27 @@ final class SessionManagerTests: IntegrationTest {
         let sut = sessionManagerBuilder.build()
         sut.delegate = mockDelegate
 
-        // WHEN
+        let logoutExpectation = self.expectation(description: "Authentication after reboot")
+
+        mockDelegate.sessionManagerDidFailToLoginError_MockMethod = { _ in }
+        mockDelegate.sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { error, userSessionCanBeTornDown in
+            XCTAssertNil(sut.activeUserSession)
+            XCTAssertEqual((error as? NSError)?.userSessionErrorCode, .needsAuthenticationAfterReboot)
+
+            userSessionCanBeTornDown?()
+            logoutExpectation.fulfill()
+        }
+
+        // WHEN && THEN
         sut.start(launchOptions: [:])
         sut.accountManager.addAndSelect(createAccount())
         XCTAssertEqual(sut.accountManager.accounts.count, 1)
-
-        // THEN
-        let logoutExpectation = customExpectation(description: "Authentication after reboot")
-
-        mockDelegate.onLogout = { error in
-            XCTAssertNil(sut.activeUserSession)
-            XCTAssertEqual(error?.userSessionErrorCode, .needsAuthenticationAfterReboot)
-            logoutExpectation.fulfill()
-        }
 
         performIgnoringZMLogError {
             sut.performPostRebootLogout()
         }
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 2))
+        waitForExpectations(timeout: 1)
     }
 
     func testThatShouldPerformPostRebootLogoutReturnsFalseIfNotRebooted() {
