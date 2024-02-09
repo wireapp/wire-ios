@@ -52,11 +52,3 @@ final class BackupViewControllerTests: ZMSnapshotTestCase {
         return BackupViewController(backupSource: backupSource)
     }
 }
-
-// MARK: - MockBackupSource
-
-private final class MockBackupSource: BackupSource {
-    func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) { }
-
-    func clearPreviousBackups() { }
-}
