@@ -203,7 +203,7 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
     func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
         guard updateEvent.type == .userDelete else { return }
 
-        guard let userId = (updateEvent.payload["id"] as? String).flatMap(UUID.init),
+        guard let userId = (updateEvent.payload["id"] as? String).flatMap(UUID.init(transportString:)),
               let user = ZMUser.fetch(with: userId, in: managedObjectContext)
         else {
             return Logging.eventProcessing.error("Malformed user.delete update event, skipping...")
@@ -322,7 +322,9 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [John] proper federation error handling.
+        // swiftlint:enable todo_requires_jira_link
         // This is a quick fix to make the app somewhat usable when
         // a remote federated backend is down.
         if response.httpStatus == 533 {

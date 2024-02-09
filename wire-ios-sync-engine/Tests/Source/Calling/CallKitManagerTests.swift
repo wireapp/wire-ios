@@ -168,7 +168,7 @@ class MockProvider: CXProvider {
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
 
     var mockConversations: [WireSyncEngine.CallHandle: ZMConversation] = [:]
-    func lookupConversation(by handle: WireSyncEngine.CallHandle, completionHandler: @escaping (Result<ZMConversation>) -> Void) {
+    func lookupConversation(by handle: WireSyncEngine.CallHandle, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
         if let conversation = mockConversations[handle] {
             completionHandler(.success(conversation))
         } else {
@@ -179,7 +179,7 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
     var lookupConversationAndProcessPendingCallEventsCalls = 0
     func lookupConversationAndProcessPendingCallEvents(
         by handle: WireSyncEngine.CallHandle,
-        completionHandler: @escaping (WireUtilities.Result<ZMConversation>
+        completionHandler: @escaping (Result<ZMConversation, Error>
     ) -> Void) {
         lookupConversationAndProcessPendingCallEventsCalls += 1
         lookupConversation(by: handle, completionHandler: completionHandler)
@@ -213,10 +213,10 @@ class CallKitManagerTest: DatabaseTest {
         let oneToOne = ZMConversation.insertNewObject(in: self.uiMOC)
         oneToOne.conversationType = .oneOnOne
         oneToOne.remoteIdentifier = UUID()
+        oneToOne.oneOnOneUser = user
 
         let connection = ZMConnection.insertNewObject(in: self.uiMOC)
         connection.status = .accepted
-        connection.conversation = oneToOne
         connection.to = user
     }
 
@@ -674,16 +674,16 @@ class CallKitManagerTest: DatabaseTest {
 
     // MARK: Activity & Intents
 
-    func userActivityFor(contacts: [INPerson]?, isVideo: Bool = false) -> NSUserActivity {
+    func userActivityFor(contacts: [INPerson], isVideo: Bool) -> NSUserActivity {
 
-        let intent: INIntent
-
-        if isVideo {
-            intent = INStartCallIntent(audioRoute: .speakerphoneAudioRoute, destinationType: .normal, contacts: contacts, recordTypeForRedialing: .unknown, callCapability: .videoCall)
-        } else {
-            intent = INStartCallIntent(audioRoute: .speakerphoneAudioRoute, destinationType: .normal, contacts: contacts, recordTypeForRedialing: .unknown, callCapability: .audioCall)
-        }
-
+        let intent = INStartCallIntent(
+            callRecordFilter: .none,
+            callRecordToCallBack: .none,
+            audioRoute: .speakerphoneAudioRoute,
+            destinationType: .normal,
+            contacts: contacts,
+            callCapability: isVideo ? .videoCall : .audioCall
+        )
         let interaction = INInteraction(intent: intent, response: .none)
 
         let activity = NSUserActivity(activityType: "voip")
@@ -699,7 +699,7 @@ class CallKitManagerTest: DatabaseTest {
         let handle = INPersonHandle(value: identifier, type: .unknown)
         let person = INPerson(personHandle: handle, nameComponents: .none, displayName: .none, image: .none, contactIdentifier: .none, customIdentifier: identifier)
         let callHandle = WireSyncEngine.CallHandle(encodedString: identifier)!
-        let activity = self.userActivityFor(contacts: [person])
+        let activity = self.userActivityFor(contacts: [person], isVideo: false)
 
         mockCallKitManagerDelegate.mockConversations[callHandle] = conversation
 

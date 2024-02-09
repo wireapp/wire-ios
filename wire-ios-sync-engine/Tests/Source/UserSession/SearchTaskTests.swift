@@ -164,7 +164,6 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA")
-        let normaliedName = user.normalizedName
 
         let request = SearchRequest(query: "serA", searchOptions: [.contacts])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)

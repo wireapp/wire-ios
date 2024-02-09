@@ -117,7 +117,9 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // TODO: John remove warning and consult design about this setting.
+    // swiftlint:enable todo_requires_jira_link
 
     func encryptionAtRestSection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
@@ -221,19 +223,24 @@ extension SettingsCellDescriptorFactory {
             }
 
             if let selfUser = ZMUser.selfUser(), nil != selfUser.handle {
+
                 let preview: PreviewGeneratorType = { _ in
                     guard let handleDisplayString = selfUser.handleDisplayString(withDomain: federationEnabled) else {
                         return .none
                     }
                     return .text(handleDisplayString)
                 }
+
+                let copiableText = selfUser.handleDisplayString(withDomain: federationEnabled)
+
                 return SettingsExternalScreenCellDescriptor(
                     title: AccountSection.Handle.title,
                     isDestructive: false,
                     presentationStyle: .navigation,
                     presentationAction: presentation,
                     previewGenerator: preview,
-                    accessoryViewMode: .alwaysHide
+                    accessoryViewMode: .alwaysHide,
+                    copiableText: copiableText
                 )
             }
 

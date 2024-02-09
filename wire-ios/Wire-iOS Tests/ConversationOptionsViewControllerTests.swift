@@ -22,15 +22,15 @@ import SnapshotTesting
 
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
 
-    typealias SetHandler = (Bool, (Swift.Result<Void, Error>) -> Void) -> Void
+    typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
     var allowGuests: Bool
     var guestLinkFeatureStatus: GuestLinkFeatureStatus
     var setAllowGuests: SetHandler?
     var allowGuestsChangedHandler: ((Bool) -> Void)?
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)?
-    var linkResult: Result<String?>?
-    var deleteResult: Swift.Result<Void, Error> = .success(())
-    var createResult: Result<String>?
+    var linkResult: Result<String?, Error>?
+    var deleteResult: Result<Void, Error> = .success(())
+    var createResult: Result<String, Error>?
     var isCodeEnabled = true
     var areGuestPresent = true
     var isConversationFromSelfTeam = true
@@ -41,19 +41,19 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
         self.setAllowGuests = setAllowGuests
     }
 
-    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         setAllowGuests?(allowGuests, completion)
     }
 
-    func createConversationLink(completion: @escaping (Result<String>) -> Void) {
+    func createConversationLink(completion: @escaping (Result<String, Error>) -> Void) {
         createResult.apply(completion)
     }
 
-    func fetchConversationLink(completion: @escaping (Result<String?>) -> Void) {
+    func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void) {
         linkResult.apply(completion)
     }
 
-    func deleteLink(completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+    func deleteLink(completion: @escaping (Result<Void, Error>) -> Void) {
         completion(deleteResult)
     }
 }

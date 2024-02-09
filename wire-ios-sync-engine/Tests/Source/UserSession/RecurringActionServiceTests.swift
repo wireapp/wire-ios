@@ -50,7 +50,7 @@ final class RecurringActionServiceTests: XCTestCase {
     func testThatItPerformsActionInitially() {
         // Given
         var actionPerformed = false
-        sut.registerAction(.init(id: .random(length: 5), interval: 1) {
+        sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 1) {
             actionPerformed = true
         })
 
@@ -64,7 +64,7 @@ final class RecurringActionServiceTests: XCTestCase {
     func testThatItDoesNotPerformActionTooEarly() {
         // Given
         var actionPerformed = false
-        sut.registerAction(.init(id: .random(length: 5), interval: 3) {
+        sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 3) {
             actionPerformed = true
         })
 
@@ -81,7 +81,7 @@ final class RecurringActionServiceTests: XCTestCase {
     func testThatItForcePerformsAction() {
         // given
         var actionPerformed = false
-        let actionID = String.random(length: 5)
+        let actionID = String.randomAlphanumerical(length: 5)
 
         sut.persistLastCheckDate(for: actionID)
         sut.registerAction(.init(id: actionID, interval: 100) {
@@ -100,7 +100,7 @@ final class RecurringActionServiceTests: XCTestCase {
     func testThatItPerformsActionAgain() {
         // Given
         var actionPerformed = false
-        sut.registerAction(.init(id: .random(length: 5), interval: 3) {
+        sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 3) {
             actionPerformed = true
         })
 
