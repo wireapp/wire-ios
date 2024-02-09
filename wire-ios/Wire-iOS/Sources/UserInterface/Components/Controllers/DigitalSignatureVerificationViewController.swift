@@ -28,7 +28,7 @@ public enum DigitalSignatureVerificationError: Error {
     case otherError
 }
 
-class DigitalSignatureVerificationViewController: UIViewController {
+final class DigitalSignatureVerificationViewController: UIViewController {
 
     typealias DigitalSignatureCompletion = ((_ result: Result<Void, Error>) -> Void)
 

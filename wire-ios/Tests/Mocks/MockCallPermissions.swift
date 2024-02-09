@@ -26,7 +26,7 @@ extension MediaState.SpeakerState {
     static let selectedCanNotBeToggled = MediaState.SpeakerState(isEnabled: true, canBeToggled: false)
 }
 
-class MockCallPermissions: CallPermissionsConfiguration {
+final class MockCallPermissions: CallPermissionsConfiguration {
 
     var isPendingAudioPermissionRequest: Bool = true
     var isPendingVideoPermissionRequest: Bool = true

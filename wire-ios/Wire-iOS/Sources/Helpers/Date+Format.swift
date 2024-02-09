@@ -20,7 +20,7 @@ import Foundation
 
 // Creating and configuring date formatters is insanely expensive.
 // This is why there’s a bunch of statically configured ones here that are reused.
-public class WRDateFormatter {
+public final class WRDateFormatter {
     static let NSTimeIntervalOneMinute = 60.0
     static let NSTimeIntervalOneHour = 3600.0
     static let DayMonthYearUnits = Set<Calendar.Component>([.day, .month, .year])
