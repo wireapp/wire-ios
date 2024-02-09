@@ -46,6 +46,7 @@ public protocol SessionActivationObserver: AnyObject {
     func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
 
+// sourcery: AutoMockable
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLogin(error: Error?)
     func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
@@ -263,7 +264,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     let sharedContainerURL: URL
-    let dispatchGroup: ZMSDispatchGroup?
+    let dispatchGroup: ZMSDispatchGroup
     let jailbreakDetector: JailbreakDetectorProtocol?
     fileprivate var accountTokens: [UUID: [Any]] = [:]
     fileprivate var memoryWarningObserver: NSObjectProtocol?
@@ -337,6 +338,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             proxyCredentials = ProxyCredentials.retrieve(for: proxy)
         }
 
+        let dispatchGroup = ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
+
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory(
             appVersion: appVersion,
             environment: environment,
@@ -368,6 +371,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             delegate: delegate,
             application: application,
             pushRegistry: PKPushRegistry(queue: nil),
+            dispatchGroup: dispatchGroup,
             environment: environment,
             configuration: configuration,
             detector: detector,
@@ -387,8 +391,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             forName: UIApplication.didReceiveMemoryWarningNotification,
             object: nil,
             queue: nil,
-            using: {[weak self] _ in
-                guard let `self` = self else {
+            using: { [weak self] _ in
+                guard let self else {
                     return
                 }
                 log.debug("Received memory warning, tearing down background user sessions.")
@@ -430,7 +434,7 @@ public final class SessionManager: NSObject, SessionManagerType {
          delegate: SessionManagerDelegate?,
          application: ZMApplication,
          pushRegistry: PushRegistry,
-         dispatchGroup: ZMSDispatchGroup? = nil,
+         dispatchGroup: ZMSDispatchGroup,
          environment: BackendEnvironmentProvider,
          configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
          detector: JailbreakDetectorProtocol = JailbreakDetector(),
@@ -839,13 +843,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         log.debug("Request to load session for \(account)")
         let group = self.dispatchGroup
 
-        group?.enter()
+        group.enter()
         self.sessionLoadingQueue.serialAsync { onWorkDone in
             if let session = self.backgroundUserSessions[account.userIdentifier] {
                 log.debug("Session for \(account) is already loaded")
                 completion(session)
                 onWorkDone()
-                group?.leave()
+                group.leave()
             } else {
                 self.setupUserSession(account: account) { userSession in
                     if let userSession {
@@ -853,7 +857,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     }
 
                     onWorkDone()
-                    group?.leave()
+                    group.leave()
                 }
             }
         }
