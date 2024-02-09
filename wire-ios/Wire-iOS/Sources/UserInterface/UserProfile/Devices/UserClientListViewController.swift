@@ -26,21 +26,31 @@ final class UserClientListViewController: UIViewController,
 
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
-    private var clients: [UserClientType]
+    private var clients: [UserClientType] {
+        didSet {
+            self.clientInstances = clients as? [UserClient] ?? []
+        }
+    }
+    private var clientInstances = [UserClient]()
+
     private var tokens: [Any?] = []
     private var user: UserType
+
     private let userSession: UserSession
+    private let contextProvider: ContextProvider?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
 
-    init(user: UserType, userSession: UserSession) {
+    init(user: UserType,
+         userSession: UserSession,
+         contextProvider: ContextProvider?) {
         self.user = user
         self.clients = UserClientListViewController.clientsSortedByRelevance(for: user)
         self.headerView = ParticipantDeviceHeaderView(userName: user.name ?? "")
         self.userSession = userSession
-
+        self.contextProvider = contextProvider
         super.init(nibName: nil, bundle: nil)
 
         tokens.append(userSession.addUserObserver(self, for: user))
@@ -99,6 +109,27 @@ final class UserClientListViewController: UIViewController,
         return user.allClients.sortedByRelevance().filter({ !$0.isSelfClient() })
     }
 
+    @MainActor
+    private func fetchUserConversationMLSGroupID() async -> MLSGroupID? {
+        guard let syncContext = contextProvider?.syncContext, let user = user as? ZMUser else {
+            return nil
+        }
+        return await syncContext.perform {
+            return ZMConversation.fetchMLSConversations(in: syncContext).first(where: {$0.sortedActiveParticipants.contains(user)})?.mlsGroupID
+        }
+    }
+
+    private func updateCertificatesForUserClients() {
+        Task {
+            if let mlsGroupID = await fetchUserConversationMLSGroupID() {
+                clients = await clientInstances.updateCertificates(mlsGroupId: mlsGroupID, userSession: userSession)
+            }
+            await MainActor.run {
+                collectionView.reloadData()
+            }
+        }
+    }
+
     // MARK: - UICollectionViewDelegateFlowLayout & UICollectionViewDataSource
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -154,7 +185,7 @@ extension UserClientListViewController: UserObserving {
         // swiftlint:enable todo_requires_jira_link
         headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.isEmpty == true
         clients = UserClientListViewController.clientsSortedByRelevance(for: user)
-        collectionView.reloadData()
+        updateCertificatesForUserClients()
     }
 
 }
@@ -163,4 +194,49 @@ extension UserClientListViewController: ParticipantDeviceHeaderViewDelegate {
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView) {
         URL.wr_fingerprintLearnMore.openInApp(above: self)
     }
+}
+
+extension Array where Element: UserClient {
+
+    func updateCertificates(mlsGroupId: MLSGroupID, userSession: UserSession) async -> [UserClient] {
+        var updatedUserClients = [UserClient]()
+        let mlsResolver = MLSClientResolver()
+        let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: self.compactMap {
+            if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+                ($0.clientId.hashValue, mlsClientId)
+            } else {
+                nil
+            }
+        })
+        let mlsClienIds = mlsClients.values.map({$0})
+        do {
+            let isE2eIEnabledForSelfClient = try await userSession.getIsE2eIdentityEnabled.invoke()
+            let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
+                                                                                       clientIds: mlsClienIds)
+            if certificates.isNonEmpty {
+                for client in self {
+                    let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
+                    client.e2eIdentityCertificate = certificates.first(where: {$0.clientId == mlsClientIdRawValue})
+                    if client.e2eIdentityCertificate != nil && client.mlsThumbPrint != nil {
+                        client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                    }
+                    updatedUserClients.append(client)
+                }
+                return updatedUserClients
+            } else if isE2eIEnabledForSelfClient {
+                for client in self {
+                    let theClient = client
+                    theClient.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                    updatedUserClients.append(theClient)
+                }
+                return updatedUserClients
+            } else {
+                return self
+            }
+        } catch {
+            WireLogger.e2ei.error(error.localizedDescription)
+            return self
+        }
+    }
+
 }

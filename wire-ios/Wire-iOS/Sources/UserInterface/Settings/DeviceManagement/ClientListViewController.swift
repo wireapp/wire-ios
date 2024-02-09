@@ -230,7 +230,7 @@ final class ClientListViewController: UIViewController,
     }
 
     @MainActor
-    private func fetchSelfConversation() async -> MLSGroupID? {
+    private func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
         guard let syncContext = contextProvider?.syncContext else {
             return nil
         }
@@ -500,7 +500,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
-        let mlsGroupID = await fetchSelfConversation()
+        let mlsGroupID = await fetchSelfConversationMLSGroupID()
         if let mlsGroupID = mlsGroupID, let userSession = userSession {
             var updatedUserClients = [UserClient]()
             let mlsResolver = MLSClientResolver()
@@ -590,7 +590,7 @@ extension ClientListViewController: UserObserving {
 
 }
 
-private extension UserClient {
+extension UserClient {
     func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
         guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
             return nil
