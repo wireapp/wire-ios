@@ -2251,8 +2251,8 @@ internal enum L10n {
           internal static let cancel = L10n.tr("Localizable", "conversation.create.mls.cancel", fallback: "Cancel")
           /// Select Protocol
           internal static let pickerTitle = L10n.tr("Localizable", "conversation.create.mls.picker_title", fallback: "Select Protocol")
-          /// Select MLS to create a group using Messaging Layer Security protocol (beta version).
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a group using Messaging Layer Security protocol (beta version).")
+          /// Select MLS to create a group using the Messaging Layer Security protocol.
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a group using the Messaging Layer Security protocol.")
           /// Protocol
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
@@ -3220,8 +3220,8 @@ internal enum L10n {
       internal enum MessageProtocol {
         /// Cipher Suite
         internal static let cipherSuite = L10n.tr("Localizable", "group_details.message_protocol.cipher_suite", fallback: "Cipher Suite")
-        /// Protocol details (beta)
-        internal static let sectionTile = L10n.tr("Localizable", "group_details.message_protocol.section_tile", fallback: "Protocol details (beta)")
+        /// Protocol details
+        internal static let sectionTile = L10n.tr("Localizable", "group_details.message_protocol.section_tile", fallback: "Protocol details")
         /// Protocol
         internal static let title = L10n.tr("Localizable", "group_details.message_protocol.title", fallback: "Protocol")
       }

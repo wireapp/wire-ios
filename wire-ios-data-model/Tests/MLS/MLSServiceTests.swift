@@ -1163,19 +1163,16 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func test_PerformPendingJoins_Retries() async throws {
-        try await test_PerformPendingJoinsRecovery(.retry)
+        try await test_PerformPendingJoinsRecovery(.retry, cause: .mlsStaleMessage)
     }
 
     func test_PerformPendingJoins_GivesUp() async throws {
-        do {
-            try await test_PerformPendingJoinsRecovery(.giveUp)
-        } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp) {
-            // expected
-        }
+        try await test_PerformPendingJoinsRecovery(.giveUp, cause: .mlsCommitMissingReferences)
     }
 
     private func test_PerformPendingJoinsRecovery(
         _ recovery: ExternalCommitError.RecoveryStrategy,
+        cause: SendCommitBundleAction.Failure,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws {
@@ -1208,7 +1205,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             joinGroupCount += 1
 
             if joinGroupCount == 1 {
-                throw ExternalCommitError.failedToSendCommit(recovery: recovery)
+                throw ExternalCommitError.failedToSendCommit(
+                    recovery: recovery,
+                    cause: cause
+                )
             }
 
             return []
@@ -1844,7 +1844,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
             default:
                 return []
             }
@@ -1884,7 +1884,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0..<3:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
             default:
                 return []
             }
@@ -1919,7 +1919,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockCommitPendingProposalsCount += 1 }
             switch mockCommitPendingProposalsCount {
             case 0..<2:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
             default:
                 return []
             }
@@ -1931,7 +1931,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0..<3:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
             default:
                 return []
             }
@@ -1982,7 +1982,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var mockUpdateKeyMaterialCount = 0
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             defer { mockUpdateKeyMaterialCount += 1 }
-            throw CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync)
+            throw CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync, cause: .mlsStaleMessage)
         }
 
         // Mock quick sync.
@@ -2020,7 +2020,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var mockUpdateKeyMaterialCount = 0
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             defer { mockUpdateKeyMaterialCount += 1 }
-            throw CommitError.failedToSendCommit(recovery: .giveUp)
+            throw CommitError.failedToSendCommit(recovery: .giveUp, cause: .mlsProtocolError)
         }
 
         // Mock quick sync.
@@ -2030,7 +2030,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then
-        await assertItThrows(error: CommitError.failedToSendCommit(recovery: .giveUp)) {
+        await assertItThrows(error: SendCommitBundleAction.Failure.mlsProtocolError) {
             // When
             try await sut.updateKeyMaterial(for: groupID)
         }

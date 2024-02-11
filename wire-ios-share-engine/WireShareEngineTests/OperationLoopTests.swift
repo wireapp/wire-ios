@@ -23,7 +23,7 @@ import WireDataModel
 import WireRequestStrategy
 @testable import WireShareEngine
 
-class OperationLoopTests: ZMTBaseTest {
+final class OperationLoopTests: ZMTBaseTest {
 
     var coreDataStack: CoreDataStack! = nil
     var sut: OperationLoop! = nil

@@ -23,7 +23,7 @@ import Foundation
  * - warning: You need to register this handler after all e-mail error related handlers.
  */
 
-class AuthenticationEmailFallbackErrorHandler: AuthenticationEventHandler {
+final class AuthenticationEmailFallbackErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

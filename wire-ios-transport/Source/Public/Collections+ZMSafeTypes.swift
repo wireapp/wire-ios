@@ -101,10 +101,10 @@ extension NSDictionary {
 
     @objc
     public func date(for key: String) -> Date? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { NSDate(transport: $0) as Date? }
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { .init(transportString: $0) }
     }
 
     @objc public func optionalDate(forKey key: String) -> Date? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { NSDate(transport: $0) as Date? }
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { .init(transportString: $0) }
     }
 }

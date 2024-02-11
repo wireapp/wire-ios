@@ -418,6 +418,7 @@ public extension UserClient {
         client.model = model
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
+        client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
 
         let selfUser = ZMUser.selfUser(in: context)
@@ -750,17 +751,21 @@ extension UserClient {
     }
 
     func activeConversationsForUserOfClients(_ clients: Set<UserClient>) -> Set<ZMConversation> {
-        let conversations: Set<ZMConversation> = clients.map(\.user).reduce(into: []) {
-            guard let user = $1 else { return }
-            guard user.isSelfUser else {
+        return clients.map(\.user).reduce(into: []) {
+            guard let user = $1 else {
+                return
+            }
+
+            if user.isSelfUser {
+                let predicateFactory = ConversationPredicateFactory(selfTeam: user.team)
+                let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+                fetchRequest.predicate = predicateFactory.predicateForConversationsIncludingArchived()
+                let conversations = managedObjectContext?.fetchOrAssert(request: fetchRequest) ?? []
+                return $0.formUnion(conversations)
+            } else {
                 return $0.formUnion(user.participantRoles.compactMap(\.conversation))
             }
-            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-            fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()
-            let conversations = managedObjectContext?.fetchOrAssert(request: fetchRequest) ?? []
-            return $0.formUnion(conversations)
         }
-        return conversations
     }
 
     func changeSecurityLevel(_ securityChangeType: SecurityChangeType, clients: Set<UserClient>, causedBy: ZMOTRMessage?) {

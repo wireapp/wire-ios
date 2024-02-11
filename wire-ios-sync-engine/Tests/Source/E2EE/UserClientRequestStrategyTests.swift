@@ -24,7 +24,7 @@ import WireDataModel
 import WireDataModelSupport
 
 @objcMembers
-public class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
+public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
 
     public var didCallRegisterMLSClient: Bool = false
     public func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {
@@ -51,7 +51,7 @@ public class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistratio
     }
 }
 
-class UserClientRequestStrategyTests: RequestStrategyTestBase {
+final class UserClientRequestStrategyTests: RequestStrategyTestBase {
 
     var sut: UserClientRequestStrategy!
     var clientRegistrationStatus: ZMMockClientRegistrationStatus!

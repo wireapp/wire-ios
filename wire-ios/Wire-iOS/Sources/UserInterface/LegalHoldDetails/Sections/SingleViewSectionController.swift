@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class CollectionViewCellAdapter: UICollectionViewCell {
+final class CollectionViewCellAdapter: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -52,7 +52,7 @@ class CollectionViewCellAdapter: UICollectionViewCell {
 
 }
 
-class SingleViewSectionController: NSObject, CollectionViewSectionController {
+final class SingleViewSectionController: NSObject, CollectionViewSectionController {
 
     fileprivate var view: UIView
 
