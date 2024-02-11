@@ -41,13 +41,14 @@ final class ConversationTitleView: TitleView {
         titleFont = .normalSemiboldFont
 
         var attachments: [NSTextAttachment] = []
+        var trailingIcons: [NSTextAttachment] = []
 
         if conversation.isUnderLegalHold {
             attachments.append(.legalHold())
         }
 
         if conversation.isVerified {
-            attachments.append(verifiedShield)
+            trailingIcons.append(verifiedShield)
         }
 
         var subtitle: String?
@@ -60,7 +61,7 @@ final class ConversationTitleView: TitleView {
         super.configure(
             leadingIcons: attachments,
             title: conversation.displayNameWithFallback,
-            trailingIcons: [],
+            trailingIcons: trailingIcons,
             subtitle: subtitle,
             interactive: interactive && conversation.relatedConnectionState != .sent,
             showInteractiveIcon: true
@@ -71,9 +72,9 @@ final class ConversationTitleView: TitleView {
 
     private var verifiedShield: NSTextAttachment {
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             return .proteusVerifiedShield()
-        case .mls, .mixed:
+        case .mls:
             return .e2eiVerifiedShield()
         }
     }
@@ -118,7 +119,7 @@ extension NSTextAttachment {
         attachment.image = shield
         let ratio = shield.size.width / shield.size.height
         let height: CGFloat = 12
-        attachment.bounds = CGRect(x: 0, y: -2, width: height * ratio, height: height)
+        attachment.bounds = CGRect(x: 0, y: 0, width: height * ratio, height: height)
         return attachment
     }
 
@@ -126,7 +127,7 @@ extension NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = Asset.Images.certificateValid.image
         attachment.image = shield
-        attachment.bounds = CGRect(x: 0, y: -4, width: shield.size.width, height: shield.size.height)
+        attachment.bounds = CGRect(x: 0, y: -2, width: shield.size.width, height: shield.size.height)
         return attachment
     }
 
