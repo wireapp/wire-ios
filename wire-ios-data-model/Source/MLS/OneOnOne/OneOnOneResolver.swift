@@ -67,7 +67,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
         // TODO: [WPB-111] implement
 
-        let users = try await context.perform {
+        let users: [ZMUser] = try await context.perform {
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             request.predicate = NSPredicate(format: "oneOnOneConversation != nil")
             return try context.fetch(request)
