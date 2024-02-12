@@ -17,7 +17,7 @@
 
 import Foundation
 
-class UserClientEventConsumerTests: RequestStrategyTestBase {
+final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
     var sut: UserClientEventConsumer!
     var clientRegistrationStatus: ZMMockClientRegistrationStatus!

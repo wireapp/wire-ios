@@ -19,7 +19,7 @@
 import Foundation
 
 /// Implementation of ZMImageOwner protocol. Used to store and access processed image data.
-public class ImageOwner: NSObject, ZMImageOwner {
+public final class ImageOwner: NSObject, ZMImageOwner {
 
     var previewData: Data?
     var mediumData: Data?

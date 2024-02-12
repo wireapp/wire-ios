@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-class DecodeImageOperationTests: BaseSnapshotTestCase {
+final class DecodeImageOperationTests: BaseSnapshotTestCase {
 
     var operationQueue: OperationQueue!
     var sut: UIImageView!

@@ -21,8 +21,9 @@ import XCTest
 
 final class BrowserOpeningOptionTests: XCTestCase {
 
-    class override func tearDown() {
+    override func tearDown() {
         Settings.shared.reset()
+        super.tearDown()
     }
 
     func testThatDefaultBrowserIsSafari() {

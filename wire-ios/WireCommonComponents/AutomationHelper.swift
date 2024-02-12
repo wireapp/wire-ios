@@ -21,7 +21,7 @@ import WireSystem
 import WireDataModel
 import WireSyncEngine
 
-final public class AutomationEmailCredentials: NSObject {
+public final class AutomationEmailCredentials: NSObject {
     public var email: String
     public var password: String
     init(email: String, password: String) {
