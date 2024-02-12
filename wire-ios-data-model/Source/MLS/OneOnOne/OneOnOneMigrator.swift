@@ -23,7 +23,7 @@ public protocol OneOnOneMigratorInterface {
 
     @discardableResult
     func migrateToMLS(
-        userID: QualifiedID,
+        user: ZMUser,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID
 
@@ -33,7 +33,8 @@ public enum MigrateMLSOneOnOneConversationError: Error {
 
     case failedToFetchConversation(Error)
     case failedToEstablishGroup(Error)
-    case failedToActivateConversation
+    case missesMLSConversation
+    case missesQualifiedUserID
 
 }
 
@@ -53,9 +54,13 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
 
     @discardableResult
     public func migrateToMLS(
-        userID: QualifiedID,
+        user: ZMUser,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
+        guard let userID = await context.perform({ user.qualifiedIDOrFallback }) else {
+            throw MigrateMLSOneOnOneConversationError.missesQualifiedUserID
+        }
+
         let mlsGroupID = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
@@ -67,7 +72,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         )
 
         try await switchLocalConversationToMLS(
-            userID: userID,
+            otherUser: user,
             mlsGroupID: mlsGroupID,
             in: context
         )
@@ -110,7 +115,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
     }
 
     private func switchLocalConversationToMLS(
-        userID: QualifiedID,
+        otherUser: ZMUser,
         mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
     ) async throws {
@@ -119,11 +124,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
                 with: mlsGroupID,
                 in: context
             ) else {
-                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
-            }
-
-            guard let otherUser = ZMUser.fetch(with: userID, in: context) else {
-                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
+                throw MigrateMLSOneOnOneConversationError.missesMLSConversation
             }
 
             // move local messages

@@ -21,28 +21,26 @@ import Foundation
 // sourcery: AutoMockable
 public protocol OneOnOneProtocolSelectorInterface {
 
-    func getProtocolForUser(
-        with id: QualifiedID,
+    func getProtocolInsersectionBetween(
+        selfUser: ZMUser,
+        otherUser: ZMUser,
         in context: NSManagedObjectContext
     ) async -> MessageProtocol?
-
 }
 
-public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
+public struct OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
 
     public init() {}
 
-    public func getProtocolForUser(
-        with id: QualifiedID,
+    public func getProtocolInsersectionBetween(
+        selfUser: ZMUser,
+        otherUser: ZMUser,
         in context: NSManagedObjectContext
     ) async -> MessageProtocol? {
 
         let commonProtocols = await context.perform {
-            let selfUser = ZMUser.selfUser(in: context)
-            let otherUser = ZMUser.fetch(with: id, in: context)
-
             let selfProtocols = selfUser.supportedProtocols
-            let otherProtocols = otherUser?.supportedProtocols ?? []
+            let otherProtocols = otherUser.supportedProtocols
 
             return selfProtocols.intersection(otherProtocols)
         }
@@ -55,5 +53,4 @@ public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
             return nil
         }
     }
-
 }

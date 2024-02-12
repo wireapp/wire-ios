@@ -3597,6 +3597,24 @@ public class MockOneOnOneProtocolSelectorInterface: OneOnOneProtocolSelectorInte
         }
     }
 
+    // MARK: - getProtocolInsersectionBetween
+
+    public var getProtocolInsersectionBetweenSelfUserOtherUserIn_Invocations: [(selfUser: ZMUser, otherUser: ZMUser, context: NSManagedObjectContext)] = []
+    public var getProtocolInsersectionBetweenSelfUserOtherUserIn_MockMethod: ((ZMUser, ZMUser, NSManagedObjectContext) async -> MessageProtocol?)?
+    public var getProtocolInsersectionBetweenSelfUserOtherUserIn_MockValue: MessageProtocol??
+
+    public func getProtocolInsersectionBetween(selfUser: ZMUser, otherUser: ZMUser, in context: NSManagedObjectContext) async -> MessageProtocol? {
+        getProtocolInsersectionBetweenSelfUserOtherUserIn_Invocations.append((selfUser: selfUser, otherUser: otherUser, context: context))
+
+        if let mock = getProtocolInsersectionBetweenSelfUserOtherUserIn_MockMethod {
+            return await mock(selfUser, otherUser, context)
+        } else if let mock = getProtocolInsersectionBetweenSelfUserOtherUserIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getProtocolInsersectionBetweenSelfUserOtherUserIn`")
+        }
+    }
+
 }
 
 public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
@@ -3605,6 +3623,26 @@ public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
 
     public init() {}
 
+
+    // MARK: - resolveAllOneOnOneConversations
+
+    public var resolveAllOneOnOneConversationsIn_Invocations: [NSManagedObjectContext] = []
+    public var resolveAllOneOnOneConversationsIn_MockError: Error?
+    public var resolveAllOneOnOneConversationsIn_MockMethod: ((NSManagedObjectContext) async throws -> Void)?
+
+    public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
+        resolveAllOneOnOneConversationsIn_Invocations.append(context)
+
+        if let error = resolveAllOneOnOneConversationsIn_MockError {
+            throw error
+        }
+
+        guard let mock = resolveAllOneOnOneConversationsIn_MockMethod else {
+            fatalError("no mock for `resolveAllOneOnOneConversationsIn`")
+        }
+
+        try await mock(context)
+    }
 
     // MARK: - resolveOneOnOneConversation
 
