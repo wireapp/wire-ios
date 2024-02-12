@@ -21,6 +21,8 @@ import Foundation
 // sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
 
+    func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws
+
     @discardableResult
     func resolveOneOnOneConversation(
         with userID: QualifiedID,
@@ -61,6 +63,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     }
 
     // MARK: - Methods
+
+    public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
+        // TODO: [WPB-111] implement
+    }
 
     @discardableResult
     public func resolveOneOnOneConversation(

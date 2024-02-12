@@ -42,7 +42,24 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
             // - Produce a list of the users we have 1:1 conversations with
             // - Loop through the list and evaluate the 1:1 conversation for each user.
 
-            syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+            Task {
+                guard let syncContext = await managedObjectContext.perform({ self.managedObjectContext.zm_sync }) else {
+                    assertionFailure("can not perform strategy without sync context!")
+                    return
+                }
+
+                do {
+                    let resolver = OneOnOneResolver(syncContext: syncContext)
+                    try await resolver.resolveAllOneOnOneConversations(in: syncContext)
+                } catch {
+                    // TODO: [WPB-111] add proper logging
+                    debugPrint("failed to resolve all 1-1 conversations!")
+                }
+
+                // TODO: [WPB-111] test if this needs to be called on main actor?
+                syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+            }
+
         }
 
         return nil
