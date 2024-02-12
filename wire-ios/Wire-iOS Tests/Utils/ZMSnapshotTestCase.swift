@@ -279,40 +279,6 @@ extension ZMSnapshotTestCase {
     }
 
     static let tolerance: CGFloat = 0.3
-    /// Performs an assertion with the given view and the recorded snapshot with the custom width
-    func verifyView(view: UIView,
-                    extraLayoutPass: Bool = false,
-                    width: CGFloat,
-                    tolerance: CGFloat = tolerance,
-                    identifier: String? = nil,
-                    configuration: ((UIView) -> Swift.Void)? = nil,
-                    file: StaticString = #file,
-                    line: UInt = #line
-        ) {
-        let container = containerView(with: view, snapshotBackgroundColor: snapshotBackgroundColor)
-
-        container.addWidthConstraint(width: width)
-
-        if assertEmptyFrame(container, file: file, line: line) {
-            return
-        }
-
-        configuration?(view)
-
-        if extraLayoutPass {
-            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1))
-        }
-
-        view.layer.speed = 0 // freeze animations for deterministic tests
-
-        let identifier = finalIdentifier(deviceName: "\(Int(width))", identifier: identifier)
-
-        snapshotVerify(view: container,
-                       identifier: identifier,
-                       tolerance: tolerance,
-                       file: file,
-                       line: line)
-    }
 
     /// verify the snapshot with default iphone size
     ///

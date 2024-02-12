@@ -20,7 +20,7 @@ import UserNotifications
 
 @testable import WireSyncEngine
 
-class LocalNotificationDispatcherCallingTests: DatabaseTest {
+final class LocalNotificationDispatcherCallingTests: DatabaseTest {
 
     var sut: LocalNotificationDispatcher!
     var notificationCenter: UserNotificationCenterMock!

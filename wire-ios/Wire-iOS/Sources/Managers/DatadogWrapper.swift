@@ -28,7 +28,7 @@ import Datadog
 import DatadogCrashReporting
 import UIKit
 
-public class DatadogWrapper {
+public final class DatadogWrapper {
 
     /// Get shared instance only if Developer Flag is on.
 
@@ -93,7 +93,12 @@ public class DatadogWrapper {
             .build()
 
         datadogUserId = UIDevice.current.identifierForVendor?.uuidString.sha256String ?? "none"
-        WireLogger.provider = self
+
+        if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
+            aggregatedLogger.addLogger(self)
+        } else {
+            WireLogger.provider = self
+        }
     }
 
     public func startMonitoring() {
@@ -180,7 +185,7 @@ public enum LogLevel {
     case critical
 
 }
-public class DatadogWrapper {
+public final class DatadogWrapper {
 
     public static let shared: DatadogWrapper? = nil
 

@@ -18,7 +18,7 @@
 
 import WireDataModelSupport
 
-class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
+final class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
 
     var uploadCount = 0
 

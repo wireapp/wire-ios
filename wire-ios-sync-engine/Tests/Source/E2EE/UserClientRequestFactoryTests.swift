@@ -25,7 +25,7 @@ import WireDataModel
 import WireDataModelSupport
 import Foundation
 
-class UserClientRequestFactoryTests: MessagingTest {
+final class UserClientRequestFactoryTests: MessagingTest {
 
     var sut: UserClientRequestFactory!
     var authenticationStatus: ZMAuthenticationStatus!

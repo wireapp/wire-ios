@@ -25,7 +25,7 @@ import WireSyncEngine
  * the user to reauthenticate.
  */
 
-class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEventHandler {
+final class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
