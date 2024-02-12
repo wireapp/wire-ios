@@ -35,7 +35,8 @@ extension ZMUserSession {
 
     var refreshUsersMissingMetadataAction: RecurringAction {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
-
+            // TODO: check why do we refreshData on main and block main thread here?
+            // this is done after qu
             guard let context = self?.managedObjectContext else { return }
             context.performGroupedAndWait { context in
 
