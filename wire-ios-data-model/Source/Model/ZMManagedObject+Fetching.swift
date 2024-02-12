@@ -76,3 +76,10 @@ public extension Collection where Element == NSManagedObjectID {
         return objects.count == self.count ? objects : nil
     }
 }
+
+public extension ZMManagedObject {
+    // common implementation of primaryKey for ZMConversation and ZMUser
+    static func primaryKey(from remoteIdentifier: UUID?, domain: String?) -> String {
+        return "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
+    }
+}

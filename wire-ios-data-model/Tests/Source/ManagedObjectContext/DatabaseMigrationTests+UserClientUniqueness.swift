@@ -47,7 +47,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         }
 
         try versions.forEach { initialVersion in
-            try migrateStoreToCurrentVersion(
+            try helper.migrateStoreToCurrentVersion(
                 sourceVersion: initialVersion,
                 preMigrationAction: { context in
                     insertDuplicateClients(with: clientID, in: context)
@@ -57,18 +57,21 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
                     XCTAssertEqual(clients.count, 2)
                 },
                 postMigrationAction: { context in
-                    // verify it deleted duplicates
-                    var clients = try fetchClients(with: clientID, in: context)
-                    XCTAssertEqual(clients.count, 1)
-
-                    // verify we can't insert duplicates
-                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                    insertDuplicateClients(with: clientID, in: context)
-                    try context.save()
-
-                    clients = try fetchClients(with: clientID, in: context)
-                    XCTAssertEqual(clients.count, 1)
-                }
+                    try context.performGroupedAndWait { [self] context in
+                        // verify it deleted duplicates
+                        var clients = try fetchClients(with: clientID, in: context)
+                        XCTAssertEqual(clients.count, 1)
+                        
+                        // verify we can't insert duplicates
+                        context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                        insertDuplicateClients(with: clientID, in: context)
+                        try context.save()
+                        
+                        clients = try fetchClients(with: clientID, in: context)
+                        XCTAssertEqual(clients.count, 1)
+                    }
+                },
+                for: self
             )
 
             // clean after each test
@@ -124,29 +127,38 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
                 XCTAssertEqual(clients.count, 2)
             },
             postMigrationAction: { context in
-                // verify it deleted duplicates
-                var clients = try fetchClients(with: clientID, in: context)
-                XCTAssertEqual(clients.count, 1)
+                try context.performGroupedAndWait { [self] context in                // verify it deleted duplicates
+                    var clients = try fetchClients(with: clientID, in: context)
+                    XCTAssertEqual(clients.count, 1)
 
-                // verify we can't insert duplicates
-                context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                insertDuplicateClients(with: clientID, in: context)
-                try context.save()
+                    // verify we can't insert duplicates
+                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                    insertDuplicateClients(with: clientID, in: context)
+                    try context.save()
 
-                clients = try fetchClients(with: clientID, in: context)
-                XCTAssertEqual(clients.count, 1)
+                    clients = try fetchClients(with: clientID, in: context)
+                    XCTAssertEqual(clients.count, 1)
+                }
             }
         )
     }
 
+<<<<<<< HEAD
     // MARK: - Migration Helpers
 
     private func migrateStoreToCurrentVersion(
         sourceVersion: String,
+=======
+    private func migrateStore(
+        sourceVersion: String,
+        destinationVersion: String,
+        mappingModel: NSMappingModel,
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
         preMigrationAction: MigrationAction,
         postMigrationAction: MigrationAction
     ) throws {
         // GIVEN
+<<<<<<< HEAD
         let accountIdentifier = UUID()
         let applicationContainer = DatabaseBaseTest.applicationContainer
 
@@ -226,6 +238,58 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
 
         return stack
+=======
+
+        // create versions models
+        let sourceModel = try helper.createObjectModel(version: sourceVersion)
+        let destinationModel = try helper.createObjectModel(version: destinationVersion)
+
+        let sourceStoreURL = storeURL(version: sourceVersion)
+        let destinationStoreURL = storeURL(version: destinationVersion)
+
+        // create container for initial version
+        let container = try helper.createStore(model: sourceModel, at: sourceStoreURL)
+
+        // perform pre-migration action
+        try preMigrationAction(container.viewContext)
+
+        // create migration manager and mapping model
+        let migrationManager = NSMigrationManager(
+            sourceModel: sourceModel,
+            destinationModel: destinationModel
+        )
+
+        // WHEN
+
+        // perform migration
+        do {
+            try migrationManager.migrateStore(
+                from: sourceStoreURL,
+                sourceType: NSSQLiteStoreType,
+                options: nil,
+                with: mappingModel,
+                toDestinationURL: destinationStoreURL,
+                destinationType: NSSQLiteStoreType,
+                destinationOptions: nil
+            )
+        } catch {
+            XCTFail("Migration failed: \(error)")
+        }
+
+        // THEN
+
+        // create store
+        let migratedContainer = try helper.createStore(model: destinationModel, at: destinationStoreURL)
+
+        // perform post migration action
+        try postMigrationAction(migratedContainer.viewContext)
+    }
+
+    // MARK: - URL Helpers
+
+    private func storeURL(version: String) -> URL {
+        return tmpStoreURL.appendingPathComponent("\(version).sqlite")
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
     }
 
     // MARK: - Fetch / Insert Helpers

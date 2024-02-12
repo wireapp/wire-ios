@@ -52,7 +52,11 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testThatItPerformsMigrationFrom_Between_2_80_0_and_PreLast_ToCurrentModelVersion() throws {
         // NOTICE: When a new version of data model is created, please increase the last number of the array.
+<<<<<<< HEAD
         let allVersions = [80...113]
+=======
+        let allVersions = [80...111]
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
             .joined()
             .map { "2-\($0)-0" }
         let modelVersion = CoreDataStack.loadMessagingModel().version

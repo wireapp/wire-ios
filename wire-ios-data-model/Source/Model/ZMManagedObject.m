@@ -161,12 +161,12 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     return nil;
 }
 
-+ (NSString *)domainKey
++ (NSString * _Nonnull)domainKey
 {
     return @"domain";
 }
 
-+ (NSString *)remoteIdentifierDataKey
++ (NSString * _Nonnull)remoteIdentifierDataKey
 {
     return @"remoteIdentifier_data";
 }

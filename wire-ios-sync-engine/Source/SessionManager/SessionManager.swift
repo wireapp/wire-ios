@@ -903,9 +903,21 @@ public final class SessionManager: NSObject, SessionManagerType {
                     for: account,
                     with: coreDataStack
                 )
+
+                triggerSlowSyncIfNeeded(with: userSession)
+
                 onCompletion(userSession)
             }
         )
+    }
+
+    private func triggerSlowSyncIfNeeded(with userSession: ZMUserSession) {
+        let context = userSession.syncContext
+        context.perform {
+            if context.readAndResetSlowSyncFlag() {
+                userSession.syncStatus?.forceSlowSync()
+            }
+        }
     }
 
     private func clearCacheDirectory() {

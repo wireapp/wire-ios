@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<<<<<<< HEAD
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="22G91" minimumToolsVersion="Xcode 11.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.111.0">
+=======
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="22G91" minimumToolsVersion="Xcode 11.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.111.0">
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
     <entity name="Action" representedClassName=".Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role"/>
@@ -87,6 +91,10 @@
         <attribute name="needsToDownloadRoles" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="needsToVerifyLegalHold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="normalizedUserDefinedName" optional="YES" attributeType="String"/>
+<<<<<<< HEAD
+=======
+        <attribute name="primaryKey" optional="YES" attributeType="String"/>
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
         <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="securityLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
@@ -115,6 +123,14 @@
             <fetchIndexElement property="internalIsArchived" type="Binary" order="ascending"/>
             <fetchIndexElement property="lastModifiedDate" type="Binary" order="ascending"/>
         </fetchIndex>
+<<<<<<< HEAD
+=======
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="primaryKey"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
     </entity>
     <entity name="Feature" representedClassName=".Feature" syncable="YES">
         <attribute name="configData" optional="YES" attributeType="Binary"/>
@@ -229,9 +245,15 @@
     </entity>
     <entity name="ParticipantRole" representedClassName=".ParticipantRole" syncable="YES">
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+<<<<<<< HEAD
         <relationship name="conversation" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation"/>
         <relationship name="role" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Role" inverseName="participantRoles" inverseEntity="Role"/>
         <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User"/>
+=======
+        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation"/>
+        <relationship name="role" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Role" inverseName="participantRoles" inverseEntity="Role"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User"/>
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
     </entity>
     <entity name="Reaction" representedClassName=".Reaction" syncable="YES">
         <attribute name="firstReactionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -285,6 +307,14 @@
         <fetchIndex name="byRemoteIdentifier_dataIndex">
             <fetchIndexElement property="remoteIdentifier_data" type="Binary" order="ascending"/>
         </fetchIndex>
+<<<<<<< HEAD
+=======
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="remoteIdentifier_data"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
     </entity>
     <entity name="TextMessage" representedClassName="ZMTextMessage" parentEntity="Message" syncable="YES">
         <attribute name="text" optional="YES" attributeType="String"/>
@@ -313,6 +343,10 @@
         <attribute name="normalizedName" optional="YES" attributeType="String"/>
         <attribute name="phoneNumber" optional="YES" attributeType="String"/>
         <attribute name="previewProfileAssetIdentifier" optional="YES" attributeType="String"/>
+<<<<<<< HEAD
+=======
+        <attribute name="primaryKey" optional="YES" attributeType="String"/>
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
         <attribute name="providerIdentifier" optional="YES" attributeType="String"/>
         <attribute name="readReceiptsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="readReceiptsEnabledChangedRemotely" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
@@ -346,6 +380,14 @@
         <fetchIndex name="byRemoteIdentifier_dataIndex">
             <fetchIndexElement property="remoteIdentifier_data" type="Binary" order="ascending"/>
         </fetchIndex>
+<<<<<<< HEAD
+=======
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="primaryKey"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
     </entity>
     <entity name="UserClient" representedClassName=".UserClient" syncable="YES">
         <attribute name="activationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -353,6 +395,10 @@
         <attribute name="apsVerificationKey" optional="YES" attributeType="Binary"/>
         <attribute name="deviceClass" optional="YES" attributeType="String"/>
         <attribute name="discoveryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+<<<<<<< HEAD
+=======
+        <attribute name="fingerprint" optional="YES" attributeType="Binary"/>
+>>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
         <attribute name="label" optional="YES" attributeType="String"/>
         <attribute name="markedToDelete" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="mlsPublicKeys" optional="YES" attributeType="Binary"/>

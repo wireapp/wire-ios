@@ -49,7 +49,6 @@ static NSString *const SessionObjectIDAsStringKey = @"SessionObjectID";
 static NSString *const SelfUserKey = @"ZMSelfUser";
 static NSString *const NormalizedNameKey = @"normalizedName";
 static NSString *const NormalizedEmailAddressKey = @"normalizedEmailAddress";
-static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
 
 static NSString *const ConversationsCreatedKey = @"conversationsCreated";
 static NSString *const ActiveCallConversationsKey = @"activeCallConversations";
@@ -98,6 +97,8 @@ static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 static NSString *const DomainKey = @"domain";
 static NSString *const IsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSendRecipient";
+static NSString *const PrimaryKey = @"primaryKey";
+
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -356,6 +357,7 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
                                            LegalHoldRequestKey,
                                            NeedsToAcknowledgeLegalHoldStatusKey,
                                            NeedsToRefetchLabelsKey,
+                                           PrimaryKey,
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
                                            DomainKey,
                                            MessagesFailedToSendRecipientKey,
@@ -411,16 +413,6 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
 + (NSSet <ZMUser *> *)usersWithRemoteIDs:(NSSet <NSUUID *>*)UUIDs inContext:(NSManagedObjectContext *)moc;
 {
     return [self fetchObjectsWithRemoteIdentifiers:UUIDs inManagedObjectContext:moc];
-}
-
-- (NSUUID *)remoteIdentifier;
-{
-    return [self transientUUIDForKey:@"remoteIdentifier"];
-}
-
-- (void)setRemoteIdentifier:(NSUUID *)remoteIdentifier;
-{
-    [self setTransientUUID:remoteIdentifier forKey:@"remoteIdentifier"];
 }
 
 - (NSUUID *)teamIdentifier;
