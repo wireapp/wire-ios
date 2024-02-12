@@ -54,7 +54,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
 
-        let (connection, proteusConversation, mlsConversation) = await createConversations(
+        let (user, connection, proteusConversation, mlsConversation) = await createConversations(
             userID: userID,
             mlsGroupID: mlsGroupID,
             in: uiMOC
@@ -70,12 +70,12 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // When
         await uiMOC.perform {
-            XCTAssertEqual(proteusConversation.oneOnOneUser?.remoteIdentifier, userID.uuid)
+            XCTAssertEqual(proteusConversation.oneOnOneUser, user)
             XCTAssertNil(mlsConversation.oneOnOneUser)
         }
 
         try await sut.migrateToMLS(
-            userID: userID,
+            user: user,
             in: uiMOC
         )
 
@@ -97,11 +97,10 @@ final class OneOnOneMigratorTests: XCTestCase {
         mockMLSService.conversationExistsGroupID_MockValue = true
 
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
-        let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
 
-        let (connection, proteusConversation, mlsConversation) = await createConversations(
-            userID: userID,
+        let (user, connection, proteusConversation, mlsConversation) = await createConversations(
+            userID: .random(),
             mlsGroupID: mlsGroupID,
             in: uiMOC
         )
@@ -114,12 +113,12 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // When
         await uiMOC.perform {
-            XCTAssertEqual(proteusConversation.oneOnOneUser?.remoteIdentifier, userID.uuid)
+            XCTAssertEqual(proteusConversation.oneOnOneUser, user)
             XCTAssertNil(mlsConversation.oneOnOneUser)
         }
 
         try await sut.migrateToMLS(
-            userID: userID,
+            user: user,
             in: uiMOC
         )
 
@@ -139,11 +138,10 @@ final class OneOnOneMigratorTests: XCTestCase {
         mockMLSService.conversationExistsGroupID_MockValue = true
 
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
-        let userID: QualifiedID = .random()
         let mlsGroupID: MLSGroupID = .random()
 
-        let (_, proteusConversation, mlsConversation) = await createConversations(
-            userID: userID,
+        let (user, _, proteusConversation, mlsConversation) = await createConversations(
+            userID: .random(),
             mlsGroupID: mlsGroupID,
             in: uiMOC
         )
@@ -175,7 +173,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         }
 
         try await sut.migrateToMLS(
-            userID: userID,
+            user: user,
             in: uiMOC
         )
 
@@ -198,6 +196,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
     ) async -> (
+        user: ZMUser,
         connection: ZMConnection,
         proteusConversation: ZMConversation,
         mlsConversation: ZMConversation
@@ -216,6 +215,7 @@ final class OneOnOneMigratorTests: XCTestCase {
             let mlsConversation = createMLSConversation(with: mlsGroupID, in: context)
 
             return (
+                user,
                 connection,
                 proteusConversation,
                 mlsConversation
