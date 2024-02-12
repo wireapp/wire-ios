@@ -61,9 +61,13 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
 
     func updateSupportedProtocols() {
         let selfUser = userRepository.selfUser()
+        let previousProtocols = selfUser.supportedProtocols
+
         selfUser.supportedProtocols = calculateSupportedProtocols()
 
-        delegate?.supportedProtocolsServiceDidCalculateNewProtocols(self)
+        if previousProtocols != selfUser.supportedProtocols {
+            delegate?.supportedProtocolsServiceDidCalculateNewProtocols(self)
+        }
     }
 
     func calculateSupportedProtocols() -> Set<MessageProtocol> {
