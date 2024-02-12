@@ -89,8 +89,8 @@ final class TeamAccountView: BaseAccountView, AccountView {
     override func update() {
         super.update()
 
-        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(self.account.teamName ?? "") + " " + accessibilityState
-        accessibilityIdentifier = "\(self.account.teamName ?? "") team"
+        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(account.teamName ?? "") + " " + accessibilityState
+        accessibilityIdentifier = "\(account.teamName ?? "") team"
     }
 
     func createDotConstraints() -> [NSLayoutConstraint] {

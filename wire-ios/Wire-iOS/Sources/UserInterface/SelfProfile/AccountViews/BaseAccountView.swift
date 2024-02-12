@@ -184,6 +184,7 @@ enum DisplayContext {
 // MARK: -
 
 extension BaseAccountView: ZMConversationListObserver {
+
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateAppearance()
     }
@@ -194,6 +195,7 @@ extension BaseAccountView: ZMConversationListObserver {
 }
 
 extension BaseAccountView: UserObserving {
+
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
             updateAppearance()
@@ -214,5 +216,4 @@ extension Account {
     var teamImageViewContent: TeamImageView.Content? {
         return TeamImageView.Content(imageData: teamImageData, name: teamName)
     }
-
 }

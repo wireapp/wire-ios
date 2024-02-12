@@ -44,19 +44,15 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// The user session to use to download images.
     var userSession: UserSession? {
-        didSet {
-            updateUser()
-        }
+        didSet { updateUser() }
     }
 
     /// The user to display the avatar of.
     var user: UserType? {
-        didSet {
-            updateUser()
-        }
+        didSet { updateUser() }
     }
 
-    private var userObserverToken: Any?
+    private var userObserverToken: NSObjectProtocol?
 
     // MARK: - Initialization
 
@@ -74,17 +70,13 @@ class UserImageView: AvatarImageView, UserObserving {
         configureConstraints()
     }
 
-    deinit {
-        userObserverToken = nil
-    }
-
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: size.rawValue, height: size.rawValue)
+        .init(width: size.rawValue, height: size.rawValue)
     }
 
     private func configureSubviews() {

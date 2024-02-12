@@ -40,20 +40,16 @@ final class TeamImageView: UIImageView {
     }
 
     var content: Content {
-        didSet {
-            updateImage()
-        }
+        didSet { updateImage() }
     }
 
     private var lastLayoutBounds: CGRect = .zero
     let initialLabel = UILabel()
     var style: TeamImageViewStyle = .small {
-        didSet {
-            applyStyle(style: style)
-        }
+        didSet { applyStyle(style: style) }
     }
 
-    func applyStyle(style: TeamImageViewStyle ) {
+    func applyStyle(style: TeamImageViewStyle) {
         switch style {
         case .small:
             initialLabel.font = .smallSemiboldFont
