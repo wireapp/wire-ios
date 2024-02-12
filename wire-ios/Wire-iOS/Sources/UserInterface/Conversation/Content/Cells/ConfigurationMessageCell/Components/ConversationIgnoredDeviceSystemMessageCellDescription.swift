@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
-class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationNewDeviceSystemMessageCell
     let configuration: View.Configuration

@@ -45,7 +45,7 @@ extension ZMConversationMessage {
     }
 }
 
-class SoundEventListener: NSObject {
+final class SoundEventListener: NSObject {
 
     weak var userSession: ZMUserSession?
 

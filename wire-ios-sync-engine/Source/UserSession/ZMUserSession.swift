@@ -54,7 +54,7 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
     & UserSessionAppLockDelegate
 
 @objcMembers
-public class ZMUserSession: NSObject {
+public final class ZMUserSession: NSObject {
 
     private let appVersion: String
     private var tokens: [Any] = []

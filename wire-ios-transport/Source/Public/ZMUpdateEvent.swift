@@ -69,7 +69,7 @@ import WireUtilities
     case userPropertiesDelete = 33
     case teamCreate = 23
     case teamDelete = 24
-    // removed: teamUpdate = 25 [WPB-4552]: The event is no longer sent, clients must fetch team metadata (e.g. name, icon) every 24h 
+    // removed: teamUpdate = 25 [WPB-4552]: The event is no longer sent, clients must fetch team metadata (e.g. name, icon) every 24h
     // removed: teamMemberJoin = 26 [WPB-4538]: no need to handle "team.member-join" in clients
     case teamMemberLeave = 27 // [WPB-4538]: "team.member-leave" is only required for backwards compatibility
     case teamConversationCreate = 28
@@ -208,7 +208,8 @@ extension ZMUpdateEvent {
 
 private let zmLog = ZMSLog(tag: "UpdateEvents")
 
-@objcMembers open class ZMUpdateEvent: NSObject {
+@objcMembers
+open class ZMUpdateEvent: NSObject {
 
     open var payload: [AnyHashable: Any]
     open var type: ZMUpdateEventType
@@ -244,10 +245,10 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
     open var hasEncryptedAndUnencryptedVersion: Bool {
         switch self.type {
         case .conversationOtrMessageAdd,
-             .conversationOtrAssetAdd,
-             .conversationMessageAdd,
-             .conversationAssetAdd,
-             .conversationKnock:
+                .conversationOtrAssetAdd,
+                .conversationMessageAdd,
+                .conversationAssetAdd,
+                .conversationKnock:
             return true
         default:
             return false
@@ -355,8 +356,8 @@ extension ZMUpdateEvent {
     override open func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ZMUpdateEvent else { return false }
         return
-            (self.uuid == other.uuid) &&
-            (self.type == other.type) &&
-            (self.payload as NSDictionary).isEqual(to: other.payload)
+        (self.uuid == other.uuid) &&
+        (self.type == other.type) &&
+        (self.payload as NSDictionary).isEqual(to: other.payload)
     }
 }
