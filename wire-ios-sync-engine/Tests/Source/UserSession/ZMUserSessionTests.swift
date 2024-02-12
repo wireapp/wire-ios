@@ -20,7 +20,7 @@ import Foundation
 import WireDataModelSupport
 import WireSyncEngine
 
-class ZMUserSessionTests: ZMUserSessionTestsBase {
+final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // given
