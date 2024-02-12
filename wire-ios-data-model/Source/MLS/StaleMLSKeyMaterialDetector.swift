@@ -69,7 +69,7 @@ final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
     }
 
     func keyingMaterialUpdated(for groupID: MLSGroupID) {
-        Logging.mls.info("Tracking key material update date for group (\(groupID))")
+        WireLogger.mls.info("Tracking key material update date for group (\(groupID))")
 
         context.performGroupedBlock {
             MLSGroup.updateOrCreate(
@@ -85,7 +85,7 @@ final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
 
     private func isKeyingMaterialStale(for group: MLSGroup) -> Bool {
         guard let lastUpdateDate = group.lastKeyMaterialUpdate else {
-            Logging.mls.info("last key material update date for group (\(String(describing: group.id)) doesn't exist... considering stale")
+            WireLogger.mls.info("last key material update date for group (\(String(describing: group.id)) doesn't exist... considering stale")
             return true
         }
 
@@ -93,7 +93,7 @@ final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
             return false
         }
 
-        Logging.mls.info("key material for group (\(String(describing: group.id))) is stale")
+        WireLogger.mls.info("key material for group (\(String(describing: group.id))) is stale")
         return true
     }
 

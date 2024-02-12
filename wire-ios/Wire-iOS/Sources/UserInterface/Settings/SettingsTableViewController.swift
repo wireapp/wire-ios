@@ -255,6 +255,29 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         fatalError("Cannot dequeue cell for index path \(indexPath) and cellDescriptor \(cellDescriptor)")
     }
 
+    func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
+        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
+        let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
+        return cellDescriptor.copiableText != nil
+    }
+
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
+        let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
+
+        guard let copiableText = cellDescriptor.copiableText else {
+            return nil
+        }
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let copy = UIAction(title: L10n.Localizable.Content.Message.copy, image: UIImage(systemName: "doc.on.doc")) { _ in
+            let pasteboard = UIPasteboard.general
+            pasteboard.string = copiableText
+          }
+          return UIMenu(children: [copy])
+        }
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
         let property = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
@@ -300,7 +323,7 @@ extension SettingsTableViewController {
 
 }
 
-extension SettingsTableViewController: ZMUserObserver {
+extension SettingsTableViewController: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
         if note.accentColorValueChanged {
             refreshData()

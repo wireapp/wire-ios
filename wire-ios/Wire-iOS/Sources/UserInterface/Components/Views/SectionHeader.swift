@@ -56,7 +56,7 @@ final class SectionHeaderView: UIView {
 
 }
 
-class SectionHeader: UICollectionReusableView {
+final class SectionHeader: UICollectionReusableView {
 
     let headerView = SectionHeaderView()
 
@@ -78,7 +78,7 @@ class SectionHeader: UICollectionReusableView {
 
 }
 
-class SectionTableHeader: UITableViewHeaderFooterView {
+final class SectionTableHeader: UITableViewHeaderFooterView {
 
     let headerView = SectionHeaderView()
 

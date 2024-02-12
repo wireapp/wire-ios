@@ -9,6 +9,11 @@
     }
   ],
   "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
     "environmentVariableEntries" : [
       {
         "key" : "RECORDING_SNAPSHOTS",

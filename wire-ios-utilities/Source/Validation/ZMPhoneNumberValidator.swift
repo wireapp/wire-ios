@@ -18,7 +18,7 @@
 
 import UIKit
 
-@objc public class ZMPhoneNumberValidator: NSObject, ZMPropertyValidator {
+@objc public final class ZMPhoneNumberValidator: NSObject, ZMPropertyValidator {
 
     @objc(validateValue:error:)
     public static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws {

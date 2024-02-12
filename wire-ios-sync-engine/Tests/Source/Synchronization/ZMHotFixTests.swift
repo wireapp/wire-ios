@@ -246,7 +246,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
     }
 
     func testThatItUpdatesAccessRolesForConversations_432_1_0() {
-        let g1 = syncMOC.performAndWait {
+        syncMOC.performAndWait {
             // GIVEN
             self.syncMOC.setPersistentStoreMetadata("432.0.1", key: "lastSavedVersion")
             self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
@@ -261,8 +261,6 @@ final class ZMHotFixTests_Integration: MessagingTest {
             XCTAssertEqual(g1.accessRoles, [ConversationAccessRoleV2.teamMember])
             XCTAssertEqual(g1.accessMode, ConversationAccessMode.teamOnly)
             XCTAssertNil(g1.team)
-
-            return g1
         }
 
         // WHEN
@@ -274,7 +272,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
         }
 
         // expect
-        let expectation = customExpectation(description: "Notified")
+        let expectation = XCTestExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: UpdateAccessRolesAction.notificationName,
                                                       context: self.syncMOC.notificationContext,
                                                       using: { note in
@@ -288,7 +286,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
 
         // then
         withExtendedLifetime(token) {
-            XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+            wait(for: [expectation], timeout: 0.5)
         }
     }
 

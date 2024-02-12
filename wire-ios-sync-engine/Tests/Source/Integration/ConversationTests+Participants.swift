@@ -111,13 +111,13 @@ class ConversationTests_Participants: ConversationTestsBase {
         XCTAssertFalse(self.conversation(for: groupConversation)!.localParticipants.contains(user(for: self.user2)!))
     }
 
-    func testThatNotificationsAreReceivedWhenConversationsAreFaulted() {
+    func testThatNotificationsAreReceivedWhenConversationsAreFaulted() throws {
         // given
         XCTAssertTrue(login())
 
         // I am faulting conversation, will maintain the "message" relations as faulted
         let conversationList = ZMConversationList.conversations(inUserSession: userSession!)
-        let conversation1 = conversation(for: self.selfToUser1Conversation)
+        let conversation1 = try XCTUnwrap(conversation(for: self.selfToUser1Conversation))
         let previousIndex = conversationList.index(of: conversation1)
 
         XCTAssertEqual(conversationList.count, 5)

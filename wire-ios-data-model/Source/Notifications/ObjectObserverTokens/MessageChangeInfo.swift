@@ -96,7 +96,7 @@ extension ZMSystemMessage {
 
 }
 
-@objcMembers final public class MessageChangeInfo: ObjectChangeInfo {
+@objcMembers public final class MessageChangeInfo: ObjectChangeInfo {
 
     static let UserChangeInfoKey = "userChanges"
     static let ReactionChangeInfoKey = "reactionChanges"

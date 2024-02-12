@@ -25,7 +25,7 @@ protocol ReactionPickerDelegate: AnyObject {
     func didTapMoreEmojis()
 }
 
-class BasicReactionPicker: UIView {
+final class BasicReactionPicker: UIView {
     private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
                                               color: SemanticColors.Label.textUserPropertyCellName)
     private let horizontalStackView = UIStackView(axis: .horizontal)

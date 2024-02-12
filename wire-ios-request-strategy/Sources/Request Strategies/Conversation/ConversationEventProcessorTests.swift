@@ -17,7 +17,9 @@
 //
 
 import XCTest
+
 @testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 final class ConversationEventProcessorTests: MessagingTestBase {
 
@@ -295,7 +297,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             let payload: [String: Any] = [
                 "from": selfUser.remoteIdentifier!.transportString(),
                 "conversation": self.groupConversation!.remoteIdentifier!.transportString(),
-                "time": NSDate(timeIntervalSinceNow: 100).transportString(),
+                "time": Date(timeIntervalSinceNow: 100).transportString(),
                 "data": NSNull(),
                 "type": "conversation.delete"
             ]
@@ -342,7 +344,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         let payload = [
             "from": self.otherUser.remoteIdentifier!.transportString(),
             "conversation": self.groupConversation.remoteIdentifier!.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "data": ["receipt_mode": enabled ? 1 : 0],
             "type": "conversation.receipt-mode-update"
         ] as [String: Any]

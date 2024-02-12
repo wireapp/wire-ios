@@ -37,7 +37,7 @@ extension CoreDataStack {
     }
 
     // Calling this method will delete all migrations stored inside `migrationDirectory`.
-    public static func clearMigrationDirectory(dispatchGroup: ZMSDispatchGroup? = nil) {
+    public static func clearMigrationDirectory(dispatchGroup: ZMSDispatchGroup) {
         workQueue.async(group: dispatchGroup) {
             removeDirectory(at: migrationDirectory)
         }
@@ -66,9 +66,9 @@ extension CoreDataStack {
     public static func migrateLocalStorage(
         accountIdentifier: UUID,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup? = nil,
+        dispatchGroup: ZMSDispatchGroup,
         migration: @escaping (NSManagedObjectContext) throws -> Void,
-        completion: @escaping (Result<Void>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
         ) {
 
         func fail(_ error: MigrationError) {

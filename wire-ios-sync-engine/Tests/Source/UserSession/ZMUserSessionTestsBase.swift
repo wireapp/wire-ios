@@ -18,7 +18,7 @@
 
 import WireDataModelSupport
 
-class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
+final class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
 
     var uploadCount = 0
 
@@ -121,9 +121,11 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     func simulateLoggedInUser() {
-        syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)
-        ZMUser.selfUser(in: syncMOC).remoteIdentifier = UUID.create()
-        cookieStorage.authenticationCookieData = validCookie
+        syncMOC.performAndWait {
+            syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)
+            ZMUser.selfUser(in: syncMOC).remoteIdentifier = UUID.create()
+            cookieStorage.authenticationCookieData = validCookie
+        }
     }
 
     private func clearCache() {

@@ -25,7 +25,7 @@ extension SessionManager {
         case invalidBackend
     }
 
-    public typealias CompletedSwitch = (Result<BackendEnvironment>) -> Void
+    public typealias CompletedSwitch = (Result<BackendEnvironment, Error>) -> Void
 
     public func canSwitchBackend() -> SwitchBackendError? {
         guard accountManager.accounts.isEmpty else { return .loggedInAccounts }
@@ -38,8 +38,7 @@ extension SessionManager {
             completed(.failure(error))
             return
         }
-        let group = self.dispatchGroup
-        group?.enter()
+        dispatchGroup.enter()
         BackendEnvironment.fetchEnvironment(url: url) { result in
             DispatchQueue.main.async {
                 switch result {
@@ -50,7 +49,7 @@ extension SessionManager {
                 case .failure:
                     completed(.failure(SwitchBackendError.invalidBackend))
                 }
-                group?.leave()
+                self.dispatchGroup.leave()
             }
         }
     }
