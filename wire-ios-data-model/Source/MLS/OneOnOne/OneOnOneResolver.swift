@@ -73,6 +73,14 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return try context.fetch(request)
         }
 
+        for user in users {
+            guard let userID = await context.perform({ user.qualifiedID }) else {
+                assertionFailure("required to have a qualifiedID")
+                return
+            }
+
+            try await resolveOneOnOneConversation(with: userID, in: context)
+        }
     }
 
     @discardableResult
