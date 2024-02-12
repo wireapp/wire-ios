@@ -71,15 +71,16 @@ final class TeamAccountView: AccountView {
     }
 
     private func createConstraints() {
-        let inset = CGFloat.TeamAccountView.imageInset
-        [imageView, imageViewContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
 
+        let inset = CGFloat.TeamAccountView.imageInset
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: inset),
             imageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: inset),
             imageView.trailingAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -inset),
             imageView.bottomAnchor.constraint(equalTo: imageViewContainer.bottomAnchor, constant: -inset)
-            ])
+        ])
     }
 
     @available(*, unavailable)
@@ -89,6 +90,7 @@ final class TeamAccountView: AccountView {
 
     override func update() {
         super.update()
+
         accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(self.account.teamName ?? "") + " " + accessibilityState
         accessibilityIdentifier = "\(self.account.teamName ?? "") team"
     }
@@ -97,25 +99,28 @@ final class TeamAccountView: AccountView {
         let dotSize: CGFloat = 9
         let dotInset: CGFloat = 2
 
-        [dotView, imageViewContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        dotView.translatesAutoresizingMaskIntoConstraints = false
+        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
 
-        return [ dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -dotInset),
-                                      dotView.centerYAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: dotInset),
-
-                                      dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
-                                      dotView.widthAnchor.constraint(equalToConstant: dotSize)
-            ]
+        return [
+            dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -dotInset),
+            dotView.centerYAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: dotInset),
+            dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
+            dotView.widthAnchor.constraint(equalToConstant: dotSize)
+        ]
     }
 }
 
 extension TeamAccountView: TeamObserver {
+
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
+
         if changeInfo.imageDataChanged {
             changeInfo.team.requestImage()
         }
 
-        guard let content = changeInfo.team.teamImageViewContent else { return }
-
-        imageView.content = content
+        if let content = changeInfo.team.teamImageViewContent {
+            imageView.content = content
+        }
     }
 }

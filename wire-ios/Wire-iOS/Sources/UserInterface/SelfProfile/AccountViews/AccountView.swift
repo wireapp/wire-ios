@@ -19,43 +19,6 @@
 import UIKit
 import WireSyncEngine
 
-class LayerHostView<LayerType: CALayer>: UIView {
-    var hostedLayer: LayerType {
-        return self.layer as! LayerType
-    }
-    override class var layerClass: AnyClass {
-        return LayerType.self
-    }
-}
-
-final class ShapeView: LayerHostView<CAShapeLayer> {
-    var pathGenerator: ((CGSize) -> (UIBezierPath))? {
-        didSet {
-            self.updatePath()
-        }
-    }
-
-    private var lastBounds: CGRect = .zero
-
-    private func updatePath() {
-        guard let generator = self.pathGenerator else {
-            return
-        }
-
-        self.hostedLayer.path = generator(bounds.size).cgPath
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        if !lastBounds.equalTo(self.bounds) {
-            lastBounds = self.bounds
-
-            self.updatePath()
-        }
-    }
-}
-
 protocol AccountViewType {
     var collapsed: Bool { get set }
     var hasUnreadMessages: Bool { get }
@@ -104,21 +67,15 @@ class BaseAccountView: UIView {
     let account: Account
 
     var unreadCountStyle: AccountUnreadCountStyle = .none {
-        didSet {
-            updateAppearance()
-        }
+        didSet { updateAppearance() }
     }
 
     var selected: Bool = true {
-        didSet {
-            updateAppearance()
-        }
+        didSet { updateAppearance() }
     }
 
     var collapsed: Bool = false {
-        didSet {
-            updateAppearance()
-        }
+        didSet { updateAppearance() }
     }
 
     var hasUnreadMessages: Bool {
@@ -256,91 +213,6 @@ extension BaseAccountView: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
             updateAppearance()
-        }
-    }
-}
-
-final class PersonalAccountView: AccountView {
-
-    let userImageView = {
-        let avatarImageView = AvatarImageView(frame: .zero)
-        avatarImageView.container.backgroundColor = SemanticColors.View.backgroundDefaultWhite
-
-        avatarImageView.initialsFont = .smallSemiboldFont
-        avatarImageView.initialsColor = SemanticColors.Label.textDefault
-
-        return avatarImageView
-    }()
-
-    private var conversationListObserver: NSObjectProtocol!
-    private var connectionRequestObserver: NSObjectProtocol!
-
-    override var collapsed: Bool {
-        didSet { userImageView.isHidden = collapsed }
-    }
-
-    override init?(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
-        super.init(account: account, user: user, displayContext: displayContext)
-
-        self.isAccessibilityElement = true
-        self.accessibilityTraits = .button
-        self.shouldGroupAccessibilityChildren = true
-        self.accessibilityIdentifier = "personal team"
-
-        selectionView.pathGenerator = {
-            return UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
-        }
-
-        // TODO []: make passive
-        if let userSession = ZMUserSession.shared() {
-            conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.conversations(inUserSession: userSession), userSession: userSession)
-            connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
-        }
-
-        self.imageViewContainer.addSubview(userImageView)
-
-        userImageView.translatesAutoresizingMaskIntoConstraints = false
-
-        userImageView.fitIn(view: imageViewContainer, inset: 2)
-
-        update()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func update() {
-        super.update()
-
-        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(account.userName) + " " + accessibilityState
-        if let imageData = account.imageData, let avatarImage = UIImage(data: imageData) {
-            userImageView.avatar = .image(avatarImage)
-        } else {
-            let personName = PersonName.person(withName: account.userName, schemeTagger: nil)
-            userImageView.avatar = .text(personName.initials)
-        }
-    }
-
-    func createDotConstraints() -> [NSLayoutConstraint] {
-        let dotSize: CGFloat = 9
-
-        [dotView, imageViewContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        return [ dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -3),
-                                      dotView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor, constant: -6),
-                                      dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
-                                      dotView.widthAnchor.constraint(equalToConstant: dotSize)
-            ]
-    }
-}
-
-extension PersonalAccountView {
-    override func userDidChange(_ changeInfo: UserChangeInfo) {
-        super.userDidChange(changeInfo)
-        if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
-            update()
         }
     }
 }

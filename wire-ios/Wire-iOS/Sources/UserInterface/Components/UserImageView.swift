@@ -114,12 +114,12 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Returns the appropriate border width for the user.
     private func borderWidth(for user: UserType) -> CGFloat {
-        return user.isServiceUser ? 0.5 : 0
+        user.isServiceUser ? 0.5 : 0
     }
 
     /// Returns the appropriate border color for the user.
     private func borderColor(for user: UserType) -> CGColor? {
-        return user.isServiceUser ? UIColor.black.withAlphaComponent(0.08).cgColor : nil
+        user.isServiceUser ? UIColor.black.withAlphaComponent(0.08).cgColor : nil
     }
 
     /// Returns the placeholder background color for the user.

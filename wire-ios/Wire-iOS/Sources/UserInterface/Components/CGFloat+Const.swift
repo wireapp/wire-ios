@@ -112,5 +112,4 @@ extension CGFloat {
     enum TeamAccountView {
         static let imageInset: CGFloat = 2
     }
-
 }
