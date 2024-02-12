@@ -24,6 +24,12 @@ protocol SupportedProtocolsServiceInterface {
 
 }
 
+protocol SupportedProtocolsServiceDelegate: AnyObject {
+
+    func supportedProtocolsServiceDidCalculateNewProtocols(_ service: SupportedProtocolsService)
+
+}
+
 final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
 
     // MARK: - Properties
@@ -31,6 +37,8 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
     private let featureRepository: FeatureRepositoryInterface
     private let userRepository: UserRepositoryInterface
     private let logger = WireLogger(tag: "supported-protocols")
+
+    weak var delegate: SupportedProtocolsServiceDelegate?
 
     // MARK: - Life cycle
 
