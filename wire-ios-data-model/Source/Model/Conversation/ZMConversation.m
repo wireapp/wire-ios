@@ -88,7 +88,6 @@ static NSString *const LastModifiedDateKey = @"lastModifiedDate";
 static NSString *const LastReadMessageKey = @"lastReadMessage";
 static NSString *const lastEditableMessageKey = @"lastEditableMessage";
 static NSString *const NeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";
-static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
 static NSString *const TeamRemoteIdentifierKey = @"teamRemoteIdentifier";
 NSString *const TeamRemoteIdentifierDataKey = @"teamRemoteIdentifier_data";
 static NSString *const VoiceChannelKey = @"voiceChannel";
@@ -111,7 +110,7 @@ NSString *const TeamKey = @"team";
 static NSString *const AccessModeStringsKey = @"accessModeStrings";
 static NSString *const AccessRoleStringKey = @"accessRoleString";
 NSString *const AccessRoleStringsKeyV2 = @"accessRoleStringsV2";
-
+static NSString *const PrimaryKey = @"primaryKey";
 
 NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay = 1.0;
 
@@ -142,7 +141,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 @property (nonatomic) NSDate *primitiveLastReadServerTimeStamp;
 @property (nonatomic) NSDate *primitiveLastServerTimeStamp;
-@property (nonatomic) NSUUID *primitiveRemoteIdentifier;
 @property (nonatomic) NSNumber *primitiveConversationType;
 @property (nonatomic) NSData *remoteIdentifier_data;
 
@@ -168,7 +166,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic labels;
 @dynamic participantRoles;
 @dynamic nonTeamRoles;
-@dynamic domain;
 
 @synthesize pendingLastReadServerTimestamp;
 @synthesize previousLastReadServerTimestamp;
@@ -360,7 +357,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.mlsStatusKey,
             ZMConversation.commitPendingProposalDateKey,
             ZMConversation.epochKey,
-            ZMConversationIsDeletedRemotelyKey
+            ZMConversationIsDeletedRemotelyKey,
+            PrimaryKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
@@ -409,16 +407,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     if (self.managedObjectContext.zm_isSyncContext) {
         [self calculateLastUnreadMessages];
     }
-}
-
-- (NSUUID *)remoteIdentifier;
-{
-    return [self transientUUIDForKey:RemoteIdentifierKey];
-}
-
-- (void)setRemoteIdentifier:(NSUUID *)remoteIdentifier;
-{
-    [self setTransientUUID:remoteIdentifier forKey:RemoteIdentifierKey];
 }
 
 - (NSUUID *)teamRemoteIdentifier;

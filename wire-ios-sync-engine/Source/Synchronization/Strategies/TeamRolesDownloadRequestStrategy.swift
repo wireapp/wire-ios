@@ -19,7 +19,7 @@
 fileprivate extension Team {
 
     static var predicateForTeamRolesNeedingToBeUpdated: NSPredicate = {
-        NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToDownloadRoles), Team.remoteIdentifierDataKey()!)
+        NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToDownloadRoles), Team.remoteIdentifierDataKey())
     }()
 
     func updateRoles(with payload: [String: Any]) {

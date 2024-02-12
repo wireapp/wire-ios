@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,20 +19,11 @@
 import Foundation
 import WireSystem
 
-protocol TemporaryFileServiceInterface {
-    func removeTemporaryData()
-}
+class DuplicateTeamsMigrationPolicy: DuplicateObjectsMigrationPolicy {
 
-class TemporaryFileService: TemporaryFileServiceInterface {
-    func removeTemporaryData() {
-        guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
-        let manager = FileManager.default
-
-        try? manager
-            .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
-            .forEach { file in
-                try? manager.removeItem(atPath: file.path)
-            }
-        WireLogger.localStorage.debug("clearing temp directory!!")
+    // Key used to compare duplicate occurences of Team
+    override func primaryKey(fromSourceInstance sInstance: NSManagedObject) -> String {
+        let remoteIdentifierData = sInstance.value(forKey: ZMManagedObject.remoteIdentifierDataKey()) as? Data
+        return remoteIdentifierData.flatMap { UUID(data: $0)?.uuidString } ?? "<nil>"
     }
 }

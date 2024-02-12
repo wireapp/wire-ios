@@ -464,7 +464,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.sharedUserDefaults = sharedUserDefaults
         self.minTLSVersion = minTLSVersion
         self.deleteUserLogs = deleteUserLogs
-        
+
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
         }
@@ -890,14 +890,25 @@ public final class SessionManager: NSObject, SessionManagerType {
                     return
                 }
 
-
                 let userSession = self.startBackgroundSession(
                     for: account,
                     with: coreDataStack
                 )
+
+                triggerSlowSyncIfNeeded(with: userSession)
+
                 onCompletion(userSession)
             }
         )
+    }
+
+    private func triggerSlowSyncIfNeeded(with userSession: ZMUserSession) {
+        let context = userSession.syncContext
+        context.perform {
+            if context.readAndResetSlowSyncFlag() {
+                userSession.syncStatus?.forceSlowSync()
+            }
+        }
     }
 
     private func clearCacheDirectory() {
