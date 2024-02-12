@@ -18,12 +18,10 @@
 import UIKit
 import WireDataModel
 
-final class TeamAccountView: AccountView {
+final class TeamAccountView: BaseAccountView, AccountView {
 
     override var collapsed: Bool {
-        didSet {
-            self.imageView.isHidden = collapsed
-        }
+        didSet { imageView.isHidden = collapsed }
     }
 
     private let imageView: TeamImageView
@@ -74,12 +72,12 @@ final class TeamAccountView: AccountView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
 
-        let inset = CGFloat.TeamAccountView.imageInset
+        let insets = Constants.teamAccountViewImageInsets
         NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: inset),
-            imageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: inset),
-            imageView.trailingAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -inset),
-            imageView.bottomAnchor.constraint(equalTo: imageViewContainer.bottomAnchor, constant: -inset)
+            imageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: insets.left),
+            imageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: insets.top),
+            imageViewContainer.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: insets.right),
+            imageViewContainer.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: insets.bottom)
         ])
     }
 

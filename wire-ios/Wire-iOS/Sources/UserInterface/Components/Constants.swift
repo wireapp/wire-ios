@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
+
+enum Constants {
+
+    static var teamAccountViewImageInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+}
 
 extension Float {
     enum ConversationButtonMessageCell {
@@ -92,7 +96,7 @@ extension CGFloat {
     enum ConversationListHeader {
         static let iconWidth: CGFloat = 32
         /// 75% of ConversationAvatarView.iconWidth + TeamAccountView.imageInset * 2 = 24 + 2 * 2
-        static let avatarSize: CGFloat = 28
+        static let avatarSize: CGFloat = 24 + Constants.teamAccountViewImageInsets.left + Constants.teamAccountViewImageInsets.right
 
         static let barHeight: CGFloat = 44
     }
@@ -107,9 +111,5 @@ extension CGFloat {
 
     enum AccountView {
         static let iconWidth: CGFloat = 32
-    }
-
-    enum TeamAccountView {
-        static let imageInset: CGFloat = 2
     }
 }

@@ -19,44 +19,11 @@
 import UIKit
 import WireSyncEngine
 
-protocol AccountViewType {
-    var collapsed: Bool { get set }
-    var hasUnreadMessages: Bool { get }
-    var onTap: ((Account?) -> Void)? { get set }
-    func update()
-    var account: Account { get }
-
-    func createDotConstraints() -> [NSLayoutConstraint]
-}
-
-enum AccountViewFactory {
-    static func viewFor(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) -> BaseAccountView {
-        return TeamAccountView(account: account, user: user, displayContext: displayContext) ??
-               PersonalAccountView(account: account, user: user, displayContext: displayContext)!
-    }
-}
-
-enum AccountUnreadCountStyle {
-    /// Do not display an unread count.
-    case none
-    /// Display unread count only considering current account.
-    case current
-    /// Display unread count only considering other accounts.
-    case others
-}
-
-/// For controlling size of BaseAccountView
-enum DisplayContext {
-    case conversationListHeader
-    case accountSelector
-}
-
-typealias AccountView = BaseAccountView & AccountViewType
-
 /// The subclasses of BaseAccountView must conform to AccountViewType,
 /// otherwise `init?(account: Account, user: ZMUser? = nil)` returns nil
 class BaseAccountView: UIView {
-    var autoUpdateSelection: Bool = true
+
+    var autoUpdateSelection = true
 
     let imageViewContainer = UIView()
     private let outlineView = UIView()
@@ -96,7 +63,7 @@ class BaseAccountView: UIView {
         layoutSubviews()
     }
 
-    var onTap: ((Account?) -> Void)? = .none
+    var onTap: (Account?) -> Void = { _ in }
 
     var accessibilityState: String {
        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
@@ -117,9 +84,7 @@ class BaseAccountView: UIView {
 
         super.init(frame: .zero)
 
-        guard let accountView = self as? AccountViewType else {
-            return nil
-        }
+        guard let accountView = self as? AccountView else { return nil }
 
         if let userSession = SessionManager.shared?.activeUserSession {
             selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
@@ -194,10 +159,29 @@ class BaseAccountView: UIView {
         }
     }
 
-    @objc func didTap(_ sender: UITapGestureRecognizer!) {
-        self.onTap?(self.account)
+    @objc func didTap(_ sender: UITapGestureRecognizer) {
+        onTap(account)
     }
 }
+
+// MARK: -
+
+enum AccountUnreadCountStyle {
+    /// Do not display an unread count.
+    case none
+    /// Display unread count only considering current account.
+    case current
+    /// Display unread count only considering other accounts.
+    case others
+}
+
+/// For controlling size of BaseAccountView
+enum DisplayContext {
+    case conversationListHeader
+    case accountSelector
+}
+
+// MARK: -
 
 extension BaseAccountView: ZMConversationListObserver {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {

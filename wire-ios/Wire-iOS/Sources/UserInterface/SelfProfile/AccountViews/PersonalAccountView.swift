@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class PersonalAccountView: AccountView {
+final class PersonalAccountView: BaseAccountView, AccountView {
 
     let userImageView = {
         let avatarImageView = AvatarImageView(frame: .zero)
