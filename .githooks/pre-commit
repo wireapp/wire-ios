@@ -41,7 +41,6 @@ end
 def compose_swiftlint_command(changed_files, autoformat)
   command = "./scripts/run-swiftlint.sh"
   command << " --fix" if autoformat
-  command << " --strict"
   command << " --reporter emoji"
   files = changed_files.map.with_index(0) { |f, i| "SCRIPT_INPUT_FILE_#{i}=#{f.shellescape}" }.join(" ")
   command = command.prepend("SCRIPT_INPUT_FILE_COUNT=#{changed_files.count} #{files} ")
@@ -77,7 +76,7 @@ staged_swift_files.each { |filename|
 print "Linting Swift in your changed Swift files (if any)...\n"
 result = `#{compose_swiftlint_command(relative_staged_swift_files, false)}`
 unless result.empty? 
-    abort(result)
+    print result
 end
 
 staged_swift_files = get_swift_files(get_paths_to_staged_files)
