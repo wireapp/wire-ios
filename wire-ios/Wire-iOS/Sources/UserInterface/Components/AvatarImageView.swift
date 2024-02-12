@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,14 +20,6 @@ import UIKit
 
 /// A view that displays the avatar of a user, either as text initials or as an image.
 class AvatarImageView: UIView {
-
-    /**
-     * The different shapes of avatars.
-     */
-
-    enum Shape {
-        case rectangle, circle, relative
-    }
 
     // MARK: - Properties
 
@@ -61,9 +53,7 @@ class AvatarImageView: UIView {
     /// The background color for the image.
     var imageBackgroundColor: UIColor? {
         get { return container.backgroundColor }
-        set {
-            container.backgroundColor = newValue
-        }
+        set { container.backgroundColor = newValue }
     }
 
     /// The font to use of the initials label.
@@ -79,11 +69,7 @@ class AvatarImageView: UIView {
     }
 
     override var contentMode: UIView.ContentMode {
-        didSet {
-            if contentMode != oldValue {
-                imageView.contentMode = contentMode
-            }
-        }
+        didSet { imageView.contentMode = contentMode }
     }
 
     /// The view that contains the avatar.
@@ -96,16 +82,18 @@ class AvatarImageView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+
         configureSubviews()
         configureConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func configureSubviews() {
-        contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFill
 
         isOpaque = false
         imageView.isOpaque = false
@@ -153,12 +141,9 @@ class AvatarImageView: UIView {
         ])
     }
 
-    /**
-     * Updates the image constraints hugging and resistance priorities.
-     * - parameter resistance: The compression resistance priority.
-     * - parameter hugging: The content hugging priority.
-     */
-
+    /// Updates the image constraints hugging and resistance priorities.
+    /// - parameter resistance: The compression resistance priority.
+    /// - parameter hugging: The content hugging priority.
     func setImageConstraint(resistance: Float, hugging: Float) {
         imageView.setContentHuggingPriority(UILayoutPriority(rawValue: hugging), for: .vertical)
         imageView.setContentHuggingPriority(UILayoutPriority(rawValue: hugging), for: .horizontal)
@@ -207,4 +192,10 @@ class AvatarImageView: UIView {
         }
     }
 
+    // MARK: -
+
+    /// The different shapes of avatars.
+    enum Shape {
+        case rectangle, circle, relative
+    }
 }

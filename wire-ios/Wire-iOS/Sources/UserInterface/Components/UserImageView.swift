@@ -19,12 +19,9 @@
 import WireSyncEngine
 
 /// A view that displays the avatar for a remote user.
-class UserImageView: AvatarImageView, UserObserving {
+final class UserImageView: AvatarImageView, UserObserving {
 
-    /**
-     * The different sizes for the avatar image.
-     */
-
+    /// The different sizes for the avatar image.
     enum Size: Int {
         case tiny = 16
         case badge = 24
@@ -92,8 +89,9 @@ class UserImageView: AvatarImageView, UserObserving {
         userObserverToken = nil
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override var intrinsicContentSize: CGSize {
@@ -156,13 +154,10 @@ class UserImageView: AvatarImageView, UserObserving {
 
     // MARK: - Changing the Content
 
-    /**
-     * Sets the avatar for the user with an optional animation.
-     * - parameter avatar: The avatar of the user.
-     * - parameter user: The currently displayed user.
-     * - parameter animated: Whether to animate the change.
-     */
-
+    /// Sets the avatar for the user with an optional animation.
+    /// - parameter avatar: The avatar of the user.
+    /// - parameter user: The currently displayed user.
+    /// - parameter animated: Whether to animate the change.
     func setAvatar(_ avatar: UserStatus.Avatar, user: UserType, animated: Bool) {
         let updateBlock = {
             self.avatar = avatar
@@ -177,7 +172,7 @@ class UserImageView: AvatarImageView, UserObserving {
     }
 
     /// Updates the image for the user.
-    fileprivate func updateUserImage() {
+    fileprivate func updateUserImage() { // TODO []: make passive
         guard
             let user = user,
             let userSession = userSession
