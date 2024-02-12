@@ -26,6 +26,8 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
     private var isSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
 
+    private var task: Task<Void, Never>?
+
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
@@ -36,32 +38,58 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
     }
 
+    deinit {
+        task?.cancel()
+    }
+
     override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if isSyncing {
-            // TODO: [WPB-5812] epic implementation
-            // - Produce a list of the users we have 1:1 conversations with
-            // - Loop through the list and evaluate the 1:1 conversation for each user.
+        guard isSyncing, task == nil else {
+            return nil
+        }
 
-            Task {
-                guard let syncContext = await managedObjectContext.perform({ self.managedObjectContext.zm_sync }) else {
-                    assertionFailure("can not perform strategy without sync context!")
-                    return
-                }
+        WireLogger.conversation.info("EvaluateOneOnOneConversationsStrategy: start evaluate one on one conversations!")
 
-                do {
-                    let resolver = OneOnOneResolver(syncContext: syncContext)
-                    try await resolver.resolveAllOneOnOneConversations(in: syncContext)
-                } catch {
-                    // TODO: [WPB-111] add proper logging
-                    debugPrint("failed to resolve all 1-1 conversations!")
-                }
-
-                // TODO: [WPB-111] test if this needs to be called on main actor?
-                syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+        // store task to avoid duplicated entries and concurrency issues
+        task = Task { [weak self] in
+            guard let self else {
+                await self?.failCurrentSyncPhase(errorMessage: "expected self in task!")
+                assertionFailure("expected self in task")
+                return
             }
 
+            let syncContext = await self.managedObjectContext.perform { [weak self] in
+                self?.managedObjectContext.zm_sync
+            }
+
+            guard let syncContext else {
+                await failCurrentSyncPhase(errorMessage: "can not perform strategy without sync context!")
+                assertionFailure("can not perform strategy without sync context!")
+                return
+            }
+
+            do {
+                let resolver = OneOnOneResolver(syncContext: syncContext)
+                try await resolver.resolveAllOneOnOneConversations(in: syncContext)
+                await finishCurrentSyncPhase()
+            } catch {
+                await failCurrentSyncPhase(errorMessage: "EvaluateOneOnOneConversationsStrategy: failed to resolve all 1-1 conversations!")
+            }
+
+            self.task = nil
         }
 
         return nil
+    }
+
+    @MainActor
+    private func failCurrentSyncPhase(errorMessage: String) {
+        WireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: \(errorMessage)!")
+        syncStatus.failCurrentSyncPhase(phase: syncPhase)
+    }
+
+    @MainActor
+    private func finishCurrentSyncPhase() {
+        WireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: finishCurrentSyncPhase!")
+        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
     }
 }
