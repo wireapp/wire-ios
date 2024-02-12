@@ -711,17 +711,20 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     public func didFinishSlowSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
-            self?.hasCompletedInitialSync = true
-            self?.notificationDispatcher.isEnabled = true
+            guard let self else { return }
 
-            if let context = self?.managedObjectContext {
-                ZMUserSession.notifyInitialSyncCompleted(context: context)
-            }
+            self.hasCompletedInitialSync = true
+            self.notificationDispatcher.isEnabled = true
+            ZMUserSession.notifyInitialSyncCompleted(context: managedObjectContext)
         }
 
-        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-        if selfClient?.hasRegisteredMLSClient == true {
-            Task {
+        Task {
+            let hasRegisteredMLSClient = await syncContext.perform {
+                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+                return selfClient?.hasRegisteredMLSClient == true
+            }
+
+            if hasRegisteredMLSClient {
                 await mlsService.repairOutOfSyncConversations()
             }
         }
