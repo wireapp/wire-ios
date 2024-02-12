@@ -313,11 +313,12 @@ final class PersonalAccountView: AccountView {
 
     override func update() {
         super.update()
-        self.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(self.account.userName) + " " + accessibilityState
-        if let imageData = self.account.imageData {
-            userImageView.avatar = UIImage(data: imageData).map(AvatarImageView.Avatar.image)
+
+        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(account.userName) + " " + accessibilityState
+        if let imageData = account.imageData, let avatarImage = UIImage(data: imageData) {
+            userImageView.avatar = .image(avatarImage)
         } else {
-            let personName = PersonName.person(withName: self.account.userName, schemeTagger: nil)
+            let personName = PersonName.person(withName: account.userName, schemeTagger: nil)
             userImageView.avatar = .text(personName.initials)
         }
     }

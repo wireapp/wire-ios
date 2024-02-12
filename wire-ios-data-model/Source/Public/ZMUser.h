@@ -78,6 +78,7 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 @property (nonatomic, readonly) BOOL managedByWire;
 
 @property (nonatomic, readonly) BOOL isTeamMember;
+@property (nonatomic, readonly) BOOL isMemberOfSelfTeam;
 
 @property (nonatomic) BOOL isPendingMetadataRefresh;
 
