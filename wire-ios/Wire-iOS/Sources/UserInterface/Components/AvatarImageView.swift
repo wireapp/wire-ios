@@ -19,7 +19,7 @@
 import UIKit
 
 /// A view that displays the avatar of a user, either as text initials or as an image.
-class AvatarImageView: UIControl {
+class AvatarImageView: UIView {
 
     /**
      * The different shapes of avatars.
