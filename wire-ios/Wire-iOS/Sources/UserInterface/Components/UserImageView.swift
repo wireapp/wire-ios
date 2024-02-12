@@ -19,34 +19,23 @@
 import WireSyncEngine
 
 /// A view that displays the avatar for a remote user.
-final class UserImageView: AvatarImageView, UserObserving {
-
-    /// The different sizes for the avatar image.
-    enum Size: Int {
-        case tiny = 16
-        case badge = 24
-        case small = 32
-        case normal = 64
-        case big = 320
-    }
+class UserImageView: AvatarImageView, UserObserving {
 
     // MARK: - Interface Properties
 
     /// The size of the avatar.
     var size: Size {
-        didSet {
-            updateUserImage()
-        }
+        didSet { updateUserImage() }
     }
 
     /// Whether the image should be desaturated, e.g. for unconnected users.
-    var shouldDesaturate: Bool = true
+    var shouldDesaturate = true {
+        didSet { updateUserImage() }
+    }
 
     /// Whether the badge indicator is enabled.
     var indicatorEnabled: Bool = false {
-        didSet {
-            badgeIndicator.isHidden = !indicatorEnabled
-        }
+        didSet { badgeIndicator.isHidden = !indicatorEnabled }
     }
 
     private let badgeIndicator = RoundedView()
@@ -134,7 +123,7 @@ final class UserImageView: AvatarImageView, UserObserving {
     }
 
     /// Returns the placeholder background color for the user.
-    private func containerBackgroundColor(for user: UserType) -> UIColor? {
+    private func containerBackgroundColor(for user: UserType) -> UIColor {
         switch avatar {
         case .image:
             user.isServiceUser ? .white : .clear
@@ -185,15 +174,16 @@ final class UserImageView: AvatarImageView, UserObserving {
             desaturate = !user.isConnected && !user.isSelfUser && !user.isTeamMember && !user.isServiceUser
         }
 
-        user.fetchProfileImage(session: userSession,
-                               imageCache: UIImage.defaultUserImageCache,
-                               sizeLimit: size.rawValue,
-                               isDesaturated: desaturate,
-                               completion: { [weak self] (image, cacheHit) in
+        user.fetchProfileImage(
+            session: userSession,
+            imageCache: UIImage.defaultUserImageCache,
+            sizeLimit: size.rawValue,
+            isDesaturated: desaturate
+        ) { [weak self] image, cacheHit in
             // Don't set image if nil or if user has changed during fetch
             guard let image = image, user.isEqual(self?.user) else { return }
             self?.setAvatar(.image(image), user: user, animated: !cacheHit)
-        })
+        }
     }
 
     // MARK: - Updates
@@ -236,7 +226,7 @@ final class UserImageView: AvatarImageView, UserObserving {
 
     /// Updates the color of the badge indicator.
     private func updateIndicatorColor() {
-        self.badgeIndicator.backgroundColor = user?.accentColor
+        badgeIndicator.backgroundColor = user?.accentColor
     }
 
     /// Updates the interface to reflect if the user is a service user or not.
@@ -250,4 +240,14 @@ final class UserImageView: AvatarImageView, UserObserving {
         }
     }
 
+    // MARK: -
+
+    /// The different sizes for the avatar image.
+    enum Size: Int {
+        case tiny = 16
+        case badge = 24
+        case small = 32
+        case normal = 64
+        case big = 320
+    }
 }

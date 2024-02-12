@@ -261,7 +261,8 @@ extension BaseAccountView: UserObserving {
 }
 
 final class PersonalAccountView: AccountView {
-    let userImageView: AvatarImageView = {
+
+    let userImageView = {
         let avatarImageView = AvatarImageView(frame: .zero)
         avatarImageView.container.backgroundColor = SemanticColors.View.backgroundDefaultWhite
 
@@ -275,9 +276,7 @@ final class PersonalAccountView: AccountView {
     private var connectionRequestObserver: NSObjectProtocol!
 
     override var collapsed: Bool {
-        didSet {
-            self.userImageView.isHidden = collapsed
-        }
+        didSet { userImageView.isHidden = collapsed }
     }
 
     override init?(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
