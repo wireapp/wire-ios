@@ -65,9 +65,9 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
                     teams = try fetchTeams(with: teamId, in: context)
                     XCTAssertEqual(teams.count, 1)
 
-                    XCTAssertTrue(context.needsToTriggerSlowSync)
+                    XCTAssertTrue(context.readAndResetSlowSyncFlag())
                     // the flag has been consumed
-                    XCTAssertFalse(context.needsToTriggerSlowSync)
+                    XCTAssertFalse(context.readAndResetSlowSyncFlag())
 
                 }
             },

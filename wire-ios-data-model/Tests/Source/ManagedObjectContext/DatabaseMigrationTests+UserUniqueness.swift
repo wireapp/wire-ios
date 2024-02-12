@@ -126,9 +126,9 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
                     clients = try fetchUsers(with: userId, domain: domain, in: context)
                     XCTAssertEqual(clients.count, 1)
 
-                    XCTAssertTrue(context.needsToTriggerSlowSync)
+                    XCTAssertTrue(context.readAndResetSlowSyncFlag())
                     // the flag has been consumed
-                    XCTAssertFalse(context.needsToTriggerSlowSync)
+                    XCTAssertFalse(context.readAndResetSlowSyncFlag())
                 }
             },
             for: self

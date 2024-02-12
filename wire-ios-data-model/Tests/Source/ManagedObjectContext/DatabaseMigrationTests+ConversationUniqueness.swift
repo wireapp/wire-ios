@@ -52,17 +52,17 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
                 insertDuplicateConversations(with: conversationId, domain: domain, in: context)
                 insertDuplicateConversations(with: otherDuplicateConversations.0, domain: otherDuplicateConversations.1, in: context)
                 _ = context.performGroupedAndWait({ context in
-                    let user = ZMConversation(context: context)
-                    user.remoteIdentifier = uniqueConversation1.0
-                    user.domain = uniqueConversation1.1
-                    return user
+                    let conversation = ZMConversation(context: context)
+                    conversation.remoteIdentifier = uniqueConversation1.0
+                    conversation.domain = uniqueConversation1.1
+                    return conversation
                 })
 
                 _ = context.performGroupedAndWait({ context in
-                    let user = ZMConversation(context: context)
-                    user.remoteIdentifier = uniqueConversation2.0
-                    user.domain = uniqueConversation2.1
-                    return user
+                    let conversation = ZMConversation(context: context)
+                    conversation.remoteIdentifier = uniqueConversation2.0
+                    conversation.domain = uniqueConversation2.1
+                    return conversation
                 })
 
                 try context.save()
@@ -127,9 +127,9 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
                     conversations = try fetchConversations(with: conversationId, domain: domain, in: context)
                     XCTAssertEqual(conversations.count, 1)
 
-                    XCTAssertTrue(context.needsToTriggerSlowSync)
+                    XCTAssertTrue(context.readAndResetSlowSyncFlag())
                     // the flag has been consumed
-                    XCTAssertFalse(context.needsToTriggerSlowSync)
+                    XCTAssertFalse(context.readAndResetSlowSyncFlag())
                 }
             },
             for: self

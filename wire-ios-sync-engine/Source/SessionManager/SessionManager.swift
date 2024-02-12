@@ -905,7 +905,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func triggerSlowSyncIfNeeded(with userSession: ZMUserSession) {
         let context = userSession.syncContext
         context.perform {
-            if context.needsToTriggerSlowSync {
+            if context.readAndResetSlowSyncFlag() {
                 userSession.syncStatus?.forceSlowSync()
             }
         }
