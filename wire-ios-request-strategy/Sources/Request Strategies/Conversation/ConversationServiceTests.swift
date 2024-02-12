@@ -276,7 +276,7 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(mockActionHandler.performedActions.count, 1)
     }
 
-    func test_CreateGroupConversation_CreatesMLSGroup() {
+    func test_CreateGroupConversation_CreatesMLSGroup() throws {
         // Given
         let groupID = MLSGroupID.random()
 
@@ -297,6 +297,10 @@ final class ConversationServiceTests: MessagingTestBase {
         let mlsService = MockMLSServiceInterface()
         mlsService.createGroupForWith_MockMethod = { _, _ in
             // no op
+        }
+
+        let user1Sync = try syncMOC.performAndWait {
+            try ZMUser.existingObject(for: user1.objectID, in: syncMOC)
         }
 
         syncMOC.performAndWait {
@@ -340,10 +344,10 @@ final class ConversationServiceTests: MessagingTestBase {
         let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
         XCTAssertEqual(addParticipantCalls.count, 1)
         XCTAssertEqual(addParticipantCalls.first?.conversation, groupConversation)
-        XCTAssertEqual(addParticipantCalls.first?.users, [user1])
+        XCTAssertEqual(addParticipantCalls.first?.users, [user1Sync])
     }
 
-    func test_CreateGroupConversation_CreatesMLSGroup_WithOnlyReachableUsers() {
+    func test_CreateGroupConversation_CreatesMLSGroup_WithOnlyReachableUsers() throws {
         // Given
         let groupID = MLSGroupID.random()
         let unreachableDomain = "foma.wire.link"
@@ -369,6 +373,10 @@ final class ConversationServiceTests: MessagingTestBase {
         let mlsService = MockMLSServiceInterface()
         mlsService.createGroupForWith_MockMethod = { _, _ in
             // no op
+        }
+
+        let user1Sync = try syncMOC.performAndWait {
+            try ZMUser.existingObject(for: user1.objectID, in: syncMOC)
         }
 
         syncMOC.performAndWait {
@@ -412,7 +420,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
         XCTAssertEqual(addParticipantCalls.count, 1)
         XCTAssertEqual(addParticipantCalls.first?.conversation, groupConversation)
-        XCTAssertEqual(addParticipantCalls.first?.users, [user1])
+        XCTAssertEqual(addParticipantCalls.first?.users, [user1Sync])
     }
 
     func test_CreateGroupConversation_WithUsersWithNoPackages_IsSuccessful() {
