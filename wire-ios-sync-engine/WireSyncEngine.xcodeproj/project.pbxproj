@@ -520,6 +520,7 @@
 		E666EDEC2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */; };
 		E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */; };
 		E666EDF22B74ED2F00C03E2B /* MockSessionManagerObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */; };
+		E959C7D52B7A2654005F3945 /* ZMUserSession+SupportedProtocolsServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E959C7D42B7A2654005F3945 /* ZMUserSession+SupportedProtocolsServiceDelegate.swift */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
 		EE01E0391F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */; };
 		EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
@@ -1264,6 +1265,7 @@
 		E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+MultiUserSession.swift"; sourceTree = "<group>"; };
 		E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AppLock.swift"; sourceTree = "<group>"; };
 		E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSessionManagerObserver.swift; sourceTree = "<group>"; };
+		E959C7D42B7A2654005F3945 /* ZMUserSession+SupportedProtocolsServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+SupportedProtocolsServiceDelegate.swift"; sourceTree = "<group>"; };
 		EBD7B55754FDA4E74F1006FD /* ZMOperationLoopTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMOperationLoopTests.h; sourceTree = "<group>"; };
 		EE01E0361F90DABC001AA33C /* audio.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = audio.m4a; sourceTree = "<group>"; };
 		EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_ExpiredMessage.swift; sourceTree = "<group>"; };
@@ -2174,6 +2176,7 @@
 				549710071F6FF5C100026EDD /* NotificationInContext+UserSession.swift */,
 				5458AF831F7021B800E45977 /* PreLoginAuthenticationNotification.swift */,
 				70355A7227AAE62D00F02C76 /* ZMUserSession+SecurityClassification.swift */,
+				E959C7D42B7A2654005F3945 /* ZMUserSession+SupportedProtocolsServiceDelegate.swift */,
 			);
 			path = UserSession;
 			sourceTree = "<group>";
@@ -3597,6 +3600,7 @@
 				1672A64523473EA100380537 /* LabelDownstreamRequestStrategy.swift in Sources */,
 				09BCDB8F1BCE7F000020DCC7 /* ZMAPSMessageDecoder.m in Sources */,
 				546392721D79D5210094EC66 /* Application.swift in Sources */,
+				E959C7D52B7A2654005F3945 /* ZMUserSession+SupportedProtocolsServiceDelegate.swift in Sources */,
 				EFC8281C1FB343B600E27E21 /* RegistationCredentialVerificationStrategy.swift in Sources */,
 				874A16902052BE5E001C6760 /* ZMUserSession+OpenConversation.swift in Sources */,
 				EE1DEBC423D5F1970087EE1F /* Conversation+TypingUsers.swift in Sources */,
