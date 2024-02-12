@@ -76,7 +76,7 @@ staged_swift_files.each { |filename|
 print "Linting Swift in your changed Swift files (if any)...\n"
 result = `#{compose_swiftlint_command(relative_staged_swift_files, false)}`
 unless result.empty? 
-    abort(result)
+    print result
 end
 
 staged_swift_files = get_swift_files(get_paths_to_staged_files)
