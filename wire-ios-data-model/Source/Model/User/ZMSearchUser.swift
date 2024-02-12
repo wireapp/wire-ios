@@ -208,6 +208,8 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
+    public var isMemberOfSelfTeam: Bool { isTeamMember }
+
     public var isPendingMetadataRefresh: Bool {
         guard let user = user else { return false }
 

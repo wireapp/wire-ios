@@ -264,6 +264,11 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
     return nil != self.membership;
 }
 
+- (BOOL)isMemberOfSelfTeam;
+{
+    return self.isTeamMember;
+}
+
 + (NSSet *)keyPathsForValuesAffectingIsConnected
 {
     return [NSSet setWithObjects:ConnectionKey, @"connection.status", nil];

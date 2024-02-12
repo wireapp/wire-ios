@@ -24,20 +24,20 @@ typealias ConversationCreatedBlock = (Result<ZMConversation, Error>) -> Void
 extension UserType {
 
     var pov: PointOfView {
-        return self.isSelfUser ? .secondPerson : .thirdPerson
+        isSelfUser ? .secondPerson : .thirdPerson
     }
 
     var isPendingApproval: Bool {
-        return isPendingApprovalBySelfUser || isPendingApprovalByOtherUser
+        isPendingApprovalBySelfUser || isPendingApprovalByOtherUser
     }
 
     var hasUntrustedClients: Bool {
-        return allClients.contains { !$0.verified }
+        allClients.contains { !$0.verified }
     }
 
     // TODO [WPB-765]: what about accessibility in attributed strings including shield images?
-    func nameIncludingAvailability(color: UIColor, selfUser: UserType) -> NSAttributedString? {
-        if selfUser.isTeamMember {
+    func nameIncludingAvailability(color: UIColor, selfUserIsTeamMember: Bool) -> NSAttributedString? {
+        if selfUserIsTeamMember {
             return AvailabilityStringBuilder.string(for: self, with: .list, color: color)
         } else if let name = name {
             return .init(string: name, attributes: [.foregroundColor: color])

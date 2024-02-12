@@ -413,8 +413,8 @@ extension MessageDetailsContentViewController {
         presentedController.modalPresentationStyle = .formSheet
 
         if let popover = presentedController.popoverPresentationController {
-            popover.sourceRect = cell.avatar.bounds
-            popover.sourceView = cell.avatar
+            popover.sourceRect = cell.avatarImageView.bounds
+            popover.sourceView = cell.avatarImageView
             popover.backgroundColor = .white
         }
 

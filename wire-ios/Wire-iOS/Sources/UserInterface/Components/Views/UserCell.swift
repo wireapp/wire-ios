@@ -35,7 +35,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     var hidesSubtitle: Bool = false
     let avatarSpacer = UIView()
-    let avatar = BadgeUserImageView()
+    let avatarImageView = BadgeUserImageView()
     let titleLabel = DynamicFontLabel(fontSpec: .bodyTwoSemibold,
                                       color: LabelColors.textDefault)
     let subtitleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
@@ -73,12 +73,8 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     /// Specify a custom avatar spacing
     var avatarSpacing: CGFloat? {
-        get {
-            return avatarSpacerWidthConstraint?.constant
-        }
-        set {
-            avatarSpacerWidthConstraint?.constant = newValue ?? UserCell.defaultAvatarSpacing
-        }
+        get { avatarSpacerWidthConstraint?.constant }
+        set { avatarSpacerWidthConstraint?.constant = newValue ?? UserCell.defaultAvatarSpacing }
     }
 
     var sectionName: String?
@@ -106,6 +102,8 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
     }
 
+    // MARK: - Methods
+
     override func prepareForReuse() {
         super.prepareForReuse()
 
@@ -128,12 +126,14 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        //  Border colors are not dynamically updating for Dark Mode
-        //  When you use adaptive colors with CALayers you’ll notice that these colors,
+        // Border colors are not dynamically updating for Dark Mode
+        // When you use adaptive colors with CALayers you’ll notice that these colors,
         // are not updating when switching appearance live in the app.
         // That's why we use the traitCollectionDidChange(_:) method.
         checkmarkIconView.layer.borderColor = IconColors.borderCheckMark.cgColor
-        updateTitleLabel()
+
+        // TODO []: enable once the selfUser is not needed as argument
+        // updateTitleLabel()
     }
 
     override func setUp() {
@@ -200,13 +200,13 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         subtitleLabel.accessibilityIdentifier = "user_cell.username"
 
         // avatar
-        avatar.userSession = ZMUserSession.shared()
-        avatar.initialsFont = .avatarInitial
-        avatar.size = .small
-        avatar.translatesAutoresizingMaskIntoConstraints = false
+        avatarImageView.userSession = ZMUserSession.shared()
+        avatarImageView.initialsFont = .avatarInitial
+        avatarImageView.size = .small
+        avatarImageView.translatesAutoresizingMaskIntoConstraints = false
 
         // avatarSpacer
-        avatarSpacer.addSubview(avatar)
+        avatarSpacer.addSubview(avatarImageView)
         avatarSpacer.translatesAutoresizingMaskIntoConstraints = false
 
         // iconStackView
@@ -261,12 +261,12 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         NSLayoutConstraint.activate([
             checkmarkIconView.widthAnchor.constraint(equalToConstant: 24),
             checkmarkIconView.heightAnchor.constraint(equalToConstant: 24),
-            avatar.widthAnchor.constraint(equalToConstant: 28),
-            avatar.heightAnchor.constraint(equalToConstant: 28),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 28),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 28),
             avatarSpacerWidthConstraint,
-            avatarSpacer.heightAnchor.constraint(equalTo: avatar.heightAnchor),
-            avatarSpacer.centerXAnchor.constraint(equalTo: avatar.centerXAnchor),
-            avatarSpacer.centerYAnchor.constraint(equalTo: avatar.centerYAnchor),
+            avatarSpacer.heightAnchor.constraint(equalTo: avatarImageView.heightAnchor),
+            avatarSpacer.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
+            avatarSpacer.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             contentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -347,14 +347,13 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     // TODO [WPB-765]: why is selfUser needed? inject primitive value instead?
 
     private func updateTitleLabel(selfUser: UserType? = nil) {
-        guard let user = user,
-              let selfUser = selfUser else {
+        guard let user = user, let selfUser = selfUser else {
             return
         }
         var attributedTitle = user.nameIncludingAvailability(
             color: SemanticColors.Label.textDefault,
-            selfUser: selfUser)
-
+            selfUserIsTeamMember: selfUser.isTeamMember
+        )
         if user.isSelfUser, let title = attributedTitle {
             attributedTitle = title + L10n.Localizable.UserCell.Title.youSuffix
         }
@@ -376,7 +375,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         self.user = user
 
-        avatar.user = user
+        avatarImageView.user = user
         updateTitleLabel(selfUser: selfUser)
 
         let style = UserTypeIconStyle(conversation: conversation, user: user, selfUser: selfUser)
