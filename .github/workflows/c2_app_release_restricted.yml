@@ -1,0 +1,13 @@
+name: C2 Restricted
+
+on: workflow_dispatch
+
+permissions: 
+  checks: write
+
+jobs:
+  column_2_restricted:
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: appstore_col_2_restricted
+    secrets: inherit

@@ -1,4 +1,4 @@
-name: C1 C3 Production
+name: C1 C2 C3 Production
 
 on: workflow_dispatch
 
@@ -12,6 +12,13 @@ jobs:
       fastlane_action: appstore_col_1_prod
     secrets: inherit
 
+
+  column_2_production:
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: appstore_col_2_prod
+    secrets: inherit
+  
   column_3_production:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
