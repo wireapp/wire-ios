@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -422,26 +422,34 @@ extension UserCell {
 
 struct UserCell_Previews: PreviewProvider {
 
-    private static var cells = [UITableViewCell]()
-
     static var previews: some View {
-        TableViewController()
-    }
-
-    private static let dataSource = DataSource()
-
-    private final class DataSource: NSObject, UITableViewDataSource {
-        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { cells.count }
-        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { cells[indexPath.row] }
+        let cell: UITableViewCell = {
+            let cell = UITableViewCell()
+            var content = cell.defaultContentConfiguration()
+            content.image = UIImage(systemName: "star")
+            content.text = "Favorites"
+            content.imageProperties.tintColor = .purple
+            cell.contentConfiguration = content
+            return cell
+        }()
+        NavigationView {
+            TableViewController(cells: [cell])
+                .navigationTitle("UserCell")
+        }
     }
 
     private struct TableViewController: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UITableViewController {
-            let tableViewController = UITableViewController()
+        private let dataSource: DataSource
+        init(cells: [UITableViewCell]) { dataSource = .init(cells) }
+        func makeUIViewController(context: Context) -> UITableViewController { .init() }
+        func updateUIViewController(_ tableViewController: UITableViewController, context: Context) {
             tableViewController.tableView.dataSource = dataSource
-            return tableViewController
         }
-
-        func updateUIViewController(_ uiViewController: UITableViewController, context: Context) {}
+        private final class DataSource: NSObject, UITableViewDataSource {
+            private let cells: [UITableViewCell]
+            init(_ cells: [UITableViewCell]) { self.cells = cells }
+            func tableView(_: UITableView, numberOfRowsInSection: Int) -> Int { cells.count }
+            func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { cells[indexPath.row] }
+        }
     }
 }
