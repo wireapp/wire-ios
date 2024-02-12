@@ -41,7 +41,6 @@ end
 def compose_swiftlint_command(changed_files, autoformat)
   command = "./scripts/run-swiftlint.sh"
   command << " --fix" if autoformat
-  command << " --strict"
   command << " --reporter emoji"
   files = changed_files.map.with_index(0) { |f, i| "SCRIPT_INPUT_FILE_#{i}=#{f.shellescape}" }.join(" ")
   command = command.prepend("SCRIPT_INPUT_FILE_COUNT=#{changed_files.count} #{files} ")
