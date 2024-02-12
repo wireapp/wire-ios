@@ -25,19 +25,19 @@ extension VoiceChannel {
     func accessoryType() -> CallInfoViewControllerAccessoryType {
         switch state {
         case .incoming(_, shouldRing: true, _),
-             .answered,
-             .establishedDataChannel,
-             .outgoing:
+                .answered,
+                .establishedDataChannel,
+                .outgoing:
             guard !videoState.isSending,
                   let initiator = initiator
             else { return .none }
             return .avatar(HashBox(value: initiator))
         case .unknown,
-             .none,
-             .terminating,
-             .mediaStopped,
-             .established,
-             .incoming(_, shouldRing: false, _):
+                .none,
+                .terminating,
+                .mediaStopped,
+                .established,
+                .incoming(_, shouldRing: false, _):
             return .participantsList(sortedParticipants().map {
                 .callParticipant(user: HashBox(value: $0.user),
                                  callParticipantState: $0.state,
@@ -150,7 +150,7 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
             callState = voiceChannel.state
             videoGridPresentationMode = voiceChannel.videoGridPresentationMode
             allowPresentationModeUpdates = voiceChannel.allowPresentationModeUpdates
-    }
+        }
 
     // This property has to be computed in order to return the correct call duration
     var state: CallStatusViewState {
@@ -235,8 +235,8 @@ fileprivate extension VoiceChannel {
 
     var isAnyParticipantSendingVideo: Bool {
         return videoState.isSending                                  // Current user is sending video and can toggle off
-            || participants.any { $0.state.isSendingVideo } // Other participants are sending video
-            || isIncomingVideoCall                                   // This is an incoming video call
+        || participants.any { $0.state.isSendingVideo } // Other participants are sending video
+        || isIncomingVideoCall                                   // This is an incoming video call
     }
 
     func sortedParticipants() -> [CallParticipant] {
