@@ -35,4 +35,16 @@ extension UserType {
         return allClients.contains { !$0.verified }
     }
 
+    // TODO [WPB-765]: what about accessibility in attributed strings including shield images?
+    func nameIncludingAvailability(color: UIColor, selfUser: UserType) -> NSAttributedString? {
+        if selfUser.isTeamMember {
+            return AvailabilityStringBuilder.string(for: self, with: .list, color: color)
+        } else if let name = name {
+            return .init(string: name, attributes: [.foregroundColor: color])
+        } else {
+            let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
+            let fallbackColor = SemanticColors.Label.textCollectionSecondary
+            return .init(string: fallbackTitle, attributes: [.foregroundColor: fallbackColor])
+        }
+    }
 }

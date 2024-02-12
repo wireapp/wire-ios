@@ -16,13 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 import WireCommonComponents
 import WireSyncEngine
 
 final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Properties
+
+    var userStatus = UserStatus() {
+        didSet {
+            // TODO []
+        }
+    }
 
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
@@ -121,6 +127,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
         //  Border colors are not dynamically updating for Dark Mode
         //  When you use adaptive colors with CALayers you’ll notice that these colors,
         // are not updating when switching appearance live in the app.
@@ -177,11 +184,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         connectingLabel.text = L10n.Localizable.Call.Status.connecting
 
         // accessoryIconView
-
-        print(accessoryIconView.accessibilityIdentifier)
-        accessoryIconView.accessibilityIdentifier = nil
-        print(accessoryIconView.accessibilityIdentifier)
-
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
         accessoryIconView.accessibilityIdentifier = nil
@@ -213,7 +215,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
                 videoIconView,
                 microphoneIconView,
                 userTypeIconView,
-                verifiedIconView,
                 connectButton,
                 checkmarkIconView,
                 accessoryIconView,
@@ -382,6 +383,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         userTypeIconView.set(style: style)
 
         verifiedIconView.isHidden = !user.isVerified
+        verifiedIconView.image = .init(resource: .soundcloud)
 
         if let subtitle = subtitle, !subtitle.string.isEmpty, !hidesSubtitle {
             subtitleLabel.isHidden = false
@@ -416,22 +418,30 @@ extension UserCell {
 
 }
 
-// MARK: - Availability
+// MARK: - Previews
 
-extension UserType {
+struct UserCell_Previews: PreviewProvider {
 
-    // TODO [WPB-765]: move to other place
+    private static var cells = [UITableViewCell]()
 
-    func nameIncludingAvailability(color: UIColor, selfUser: UserType) -> NSAttributedString? {
-        if selfUser.isTeamMember {
-            return AvailabilityStringBuilder.string(for: self, with: .list, color: color)
-        } else if let name = name {
-            return name && color // TODO [WPB-765]: don't use &&
-        } else {
-            let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
-            let fallbackColor = SemanticColors.Label.textCollectionSecondary
-            return fallbackTitle && fallbackColor
-        }
+    static var previews: some View {
+        TableViewController()
     }
 
+    private static let dataSource = DataSource()
+
+    private final class DataSource: NSObject, UITableViewDataSource {
+        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { cells.count }
+        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { cells[indexPath.row] }
+    }
+
+    private struct TableViewController: UIViewControllerRepresentable {
+        func makeUIViewController(context: Context) -> UITableViewController {
+            let tableViewController = UITableViewController()
+            tableViewController.tableView.dataSource = dataSource
+            return tableViewController
+        }
+
+        func updateUIViewController(_ uiViewController: UITableViewController, context: Context) {}
+    }
 }
