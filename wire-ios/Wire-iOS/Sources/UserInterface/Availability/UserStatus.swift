@@ -17,15 +17,17 @@
 //
 
 import WireDataModel
+import WireCommonComponents
 
 /// The status of the user, consisting of its name and availability.
 public struct UserStatus {
+
+    public var accentColor: AccentColor
 
     public var avatar: Avatar
 
     public var handle: String
 
-    /// The name of the users.
     public var name: String
 
     public var availability: Availability
@@ -37,6 +39,7 @@ public struct UserStatus {
     public var isVerified: Bool
 
     public init(
+        accentColor: AccentColor = .default,
         avatar: Avatar = .text(""),
         handle: String = "",
         name: String = "",
@@ -44,28 +47,12 @@ public struct UserStatus {
         isCertified: Bool = false,
         isVerified: Bool = false
     ) {
+        self.accentColor = accentColor
         self.avatar = avatar
         self.handle = handle
         self.name = name
         self.availability = availability
         self.isCertified = isCertified
         self.isVerified = isVerified
-    }
-
-    // MARK: - Avatar
-
-    /// The different, mutually-exclusive forms of avatars.
-    public enum Avatar: Equatable {
-
-        case image(UIImage)
-        case text(String)
-
-        public init() {
-            self = .image(resource: .unavailableUser)
-        }
-
-        static func image(resource: ImageResource) -> Self {
-            .image(.init(resource: resource))
-        }
     }
 }

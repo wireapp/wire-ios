@@ -29,6 +29,8 @@ public enum AccentColor: Int16, CaseIterable {
     case turquoise
     case purple
 
+    public static var `default`: Self { .allCases[0] }
+
     /// Returns a random accent color.
     public static var random: AccentColor {
         return AccentColor.allSelectable().randomElement()!
@@ -39,7 +41,7 @@ public enum AccentColor: Int16, CaseIterable {
     }
 
     public var zmAccentColor: ZMAccentColor {
-        return ZMAccentColor(rawValue: self.rawValue)!
+        return ZMAccentColor(rawValue: rawValue)!
     }
 
     public static func allSelectable() -> [AccentColor] {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,29 +18,20 @@
 
 import UIKit
 
-class RoundedView: UIView, RoundedViewProtocol {
+extension UserStatus {
 
-    final override class var layerClass: AnyClass {
-        return ContinuousMaskLayer.self
-    }
+    /// The different, mutually-exclusive forms of avatars.
+    public enum Avatar: Equatable {
 
-    func toggleCircle() {
-        shape = .circle
-    }
+        case image(UIImage)
+        case text(String)
 
-    func toggleRectangle() {
-        shape = .rectangle
-    }
+        public init() {
+            self = .image(resource: .unavailableUser)
+        }
 
-    func setRelativeCornerRadius(multiplier: CGFloat, dimension: MaskDimension) {
-        shape = .relative(multiplier: multiplier, dimension: dimension)
-    }
-
-    func setCornerRadius(_ cornerRadius: CGFloat) {
-        shape = .rounded(radius: cornerRadius)
-    }
-
-    func setRoundedCorners(_ corners: UIRectCorner) {
-        roundedCorners = corners
+        static func image(resource: ImageResource) -> Self {
+            .image(.init(resource: resource))
+        }
     }
 }

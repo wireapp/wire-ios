@@ -21,35 +21,21 @@ import WireSyncEngine
 /// A view that displays the avatar for a remote user.
 class UserImageView: AvatarImageView, UserObserving {
 
-    /**
-     * The different sizes for the avatar image.
-     */
-
-    enum Size: Int {
-        case tiny = 16
-        case badge = 24
-        case small = 32
-        case normal = 64
-        case big = 320
-    }
-
     // MARK: - Interface Properties
 
     /// The size of the avatar.
     var size: Size {
-        didSet {
-            updateUserImage()
-        }
+        didSet { updateUserImage() }
     }
 
     /// Whether the image should be desaturated, e.g. for unconnected users.
-    var shouldDesaturate: Bool = true
+    var shouldDesaturate = true {
+        didSet { updateUserImage() }
+    }
 
     /// Whether the badge indicator is enabled.
     var indicatorEnabled: Bool = false {
-        didSet {
-            badgeIndicator.isHidden = !indicatorEnabled
-        }
+        didSet { badgeIndicator.isHidden = !indicatorEnabled }
     }
 
     private let badgeIndicator = RoundedView()
@@ -58,19 +44,15 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// The user session to use to download images.
     var userSession: UserSession? {
-        didSet {
-            updateUser()
-        }
+        didSet { updateUser() }
     }
 
     /// The user to display the avatar of.
     var user: UserType? {
-        didSet {
-            updateUser()
-        }
+        didSet { updateUser() }
     }
 
-    private var userObserverToken: Any?
+    private var userObserverToken: NSObjectProtocol?
 
     // MARK: - Initialization
 
@@ -88,16 +70,13 @@ class UserImageView: AvatarImageView, UserObserving {
         configureConstraints()
     }
 
-    deinit {
-        userObserverToken = nil
-    }
-
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: size.rawValue, height: size.rawValue)
+        .init(width: size.rawValue, height: size.rawValue)
     }
 
     private func configureSubviews() {
@@ -127,16 +106,16 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Returns the appropriate border width for the user.
     private func borderWidth(for user: UserType) -> CGFloat {
-        return user.isServiceUser ? 0.5 : 0
+        user.isServiceUser ? 0.5 : 0
     }
 
     /// Returns the appropriate border color for the user.
     private func borderColor(for user: UserType) -> CGColor? {
-        return user.isServiceUser ? UIColor.black.withAlphaComponent(0.08).cgColor : nil
+        user.isServiceUser ? UIColor.black.withAlphaComponent(0.08).cgColor : nil
     }
 
     /// Returns the placeholder background color for the user.
-    private func containerBackgroundColor(for user: UserType) -> UIColor? {
+    private func containerBackgroundColor(for user: UserType) -> UIColor {
         switch avatar {
         case .image:
             user.isServiceUser ? .white : .clear
@@ -156,13 +135,10 @@ class UserImageView: AvatarImageView, UserObserving {
 
     // MARK: - Changing the Content
 
-    /**
-     * Sets the avatar for the user with an optional animation.
-     * - parameter avatar: The avatar of the user.
-     * - parameter user: The currently displayed user.
-     * - parameter animated: Whether to animate the change.
-     */
-
+    /// Sets the avatar for the user with an optional animation.
+    /// - parameter avatar: The avatar of the user.
+    /// - parameter user: The currently displayed user.
+    /// - parameter animated: Whether to animate the change.
     func setAvatar(_ avatar: UserStatus.Avatar, user: UserType, animated: Bool) {
         let updateBlock = {
             self.avatar = avatar
@@ -177,7 +153,7 @@ class UserImageView: AvatarImageView, UserObserving {
     }
 
     /// Updates the image for the user.
-    fileprivate func updateUserImage() {
+    fileprivate func updateUserImage() { // TODO []: make passive
         guard
             let user = user,
             let userSession = userSession
@@ -190,15 +166,16 @@ class UserImageView: AvatarImageView, UserObserving {
             desaturate = !user.isConnected && !user.isSelfUser && !user.isTeamMember && !user.isServiceUser
         }
 
-        user.fetchProfileImage(session: userSession,
-                               imageCache: UIImage.defaultUserImageCache,
-                               sizeLimit: size.rawValue,
-                               isDesaturated: desaturate,
-                               completion: { [weak self] (image, cacheHit) in
+        user.fetchProfileImage(
+            session: userSession,
+            imageCache: UIImage.defaultUserImageCache,
+            sizeLimit: size.rawValue,
+            isDesaturated: desaturate
+        ) { [weak self] image, cacheHit in
             // Don't set image if nil or if user has changed during fetch
             guard let image = image, user.isEqual(self?.user) else { return }
             self?.setAvatar(.image(image), user: user, animated: !cacheHit)
-        })
+        }
     }
 
     // MARK: - Updates
@@ -241,7 +218,7 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Updates the color of the badge indicator.
     private func updateIndicatorColor() {
-        self.badgeIndicator.backgroundColor = user?.accentColor
+        badgeIndicator.backgroundColor = user?.accentColor
     }
 
     /// Updates the interface to reflect if the user is a service user or not.
@@ -255,4 +232,14 @@ class UserImageView: AvatarImageView, UserObserving {
         }
     }
 
+    // MARK: -
+
+    /// The different sizes for the avatar image.
+    enum Size: Int {
+        case tiny = 16
+        case badge = 24
+        case small = 32
+        case normal = 64
+        case big = 320
+    }
 }
