@@ -871,24 +871,10 @@ extension AuthenticationCoordinator {
             return
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
-        let selfUser = ZMUser.selfUser(inUserSession: session)
-
-        guard
-            let userName = selfUser.name,
-            let handle = selfUser.handle,
-            let teamID = selfUser.teamIdentifier,
-            let e2eiClientId = E2eIClientID(user: selfUser)
-        else {
-            return
-        }
 
         Task {
             do {
                 _ = try await e2eiCertificateUseCase?.invoke(
-                    e2eiClientId: e2eiClientId,
-                    userName: userName,
-                    userHandle: handle,
-                    team: teamID,
                     authenticate: oauthUseCase.invoke
                 )
                 session.reportEndToEndIdentityEnrollmentSuccess()
