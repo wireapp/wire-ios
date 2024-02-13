@@ -195,7 +195,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         guard let user else { return }
 
         do {
-            try await oneOneOneResolver.resolveOneOnOneUserConversation(user, in: context)
+            try await oneOneOneResolver.resolveOneOnOneConversation(with: user, in: context)
 
             try await context.perform {
                 try context.save()
