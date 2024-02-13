@@ -427,33 +427,33 @@ extension UserCell {
 struct UserCell_Previews: PreviewProvider {
 
     static var previews: some View {
-        let cell: UITableViewCell = {
-            let cell = UITableViewCell()
-            var content = cell.defaultContentConfiguration()
-            content.image = UIImage(systemName: "star")
-            content.text = "Favorites"
-            content.imageProperties.tintColor = .purple
-            cell.contentConfiguration = content
-            return cell
+        let cells: [UICollectionViewCell] = {
+            let cell = UICollectionViewCell()
+//            var content = cell.defaultContentConfiguration()
+//            content.image = UIImage(systemName: "star")
+//            content.text = "Favorites"
+//            content.imageProperties.tintColor = .purple
+//            cell.contentConfiguration = content
+            return [cell, /*UserCell()*/]
         }()
         NavigationView {
-            TableViewController(cells: [cell])
+            CollectionViewController(cells: cells)
                 .navigationTitle("UserCell")
         }
     }
 
-    private struct TableViewController: UIViewControllerRepresentable {
+    private struct CollectionViewController: UIViewControllerRepresentable {
         private let dataSource: DataSource
-        init(cells: [UITableViewCell]) { dataSource = .init(cells) }
-        func makeUIViewController(context: Context) -> UITableViewController { .init() }
-        func updateUIViewController(_ tableViewController: UITableViewController, context: Context) {
-            tableViewController.tableView.dataSource = dataSource
+        init(cells: [UICollectionViewCell]) { dataSource = .init(cells) }
+        func makeUIViewController(context: Context) -> UICollectionViewController { .init(collectionViewLayout: <#T##UICollectionViewLayout#>) }
+        func updateUIViewController(_ collectionViewController: UICollectionViewController, context: Context) {
+            collectionViewController.collectionView.dataSource = dataSource
         }
-        private final class DataSource: NSObject, UITableViewDataSource {
-            private let cells: [UITableViewCell]
-            init(_ cells: [UITableViewCell]) { self.cells = cells }
-            func tableView(_: UITableView, numberOfRowsInSection: Int) -> Int { cells.count }
-            func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { cells[indexPath.row] }
+        private final class DataSource: NSObject, UICollectionViewDataSource {
+            private let cells: [UICollectionViewCell]
+            init(_ cells: [UICollectionViewCell]) { self.cells = cells }
+            func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { cells.count }
+            func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell { cells[indexPath.item] }
         }
     }
 }
