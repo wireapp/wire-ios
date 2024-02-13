@@ -21,7 +21,13 @@ import UIKit
 extension UserStatus {
 
     // TODO [WPB-765]: add support for showing verification status images (+ accessibility)
-    func title(color: UIColor, includeAvailabilityAndCertificationStatus: Bool) -> NSAttributedString? {
+    func title(
+        color: UIColor,
+        includeAvailabilityAndCertificationStatus: Bool,
+        appendYouSuffix: Bool
+    ) -> NSAttributedString? {
+
+        let name = name + (appendYouSuffix ? L10n.Localizable.UserCell.Title.youSuffix : "")
 
         if includeAvailabilityAndCertificationStatus {
             return AvailabilityStringBuilder.titleForUser(

@@ -79,6 +79,7 @@ final class UserStatusView: TitleView {
         let isInteractive = options.contains(.allowSettingStatus)
         var title = ""
 
+        // TODO [WPB-765]: add accessibility strings for image attachments?
         if options.contains(.displayUserName) {
             title = userStatus.name
             if userStatus.isVerified {

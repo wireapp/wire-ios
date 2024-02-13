@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
@@ -338,14 +338,11 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     // MARK: - Update and configure methods
 
     private func updateTitleLabel() {
-        var attributedTitle = userStatus.title(
+        titleLabel.attributedText = userStatus.title(
             color: SemanticColors.Label.textDefault,
-            includeAvailabilityAndCertificationStatus: isSelfUserPartOfATeam
+            includeAvailabilityAndCertificationStatus: isSelfUserPartOfATeam,
+            appendYouSuffix: userIsSelfUser
         )
-        if userIsSelfUser, let title = attributedTitle {
-            attributedTitle = title + L10n.Localizable.UserCell.Title.youSuffix
-        }
-        titleLabel.attributedText = attributedTitle
     }
 }
 

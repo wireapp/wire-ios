@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import UIKit
 import WireDataModel
 import WireCommonComponents
 
@@ -25,8 +25,8 @@ final class AvailabilityStringBuilder: NSObject {
     static func titleForUser(
         name: String,
         availability: Availability,
-        isCertified: Bool /*= false*/,
-        isVerified: Bool /*= false*/,
+        isCertified: Bool,
+        isVerified: Bool,
         style: AvailabilityLabelStyle,
         color: UIColor? = nil
     ) -> NSAttributedString? {
@@ -62,6 +62,7 @@ final class AvailabilityStringBuilder: NSObject {
             }
         }
 
+        // TODO [WPB-765]: add accessibility strings for image attachments?
         guard let textColor = color, let iconColor = iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         let attributedText = IconStringsBuilder.iconString(
@@ -106,31 +107,5 @@ final class AvailabilityStringBuilder: NSObject {
         case .away:
             return IconColors.foregroundAvailabilityAway
         }
-    }
-}
-
-#Preview {
-    NavigationView {
-        ScrollView {
-            VStack {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("title(userName:availability:style:color:)")
-                    Rectangle().fill(.black).frame(height: 1)
-                    if let value = AvailabilityStringBuilder.titleForUser(
-                        name: "Available (List)", availability: .available, isCertified: true, isVerified: true, style: .list
-                    ) {
-                        Text(AttributedString(value))
-                    }
-                    if let value = AvailabilityStringBuilder.titleForUser(
-                        name: "Available (Participants)", availability: .available, isCertified: true, isVerified: true, style: .participants
-                    ) {
-                        Text(AttributedString(value))
-                    }
-                }
-            }
-            .padding()
-        }
-        .navigationTitle("AvailabilityStringBuilder")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }

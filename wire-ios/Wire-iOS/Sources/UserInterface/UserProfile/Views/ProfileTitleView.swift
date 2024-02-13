@@ -78,16 +78,17 @@ final class ProfileTitleView: UIView {
             return
         }
 
-        // TODO [WPB-765]: fill in all required values
         let userStatus = UserStatus(
             name: user.name ?? "",
-            availability: user.availability
+            availability: user.availability,
+            isCertified: false, // TODO [WPB-765]: provide value
+            isVerified: user.isVerified
         )
-        let attributedTitle = userStatus.title(
+        titleLabel.attributedText = userStatus.title(
             color: LabelColors.textDefault,
-            includeAvailabilityAndCertificationStatus: selfUser.isTeamMember
+            includeAvailabilityAndCertificationStatus: selfUser.isTeamMember,
+            appendYouSuffix: false
         )
-        titleLabel.attributedText = attributedTitle
         setupAccessibility()
     }
 

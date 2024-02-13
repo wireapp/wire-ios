@@ -47,13 +47,13 @@ final class AvailabilityStringBuilderTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
-        super.tearDown()
-
         selfUser = nil
         otherUser = nil
         team1 = nil
         team2 = nil
         fixture = nil
+
+        super.tearDown()
     }
 
     // MARK: - Tests

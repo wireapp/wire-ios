@@ -80,20 +80,18 @@ final class ConversationListTopBarViewController: UIViewController {
     // MARK: - Title View
 
     func updateTitleView() {
-        topBar?.middleView = createTitleView()
-    }
-
-    private func createTitleView() -> UIView {
+        if let availabilityViewController {
+            removeChild(availabilityViewController)
+        }
         if selfUser.isTeamMember {
             let availabilityViewController = UserStatusViewController(options: .header, settings: .shared)
             availabilityViewController.userStatus = .init(name: selfUser.name ?? "", availability: selfUser.availability)
             addChild(availabilityViewController)
+            topBar?.middleView = availabilityViewController.view
+            availabilityViewController.didMove(toParent: self)
             self.availabilityViewController = availabilityViewController
-
-            return availabilityViewController.view
         } else {
             let titleLabel = UILabel()
-
             titleLabel.text = selfUser.name
             titleLabel.font = FontSpec(.normal, .semibold).font
             titleLabel.textColor = SemanticColors.Label.textDefault
@@ -103,8 +101,7 @@ final class ConversationListTopBarViewController: UIViewController {
             titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
             titleLabel.setContentHuggingPriority(.required, for: .horizontal)
             titleLabel.setContentHuggingPriority(.required, for: .vertical)
-
-            return titleLabel
+            topBar?.middleView = titleLabel
         }
     }
 
