@@ -31,6 +31,7 @@ public enum CreateTeamOneOnOneConversationError: Error {
 
     case userDoesNotExist
     case userIsNotOnSameTeam
+    case missingUserQualifiedID
     case mlsMigratorNotFound
     case failedToCreateMLSConversation(Error)
     case failedToCreateProteusConversation(Error)
