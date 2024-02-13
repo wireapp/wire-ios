@@ -363,11 +363,12 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         titleLabel.attributedText = attributedTitle
     }
 
-    func configure(with user: UserType,
-                   selfUser: UserType,
-                   subtitle overrideSubtitle: NSAttributedString? = nil,
-                   conversation: GroupDetailsConversationType? = nil) {
-
+    func configure(
+        user: UserType,
+        isSelfUserPartOfATeam: Bool,
+        subtitle overrideSubtitle: NSAttributedString? = nil,
+        conversation: GroupDetailsConversationType? = nil
+    ) {
         let subtitle: NSAttributedString?
         if overrideSubtitle == nil {
             subtitle = self.subtitle(for: user)
@@ -378,12 +379,12 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         self.user = user
 
         avatarImageView.user = user
-        updateTitleLabel(selfUserHasTeam: selfUser.isTeamMember)
+        updateTitleLabel(selfUserHasTeam: isSelfUserPartOfATeam)
 
         let style = UserTypeIconStyle(
             conversation: conversation,
             user: user,
-            selfUserHasTeam: selfUser.isTeamMember
+            selfUserHasTeam: isSelfUserPartOfATeam
         )
         userTypeIconView.set(style: style)
 
@@ -408,16 +409,14 @@ extension UserCell {
 
     private func subtitle(for user: UserType) -> NSAttributedString? {
         if user.isServiceUser, let service = user as? SearchServiceUser {
-            return subtitle(forServiceUser: service)
+            subtitle(forServiceUser: service)
         } else {
-            return subtitle(forRegularUser: user)
+            subtitle(forRegularUser: user)
         }
     }
 
     private func subtitle(forServiceUser service: SearchServiceUser) -> NSAttributedString? {
         guard let summary = service.summary else { return nil }
-
-        return summary && UserCell.boldFont.font!
+        return .init(string: summary, attributes: [.font: UserCell.boldFont.font].compactMapValues { $0 })
     }
-
 }

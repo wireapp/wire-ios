@@ -146,7 +146,7 @@ extension UserCell: ParticipantsCellConfigurable {
             return
         }
 
-        configure(with: user, selfUser: selfUser, conversation: conversation as? ZMConversation)
+        configure(user: user, isSelfUserPartOfATeam: selfUser.hasTeam, conversation: conversation as? ZMConversation)
         accessoryIconView.isHidden = user.isSelfUser
         accessibilityIdentifier = identifier
         accessibilityHint = L10n.Accessibility.ConversationDetails.ParticipantCell.hint

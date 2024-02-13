@@ -142,7 +142,7 @@ extension UserCell: CallParticipantsListCellConfigurable {
             unconnectedStateOverlay.isHidden = true
 
         }
-        configure(with: user.value, selfUser: selfUser)
+        configure(user: user.value, isSelfUserPartOfATeam: selfUser.hasTeam)
         backgroundColor = SemanticColors.View.backgroundDefaultWhite
     }
 

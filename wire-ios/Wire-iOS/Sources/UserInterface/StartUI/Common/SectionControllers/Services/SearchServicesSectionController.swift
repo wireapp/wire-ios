@@ -77,7 +77,7 @@ final class SearchServicesSectionController: SearchSectionController {
 
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
             if let selfUser = ZMUser.selfUser() {
-                cell.configure(with: service, selfUser: selfUser)
+                cell.configure(user: service, isSelfUserPartOfATeam: selfUser.hasTeam)
             } else {
                 assertionFailure("ZMUser.selfUser() is nil")
             }

@@ -65,7 +65,7 @@ class ContactsSectionController: SearchSectionController {
         let user = contacts[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
         if let selfUser = ZMUser.selfUser() {
-            cell.configure(with: user, selfUser: selfUser)
+            cell.configure(user: user, isSelfUserPartOfATeam: selfUser.hasTeam)
         } else {
             assertionFailure("ZMUser.selfUser() is nil")
         }
