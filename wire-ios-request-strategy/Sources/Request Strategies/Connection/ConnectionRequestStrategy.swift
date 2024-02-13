@@ -215,17 +215,17 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
     }
 
     private func processEvent(_ payload: Payload.UserConnectionEvent) {
+        let context = managedObjectContext
+
         let processor = ConnectionPayloadProcessor()
         processor.processPayload(
             payload,
-            in: managedObjectContext
+            in: context
         )
 
         guard payload.connection.status == .accepted, let userID = payload.connection.qualifiedTo else {
             return
         }
-
-        let context = managedObjectContext
 
         WaitingGroupTask(context: context) { [self] in
             do {

@@ -65,7 +65,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     // MARK: - Methods
 
     public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
-        // TODO: [WPB-5812] implement
+        // TODO: [WPB-111] implement
 
         let users: [ZMUser] = try await context.perform {
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
@@ -74,7 +74,12 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
 
         for user in users {
-            try await resolveOneOnOneConversation(with: user, in: context)
+            guard let userID = await context.perform({ user.qualifiedID }) else {
+                assertionFailure("required to have a qualifiedID")
+                return
+            }
+
+            try await resolveOneOnOneConversation(with: userID, in: context)
         }
     }
 
@@ -83,26 +88,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        guard let otherUser = await context.perform({ ZMUser.fetch(with: userID, in: context) }) else {
-            // TODO: [WPB-5812] throw error? was ignored before
-            return .noAction
-        }
+        WireLogger.conversation.debug("resolving one on one with user: \(userID)")
 
-        return try await resolveOneOnOneConversation(with: otherUser, in: context)
-    }
-
-    @discardableResult
-    func resolveOneOnOneConversation(
-        with otherUser: ZMUser,
-        in context: NSManagedObjectContext
-    ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("resolving one on one with user: \(String(describing: otherUser.remoteIdentifier)) on domain: \(String(describing: otherUser.domain))")
-
-        let selfUser = await context.perform { ZMUser(context: context) }
-
-        let messageProtocol = await protocolSelector.getProtocolInsersectionBetween(
-            selfUser: selfUser,
-            otherUser: otherUser,
+        let messageProtocol = await protocolSelector.getProtocolForUser(
+            with: userID,
             in: context
         )
 
@@ -110,7 +99,14 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         case .none:
             WireLogger.conversation.debug("no common protocols found")
             await context.perform {
-                otherUser.oneOnOneConversation?.isForcedReadOnly = true
+                guard
+                    let otherUser = ZMUser.fetch(with: userID, in: context),
+                    let conversation = otherUser.oneOnOneConversation
+                else {
+                    return
+                }
+
+                conversation.isForcedReadOnly = true
             }
             return .archivedAsReadOnly
 
@@ -122,7 +118,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             }
 
             let mlsGroupIdentifier = try await migrator.migrateToMLS(
-                user: otherUser,
+                userID: userID,
                 in: context
             )
 

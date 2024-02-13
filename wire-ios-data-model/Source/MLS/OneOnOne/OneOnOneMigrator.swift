@@ -23,7 +23,7 @@ public protocol OneOnOneMigratorInterface {
 
     @discardableResult
     func migrateToMLS(
-        user: ZMUser,
+        userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID
 
@@ -33,8 +33,7 @@ public enum MigrateMLSOneOnOneConversationError: Error {
 
     case failedToFetchConversation(Error)
     case failedToEstablishGroup(Error)
-    case missesMLSConversation
-    case missesQualifiedUserID
+    case failedToActivateConversation
 
 }
 
@@ -54,13 +53,9 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
 
     @discardableResult
     public func migrateToMLS(
-        user: ZMUser,
+        userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
-        guard let userID = await context.perform({ user.qualifiedIDOrFallback }) else {
-            throw MigrateMLSOneOnOneConversationError.missesQualifiedUserID
-        }
-
         let mlsGroupID = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
@@ -72,7 +67,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         )
 
         try await switchLocalConversationToMLS(
-            otherUser: user,
+            userID: userID,
             mlsGroupID: mlsGroupID,
             in: context
         )
@@ -115,7 +110,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
     }
 
     private func switchLocalConversationToMLS(
-        otherUser: ZMUser,
+        userID: QualifiedID,
         mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
     ) async throws {
@@ -124,7 +119,11 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
                 with: mlsGroupID,
                 in: context
             ) else {
-                throw MigrateMLSOneOnOneConversationError.missesMLSConversation
+                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
+            }
+
+            guard let otherUser = ZMUser.fetch(with: userID, in: context) else {
+                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
             // move local messages

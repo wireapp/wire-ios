@@ -65,24 +65,31 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
         with user: ZMUser,
         syncContext: NSManagedObjectContext
     ) async throws -> NSManagedObjectID {
-        let selfUser = try await syncContext.perform {
-            let selfUser = ZMUser.selfUser(in: syncContext)
-
-            guard selfUser.isOnSameTeam(otherUser: user) else {
+        let userID = try await syncContext.perform {
+            guard user.isOnSameTeam(otherUser: ZMUser.selfUser(in: syncContext)) else {
                 throw Error.userIsNotOnSameTeam
             }
 
-            return selfUser
+            guard
+                let userID = user.remoteIdentifier,
+                let domain = user.domain ?? BackendInfo.domain
+            else {
+                throw Error.missingUserQualifiedID
+            }
+
+            return QualifiedID(
+                uuid: userID,
+                domain: domain
+            )
         }
 
-        switch await protocolSelector.getProtocolInsersectionBetween(
-            selfUser: selfUser,
-            otherUser: user,
+        switch await protocolSelector.getProtocolForUser(
+            with: userID,
             in: syncContext
         ) {
         case .mls:
             return try await createMLSConversation(
-                user: user,
+                userID: userID,
                 in: syncContext
             )
 
@@ -98,7 +105,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
     }
 
     private func createMLSConversation(
-        user: ZMUser,
+        userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> NSManagedObjectID {
         guard let migrator else {
@@ -109,7 +116,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
 
         do {
             groupID = try await migrator.migrateToMLS(
-                user: user,
+                userID: userID,
                 in: context
             )
         } catch {
