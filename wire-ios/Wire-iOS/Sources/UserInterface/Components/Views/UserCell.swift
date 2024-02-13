@@ -350,7 +350,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     private func updateTitleLabel(selfUserHasTeam: Bool? = nil) {
         guard let user, let selfUserHasTeam = cachedSelfUserHasTeam else { return }
-        cachedSelfUserHasTeam = selfUserHasTeam
 
         var attributedTitle = user.title(
             color: SemanticColors.Label.textDefault,
@@ -379,6 +378,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         self.user = user
 
         avatarImageView.user = user
+        cachedSelfUserHasTeam = isSelfUserPartOfATeam
         updateTitleLabel(selfUserHasTeam: isSelfUserPartOfATeam)
 
         let style = UserTypeIconStyle(
