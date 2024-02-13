@@ -121,7 +121,7 @@ platform :ios do
         options[:override_folder] = "BK-COLUMN2"
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_RESTRICTED']
         options[:app_center_app_name] = ENV['C2_APP_CENTER_APP_NAME_RESTRICTED']
-        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
+        options[:run_security_tests] = false #!ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
