@@ -41,7 +41,8 @@ class AuthenticatedRouter: NSObject {
     private let activeCallRouter: ActiveCallRouter
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: FeatureRepositoryProvider
-    private let featureChangeActionsHandler: FeatureChangeActions
+    private let featureChangeActionsHandler: E2eINotificationActions
+    private let gracePeriodRepository: GracePeriodRepository
 
     // MARK: - Public Property
 
@@ -59,7 +60,9 @@ class AuthenticatedRouter: NSObject {
         userSession: UserSession,
         isComingFromRegistration: Bool,
         needToShowDataUsagePermissionDialog: Bool,
-        featureRepositoryProvider: FeatureRepositoryProvider
+        featureRepositoryProvider: FeatureRepositoryProvider,
+        featureChangeActionsHandler: E2eINotificationActionsHandler,
+        gracePeriodRepository: GracePeriodRepository
     ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
@@ -72,7 +75,8 @@ class AuthenticatedRouter: NSObject {
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
-        self.featureChangeActionsHandler = userSession.featureChangeActionsHandler
+        self.featureChangeActionsHandler = featureChangeActionsHandler
+        self.gracePeriodRepository = gracePeriodRepository
 
         super.init()
 
@@ -89,10 +93,18 @@ class AuthenticatedRouter: NSObject {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
             let alert = change.hasFurtherActions
-                ? UIAlertController.fromFeatureChangeWithActions(change, actionsHandler: featureChangeActionsHandler)
-                : UIAlertController.fromFeatureChange(change, acknowledger: featureRepositoryProvider.featureRepository)
+                ? UIAlertController.fromFeatureChangeWithActions(change,
+                                                                 acknowledger: featureRepositoryProvider.featureRepository,
+                                                                 actionsHandler: featureChangeActionsHandler)
+                : UIAlertController.fromFeatureChange(change,
+                                                      acknowledger: featureRepositoryProvider.featureRepository)
         else {
             return
+        }
+
+        if case .e2eIEnabled(gracePeriod: let gracePeriod) = change, let gracePeriod {
+            let endOfGracePeriod = Date.now.addingTimeInterval(gracePeriod)
+            gracePeriodRepository.storeEndGracePeriodDate(endOfGracePeriod)
         }
 
         _viewController?.presentAlert(alert)
