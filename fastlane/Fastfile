@@ -146,7 +146,7 @@ platform :ios do
     desc "Build & Upload Col 1 Production AppStore build"
     lane :appstore_col_1_prod do |options|
         options[:build_type] = "AppStore"
-        options[:override_folder] = "BK-CI-configuration"
+        options[:override_folder] = "BK-COLUMN1"
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_PRODUCTION']
         options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_PRODUCTION']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
