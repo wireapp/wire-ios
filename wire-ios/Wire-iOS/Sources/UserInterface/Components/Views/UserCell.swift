@@ -421,39 +421,3 @@ extension UserCell {
     }
 
 }
-
-// MARK: - Previews
-
-struct UserCell_Previews: PreviewProvider {
-
-    static var previews: some View {
-        let cells: [UICollectionViewCell] = {
-            let cell = UICollectionViewCell()
-//            var content = cell.defaultContentConfiguration()
-//            content.image = UIImage(systemName: "star")
-//            content.text = "Favorites"
-//            content.imageProperties.tintColor = .purple
-//            cell.contentConfiguration = content
-            return [cell, /*UserCell()*/]
-        }()
-        NavigationView {
-            CollectionViewController(cells: cells)
-                .navigationTitle("UserCell")
-        }
-    }
-
-    private struct CollectionViewController: UIViewControllerRepresentable {
-        private let dataSource: DataSource
-        init(cells: [UICollectionViewCell]) { dataSource = .init(cells) }
-        func makeUIViewController(context: Context) -> UICollectionViewController { .init(collectionViewLayout: <#T##UICollectionViewLayout#>) }
-        func updateUIViewController(_ collectionViewController: UICollectionViewController, context: Context) {
-            collectionViewController.collectionView.dataSource = dataSource
-        }
-        private final class DataSource: NSObject, UICollectionViewDataSource {
-            private let cells: [UICollectionViewCell]
-            init(_ cells: [UICollectionViewCell]) { self.cells = cells }
-            func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { cells.count }
-            func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell { cells[indexPath.item] }
-        }
-    }
-}
