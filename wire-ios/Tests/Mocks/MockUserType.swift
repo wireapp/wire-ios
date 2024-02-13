@@ -134,8 +134,6 @@ class MockUserType: NSObject, UserType, Decodable {
 
     var teamName: String?
 
-    var team: Team?
-
     var teamRole: TeamRole = .none
 
     // MARK: - Connections

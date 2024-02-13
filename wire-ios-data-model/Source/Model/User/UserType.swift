@@ -57,9 +57,6 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The name of the team the user belongs to.
     var teamName: String? { get }
 
-    /// The id of the team the user belongs to.
-    var team: Team? { get }
-
     /// Whether this is the member of a team
     var isTeamMember: Bool { get }
 

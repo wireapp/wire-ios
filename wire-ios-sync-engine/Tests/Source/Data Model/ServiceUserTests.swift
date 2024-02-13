@@ -60,8 +60,6 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var teamName: String?
 
-    var team: Team?
-
     var isBlocked: Bool = false
 
     var blockState: ZMBlockState = .none

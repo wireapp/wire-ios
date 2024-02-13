@@ -162,6 +162,7 @@ public class ZMSearchUser: NSObject, UserType {
 
     public var name: String? {
         return user?.name ?? internalName
+
     }
 
     public var handle: String? {
@@ -197,10 +198,6 @@ public class ZMSearchUser: NSObject, UserType {
 
     public var teamName: String? {
         return user?.teamName
-    }
-
-    public var team: Team? {
-        return user?.team
     }
 
     public var isTeamMember: Bool {
