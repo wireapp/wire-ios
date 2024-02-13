@@ -203,30 +203,10 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
 
             switch event.type {
             case .userConnection:
-                if let conversationEvent = Payload.UserConnectionEvent(payloadData) {
-                    let processor = ConnectionPayloadProcessor()
-                    processor.processPayload(
-                        conversationEvent,
-                        in: managedObjectContext
-                    )
-
-                    if conversationEvent.connection.status == .accepted, let userID = conversationEvent.connection.qualifiedTo {
-
-                        WaitingGroupTask(context: managedObjectContext) { [self] in
-                            do {
-                                // The client who accepts the connection resolves the conversation immediately.
-                                // Other clients (from self and other user) resolve after a delay to avoid a race condition,
-                                // but also to re-attempt resolution in case of failure.
-                                try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
-                                try await self.oneOnOneResolver.resolveOneOnOneConversation(with: userID, in: self.managedObjectContext)
-                            } catch {
-                                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
-                                assertionFailure("Error resolving one-on-one conversation: \(error)")
-                            }
-                        }
-                    }
-
+                guard let payload = Payload.UserConnectionEvent(payloadData) else {
+                    return
                 }
+                processEvent(payload)
 
             default:
                 break
@@ -234,6 +214,32 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
         }
     }
 
+    private func processEvent(_ payload: Payload.UserConnectionEvent) {
+        let processor = ConnectionPayloadProcessor()
+        processor.processPayload(
+            payload,
+            in: managedObjectContext
+        )
+
+        guard payload.connection.status == .accepted, let userID = payload.connection.qualifiedTo else {
+            return
+        }
+
+        let context = managedObjectContext
+
+        WaitingGroupTask(context: context) { [self] in
+            do {
+                // The client who accepts the connection resolves the conversation immediately.
+                // Other clients (from self and other user) resolve after a delay to avoid a race condition,
+                // but also to re-attempt resolution in case of failure.
+                try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
+                try await self.oneOnOneResolver.resolveOneOnOneConversation(with: userID, in: context)
+            } catch {
+                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
+                assertionFailure("Error resolving one-on-one conversation: \(error)")
+            }
+        }
+    }
 }
 
 class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
