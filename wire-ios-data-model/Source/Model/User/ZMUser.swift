@@ -451,6 +451,11 @@ extension ZMUser: UserConnections {
                     do {
                         let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
                         try await resolver.resolveOneOnOneUserConversation(self, in: context)
+
+                        await context.perform {
+                            _ = context.saveOrRollback()
+                        }
+
                         await MainActor.run {
                             completion(nil)
                         }

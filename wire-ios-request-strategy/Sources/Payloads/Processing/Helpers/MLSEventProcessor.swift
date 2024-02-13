@@ -166,7 +166,6 @@ public class MLSEventProcessor: MLSEventProcessing {
                 oneOneOneResolver: oneOnOneResolver,
                 in: context
             )
-
         } catch {
             WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
             return
@@ -197,6 +196,11 @@ public class MLSEventProcessor: MLSEventProcessing {
 
         do {
             try await oneOneOneResolver.resolveOneOnOneUserConversation(user, in: context)
+
+            try await context.perform {
+                try context.save()
+            }
+
             WireLogger.mls.debug("successfully resolved one on one conversation")
         } catch {
             WireLogger.mls.warn("failed to resolve one on one conversation: \(error)")

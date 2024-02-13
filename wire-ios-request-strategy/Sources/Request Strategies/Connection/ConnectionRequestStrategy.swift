@@ -234,6 +234,10 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                 // but also to re-attempt resolution in case of failure.
                 try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
                 try await self.oneOnOneResolver.resolveOneOnOneConversation(with: userID, in: context)
+
+                await context.perform {
+                    _ = context.saveOrRollback()
+                }
             } catch {
                 WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
                 assertionFailure("Error resolving one-on-one conversation: \(error)")
