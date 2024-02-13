@@ -57,6 +57,7 @@ final class UserStatusViewController: UIViewController {
             options: options,
             userSession: userSession
         )
+        view.userStatus = userStatus
         view.tapHandler = { [weak self] _ in
             self?.presentAvailabilityPicker()
         }
