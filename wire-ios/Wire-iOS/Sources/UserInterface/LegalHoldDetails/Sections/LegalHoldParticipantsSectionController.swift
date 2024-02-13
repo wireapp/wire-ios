@@ -96,8 +96,8 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
         if let user = SelfUser.provider?.providedSelfUser {
             cell.configure(
-                userStatus: .init(isVerified: participant.isVerified),
                 user: participant,
+                isCertified: false, // TODO [WPB-765]: provide value
                 isSelfUserPartOfATeam: user.hasTeam,
                 conversation: conversation
             )

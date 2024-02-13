@@ -334,8 +334,8 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
             cell.configure(
-                userStatus: .init(isVerified: description.user.isVerified),
                 user: description.user,
+                isCertified: false, // TODO [WPB-765]: provide value
                 isSelfUserPartOfATeam: selfUser.hasTeam,
                 subtitle: description.attributedSubtitle,
                 conversation: conversation

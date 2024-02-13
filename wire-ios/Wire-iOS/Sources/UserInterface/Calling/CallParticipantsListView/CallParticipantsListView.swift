@@ -145,8 +145,8 @@ extension UserCell: CallParticipantsListCellConfigurable {
 
         }
         configure(
-            userStatus: .init(isVerified: user.isVerified),
             user: user,
+            isCertified: false, // TODO [WPB-765]: provide value
             isSelfUserPartOfATeam: selfUser.hasTeam
         )
         backgroundColor = SemanticColors.View.backgroundDefaultWhite

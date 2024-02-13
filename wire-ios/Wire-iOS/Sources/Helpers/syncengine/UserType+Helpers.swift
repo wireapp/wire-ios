@@ -34,17 +34,4 @@ extension UserType {
     var hasUntrustedClients: Bool {
         allClients.contains { !$0.verified }
     }
-
-    // TODO [WPB-765]: add support for showing verification status images (+ accessibility)
-    func title(color: UIColor, includeAvailabilityAndCertificationStatus: Bool) -> NSAttributedString? {
-        if includeAvailabilityAndCertificationStatus {
-            return AvailabilityStringBuilder.titleForUser(name: name ?? "", availability: availability, style: .list, color: color)
-        } else if let name = name {
-            return .init(string: name, attributes: [.foregroundColor: color])
-        } else {
-            let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
-            let fallbackColor = SemanticColors.Label.textCollectionSecondary
-            return .init(string: fallbackTitle, attributes: [.foregroundColor: fallbackColor])
-        }
-    }
 }

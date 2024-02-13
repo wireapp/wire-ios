@@ -55,7 +55,11 @@ final class FederationSectionController: SearchSectionController {
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         let user = users[indexPath.row]
         if let selfUser = ZMUser.selfUser() {
-            cell.configure(userStatus: .init(isVerified: user.isVerified), user: user, isSelfUserPartOfATeam: selfUser.hasTeam)
+            cell.configure(
+                user: user,
+                isCertified: false, // TODO [WPB-765]: provide value
+                isSelfUserPartOfATeam: selfUser.hasTeam
+            )
         } else {
             assertionFailure("ZMUser.selfUser() is nil")
         }

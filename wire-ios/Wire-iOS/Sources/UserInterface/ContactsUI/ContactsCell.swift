@@ -216,7 +216,12 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             return
         }
 
-        titleLabel.attributedText = user.title(
+        // TODO [WPB-765]: fill in all required values
+        let userStatus = UserStatus(
+            name: user.name ?? "",
+            availability: user.availability
+        )
+        titleLabel.attributedText = userStatus.title(
             color: LabelColors.textDefault,
             includeAvailabilityAndCertificationStatus: selfUser.isTeamMember
         )

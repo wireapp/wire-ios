@@ -31,6 +31,10 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         didSet { updateTitleLabel() }
     }
 
+    private var userIsSelfUser = false
+    private var isSelfUserPartOfATeam = false
+    private var userIsServiceUser = false
+
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
@@ -64,8 +68,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     var unconnectedStateOverlay = UIView()
 
     fileprivate var avatarSpacerWidthConstraint: NSLayoutConstraint?
-
-    weak var user: UserType?
 
     static let boldFont: FontSpec = .smallRegularFont
     static let lightFont: FontSpec = .smallLightFont
@@ -293,10 +295,9 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             content += ", \(userType)"
         }
 
-        // TODO: add accessibility strings
-//        if !verifiedIconView.isHidden {
-//            content += ", " + ClientsList.DeviceVerified.description
-//        }
+        if userStatus.isVerified {
+            content += ", " + ClientsList.DeviceVerified.description
+        }
 
         if !microphoneIconView.isHidden {
             accessibilityTraits = .staticText
@@ -327,7 +328,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         if !checkmarkIconView.isHidden {
             accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser.hint
-        } else if let user = user, user.isServiceUser {
+        } else if userIsServiceUser {
             accessibilityHint = ServicesList.ServiceCell.hint
         } else {
             accessibilityHint = ContactsList.UserCell.hint
@@ -336,36 +337,36 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Update and configure methods
 
-    /// Caches the information if the self user has a team, because
-    /// when the title label is updated due to traitCollection changes,
-    /// we don't have a self-user instance.
-    private var cachedSelfUserHasTeam: Bool?
-
-    private func updateTitleLabel(selfUserHasTeam: Bool? = nil) {
-        guard let user, let selfUserHasTeam = cachedSelfUserHasTeam else { return }
-
-        var attributedTitle = user.title(
+    private func updateTitleLabel() {
+        var attributedTitle = userStatus.title(
             color: SemanticColors.Label.textDefault,
-            includeAvailabilityAndCertificationStatus: selfUserHasTeam
+            includeAvailabilityAndCertificationStatus: isSelfUserPartOfATeam
         )
-        if user.isSelfUser, let title = attributedTitle {
+        if userIsSelfUser, let title = attributedTitle {
             attributedTitle = title + L10n.Localizable.UserCell.Title.youSuffix
         }
-
         titleLabel.attributedText = attributedTitle
     }
+}
+
+// MARK: - UserCell + configure
+
+extension UserCell {
 
     /// Updates the cell with the provided information.
     /// - parameter userStatus: At the moment only the E2EI and Proteus verification statuses are considered from this value.
     func configure(
         userStatus: UserStatus,
-        user: UserType,
+        user: UserType, // ideally no UserType instance would be needed
+        userIsSelfUser: Bool,
         isSelfUserPartOfATeam: Bool,
         subtitle overrideSubtitle: NSAttributedString? = nil,
         conversation: GroupDetailsConversationType? = nil
     ) {
-        self.user = user
         self.userStatus = userStatus
+        self.userIsSelfUser = userIsSelfUser
+        self.isSelfUserPartOfATeam = isSelfUserPartOfATeam
+        self.userIsServiceUser = user.isServiceUser
 
         let subtitle: NSAttributedString?
         if overrideSubtitle == nil {
@@ -375,8 +376,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
 
         avatarImageView.user = user
-        cachedSelfUserHasTeam = isSelfUserPartOfATeam
-        updateTitleLabel(selfUserHasTeam: isSelfUserPartOfATeam)
+        updateTitleLabel()
 
         let style = UserTypeIconStyle(
             conversation: conversation,
@@ -394,6 +394,32 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             subtitleLabel.isHidden = true
         }
         setupAccessibility()
+    }
+
+    /// Updates the cell with the information in the user instance.
+    func configure(
+        user: UserType,
+        isCertified: Bool,
+        isSelfUserPartOfATeam: Bool,
+        subtitle overrideSubtitle: NSAttributedString? = nil,
+        conversation: GroupDetailsConversationType? = nil
+    ) {
+        configure(
+            userStatus: .init(
+                accentColor: .init(ZMAccentColor: user.accentColorValue) ?? .init(),
+                avatar: .init(),
+                handle: user.handle ?? "",
+                name: user.name ?? "",
+                availability: user.availability,
+                isCertified: isCertified,
+                isVerified: user.isVerified
+            ),
+            user: user,
+            userIsSelfUser: user.isSelfUser,
+            isSelfUserPartOfATeam: isSelfUserPartOfATeam,
+            subtitle: overrideSubtitle,
+            conversation: conversation
+        )
     }
 }
 

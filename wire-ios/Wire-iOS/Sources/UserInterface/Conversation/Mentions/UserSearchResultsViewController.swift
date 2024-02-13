@@ -269,7 +269,11 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         let user = searchResults[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
         if let selfUser = ZMUser.selfUser() {
-            cell.configure(userStatus: .init(isVerified: user.isVerified), user: user, isSelfUserPartOfATeam: selfUser.hasTeam)
+            cell.configure(
+                user: user,
+                isCertified: false, // TODO [WPB-765]: provide value
+                isSelfUserPartOfATeam: selfUser.hasTeam
+            )
         } else {
             assertionFailure("ZMUser.selfUser() is nil")
         }

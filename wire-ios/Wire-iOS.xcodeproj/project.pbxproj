@@ -273,6 +273,7 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		594CA2F82B7A882500D5E91A /* UserStatus+Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594CA2F72B7A882500D5E91A /* UserStatus+Avatar.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
+		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
 		59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62B2B7A73B2008236FF /* ShapeView.swift */; };
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewFactory.swift */; };
@@ -2274,6 +2275,7 @@
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		594CA2F72B7A882500D5E91A /* UserStatus+Avatar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserStatus+Avatar.swift"; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
+		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
 		59D8A62B2B7A73B2008236FF /* ShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeView.swift; sourceTree = "<group>"; };
 		59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAccountView.swift; sourceTree = "<group>"; };
 		59D8A6302B7A7C2D008236FF /* AccountViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewFactory.swift; sourceTree = "<group>"; };
@@ -4469,6 +4471,18 @@
 			path = CallQualityController;
 			sourceTree = "<group>";
 		};
+		59A1F1452B7BA1E7002CB679 /* UserStatus */ = {
+			isa = PBXGroup;
+			children = (
+				597A3BB92B641F280020E337 /* UserStatus.swift */,
+				594CA2F72B7A882500D5E91A /* UserStatus+Avatar.swift */,
+				7C5836631FD5ABE7001CC843 /* UserStatusView.swift */,
+				1639A85A2264EAB800868AB9 /* UserStatusViewController.swift */,
+				59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */,
+			);
+			path = UserStatus;
+			sourceTree = "<group>";
+		};
 		59D8A62D2B7A75A0008236FF /* AccountViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -5196,10 +5210,6 @@
 				7CED30711FD97748009F0DAC /* IconStringsBuilder.swift */,
 				7C5836651FD5ABFE001CC843 /* TitleView.swift */,
 				1639A85C2265FC8800868AB9 /* UIAlertController+Availability.swift */,
-				597A3BB92B641F280020E337 /* UserStatus.swift */,
-				594CA2F72B7A882500D5E91A /* UserStatus+Avatar.swift */,
-				7C5836631FD5ABE7001CC843 /* UserStatusView.swift */,
-				1639A85A2264EAB800868AB9 /* UserStatusViewController.swift */,
 			);
 			path = Availability;
 			sourceTree = "<group>";
@@ -6339,6 +6349,7 @@
 				16DD6E932283048A0090A74C /* LegalHoldDetails */,
 				16D49326203DCC59008DDFFA /* GroupDetails */,
 				7C5836621FD5AB98001CC843 /* Availability */,
+				59A1F1452B7BA1E7002CB679 /* UserStatus */,
 				16A293D81F5FF9F500B4EB16 /* Skeleton */,
 				162936C11F4AD99C00D4F386 /* Blacklist */,
 				871BC1271D34F8F800DF0793 /* Components */,
@@ -9858,6 +9869,7 @@
 				5E8FFC2421F086240052DF03 /* AuthenticationReauthenticateInputHandler.swift in Sources */,
 				BFE277631D5B4FC50074DC6D /* ConversationContentViewController+MessageDeletion.swift in Sources */,
 				7C5836661FD5ABFE001CC843 /* TitleView.swift in Sources */,
+				59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */,
 				7C5DF2CC1FD7DEAD00B793B6 /* AvailabilityExtensions.swift in Sources */,
 				E9EC273429D4440C00599D0A /* String+Capitalization.swift in Sources */,
 				16595CFF20BEE5E000E1340E /* Analytics+CallEvents.swift in Sources */,
