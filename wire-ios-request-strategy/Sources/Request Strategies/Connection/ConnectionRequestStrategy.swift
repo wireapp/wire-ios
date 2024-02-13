@@ -232,7 +232,12 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                 // The client who accepts the connection resolves the conversation immediately.
                 // Other clients (from self and other user) resolve after a delay to avoid a race condition,
                 // but also to re-attempt resolution in case of failure.
-                try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
+                if #available(iOS 16, *) {
+                    try await Task.sleep(for: .seconds(oneOnOneResolutionDelay))
+                } else {
+                    try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
+                }
+
                 try await self.oneOnOneResolver.resolveOneOnOneConversation(with: userID, in: context)
 
                 await context.perform {
