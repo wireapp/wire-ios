@@ -68,8 +68,8 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         selfMember.team = team1
 
         // WHEN
-        let listString = AvailabilityStringBuilder.string(for: otherUser, with: .list, color: UIColor.black)
-        let participantsString = AvailabilityStringBuilder.string(for: otherUser, with: .participants, color: UIColor.black)
+        let listString = AvailabilityStringBuilder.titleForUser(name: otherUser.name ?? "", availability: otherUser.availability, style: .list, color: .black)
+        let participantsString = AvailabilityStringBuilder.titleForUser(name: otherUser.name ?? "", availability: otherUser.availability, style: .participants, color: .black)
 
         // THEN
         XCTAssertFalse(listString!.allAttachments.isEmpty)
@@ -88,8 +88,8 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         selfMember.team = team1
 
         // WHEN
-        let listString = AvailabilityStringBuilder.string(for: otherUser, with: .list, color: UIColor.black)
-        let participantsString = AvailabilityStringBuilder.string(for: otherUser, with: .participants, color: UIColor.black)
+        let listString = AvailabilityStringBuilder.titleForUser(name: otherUser.name ?? "", availability: otherUser.availability, style: .list, color: .black)
+        let participantsString = AvailabilityStringBuilder.titleForUser(name: otherUser.name ?? "", availability: otherUser.availability, style: .participants, color: .black)
 
         // THEN
         XCTAssertFalse(listString!.allAttachments.isEmpty)
@@ -104,8 +104,8 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         selfUser.updateAvailability(.available)
 
         // WHEN
-        let listString = AvailabilityStringBuilder.string(for: selfUser, with: .list, color: UIColor.black)
-        let participantsString = AvailabilityStringBuilder.string(for: selfUser, with: .participants, color: UIColor.black)
+        let listString = AvailabilityStringBuilder.titleForUser(name: selfUser.name ?? "", availability: selfUser.availability, style: .list, color: .black)
+        let participantsString = AvailabilityStringBuilder.titleForUser(name: selfUser.name ?? "", availability: selfUser.availability, style: .participants, color: .black)
 
         // THEN
         XCTAssertFalse(listString!.allAttachments.isEmpty)

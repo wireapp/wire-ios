@@ -16,24 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireDataModel
 import WireCommonComponents
 
 final class AvailabilityStringBuilder: NSObject {
 
-    static func string(for user: UserType, with style: AvailabilityLabelStyle, color: UIColor? = nil) -> NSAttributedString? {
+    static func titleForUser(name: String, availability: Availability, style: AvailabilityLabelStyle, color: UIColor? = nil) -> NSAttributedString? {
 
         let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
-        var title: String = ""
+        var title: String
         var color = color
         var iconColor = color
-        let availability = user.availability
         var fontSize: FontSize = .small
 
         switch style {
         case .list:
             do {
-                if let name = user.name, !name.isEmpty {
+                if !name.isEmpty {
                     title = name
                 } else {
                     title = fallbackTitle
@@ -49,14 +49,13 @@ final class AvailabilityStringBuilder: NSObject {
             }
         case .participants:
             do {
-                title = (user.name ?? "").localizedUppercase
+                title = name.localizedUppercase
                 color = SemanticColors.Label.textDefault
                 iconColor = self.color(for: availability)
             }
         }
 
-        guard let textColor = color,
-              let iconColor = iconColor else { return nil }
+        guard let textColor = color, let iconColor = iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         let attributedText = IconStringsBuilder.iconString(with: icon, title: title, interactive: false, color: textColor)
         return attributedText
@@ -91,5 +90,27 @@ final class AvailabilityStringBuilder: NSObject {
         case .away:
             return IconColors.foregroundAvailabilityAway
         }
+    }
+}
+
+#Preview {
+    NavigationView {
+        ScrollView {
+            VStack {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("title(userName:availability:style:color:)")
+                    Rectangle().fill(.black).frame(height: 1)
+                    if let value = AvailabilityStringBuilder.titleForUser(name: "Available (List)", availability: .available, style: .list) {
+                        Text(AttributedString(value))
+                    }
+                    if let value = AvailabilityStringBuilder.titleForUser(name: "Available (Participants)", availability: .available, style: .participants) {
+                        Text(AttributedString(value))
+                    }
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("AvailabilityStringBuilder")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

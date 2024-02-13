@@ -389,7 +389,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         userTypeIconView.set(style: style)
 
         verifiedIconView.isHidden = !user.isVerified
-        verifiedIconView.image = .init(resource: .soundcloud)
 
         if let subtitle = subtitle, !subtitle.string.isEmpty, !hidesSubtitle {
             subtitleLabel.isHidden = false
