@@ -37,10 +37,7 @@ final class UserStatusView: TitleView {
 
     /// Creates a view for the specific user and options.
     /// - parameter options: The options to display the availability.
-    init(
-        options: Options,
-        userSession: UserSession
-    ) {
+    init(options: Options) {
         self.options = options
         super.init()
         updateConfiguration()

@@ -22,22 +22,24 @@ import WireSyncEngine
 
 final class UserStatusViewController: UIViewController {
 
-    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-    private let options: UserStatusView.Options
-    private let user: UserType
-    let userSession: UserSession
+    weak var delegate: UserStatusViewControllerDelegate?
 
-    /// Used to update the `UserStatusView` on changes of a user.
-    private var userChangeObservation: NSObjectProtocol?
+    private lazy var feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+
+    private let options: UserStatusView.Options
+    private let settings: Settings
 
     public var userStatus: UserStatus {
         didSet { (view as? UserStatusView)?.userStatus = userStatus }
     }
 
-    init(user: UserType, options: UserStatusView.Options, userSession: UserSession) {
-        self.user = user
+    init(
+        user: UserType,
+        options: UserStatusView.Options,
+        settings: Settings
+    ) {
         self.options = options
-        self.userSession = userSession
+        self.settings = settings
 
         userStatus = .init(
             name: user.name ?? "",
@@ -53,52 +55,28 @@ final class UserStatusViewController: UIViewController {
     }
 
     override func loadView() {
-        let view = UserStatusView(
-            options: options,
-            userSession: userSession
-        )
+        let view = UserStatusView(options: options)
         view.userStatus = userStatus
         view.tapHandler = { [weak self] _ in
             self?.presentAvailabilityPicker()
         }
         self.view = view
-
-        // refresh view when some user changes
-        userChangeObservation = userSession.addUserObserver(self, for: user)
     }
 
     func presentAvailabilityPicker() {
-        let alertViewController = UIAlertController.availabilityPicker { [weak self] availability in
-            self?.didSelectAvailability(availability)
+        let availabilityChangedHandler = { [weak self] (availability: Availability) in
+            guard let self else { return }
+
+            delegate?.userStatusViewController(self, didSelect: availability)
+            feedbackGenerator.impactOccurred()
+
+            if settings.shouldRemindUserWhenChanging(availability) {
+                present(UIAlertController.availabilityExplanation(availability), animated: true)
+            }
         }
+
+        let alertViewController = UIAlertController.availabilityPicker(availabilityChangedHandler)
         alertViewController.configPopover(pointToView: view)
         present(alertViewController, animated: true)
-    }
-
-    private func didSelectAvailability(_ availability: Availability) {
-        let changes = { [weak self] in
-            self?.user.availability = availability
-            self?.feedbackGenerator.impactOccurred()
-        }
-
-        userSession.perform(changes)
-
-        if Settings.shared.shouldRemindUserWhenChanging(availability) {
-            present(UIAlertController.availabilityExplanation(availability), animated: true)
-        }
-    }
-}
-
-// MARK: UserStatusViewController + UserObserving
-
-extension UserStatusViewController: UserObserving {
-
-    func userDidChange(_ changes: UserChangeInfo) {
-        if changes.nameChanged {
-            userStatus.name = changes.user.name ?? ""
-        }
-        if changes.availabilityChanged {
-            userStatus.availability = changes.user.availability
-        }
     }
 }
