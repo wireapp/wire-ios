@@ -48,6 +48,8 @@ final class AvailabilityLabelTests: BaseSnapshotTestCase {
         let attributedString = AvailabilityStringBuilder.titleForUser(
             name: user.name ?? "",
             availability: user.availability,
+            isCertified: false,
+            isVerified: false,
             style: .list
         )
         let label = UILabel()
@@ -83,6 +85,8 @@ final class AvailabilityLabelTests: BaseSnapshotTestCase {
         let attributedString = AvailabilityStringBuilder.titleForUser(
             name: user.name ?? "",
             availability: user.availability,
+            isCertified: false,
+            isVerified: false,
             style: .participants
         )
         let label = UILabel()

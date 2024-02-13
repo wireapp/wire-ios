@@ -22,7 +22,14 @@ import WireCommonComponents
 
 final class AvailabilityStringBuilder: NSObject {
 
-    static func titleForUser(name: String, availability: Availability, style: AvailabilityLabelStyle, color: UIColor? = nil) -> NSAttributedString? {
+    static func titleForUser(
+        name: String,
+        availability: Availability,
+        isCertified: Bool /*= false*/,
+        isVerified: Bool /*= false*/,
+        style: AvailabilityLabelStyle,
+        color: UIColor? = nil
+    ) -> NSAttributedString? {
 
         let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
         var title: String
@@ -60,7 +67,10 @@ final class AvailabilityStringBuilder: NSObject {
         let attributedText = IconStringsBuilder.iconString(
             leadingIcons: [icon].compactMap(\.self),
             title: title,
-            trailingIcons: [],
+            trailingIcons: [
+                isCertified ? .init(imageResource: .certificateValid) : nil,
+                isVerified ? .init(imageResource: .verifiedShield) : nil
+            ].compactMap { $0 },
             interactive: false,
             color: textColor
         )
@@ -106,10 +116,14 @@ final class AvailabilityStringBuilder: NSObject {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("title(userName:availability:style:color:)")
                     Rectangle().fill(.black).frame(height: 1)
-                    if let value = AvailabilityStringBuilder.titleForUser(name: "Available (List)", availability: .available, style: .list) {
+                    if let value = AvailabilityStringBuilder.titleForUser(
+                        name: "Available (List)", availability: .available, isCertified: true, isVerified: true, style: .list
+                    ) {
                         Text(AttributedString(value))
                     }
-                    if let value = AvailabilityStringBuilder.titleForUser(name: "Available (Participants)", availability: .available, style: .participants) {
+                    if let value = AvailabilityStringBuilder.titleForUser(
+                        name: "Available (Participants)", availability: .available, isCertified: true, isVerified: true, style: .participants
+                    ) {
                         Text(AttributedString(value))
                     }
                 }

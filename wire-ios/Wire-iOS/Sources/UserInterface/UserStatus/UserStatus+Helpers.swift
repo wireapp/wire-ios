@@ -24,7 +24,14 @@ extension UserStatus {
     func title(color: UIColor, includeAvailabilityAndCertificationStatus: Bool) -> NSAttributedString? {
 
         if includeAvailabilityAndCertificationStatus {
-            return AvailabilityStringBuilder.titleForUser(name: name, availability: availability, style: .list, color: color)
+            return AvailabilityStringBuilder.titleForUser(
+                name: name,
+                availability: availability,
+                isCertified: isCertified,
+                isVerified: isVerified,
+                style: .list,
+                color: color
+            )
 
         } else if !name.isEmpty {
             return .init(string: name, attributes: [.foregroundColor: color])
