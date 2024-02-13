@@ -20,6 +20,10 @@
 		01D33D8129B8ED97009E94F3 /* SyncStatusLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */; };
 		0601900B2678750D0043F8F8 /* DeepLinkURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161ACB3E23F6E4C200ABFF33 /* DeepLinkURLActionProcessorTests.swift */; };
 		06025664248E5BC700E060E1 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		060C06632B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06622B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift */; };
+		060C06682B7619E300B484C6 /* SelfClientCertificateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */; };
+		061F791C2B767B3D00E8827B /* SelfClientCertificateProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */; };
+		061F791E2B76828500E8827B /* SnoozeCertificateEnrollmentUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061F791D2B76828500E8827B /* SnoozeCertificateEnrollmentUseCaseTests.swift */; };
 		06239126274DB73A0065A72D /* StartLoginURLActionProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */; };
 		063AF985264B2DF800DCBCED /* CallClosedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625690E264AE6560041C17B /* CallClosedReason.swift */; };
 		0640C26D26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0640C26C26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift */; };
@@ -744,6 +748,10 @@
 		018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCase.swift; sourceTree = "<group>"; };
 		018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCaseTests.swift; sourceTree = "<group>"; };
 		01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatusLog.swift; sourceTree = "<group>"; };
+		060C06622B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeCertificateEnrollmentUseCase.swift; sourceTree = "<group>"; };
+		060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProvider.swift; sourceTree = "<group>"; };
+		061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProviderTests.swift; sourceTree = "<group>"; };
+		061F791D2B76828500E8827B /* SnoozeCertificateEnrollmentUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeCertificateEnrollmentUseCaseTests.swift; sourceTree = "<group>"; };
 		06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessor.swift; sourceTree = "<group>"; };
 		0625690E264AE6560041C17B /* CallClosedReason.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallClosedReason.swift; sourceTree = "<group>"; };
 		063AFA3E264B30C400DCBCED /* BuildType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildType.swift; sourceTree = "<group>"; };
@@ -1551,8 +1559,25 @@
 				018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */,
 				16D74BF52B5A961800160298 /* ChangeUsernameUseCaseTests.swift */,
 				EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */,
+				061F791D2B76828500E8827B /* SnoozeCertificateEnrollmentUseCaseTests.swift */,
 			);
 			path = "Use cases";
+			sourceTree = "<group>";
+		};
+		060C06662B7619C600B484C6 /* E2EI */ = {
+			isa = PBXGroup;
+			children = (
+				060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */,
+			);
+			path = E2EI;
+			sourceTree = "<group>";
+		};
+		061F79192B767ACD00E8827B /* E2EI */ = {
+			isa = PBXGroup;
+			children = (
+				061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */,
+			);
+			path = E2EI;
 			sourceTree = "<group>";
 		};
 		0928E38F1BA2CFF60057232E /* E2EE */ = {
@@ -1885,6 +1910,7 @@
 		5423B98C191A49CD0044347D /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				060C06662B7619C600B484C6 /* E2EI */,
 				EFF9403C2240FE12004F3115 /* DeepLink */,
 				54B2A0821DAE71F100BB40B1 /* Analytics */,
 				0928E38F1BA2CFF60057232E /* E2EE */,
@@ -1919,6 +1945,7 @@
 		5474C7DC1921303400185A3A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				061F79192B767ACD00E8827B /* E2EI */,
 				018A3DBD2B0799CA00EB3D6B /* Use cases */,
 				169BA25025EF777300374343 /* Recorders */,
 				169BA1F625ECF8C300374343 /* Mocks */,
@@ -2649,6 +2676,7 @@
 				25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */,
 				16D74BF32B59670B00160298 /* ChangeUsernameUseCase.swift */,
 				EE8584DA2B6938390045EAD4 /* CreateTeamOneOnOneConversationUseCase.swift */,
+				060C06622B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -3392,6 +3420,7 @@
 				F905C47F1E79A86A00AF34A5 /* WireCallCenterV3Tests.swift in Sources */,
 				1636EAFF23F6FCCC00CD9527 /* MockPresentationDelegate.swift in Sources */,
 				872C99601DB6722C006A3BDE /* CallKitDelegateTests+Mocking.m in Sources */,
+				061F791C2B767B3D00E8827B /* SelfClientCertificateProviderTests.swift in Sources */,
 				164C29A51ECF47D80026562A /* SearchDirectoryTests.swift in Sources */,
 				06CDC6F82A2DFB4400EB518D /* RecurringActionServiceTests.swift in Sources */,
 				D55272EA2062732100F542BE /* AssetDeletionStatusTests.swift in Sources */,
@@ -3440,6 +3469,7 @@
 				6391A8012A7A529000832665 /* MLSConferenceStaleParticipantsRemoverTests.swift in Sources */,
 				164A55D820F4FE4A00AE62A6 /* SearchUserImageStrategyTests.swift in Sources */,
 				09B730961B3045E400A5CCC9 /* ProxiedRequestStatusTests.swift in Sources */,
+				061F791E2B76828500E8827B /* SnoozeCertificateEnrollmentUseCaseTests.swift in Sources */,
 				F148F66B1FBAFAF600BD6909 /* RegistrationStatusTestHelper.swift in Sources */,
 				EFC828221FB356CE00E27E21 /* RegistrationStatusTests.swift in Sources */,
 				163FB9942052EA4C00E74F83 /* OperationLoopNewRequestObserver.swift in Sources */,
@@ -3570,6 +3600,7 @@
 				06E0979C2A261E5D00B38C4A /* ZMUserSession+RecurringAction.swift in Sources */,
 				5EFE9C15212AB138007932A6 /* UnregisteredUser+Payload.swift in Sources */,
 				161ACB2D23F5BA0200ABFF33 /* DeepLinkURLActionProcessor.swift in Sources */,
+				060C06632B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift in Sources */,
 				54131BCE25C7FFCA00CE2CA2 /* SessionManager+AuthenticationStatusDelegate.swift in Sources */,
 				160C31271E6434500012E4BC /* OperationStatus.swift in Sources */,
 				165911531DEF38EC007FA847 /* CallStateObserver.swift in Sources */,
@@ -3682,6 +3713,7 @@
 				F19F1D381EFBF61800275E27 /* SessionManager.swift in Sources */,
 				634976F8268A200C00824A05 /* AVSClient.swift in Sources */,
 				D522571E2062552800562561 /* AssetDeletionRequestStrategy.swift in Sources */,
+				060C06682B7619E300B484C6 /* SelfClientCertificateProvider.swift in Sources */,
 				161ACB1623F1AFB000ABFF33 /* SessionManager+CallKitManagerDelegate.swift in Sources */,
 				6349770A268A250E00824A05 /* Encodable+JSONString.swift in Sources */,
 				1658C2371F503CF800889F22 /* FlowManager.swift in Sources */,

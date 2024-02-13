@@ -440,7 +440,11 @@ extension AppRootRouter {
             userSession: userSession,
             isComingFromRegistration: isComingFromRegistration,
             needToShowDataUsagePermissionDialog: needToShowDialog,
-            featureRepositoryProvider: userSession
+            featureRepositoryProvider: userSession,
+            featureChangeActionsHandler: E2eINotificationActionsHandler(
+                enrollCertificateUseCase: userSession.enrollE2eICertificate,
+                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase),
+            gracePeriodRepository: userSession.gracePeriodRepository
         )
     }
 }

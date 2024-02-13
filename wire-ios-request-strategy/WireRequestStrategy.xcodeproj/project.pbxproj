@@ -65,7 +65,6 @@
 		06CF5DFA27FC900F00822FAB /* ZMLocalNotification+Calling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CF5DF927FC900F00822FAB /* ZMLocalNotification+Calling.swift */; };
 		06D61FB62B0CBE1E00C2699A /* AcmeAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D61FB52B0CBE1E00C2699A /* AcmeAPITests.swift */; };
 		06D61FB82B0CBE3100C2699A /* E2eIEnrollmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D61FB72B0CBE3100C2699A /* E2eIEnrollmentTests.swift */; };
-		06D93B452B56F46E00A0A512 /* E2eIFeatureChangeActionsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D93B442B56F46E00A0A512 /* E2eIFeatureChangeActionsHandler.swift */; };
 		06FDC62F28354DAE008300DB /* PushTokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06FDC62E28354DAE008300DB /* PushTokenStorage.swift */; };
 		06FDC63128354DBD008300DB /* PushTokenStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06FDC63028354DBD008300DB /* PushTokenStorageTests.swift */; };
 		160ADE9C270DBD0A003FA638 /* ConnectToUserActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160ADE9B270DBD0A003FA638 /* ConnectToUserActionHandlerTests.swift */; };
@@ -550,7 +549,6 @@
 		06CF5DF927FC900F00822FAB /* ZMLocalNotification+Calling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMLocalNotification+Calling.swift"; sourceTree = "<group>"; };
 		06D61FB52B0CBE1E00C2699A /* AcmeAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcmeAPITests.swift; sourceTree = "<group>"; };
 		06D61FB72B0CBE3100C2699A /* E2eIEnrollmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIEnrollmentTests.swift; sourceTree = "<group>"; };
-		06D93B442B56F46E00A0A512 /* E2eIFeatureChangeActionsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIFeatureChangeActionsHandler.swift; sourceTree = "<group>"; };
 		06FDC62E28354DAE008300DB /* PushTokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenStorage.swift; sourceTree = "<group>"; };
 		06FDC63028354DBD008300DB /* PushTokenStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenStorageTests.swift; sourceTree = "<group>"; };
 		160ADE9B270DBD0A003FA638 /* ConnectToUserActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToUserActionHandlerTests.swift; sourceTree = "<group>"; };
@@ -1062,7 +1060,6 @@
 				064824972B10E32C00115329 /* EnrollE2eICertificateUseCase.swift */,
 				639971B32B2779A9009DD5CF /* E2eIKeyPackageRotator.swift */,
 				63457C072B2CA8E300AFFEF3 /* E2eIKeyPackageRotatorTests.swift */,
-				06D93B442B56F46E00A0A512 /* E2eIFeatureChangeActionsHandler.swift */,
 			);
 			path = E2EIdentity;
 			sourceTree = "<group>";
@@ -2331,7 +2328,6 @@
 				EEE0EE0528591D3200BBEE29 /* OptionalString+NonEmptyValue.swift in Sources */,
 				168D7CB226FB0E3F00789960 /* EntityActionSync.swift in Sources */,
 				168D7CBB26FB21D900789960 /* RemoveParticipantActionHandler.swift in Sources */,
-				06D93B452B56F46E00A0A512 /* E2eIFeatureChangeActionsHandler.swift in Sources */,
 				F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */,
 				E629E3A52B4701E200D526AD /* Payload+ConversationList.swift in Sources */,
 				166901F21D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m in Sources */,
