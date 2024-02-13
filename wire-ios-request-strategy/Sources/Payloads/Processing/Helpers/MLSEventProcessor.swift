@@ -204,8 +204,8 @@ public class MLSEventProcessor: MLSEventProcessing {
         do {
             try await oneOneOneResolver.resolveOneOnOneConversation(with: userID, in: context)
 
-            try await context.perform {
-                try context.save()
+            await context.perform {
+                _ = context.saveOrRollback()
             }
 
             WireLogger.mls.debug("successfully resolved one on one conversation")
