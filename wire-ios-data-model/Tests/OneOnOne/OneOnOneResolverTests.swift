@@ -44,48 +44,33 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
 
     func test_ResolveOneOnOneConversation_MLSSupported() async throws {
         // Given
-        let userID: QualifiedID = .random()
-
-        await uiMOC.perform {
-            let user = ZMUser.insertNewObject(in: self.uiMOC)
-            user.remoteIdentifier = userID.uuid
-            user.domain = userID.domain
-        }
+        let userID = QualifiedID.random()
 
         // Mock
-        protocolSelector.getProtocolInsersectionBetweenSelfUserOtherUserIn_MockValue = .mls
-        migrator.migrateToMLSUserIn_MockMethod = { _, _ in .random() }
+        protocolSelector.getProtocolForUserWithIn_MockValue = .mls
+        migrator.migrateToMLSUserIDIn_MockMethod = { _, _ in .random() }
 
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
 
         // Then
-        XCTAssertEqual(migrator.migrateToMLSUserIn_Invocations.count, 1)
-        let invocation = try XCTUnwrap(migrator.migrateToMLSUserIn_Invocations.first)
-
-        await uiMOC.perform {
-            XCTAssertEqual(invocation.user.qualifiedID, userID)
-        }
+        XCTAssertEqual(migrator.migrateToMLSUserIDIn_Invocations.count, 1)
+        let invocation = try XCTUnwrap(migrator.migrateToMLSUserIDIn_Invocations.first)
+        XCTAssertEqual(invocation.userID, userID)
     }
 
     func test_ResolveOneOnOneConversation_ProteusSupported() async throws {
         // Given
-        // Mock
-        protocolSelector.getProtocolInsersectionBetweenSelfUserOtherUserIn_MockValue = .proteus
+        let userID = QualifiedID.random()
 
-        let user = await uiMOC.perform {
-            let userID = QualifiedID.random()
-            let user = ZMUser.insertNewObject(in: self.uiMOC)
-            user.remoteIdentifier = userID.uuid
-            user.domain = userID.domain
-            return user
-        }
+        // Mock
+        protocolSelector.getProtocolForUserWithIn_MockValue = .proteus
 
         // When
-        try await sut.resolveOneOnOneConversation(with: user, in: uiMOC)
+        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
 
         // Then
-        XCTAssertEqual(migrator.migrateToMLSUserIn_Invocations.count, 0)
+        XCTAssertEqual(migrator.migrateToMLSUserIDIn_Invocations.count, 0)
     }
 
     func test_ResolveOneOnOneConversation_NoCommonProtocols() async throws {
@@ -110,7 +95,7 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         }
 
         // Mock
-        protocolSelector.getProtocolInsersectionBetweenSelfUserOtherUserIn_MockValue = .some(nil)
+        protocolSelector.getProtocolForUserWithIn_MockValue = .some(nil)
 
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
@@ -121,4 +106,5 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
             XCTAssertTrue(conversation.isForcedReadOnly)
         }
     }
+
 }

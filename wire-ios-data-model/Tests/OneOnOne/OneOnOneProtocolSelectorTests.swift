@@ -37,16 +37,19 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
 
     func test_GetProtocolForUser_MLS() async throws {
         // Given
-        let (selfUser, otherUser) = await createUsersUsingProtocols(
-            self: [.proteus, .mls],
-            other: [.proteus, .mls],
-            in: uiMOC
-        )
+        let userID = QualifiedID.random()
+
+        await uiMOC.perform { [self] in
+            let user = createUser(id: userID, in: uiMOC)
+            user.supportedProtocols = [.proteus, .mls]
+
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            selfUser.supportedProtocols = [.proteus, .mls]
+        }
 
         // When
-        let result = await sut.getProtocolInsersectionBetween(
-            selfUser: selfUser,
-            otherUser: otherUser,
+        let result = await sut.getProtocolForUser(
+            with: userID,
             in: uiMOC
         )
 
@@ -58,16 +61,17 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
         // Given
         let userID = QualifiedID.random()
 
-        let (selfUser, otherUser) = await createUsersUsingProtocols(
-            self: [.proteus, .mls],
-            other: [.proteus],
-            in: uiMOC
-        )
+        await uiMOC.perform { [self] in
+            let user = createUser(id: userID, in: uiMOC)
+            user.supportedProtocols = [.proteus]
+
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            selfUser.supportedProtocols = [.proteus, .mls]
+        }
 
         // When
-        let result = await sut.getProtocolInsersectionBetween(
-            selfUser: selfUser,
-            otherUser: otherUser,
+        let result = await sut.getProtocolForUser(
+            with: userID,
             in: uiMOC
         )
 
@@ -77,16 +81,19 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
 
     func test_GetProtocolForUser_NoCommonProtocol() async throws {
         // Given
-        let (selfUser, otherUser) = await createUsersUsingProtocols(
-            self: [.mls],
-            other: [.proteus],
-            in: uiMOC
-        )
+        let userID = QualifiedID.random()
+
+        await uiMOC.perform { [self] in
+            let user = createUser(id: userID, in: uiMOC)
+            user.supportedProtocols = [.proteus]
+
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            selfUser.supportedProtocols = [.mls]
+        }
 
         // When
-        let result = await sut.getProtocolInsersectionBetween(
-            selfUser: selfUser,
-            otherUser: otherUser,
+        let result = await sut.getProtocolForUser(
+            with: userID,
             in: uiMOC
         )
 
@@ -94,19 +101,4 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
         XCTAssertNil(result)
     }
 
-    private func createUsersUsingProtocols(
-        self selfProtocols: Set<MessageProtocol>,
-        other otherProtocols: Set<MessageProtocol>,
-        in context: NSManagedObjectContext
-    ) async -> (selfUser: ZMUser, otherUser: ZMUser) {
-        await context.perform {
-            let otherUser = self.createUser(id: .random(), in: context)
-            otherUser.supportedProtocols = otherProtocols
-
-            let selfUser = ZMUser.selfUser(in: context)
-            selfUser.supportedProtocols = selfProtocols
-
-            return (selfUser, otherUser)
-        }
-    }
 }

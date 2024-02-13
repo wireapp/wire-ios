@@ -96,7 +96,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with otherUser: ZMUser,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("resolving one on one conversation with user")
+        WireLogger.conversation.debug("resolving one on one with user: \(String(describing: otherUser.remoteIdentifier)) on domain: \(String(describing: otherUser.domain))")
 
         let selfUser = await context.perform { ZMUser(context: context) }
 
