@@ -25,7 +25,7 @@ typealias ZiphyPaginatedFetchBlock = (_ offset: Int) -> CancelableTask?
  * An object that handles pagination of Giphy requests.
  */
 
-class ZiphyPaginationController {
+final class ZiphyPaginationController {
 
     var ziphs: [Ziph] = []
     var offset = 0

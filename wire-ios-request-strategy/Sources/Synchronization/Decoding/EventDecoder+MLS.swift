@@ -24,14 +24,15 @@ extension EventDecoder {
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext
     ) async -> [ZMUpdateEvent] {
-        Logging.mls.info("decrypting mls message")
+        WireLogger.mls.info("decrypting mls message")
 
         guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
             WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
             fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
-        guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
+        let decoder = EventPayloadDecoder()
+        guard let payload = try? decoder.decode(Payload.UpdateConversationMLSMessageAdd.self, from: updateEvent.payload) else {
             WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
             return []
         }
@@ -96,7 +97,7 @@ extension EventDecoder {
             }
 
         } catch {
-            Logging.mls.warn("failed to decrypt mls message: \(String(describing: error))")
+            WireLogger.mls.warn("failed to decrypt mls message: \(String(describing: error))")
             return []
         }
     }

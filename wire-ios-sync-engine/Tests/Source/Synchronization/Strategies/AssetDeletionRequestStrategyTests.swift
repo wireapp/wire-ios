@@ -122,7 +122,7 @@ extension AssetDeletionRequestStrategyTests {
             expectedPath = "/assets/v3/\(identifier)"
         case .v1:
             expectedPath = "/v1/assets/v3/\(identifier)"
-        case .v2, .v3, .v4, .v5:
+        case .v2, .v3, .v4, .v5, .v6:
             expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
         }
         XCTAssertNotNil(request)

@@ -134,7 +134,7 @@ public class MessageSender: MessageSenderInterface {
 
         do {
             return switch messageProtocol {
-            case .proteus:
+            case .proteus, .mixed:
                 try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
             case .mls:
                 try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
@@ -180,9 +180,9 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) async {
-        await context.perform {
+        await context.perform { // swiftlint:disable todo_requires_jira_link
             message.delivered(with: response) // FIXME: jacob refactor to not use raw response
-        }
+        } // swiftlint:enable todo_requires_jira_link
         await proteusPayloadProcessor.updateClientsChanges(
             from: messageSendingStatus,
             for: message
@@ -210,7 +210,7 @@ public class MessageSender: MessageSenderInterface {
                 if await context.perform({ message.isExpired }) {
                     throw MessageSendError.messageExpired
                 } else {
-                    return Set() // FIXME: [jacob] it's dangerous to retry indefinitely like this WPB-5454
+                    return Set() // FIXME: [WPB-5454] it's dangerous to retry indefinitely like this - [jacob]
                 }
             } else {
                 throw failure

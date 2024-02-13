@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireRequestStrategySupport
 import XCTest
 
 final class SessionEstablisherTests: MessagingTestBase {
@@ -31,7 +32,7 @@ final class SessionEstablisherTests: MessagingTestBase {
 
         // then
         await assertItThrows(error: networkError) {
-            try await sessionEstablisher.establishSession(with: Set(arrayLiteral: clientID), apiVersion: .v0)
+            try await sessionEstablisher.establishSession(with: [clientID], apiVersion: .v0)
         }
     }
 
@@ -47,7 +48,7 @@ final class SessionEstablisherTests: MessagingTestBase {
 
         // then
         await assertItThrows(error: SessionEstablisherError.missingSelfClient) {
-            try await sessionEstablisher.establishSession(with: Set(arrayLiteral: clientID), apiVersion: .v0)
+            try await sessionEstablisher.establishSession(with: [clientID], apiVersion: .v0)
         }
     }
 
@@ -60,10 +61,10 @@ final class SessionEstablisherTests: MessagingTestBase {
             .arrange()
 
         // when
-        try await sessionEstablisher.establishSession(with: Set(arrayLiteral: clientID), apiVersion: .v0)
+        try await sessionEstablisher.establishSession(with: [clientID], apiVersion: .v0)
 
         // then
-        XCTAssertEqual([Set(arrayLiteral: clientID)], arrangement.prekeyApi.fetchPrekeysFor_Invocations)
+        XCTAssertEqual([[clientID]], arrangement.prekeyApi.fetchPrekeysFor_Invocations)
     }
 
     func testThatPrekeysAreFetchedInBatches_whenEstablishingSession() async throws {
@@ -93,7 +94,7 @@ final class SessionEstablisherTests: MessagingTestBase {
             .arrange()
 
         // when
-        try await sessionEstablisher.establishSession(with: Set(arrayLiteral: Arrangement.Scaffolding.clientID), apiVersion: .v0)
+        try await sessionEstablisher.establishSession(with: [Arrangement.Scaffolding.clientID], apiVersion: .v0)
 
         // then
         XCTAssertEqual(1, arrangement.processor.establishSessionsFromWithContext_Invocations.count)
@@ -119,7 +120,7 @@ final class SessionEstablisherTests: MessagingTestBase {
             apiProvider.prekeyAPIApiVersion_MockValue = prekeyApi
         }
 
-        func withFetchPrekeyAPI(returning result: Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError>) -> Arrangement {
+        func withFetchPrekeyAPI(returning result: Result<Payload.PrekeyByQualifiedUserID, NetworkError>) -> Arrangement {
             switch result {
             case.success(let payload):
                 prekeyApi.fetchPrekeysFor_MockValue = payload

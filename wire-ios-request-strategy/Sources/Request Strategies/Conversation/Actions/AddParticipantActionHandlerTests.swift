@@ -16,15 +16,18 @@
 //
 
 import XCTest
-@testable import WireRequestStrategy
 
-class AddParticipantActionHandlerTests: MessagingTestBase {
+@testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
+
+final class AddParticipantActionHandlerTests: MessagingTestBase {
 
     typealias ErrorResponse = AddParticipantActionHandler.ErrorResponse
 
     var sut: AddParticipantActionHandler!
     var user: ZMUser!
     var conversation: ZMConversation!
+    var mockConversationService: MockConversationServiceInterface!
 
     override func setUp() {
         super.setUp()
@@ -44,23 +47,26 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             self.conversation = conversation
         }
 
-        let mockConversationService = MockConversationServiceInterface()
-        mockConversationService.syncConversationQualifiedID_MockMethod = { _ in
+        mockConversationService = MockConversationServiceInterface()
 
+        mockConversationService.syncConversationQualifiedID_MockMethod = { _ in }
+        mockConversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
+            completion()
         }
 
         sut = AddParticipantActionHandler(
             context: syncMOC,
             eventProcessor: ConversationEventProcessor(
                 context: syncMOC,
-                conversationService: mockConversationService
+                conversationService: mockConversationService,
+                mlsEventProcessor: MockMLSEventProcessing()
             )
         )
     }
 
     override func tearDown() {
         sut = nil
-
+        mockConversationService = nil
         super.tearDown()
     }
 

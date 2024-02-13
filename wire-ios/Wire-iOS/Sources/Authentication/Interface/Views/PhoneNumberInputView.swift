@@ -32,7 +32,7 @@ protocol PhoneNumberInputViewDelegate: AnyObject {
  * A view providing an input field for phone numbers and a button for choosing the country.
  */
 
-class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDelegate, TextContainer {
+final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDelegate, TextContainer {
 
     typealias RegistrationEnterPhoneNumber = L10n.Localizable.Registration.EnterPhoneNumber
 
@@ -154,7 +154,9 @@ class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDele
     }
 
     private func configureConstraints() {
-        [inputStack, countryPickerButton, loginButton].prepareForLayout()
+        [inputStack, countryPickerButton, loginButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             // countryPickerStack

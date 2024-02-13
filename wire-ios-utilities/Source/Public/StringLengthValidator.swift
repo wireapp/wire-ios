@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers open class StringLengthValidator: NSObject {
+@objcMembers
+open class StringLengthValidator: NSObject {
 
     private static let controlSet: CharacterSet = {
         var controlSet = CharacterSet.controlCharacters
@@ -26,7 +27,7 @@ import Foundation
         return controlSet
     }()
 
-    public class StringLengthError: NSError {
+    public final class StringLengthError: NSError {
         static let tooShort = StringLengthError(domain: ZMObjectValidationErrorDomain,
                                                 code: ZMManagedObjectValidationErrorCode.tooShort.rawValue,
                                                 userInfo: nil)

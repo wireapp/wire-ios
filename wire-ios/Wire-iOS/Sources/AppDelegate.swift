@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// Test CI: modify this line to run ci tests, sometimes it's the easiest way.
+
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
@@ -38,7 +40,7 @@ extension Notification.Name {
 private let zmLog = ZMSLog(tag: "AppDelegate")
 private let pushLog = ZMSLog(tag: "Push")
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Private Property
 
@@ -112,9 +114,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = Settings.shared
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
+
         zmLog.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
         DatadogWrapper.shared?.startMonitoring()
         DatadogWrapper.shared?.log(level: .info, message: "start app")
+
         // Initial log line to indicate the client version and build
         zmLog.safePublic(SanitizedString(stringLiteral: Bundle.main.appInfo.safeForLoggingDescription))
 
@@ -302,7 +306,8 @@ private extension AppDelegate {
             callKitManager: voIPPushManager.callKitManager,
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
-            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+            deleteUserLogs: LogFileDestination.deleteAllLogs
         )
 
         voIPPushManager.delegate = sessionManager

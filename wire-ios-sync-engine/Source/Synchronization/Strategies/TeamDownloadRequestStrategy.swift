@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -144,7 +144,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         switch event.type {
         case .teamCreate: createTeam(with: event)
         case .teamDelete: deleteTeam(with: event)
-        case .teamUpdate: updateTeam(with: event)
         case .teamMemberLeave: processRemovedMember(with: event)
         case .teamMemberUpdate: processUpdatedMember(with: event)
         default: break
@@ -162,17 +161,10 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         deleteAccount()
     }
 
-    private func updateTeam(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let existingTeam = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-
-        TeamUpdateEventPayload(data)?.updateTeam(existingTeam, in: managedObjectContext)
-    }
-
     private func processRemovedMember(with event: ZMUpdateEvent) {
         guard let identifier = event.teamId, let data = event.dataPayload else { return }
         guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
+        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
         guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else { return }
         if let member = user.membership {
             if user.isSelfUser {
@@ -188,7 +180,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
     private func processUpdatedMember(with event: ZMUpdateEvent) {
         guard nil != event.teamId, let data = event.dataPayload else { return }
-        guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
+        guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
         guard let member = Member.fetch(with: userId, in: managedObjectContext) else { return }
         member.needsToBeUpdatedFromBackend = true
     }
@@ -209,7 +201,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             return TeamDownloadRequestFactory.getTeamsRequest(apiVersion: apiVersion)
-        case .v4, .v5:
+        case .v4, .v5, .v6:
             guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
                 syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
                 return nil
@@ -235,7 +227,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
             syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
 
-        case .v4, .v5:
+        case .v4, .v5, .v6:
             guard
                 let rawData = response.rawData,
                 let teamPayload = TeamPayload(rawData)
@@ -282,7 +274,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 fileprivate extension ZMUpdateEvent {
 
     var teamId: UUID? {
-        return(payload[TeamEventPayloadKey.team.rawValue] as? String).flatMap(UUID.init)
+        (payload[TeamEventPayloadKey.team.rawValue] as? String).flatMap(UUID.init(transportString:))
     }
 
     var dataPayload: [String: Any]? {

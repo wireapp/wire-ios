@@ -67,7 +67,7 @@ class ZMConversationTests_Labels: ZMConversationTestsBase {
         sut.moveToFolder(folder)
 
         // THEN
-        XCTAssertEqual(sut.labels, Set(arrayLiteral: folder))
+        XCTAssertEqual(sut.labels, [folder])
     }
 
     func testThatConversationIsRemovedFromPreviousFolder_WhenMovedToFolder() {
@@ -81,7 +81,7 @@ class ZMConversationTests_Labels: ZMConversationTestsBase {
         sut.moveToFolder(folder2)
 
         // THEN
-        XCTAssertEqual(sut.labels, Set(arrayLiteral: folder2))
+        XCTAssertEqual(sut.labels, [folder2])
     }
 
     func testThatConversationIsNotRemovedFromFavorites_WhenMovedToFolder() {

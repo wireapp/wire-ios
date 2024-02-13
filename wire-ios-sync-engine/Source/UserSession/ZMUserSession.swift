@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSystem
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -53,9 +54,7 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
     & UserSessionAppLockDelegate
 
 @objcMembers
-public class ZMUserSession: NSObject {
-
-    private static let logger = Logger(subsystem: "VoIP Push", category: "ZMUserSession")
+public final class ZMUserSession: NSObject {
 
     private let appVersion: String
     private var tokens: [Any] = []
@@ -104,6 +103,7 @@ public class ZMUserSession: NSObject {
     lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     var mlsService: MLSServiceInterface
     var proteusProvider: ProteusProviding!
+    let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     public var syncStatus: SyncStatusProtocol {
         return applicationStatusDirectory.syncStatus
@@ -260,6 +260,10 @@ public class ZMUserSession: NSObject {
                                         proteusProvider: proteusProvider)
     }()
 
+    public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
+        ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
+    }()
+
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
@@ -280,6 +284,7 @@ public class ZMUserSession: NSObject {
         earService: EARServiceInterface? = nil,
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
         sharedUserDefaults: UserDefaults
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
@@ -341,6 +346,11 @@ public class ZMUserSession: NSObject {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
+        self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
+            context: coreDataStack.syncContext,
+            userID: userId
+        )
+
         super.init()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
@@ -369,7 +379,7 @@ public class ZMUserSession: NSObject {
                                                        contextProvider: self,
                                                        callNotificationStyleProvider: self)
 
-            // FIXME: [jacob] inject instead of storing on context WPB-5827
+            // FIXME: [WPB-5827] inject instead of storing on context - [jacob]
             self.syncManagedObjectContext.proteusService = self.proteusService
             self.syncManagedObjectContext.mlsService = self.mlsService
 
@@ -392,6 +402,23 @@ public class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+        updateSupportedProtocolsIfNeeded()
+    }
+
+    private func updateSupportedProtocolsIfNeeded() {
+        let recurringAction = RecurringAction(
+            id: "\(account.userIdentifier).updateSupportedProtocols",
+            interval: .oneDay
+        ) { [weak self] in
+            guard let context = self?.syncContext else { return }
+
+            context.perform {
+                let service = SupportedProtocolsService(context: context)
+                service.updateSupportedProtocols()
+            }
+        }
+
+        recurringActionService.registerAction(recurringAction)
     }
 
     private func configureTransportSession() {
@@ -436,7 +463,8 @@ public class ZMUserSession: NSObject {
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: self.proteusProvider,
-            mlsService: mlsService
+            mlsService: mlsService,
+            coreCryptoProvider: coreCryptoProvider
         )
     }
 
@@ -480,8 +508,10 @@ public class ZMUserSession: NSObject {
     }
 
     private func configureRecurringActions() {
-        recurringActionService.registerAction(refreshUsersMissingMetadata())
-        recurringActionService.registerAction(refreshConversationsMissingMetadata())
+        recurringActionService.registerAction(refreshUsersMissingMetadataAction)
+        recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
+        recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
+        recurringActionService.registerAction(refreshTeamMetadataAction)
     }
 
     func startRequestLoopTracker() {
@@ -530,6 +560,7 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
+        // TODO: [WPB-6198] refactor out - [jacob]
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
@@ -597,7 +628,7 @@ public class ZMUserSession: NSObject {
             let group = ZMSDispatchGroup(label: "enqueueDelayedChanges")
             self?.managedObjectContext.enqueueDelayedSave(with: group)
 
-            group?.notify(on: DispatchQueue.global(qos: .background), block: {
+            group.notify(on: DispatchQueue.global(qos: .background), block: {
                 self?.managedObjectContext.performGroupedBlock {
                     completionHandler?()
                 }
@@ -651,8 +682,9 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
 }
-
+// swiftlint:disable todo_requires_jira_link
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
+// swiftlint:enable todo_requires_jira_link
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         await updateEventProcessor?.bufferEvents(events)
@@ -696,7 +728,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didStartQuickSync() {
-        Self.logger.trace("did start quick sync")
+        WireLogger.sync.debug("did start quick sync")
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
@@ -704,7 +736,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didFinishQuickSync() {
-        Self.logger.trace("did finish quick sync")
+        WireLogger.sync.debug("did finish quick sync")
         processEvents()
 
         NotificationInContext(
@@ -721,13 +753,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
                     // rework implementation of following method - WPB-6053
                     try await mlsService.performPendingJoins()
                 } catch {
-                    Logging.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
+                    WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
                 }
 
                 do {
                     try await mlsService.commitPendingProposals()
                 } catch {
-                    Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
+                    WireLogger.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
                 }
                 await mlsService.uploadKeyPackagesIfNeeded()
                 await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
@@ -784,25 +816,38 @@ extension ZMUserSession: ZMSyncStateDelegate {
                     completionHandler()
                 }
             } catch {
-                Logging.mls.error("Failed to process pending call events: \(String(reflecting: error))")
+                WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }
 
-    // // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
+    // swiftlint:disable todo_requires_jira_link
+    // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
+    // swiftlint:enable todo_requires_jira_link
     private func commitPendingProposalsIfNeeded() {
         Task {
             do {
                 try await mlsService.commitPendingProposals()
             } catch {
-                Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+                WireLogger.mls.error("Failed to commit pending proposals: \(String(describing: error))")
             }
         }
     }
 
     private func fetchFeatureConfigs() {
-        let action = GetFeatureConfigsAction { result in
-            if case let .failure(reason) = result {
+        let action = GetFeatureConfigsAction { [weak self] result in
+            switch result {
+            case .success:
+                guard let context = self?.syncContext else {
+                    return
+                }
+
+                context.perform {
+                    let service = SupportedProtocolsService(context: context)
+                    service.updateSupportedProtocols()
+                }
+
+            case .failure(let reason):
                 Logging.network.error("Failed to fetch feature configs: \(String(describing: reason))")
             }
         }
@@ -810,15 +855,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         action.send(in: syncContext.notificationContext)
     }
 
-    public func didRegisterMLSClient(_ userClient: UserClient) {
-        Task {
-            await mlsService.uploadKeyPackagesIfNeeded()
-        }
-    }
-
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
-        createMLSClientIfNeeded()
-
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier

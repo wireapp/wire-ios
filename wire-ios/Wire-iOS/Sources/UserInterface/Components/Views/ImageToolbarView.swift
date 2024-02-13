@@ -126,14 +126,16 @@ final class ImageToolbarView: UIView {
         createButtonConstraints()
     }
 
-    /// TODO: Bill - use stack view to hold the buttons?
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: Bill - use stack view to hold the buttons?
+    //  swiftlint:enable todo_requires_jira_link
     private func createButtonConstraints() {
         let spacing: CGFloat = 16
 
         var constraints: [NSLayoutConstraint] = []
 
         if let firstButton = buttons.first {
-            [firstButton].prepareForLayout()
+            firstButton.translatesAutoresizingMaskIntoConstraints = false
             constraints.append(
                 firstButton.leftAnchor.constraint(equalTo: buttonContainer.leftAnchor, constant: spacing)
             )
@@ -159,7 +161,7 @@ final class ImageToolbarView: UIView {
             let previousButton = buttons[i-1]
             let button = buttons[i]
 
-            [button, previousButton].prepareForLayout()
+            [button, previousButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             constraints.append(
                 button.leftAnchor.constraint(equalTo: previousButton.rightAnchor, constant: spacing * 2)
             )

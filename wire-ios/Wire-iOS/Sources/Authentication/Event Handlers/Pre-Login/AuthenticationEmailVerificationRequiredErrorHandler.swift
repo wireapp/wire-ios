@@ -23,7 +23,7 @@ import WireSyncEngine
  * Handles the event that informs the app when the email login verification code is available.
  */
 
-class AuthenticationEmailVerificationRequiredErrorHandler: AuthenticationEventHandler {
+final class AuthenticationEmailVerificationRequiredErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

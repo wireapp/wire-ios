@@ -29,7 +29,7 @@ extension UIImageView {
     }
 }
 
-class UserCell: SeparatorCollectionViewCell, SectionListCellType {
+final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Properties
 
@@ -198,14 +198,16 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         // iconStackView
         iconStackView = UIStackView(
-            arrangedSubviews: [videoIconView,
-                               microphoneIconView,
-                               userTypeIconView,
-                               verifiedIconView,
-                               connectButton,
-                               checkmarkIconView,
-                               accessoryIconView,
-                               connectingLabel]
+            arrangedSubviews: [
+                videoIconView,
+                microphoneIconView,
+                userTypeIconView,
+                verifiedIconView,
+                connectButton,
+                checkmarkIconView,
+                accessoryIconView,
+                connectingLabel
+            ]
         )
         iconStackView.spacing = 16
         iconStackView.axis = .horizontal

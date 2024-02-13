@@ -114,13 +114,14 @@ final class UserClientTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItTracksCorrectKeys() {
-        let expectedKeys = Set([ZMUserClientMarkedToDeleteKey,
-                                ZMUserClientNumberOfKeysRemainingKey,
-                                ZMUserClientMissingKey,
-                                ZMUserClientNeedsToUpdateSignalingKeysKey,
-                                ZMUserClientNeedsToUpdateCapabilitiesKey,
-                                UserClient.needsToUploadMLSPublicKeysKey
-                               ])
+        let expectedKeys = Set([
+            ZMUserClientMarkedToDeleteKey,
+            ZMUserClientNumberOfKeysRemainingKey,
+            ZMUserClientMissingKey,
+            ZMUserClientNeedsToUpdateSignalingKeysKey,
+            ZMUserClientNeedsToUpdateCapabilitiesKey,
+            UserClient.needsToUploadMLSPublicKeysKey
+        ])
 
         let client = UserClient.insertNewObject(in: self.uiMOC)
         XCTAssertEqual(client.keysTrackedForLocalModifications(), expectedKeys)
@@ -132,7 +133,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         let ignoredClient = client.ignoredClients.first!
 
-        client.trustClients(Set(arrayLiteral: ignoredClient))
+        client.trustClients([ignoredClient])
 
         XCTAssertFalse(client.ignoredClients.contains(ignoredClient))
         XCTAssertTrue(client.trustedClients.contains(ignoredClient))
@@ -144,7 +145,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         let trustedClient = client.trustedClients.first!
 
-        client.ignoreClients(Set(arrayLiteral: trustedClient))
+        client.ignoreClients([trustedClient])
 
         XCTAssertFalse(client.trustedClients.contains(trustedClient))
         XCTAssertTrue(client.ignoredClients.contains(trustedClient))
@@ -356,7 +357,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             XCTAssertEqual(conversation.allMessages.count, 2)
             if let message = conversation.lastMessage as? ZMSystemMessage {
                 XCTAssertEqual(message.systemMessageType, ZMSystemMessageType.conversationIsSecure)
-                XCTAssertEqual(message.users, Set(arrayLiteral: otherUser))
+                XCTAssertEqual(message.users, [otherUser])
             } else {
                 XCTFail("Did not insert systemMessage")
             }
@@ -510,7 +511,7 @@ extension UserClientTests {
         self.createSelfClient()
 
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        otherClient.remoteIdentifier = NSString.createAlphanumerical()
+        otherClient.remoteIdentifier = .randomRemoteIdentifier()
 
         // then
         XCTAssertFalse(otherClient.verified)
@@ -521,7 +522,7 @@ extension UserClientTests {
         let selfClient = self.createSelfClient()
 
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        otherClient.remoteIdentifier = NSString.createAlphanumerical()
+        otherClient.remoteIdentifier = .randomRemoteIdentifier()
 
         // when
         selfClient.trustClient(otherClient)
@@ -535,7 +536,7 @@ extension UserClientTests {
         let selfClient = createSelfClient()
 
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        otherClient.remoteIdentifier = NSString.createAlphanumerical()
+        otherClient.remoteIdentifier = .randomRemoteIdentifier()
 
         // when
         selfClient.ignoreClient(otherClient)
@@ -903,7 +904,9 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }
@@ -967,7 +970,9 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }

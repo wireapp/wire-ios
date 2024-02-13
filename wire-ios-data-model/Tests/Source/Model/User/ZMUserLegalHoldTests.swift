@@ -17,9 +17,21 @@
 //
 
 import XCTest
-import WireDataModel
+@testable import WireDataModel
 
 class ZMUserLegalHoldTests: ModelObjectsTests {
+
+    override func setUp() {
+        DeveloperFlag.storage = .temporary()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+        super.setUp()
+    }
+
+    override func tearDown() {
+        DeveloperFlag.storage = .standard
+        super.tearDown()
+    }
 
     func testThatLegalHoldStatusIsDisabled_ByDefault() {
         // GIVEN
@@ -187,7 +199,7 @@ extension UserClient {
     @discardableResult
     static func createMockLegalHoldSelfUserClient(in moc: NSManagedObjectContext) -> UserClient {
         let payload: [String: AnyObject] = [
-            "id": NSUUID().transportString() as NSString,
+            "id": UUID().transportString() as NSString,
             "type": DeviceType.legalHold.rawValue as NSString,
             "class": DeviceClass.legalHold.rawValue as NSString,
             "time": NSDate()
@@ -199,7 +211,7 @@ extension UserClient {
     @discardableResult
     static func createMockPhoneUserClient(in moc: NSManagedObjectContext) -> UserClient {
         let payload: [String: AnyObject] = [
-            "id": NSUUID().transportString() as NSString,
+            "id": UUID().transportString() as NSString,
             "type": DeviceType.permanent.rawValue as NSString,
             "class": DeviceClass.phone.rawValue as NSString,
             "time": NSDate()

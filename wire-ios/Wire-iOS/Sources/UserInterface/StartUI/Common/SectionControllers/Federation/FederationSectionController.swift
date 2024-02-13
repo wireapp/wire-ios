@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
-class FederationSectionController: SearchSectionController {
+final class FederationSectionController: SearchSectionController {
 
     var users = [ZMSearchUser]()
 

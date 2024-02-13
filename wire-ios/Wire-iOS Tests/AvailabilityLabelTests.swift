@@ -20,7 +20,7 @@ import XCTest
 import WireCommonComponents
 @testable import Wire
 
-class AvailabilityLabelTests: BaseSnapshotTestCase {
+final class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     // MARK: - List labels
 
@@ -42,7 +42,7 @@ class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     // MARK: - Helper Method
 
-    func createLabelForList(_ availability: AvailabilityKind) -> UILabel {
+    func createLabelForList(_ availability: Availability) -> UILabel {
         guard let user = ZMUser.selfUser() else { return UILabel() }
         user.availability = availability
         let attributedString = AvailabilityStringBuilder.string(for: user, with: .list)
@@ -73,7 +73,7 @@ class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     // MARK: - Helper Method
 
-    func createLabelForParticipants(_ availability: AvailabilityKind) -> UILabel {
+    func createLabelForParticipants(_ availability: Availability) -> UILabel {
         guard let user = ZMUser.selfUser() else { return UILabel() }
         user.availability = availability
         let attributedString = AvailabilityStringBuilder.string(for: user, with: .participants)

@@ -431,6 +431,14 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             self.conversation.remoteIdentifier = .create()
             self.conversation.lastModifiedDate = startDate
 
+            let user = ZMUser.insertNewObject(in: self.syncMOC)
+            user.remoteIdentifier = .create()
+            user.oneOnOneConversation = self.conversation
+
+            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            connection.to = user
+            connection.status = .accepted
+
             XCTAssertEqual(self.conversation.mutedMessageTypes, .all)
             XCTAssertFalse(self.conversation.isArchived)
 
@@ -442,6 +450,14 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             otherConvo?.userDefinedName = "Other"
             otherConvo?.lastServerTimeStamp = Date()
             otherConvo?.lastModifiedDate = startDate.addingTimeInterval(500)
+
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser.remoteIdentifier = .create()
+            otherUser.oneOnOneConversation = otherConvo
+
+            let otherConnection = ZMConnection.insertNewObject(in: self.syncMOC)
+            otherConnection.to = otherUser
+            otherConnection.status = .accepted
 
             self.syncMOC.saveOrRollback()
         }

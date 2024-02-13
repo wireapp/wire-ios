@@ -20,13 +20,13 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class MockBackupSource: BackupSource {
-    func backupActiveAccount(password: Password, completion: @escaping SessionManager.BackupResultClosure) {
+final class MockBackupSource: BackupSource {
+    func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void) { }
 
-    }
+    func clearPreviousBackups() { }
 }
 
-class BackupViewControllerTests: ZMSnapshotTestCase {
+final class BackupViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()

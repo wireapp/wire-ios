@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */; };
+		013404E42B5F162D00D2D2D5 /* LegacyLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013404E32B5F162D00D2D2D5 /* LegacyLogger.swift */; };
 		01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030C2A0CED010000CFF2 /* WireLogger.swift */; };
 		01CB030F2A0CED010000CFF2 /* Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030D2A0CED010000CFF2 /* Flow.swift */; };
 		096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1D1B67CEF700565001 /* ZMSLogging.m */; };
@@ -50,7 +52,7 @@
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
 		D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */; };
 		E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */; };
-		EEDC67192A1778D600201436 /* UserDefaults+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDC67182A1778D600201436 /* UserDefaults+Helpers.swift */; };
+		EEDC67192A1778D600201436 /* UserDefaults+Temporary.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */; };
 		F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */; };
 		F1670FB022A7C7D800BC6811 /* SanitizedStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1670FAF22A7C7D800BC6811 /* SanitizedStringTests.swift */; };
 		F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19E554422AA8748005C792D /* SafeForLoggingStringConvertible.swift */; };
@@ -67,6 +69,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregatedLogger.swift; sourceTree = "<group>"; };
+		013404E32B5F162D00D2D2D5 /* LegacyLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyLogger.swift; sourceTree = "<group>"; };
 		01CB030C2A0CED010000CFF2 /* WireLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WireLogger.swift; sourceTree = "<group>"; };
 		01CB030D2A0CED010000CFF2 /* Flow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flow.swift; sourceTree = "<group>"; };
 		092758691B70E68F00AD5A78 /* WireSystem.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireSystem.xcconfig; sourceTree = "<group>"; };
@@ -121,7 +125,7 @@
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
 		D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueHelperTests.swift; sourceTree = "<group>"; };
 		E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = ../Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
-		EEDC67182A1778D600201436 /* UserDefaults+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Helpers.swift"; sourceTree = "<group>"; };
+		EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Temporary.swift"; sourceTree = "<group>"; };
 		F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanitizedString.swift; sourceTree = "<group>"; };
 		F1670FAF22A7C7D800BC6811 /* SanitizedStringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanitizedStringTests.swift; sourceTree = "<group>"; };
 		F19E554422AA8748005C792D /* SafeForLoggingStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeForLoggingStringConvertible.swift; sourceTree = "<group>"; };
@@ -153,6 +157,8 @@
 				01CB030C2A0CED010000CFF2 /* WireLogger.swift */,
 				01CB030D2A0CED010000CFF2 /* Flow.swift */,
 				16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */,
+				013404E32B5F162D00D2D2D5 /* LegacyLogger.swift */,
+				013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */,
 			);
 			path = Logging;
 			sourceTree = "<group>";
@@ -225,7 +231,7 @@
 				54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */,
 				16962EDB20221F970069D88D /* ZMSLogNotifications.h */,
 				16962EDC20221F970069D88D /* ZMSLogNotifications.m */,
-				EEDC67182A1778D600201436 /* UserDefaults+Helpers.swift */,
+				EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -454,8 +460,9 @@
 				16BBA1F02AF2611000CDF38A /* SystemLogger.swift in Sources */,
 				54180BD91F459DCF0020D2BD /* MemoryReferenceDebugger.swift in Sources */,
 				54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */,
-				EEDC67192A1778D600201436 /* UserDefaults+Helpers.swift in Sources */,
+				EEDC67192A1778D600201436 /* UserDefaults+Temporary.swift in Sources */,
 				54C0CC411C9C7635000A9286 /* ZMSAsserts.m in Sources */,
+				013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */,
 				54F9BC4E1C48F55900BC09DB /* ZMSTestDetection.m in Sources */,
 				096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */,
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
@@ -463,6 +470,7 @@
 				59059B9C2B4DBA1D0087D1F1 /* DateProviding.swift in Sources */,
 				F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */,
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,
+				013404E42B5F162D00D2D2D5 /* LegacyLogger.swift in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,
 				54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */,
 				54D5736A1DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift in Sources */,

@@ -17,9 +17,10 @@
 //
 
 import Foundation
-import WireRequestStrategy
-import XCTest
 import WireDataModel
+import WireRequestStrategy
+import WireRequestStrategySupport
+import XCTest
 
 final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -263,7 +264,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         }
 
         // THEN
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }

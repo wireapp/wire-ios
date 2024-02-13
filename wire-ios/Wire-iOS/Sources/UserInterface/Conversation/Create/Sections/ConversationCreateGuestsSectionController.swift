@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class ConversationCreateGuestsSectionController: ConversationCreateSectionController {
+final class ConversationCreateGuestsSectionController: ConversationCreateSectionController {
 
     typealias Cell = ConversationCreateGuestsCell
 

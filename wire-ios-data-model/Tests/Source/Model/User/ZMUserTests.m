@@ -893,7 +893,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [user updateWithTransportData:payload authoritative:YES];
 
     // then
-    XCTAssertEqualObjects(user.remoteIdentifier, [payload[@"id"] UUID]);
+    XCTAssertEqualObjects(user.remoteIdentifier, [NSUUID uuidWithTransportString:payload[@"id"]]);
 }
 
 - (void)testThatItAssignsQualifiedIDIfTheUserDoesNotHaveOne
@@ -915,7 +915,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [user updateWithTransportData:payload authoritative:YES];
 
     // then
-    XCTAssertEqualObjects(user.remoteIdentifier, [qualifedIDPayload[@"id"] UUID]);
+    XCTAssertEqualObjects(user.remoteIdentifier, [NSUUID uuidWithTransportString:qualifedIDPayload[@"id"]]);
     XCTAssertEqualObjects(user.domain, qualifedIDPayload[@"domain"]);
 }
 
@@ -1244,14 +1244,17 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForSelfUser
 {
     // given
-    NSSet *expected = [NSSet setWithArray:@[@"accentColorValue",
-                                            @"emailAddress",
-                                            @"previewProfileAssetIdentifier",
-                                            @"completeProfileAssetIdentifier",
-                                            @"name",
-                                            @"phoneNumber",
-                                            @"availability",
-                                            @"readReceiptsEnabled"]];
+    NSSet *expected = [NSSet setWithArray:@[
+        @"accentColorValue",
+        @"emailAddress",
+        @"previewProfileAssetIdentifier",
+        @"completeProfileAssetIdentifier",
+        @"name",
+        @"phoneNumber",
+        @"availability",
+        @"readReceiptsEnabled",
+        @"supportedProtocols"
+    ]];
     
     // when
     ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
@@ -1483,9 +1486,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     connection.status = ZMConnectionStatusIgnored;
-    connection.conversation = oneToOne;
     connection.to = connectedUser;
-    
+    connectedUser.oneOnOneConversation = oneToOne;
+
     // then
     XCTAssertNil(unconnectedUser.oneToOneConversation);
     XCTAssertEqual(oneToOne, connectedUser.oneToOneConversation);
