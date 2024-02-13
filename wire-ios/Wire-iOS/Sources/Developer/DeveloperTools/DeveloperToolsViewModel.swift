@@ -253,23 +253,10 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
 
-        guard
-            let selfUser = selfUser,
-            let userName = selfUser.name,
-            let handle = selfUser.handle,
-            let teamId = selfUser.team?.remoteIdentifier,
-            let e2eiClientId = E2eIClientID(user: selfUser)
-        else {
-            return
-        }
-
         Task {
             do {
-                _ = try await e2eiCertificateUseCase?.invoke(e2eiClientId: e2eiClientId,
-                                                             userName: userName,
-                                                             userHandle: handle,
-                                                             team: teamId,
-                                                             authenticate: oauthUseCase.invoke)
+                _ = try await e2eiCertificateUseCase?.invoke(
+                    authenticate: oauthUseCase.invoke)
             } catch {
                 WireLogger.e2ei.error("failed to enroll e2ei: \(error)")
             }

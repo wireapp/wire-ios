@@ -22,8 +22,7 @@ import WireCoreCrypto
 public protocol E2eISetupServiceInterface {
 
     func registerTrustAnchor(_ trustAnchor: String) async throws
-
-    func setupEnrollment(userName: String, handle: String, team: UUID) async throws -> E2eiEnrollment
+    func setupEnrollment(userName: String, handle: String, teamId: UUID) async throws -> E2eiEnrollment
 
 }
 
@@ -53,9 +52,9 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         }
     }
 
-    public func setupEnrollment(userName: String, handle: String, team: UUID) async throws -> E2eiEnrollment {
+    public func setupEnrollment(userName: String, handle: String, teamId: UUID) async throws -> E2eiEnrollment {
         do {
-            return try await setupNewActivationOrRotate(userName: userName, handle: handle, teamId: team)
+            return try await setupNewActivationOrRotate(userName: userName, handle: handle, teamId: teamId)
         } catch {
             throw Failure.failedToSetupE2eIClient(error)
         }

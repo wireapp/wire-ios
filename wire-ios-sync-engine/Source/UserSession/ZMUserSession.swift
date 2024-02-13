@@ -295,7 +295,9 @@ public class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider
         )
 
-        return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
+        return EnrollE2eICertificateUseCase(
+            e2eiRepository: e2eiRepository,
+            context: syncContext)
     }()
 
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol =  {
