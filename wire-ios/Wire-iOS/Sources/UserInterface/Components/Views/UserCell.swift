@@ -338,6 +338,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     // MARK: - Update and configure methods
 
     private func updateTitleLabel() {
+        // TODO [WPB-765]: is long text properly truncated?
         titleLabel.attributedText = userStatus.title(
             color: SemanticColors.Label.textDefault,
             includeAvailabilityAndCertificationStatus: isSelfUserPartOfATeam,
