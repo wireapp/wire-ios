@@ -76,15 +76,19 @@ extension UIAlertController {
     }
 
     class func fromFeatureChangeWithActions(_ change: FeatureRepository.FeatureChange,
-                                            actionsHandler: FeatureChangeActions) -> UIAlertController? {
+                                            acknowledger: FeatureChangeAcknowledger,
+                                            actionsHandler: E2eINotificationActions) -> UIAlertController? {
         switch change {
-        case .e2eIEnabled:
+        case .e2eIEnabled(let gracePeriod):
             return alertForE2eIChangeWithActions { action in
+                acknowledger.acknowledgeChange(for: .e2ei)
                 switch action {
                 case .getCertificate:
                     actionsHandler.enrollCertificate()
                 case .remindLater:
-                    actionsHandler.postponeReminder()
+                    Task {
+                        await actionsHandler.snoozeReminder()
+                    }
                 }
             }
 
