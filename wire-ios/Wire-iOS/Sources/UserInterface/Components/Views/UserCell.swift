@@ -24,10 +24,11 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Properties
 
+    // This property should replace the `user: UserType` property
+    // in the long run, but currently too much code depends on the
+    // actual `UserType/ZMUser` instance, like the `BadgeUserImageView`.
     var userStatus = UserStatus() {
-        didSet {
-            // TODO []
-        }
+        didSet { updateTitleLabel() }
     }
 
     typealias IconColors = SemanticColors.Icon
@@ -43,7 +44,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     let connectButton = IconButton()
     let accessoryIconView = UIImageView()
     let userTypeIconView = IconImageView()
-    let verifiedIconView = UIImageView() // TODO [WPB-765]: remove (attributed string will hold shields)
     let videoIconView = IconImageView()
 
     lazy var connectingLabel: DynamicFontLabel = {
@@ -110,7 +110,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         UIView.performWithoutAnimation {
             hidesSubtitle = false
             userTypeIconView.isHidden = true
-            verifiedIconView.isHidden = true
             videoIconView.isHidden = true
             microphoneIconView.isHidden = true
             connectingLabel.isHidden = true
@@ -158,13 +157,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         microphoneIconView.accessibilityIdentifier = nil
         microphoneIconView.isHidden = true
         microphoneIconView.set(size: .tiny, color: iconColor)
-
-        // verifiedIconView
-        verifiedIconView.image = WireStyleKit.imageOfShieldverified
-        verifiedIconView.translatesAutoresizingMaskIntoConstraints = false
-        verifiedIconView.contentMode = .center
-        verifiedIconView.accessibilityIdentifier = "img.shield"
-        verifiedIconView.isHidden = true
 
         // connectButton
         connectButton.setIcon(.plusCircled, size: .tiny, for: .normal)
@@ -301,9 +293,10 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             content += ", \(userType)"
         }
 
-        if !verifiedIconView.isHidden {
-            content += ", " + ClientsList.DeviceVerified.description
-        }
+        // TODO: add accessibility strings
+//        if !verifiedIconView.isHidden {
+//            content += ", " + ClientsList.DeviceVerified.description
+//        }
 
         if !microphoneIconView.isHidden {
             accessibilityTraits = .staticText
@@ -362,20 +355,24 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         titleLabel.attributedText = attributedTitle
     }
 
+    /// Updates the cell with the provided information.
+    /// - parameter userStatus: At the moment only the E2EI and Proteus verification statuses are considered from this value.
     func configure(
+        userStatus: UserStatus,
         user: UserType,
         isSelfUserPartOfATeam: Bool,
         subtitle overrideSubtitle: NSAttributedString? = nil,
         conversation: GroupDetailsConversationType? = nil
     ) {
+        self.user = user
+        self.userStatus = userStatus
+
         let subtitle: NSAttributedString?
         if overrideSubtitle == nil {
             subtitle = self.subtitle(for: user)
         } else {
             subtitle = overrideSubtitle
         }
-
-        self.user = user
 
         avatarImageView.user = user
         cachedSelfUserHasTeam = isSelfUserPartOfATeam
@@ -388,7 +385,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         )
         userTypeIconView.set(style: style)
 
-        verifiedIconView.isHidden = !user.isVerified
+        // verifiedIconView.isHidden = !user.isVerified
 
         if let subtitle = subtitle, !subtitle.string.isEmpty, !hidesSubtitle {
             subtitleLabel.isHidden = false
