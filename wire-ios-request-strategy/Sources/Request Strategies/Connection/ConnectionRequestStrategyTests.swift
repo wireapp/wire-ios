@@ -19,7 +19,7 @@ import XCTest
 import WireDataModelSupport
 @testable import WireRequestStrategy
 
-class ConnectionRequestStrategyTests: MessagingTestBase {
+final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     var sut: ConnectionRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!

@@ -1067,7 +1067,7 @@ extension ZMUserTests_Swift {
         }
 
         let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: uiMOC))
-        let proteusConversation = try XCTUnwrap(ZMConversation.fetch(with: proteusConversationID, in: uiMOC))
+        _ = try XCTUnwrap(ZMConversation.fetch(with: proteusConversationID, in: uiMOC))
 
         // Mock successful connection updates.
         _ = MockActionHandler<UpdateConnectionAction>(
@@ -1076,7 +1076,7 @@ extension ZMUserTests_Swift {
         )
 
         let oneOneOneResolver = MockOneOnOneResolverInterface()
-        oneOneOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in .noAction }
+        oneOneOneResolver.resolveOneOnOneUserConversationIn_MockValue = .noAction
 
         // Expect
         let didSucceed = XCTestExpectation(description: "didSucceed")
@@ -1092,9 +1092,9 @@ extension ZMUserTests_Swift {
 
         // Then
         wait(for: [didSucceed], timeout: 0.5)
-        XCTAssertEqual(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
-        let invocation = try XCTUnwrap(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.first)
-        XCTAssertEqual(invocation.userID, userID)
+        XCTAssertEqual(oneOneOneResolver.resolveOneOnOneUserConversationIn_Invocations.count, 1)
+        let invocation = try XCTUnwrap(oneOneOneResolver.resolveOneOnOneUserConversationIn_Invocations.first)
+        XCTAssertEqual(invocation.user, user)
     }
 
     func testThatBlockSendsAUpdateConnectionAction() {
