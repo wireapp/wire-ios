@@ -78,7 +78,7 @@ final class ProfileTitleView: UIView {
 
         let attributedTitle = user.nameIncludingAvailability(
             color: LabelColors.textDefault,
-            selfUserIsTeamMember: selfUser.isTeamMember
+            isAvailabilityAndCertificationStatusVisible: selfUser.isTeamMember
         )
         titleLabel.attributedText = attributedTitle
         setupAccessibility()

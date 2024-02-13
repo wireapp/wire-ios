@@ -36,8 +36,8 @@ extension UserType {
     }
 
     // TODO [WPB-765]: what about accessibility in attributed strings including shield images?
-    func nameIncludingAvailability(color: UIColor, selfUserIsTeamMember: Bool) -> NSAttributedString? {
-        if selfUserIsTeamMember {
+    func nameIncludingAvailability(color: UIColor, isAvailabilityAndCertificationStatusVisible: Bool) -> NSAttributedString? {
+        if isAvailabilityAndCertificationStatusVisible {
             return AvailabilityStringBuilder.string(for: self, with: .list, color: color)
         } else if let name = name {
             return .init(string: name, attributes: [.foregroundColor: color])

@@ -352,7 +352,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
         var attributedTitle = user.nameIncludingAvailability(
             color: SemanticColors.Label.textDefault,
-            selfUserIsTeamMember: selfUser.isTeamMember
+            isAvailabilityAndCertificationStatusVisible: selfUser.isTeamMember
         )
         if user.isSelfUser, let title = attributedTitle {
             attributedTitle = title + L10n.Localizable.UserCell.Title.youSuffix
