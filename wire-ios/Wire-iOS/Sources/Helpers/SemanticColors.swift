@@ -206,6 +206,10 @@ public enum SemanticColors {
         static let reactionBorderSelected = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
         static let reactionBackgroundSelected = UIColor(light: Asset.Colors.blue50Light, dark: Asset.Colors.blue800Dark)
 
+        static let popUpIconShadowSelected = UIColor { traits in
+            traits.userInterfaceStyle == .dark ? UIColor.black : UIColor.black.withAlphaComponent(24)
+        }
+
         /// Calling buttons
         static let backgroundCallingNormal = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray90)
         static let backgroundCallingSelected = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)

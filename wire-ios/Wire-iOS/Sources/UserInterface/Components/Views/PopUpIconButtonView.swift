@@ -88,7 +88,7 @@ class PopUpIconButtonView: UIView {
         context.saveGState()
 
         // overlay shadow
-        let shadowColor = UIColor.from(scheme: .popUpButtonOverlayShadow).cgColor
+        let shadowColor = SemanticColors.Button.popUpIconShadowSelected.cgColor
         let offset = CGSize(width: 0.0, height: 2.0)
         let blurRadius: CGFloat = 4.0
         context.setShadow(offset: offset, blur: blurRadius, color: shadowColor)
