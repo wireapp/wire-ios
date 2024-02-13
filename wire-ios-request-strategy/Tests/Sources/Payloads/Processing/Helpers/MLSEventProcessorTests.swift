@@ -108,16 +108,12 @@ class MLSEventProcessorTests: MessagingTestBase {
         // Given
         let message = "welcome message"
 
-        let otherUserID = QualifiedID(
-            uuid: .create(),
-            domain: qualifiedID.domain
-        )
-
-        await syncMOC.perform {
+        let otherUser = await syncMOC.perform {
             self.conversation.mlsStatus = .pendingJoin
             self.conversation.conversationType = .oneOnOne
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
+            let otherUserID = QualifiedID(uuid: .create(), domain: self.qualifiedID.domain)
             let otherUser = self.createUser()
             otherUser.remoteIdentifier = otherUserID.uuid
             otherUser.domain = otherUserID.domain
@@ -126,10 +122,12 @@ class MLSEventProcessorTests: MessagingTestBase {
                 user: otherUser,
                 role: nil
             )
+
+            return otherUser
         }
 
         // Mock
-        oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in .noAction }
+        oneOnOneResolverMock.resolveOneOnOneUserConversationIn_MockValue = .noAction
 
         // When
         await sut.process(
@@ -145,10 +143,10 @@ class MLSEventProcessorTests: MessagingTestBase {
         XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
         XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
         XCTAssertEqual(conversationServiceMock.syncConversationQualifiedID_Invocations, [qualifiedID])
-        XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.count, 1)
-        XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.first?.userID, otherUserID)
+        XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneUserConversationIn_Invocations.count, 1)
 
         await syncMOC.perform {
+            XCTAssertEqual(self.oneOnOneResolverMock.resolveOneOnOneUserConversationIn_Invocations.first?.user, otherUser)
             XCTAssertEqual(self.conversation.mlsStatus, .ready)
         }
     }

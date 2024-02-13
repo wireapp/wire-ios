@@ -196,7 +196,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         guard let user else { return }
 
         do {
-            try await oneOneOneResolver.resolveOneOnOneConversation(with: user, in: context)
+            try await oneOneOneResolver.resolveOneOnOneUserConversation(user, in: context)
             WireLogger.mls.debug("successfully resolved one on one conversation")
         } catch {
             WireLogger.mls.warn("failed to resolve one on one conversation: \(error)")
