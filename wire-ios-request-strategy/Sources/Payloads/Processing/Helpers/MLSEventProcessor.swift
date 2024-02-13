@@ -180,30 +180,23 @@ public class MLSEventProcessor: MLSEventProcessing {
     ) async {
         WireLogger.mls.debug("resolving one on one conversation")
 
-        let userID: QualifiedID? = await context.perform {
+        let user: ZMUser? = await context.perform {
             guard conversation.conversationType == .oneOnOne else {
                 return nil
             }
 
-            guard
-                let otherUser = conversation.localParticipantsExcludingSelf.first,
-                let otherUserID = otherUser.remoteIdentifier,
-                let otherUserDomain = otherUser.domain ?? BackendInfo.domain
-            else {
-                WireLogger.mls.warn("failed to resolve one on one conversation: can not get other user id")
+            guard let otherUser = conversation.localParticipantsExcludingSelf.first else {
+                WireLogger.mls.warn("failed to resolve one on one conversation: can not get other user")
                 return nil
             }
 
-            return QualifiedID(
-                uuid: otherUserID,
-                domain: otherUserDomain
-            )
+            return otherUser
         }
 
-        guard let userID else { return }
+        guard let user else { return }
 
         do {
-            try await oneOneOneResolver.resolveOneOnOneConversation(with: userID, in: context)
+            try await oneOneOneResolver.resolveOneOnOneConversation(with: user, in: context)
             WireLogger.mls.debug("successfully resolved one on one conversation")
         } catch {
             WireLogger.mls.warn("failed to resolve one on one conversation: \(error)")

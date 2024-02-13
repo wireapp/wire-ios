@@ -438,9 +438,7 @@ extension ZMUser: UserConnections {
         guard
             let context = managedObjectContext,
             let syncContext = context.zm_sync,
-            let connection,
-            let userID = remoteIdentifier,
-            let domain = domain ?? BackendInfo.domain
+            let connection
         else {
             completion(AcceptConnectionError.invalidState)
             return
@@ -452,10 +450,7 @@ extension ZMUser: UserConnections {
                 Task {
                     do {
                         let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
-                        try await resolver.resolveOneOnOneConversation(
-                            with: QualifiedID(uuid: userID, domain: domain),
-                            in: context
-                        )
+                        try await resolver.resolveOneOnOneUserConversation(self, in: context)
                         await MainActor.run {
                             completion(nil)
                         }
