@@ -85,7 +85,8 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private func createTitleView() -> UIView {
         if selfUser.isTeamMember {
-            let availabilityViewController = UserStatusViewController(user: selfUser, options: .header, settings: .shared)
+            let availabilityViewController = UserStatusViewController(options: .header, settings: .shared)
+            availabilityViewController.userStatus = .init(name: selfUser.name ?? "", availability: selfUser.availability)
             addChild(availabilityViewController)
             self.availabilityViewController = availabilityViewController
 

@@ -29,23 +29,13 @@ final class UserStatusViewController: UIViewController {
     private let options: UserStatusView.Options
     private let settings: Settings
 
-    public var userStatus: UserStatus {
+    public var userStatus = UserStatus() {
         didSet { (view as? UserStatusView)?.userStatus = userStatus }
     }
 
-    init(
-        user: UserType,
-        options: UserStatusView.Options,
-        settings: Settings
-    ) {
+    init(options: UserStatusView.Options, settings: Settings) {
         self.options = options
         self.settings = settings
-
-        userStatus = .init(
-            name: user.name ?? "",
-            availability: user.availability
-        )
-
         super.init(nibName: nil, bundle: nil)
     }
 

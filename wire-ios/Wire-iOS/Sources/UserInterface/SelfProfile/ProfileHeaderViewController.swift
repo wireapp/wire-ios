@@ -108,17 +108,19 @@ final class ProfileHeaderViewController: UIViewController {
         self.conversation = conversation
         self.options = options
         userStatusViewController = .init(
-            user: user,
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             settings: .shared
         )
+
         super.init(nibName: nil, bundle: nil)
+
         userStatusViewController.delegate = self
+        userStatusViewController.userStatus = .init(name: user.name ?? "", availability: user.availability)
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
