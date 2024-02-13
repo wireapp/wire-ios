@@ -58,7 +58,9 @@ final class ProfileTitleView: UIView {
     }
 
     private func createConstraints() {
-        [titleLabel, verifiedImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        verifiedImageView.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
           titleLabel.topAnchor.constraint(equalTo: topAnchor),
           titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -76,9 +78,9 @@ final class ProfileTitleView: UIView {
             return
         }
 
-        let attributedTitle = user.nameIncludingAvailability(
+        let attributedTitle = user.title(
             color: LabelColors.textDefault,
-            isAvailabilityAndCertificationStatusVisible: selfUser.isTeamMember
+            includeAvailabilityAndCertificationStatus: selfUser.isTeamMember
         )
         titleLabel.attributedText = attributedTitle
         setupAccessibility()
@@ -98,5 +100,4 @@ final class ProfileTitleView: UIView {
         accessibilityTraits = .header
         accessibilityLabel = titleLabel.text
     }
-
 }

@@ -59,10 +59,8 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The name of the team the user belongs to.
     var teamName: String? { get }
 
-    /// Returns `true` iff this users is in the same team as the `selfUser`.
-    @objc var isMemberOfSelfTeam: Bool { get }
-
     /// Whether this is the member of a team.
+    /// Rename this property eventually to `isMemberOfSelfTeam`.
     var isTeamMember: Bool { get }
 
     /// Returns `true` if the user is part of any team.

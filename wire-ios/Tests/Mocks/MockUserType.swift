@@ -129,7 +129,6 @@ class MockUserType: NSObject, UserType, Decodable {
         return teamIdentifier != nil
     }
 
-    var isMemberOfSelfTeam: Bool { isTeamMember }
     var hasTeam: Bool = false
 
     var hasDigitalSignatureEnabled: Bool = false

@@ -39,7 +39,7 @@ public struct UserStatus {
     public var isVerified: Bool
 
     public init(
-        accentColor: AccentColor = .default,
+        accentColor: AccentColor = .init(),
         avatar: Avatar = .text(""),
         handle: String = "",
         name: String = "",

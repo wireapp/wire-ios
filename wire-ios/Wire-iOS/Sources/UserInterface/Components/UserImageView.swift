@@ -153,7 +153,7 @@ class UserImageView: AvatarImageView, UserObserving {
     }
 
     /// Updates the image for the user.
-    fileprivate func updateUserImage() { // TODO []: make passive
+    fileprivate func updateUserImage() {
         guard
             let user = user,
             let userSession = userSession

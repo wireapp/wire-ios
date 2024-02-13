@@ -29,11 +29,13 @@ public enum AccentColor: Int16, CaseIterable {
     case turquoise
     case purple
 
-    public static var `default`: Self { .allCases[0] }
-
     /// Returns a random accent color.
     public static var random: AccentColor {
         return AccentColor.allSelectable().randomElement()!
+    }
+
+    public init() {
+        self = .allCases[0]
     }
 
     public init?(ZMAccentColor zmAccentColor: ZMAccentColor) {

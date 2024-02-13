@@ -132,8 +132,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         // That's why we use the traitCollectionDidChange(_:) method.
         checkmarkIconView.layer.borderColor = IconColors.borderCheckMark.cgColor
 
-        // TODO []: enable once the selfUser is not needed as argument
-        // updateTitleLabel()
+        updateTitleLabel()
     }
 
     override func setUp() {
@@ -344,15 +343,18 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Update and configure methods
 
-    // TODO [WPB-765]: why is selfUser needed? inject primitive value instead?
+    /// Caches the information if the self user has a team, because
+    /// when the title label is updated due to traitCollection changes,
+    /// we don't have a self-user instance.
+    private var cachedSelfUserHasTeam: Bool?
 
-    private func updateTitleLabel(selfUser: UserType? = nil) {
-        guard let user = user, let selfUser = selfUser else {
-            return
-        }
-        var attributedTitle = user.nameIncludingAvailability(
+    private func updateTitleLabel(selfUserHasTeam: Bool? = nil) {
+        guard let user, let selfUserHasTeam = cachedSelfUserHasTeam else { return }
+        cachedSelfUserHasTeam = selfUserHasTeam
+
+        var attributedTitle = user.title(
             color: SemanticColors.Label.textDefault,
-            isAvailabilityAndCertificationStatusVisible: selfUser.isTeamMember
+            includeAvailabilityAndCertificationStatus: selfUserHasTeam
         )
         if user.isSelfUser, let title = attributedTitle {
             attributedTitle = title + L10n.Localizable.UserCell.Title.youSuffix
@@ -376,9 +378,13 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         self.user = user
 
         avatarImageView.user = user
-        updateTitleLabel(selfUser: selfUser)
+        updateTitleLabel(selfUserHasTeam: selfUser.isTeamMember)
 
-        let style = UserTypeIconStyle(conversation: conversation, user: user, selfUser: selfUser)
+        let style = UserTypeIconStyle(
+            conversation: conversation,
+            user: user,
+            selfUserHasTeam: selfUser.isTeamMember
+        )
         userTypeIconView.set(style: style)
 
         verifiedIconView.isHidden = !user.isVerified
@@ -392,7 +398,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
         setupAccessibility()
     }
-
 }
 
 // MARK: - Subtitle

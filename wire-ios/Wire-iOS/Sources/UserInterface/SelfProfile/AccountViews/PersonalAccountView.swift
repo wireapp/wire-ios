@@ -50,7 +50,6 @@ final class PersonalAccountView: BaseAccountView, AccountView {
             return UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
         }
 
-        // TODO []: make passive
         if let userSession = ZMUserSession.shared() {
             conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.conversations(inUserSession: userSession), userSession: userSession)
             connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
