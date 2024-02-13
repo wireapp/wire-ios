@@ -29,11 +29,6 @@ public protocol OneOnOneResolverInterface {
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution
 
-    @discardableResult
-    func resolveOneOnOneUserConversation(
-        _ user: ZMUser,
-        in context: NSManagedObjectContext
-    ) async throws -> OneOnOneConversationResolution
 }
 
 public enum OneOnOneResolverError: Error {
@@ -79,7 +74,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
 
         for user in users {
-            try await resolveOneOnOneUserConversation(user, in: context)
+            try await resolveOneOnOneConversation(with: user, in: context)
         }
     }
 
@@ -93,12 +88,12 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return .noAction
         }
 
-        return try await resolveOneOnOneUserConversation(otherUser, in: context)
+        return try await resolveOneOnOneConversation(with: otherUser, in: context)
     }
 
     @discardableResult
-    public func resolveOneOnOneUserConversation(
-        _ otherUser: ZMUser,
+    func resolveOneOnOneConversation(
+        with otherUser: ZMUser,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("resolving one on one conversation with user")

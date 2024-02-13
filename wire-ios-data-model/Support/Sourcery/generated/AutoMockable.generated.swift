@@ -3650,30 +3650,6 @@ public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
         }
     }
 
-    // MARK: - resolveOneOnOneUserConversation
-
-    public var resolveOneOnOneUserConversationIn_Invocations: [(user: ZMUser, context: NSManagedObjectContext)] = []
-    public var resolveOneOnOneUserConversationIn_MockError: Error?
-    public var resolveOneOnOneUserConversationIn_MockMethod: ((ZMUser, NSManagedObjectContext) async throws -> OneOnOneConversationResolution)?
-    public var resolveOneOnOneUserConversationIn_MockValue: OneOnOneConversationResolution?
-
-    @discardableResult
-    public func resolveOneOnOneUserConversation(_ user: ZMUser, in context: NSManagedObjectContext) async throws -> OneOnOneConversationResolution {
-        resolveOneOnOneUserConversationIn_Invocations.append((user: user, context: context))
-
-        if let error = resolveOneOnOneUserConversationIn_MockError {
-            throw error
-        }
-
-        if let mock = resolveOneOnOneUserConversationIn_MockMethod {
-            return try await mock(user, context)
-        } else if let mock = resolveOneOnOneUserConversationIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `resolveOneOnOneUserConversationIn`")
-        }
-    }
-
 }
 
 public class MockProteusServiceInterface: ProteusServiceInterface {
