@@ -24,14 +24,15 @@ typealias ConversationCreatedBlock = (Result<ZMConversation, Error>) -> Void
 extension UserType {
 
     var pov: PointOfView {
-        isSelfUser ? .secondPerson : .thirdPerson
+        return self.isSelfUser ? .secondPerson : .thirdPerson
     }
 
     var isPendingApproval: Bool {
-        isPendingApprovalBySelfUser || isPendingApprovalByOtherUser
+        return isPendingApprovalBySelfUser || isPendingApprovalByOtherUser
     }
 
     var hasUntrustedClients: Bool {
-        allClients.contains { !$0.verified }
+        return allClients.contains { !$0.verified }
     }
+
 }

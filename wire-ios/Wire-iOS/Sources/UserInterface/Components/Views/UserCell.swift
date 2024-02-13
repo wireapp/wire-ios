@@ -24,9 +24,9 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Properties
 
-    // This property should replace the `user: UserType` property
-    // in the long run, but currently too much code depends on the
-    // actual `UserType/ZMUser` instance, like the `BadgeUserImageView`.
+    // This property should in the long run replace the `user: UserType` property
+    // provided in the `configure` method. Unfortunately, currently there is still code
+    // which depends on the actual `UserType/ZMUser` instance, like the `BadgeUserImageView`.
     var userStatus = UserStatus() {
         didSet { updateTitleLabel() }
     }
