@@ -96,7 +96,7 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
         if let user = SelfUser.provider?.providedSelfUser {
             cell.configure(
-                userStatus: .init(),
+                userStatus: .init(isVerified: participant.isVerified),
                 user: participant,
                 isSelfUserPartOfATeam: user.hasTeam,
                 conversation: conversation

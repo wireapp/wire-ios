@@ -261,7 +261,7 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
 
 - (BOOL)isTeamMember
 {
-    // `self.membership` is only set for users of the same team as the self user.
+    // Note: `self.membership` only has a value for users of the same team as the self user.
     return nil != self.membership;
 }
 

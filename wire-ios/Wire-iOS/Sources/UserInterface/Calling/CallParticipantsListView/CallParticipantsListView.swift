@@ -111,7 +111,9 @@ extension UserCell: CallParticipantsListCellConfigurable {
 
     func configure(with configuration: CallParticipantsListCellConfiguration,
                    selfUser: UserType) {
-        guard case let .callParticipant(user, callParticipantState, activeSpeakerState) = configuration else { preconditionFailure() }
+        guard case let .callParticipant(hashBoxUser, callParticipantState, activeSpeakerState) = configuration else { preconditionFailure() }
+
+        let user = hashBoxUser.value
         hidesSubtitle = true
         accessoryIconView.isHidden = true
         switch callParticipantState {
@@ -142,8 +144,11 @@ extension UserCell: CallParticipantsListCellConfigurable {
             unconnectedStateOverlay.isHidden = true
 
         }
-        configure(userStatus: .init(), user: user.value, isSelfUserPartOfATeam: selfUser.hasTeam)
+        configure(
+            userStatus: .init(isVerified: user.isVerified),
+            user: user,
+            isSelfUserPartOfATeam: selfUser.hasTeam
+        )
         backgroundColor = SemanticColors.View.backgroundDefaultWhite
     }
-
 }

@@ -51,7 +51,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The availability of the user
     var availability: Availability { get set }
 
-    /// Team membership for this user in the self team.
+    /// Team membership for this user.
     /// This property is `nil` even for users, who are part of a
     /// team, but not the same team as the self user.
     var membership: TeamMembership? { get }
@@ -59,7 +59,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The name of the team the user belongs to.
     var teamName: String? { get }
 
-    /// Whether this is the member of a team.
+    /// Whether this is the member of a team
     /// Rename this property eventually to `isMemberOfSelfTeam`.
     var isTeamMember: Bool { get }
 

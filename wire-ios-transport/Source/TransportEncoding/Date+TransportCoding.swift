@@ -26,7 +26,9 @@ private let iso8601DateWithFractionalSecondsFormatter = {
 }()
 
 /// Covers the cases where no fractional seconds are provided.
-/// This should not be required after bug [WPB-6529](https://wearezeta.atlassian.net/browse/WPB-6529) is fixed.
+/// Due to a bug in the backend timestamps without fractional seconds are received.
+/// [WPB-6529](https://wearezeta.atlassian.net/browse/WPB-6529)
+/// After the bug is fixed, this date formatter can be removed.
 private let iso8601DateFormatter = {
     let dateFormatter = ISO8601DateFormatter()
     dateFormatter.formatOptions = [.withInternetDateTime]

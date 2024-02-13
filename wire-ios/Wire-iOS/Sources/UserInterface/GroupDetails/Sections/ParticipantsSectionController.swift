@@ -147,7 +147,7 @@ extension UserCell: ParticipantsCellConfigurable {
         }
 
         configure(
-            userStatus: .init(),
+            userStatus: .init(isVerified: user.isVerified),
             user: user,
             isSelfUserPartOfATeam: selfUser.hasTeam,
             conversation: conversation as? ZMConversation

@@ -334,7 +334,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
             cell.configure(
-                userStatus: .init(),
+                userStatus: .init(isVerified: description.user.isVerified),
                 user: description.user,
                 isSelfUserPartOfATeam: selfUser.hasTeam,
                 subtitle: description.attributedSubtitle,

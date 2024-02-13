@@ -54,7 +54,7 @@ final class ServicesSectionController: GroupDetailsSectionController {
         let user = serviceUsers[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         if let selfUser = ZMUser.selfUser() {
-            cell.configure(userStatus: .init(), user: user, isSelfUserPartOfATeam: selfUser.hasTeam, conversation: conversation)
+            cell.configure(userStatus: .init(isVerified: user.isVerified), user: user, isSelfUserPartOfATeam: selfUser.hasTeam, conversation: conversation)
         } else {
             assertionFailure("ZMUser.selfUser() is nil")
         }

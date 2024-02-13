@@ -35,7 +35,7 @@ extension UserType {
         allClients.contains { !$0.verified }
     }
 
-    // TODO [WPB-765]: what about accessibility in attributed strings including shield images?
+    // TODO [WPB-765]: add support for showing verification status images (+ accessibility)
     func title(color: UIColor, includeAvailabilityAndCertificationStatus: Bool) -> NSAttributedString? {
         if includeAvailabilityAndCertificationStatus {
             return AvailabilityStringBuilder.titleForUser(name: name ?? "", availability: availability, style: .list, color: color)
