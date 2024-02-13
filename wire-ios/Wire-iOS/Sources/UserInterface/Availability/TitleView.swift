@@ -24,7 +24,7 @@ class TitleView: UIView, DynamicTypeCapable {
     // MARK: - Properties
     var titleColor: UIColor?
     var titleFont: FontSpec?
-    var tapHandler: ((UIButton) -> Void)?
+    var tapHandler: (UIButton) -> Void = { _ in }
 
     private let stackView = UIStackView(axis: .vertical)
     let titleButton = UIButton()
@@ -62,22 +62,27 @@ class TitleView: UIView, DynamicTypeCapable {
     // MARK: - Methods
     @objc
     func titleButtonTapped(_ sender: UIButton) {
-        tapHandler?(sender)
+        tapHandler(sender)
     }
 
-    /// Configures the title view for the given conversation
-    /// - parameter conversation: The conversation for which the view should be configured
-    /// - parameter interactive: Whether the view should react to user interaction events
-    /// - return: Whether the view contains any `NSTextAttachments`
-    func configure(icon: NSTextAttachment?, title: String, subtitle: String? = nil, interactive: Bool, showInteractiveIcon: Bool = true) {
-        configure(icons: icon == nil ? [] : [icon!], title: title, subtitle: subtitle, interactive: interactive, showInteractiveIcon: showInteractiveIcon)
-    }
-
-    func configure(icons: [NSTextAttachment], title: String, subtitle: String? = nil, interactive: Bool, showInteractiveIcon: Bool = true) {
-
+    func configure(
+        leadingIcons: [NSTextAttachment],
+        title: String,
+        trailingIcons: [NSTextAttachment],
+        subtitle: String?,
+        interactive: Bool,
+        showInteractiveIcon: Bool
+    ) {
         guard let font = titleFont, let color = titleColor else { return }
         let shouldShowInteractiveIcon = interactive && showInteractiveIcon
-        let normalLabel = IconStringsBuilder.iconString(with: icons, title: title, interactive: shouldShowInteractiveIcon, color: color, titleFont: titleFont?.font)
+        let normalLabel = IconStringsBuilder.iconString(
+            leadingIcons: leadingIcons,
+            title: title,
+            trailingIcons: trailingIcons,
+            interactive: shouldShowInteractiveIcon,
+            color: color,
+            titleFont: titleFont?.font
+        )
 
         titleButton.titleLabel!.font = font.font
         titleButton.setAttributedTitle(normalLabel, for: [])
@@ -101,7 +106,9 @@ class TitleView: UIView, DynamicTypeCapable {
 }
 
 // MARK: NSTextAttachment Extension
+
 extension NSTextAttachment {
+
     static func downArrow(color: UIColor, size: StyleKitIcon.Size = .nano) -> NSTextAttachment {
         let attachment = NSTextAttachment()
         attachment.image = StyleKitIcon.downArrow.makeImage(

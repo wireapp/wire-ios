@@ -57,7 +57,13 @@ final class AvailabilityStringBuilder: NSObject {
 
         guard let textColor = color, let iconColor = iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
-        let attributedText = IconStringsBuilder.iconString(with: icon, title: title, interactive: false, color: textColor)
+        let attributedText = IconStringsBuilder.iconString(
+            leadingIcons: [icon].compactMap(\.self),
+            title: title,
+            trailingIcons: [],
+            interactive: false,
+            color: textColor
+        )
         return attributedText
     }
 
