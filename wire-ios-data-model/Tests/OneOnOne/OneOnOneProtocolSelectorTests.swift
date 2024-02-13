@@ -94,8 +94,6 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
         XCTAssertNil(result)
     }
 
-    // MARK: - Helpers
-
     private func createUsersUsingProtocols(
         self selfProtocols: Set<MessageProtocol>,
         other otherProtocols: Set<MessageProtocol>,
