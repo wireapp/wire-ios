@@ -19,16 +19,13 @@
 import WireDataModel
 import WireCommonComponents
 
-/// The status of the user, consisting of its name and availability.
+/// The status of the user, consisting of its name,
+/// handle, availability and verification status.
 public struct UserStatus {
 
-    public var accentColor: AccentColor
-
-    public var avatar: Avatar
+    public var name: String
 
     public var handle: String
-
-    public var name: String
 
     public var availability: Availability
 
@@ -39,18 +36,14 @@ public struct UserStatus {
     public var isVerified: Bool
 
     public init(
-        accentColor: AccentColor = .init(),
-        avatar: Avatar = .text(""),
-        handle: String = "",
         name: String = "",
+        handle: String = "",
         availability: Availability = Availability.none,
         isCertified: Bool = false,
         isVerified: Bool = false
     ) {
-        self.accentColor = accentColor
-        self.avatar = avatar
-        self.handle = handle
         self.name = name
+        self.handle = handle
         self.availability = availability
         self.isCertified = isCertified
         self.isVerified = isVerified

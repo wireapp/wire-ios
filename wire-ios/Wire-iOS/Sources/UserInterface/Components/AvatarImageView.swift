@@ -24,30 +24,18 @@ class AvatarImageView: UIView {
     // MARK: - Properties
 
     /// The avatar to display.
-    var avatar = UserStatus.Avatar() {
-        didSet {
-            if avatar != oldValue {
-                updateAvatar()
-            }
-        }
+    var avatar = Avatar() {
+        didSet { avatar != oldValue ? updateAvatar() : () }
     }
 
     /// The shape of the avatar
     var shape: Shape = .circle {
-        didSet {
-            if shape != oldValue {
-                updateShape()
-            }
-        }
+        didSet { shape != oldValue ? updateShape() : () }
     }
 
     /// Whether to allow initials.
     var allowsInitials = true {
-        didSet {
-            if allowsInitials != oldValue {
-                updateAvatar()
-            }
-        }
+        didSet { allowsInitials != oldValue ? updateAvatar() : () }
     }
 
     /// The background color for the image.
@@ -193,6 +181,21 @@ class AvatarImageView: UIView {
     }
 
     // MARK: -
+
+    /// The different, mutually-exclusive forms of avatars.
+    public enum Avatar: Equatable {
+
+        case image(UIImage)
+        case text(String)
+
+        public init() {
+            self = .image(resource: .unavailableUser)
+        }
+
+        static func image(resource: ImageResource) -> Self {
+            .image(.init(resource: resource))
+        }
+    }
 
     /// The different shapes of avatars.
     enum Shape {

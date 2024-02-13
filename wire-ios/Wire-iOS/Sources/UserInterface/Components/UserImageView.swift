@@ -139,7 +139,7 @@ class UserImageView: AvatarImageView, UserObserving {
     /// - parameter avatar: The avatar of the user.
     /// - parameter user: The currently displayed user.
     /// - parameter animated: Whether to animate the change.
-    func setAvatar(_ avatar: UserStatus.Avatar, user: UserType, animated: Bool) {
+    func setAvatar(_ avatar: Avatar, user: UserType, animated: Bool) {
         let updateBlock = {
             self.avatar = avatar
             self.container.backgroundColor = self.containerBackgroundColor(for: user)
@@ -204,7 +204,7 @@ class UserImageView: AvatarImageView, UserObserving {
             return
         }
 
-        let defaultAvatar: UserStatus.Avatar = initials.isEmpty ? .init() : .text(initials.localizedUppercase)
+        let defaultAvatar: Avatar = initials.isEmpty ? .init() : .text(initials.localizedUppercase)
         setAvatar(defaultAvatar, user: user, animated: false)
         if !ProcessInfo.processInfo.isRunningTests,
            let userSession = userSession as? ZMUserSession {

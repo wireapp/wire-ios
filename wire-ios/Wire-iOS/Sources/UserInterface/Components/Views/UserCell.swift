@@ -385,8 +385,6 @@ extension UserCell {
         )
         userTypeIconView.set(style: style)
 
-        // verifiedIconView.isHidden = !user.isVerified
-
         if let subtitle = subtitle, !subtitle.string.isEmpty, !hidesSubtitle {
             subtitleLabel.isHidden = false
             subtitleLabel.attributedText = subtitle
@@ -406,10 +404,8 @@ extension UserCell {
     ) {
         configure(
             userStatus: .init(
-                accentColor: .init(ZMAccentColor: user.accentColorValue) ?? .init(),
-                avatar: .init(),
-                handle: user.handle ?? "",
                 name: user.name ?? "",
+                handle: user.handle ?? "",
                 availability: user.availability,
                 isCertified: isCertified,
                 isVerified: user.isVerified
