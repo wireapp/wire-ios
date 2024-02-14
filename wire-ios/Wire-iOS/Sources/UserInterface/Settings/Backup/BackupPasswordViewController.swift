@@ -17,43 +17,16 @@
 //
 
 import UIKit
-import WireUtilities
-import WireCommonComponents
-
-struct Password {
-    let value: String
-
-    init?(_ value: String) {
-        if case PasswordValidationResult.valid = PasswordRuleSet.shared.validatePassword(value) {
-            self.value = value
-        } else {
-            return nil
-        }
-    }
-}
-
-extension BackupViewController {
-    func requestBackupPassword(completion: @escaping (Password?) -> Void) {
-        let passwordController = BackupPasswordViewController { controller, password in
-            controller.dismiss(animated: true) {
-                completion(password)
-            }
-        }
-        let navigationController = KeyboardAvoidingViewController(viewController: passwordController).wrapInNavigationController()
-        navigationController.modalPresentationStyle = .formSheet
-        present(navigationController, animated: true, completion: nil)
-    }
-}
+import struct WireCommonComponents.FontSpec
 
 final class BackupPasswordViewController: UIViewController {
 
-    typealias Completion = (BackupPasswordViewController, Password?) -> Void
     typealias LabelColors = SemanticColors.Label
     typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
     typealias ViewColors = SemanticColors.View
-    var completion: Completion?
+    var onCompletion: ((_ password: String?) -> Void)?
 
-    private var password: Password?
+    private var password: String?
     private let passwordView = SimpleTextField()
 
     private let subtitleLabel: DynamicFontLabel = {
@@ -71,9 +44,9 @@ final class BackupPasswordViewController: UIViewController {
         return label
     }()
 
-    init(completion: @escaping Completion) {
-        self.completion = completion
+    init() {
         super.init(nibName: nil, bundle: nil)
+
         setupViews()
         createConstraints()
     }
@@ -164,18 +137,26 @@ final class BackupPasswordViewController: UIViewController {
     }
 
     private func updateState(with text: String) {
-        password = Password(text)
-        navigationItem.rightBarButtonItem?.isEnabled = nil != password
+        switch PasswordRuleSet.shared.validatePassword(text) {
+        case .valid:
+            password = text
+            navigationItem.rightBarButtonItem?.isEnabled = true
+        case .invalid:
+            password = nil
+            navigationItem.rightBarButtonItem?.isEnabled = false
+        }
     }
 
     @objc dynamic private func cancel() {
-        completion?(self, nil)
+        onCompletion?(nil)
     }
 
     @objc dynamic private func completeWithCurrentResult() {
-        completion?(self, password)
+        onCompletion?(password)
     }
 }
+
+// MARK: - UITextFieldDelegate
 
 extension BackupPasswordViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
