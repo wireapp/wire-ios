@@ -3221,24 +3221,19 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID)
     }
 
-    // MARK: - commitPendingProposals
+    // MARK: - commitPendingProposalsIfNeeded
 
-    public var commitPendingProposals_Invocations: [Void] = []
-    public var commitPendingProposals_MockError: Error?
-    public var commitPendingProposals_MockMethod: (() async throws -> Void)?
+    public var commitPendingProposalsIfNeeded_Invocations: [Void] = []
+    public var commitPendingProposalsIfNeeded_MockMethod: (() -> Void)?
 
-    public func commitPendingProposals() async throws {
-        commitPendingProposals_Invocations.append(())
+    public func commitPendingProposalsIfNeeded() {
+        commitPendingProposalsIfNeeded_Invocations.append(())
 
-        if let error = commitPendingProposals_MockError {
-            throw error
+        guard let mock = commitPendingProposalsIfNeeded_MockMethod else {
+            fatalError("no mock for `commitPendingProposalsIfNeeded`")
         }
 
-        guard let mock = commitPendingProposals_MockMethod else {
-            fatalError("no mock for `commitPendingProposals`")
-        }
-
-        try await mock()
+        mock()
     }
 
     // MARK: - commitPendingProposals

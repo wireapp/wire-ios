@@ -755,17 +755,12 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 } catch {
                     WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
                 }
-
-                do {
-                    try await mlsService.commitPendingProposals()
-                } catch {
-                    WireLogger.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
-                }
                 await mlsService.uploadKeyPackagesIfNeeded()
                 await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
             }
         }
 
+        mlsService.commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()
         recurringActionService.performActionsIfNeeded()
 
@@ -817,19 +812,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 }
             } catch {
                 WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
-            }
-        }
-    }
-
-    // swiftlint:disable todo_requires_jira_link
-    // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
-    // swiftlint:enable todo_requires_jira_link
-    private func commitPendingProposalsIfNeeded() {
-        Task {
-            do {
-                try await mlsService.commitPendingProposals()
-            } catch {
-                WireLogger.mls.error("Failed to commit pending proposals: \(String(describing: error))")
             }
         }
     }
