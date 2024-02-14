@@ -83,15 +83,11 @@ final class UserStatusView: TitleView {
             title = userStatus.name
             var accessibilityLabel = title
             if userStatus.isCertified {
-                let attachment = NSTextAttachment(imageResource: .certificateValid)
-                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
-                trailingIcons.insert(attachment, at: 0)
+                trailingIcons += [.e2eiCertifiedShield]
                 // TODO [WPB-765]: add accessibility label for the E2EI verified shield.
             }
             if userStatus.isVerified {
-                let attachment = NSTextAttachment(imageResource: .verifiedShield)
-                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
-                trailingIcons.insert(attachment, at: 0)
+                trailingIcons += [.proteusVerifiedShield]
                 accessibilityLabel += ", " + L10n.Accessibility.ClientsList.DeviceVerified.description
             }
             self.accessibilityLabel = accessibilityLabel
@@ -152,5 +148,24 @@ extension UserStatusView {
 
         /// The default options for using the view in a title bar.
         static var header: Options = [.allowSettingStatus, .hideActionHint, .displayUserName, .useLargeFont]
+    }
+}
+
+extension NSTextAttachment {
+
+    fileprivate static var e2eiCertifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .certificateValid)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
+    }
+
+    fileprivate static var proteusVerifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .verifiedShield)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
     }
 }
