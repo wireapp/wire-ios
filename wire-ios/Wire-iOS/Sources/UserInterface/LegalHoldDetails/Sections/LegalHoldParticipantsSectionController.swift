@@ -97,7 +97,7 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
         if let user = SelfUser.provider?.providedSelfUser {
             cell.configure(
                 user: participant,
-                isCertified: false, // TODO [WPB-765]: provide value
+                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
                 isSelfUserPartOfATeam: user.hasTeam,
                 conversation: conversation
             )

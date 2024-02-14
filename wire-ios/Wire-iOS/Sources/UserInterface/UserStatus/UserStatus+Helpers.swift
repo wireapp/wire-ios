@@ -20,7 +20,6 @@ import UIKit
 
 extension UserStatus {
 
-    // TODO [WPB-765]: add support for showing verification status images (+ accessibility)
     func title(
         color: UIColor,
         includeAvailabilityAndCertificationStatus: Bool,

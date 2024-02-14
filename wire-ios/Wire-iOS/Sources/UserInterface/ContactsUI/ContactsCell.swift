@@ -219,7 +219,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         let userStatus = UserStatus(
             name: user.name ?? "",
             availability: user.availability,
-            isCertified: false, // TODO [WPB-765]: provide value
+            isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
             isVerified: user.isVerified
         )
         titleLabel.attributedText = userStatus.title(

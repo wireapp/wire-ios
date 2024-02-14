@@ -148,7 +148,7 @@ extension UserCell: ParticipantsCellConfigurable {
 
         configure(
             user: user,
-            isCertified: false, // TODO [WPB-765]: provide value
+            isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
             isSelfUserPartOfATeam: selfUser.hasTeam,
             conversation: conversation as? ZMConversation
         )

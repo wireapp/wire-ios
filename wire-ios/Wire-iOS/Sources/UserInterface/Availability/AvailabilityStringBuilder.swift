@@ -62,7 +62,6 @@ enum AvailabilityStringBuilder {
             }
         }
 
-        // TODO [WPB-765]: add accessibility strings for image attachments?
         guard let textColor = color, let iconColor = iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         let attributedText = IconStringsBuilder.iconString(

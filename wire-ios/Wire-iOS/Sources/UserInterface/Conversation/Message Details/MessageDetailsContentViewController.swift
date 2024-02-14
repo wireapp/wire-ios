@@ -335,7 +335,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         if let selfUser = SelfUser.provider?.providedSelfUser {
             cell.configure(
                 user: description.user,
-                isCertified: false, // TODO [WPB-765]: provide value
+                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
                 isSelfUserPartOfATeam: selfUser.hasTeam,
                 subtitle: description.attributedSubtitle,
                 conversation: conversation

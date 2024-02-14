@@ -56,7 +56,7 @@ final class ServicesSectionController: GroupDetailsSectionController {
         if let selfUser = ZMUser.selfUser() {
             cell.configure(
                 user: user,
-                isCertified: false, // TODO [WPB-765]: provide value
+                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
                 isSelfUserPartOfATeam: selfUser.hasTeam,
                 conversation: conversation
             )
