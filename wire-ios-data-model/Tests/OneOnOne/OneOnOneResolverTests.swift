@@ -20,24 +20,39 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
+final class OneOnOneResolverTests: XCTestCase {
 
-    var sut: OneOnOneResolver!
-    var protocolSelector: MockOneOnOneProtocolSelectorInterface!
-    var migrator: MockOneOnOneMigratorInterface!
+    private var coreDataStackHelper: CoreDataStackHelper!
 
-    override func setUp() {
-        super.setUp()
-        protocolSelector = MockOneOnOneProtocolSelectorInterface()
-        migrator = MockOneOnOneMigratorInterface()
-        sut = OneOnOneResolver(protocolSelector: protocolSelector, migrator: migrator)
+    private var sut: OneOnOneResolver!
+
+    private var mockCoreDataStack: CoreDataStack!
+    private var mockProtocolSelector: MockOneOnOneProtocolSelectorInterface!
+    private var mockMigrator: MockOneOnOneMigratorInterface!
+
+    private var viewContext: NSManagedObjectContext { mockCoreDataStack.viewContext }
+
+    override func setUp() async throws {
+        try await super.setUp()
+
+        coreDataStackHelper = CoreDataStackHelper()
+
+        mockCoreDataStack = try await coreDataStackHelper.createStack()
+        mockProtocolSelector = MockOneOnOneProtocolSelectorInterface()
+        mockMigrator = MockOneOnOneMigratorInterface()
+        sut = OneOnOneResolver(protocolSelector: mockProtocolSelector, migrator: mockMigrator)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
-        protocolSelector = nil
-        migrator = nil
-        super.tearDown()
+        mockProtocolSelector = nil
+        mockMigrator = nil
+        mockCoreDataStack = nil
+
+        try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
+
+        try await super.tearDown()
     }
 
     // MARK: - Tests
@@ -47,15 +62,15 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         let userID = QualifiedID.random()
 
         // Mock
-        protocolSelector.getProtocolForUserWithIn_MockValue = .mls
-        migrator.migrateToMLSUserIDIn_MockMethod = { _, _ in .random() }
+        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
+        mockMigrator.migrateToMLSUserIDIn_MockMethod = { _, _ in .random() }
 
         // When
-        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
+        try await sut.resolveOneOnOneConversation(with: userID, in: viewContext)
 
         // Then
-        XCTAssertEqual(migrator.migrateToMLSUserIDIn_Invocations.count, 1)
-        let invocation = try XCTUnwrap(migrator.migrateToMLSUserIDIn_Invocations.first)
+        XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 1)
+        let invocation = try XCTUnwrap(mockMigrator.migrateToMLSUserIDIn_Invocations.first)
         XCTAssertEqual(invocation.userID, userID)
     }
 
@@ -64,28 +79,28 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         let userID = QualifiedID.random()
 
         // Mock
-        protocolSelector.getProtocolForUserWithIn_MockValue = .proteus
+        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .proteus
 
         // When
-        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
+        try await sut.resolveOneOnOneConversation(with: userID, in: viewContext)
 
         // Then
-        XCTAssertEqual(migrator.migrateToMLSUserIDIn_Invocations.count, 0)
+        XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 0)
     }
 
     func test_ResolveOneOnOneConversation_NoCommonProtocols() async throws {
         // Given
         let userID = QualifiedID.random()
 
-        let conversation = await uiMOC.perform { [self] in
-            let user = createUser(in: uiMOC)
+        let conversation = await viewContext.perform { [self] in
+            let user = createUser(in: viewContext)
             user.remoteIdentifier = userID.uuid
             user.domain = userID.domain
 
             let (_, conversation) = createConnection(
                 status: .pending,
                 to: user,
-                in: uiMOC
+                in: viewContext
             )
 
             XCTAssertEqual(conversation.messageProtocol, .proteus)
@@ -95,16 +110,44 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         }
 
         // Mock
-        protocolSelector.getProtocolForUserWithIn_MockValue = .some(nil)
+        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .some(nil)
 
         // When
-        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
+        try await sut.resolveOneOnOneConversation(with: userID, in: viewContext)
 
         // Then
-        await uiMOC.perform {
+        await viewContext.perform {
             XCTAssertEqual(conversation.messageProtocol, .proteus)
             XCTAssertTrue(conversation.isForcedReadOnly)
         }
     }
 
+    // MARK: - Helpers
+
+    @discardableResult
+    private func createUser(in context: NSManagedObjectContext) -> ZMUser {
+        let user = ZMUser.insertNewObject(in: context)
+        user.remoteIdentifier = UUID()
+        return user
+    }
+
+    private func createConnection(
+        status: ZMConnectionStatus,
+        to user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> (ZMConnection, ZMConversation) {
+        let connection = ZMConnection.insertNewObject(in: context)
+        connection.to = user
+        connection.status = status
+        connection.message = "Connect to me"
+        connection.lastUpdateDate = .now
+
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .connection
+        conversation.remoteIdentifier = .create()
+        conversation.domain = "local@domain.com"
+        user.oneOnOneConversation = conversation
+
+        return (connection, conversation)
+    }
 }
