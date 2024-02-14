@@ -222,15 +222,21 @@ fileprivate extension VoiceChannel {
             return true
         }
 
+        WireLogger.calling.debug("convId: \(String(describing: conversation?.avsIdentifier?.safeForLoggingDescription)); canUpgradeToVideo: not a conf call")
+
         guard let conversation = conversation, conversation.conversationType != .oneOnOne else {
             return true
         }
 
         guard !isLegacyGroupVideoParticipantLimitReached else {
+            WireLogger.calling.warn("convId: \(String(describing: conversation.avsIdentifier?.safeForLoggingDescription)); canUpgradeToVideo: disabled ; video group call limit reached")
             return false
         }
-
-        return selfUser.isTeamMember || isAnyParticipantSendingVideo
+        let condition = selfUser.isTeamMember || isAnyParticipantSendingVideo
+        if !condition {
+            WireLogger.calling.warn("convId: \(String(describing: conversation.avsIdentifier?.safeForLoggingDescription)); canUpgradeToVideo: disabled ; teamMember: \(selfUser.isTeamMember) | isAnyParticipantSendingVideo: \(isAnyParticipantSendingVideo) ")
+        }
+        return condition
     }
 
     var isAnyParticipantSendingVideo: Bool {

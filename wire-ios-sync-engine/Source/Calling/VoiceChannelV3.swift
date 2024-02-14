@@ -139,7 +139,10 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         guard
             let conversationId = conversation?.avsIdentifier,
             let callCenter = self.callCenter
-        else { return false }
+        else {
+            WireLogger.calling.debug("convId:\(String(describing: conversation?.avsIdentifier?.safeForLoggingDescription)); isConferenceCall: false")
+            return false
+        }
 
         return callCenter.isConferenceCall(conversationId: conversationId)
     }

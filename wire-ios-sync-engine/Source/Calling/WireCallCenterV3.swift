@@ -189,6 +189,7 @@ extension WireCallCenterV3 {
         let token = ConversationChangeInfo.add(observer: self, for: conversation)
         let group = conversation.conversationType == .group
 
+        WireLogger.calling.debug("convId: \(conversationId.safeForLoggingDescription); create snapshot, isConferenceCall: \(isConferenceCall); video: \(video); group: \(group)")
         callSnapshots[conversationId] = CallSnapshot(
             callParticipants: callParticipants,
             callState: callState,
@@ -347,7 +348,15 @@ extension WireCallCenterV3 {
     }
 
     public func isConferenceCall(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.isConferenceCall ?? false
+        if let snapshot = callSnapshots[conversationId] {
+            if !snapshot.isConferenceCall {
+                WireLogger.calling.warn("convId: \(conversationId.safeForLoggingDescription); snapshot is not a conf call)")
+            }
+            return snapshot.isConferenceCall
+        } else {
+            WireLogger.calling.warn("no snapshot for conversationId: \(conversationId.safeForLoggingDescription)")
+            return false
+        }
     }
 
     func degradedUser(conversationId: AVSIdentifier) -> ZMUser? {
