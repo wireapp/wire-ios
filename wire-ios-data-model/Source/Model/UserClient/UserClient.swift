@@ -197,7 +197,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             fatal("User \(user.safeForLoggingDescription) is not a member of a managed object context (deleted object).")
         }
 
-        let relationClients = user.clients.filter({$0.remoteIdentifier == remoteIdentifier})
+        let relationClients = user.clients.filter({ $0.remoteIdentifier == remoteIdentifier })
 
         if relationClients.count > 1 {
             WireLogger.userClient.error("Detected duplicate clients: \(relationClients.map(\.remoteIdentifier))")
@@ -721,7 +721,7 @@ extension UserClient {
 
     /// Adds to ignored clients, remove from trusted clients, returns the set with the self client excluded
     fileprivate func addIgnoredClients(_ clients: Set<UserClient>) -> Set<UserClient> {
-        let notSelfClients = Set(clients.filter {$0 != self})
+        let notSelfClients = Set(clients.filter { $0 != self })
 
         guard notSelfClients.count > 0 else { return notSelfClients }
 

@@ -139,7 +139,7 @@ extension KeySet {
         return backing.isEmpty
     }
     func filter(_ match: (StringKeyPath) -> Bool) -> KeySet {
-        return KeySet(backing.filter {match($0)})
+        return KeySet(backing.filter { match($0) })
     }
 }
 
