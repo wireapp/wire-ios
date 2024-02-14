@@ -1,5 +1,5 @@
 sources:
-  - ../Wire-iOS/Sources
+  - ../../Wire-iOS/Sources
 templates:
   - ./AutoMockable.stencil
 output:
