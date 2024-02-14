@@ -272,6 +272,7 @@
 		55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */; };
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
+		5934DBEE2B7D34A4001B83A7 /* GroupConversationVerificationStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBED2B7D34A4001B83A7 /* GroupConversationVerificationStatusView.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
 		59A1F1492B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */; };
@@ -2280,6 +2281,7 @@
 		55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallQualityController+Budget.swift"; sourceTree = "<group>"; };
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
+		5934DBED2B7D34A4001B83A7 /* GroupConversationVerificationStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupConversationVerificationStatusView.swift; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
 		59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusViewControllerDelegate.swift; sourceTree = "<group>"; };
@@ -4289,14 +4291,15 @@
 		16D49326203DCC59008DDFFA /* GroupDetails */ = {
 			isa = PBXGroup;
 			children = (
-				5EA73D7A20D900A10001D106 /* Cells */,
-				1682AEB720483C9D003A052A /* Sections */,
-				D550F57320444BE8009E09DD /* ConversationActions */,
+				7CCA7CC1221AEC7B00A7CA2A /* ConversationDetailFooterView.swift */,
+				5934DBED2B7D34A4001B83A7 /* GroupConversationVerificationStatusView.swift */,
+				D586C51E20405CC200BBA492 /* GroupDetailsFooterView.swift */,
 				16D49327203DCC88008DDFFA /* GroupDetailsViewController.swift */,
 				BF5DF5C420F4B0B8002BCB67 /* UICollectionView+GroupedSections.swift */,
+				5EA73D7A20D900A10001D106 /* Cells */,
+				D550F57320444BE8009E09DD /* ConversationActions */,
 				BF5DF5C820F4C1FB002BCB67 /* GroupParticipantsDetail */,
-				7CCA7CC1221AEC7B00A7CA2A /* ConversationDetailFooterView.swift */,
-				D586C51E20405CC200BBA492 /* GroupDetailsFooterView.swift */,
+				1682AEB720483C9D003A052A /* Sections */,
 			);
 			path = GroupDetails;
 			sourceTree = "<group>";
@@ -9083,6 +9086,7 @@
 				F18993B822413C9800535A74 /* ConversationContentViewController+ScrollViewDelegate.swift in Sources */,
 				D5168F532010F20B00F8222A /* BlurEffectTransition.swift in Sources */,
 				1671D6D1200CDC380022D289 /* InviteTeamMemberCell.swift in Sources */,
+				5934DBEE2B7D34A4001B83A7 /* GroupConversationVerificationStatusView.swift in Sources */,
 				E95B0A142B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift in Sources */,
 				D5D65A11207509F300D7F3C3 /* BackupPasswordViewController.swift in Sources */,
 				5EC7C87A219038F6004662AC /* ImageResourceThumbnailView.swift in Sources */,
