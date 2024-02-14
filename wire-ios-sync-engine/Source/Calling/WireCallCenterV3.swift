@@ -1016,7 +1016,7 @@ private extension ZMConversation {
 
 }
 
-private extension AVSConversationType {
+extension AVSConversationType {
 
     var isConference: Bool {
         switch self {
