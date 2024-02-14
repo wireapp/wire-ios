@@ -30,7 +30,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             let accessMode = ConversationAccessMode.allowGuests
 
             // when
-            conversation.updateAccessStatus(accessModes: accessMode.stringValue, accessRoles: accessRoles.map({$0.rawValue}))
+            conversation.updateAccessStatus(accessModes: accessMode.stringValue, accessRoles: accessRoles.map({ $0.rawValue }))
 
             // then
             XCTAssertEqual(conversation.accessMode, accessMode)
@@ -166,7 +166,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             XCTAssertEqual(participant2.role?.team, team)
             XCTAssertEqual(participant1.role?.name, "test_role1")
             XCTAssertEqual(participant2.role?.name, "test_role2")
-            XCTAssertEqual(team.roles, Set([participant1.role, participant2.role].compactMap {$0}))
+            XCTAssertEqual(team.roles, Set([participant1.role, participant2.role].compactMap { $0 }))
         }
     }
 

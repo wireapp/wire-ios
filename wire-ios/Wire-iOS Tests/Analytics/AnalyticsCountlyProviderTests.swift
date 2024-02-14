@@ -40,7 +40,7 @@ final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper
     }
 
     func testThatLogRoundedConvertNumberIntoBuckets() {
-        XCTAssertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100].map({$0.logRound()}), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 46, 91])
+        XCTAssertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100].map({ $0.logRound() }), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 46, 91])
     }
 
     func testThatCountlyAttributesFromConverationIsGenerated() {

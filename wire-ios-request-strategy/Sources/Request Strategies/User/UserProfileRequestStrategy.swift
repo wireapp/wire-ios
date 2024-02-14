@@ -136,7 +136,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
         guard let apiVersion = BackendInfo.apiVersion else { return }
 
         let usersNeedingToBeUpdated = objects
-            .compactMap { $0 as? ZMUser}
+            .compactMap { $0 as? ZMUser }
             .filter(\.needsToBeUpdatedFromBackend)
 
         fetch(users: Set(usersNeedingToBeUpdated), for: apiVersion)

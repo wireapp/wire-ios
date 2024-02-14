@@ -78,7 +78,7 @@ import CoreData
     private var changeInfoConsumers = [UnownedNSObject]()
 
     private var allChangeInfoConsumers: [ChangeInfoConsumer] {
-        var consumers = changeInfoConsumers.compactMap {$0.unbox as? ChangeInfoConsumer}
+        var consumers = changeInfoConsumers.compactMap { $0.unbox as? ChangeInfoConsumer }
         consumers.append(searchUserObserverCenter)
         consumers.append(conversationListObserverCenter)
         return consumers

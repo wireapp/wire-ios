@@ -85,7 +85,7 @@ extension MockTransportSession {
         guard let identifier = identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate),
-              let selfMemberships = selfUser.memberships, selfMemberships.contains(where: {$0.team == team})
+              let selfMemberships = selfUser.memberships, selfMemberships.contains(where: { $0.team == team })
         else {
             return .teamNotFound(apiVersion: apiVersion)
         }
@@ -96,7 +96,7 @@ extension MockTransportSession {
     }
 
     private func fetchAllTeams(query: [String: Any], apiVersion: APIVersion) -> ZMTransportResponse? {
-        let teams = selfUser.memberships?.map {$0.team} ?? []
+        let teams = selfUser.memberships?.map { $0.team } ?? []
         let payload: [String: Any] = [
             "teams": teams.map { $0.payload },
             "has_more": false
@@ -212,7 +212,7 @@ extension MockTransportSession {
         guard let teamId = teamId, let userId = userId else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
-        guard let member = team.members.first(where: {$0.user.identifier == userId}) else { return .notTeamMember(apiVersion: apiVersion) }
+        guard let member = team.members.first(where: { $0.user.identifier == userId }) else { return .notTeamMember(apiVersion: apiVersion) }
         if let permissionError = ensurePermission(.getMemberPermissions, in: team, apiVersion: apiVersion) {
             return permissionError
         }
@@ -241,7 +241,7 @@ extension MockTransportSession {
         // 2) Check the user in the team
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
-        guard let member = team.members.first(where: {$0.user.identifier == userId}) else { return .notTeamMember(apiVersion: apiVersion) }
+        guard let member = team.members.first(where: { $0.user.identifier == userId }) else { return .notTeamMember(apiVersion: apiVersion) }
 
         // 3) Check the password
         guard let password = payload?.asDictionary()?["password"] as? String, password == member.user.password else {

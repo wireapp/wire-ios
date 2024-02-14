@@ -140,7 +140,7 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     let footerGenerator: () -> String?
 
     convenience init(cellDescriptors: [SettingsCellDescriptorType], header: String? = .none, footer: String? = .none, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
-        self.init(cellDescriptors: cellDescriptors, headerGenerator: { return header }, footerGenerator: { return footer}, visibilityAction: visibilityAction)
+        self.init(cellDescriptors: cellDescriptors, headerGenerator: { return header }, footerGenerator: { return footer }, visibilityAction: visibilityAction)
     }
 
     init(cellDescriptors: [SettingsCellDescriptorType], headerGenerator: @escaping () -> String?, footerGenerator: @escaping () -> String?, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {

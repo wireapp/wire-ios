@@ -37,7 +37,7 @@ import Foundation
             forName: .NSManagedObjectContextObjectsDidChange,
             object: context,
             queue: nil,
-            using: {  [weak self] _ in self?.callback() }
+            using: { [weak self] _ in self?.callback() }
         )
     }
 

@@ -71,7 +71,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             coreCryptoProvider: coreCryptoProvider
         )
 
-        self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
+        self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy })
         self.eventConsumers = strategies.compactMap({ $0 as? ZMEventConsumer })
         self.eventAsyncConsumers = strategies.compactMap({ $0 as? ZMEventAsyncConsumer })
         self.contextChangeTrackers = strategies.flatMap({ (object: Any) -> [ZMContextChangeTracker] in

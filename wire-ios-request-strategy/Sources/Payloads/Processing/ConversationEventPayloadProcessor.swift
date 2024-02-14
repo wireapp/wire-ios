@@ -223,7 +223,7 @@ struct ConversationEventPayloadProcessor {
             }
 
             conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
+        } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }) {
             // NOTE: legacy code path for backwards compatibility with servers without role support
 
             let users = Set(users)
@@ -292,7 +292,7 @@ struct ConversationEventPayloadProcessor {
             }
         }
 
-        if let role = payload.data.conversationRole.map({conversation.fetchOrCreateRoleForConversation(name: $0) }) {
+        if let role = payload.data.conversationRole.map({ conversation.fetchOrCreateRoleForConversation(name: $0) }) {
             conversation.addParticipantAndUpdateConversationState(user: targetUser, role: role)
         }
     }
