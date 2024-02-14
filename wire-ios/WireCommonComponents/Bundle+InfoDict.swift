@@ -49,7 +49,9 @@ public extension Bundle {
         public var safeForLoggingDescription: String {
             "Wire-ios version \(version) (\(build)))"
         }
+
+        public var fullVersion: String {
+            "\(version) (\(build))"
+        }
     }
-
 }
-

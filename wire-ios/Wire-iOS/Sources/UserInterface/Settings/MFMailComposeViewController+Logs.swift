@@ -25,20 +25,24 @@ extension MFMailComposeViewController {
 
     func prefilledBody(withMessage message: String = "") -> String {
         let date = Date()
-        let device = UIDevice.current.name
+        let device = UIDevice.current.zm_model()
 
         var body = """
         --DO NOT EDIT--
-        App Version: \(Bundle.main.appInfo)
+        App Version: \(Bundle.main.appInfo.fullVersion)
         Bundle id: \(Bundle.main.bundleIdentifier ?? "-")
         Device: \(device)
         iOS version: \(UIDevice.current.systemVersion)
-        Date: \(date.formattedDate)
+        Date: \(date.transportString())
         """
 
+#if DATADOG_IMPORT
+        // datadogId has always a value. NONE by default
+        // display only when enabled
         if let datadogId = DatadogWrapper.shared?.datadogUserId {
             body.append("\nDatadog ID: \(datadogId)")
         }
+#endif
         body.append("\n---------------\n")
 
         let details = """
