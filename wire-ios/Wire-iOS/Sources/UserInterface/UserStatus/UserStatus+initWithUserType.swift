@@ -26,7 +26,6 @@ extension UserStatus {
     ) {
         self.init(
             name: user.name ?? "",
-            handle: user.handle ?? "",
             availability: user.availability,
             isCertified: isCertified,
             isVerified: user.isVerified

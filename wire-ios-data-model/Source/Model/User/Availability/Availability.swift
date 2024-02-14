@@ -19,8 +19,4 @@
 @objc(ZMAvailability)
 public enum Availability: Int, CaseIterable {
     case none, available, busy, away
-
-    public init() {
-        self = .none
-    }
 }

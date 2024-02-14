@@ -17,33 +17,28 @@
 //
 
 import WireDataModel
-import WireCommonComponents
 
 /// The status of the user, consisting of its name,
 /// handle, availability and verification status.
 public struct UserStatus {
 
-    public var name = String()
+    public var name = ""
 
-    /*public*/ private var handle = String()
-
-    public var availability = Availability()
+    public var availability = Availability.none
 
     /// `true` if the user has a valid certificate (MLS), `false` otherwise.
-    public var isCertified = Bool()
+    public var isCertified = false
 
     /// `true` if the user has been verified (Proteus), `false` otherwise.
-    public var isVerified = Bool()
+    public var isVerified = false
 
     public init(
         name: String,
-        handle: String = "",
         availability: Availability,
         isCertified: Bool,
         isVerified: Bool
     ) {
         self.name = name
-        self.handle = handle
         self.availability = availability
         self.isCertified = isCertified
         self.isVerified = isVerified

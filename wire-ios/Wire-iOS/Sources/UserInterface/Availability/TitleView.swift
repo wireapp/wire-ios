@@ -24,7 +24,7 @@ class TitleView: UIView, DynamicTypeCapable {
     // MARK: - Properties
     var titleColor: UIColor?
     var titleFont: FontSpec?
-    var tapHandler: (UIButton) -> Void = { _ in }
+    var tapHandler: ((UIButton) -> Void)?
 
     private let stackView = UIStackView(axis: .vertical)
     let titleButton = UIButton()
@@ -62,7 +62,7 @@ class TitleView: UIView, DynamicTypeCapable {
     // MARK: - Methods
     @objc
     func titleButtonTapped(_ sender: UIButton) {
-        tapHandler(sender)
+        tapHandler?(sender)
     }
 
     func configure(
