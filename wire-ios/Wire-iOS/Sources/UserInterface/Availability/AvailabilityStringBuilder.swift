@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
-final class AvailabilityStringBuilder: NSObject {
+enum AvailabilityStringBuilder {
 
     static func titleForUser(
         name: String,
@@ -69,8 +69,8 @@ final class AvailabilityStringBuilder: NSObject {
             leadingIcons: [icon].compactMap(\.self),
             title: title,
             trailingIcons: [
-                isCertified ? .init(imageResource: .certificateValid) : nil,
-                isVerified ? .init(imageResource: .verifiedShield) : nil
+                isCertified ? e2eiCertifiedShield : nil,
+                isVerified ? proteusVerifiedShield : nil
             ].compactMap { $0 },
             interactive: false,
             color: textColor
@@ -107,5 +107,21 @@ final class AvailabilityStringBuilder: NSObject {
         case .away:
             return IconColors.foregroundAvailabilityAway
         }
+    }
+
+    private static var e2eiCertifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .certificateValid)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
+    }
+
+    private static var proteusVerifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .verifiedShield)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
     }
 }
