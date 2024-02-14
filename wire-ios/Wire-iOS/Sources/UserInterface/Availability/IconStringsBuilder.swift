@@ -21,8 +21,8 @@ import WireCommonComponents
 
 public enum IconStringsBuilder {
 
-    /// Creates an attributed string with the title, leading/trailing icons.
-    /// - parameter interactive: A down-arrow image will be suffixed.
+    /// Creates an attributed string with the title and leading and/or trailing icons.
+    /// - parameter interactive: A down-arrow image will be appended.
     static func iconString(
         leadingIcons: [NSTextAttachment],
         title: String,
