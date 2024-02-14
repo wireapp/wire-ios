@@ -44,17 +44,17 @@ extension MFMailComposeViewController {
         }
 #endif
         body.append("\n---------------\n")
-
+        typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
         let details = """
-        Please fill in the following
+        \(l10n.firstline)
 
-        - Date and Time of the issue occured:
+        - \(l10n.section1)
 
 
-        - What Happened:
+        - \(l10n.section2)
         \(message)
 
-        - Steps to reproduce (if relevant):
+        - \(l10n.section3)
 
 
         """
