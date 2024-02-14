@@ -395,9 +395,12 @@ public extension UserClient {
     ) -> UserClient? {
         WireLogger.userClient.info("create or update self user client")
 
-        guard let id = payloadData["id"] as? String,
-              let type = payloadData["type"] as? String
-        else { return nil }
+        guard
+            let id = payloadData["id"] as? String,
+            let type = payloadData["type"] as? String
+        else {
+            return nil
+        }
 
         let payloadAsDictionary = payloadData as NSDictionary
 
@@ -406,6 +409,7 @@ public extension UserClient {
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
         let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
+        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
 
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
@@ -421,6 +425,10 @@ public extension UserClient {
 
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
+
+        if let ed22519Key = mlsPublicKeys?["ed25519"] as? String {
+            client.mlsPublicKeys.ed25519 = ed22519Key
+        }
 
         if isNewClient {
             client.needsSessionMigration = selfUser.domain == nil
