@@ -127,7 +127,7 @@ final class CallingV3Tests: IntegrationTest {
     }
 
     func participantsChanged(members: [(user: ZMUser, establishedFlow: Bool)]) {
-        let mappedMembers = members.map {AVSCallMember(userId: $0.user.remoteIdentifier!, audioEstablished: $0.establishedFlow)}
+        let mappedMembers = members.map { AVSCallMember(userId: $0.user.remoteIdentifier!, audioEstablished: $0.establishedFlow) }
         (userSession!.managedObjectContext.zm_callCenter as! WireCallCenterV3IntegrationMock).mockAVSWrapper.mockMembers = mappedMembers
 
         WireSyncEngine.groupMemberHandler(conversationIdRef: conversationIdRef, contextRef: wireCallCenterRef)

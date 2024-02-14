@@ -43,7 +43,7 @@ extension ZMConversation {
     }
 
     var detailActions: [Action] {
-        return actions.filter({ $0 != .configureNotifications})
+        return actions.filter({ $0 != .configureNotifications })
     }
 
     private var actions: [Action] {
