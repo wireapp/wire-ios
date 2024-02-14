@@ -23,6 +23,41 @@ import WireCommonComponents
 
 extension MFMailComposeViewController {
 
+    func prefilledBody(withMessage message: String = "") -> String {
+        let date = Date()
+        let device = UIDevice.current.name
+
+        var body = """
+        --DO NOT EDIT--
+        App Version: \(Bundle.main.appInfo)
+        Bundle id: \(Bundle.main.bundleIdentifier ?? "-")
+        Device: \(device)
+        iOS version: \(UIDevice.current.systemVersion)
+        Date: \(date.formattedDate)
+        """
+
+        if let datadogId = DatadogWrapper.shared?.datadogUserId {
+            body.append("\nDatadog ID: \(datadogId)")
+        }
+        body.append("\n---------------\n")
+
+        let details = """
+        Please fill in the following
+
+        - Date and Time of the issue occured:
+
+
+        - What Happened:
+        \(message)
+
+        - Steps to reproduce (if relevant):
+
+
+        """
+        body.append("\n\(details)\n")
+        return body
+    }
+
     func attachLogs() async {
         defer {
             // because we don't rotate file for this one, we clean it once sent

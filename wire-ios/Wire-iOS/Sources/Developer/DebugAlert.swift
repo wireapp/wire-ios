@@ -143,6 +143,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let message = "Logs for: \(message)\n\n"
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
+
         guard MFMailComposeViewController.canSendMail() else {
 
             DebugAlert.displayFallbackActivityController(logPaths: debugLogs, email: mail, from: controller)
@@ -156,7 +157,8 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mailVC = MFMailComposeViewController()
         mailVC.setToRecipients([mail])
         mailVC.setSubject("iOS logs from \(userDescription)")
-        mailVC.setMessageBody(message, isHTML: false)
+        let body = mailVC.prefilledBody(withMessage: message)
+        mailVC.setMessageBody(body, isHTML: false)
 
         mailVC.mailComposeDelegate = alert
         alert.mailViewController = mailVC
@@ -178,3 +180,5 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         type(of: self).senderInstance = nil
     }
 }
+
+
