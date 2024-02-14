@@ -84,7 +84,8 @@ final class ProfileTitleView: UIView {
         )
         titleLabel.attributedText = userStatus.title(
             color: LabelColors.textDefault,
-            includeAvailabilityAndCertificationStatus: selfUser.isTeamMember,
+            includeAvailability: selfUser.isTeamMember,
+            includeVerificationStatus: false,
             appendYouSuffix: false
         )
         setupAccessibility()

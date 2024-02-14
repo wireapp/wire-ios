@@ -345,7 +345,8 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     private func updateTitleLabel() {
         titleLabel.attributedText = userStatus.title(
             color: SemanticColors.Label.textDefault,
-            includeAvailabilityAndCertificationStatus: isSelfUserPartOfATeam,
+            includeAvailability: isSelfUserPartOfATeam,
+            includeVerificationStatus: isSelfUserPartOfATeam,
             appendYouSuffix: userIsSelfUser
         )
     }

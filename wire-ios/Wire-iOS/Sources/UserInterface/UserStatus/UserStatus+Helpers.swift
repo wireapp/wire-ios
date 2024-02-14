@@ -22,18 +22,19 @@ extension UserStatus {
 
     func title(
         color: UIColor,
-        includeAvailabilityAndCertificationStatus: Bool,
+        includeAvailability: Bool,
+        includeVerificationStatus: Bool,
         appendYouSuffix: Bool
     ) -> NSAttributedString? {
 
         let name = name + (appendYouSuffix ? L10n.Localizable.UserCell.Title.youSuffix : "")
 
-        if includeAvailabilityAndCertificationStatus {
+        if includeAvailability || includeVerificationStatus {
             return AvailabilityStringBuilder.titleForUser(
                 name: name,
-                availability: availability,
-                isCertified: isCertified,
-                isVerified: isVerified,
+                availability: includeAvailability ? availability : .none,
+                isCertified: includeVerificationStatus && isCertified,
+                isVerified: includeVerificationStatus && isVerified,
                 style: .list,
                 color: color
             )
