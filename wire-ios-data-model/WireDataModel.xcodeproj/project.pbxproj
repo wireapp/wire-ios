@@ -240,6 +240,7 @@
 		590C55752B62BF0000FC1CE8 /* MLSGroupID+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590C55742B62BF0000FC1CE8 /* MLSGroupID+random.swift */; };
 		591362E62B70F45C000B210C /* MLSVerificationStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591362E52B70F45C000B210C /* MLSVerificationStatusTests.swift */; };
 		591942B62B6A4B4D0000B390 /* UserObserving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591942B52B6A4B4D0000B390 /* UserObserving.swift */; };
+		5934DBF02B7D3B76001B83A7 /* ConversationVerificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEF2B7D3B76001B83A7 /* ConversationVerificationStatus.swift */; };
 		594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */; };
 		597A3BB42B6416CA0020E337 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB32B6416CA0020E337 /* Availability.swift */; };
 		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
@@ -1090,6 +1091,7 @@
 		590C55742B62BF0000FC1CE8 /* MLSGroupID+random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MLSGroupID+random.swift"; sourceTree = "<group>"; };
 		591362E52B70F45C000B210C /* MLSVerificationStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSVerificationStatusTests.swift; sourceTree = "<group>"; };
 		591942B52B6A4B4D0000B390 /* UserObserving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserObserving.swift; sourceTree = "<group>"; };
+		5934DBEF2B7D3B76001B83A7 /* ConversationVerificationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationVerificationStatus.swift; sourceTree = "<group>"; };
 		594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		5972D9792B480E790089D1D3 /* CoreCryptoProtocolExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoProtocolExt.swift; sourceTree = "<group>"; };
 		597A3BB32B6416CA0020E337 /* Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Availability.swift; sourceTree = "<group>"; };
@@ -2637,6 +2639,7 @@
 				70E77B7C273188150021EE70 /* ZMConversation+Role.swift */,
 				6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */,
 				63DA3372286CA43300818C3C /* ZMConversation+MLS.swift */,
+				5934DBEF2B7D3B76001B83A7 /* ConversationVerificationStatus.swift */,
 			);
 			path = Conversation;
 			sourceTree = "<group>";
@@ -4110,6 +4113,7 @@
 				6308F8A42A273C680072A177 /* FetchMLSSubconversationGroupInfoAction.swift in Sources */,
 				87D9CCE91F27606200AA4388 /* NSManagedObjectContext+TearDown.swift in Sources */,
 				F963E9711D9ADD5A00098AD3 /* ZMImageAssetEncryptionKeys.m in Sources */,
+				5934DBF02B7D3B76001B83A7 /* ConversationVerificationStatus.swift in Sources */,
 				0604F7C8265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift in Sources */,
 				63B1336829A503D100009D84 /* CountSelfMLSKeyPackagesAction.swift in Sources */,
 				F11F3E891FA32463007B6D3D /* InvalidClientsRemoval.swift in Sources */,

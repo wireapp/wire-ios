@@ -17,14 +17,49 @@
 //
 
 import SwiftUI
+import WireDataModel
 
 struct GroupConversationVerificationStatusView: View {
 
+    let status: ConversationVerificationStatus
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("TODO")
     }
 }
 
-#Preview {
-    GroupConversationVerificationStatusView()
+#Preview("neither nor") {
+    GroupConversationVerificationStatusView(
+        status: .init(
+            e2eiCertificationStatus: false,
+            proteusVerificationStatus: false
+        )
+    )
+}
+
+#Preview("verified") {
+    GroupConversationVerificationStatusView(
+        status: .init(
+            e2eiCertificationStatus: false,
+            proteusVerificationStatus: true
+        )
+    )
+}
+
+#Preview("certified") {
+    GroupConversationVerificationStatusView(
+        status: .init(
+            e2eiCertificationStatus: true,
+            proteusVerificationStatus: false
+        )
+    )
+}
+
+#Preview("both") {
+    GroupConversationVerificationStatusView(
+        status: .init(
+            e2eiCertificationStatus: true,
+            proteusVerificationStatus: true
+        )
+    )
 }
