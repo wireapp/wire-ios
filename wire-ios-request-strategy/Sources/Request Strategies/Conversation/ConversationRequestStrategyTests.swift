@@ -457,7 +457,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                             notFound: [QualifiedID],
                             failed: [QualifiedID]) -> ZMTransportResponse {
 
-        let found = request.qualifiedIDs.map({ conversation(uuid: $0.uuid, domain: $0.domain)})
+        let found = request.qualifiedIDs.map({ conversation(uuid: $0.uuid, domain: $0.domain) })
         let payload = Payload.QualifiedConversationList(found: found, notFound: notFound, failed: failed)
         let payloadData = payload.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!

@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objc class ConversationMessageSectionController: NSObject {
+@objc final class ConversationMessageSectionController: NSObject {
 
     let sectionDescription: CellSectionDescription
 
