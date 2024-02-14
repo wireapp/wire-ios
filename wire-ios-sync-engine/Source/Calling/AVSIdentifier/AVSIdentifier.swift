@@ -28,6 +28,18 @@ public struct AVSIdentifier: Hashable, Equatable {
     }
 }
 
+extension AVSIdentifier: LogConvertible {
+    public var logDescription: String {
+        safeForLoggingDescription
+    }
+}
+
+extension AVSIdentifier: SafeForLoggingStringConvertible {
+    public var safeForLoggingDescription: String {
+        "\(identifier.safeForLoggingDescription)_\(domain?.readableHash ?? "<nil>")"
+    }
+}
+
 extension AVSIdentifier {
 
     public var serialized: String {
