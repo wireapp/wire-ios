@@ -187,6 +187,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.accessibilityIdentifier = "user_cell.name"
+        titleLabel.lineBreakMode = .byTruncatingMiddle
 
         // subtitleLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -295,6 +296,10 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             content += ", \(userType)"
         }
 
+        if userStatus.isCertified {
+            // TODO [WPB-765]: add accessibility label for shield after merging into `epic/e2ei`
+            // content += ", " + <?>
+        }
         if userStatus.isVerified {
             content += ", " + ClientsList.DeviceVerified.description
         }
