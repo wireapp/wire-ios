@@ -718,13 +718,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
             ZMUserSession.notifyInitialSyncCompleted(context: managedObjectContext)
         }
 
-        Task {
-            let hasRegisteredMLSClient = await syncContext.perform {
-                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
-                return selfClient?.hasRegisteredMLSClient == true
-            }
+        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
 
-            if hasRegisteredMLSClient {
+        if selfClient?.hasRegisteredMLSClient == true {
+            Task {
                 await mlsService.repairOutOfSyncConversations()
             }
         }
