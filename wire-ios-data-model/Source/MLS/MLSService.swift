@@ -46,7 +46,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func wipeGroup(_ groupID: MLSGroupID) async throws
 
-    func commitPendingProposals() async throws
+    func commitPendingProposalsIfNeeded()
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws
 
@@ -1280,11 +1280,21 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    /// Commit all pending proposals for all groups.
-    ///
-    /// - Throws: `MLSCommitPendingProposalsError` if proposals couldn't be commited.
+    public func commitPendingProposalsIfNeeded() {
+        guard let context = context else {
+            return
+        }
 
-    public func commitPendingProposals() async throws {
+        WaitingGroupTask(context: context) { [self] in
+            do {
+                try await commitPendingProposals()
+            } catch {
+                WireLogger.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+            }
+        }
+    }
+
+    func commitPendingProposals() async throws {
         guard context != nil else {
             return
         }

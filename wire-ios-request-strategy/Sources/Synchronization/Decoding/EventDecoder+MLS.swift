@@ -84,16 +84,7 @@ extension EventDecoder {
                     }
 
                     if let mlsService, updateEvent.source == .webSocket {
-                        // It's not uncommon to receive multiple proposals in a row for a group, and attempting to
-                        // commit only one of them will result in mls-commit-missing-references and uncessary re-tries
-                        // so we defer committing them for later.
-                        WaitingGroupTask(context: context) {
-                            do {
-                                try await mlsService.commitPendingProposals()
-                            } catch {
-                                WireLogger.mls.error("failed to commit pending proposals: \(String(describing: error))")
-                            }
-                        }
+                        mlsService.commitPendingProposalsIfNeeded()
                     }
 
                     return nil
