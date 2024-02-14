@@ -19,7 +19,7 @@
 import  WireTesting
 @testable import WireTransport
 
-private class MockTask: DataTaskProtocol {
+private final class MockTask: DataTaskProtocol {
 
     var resumeCallCount = 0
 
@@ -29,7 +29,7 @@ private class MockTask: DataTaskProtocol {
 
 }
 
-private class MockURLSession: SessionProtocol {
+private final class MockURLSession: SessionProtocol {
 
     var recordedRequest: URLRequest?
     var recordedCompletionHandler: ((Data?, URLResponse?, Error?) -> Void)?
@@ -47,7 +47,7 @@ private class MockURLSession: SessionProtocol {
 
 }
 
-private class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
+private final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
 
     let mayBeReachable = true
     let isMobileConnection = true
@@ -63,7 +63,7 @@ private class MockReachability: NSObject, ReachabilityProvider, TearDownCapable 
 }
 
 @objcMembers
-class MockCertificateTrust: NSObject, BackendTrustProvider {
+final class MockCertificateTrust: NSObject, BackendTrustProvider {
 
     var isTrustingServer: Bool = true
 

@@ -110,7 +110,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
     public func assets(for category: CategoryMatch) -> [ZMConversationMessage] {
         // Remove zombie objects and return remaining
         if let values = assets?[category] {
-            let withoutZombie = values.filter {!$0.isZombieObject}
+            let withoutZombie = values.filter { !$0.isZombieObject }
             assets?[category] = withoutZombie
             return withoutZombie
         }
@@ -178,7 +178,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             // Map assets to UI assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
             newAssets.forEach {
-                let uiValues = $1.compactMap { (try? self.uiMOC?.existingObject(with: $0.objectID)) as? ZMMessage}
+                let uiValues = $1.compactMap { (try? self.uiMOC?.existingObject(with: $0.objectID)) as? ZMMessage }
                 uiAssets[$0] = uiValues
             }
 
@@ -258,7 +258,7 @@ extension AssetCollectionBatched {
             sorted[matchPair] = []
         }
 
-        let unionIncluding: MessageCategory = matchingCategories.reduce(.none) {$0.union($1.including)}
+        let unionIncluding: MessageCategory = matchingCategories.reduce(.none) { $0.union($1.including) }
         messages.forEach { message in
             let category = message.cachedCategory
             guard     (category.intersection(unionIncluding) != .none)

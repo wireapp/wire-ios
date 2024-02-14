@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class MockPinchGestureRecognizer: UIPinchGestureRecognizer {
+final class MockPinchGestureRecognizer: UIPinchGestureRecognizer {
     let mockState: UIGestureRecognizer.State
     var mockLocation: CGPoint?
     var mockView: UIView?

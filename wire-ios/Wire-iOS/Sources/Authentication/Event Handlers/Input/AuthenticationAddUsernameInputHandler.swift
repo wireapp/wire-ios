@@ -22,7 +22,7 @@ import Foundation
  * Handles the input of the username after login if the user doesn't have one.
  */
 
-class AuthenticationAddUsernameInputHandler: AuthenticationEventHandler {
+final class AuthenticationAddUsernameInputHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

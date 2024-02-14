@@ -114,7 +114,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         attributes: TextAttributes
     ) -> View.Configuration {
 
-        let displayNamesOfOthers = users.filter {!$0.isSelfUser }.compactMap { $0.name }
+        let displayNamesOfOthers = users.filter { !$0.isSelfUser }.compactMap { $0.name }
         let firstTwoNames = displayNamesOfOthers.prefix(2)
         let senderNames = firstTwoNames.joined(separator: ", ")
         let additionalSenderCount = max(displayNamesOfOthers.count - 1, 1)

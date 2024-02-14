@@ -19,7 +19,7 @@
 import Foundation
 import WireRequestStrategy
 
-class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
+final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     // MARK: - Properties
 
