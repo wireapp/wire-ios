@@ -380,9 +380,13 @@ extension XCTestCase {
 
     func verify(matching value: UIView,
                 named name: String? = nil,
+                identifier: String? = nil,
+                deviceName: String? = nil,
                 file: StaticString = #file,
                 testName: String = #function,
                 line: UInt = #line) {
+
+        let identifier = finalIdentifier(deviceName: deviceName, identifier: identifier)
 
         let failure = verifySnapshot(matching: value,
                                      as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
@@ -641,5 +645,25 @@ extension XCTestCase {
                       file: file,
                       testName: testName,
                       line: line)
+    }
+
+    func finalIdentifier(deviceName: String?, identifier: String?) -> String? {
+        var finalIdentifier: String?
+
+        if 0 == (identifier?.count ?? 0) {
+            if let deviceName = deviceName,
+                deviceName.count > 0 {
+                finalIdentifier = deviceName
+            }
+        } else {
+            if let deviceName = deviceName,
+                deviceName.count > 0 {
+                finalIdentifier = "\(identifier ?? "")-\(deviceName)"
+            } else {
+                finalIdentifier = "\(identifier ?? "")"
+            }
+        }
+
+        return finalIdentifier
     }
 }

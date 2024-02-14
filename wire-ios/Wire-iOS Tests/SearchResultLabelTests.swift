@@ -69,13 +69,14 @@ final class SearchResultLabelTests: ZMSnapshotTestCase {
             $0.result.setContentHuggingPriority(.required, for: .vertical)
             $0.result.widthAnchor.constraint(lessThanOrEqualToConstant: 320).isActive = true
 
-            $0.result.layoutForTest()
+            $0.result.layoutViewForTest()
             let mockBackgroundView = UIView(frame: $0.result.frame)
             mockBackgroundView.overrideUserInterfaceStyle = mode
             mockBackgroundView.backgroundColor = SemanticColors.View.backgroundDefault
             mockBackgroundView.addSubview($0.result)
 
-            self.verify(view: mockBackgroundView, identifier: identifier, file: #file, line: #line)
+            // self.verify(view: mockBackgroundView, identifier: identifier, file: #file, line: #line)
+            self.verify(matching: mockBackgroundView, identifier: identifier, file: file, line: line)
             return .none
         }.count, 0, line: #line)
     }
@@ -94,5 +95,13 @@ final class SearchResultLabelTests: ZMSnapshotTestCase {
     func testThatItShowsStringWithoutHighlight() {
         prepareForTest()
         performTest()
+    }
+}
+
+fileprivate extension UIView {
+    func layoutViewForTest(in size: CGSize = CGSize(width: 320, height: 480)) {
+        let fittingSize = self.systemLayoutSizeFitting(size)
+        self.frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
+
     }
 }
