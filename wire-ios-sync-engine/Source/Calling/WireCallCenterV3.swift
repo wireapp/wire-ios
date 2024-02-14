@@ -1015,17 +1015,3 @@ private extension ZMConversation {
     }
 
 }
-
-extension AVSConversationType {
-
-    var isConference: Bool {
-        switch self {
-        case .conference, .mlsConference:
-            return true
-
-        default:
-            return false
-        }
-    }
-
-}
