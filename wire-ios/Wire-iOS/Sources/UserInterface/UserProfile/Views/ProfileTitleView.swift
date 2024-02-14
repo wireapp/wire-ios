@@ -79,10 +79,8 @@ final class ProfileTitleView: UIView {
         }
 
         let userStatus = UserStatus(
-            name: user.name ?? "",
-            availability: user.availability,
-            isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-            isVerified: user.isVerified
+            user: user,
+            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
         )
         titleLabel.attributedText = userStatus.title(
             color: LabelColors.textDefault,

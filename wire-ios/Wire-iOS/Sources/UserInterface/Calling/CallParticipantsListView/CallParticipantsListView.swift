@@ -109,9 +109,13 @@ extension CallParticipantsListView: UICollectionViewDataSource {
 
 extension UserCell: CallParticipantsListCellConfigurable {
 
-    func configure(with configuration: CallParticipantsListCellConfiguration,
-                   selfUser: UserType) {
-        guard case let .callParticipant(hashBoxUser, callParticipantState, activeSpeakerState) = configuration else { preconditionFailure() }
+    func configure(
+        with configuration: CallParticipantsListCellConfiguration,
+        selfUser: UserType
+    ) {
+        guard case let .callParticipant(hashBoxUser, callParticipantState, activeSpeakerState) = configuration else {
+            preconditionFailure()
+        }
 
         let user = hashBoxUser.value
         hidesSubtitle = true

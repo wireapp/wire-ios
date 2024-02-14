@@ -26,7 +26,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // This property should in the long run replace the `user: UserType` property
     // provided in the `configure` method. Unfortunately, currently there is still code
-    // which depends on the actual `UserType/ZMUser` instance, like the `BadgeUserImageView`.
+    // which depends on the actual `UserType`/`ZMUser` instance, like the `BadgeUserImageView`.
     var userStatus = UserStatus() {
         didSet { updateTitleLabel() }
     }
@@ -343,7 +343,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     // MARK: - Update and configure methods
 
     private func updateTitleLabel() {
-        // TODO [WPB-765]: is long text properly truncated?
         titleLabel.attributedText = userStatus.title(
             color: SemanticColors.Label.textDefault,
             includeAvailabilityAndCertificationStatus: isSelfUserPartOfATeam,
@@ -407,11 +406,8 @@ extension UserCell {
     ) {
         configure(
             userStatus: .init(
-                name: user.name ?? "",
-                handle: user.handle ?? "",
-                availability: user.availability,
-                isCertified: isCertified,
-                isVerified: user.isVerified
+                user: user,
+                isCertified: isCertified
             ),
             user: user,
             userIsSelfUser: user.isSelfUser,

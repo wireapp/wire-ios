@@ -116,10 +116,8 @@ final class ProfileHeaderViewController: UIViewController {
 
         userStatusViewController.delegate = self
         userStatusViewController.userStatus = .init(
-            name: user.name ?? "",
-            availability: user.availability,
-            isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-            isVerified: user.isVerified
+            user: user,
+            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
         )
     }
 

@@ -86,10 +86,8 @@ final class ConversationListTopBarViewController: UIViewController {
         if selfUser.isTeamMember {
             let availabilityViewController = UserStatusViewController(options: .header, settings: .shared)
             availabilityViewController.userStatus = .init(
-                name: selfUser.name ?? "",
-                availability: selfUser.availability,
-                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-                isVerified: selfUser.isVerified
+                user: selfUser,
+                isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
             )
             addChild(availabilityViewController)
             topBar?.middleView = availabilityViewController.view
