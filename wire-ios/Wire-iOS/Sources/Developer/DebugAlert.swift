@@ -140,9 +140,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let userID = user?.remoteIdentifier?.transportString() ?? ""
         let device = UIDevice.current.name
         let userDescription = "\(user?.name ?? "") [user: \(userID)] [device: \(device)]"
-        let message = "Logs for: \(message)\n\n"
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
-
 
         guard MFMailComposeViewController.canSendMail() else {
 
