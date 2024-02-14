@@ -79,20 +79,22 @@ final class UserStatusView: TitleView {
         let isInteractive = options.contains(.allowSettingStatus)
         var title = ""
 
-        // TODO [WPB-765]: add accessibility strings for image attachments?
         if options.contains(.displayUserName) {
             title = userStatus.name
-            if userStatus.isVerified {
-                let attachment = NSTextAttachment(imageResource: .verifiedShield)
-                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
-                trailingIcons.insert(attachment, at: 0)
-            }
+            var accessibilityLabel = title
             if userStatus.isCertified {
                 let attachment = NSTextAttachment(imageResource: .certificateValid)
                 attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
                 trailingIcons.insert(attachment, at: 0)
+                // TODO [WPB-765]: add accessibility label for the E2EI verified shield.
             }
-            accessibilityLabel = title
+            if userStatus.isVerified {
+                let attachment = NSTextAttachment(imageResource: .verifiedShield)
+                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
+                trailingIcons.insert(attachment, at: 0)
+                accessibilityLabel += ", " + L10n.Accessibility.ClientsList.DeviceVerified.description
+            }
+            self.accessibilityLabel = accessibilityLabel
         } else if availability == .none && options.contains(.allowSettingStatus) {
             title = L10n.Localizable.Availability.Message.setStatus
             accessibilityLabel = title
