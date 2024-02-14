@@ -113,7 +113,7 @@ extension IntegrationTest {
 
     @objc
     public func connect(withUser user: UserType) {
-        user.connect(completion: {_ in })
+        user.connect(completion: { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 

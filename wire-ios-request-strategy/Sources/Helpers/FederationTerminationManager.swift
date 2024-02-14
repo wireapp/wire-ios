@@ -26,7 +26,7 @@ public protocol FederationTerminationManagerInterface {
 
 }
 
-final public class FederationTerminationManager: FederationTerminationManagerInterface {
+public final class FederationTerminationManager: FederationTerminationManagerInterface {
 
     private var context: NSManagedObjectContext
 

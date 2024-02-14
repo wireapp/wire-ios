@@ -104,7 +104,7 @@ class CallingRequestStrategyTests: MessagingTest {
     func testThatItGeneratesOnlyOneCallConfigRequest() {
 
         // given
-        sut.requestCallConfig { (_, _) in}
+        sut.requestCallConfig { (_, _) in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -119,7 +119,7 @@ class CallingRequestStrategyTests: MessagingTest {
     func testThatItGeneratesCompressedCallConfigRequest() {
 
         // given
-        sut.requestCallConfig { (_, _) in}
+        sut.requestCallConfig { (_, _) in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -520,7 +520,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
             XCTAssertEqual(targetRecipients.count, 2)
 
-            guard let recipient1 = targetRecipients.first(where: {  $0.key == user1 }) else {
+            guard let recipient1 = targetRecipients.first(where: { $0.key == user1 }) else {
                 return XCTFail("Expected user1 to be recipient")
             }
 

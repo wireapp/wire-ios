@@ -173,7 +173,7 @@ extension AppCenterOperation: DistributeDelegate {
             })
         }
 
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default) {_ in })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .default) { _ in })
 
         window.endEditing(true)
         rootViewController.present(alertController, animated: true)

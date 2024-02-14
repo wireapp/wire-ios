@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class ZMLocalNotificationTests_CallState: MessagingTest {
+final class ZMLocalNotificationTests_CallState: MessagingTest {
 
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
 

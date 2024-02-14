@@ -153,7 +153,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testUpdateOrCreateConversation_Group_AddSystemMessageWhenCreatingGroup() async throws {
+    func testUpdateOrCreateConversation_Group_AddsNewConversationSystemMessageWhenCreatingGroup() async throws {
         // given
         let qualifiedID = await syncMOC.perform {
             QualifiedID(uuid: UUID(), domain: self.owningDomain)
@@ -173,6 +173,32 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         await syncMOC.perform {
             let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC)
             XCTAssertEqual(conversation?.lastMessage?.systemMessageData?.systemMessageType, .newConversation)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Group_DoesntAddMlsMigrationPotentialGapSystemMessageWhenCreatingGroup() async throws {
+        // given
+        let qualifiedID = await syncMOC.perform {
+            QualifiedID(uuid: UUID(), domain: self.owningDomain)
+        }
+        let payload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mls.rawValue
+        )
+
+        // when
+        await sut.updateOrCreateConversation(
+            from: payload,
+            in: syncMOC
+        )
+
+        // then
+        try await syncMOC.perform {
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
+            XCTAssertFalse(conversation.allMessages.contains(where: { message in
+                message.systemMessageData?.systemMessageType == .mlsMigrationPotentialGap
+            }))
         }
     }
 

@@ -18,7 +18,7 @@
 
 import UIKit
 
-class EmailPasswordTextFieldCell: UITableViewCell {
+final class EmailPasswordTextFieldCell: UITableViewCell {
 
     let textField: EmailPasswordTextField = {
         let textField = EmailPasswordTextField()

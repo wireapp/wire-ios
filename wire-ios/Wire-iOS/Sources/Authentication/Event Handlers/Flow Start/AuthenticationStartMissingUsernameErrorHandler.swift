@@ -22,7 +22,7 @@ import Foundation
  * Handles client registration errors related to the lack of a username
  */
 
-class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventHandler {
+final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

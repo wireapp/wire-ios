@@ -113,7 +113,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         let environment = MockEnvironment()
@@ -171,7 +172,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
             sharedUserDefaults: sharedUserDefaults,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            deleteUserLogs: {}
         )
 
         let environment = MockEnvironment()

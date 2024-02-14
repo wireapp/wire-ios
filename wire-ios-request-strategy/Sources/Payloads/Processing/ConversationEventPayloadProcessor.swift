@@ -223,7 +223,7 @@ struct ConversationEventPayloadProcessor {
             }
 
             conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
+        } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }) {
             // NOTE: legacy code path for backwards compatibility with servers without role support
 
             let users = Set(users)
@@ -292,7 +292,7 @@ struct ConversationEventPayloadProcessor {
             }
         }
 
-        if let role = payload.data.conversationRole.map({conversation.fetchOrCreateRoleForConversation(name: $0) }) {
+        if let role = payload.data.conversationRole.map({ conversation.fetchOrCreateRoleForConversation(name: $0) }) {
             conversation.addParticipantAndUpdateConversationState(user: targetUser, role: role)
         }
     }
@@ -498,7 +498,12 @@ struct ConversationEventPayloadProcessor {
             self.updateMembers(from: payload, for: conversation, context: context)
             self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             self.updateConversationStatus(from: payload, for: conversation)
-            self.updateMessageProtocol(from: payload, for: conversation, in: context)
+
+            if created {
+                self.assignMessageProtocol(from: payload, for: conversation, in: context)
+            } else {
+                self.updateMessageProtocol(from: payload, for: conversation, in: context)
+            }
 
             Flow.createGroup.checkpoint(description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
 
@@ -778,6 +783,24 @@ struct ConversationEventPayloadProcessor {
         if let messageTimer = payload.messageTimer {
             conversation.updateMessageDestructionTimeout(timeout: messageTimer)
         }
+    }
+
+    private func assignMessageProtocol(
+        from payload: Payload.Conversation,
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) {
+        guard let messageProtocolString = payload.messageProtocol else {
+            Logging.eventProcessing.warn("message protocol is missing")
+            return
+        }
+
+        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
+            Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            return
+        }
+
+        conversation.messageProtocol = newMessageProtocol
     }
 
     private func updateMessageProtocol(

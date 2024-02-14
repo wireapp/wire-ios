@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
-class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
 

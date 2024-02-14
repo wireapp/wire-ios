@@ -50,7 +50,7 @@ extension CallStatusViewState {
     }
 }
 
-class EstablishingCallStatusView: UIView {
+final class EstablishingCallStatusView: UIView {
 
     private let titleLabel = DynamicFontLabel(
         text: "",

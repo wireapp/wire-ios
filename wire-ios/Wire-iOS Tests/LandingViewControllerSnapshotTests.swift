@@ -74,7 +74,7 @@ final class LandingViewControllerSnapshotTests: BaseSnapshotTestCase {
 
 // MARK: - FakeProxySettings
 
-class FakeProxySettings: NSObject, ProxySettingsProvider {
+final class FakeProxySettings: NSObject, ProxySettingsProvider {
 
     var host: String
     var port: Int

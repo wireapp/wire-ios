@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
-class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationCannotDecryptSystemMessageCell
     typealias IconColors = SemanticColors.Icon

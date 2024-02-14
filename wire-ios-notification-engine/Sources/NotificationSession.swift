@@ -70,7 +70,7 @@ public protocol NotificationSessionDelegate: AnyObject {
 /// the lifetime of the notification extension, and hold on to that session
 /// for the entire lifetime.
 ///
-public class NotificationSession {
+public final class NotificationSession {
 
     /// The failure reason of a `NotificationSession` initialization
     /// - noAccount: Account doesn't exist

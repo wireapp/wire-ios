@@ -264,45 +264,6 @@ class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderPr
 
 }
 
-public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - start
-
-    public var start_Invocations: [Void] = []
-    public var start_MockMethod: (() async -> Void)?
-
-    public func start() async {
-        start_Invocations.append(())
-
-        guard let mock = start_MockMethod else {
-            fatalError("no mock for `start`")
-        }
-
-        await mock()
-    }
-
-    // MARK: - stop
-
-    public var stop_Invocations: [Void] = []
-    public var stop_MockMethod: (() -> Void)?
-
-    public func stop() {
-        stop_Invocations.append(())
-
-        guard let mock = stop_MockMethod else {
-            fatalError("no mock for `stop`")
-        }
-
-        mock()
-    }
-
-}
-
 public class MockSessionManagerDelegate: SessionManagerDelegate {
 
     // MARK: - Life cycle
@@ -506,6 +467,45 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         }
 
         mock(session)
+    }
+
+}
+
+public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - start
+
+    public var start_Invocations: [Void] = []
+    public var start_MockMethod: (() async -> Void)?
+
+    public func start() async {
+        start_Invocations.append(())
+
+        guard let mock = start_MockMethod else {
+            fatalError("no mock for `start`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - stop
+
+    public var stop_Invocations: [Void] = []
+    public var stop_MockMethod: (() -> Void)?
+
+    public func stop() {
+        stop_Invocations.append(())
+
+        guard let mock = stop_MockMethod else {
+            fatalError("no mock for `stop`")
+        }
+
+        mock()
     }
 
 }

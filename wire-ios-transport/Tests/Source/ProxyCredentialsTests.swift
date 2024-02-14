@@ -20,7 +20,7 @@ import WireTransport
 import WireTesting
 import XCTest
 
-class ProxyCredentialsTests: ZMTBaseTest {
+final class ProxyCredentialsTests: ZMTBaseTest {
 
     func test_persist_storesInformationToTheKeychainDoesNotThrow() throws {
         // GIVEN

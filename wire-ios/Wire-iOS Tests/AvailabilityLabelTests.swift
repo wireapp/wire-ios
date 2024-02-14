@@ -20,7 +20,7 @@ import XCTest
 import WireCommonComponents
 @testable import Wire
 
-class AvailabilityLabelTests: BaseSnapshotTestCase {
+final class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     // MARK: - List labels
 

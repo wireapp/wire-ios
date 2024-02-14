@@ -19,7 +19,7 @@
 import Foundation
 import WireRequestStrategy
 
-class AuthenticationStatus: AuthenticationStatusProvider {
+final class AuthenticationStatus: AuthenticationStatusProvider {
 
     // MARK: - Properties
 

@@ -65,7 +65,7 @@ class DictionaryTests: XCTestCase {
         let input = [1: "foo1", 2: "foo2", 3: "foo3"]
 
         // when
-        let dictionary: [Int: String] = input.mapKeysAndValues(keysMapping: ({$0*2}), valueMapping: ({$1 + "bar"}))
+        let dictionary: [Int: String] = input.mapKeysAndValues(keysMapping: ({ $0*2 }), valueMapping: ({ $1 + "bar" }))
 
         // then
         XCTAssertEqual(dictionary, [2: "foo1bar", 4: "foo2bar", 6: "foo3bar"])
@@ -76,8 +76,8 @@ class DictionaryTests: XCTestCase {
         let input = [1: "foo1", 2: "foo2", 3: "foo3"]
 
         // when
-        let dictionary: [Int: String] = input.mapKeysAndValues(keysMapping: ({$0*2}),
-                                                                 valueMapping: ({ $0 == 1 ? nil : $1 + "bar"}))
+        let dictionary: [Int: String] = input.mapKeysAndValues(keysMapping: ({ $0*2 }),
+                                                                 valueMapping: ({ $0 == 1 ? nil : $1 + "bar" }))
 
         // then
         XCTAssertEqual(dictionary, [4: "foo2bar", 6: "foo3bar"])

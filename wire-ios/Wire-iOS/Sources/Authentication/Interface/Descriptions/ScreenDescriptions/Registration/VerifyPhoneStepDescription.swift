@@ -18,7 +18,7 @@
 
 import Foundation
 
-class VerifyPhoneStepSecondaryView: AuthenticationFooterViewDescription {
+final class VerifyPhoneStepSecondaryView: AuthenticationFooterViewDescription {
     let views: [ViewDescriptor]
     weak var actioner: AuthenticationActioner?
 

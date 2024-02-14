@@ -23,14 +23,14 @@ import WireRequestStrategy
 
 final class RequestGeneratorStoreTests: ZMTBaseTest {
 
-    class MockStrategy: NSObject, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
+    final class MockStrategy: NSObject, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
         public var requestGenerators: [ZMRequestGenerator] = []
         public var contextChangeTrackers: [ZMContextChangeTracker] = []
     }
 
     typealias RequestBlock = () -> ZMTransportRequest?
 
-    class DummyGenerator: NSObject, ZMRequestGenerator {
+    final class DummyGenerator: NSObject, ZMRequestGenerator {
 
         let requestBlock: RequestBlock
 
@@ -43,7 +43,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         }
     }
 
-    class MockRequestStrategy: NSObject, RequestStrategy {
+    final class MockRequestStrategy: NSObject, RequestStrategy {
 
         let request: ZMTransportRequest
 

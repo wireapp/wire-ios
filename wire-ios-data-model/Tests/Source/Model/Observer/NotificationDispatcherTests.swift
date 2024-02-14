@@ -84,7 +84,7 @@ extension ObjectChangeInfo {
     }
     @discardableResult public func mergeLastChangesWithoutNotifying() -> [NSManagedObjectID] {
         guard let change = mergeNotifications.last else { return [] }
-        let changedObjects = (change.userInfo?[NSUpdatedObjectsKey] as? Set<ZMManagedObject>)?.map {$0.objectID} ?? []
+        let changedObjects = (change.userInfo?[NSUpdatedObjectsKey] as? Set<ZMManagedObject>)?.map { $0.objectID } ?? []
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         self.uiMOC.mergeChanges(fromContextDidSave: change)

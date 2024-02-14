@@ -122,7 +122,7 @@ func << (value: inout Any?, property: SettingsProperty) {
 }
 
 /// Generic user defaults property
-class SettingsUserDefaultsProperty: SettingsProperty {
+final class SettingsUserDefaultsProperty: SettingsProperty {
     var enabled: Bool = true
 
     func set(newValue: SettingsPropertyValue) throws {

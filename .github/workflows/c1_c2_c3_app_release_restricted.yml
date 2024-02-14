@@ -1,4 +1,4 @@
-name: C1 C3 Restricted
+name: C1 C2 C3 Restricted
 
 on: workflow_dispatch
 
@@ -10,6 +10,12 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_1_restricted
+    secrets: inherit
+
+  column_2_restricted:
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: appstore_col_2_restricted
     secrets: inherit
 
   column_3_restricted:

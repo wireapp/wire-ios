@@ -23,7 +23,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
     var sut: ValidatedTextField!
     var mockViewController: MockViewController!
 
-    class MockViewController: UIViewController, TextFieldValidationDelegate {
+    final class MockViewController: UIViewController, TextFieldValidationDelegate {
 
         var errorCounter = 0
         var successCounter = 0
@@ -85,7 +85,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
         XCTAssertEqual(
             mockViewController.lastError,
-                .none,
+            .none,
             "Should not have error",
             file: file,
             line: line
@@ -267,8 +267,8 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
         // WHEN & THEN
         checkError(textFieldType: type, text: text, expectedError:
-            .invalidPassword([.tooShort,
-                              .missingRequiredClasses(missingRequiredClassesSet)]))
+                .invalidPassword([.tooShort,
+                                  .missingRequiredClasses(missingRequiredClassesSet)]))
     }
 
     func testThat129CharacterPasswordIsInvalid_New() {

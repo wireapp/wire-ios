@@ -31,7 +31,7 @@ public protocol CallEventHandlerProtocol {
     func reportIncomingVoIPCall(_ payload: [String: Any])
 }
 
-class CallEventHandler: CallEventHandlerProtocol {
+final class CallEventHandler: CallEventHandlerProtocol {
 
     func reportIncomingVoIPCall(_ payload: [String: Any]) {
         WireLogger.calling.info("waking up main app to handle call event")
@@ -44,7 +44,7 @@ class CallEventHandler: CallEventHandlerProtocol {
 
 }
 
-public class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
+public final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
 
     // MARK: - Properties
 

@@ -26,7 +26,7 @@ private let log = ZMSLog(tag: "AssetDeletion")
     func didFailToDelete(identifier: String)
 }
 
-final public class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProviderType {
+public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProviderType {
 
     private var provider: DeletableAssetIdentifierProvider
     private var identifiersInProgress = Set<String>()

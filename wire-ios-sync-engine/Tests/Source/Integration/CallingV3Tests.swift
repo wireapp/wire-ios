@@ -21,7 +21,7 @@ import avs
 import WireDataModel
 @testable import WireSyncEngine
 
-class CallStateTestObserver: WireCallCenterCallStateObserver {
+final class CallStateTestObserver: WireCallCenterCallStateObserver {
 
     var changes: [CallState] = []
     var token: Any?
@@ -44,7 +44,7 @@ class CallStateTestObserver: WireCallCenterCallStateObserver {
 
 }
 
-class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
+final class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
 
     var changes: [[(UUID, CallParticipantState)]] = []
     var token: Any?
@@ -59,7 +59,7 @@ class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
 
 }
 
-class CallingV3Tests: IntegrationTest {
+final class CallingV3Tests: IntegrationTest {
 
     var stateObserver: CallStateTestObserver!
     var participantObserver: CallParticipantTestObserver!
@@ -127,7 +127,7 @@ class CallingV3Tests: IntegrationTest {
     }
 
     func participantsChanged(members: [(user: ZMUser, establishedFlow: Bool)]) {
-        let mappedMembers = members.map {AVSCallMember(userId: $0.user.remoteIdentifier!, audioEstablished: $0.establishedFlow)}
+        let mappedMembers = members.map { AVSCallMember(userId: $0.user.remoteIdentifier!, audioEstablished: $0.establishedFlow) }
         (userSession!.managedObjectContext.zm_callCenter as! WireCallCenterV3IntegrationMock).mockAVSWrapper.mockMembers = mappedMembers
 
         WireSyncEngine.groupMemberHandler(conversationIdRef: conversationIdRef, contextRef: wireCallCenterRef)

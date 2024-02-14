@@ -739,7 +739,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await syncMOC.perform {
             // THEN
             guard let participant = self.groupConversation.participantRoles
-                .first(where: {$0.user == user}) else {
+                .first(where: { $0.user == user }) else {
                 return XCTFail("No user in convo")
             }
             XCTAssertEqual(participant.role, newRole)
@@ -783,7 +783,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await syncMOC.perform {
             // THEN
             guard let participant = self.groupConversation.participantRoles
-                .first(where: {$0.user == selfUser}) else {
+                .first(where: { $0.user == selfUser }) else {
                 return XCTFail("No user in convo")
             }
             XCTAssertEqual(participant.role, newRole)

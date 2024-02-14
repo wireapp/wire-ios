@@ -66,7 +66,8 @@ struct SessionManagerBuilder {
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: .temporary()
+            sharedUserDefaults: .temporary(),
+            deleteUserLogs: nil
         )
     }
 }

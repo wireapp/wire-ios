@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-private class MockCallHapticsGenerator: CallHapticsGeneratorType {
+private final class MockCallHapticsGenerator: CallHapticsGeneratorType {
     var triggeredEvents = [CallHapticsEvent]()
 
     func trigger(event: CallHapticsEvent) {

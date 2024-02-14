@@ -21,7 +21,7 @@ import Foundation
 let ZMParticipantRoleRoleValueKey           = #keyPath(ParticipantRole.role)
 
 @objcMembers
-final public class ParticipantRole: ZMManagedObject {
+public final class ParticipantRole: ZMManagedObject {
 
     @NSManaged public var conversation: ZMConversation?
     @NSManaged public var user: ZMUser?

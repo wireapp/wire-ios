@@ -446,9 +446,9 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
             // then
             XCTAssertEqual(conversation.unreadMessages.count, 2)
-            XCTAssertTrue(conversation.unreadMessages.contains { $0.nonce == systemMessage1.nonce})
-            XCTAssertFalse(conversation.unreadMessages.contains { $0.nonce == systemMessage2.nonce})
-            XCTAssertTrue(conversation.unreadMessages.contains { $0.nonce == textMessage.nonce})
+            XCTAssertTrue(conversation.unreadMessages.contains { $0.nonce == systemMessage1.nonce })
+            XCTAssertFalse(conversation.unreadMessages.contains { $0.nonce == systemMessage2.nonce })
+            XCTAssertTrue(conversation.unreadMessages.contains { $0.nonce == textMessage.nonce })
         }
     }
 

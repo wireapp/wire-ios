@@ -18,7 +18,7 @@
 
 import Foundation
 
-class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
+final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
     var mayBeReachable = true
     var isMobileConnection = true
     var oldMayBeReachable = true

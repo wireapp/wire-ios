@@ -117,6 +117,6 @@ class MemoryReferenceDebuggerTests: XCTestCase {
     }
 }
 
-private class TestClass {
+private final class TestClass {
 
 }

@@ -21,7 +21,7 @@ import PushKit
 
 @testable import WireSyncEngine
 
-class PushPayloadMock: PKPushPayload {
+final class PushPayloadMock: PKPushPayload {
 
     let mockDictionaryPayload: [AnyHashable: Any]
 
@@ -37,7 +37,7 @@ class PushPayloadMock: PKPushPayload {
 
 }
 
-class PushCredentialsMock: PKPushCredentials {
+final class PushCredentialsMock: PKPushCredentials {
 
     let mockToken: Data
     let mockType: PKPushType
@@ -60,7 +60,7 @@ class PushCredentialsMock: PKPushCredentials {
 }
 
 @objcMembers
-class PushRegistryMock: PKPushRegistry {
+final class PushRegistryMock: PKPushRegistry {
 
     var mockPushToken: Data?
 

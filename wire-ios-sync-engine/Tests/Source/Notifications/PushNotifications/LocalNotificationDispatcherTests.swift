@@ -21,7 +21,7 @@ import UserNotifications
 
 @testable import WireSyncEngine
 
-class LocalNotificationDispatcherTests: DatabaseTest {
+final class LocalNotificationDispatcherTests: DatabaseTest {
 
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
 

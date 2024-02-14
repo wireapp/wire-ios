@@ -20,7 +20,7 @@ import Foundation
 import LocalAuthentication
 @testable import WireSyncEngine
 
-class MockUserSessionDelegate: NSObject, UserSessionDelegate {
+final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 
     var prepareForMigration_Invocations = [Account]()
     func prepareForMigration(

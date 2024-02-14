@@ -49,7 +49,7 @@ typealias URLRequestSuccessHandler = (_ data: Data) throws -> Void
  * fails sliently.
  */
 
-class URLRequestPromise: CancelableTask {
+final class URLRequestPromise: CancelableTask {
 
     let requester: ZiphyURLRequester
 

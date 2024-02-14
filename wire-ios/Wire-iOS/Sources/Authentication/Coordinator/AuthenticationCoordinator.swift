@@ -46,7 +46,7 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
  * or delegate call from one of the abstracted components.
  */
 
-class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
+final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
 
     /// The handle to the OS log for authentication events.
     let log = ZMSLog(tag: "Authentication")
@@ -203,7 +203,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             var viewControllers = presenter.viewControllers
             let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
             if let rewindedController = rewindedController {
-                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0)}, [rewindedController], [stepViewController]].flatMap { $0 }
+                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0) }, [rewindedController], [stepViewController]].flatMap { $0 }
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
                 presenter.setViewControllers([stepViewController], animated: true)

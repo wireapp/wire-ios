@@ -23,7 +23,7 @@ import WireDataModel
  * Handles the change of email of the user when logging in.
  */
 
-class UserEmailChangeEventHandler: AuthenticationEventHandler {
+final class UserEmailChangeEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

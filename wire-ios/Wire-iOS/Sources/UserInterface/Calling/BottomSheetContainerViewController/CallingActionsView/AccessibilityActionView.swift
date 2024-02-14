@@ -18,7 +18,7 @@
 
 import UIKit
 
-class AccessibilityActionView: UIView {
+final class AccessibilityActionView: UIView {
     var accessibilityAction: (() -> Void)?
 
     override func accessibilityActivate() -> Bool {

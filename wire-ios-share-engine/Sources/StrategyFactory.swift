@@ -21,7 +21,7 @@ import WireRequestStrategy
 import WireTransport.ZMRequestCancellation
 import WireLinkPreview
 
-class StrategyFactory {
+final class StrategyFactory {
 
     unowned let syncContext: NSManagedObjectContext
     let applicationStatus: ApplicationStatus

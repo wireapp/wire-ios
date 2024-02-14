@@ -178,7 +178,7 @@ extension CallControllerTests {
 }
 
 // MARK: - ActiveCallRouterMock
-class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
+final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
     var presentActiveCallIsCalled: Bool = false
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
@@ -218,7 +218,7 @@ class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 }
 
 // MARK: - MockCallConversationProvider
-class MockCallConversationProvider: CallConversationProvider {
+final class MockCallConversationProvider: CallConversationProvider {
     var priorityCallConversation: ZMConversation?
     var ongoingCallConversation: ZMConversation?
     var ringingCallConversation: ZMConversation?

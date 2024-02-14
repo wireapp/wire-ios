@@ -31,7 +31,8 @@ import Foundation
     func didClose(socket: NetworkSocket)
 }
 
-@objcMembers public class DataBuffer: NSObject {
+@objcMembers
+public final class DataBuffer: NSObject {
     fileprivate var data: DispatchData = DispatchData.empty
 
     public var objcData: __DispatchData {
