@@ -35,14 +35,16 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     let connectToUserActionHandler: ConnectToUserActionHandler
     let updateConnectionActionHandler: UpdateConnectionActionHandler
     let actionSync: EntityActionSync
-    let oneOnOneResolver: OneOnOneResolverInterface
+    let oneOnOneResolver: OneOnOneResolverInterface?
 
     var oneOnOneResolutionDelay: TimeInterval = 3
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                syncProgress: SyncProgress,
-                oneOneOneResolver: OneOnOneResolverInterface? = nil) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncProgress: SyncProgress,
+        oneOneOneResolver: OneOnOneResolverInterface? = nil
+    ) {
 
         self.syncProgress = syncProgress
         self.localConnectionListSync =
@@ -71,7 +73,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
             updateConnectionActionHandler
         ])
 
-        self.oneOnOneResolver = oneOneOneResolver ?? OneOnOneResolver(syncContext: managedObjectContext)
+        self.oneOnOneResolver = oneOneOneResolver
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -238,7 +240,8 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                     try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
                 }
 
-                try await self.oneOnOneResolver.resolveOneOnOneConversation(with: userID, in: context)
+                let resolver = self.oneOnOneResolver ?? OneOnOneResolver(syncContext: context)
+                try await resolver.resolveOneOnOneConversation(with: userID, in: context)
 
                 await context.perform {
                     _ = context.saveOrRollback()
