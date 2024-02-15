@@ -5509,6 +5509,16 @@ internal enum L10n {
             /// Wire Debug Report
             internal static let subject = L10n.tr("Localizable", "self.settings.technical_report.mail.subject", fallback: "Wire Debug Report")
           }
+          internal enum MailBody {
+            /// Please fill in the following
+            internal static let firstline = L10n.tr("Localizable", "self.settings.technical_report.mail_body.firstline", fallback: "Please fill in the following")
+            /// Date and Time of the issue occured:
+            internal static let section1 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section1", fallback: "Date and Time of the issue occured:")
+            /// What Happened:
+            internal static let section2 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section2", fallback: "What Happened:")
+            /// Steps to reproduce (if relevant):
+            internal static let section3 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section3", fallback: "Steps to reproduce (if relevant):")
+          }
         }
         internal enum TechnicalReportSection {
           /// Technical Report
