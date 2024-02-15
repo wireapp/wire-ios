@@ -35,7 +35,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     let connectToUserActionHandler: ConnectToUserActionHandler
     let updateConnectionActionHandler: UpdateConnectionActionHandler
     let actionSync: EntityActionSync
-    let oneOnOneResolver: OneOnOneResolverInterface?
+    let oneOnOneResolver: OneOnOneResolverInterface
 
     var oneOnOneResolutionDelay: TimeInterval = 3
 
@@ -43,7 +43,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
-        oneOneOneResolver: OneOnOneResolverInterface? = nil
+        oneOneOneResolver: OneOnOneResolverInterface
     ) {
 
         self.syncProgress = syncProgress
@@ -240,7 +240,7 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                     try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
                 }
 
-                let resolver = self.oneOnOneResolver ?? OneOnOneResolver(syncContext: context)
+                let resolver = self.oneOnOneResolver
                 try await resolver.resolveOneOnOneConversation(with: userID, in: context)
 
                 await context.perform {
