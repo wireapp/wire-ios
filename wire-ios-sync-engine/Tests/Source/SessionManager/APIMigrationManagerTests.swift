@@ -117,8 +117,8 @@ class APIMigrationManagerTests: MessagingTest {
 
     func test_itPerformsMigrationsForMultipleSessions() async {
         // Given
-        let clientID1 = "client1"
-        let clientID2 = "client2"
+        let clientID1 = UUID().uuidString
+        let clientID2 = UUID().uuidString
         let userSession1 = setupSession(with: clientID1)
         let userSession2 = setupSession(with: clientID2)
 
