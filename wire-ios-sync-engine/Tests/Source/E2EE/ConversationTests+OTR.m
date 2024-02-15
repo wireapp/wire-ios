@@ -284,7 +284,10 @@
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
+@end
+
 #pragma mark - Trust
+@implementation ConversationTestsOTR (Trust)
 
 - (ZMClientMessage *)sendOtrMessageWithInitialSecurityLevel:(ZMConversationSecurityLevel)securityLevel
                                            numberOfMessages:(NSUInteger)numberOfMessages
