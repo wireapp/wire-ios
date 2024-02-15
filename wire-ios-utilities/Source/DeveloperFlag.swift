@@ -106,7 +106,7 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 }
 
-private class DeveloperFlagsDefault {
+private final class DeveloperFlagsDefault {
 
     static func isEnabled(for bundleKey: String) -> Bool {
         return Bundle(for: self).infoForKey(bundleKey) == "1"

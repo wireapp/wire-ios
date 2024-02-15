@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-public class TimedCircularProgressView: CircularProgressView {
+public final class TimedCircularProgressView: CircularProgressView {
     public typealias Completion = () -> Void
     public var duration: CFTimeInterval = 5
     private var completion: Completion?

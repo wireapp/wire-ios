@@ -21,7 +21,7 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
-class CustomMessageView: UIView {
+final class CustomMessageView: UIView {
     public var isSelected: Bool = false
 
     weak var delegate: ConversationMessageCellDelegate?

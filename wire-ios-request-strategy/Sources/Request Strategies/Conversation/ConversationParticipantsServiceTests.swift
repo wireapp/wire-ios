@@ -50,7 +50,7 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         conversation.conversationType = .group
 
         user = ZMUser.insertNewObject(in: uiMOC)
-
+        user.remoteIdentifier = UUID()
         // Set up sut
         sut = ConversationParticipantsService(
             context: uiMOC,
@@ -192,6 +192,8 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
             let failedUser1 = ZMUser.insertNewObject(in: uiMOC)
             let failedUser2 = ZMUser.insertNewObject(in: uiMOC)
+            failedUser1.remoteIdentifier = UUID()
+            failedUser2.remoteIdentifier = UUID()
 
             return (failedUser1, failedUser2)
         }

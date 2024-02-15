@@ -125,7 +125,7 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSend(message: any SendableMessage) async throws {
-        let messageProtocol = await context.perform {message.conversation?.messageProtocol }
+        let messageProtocol = await context.perform { message.conversation?.messageProtocol }
 
         guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
         guard let messageProtocol else {
