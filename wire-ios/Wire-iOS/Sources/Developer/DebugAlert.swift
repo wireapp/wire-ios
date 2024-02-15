@@ -178,5 +178,3 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         type(of: self).senderInstance = nil
     }
 }
-
-
