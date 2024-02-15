@@ -63,6 +63,8 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
             let rawData = response.rawData,
             let payload = MembershipListPayload(rawData)
         else {
+            //failed for some reason, should we inform?
+            syncStatus.failCurrentSyncPhase(phase: .fetchingTeamMembers)
             return
         }
 
