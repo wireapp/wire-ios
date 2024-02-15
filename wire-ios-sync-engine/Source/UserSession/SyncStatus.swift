@@ -126,7 +126,6 @@ extension Notification.Name {
        syncStateDelegate.didStartSlowSync()
    }
 
-
     public func performQuickSync() async {
         return await withCheckedContinuation { [weak self] continuation in
             guard let `self` = self else {
