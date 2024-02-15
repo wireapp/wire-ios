@@ -127,7 +127,7 @@ extension AvailabilityRequestStrategy: OTREntity {
     public func detectedRedundantUsers(_ users: [ZMUser]) {
         // We were sending a message to clients which should not receive it. To recover
         // from this we must restart the slow sync.
-        applicationStatus?.requestSlowSync()
+        applicationStatus?.requestResyncResources()
     }
 
     public func delivered(with response: ZMTransportResponse) {

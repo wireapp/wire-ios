@@ -98,8 +98,8 @@ class ApplicationStatusDirectory: ApplicationStatus {
         return transportSession
     }
 
-    func requestSlowSync() {
-        // We don't do slow syncing in the notification engine.
+    func requestResyncResources() {
+        // We don't resync Resources in the notification engine.
     }
 
 }
