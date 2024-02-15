@@ -163,7 +163,8 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         mailComposeViewController.mailComposeDelegate = self
         mailComposeViewController.setToRecipients([mailRecipient])
         mailComposeViewController.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
-        mailComposeViewController.setMessageBody("Debug report", isHTML: false)
+        let body = mailComposeViewController.prefilledBody()
+        mailComposeViewController.setMessageBody(body, isHTML: false)
 
         if logsIncluded {
             let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
