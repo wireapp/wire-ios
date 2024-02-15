@@ -19,7 +19,7 @@
 import Foundation
 
 @objc
-class MockPushTokenService: NSObject, PushTokenServiceInterface {
+final class MockPushTokenService: NSObject, PushTokenServiceInterface {
 
     // MARK: - Properties
 

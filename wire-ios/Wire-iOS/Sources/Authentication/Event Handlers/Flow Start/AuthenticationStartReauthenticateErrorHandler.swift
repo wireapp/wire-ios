@@ -23,7 +23,7 @@ import WireSyncEngine
  * Handles reauthentication errors sent at the start of the flow.
  */
 
-class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHandler {
+final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

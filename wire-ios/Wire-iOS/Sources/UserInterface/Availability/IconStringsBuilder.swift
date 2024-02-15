@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-public class IconStringsBuilder {
+public final class IconStringsBuilder {
 
     // Logic for composing attributed strings with:
     // - an icon (optional)

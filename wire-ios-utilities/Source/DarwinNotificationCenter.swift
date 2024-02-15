@@ -20,7 +20,7 @@ import Foundation
 
 /// A wrapper class to simplify observation of Darwin Notifications.
 ///
-public class DarwinNotificationCenter {
+public final class DarwinNotificationCenter {
 
     public static var shared = DarwinNotificationCenter()
 

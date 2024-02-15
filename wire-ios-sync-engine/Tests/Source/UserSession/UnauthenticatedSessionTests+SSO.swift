@@ -55,7 +55,7 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
     func testThatItGeneratesCorrectRequest() {
         // when
-        sut.fetchSSOSettings(completion: {_ in })
+        sut.fetchSSOSettings(completion: { _ in })
 
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)

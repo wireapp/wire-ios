@@ -22,7 +22,7 @@ import Foundation
  * Handles the input of the phone number or email to log in.
  */
 
-class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandler {
+final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

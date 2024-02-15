@@ -24,7 +24,7 @@ import WireCommonComponents
  * Handles client registration errors related to the client limit.
  */
 
-class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
+final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
