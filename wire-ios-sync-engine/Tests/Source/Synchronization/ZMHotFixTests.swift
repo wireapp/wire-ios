@@ -286,7 +286,11 @@ final class ZMHotFixTests_Integration: MessagingTest {
 
         // then
         withExtendedLifetime(token) {
+<<<<<<< HEAD
             wait(for: [expectation], timeout: 0.5)
+=======
+            XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+>>>>>>> 9841bde581 (fix: request loop slow sync - WPB-6502 (#988))
         }
     }
 

@@ -575,8 +575,13 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Network
 
+<<<<<<< HEAD
     public func requestSlowSync() {
         applicationStatusDirectory.requestSlowSync()
+=======
+    public func requestResyncResources() {
+        applicationStatusDirectory?.requestResyncResources()
+>>>>>>> 9841bde581 (fix: request loop slow sync - WPB-6502 (#988))
     }
 
     // MARK: - Access Token

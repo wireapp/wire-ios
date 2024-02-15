@@ -125,4 +125,21 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(selfUser.availability, .away)
         }
     }
+<<<<<<< HEAD
+=======
+
+    func testThatItRequestResyncResourcesIfWeAreSendingToRedudantClients() {
+        self.syncMOC.performGroupedAndWait { moc in
+            // given
+            let redundantUser = ZMUser.fetchOrCreate(with: UUID(), domain: nil, in: moc)
+
+            // when
+            self.sut.detectedRedundantUsers([redundantUser])
+
+            // then
+            XCTAssertTrue(self.applicationStatus.resyncResourcesWasRequested)
+        }
+    }
+
+>>>>>>> 9841bde581 (fix: request loop slow sync - WPB-6502 (#988))
 }

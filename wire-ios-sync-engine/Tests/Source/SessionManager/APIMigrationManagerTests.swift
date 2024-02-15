@@ -117,10 +117,17 @@ class APIMigrationManagerTests: MessagingTest {
 
     func test_itPerformsMigrationsForMultipleSessions() async {
         // Given
+<<<<<<< HEAD
         let clientID1 = "client1"
         let clientID2 = "client2"
         let userSession1 = await setupSession(with: clientID1)
         let userSession2 = await setupSession(with: clientID2)
+=======
+        let clientID1 = UUID().uuidString
+        let clientID2 = UUID().uuidString
+        let userSession1 = setupSession(with: clientID1)
+        let userSession2 = setupSession(with: clientID2)
+>>>>>>> 9841bde581 (fix: request loop slow sync - WPB-6502 (#988))
 
         let migration = APIMigrationMock(version: .v3)
         let sut = APIMigrationManager(migrations: [migration])

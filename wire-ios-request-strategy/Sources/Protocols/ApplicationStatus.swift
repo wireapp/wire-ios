@@ -40,6 +40,6 @@ public protocol ApplicationStatus: AnyObject {
     var clientRegistrationDelegate: ClientRegistrationDelegate { get }
     var requestCancellation: ZMRequestCancellation { get }
 
-    func requestSlowSync()
+    func requestResyncResources()
 
 }
