@@ -24,7 +24,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
 
     struct Configuration {
         let attachment: LinkAttachment
-        let thumbnailResource: WireImageResource?
+        let thumbnailResource: ImageResource?
     }
 
     lazy var attachmentView: MediaPreviewView = {
@@ -157,7 +157,7 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attachment: LinkAttachment, thumbnailResource: WireImageResource?) {
+    init(attachment: LinkAttachment, thumbnailResource: ImageResource?) {
         configuration = View.Configuration(attachment: attachment, thumbnailResource: thumbnailResource)
         actionController = nil
     }
