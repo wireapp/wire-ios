@@ -1301,6 +1301,10 @@
 "self.settings.technical_report.privacy_warning" = "Detailed logs could contain personal data";
 "self.settings.technical_report.no_mail_alert" = "No mail client detected. Tap \"OK\" and send logs manually to: ";
 
+"self.settings.technical_report.mail_body.firstline" = "Please fill in the following";
+"self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
+"self.settings.technical_report.mail_body.section2" = "What Happened:";
+"self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
 // Password reset
 "self.settings.password_reset_menu.title" = "Reset Password";
 
