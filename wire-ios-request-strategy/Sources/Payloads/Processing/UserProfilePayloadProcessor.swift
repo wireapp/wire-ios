@@ -135,6 +135,8 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
         if let supportedProtocols = payload.supportedProtocols {
             user.supportedProtocols = Set(supportedProtocols.map(\.dataModelMessageProtocol))
+        } else {
+            user.supportedProtocols = [.proteus]
         }
 
         if authoritative {
