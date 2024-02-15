@@ -193,7 +193,7 @@ import Foundation
     }
 
     public static func restartSlowSync(_ context: NSManagedObjectContext) {
-        NotificationInContext(name: .ForceSlowSync, context: context.notificationContext).post()
+        NotificationInContext(name: .resyncResources, context: context.notificationContext).post()
     }
 
     /// Marks all conversations created in a team to be refetched.

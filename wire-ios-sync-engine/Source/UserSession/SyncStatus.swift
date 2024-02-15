@@ -20,7 +20,7 @@ private let zmLog = ZMSLog(tag: "SyncStatus")
 
 extension Notification.Name {
 
-    public static let ForceSlowSync = Notification.Name("restartSlowSyncNotificationName")
+    public static let resyncResources = Notification.Name("resyncResourcesNotificationName")
     static let triggerQuickSync = Notification.Name("triggerQuickSync")
 
 }
@@ -83,8 +83,8 @@ extension Notification.Name {
         currentSyncPhase = hasPersistedLastEventID ? .fetchingMissedEvents : .fetchingLastUpdateEventID
         notifySyncPhaseDidStart()
 
-        self.forceSlowSyncToken = NotificationInContext.addObserver(name: .ForceSlowSync, context: managedObjectContext.notificationContext) { [weak self] (_) in
-            self?.forceSlowSync()
+        self.forceSlowSyncToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] (_) in
+            self?.resyncResources()
         }
 
         NotificationCenter.default.addObserver(
@@ -110,11 +110,22 @@ extension Notification.Name {
     public func forceSlowSync() {
         // Refetch user settings.
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-        // Set the status.
-        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
+        // Reset the status.
+        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
         self.log("slow sync")
         syncStateDelegate.didStartSlowSync()
     }
+
+    /// Sync the resources: Teams, Users, Conversations...
+    func resyncResources() {
+       // Refetch user settings.
+       ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
+       // Set the status.
+       currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
+       self.log("slow sync")
+       syncStateDelegate.didStartSlowSync()
+   }
+
 
     public func performQuickSync() async {
         return await withCheckedContinuation { [weak self] continuation in
