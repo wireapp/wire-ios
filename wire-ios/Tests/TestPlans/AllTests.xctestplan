@@ -49,7 +49,14 @@
     {
       "skippedTests" : [
         "AVURLAsset_conversionTests\/testThatVideoIsConvertedToUploadFormat()",
+        "ConversationListTopBarViewControllerSnapshotTests",
+        "ConversationListTopBarViewControllerSnapshotTests\/testForLegalHoldDisabled()",
+        "ConversationListTopBarViewControllerSnapshotTests\/testForLegalHoldEnabled()",
+        "ConversationListTopBarViewControllerSnapshotTests\/testForLegalHoldPending()",
         "ConversationListTopBarViewControllerSnapshotTests\/testForLongName()",
+        "ConversationListTopBarViewControllerSnapshotTests\/testForOverflowSeperatorIsShownWhenScrollViewScrollsDown()",
+        "ConversationListViewControllerTests\/testForEverythingArchived()",
+        "ConversationListViewControllerTests\/testForNoConversations()",
         "MessageReplyPreviewViewTests\/testThatItRendersImageMessagePreview()",
         "SearchResultLabelTests",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",

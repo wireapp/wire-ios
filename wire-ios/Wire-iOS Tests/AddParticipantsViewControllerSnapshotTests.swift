@@ -49,6 +49,7 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        accentColor = .strongBlue
         SelfUser.setupMockSelfUser(inTeam: UUID())
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         userSession = UserSessionMock(mockUser: mockSelfUser)
