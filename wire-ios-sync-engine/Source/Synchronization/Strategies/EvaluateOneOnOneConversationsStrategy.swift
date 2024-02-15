@@ -51,11 +51,13 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
         WireLogger.conversation.info("EvaluateOneOnOneConversationsStrategy: start evaluate one on one conversations!")
 
+        precondition(managedObjectContext.zm_isSyncContext, "can only execute on syncContext!")
+        let syncContext = managedObjectContext
+
         // store task to avoid duplicated entries and concurrency issues
         task = Task { [weak self] in
-            guard let self, let syncContext = managedObjectContext.performAndWait({ self.managedObjectContext.zm_sync }) else {
-                self?.failCurrentSyncPhase(errorMessage: "EvaluateOneOnOneConversationsStrategy: cannot perform without preconditions!")
-                assertionFailure("EvaluateOneOnOneConversationsStrategy: cannot perform without preconditions!")
+            guard let self else {
+                assertionFailure("EvaluateOneOnOneConversationsStrategy: cannot perform without self reference!")
                 return
             }
 
