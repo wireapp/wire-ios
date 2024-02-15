@@ -20,7 +20,7 @@ import XCTest
 import WireTesting
 @testable import WireSyncEngine
 
-class SessionManagerTests_Backup: IntegrationTest {
+final class SessionManagerBackupTests: IntegrationTest {
 
     override var useInMemoryStore: Bool {
         return false
@@ -196,6 +196,7 @@ class SessionManagerTests_Backup: IntegrationTest {
 
     func testThatItDeletesABackup() throws {
         // Given
+        let sessionManager = try XCTUnwrap(sessionManager)
         XCTAssert(login())
 
         let result = backupActiveAcount(password: "idontneednopassword")
@@ -205,7 +206,7 @@ class SessionManagerTests_Backup: IntegrationTest {
         XCTAssert(FileManager.default.fileExists(atPath: CoreDataStack.importsDirectory.path))
 
         // When
-        SessionManager.clearPreviousBackups(dispatchGroup: dispatchGroup)
+        sessionManager.clearPreviousBackups()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // Then

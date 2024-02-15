@@ -23,7 +23,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
     public func pushChannelDidReceive(_ data: ZMTransportData) {
         if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: data), !events.isEmpty {
             Logging.eventProcessing.info("Received \(events.count) events from push channel")
-            events.forEach({ $0.appendDebugInformation("from push channel (web socket)")})
+            events.forEach({ $0.appendDebugInformation("from push channel (web socket)") })
 
             if syncStatus.isSyncing {
                 WaitingGroupTask(context: syncMOC) {

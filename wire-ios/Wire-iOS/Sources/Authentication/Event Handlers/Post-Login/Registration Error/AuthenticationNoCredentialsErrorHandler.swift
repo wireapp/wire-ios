@@ -23,7 +23,7 @@ import WireSyncEngine
  * Handles client registration errors related to the lack of e-mail and password credentials.
  */
 
-class AuthenticationNoCredentialsErrorHandler: AuthenticationEventHandler {
+final class AuthenticationNoCredentialsErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

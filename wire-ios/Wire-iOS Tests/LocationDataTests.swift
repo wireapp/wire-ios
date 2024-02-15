@@ -23,8 +23,9 @@ import MapKit
 
 final class LocationDataTests: XCTestCase {
 
-    class override func tearDown() {
+    override func tearDown() {
         Settings.shared.reset()
+        super.tearDown()
     }
 
     func testThatLocationDataCanBeStored() {
