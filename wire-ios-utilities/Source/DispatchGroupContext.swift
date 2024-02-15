@@ -49,7 +49,7 @@ public final class DispatchGroupContext: NSObject {
 
     @objc(enterAllExcept:)
     func enterAll(except group: ZMSDispatchGroup? = nil) -> [ZMSDispatchGroup] {
-        let groups = self.groups.filter { $0 != group}
+        let groups = self.groups.filter { $0 != group }
 
         groups.forEach {
             $0.enter()
