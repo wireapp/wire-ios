@@ -31,9 +31,8 @@ public protocol OneOnOneResolverInterface {
 
 }
 
-public enum OneOnOneResolverError: Error {
+enum OneOnOneResolverError: Error {
 
-    case otherUserNotFound
     case migratorNotFound
 
 }
@@ -75,7 +74,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         for user in users {
             guard let userID = await context.perform({ user.qualifiedID }) else {
                 WireLogger.conversation.error("required to have a user's qualifiedID to resolve 1-1 conversation!")
-                throw OneOnOneResolverError.otherUserNotFound
+                return
             }
 
             try await resolveOneOnOneConversation(with: userID, in: context)
@@ -104,7 +103,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 else {
                     return
                 }
-
                 conversation.isForcedReadOnly = true
             }
             return .archivedAsReadOnly
