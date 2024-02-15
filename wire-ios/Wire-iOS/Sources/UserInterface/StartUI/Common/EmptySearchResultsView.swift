@@ -114,20 +114,32 @@ final class EmptySearchResultsView: UIView {
         scrollView.addSubview(stackView)
 
         NSLayoutConstraint.activate([
-
-            // scroll view with empty search results view
+            // Scroll view constraints
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
             scrollView.topAnchor.constraint(equalTo: topAnchor),
             trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
 
-            // stack view within scroll view
-            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
-            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
-            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
-            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
-            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
+            // Centering stack view within scroll view
+            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor),
+
+            // Ensure the stack view does not stretch wider than the scroll view
+            stackView.widthAnchor.constraint(lessThanOrEqualTo: scrollView.widthAnchor),
+
+            // Allow the stack view to grow vertically and be scrollable when content is larger than the screen
+            stackView.topAnchor.constraint(greaterThanOrEqualTo: scrollView.contentLayoutGuide.topAnchor),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: scrollView.contentLayoutGuide.bottomAnchor)
         ])
+
+        // Additional constraints to manage the content size of the stack view
+        let stackViewWidthConstraint = stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -40) // Adjust constant for padding if needed
+        stackViewWidthConstraint.priority = UILayoutPriority(999)
+        stackViewWidthConstraint.isActive = true
+
+        let stackViewHeightConstraint = stackView.heightAnchor.constraint(lessThanOrEqualTo: scrollView.heightAnchor)
+        stackViewHeightConstraint.priority = UILayoutPriority(250) // Low priority to allow for scrolling
+        stackViewHeightConstraint.isActive = true
 
         stackView.alignment = .center
         stackView.spacing = 16
