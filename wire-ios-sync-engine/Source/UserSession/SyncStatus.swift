@@ -43,7 +43,7 @@ extension Notification.Name {
     fileprivate var lastUpdateEventID: UUID?
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
     fileprivate unowned var syncStateDelegate: ZMSyncStateDelegate
-    fileprivate var forceSlowSyncToken: Any?
+    fileprivate var resyncResourcesToken: Any?
 
     public internal (set) var isFetchingNotificationStream: Bool = false
     public internal (set) var isInBackground: Bool = false
@@ -83,7 +83,7 @@ extension Notification.Name {
         currentSyncPhase = hasPersistedLastEventID ? .fetchingMissedEvents : .fetchingLastUpdateEventID
         notifySyncPhaseDidStart()
 
-        self.forceSlowSyncToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] (_) in
+        self.resyncResourcesToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] (_) in
             self?.resyncResources()
         }
 
@@ -122,7 +122,7 @@ extension Notification.Name {
        ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
        // Set the status.
        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
-       self.log("slow sync")
+       self.log("resyncResources")
        syncStateDelegate.didStartSlowSync()
    }
 
