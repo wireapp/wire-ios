@@ -38,11 +38,11 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                        clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
-        let clientIds = clientIds.compactMap({$0.rawValue.data(using: .utf8)})
+        let clientIds = clientIds.compactMap { $0.rawValue.data(using: .utf8) }
         let wireIdentities = try await getWireIdentity(coreCrypto: coreCrypto,
                                                        conversationId: mlsGroupId.data,
                                                        clientIDs: clientIds)
-        return try wireIdentities.compactMap({try $0.toE2eIdenityCertificate()})
+        return try wireIdentities.compactMap { try $0.toE2eIdenityCertificate() }
     }
 
     @MainActor
@@ -94,10 +94,11 @@ extension X509Certificate {
         certificateStatus: E2EIdentityCertificateStatus,
         mlsThumbprint: String
     ) -> E2eIdentityCertificate? {
-        guard let notValidBefore = notBefore,
-              let notValidAfter = notAfter,
-              let theSerialNumber = serialNumber?.bytes.map({String($0, radix: 16).uppercased()}).joined(separator: "")
-        else {
+        let serialNumber = serialNumber
+            .map { [UInt8]($0) }?
+            .map { String($0, radix: 16).uppercased() }
+            .joined(separator: "")
+        guard let notValidBefore = notBefore, let notValidAfter = notAfter, let serialNumber else {
             return nil
         }
         return .init(
@@ -107,6 +108,7 @@ extension X509Certificate {
             notValidBefore: notValidBefore,
             expiryDate: notValidAfter,
             certificateStatus: certificateStatus,
-            serialNumber: theSerialNumber)
+            serialNumber: serialNumber
+        )
     }
 }
