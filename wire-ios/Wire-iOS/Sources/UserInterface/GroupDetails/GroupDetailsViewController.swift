@@ -107,7 +107,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Participants.title.capitalized)
+
+        // TODO: remove
+        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Participants.title.capitalized) // "participants.title"
+
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 

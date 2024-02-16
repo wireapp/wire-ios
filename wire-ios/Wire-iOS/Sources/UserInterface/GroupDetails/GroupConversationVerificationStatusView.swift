@@ -25,7 +25,7 @@ final class GroupConversationVerificationStatusView: UIView {
         didSet { updateSubviews() }
     }
 
-    private let label = UILabel()
+    private let label = DynamicFontLabel(style: .caption1, color: .clear)
     private let shieldImageView = UIImageView()
     private let stackView = UIStackView()
 
@@ -53,19 +53,17 @@ final class GroupConversationVerificationStatusView: UIView {
         stackView.addArrangedSubview(label)
         stackView.addArrangedSubview(shieldImageView)
 
-        // TODO [WPB-765]: use predefined font
-        label.font = .systemFont(ofSize: 12)
         shieldImageView.contentMode = .center
     }
 
     private func updateSubviews() {
         if status.isE2EICertified {
             label.text = L10n.Localizable.GroupDetails.ConversationVerificationStatus.e2ei
-            label.textColor = SemanticColors.DrawingColors.green
+            label.textColor = SemanticColors.Label.textE2EIVerificationStatus
             shieldImageView.image = .init(resource: .certificateValid)
         } else if status.isProteusVerified {
             label.text = L10n.Localizable.GroupDetails.ConversationVerificationStatus.proteus
-            label.textColor = SemanticColors.DrawingColors.blue
+            label.textColor = SemanticColors.Label.textProteusVerificationStatus
             shieldImageView.image = .init(resource: .verifiedShield)
         } else {
             label.text = ""

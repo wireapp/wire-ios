@@ -60,6 +60,9 @@ public enum SemanticColors {
         static let textReactionCounterSelected = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
         static let textInactive = UIColor(light: Asset.Colors.gray60, dark: Asset.Colors.gray70)
         static let textParticipantDisconnected = UIColor(light: Asset.Colors.red300Light, dark: Asset.Colors.red300Dark)
+
+        static let textProteusVerificationStatus = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark) // TODO [WPB-765]: verify dark mode color
+        static let textE2EIVerificationStatus = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark) // TODO [WPB-765]: verify dark mode color
     }
 
     public enum SearchBar {

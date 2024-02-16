@@ -16,4 +16,84 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+import WireDataModel
+
+// TODO [WPB-765]: ensure accessibility labels are correctly set
+final class GroupDetailsNavigationItemTitleView: UIView { // TODO [WPB-765]: or ModalTopBar?
+
+    var title: String {
+        get { titleLabel.text ?? "" }
+        set { titleLabel.text = newValue }
+    }
+
+    var verificationStatus: ConversationVerificationStatus {
+        get { verificationStatusView.status }
+        set { verificationStatusView.status = newValue }
+    }
+
+    private let stackView = UIStackView()
+    private let titleLabel = DynamicFontLabel(style: .headline, color: SemanticColors.Label.textDefault)
+    private let verificationStatusView = GroupConversationVerificationStatusView()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupSubviews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    private func setupSubviews() {
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
+        ])
+
+        stackView.axis = .vertical
+        stackView.spacing = 6
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(verificationStatusView)
+
+        titleLabel.textAlignment = .center
+    }
+}
+
+// MARK: - Preview
+
+private struct PreviewViewControllerRepresentable: UIViewControllerRepresentable {
+    let title = "Details"
+    let verificationStatus: ConversationVerificationStatus
+    func makeUIViewController(context: Context) -> UINavigationController {
+        .init(rootViewController: PreviewViewController())
+    }
+    func updateUIViewController(_ navigationController: UINavigationController, context: Context) {
+        let viewController = navigationController.viewControllers[0] as! PreviewViewController
+        viewController.navigationItemTitleView.title = title
+        viewController.navigationItemTitleView.verificationStatus = verificationStatus
+    }
+}
+
+private final class PreviewViewController: UIViewController {
+    let navigationItemTitleView = GroupDetailsNavigationItemTitleView()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationItemTitleView.translatesAutoresizingMaskIntoConstraints = false
+        navigationItem.titleView = navigationItemTitleView
+    }
+}
+
+#Preview {
+    PreviewViewControllerRepresentable(
+        verificationStatus: .init(
+            isE2EICertified: false,
+            isProteusVerified: true
+        )
+    )
+}
