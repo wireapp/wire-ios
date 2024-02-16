@@ -38,7 +38,7 @@ final class RequestPasswordControllerSnapshotTests: XCTestCase, CoreDataFixtureT
     }
 
     func testForRemoveDeviceContextPasswordEntered() throws {
-        sut = RequestPasswordController(context: .removeDevice, callback: {_ in })
+        sut = RequestPasswordController(context: .removeDevice, callback: { _ in })
         sut.passwordTextField?.text = "12345678"
         sut.passwordTextFieldChanged(sut.passwordTextField!)
 
@@ -46,7 +46,7 @@ final class RequestPasswordControllerSnapshotTests: XCTestCase, CoreDataFixtureT
     }
 
     func testForRemoveDeviceContext() throws {
-        sut = RequestPasswordController(context: .removeDevice, callback: {_ in })
+        sut = RequestPasswordController(context: .removeDevice, callback: { _ in })
 
         try verify(matching: sut.alertController)
     }
