@@ -20,22 +20,31 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "feature configurations")
 
-@objcMembers
 public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
+    let syncPhase: SyncPhase = .fetchingFeatureConfig
+
+    private unowned var syncStatus: SyncProgress
+
+    private var isSlowSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
+
     private let getFeatureConfigsActionHandler: GetFeatureConfigsActionHandler
     private let actionSync: EntityActionSync
 
+    private var task: Task<Void, Never>?
+
     // MARK: - Life cycle
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        syncProgress: SyncProgress
     ) {
         getFeatureConfigsActionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
         actionSync = EntityActionSync(actionHandlers: [getFeatureConfigsActionHandler])
+        self.syncStatus = syncProgress
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -45,14 +54,37 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
         configuration = [
             .allowsRequestsWhileOnline,
             .allowsRequestsDuringQuickSync,
+            .allowsRequestsDuringSlowSync,
             .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileInBackground
         ]
     }
 
+    deinit {
+        task?.cancel()
+    }
+
     // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        if isSlowSyncing, task == nil {
+            task = Task { [weak self] in
+                guard let self, !Task.isCancelled else { return }
+
+                WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync start fetch feature config!")
+
+                if #available(iOS 16, *) {
+                    try? await Task.sleep(for: .seconds(1))
+                } else {
+                    try? await Task.sleep(nanoseconds: 1_000_000)
+                }
+
+                syncStatus.finishCurrentSyncPhase(phase: self.syncPhase)
+
+                self.task = nil
+            }
+        }
+
         return actionSync.nextRequest(for: apiVersion)
     }
 

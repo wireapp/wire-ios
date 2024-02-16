@@ -27,7 +27,10 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         for action: GetFeatureConfigsActionHandler.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-        return ZMTransportRequest(getFromPath: "/feature-configs", apiVersion: apiVersion.rawValue)
+        ZMTransportRequest(
+            getFromPath: "/feature-configs",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     // MARK: - Response
