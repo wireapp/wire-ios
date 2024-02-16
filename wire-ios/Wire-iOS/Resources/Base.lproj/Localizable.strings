@@ -999,6 +999,8 @@
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
 
+"group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
+"group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
 // Legal hold details
 

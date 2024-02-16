@@ -58,11 +58,11 @@ final class GroupConversationVerificationStatusView: UIView {
 
     private func updateSubviews() {
         if status.e2eiCertificationStatus {
-            label.text = NSLocalizedString("Verified (End-to-end Identity)", comment: "")
+            label.text = L10n.Localizable.GroupDetails.ConversationVerificationStatus.e2ei
             label.textColor = SemanticColors.DrawingColors.green
             shieldImageView.image = .init(resource: .certificateValid)
         } else if status.proteusVerificationStatus {
-            label.text = NSLocalizedString("Verified (Proteus)", comment: "")
+            label.text = L10n.Localizable.GroupDetails.ConversationVerificationStatus.proteus
             label.textColor = SemanticColors.DrawingColors.blue
             shieldImageView.image = .init(resource: .verifiedShield)
         } else {

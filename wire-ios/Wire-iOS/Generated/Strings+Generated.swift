@@ -3209,6 +3209,12 @@ internal enum L10n {
         /// Group members
         internal static let title = L10n.tr("Localizable", "group_details.conversation_members_header.title", fallback: "Group members")
       }
+      internal enum ConversationVerificationStatus {
+        /// Verified (End-to-end Identity)
+        internal static let e2ei = L10n.tr("Localizable", "group_details.conversation_verification_status.e2ei", fallback: "Verified (End-to-end Identity)")
+        /// Verified (Proteus)
+        internal static let proteus = L10n.tr("Localizable", "group_details.conversation_verification_status.proteus", fallback: "Verified (Proteus)")
+      }
       internal enum GuestOptionsCell {
         /// Off
         internal static let disabled = L10n.tr("Localizable", "group_details.guest_options_cell.disabled", fallback: "Off")
