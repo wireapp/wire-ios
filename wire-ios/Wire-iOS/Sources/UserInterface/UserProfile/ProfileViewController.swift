@@ -56,8 +56,6 @@ final class ProfileViewController: UIViewController {
     private let securityLevelView = SecurityLevelView()
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
 
-    private let profileTitleView: ProfileTitleView = ProfileTitleView()
-
     private var tabsController: TabBarController?
 
     var delegate: ProfileViewControllerDelegate? {
@@ -124,9 +122,6 @@ final class ProfileViewController: UIViewController {
 
         updateTitleView()
 
-        profileTitleView.translatesAutoresizingMaskIntoConstraints = false
-        navigationItem.titleView = profileTitleView
-
         securityLevelView.configure(with: viewModel.classification)
         view.addSubview(securityLevelView)
     }
@@ -167,6 +162,8 @@ final class ProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        title = L10n.Localizable.Profile.Details.title
 
         view.addSubview(profileFooterView)
         view.addSubview(incomingRequestFooter)
@@ -550,18 +547,20 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
 }
 
 extension ProfileViewController: TabBarControllerDelegate {
+
     func tabBarController(_ controller: TabBarController, tabBarDidSelectIndex: Int) {
-        updateShowVerifiedShield()
+        // updateShowVerifiedShield()
     }
 }
 
 extension ProfileViewController: ProfileViewControllerViewModelDelegate {
-    func updateTitleView() {
-        profileTitleView.configure(with: viewModel.user)
-    }
 
     func updateShowVerifiedShield() {
-        profileTitleView.showVerifiedShield = viewModel.shouldShowVerifiedShield && tabsController?.selectedIndex != ProfileViewControllerTabBarIndex.devices.rawValue
+        //
+    }
+
+    func updateTitleView() {
+        //
     }
 
     func setupNavigationItems() {
