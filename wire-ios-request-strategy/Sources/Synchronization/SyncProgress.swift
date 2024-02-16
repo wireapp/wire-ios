@@ -18,7 +18,7 @@
 
 import Foundation
 
-public protocol SyncProgress {
+public protocol SyncProgress: AnyObject {
 
     var currentSyncPhase: SyncPhase { get }
 

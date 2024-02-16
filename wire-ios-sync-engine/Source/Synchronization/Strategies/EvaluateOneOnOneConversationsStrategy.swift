@@ -17,12 +17,13 @@
 //
 
 import Foundation
+import WireRequestStrategy
 
 final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
     let syncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
 
-    private unowned var syncStatus: SyncStatus
+    private unowned var syncStatus: SyncProgress
 
     private var isSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
 
@@ -33,7 +34,7 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncStatus: SyncStatus
+        syncStatus: SyncProgress
     ) {
         self.syncStatus = syncStatus
 
