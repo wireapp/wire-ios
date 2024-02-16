@@ -163,7 +163,7 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = L10n.Localizable.Profile.Details.title
+        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Profile.Details.title)
 
         view.addSubview(profileFooterView)
         view.addSubview(incomingRequestFooter)
