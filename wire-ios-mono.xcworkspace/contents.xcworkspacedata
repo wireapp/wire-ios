@@ -8,66 +8,6 @@
       location = "group:README.md">
    </FileRef>
    <FileRef
-      location = "group:Cartfile">
-   </FileRef>
-   <FileRef
-      location = "group:Cartfile.private">
-   </FileRef>
-   <FileRef
-      location = "group:Cartfile.resolved">
-   </FileRef>
-   <FileRef
-      location = "group:Gemfile">
-   </FileRef>
-   <FileRef
-      location = "group:Gemfile.lock">
-   </FileRef>
-   <FileRef
-      location = "group:setup.sh">
-   </FileRef>
-   <Group
-      location = "group:fastlane"
-      name = "fastlane">
-      <FileRef
-         location = "group:Preview.html">
-      </FileRef>
-      <Group
-         location = "group:screenshots"
-         name = "screenshots">
-         <Group
-            location = "group:de-DE"
-            name = "de-DE">
-         </Group>
-         <Group
-            location = "group:en-US"
-            name = "en-US">
-         </Group>
-      </Group>
-      <FileRef
-         location = "group:Pluginfile">
-      </FileRef>
-      <FileRef
-         location = "group:Fastfile"
-         assignedFileDataType = "public.ruby-script">
-      </FileRef>
-      <FileRef
-         location = "group:README.md">
-      </FileRef>
-      <FileRef
-         location = "group:Matchfile">
-      </FileRef>
-      <Group
-         location = "group:metadata"
-         name = "metadata">
-      </Group>
-      <FileRef
-         location = "group:report.xml">
-      </FileRef>
-   </Group>
-   <FileRef
-      location = "group:wire-avs.json">
-   </FileRef>
-   <FileRef
       location = "group:scripts">
    </FileRef>
    <Group

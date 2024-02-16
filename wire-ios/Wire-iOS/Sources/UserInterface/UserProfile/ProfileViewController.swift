@@ -50,13 +50,11 @@ final class ProfileViewController: UIViewController {
     let viewModel: ProfileViewControllerViewModel
     weak var viewControllerDismisser: ViewControllerDismisser?
 
-    private let profileFooterView: ProfileFooterView = ProfileFooterView()
-    private let incomingRequestFooter: IncomingRequestFooterView = IncomingRequestFooterView()
-    private let usernameDetailsView: UserNameDetailView = UserNameDetailView()
+    private let profileFooterView = ProfileFooterView()
+    private let incomingRequestFooter = IncomingRequestFooterView()
+    private let usernameDetailsView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
-
-    private let profileTitleView: ProfileTitleView = ProfileTitleView()
 
     private var tabsController: TabBarController?
 
@@ -71,13 +69,15 @@ final class ProfileViewController: UIViewController {
 
     // MARK: - init
 
-    convenience init(user: UserType,
-                     viewer: UserType,
-                     conversation: ZMConversation? = nil,
-                     context: ProfileViewControllerContext? = nil,
-                     classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
-                     viewControllerDismisser: ViewControllerDismisser? = nil,
-                     userSession: UserSession) {
+    convenience init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation? = nil,
+        context: ProfileViewControllerContext? = nil,
+        classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
+        viewControllerDismisser: ViewControllerDismisser? = nil,
+        userSession: UserSession
+    ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context = context {
             profileViewControllerContext = context
@@ -85,12 +85,14 @@ final class ProfileViewController: UIViewController {
             profileViewControllerContext = conversation?.conversationType.profileViewControllerContext ?? .oneToOneConversation
         }
 
-        let viewModel = ProfileViewControllerViewModel(user: user,
-                                                       conversation: conversation,
-                                                       viewer: viewer,
-                                                       context: profileViewControllerContext,
-                                                       classificationProvider: classificationProvider,
-                                                       userSession: userSession)
+        let viewModel = ProfileViewControllerViewModel(
+            user: user,
+            conversation: conversation,
+            viewer: viewer,
+            context: profileViewControllerContext,
+            classificationProvider: classificationProvider,
+            userSession: userSession
+        )
 
         self.init(viewModel: viewModel)
 
@@ -123,9 +125,6 @@ final class ProfileViewController: UIViewController {
         view.addSubview(usernameDetailsView)
 
         updateTitleView()
-
-        profileTitleView.translatesAutoresizingMaskIntoConstraints = false
-        navigationItem.titleView = profileTitleView
 
         securityLevelView.configure(with: viewModel.classification)
         view.addSubview(securityLevelView)
@@ -168,6 +167,8 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Profile.Details.title)
+
         view.addSubview(profileFooterView)
         view.addSubview(incomingRequestFooter)
 
@@ -209,11 +210,13 @@ final class ProfileViewController: UIViewController {
         // swiftlint:disable todo_requires_jira_link
         // TODO: Pass the whole view Model/stuct/context
         // swiftlint:enable todo_requires_jira_link
-        let profileDetailsViewController = ProfileDetailsViewController(user: viewModel.user,
-                                                                        viewer: viewModel.viewer,
-                                                                        conversation: viewModel.conversation,
-                                                                        context: viewModel.context,
-                                                                        userSession: viewModel.userSession)
+        let profileDetailsViewController = ProfileDetailsViewController(
+            user: viewModel.user,
+            viewer: viewModel.viewer,
+            conversation: viewModel.conversation,
+            context: viewModel.context,
+            userSession: viewModel.userSession
+        )
         profileDetailsViewController.title = L10n.Localizable.Profile.Details.title
 
         return profileDetailsViewController
@@ -264,7 +267,7 @@ final class ProfileViewController: UIViewController {
             usernameDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
             securityLevelView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            securityLevelView.topAnchor.constraint(equalTo: usernameDetailsView.bottomAnchor),
+            securityLevelView.topAnchor.constraint(equalTo: view.topAnchor),
             securityLevelView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             securityLevelView.heightAnchor.constraint(equalToConstant: securityBannerHeight),
 
@@ -550,18 +553,20 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
 }
 
 extension ProfileViewController: TabBarControllerDelegate {
+
     func tabBarController(_ controller: TabBarController, tabBarDidSelectIndex: Int) {
         updateShowVerifiedShield()
     }
 }
 
 extension ProfileViewController: ProfileViewControllerViewModelDelegate {
+
     func updateTitleView() {
-        profileTitleView.configure(with: viewModel.user)
+        // profileTitleView.configure(with: viewModel.user)
     }
 
     func updateShowVerifiedShield() {
-        profileTitleView.showVerifiedShield = viewModel.shouldShowVerifiedShield && tabsController?.selectedIndex != ProfileViewControllerTabBarIndex.devices.rawValue
+        // profileTitleView.showVerifiedShield = viewModel.shouldShowVerifiedShield && tabsController?.selectedIndex != ProfileViewControllerTabBarIndex.devices.rawValue
     }
 
     func setupNavigationItems() {
