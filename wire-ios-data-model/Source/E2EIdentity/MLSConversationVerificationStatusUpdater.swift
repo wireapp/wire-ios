@@ -57,7 +57,7 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
         try await updateStatus(for: conversation, groupID: groupID)
     }
 
-    public func updateAllStatuses() async {
+    public func updateAllStatuses() async throws {
         let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
             let conversations = ZMConversation.fetchMLSConversations(in: syncContext)
             return conversations.compactMap {
@@ -69,11 +69,7 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
         }
 
         for (groupID, conversation) in groupIDConversationTuples {
-            do {
-                try await updateStatus(for: conversation, groupID: groupID)
-            } catch {
-                // TODO: Handle error
-            }
+            try await updateStatus(for: conversation, groupID: groupID)
         }
     }
 
