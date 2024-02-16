@@ -31,6 +31,12 @@ final class UserClientCellTests: BaseSnapshotTestCase {
         container.frame = frame
     }
 
+    override func tearDown() {
+        sut = nil
+        container = nil
+        super.tearDown()
+    }
+
     func prepareSut(shouldDisplayMLSInfo: Bool = false,
                     isProteusVerified: Bool = false,
                     e2EIdentityCertificateStatus: E2EIdentityCertificateStatus? = nil,
