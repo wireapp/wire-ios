@@ -29,8 +29,6 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
     private var task: Task<Void, Never>?
 
-    var taskCompletion: (() -> Void)?
-
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
@@ -76,7 +74,6 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
             }
 
             self.task = nil
-            self.taskCompletion?()
         }
 
         return nil
