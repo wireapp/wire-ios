@@ -52,7 +52,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockSafeCoreCrypto = nil
         mockCoreCryptoProvider = nil
         mockCommitSender = nil
-        cancellable.cancel()
         cancellable = nil
         sut = nil
         super.tearDown()
