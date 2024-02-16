@@ -111,7 +111,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         EvaluateOneOnOneConversationsStrategy(
             withManagedObjectContext: syncContext,
             applicationStatus: mockApplicationStatus,
-            syncStatus: mockSyncStatus
+            syncProgress: mockSyncStatus
         )
     }
 }

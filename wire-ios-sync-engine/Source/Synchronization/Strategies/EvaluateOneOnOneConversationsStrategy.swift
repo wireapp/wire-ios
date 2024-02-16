@@ -23,18 +23,18 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
     let syncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
 
-    private unowned var syncStatus: SyncProgress
+    private unowned var syncProgress: SyncProgress
 
-    private var isSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
+    private var isSyncing: Bool { syncProgress.currentSyncPhase == syncPhase }
 
     private var task: Task<Void, Never>?
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncStatus: SyncProgress
+        syncProgress: SyncProgress
     ) {
-        self.syncStatus = syncStatus
+        self.syncProgress = syncProgress
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
     }
@@ -81,11 +81,11 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
     private func failCurrentSyncPhase(errorMessage: String) {
         WireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: \(errorMessage)!")
-        syncStatus.failCurrentSyncPhase(phase: syncPhase)
+        syncProgress.failCurrentSyncPhase(phase: syncPhase)
     }
 
     private func finishCurrentSyncPhase() {
         WireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: finishCurrentSyncPhase!")
-        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+        syncProgress.finishCurrentSyncPhase(phase: syncPhase)
     }
 }
