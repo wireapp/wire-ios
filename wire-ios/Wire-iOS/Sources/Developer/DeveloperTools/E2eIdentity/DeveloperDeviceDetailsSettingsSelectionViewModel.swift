@@ -83,7 +83,7 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
         ]
         selectedItemID = UUID()
         guard let status = E2EIdentityCertificateStatus.allCases
-                                                        .first(where: {$0.title == Self.selectedE2eIdentiyStatus ?? ""}),
+                                                        .first(where: { $0.title == Self.selectedE2eIdentiyStatus ?? "" }),
               let selectedItem = sections.flatMap(\.items).first(where: {
             $0.value == status.title
         }) else {
