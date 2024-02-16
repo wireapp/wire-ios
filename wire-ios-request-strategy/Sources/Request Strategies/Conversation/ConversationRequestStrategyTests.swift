@@ -19,6 +19,7 @@ import Foundation
 import XCTest
 import WireDataModel
 import WireDataModelSupport
+import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
 class ConversationRequestStrategyTests: MessagingTestBase {
@@ -40,9 +41,13 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        mockSyncProgress = MockSyncProgress()
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
         mockMLSService = MockMLSServiceInterface()
+
+        mockSyncProgress = MockSyncProgress()
+        mockSyncProgress.currentSyncPhase = .done
+        mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
+        mockSyncProgress.failCurrentSyncPhasePhase_MockMethod = { _ in }
 
         sut = ConversationRequestStrategy(
             withManagedObjectContext: syncMOC,
@@ -231,7 +236,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         // then
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingConversations)
+            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConversations])
         }
     }
 
@@ -245,7 +250,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         // then
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingConversations)
+            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConversations])
         }
     }
 
@@ -259,7 +264,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         // then
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(self.mockSyncProgress.didFailCurrentSyncPhase, .fetchingConversations)
+            XCTAssertEqual(self.mockSyncProgress.failCurrentSyncPhasePhase_Invocations, [.fetchingConversations])
         }
     }
 
