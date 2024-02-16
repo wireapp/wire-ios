@@ -17,112 +17,13 @@
 //
 
 import UIKit
-import Foundation
-import WireSyncEngine
-import WireCommonComponents
-
-private typealias LabelColors = SemanticColors.Label
-private typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
-
-final class BackupStatusCell: UITableViewCell {
-
-    let descriptionLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .normalRegularFont,
-                                     color: LabelColors.textDefault)
-        label.textAlignment = .left
-        label.numberOfLines = 0
-        return label
-    }()
-    let iconView = UIImageView()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        selectionStyle = .none
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
-
-        iconView.setTemplateIcon(.restore, size: .large)
-        iconView.tintColor = LabelColors.textDefault
-        iconView.contentMode = .center
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(iconView)
-
-        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(descriptionLabel)
-
-        NSLayoutConstraint.activate([
-            iconView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-            iconView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            iconView.heightAnchor.constraint(equalTo: iconView.widthAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 48),
-            descriptionLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 24),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
-        ])
-
-        descriptionLabel.attributedText = HistoryBackup.description && .paragraphSpacing(2)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-final class BackupActionCell: UITableViewCell {
-    let actionTitleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: HistoryBackup.action,
-                                     fontSpec: .normalRegularFont,
-                                     color: LabelColors.textDefault)
-        label.textAlignment = .left
-        return label
-    }()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .none
-        backgroundColor = SemanticColors.View.backgroundUserCell
-        accessibilityTraits = .button
-        contentView.backgroundColor = .clear
-
-        actionTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(actionTitleLabel)
-        NSLayoutConstraint.activate([
-            actionTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            actionTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            actionTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            actionTitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0)
-        ])
-        actionTitleLabel.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        addBorder(for: .bottom)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-protocol BackupSource {
-    func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void)
-
-    func clearPreviousBackups()
-}
-
-extension SessionManager: BackupSource {
-    func backupActiveAccount(password: Password, completion: @escaping (Result<URL, Error>) -> Void) {
-        backupActiveAccount(password: password.value, completion: completion)
-    }
-}
 
 final class BackupViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
     private let tableView = UITableView(frame: .zero)
     private var cells: [UITableViewCell.Type] = []
-    let backupSource: BackupSource
+    private let backupSource: BackupSource
 
     init(backupSource: BackupSource) {
         self.backupSource = backupSource
@@ -168,7 +69,8 @@ final class BackupViewController: UIViewController, SpinnerCapable {
     }
 
     private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: HistoryBackup.title.capitalized)
+        let title = L10n.Localizable.Self.Settings.HistoryBackup.title.capitalized
+        navigationItem.setupNavigationBarTitle(title: title)
     }
 
     var loadingHostController: SpinnerCapableViewController {
@@ -204,7 +106,7 @@ private extension BackupViewController {
 
     func backupActiveAccount(indexPath: IndexPath) {
         requestBackupPassword { [weak self] result in
-            guard let `self` = self, let password = result else { return }
+            guard let self, let password = result else { return }
             self.loadingHostController.isLoadingViewVisible = true
 
             self.backupSource.backupActiveAccount(password: password) { backupResult in
@@ -221,11 +123,25 @@ private extension BackupViewController {
         }
     }
 
+    private func requestBackupPassword(completion: @escaping (String?) -> Void) {
+        let passwordController = BackupPasswordViewController()
+        passwordController.onCompletion = { [weak passwordController] password in
+            passwordController?.dismiss(animated: true) {
+                completion(password)
+            }
+        }
+        let navigationController = KeyboardAvoidingViewController(viewController: passwordController).wrapInNavigationController()
+        navigationController.modalPresentationStyle = .formSheet
+        present(navigationController, animated: true)
+    }
+
     private func presentAlert(for error: Error) {
         let alert = UIAlertController(
-            title: HistoryBackup.Error.title,
+            title: L10n.Localizable.Self.Settings.HistoryBackup.Error.title,
             message: error.localizedDescription,
-            alertAction: .ok(style: .cancel))
+            alertAction: .ok(style: .cancel)
+        )
+
         present(alert, animated: true)
     }
 
@@ -238,7 +154,6 @@ private extension BackupViewController {
             $0.sourceView = tableView
             $0.sourceRect = tableView.rectForRow(at: indexPath)
         }
-
-        present(activityController, animated: true)
+        self.present(activityController, animated: true)
     }
 }

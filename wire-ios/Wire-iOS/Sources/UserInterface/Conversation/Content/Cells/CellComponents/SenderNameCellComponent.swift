@@ -18,7 +18,7 @@
 
 import UIKit
 
-class SenderNameCellComponent: UIView {
+final class SenderNameCellComponent: UIView {
 
     let label = UILabel()
     let indicatorView = UIImageView()

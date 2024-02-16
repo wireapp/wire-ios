@@ -17,7 +17,7 @@
 
 import Foundation
 
-class UserClientEventConsumerTests: RequestStrategyTestBase {
+final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
     var sut: UserClientEventConsumer!
     var clientRegistrationStatus: ZMMockClientRegistrationStatus!
@@ -118,7 +118,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(selfUser.clients.count, 2)
-            guard let newClient = selfUser.clients.filter({ $0 != selfClient}).first else {
+            guard let newClient = selfUser.clients.filter({ $0 != selfClient }).first else {
                 XCTFail()
                 return
             }

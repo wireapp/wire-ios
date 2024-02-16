@@ -237,7 +237,7 @@ extension ZMClientRegistrationStatus {
     }
 
     public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple], lastResortPrekey: IdPrekeyTuple) {
-        self.prekeys = prekeys.map { [NSNumber(value: Int($0.id)): $0.prekey]}
+        self.prekeys = prekeys.map { [NSNumber(value: Int($0.id)): $0.prekey] }
         self.lastResortPrekey = lastResortPrekey.prekey
         self.isGeneratingPrekeys = false
         RequestAvailableNotification.notifyNewRequestsAvailable(self)

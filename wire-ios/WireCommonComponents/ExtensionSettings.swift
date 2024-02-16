@@ -44,7 +44,7 @@ private enum ExtensionSettingsKey: String, CaseIterable {
     }
 }
 
-public class ExtensionSettings: NSObject {
+public final class ExtensionSettings: NSObject {
 
     public static let shared = ExtensionSettings(defaults: .shared()!)
     private let defaults: UserDefaults

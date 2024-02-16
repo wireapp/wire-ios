@@ -40,7 +40,7 @@ protocol CallQualityRouterProtocol: AnyObject {
 }
 
 // MARK: - ActiveCallRouter
-class ActiveCallRouter: NSObject {
+final class ActiveCallRouter: NSObject {
 
     // MARK: - Public Property
     var isActiveCallShown = false {

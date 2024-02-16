@@ -32,7 +32,7 @@ protocol AuthenticatedRouterProtocol: AnyObject {
     func navigate(to destination: NavigationDestination)
 }
 
-class AuthenticatedRouter: NSObject {
+final class AuthenticatedRouter: NSObject {
 
     // MARK: - Private Property
 

@@ -455,7 +455,7 @@ extension GenericMessage {
                 )
             }
 
-            if useQualifiedIdentifiers, let selfDomain = context.performAndWait({ZMUser.selfUser(in: context).domain }) {
+            if useQualifiedIdentifiers, let selfDomain = context.performAndWait({ ZMUser.selfUser(in: context).domain }) {
                 let message = legacyProteusMessage(
                     selfClient,
                     selfDomain: selfDomain,

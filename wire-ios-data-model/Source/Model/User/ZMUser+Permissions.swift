@@ -220,6 +220,6 @@ public extension ZMUser {
         guard conversation.isSelfAnActiveMember,
             let role = self.role(in: conversation)
         else { return false }
-        return role.actions.contains(where: {$0.name == actionName})
+        return role.actions.contains(where: { $0.name == actionName })
     }
 }
