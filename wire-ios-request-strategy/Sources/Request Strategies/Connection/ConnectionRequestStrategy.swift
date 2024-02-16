@@ -208,7 +208,7 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                 guard let payload = Payload.UserConnectionEvent(payloadData) else {
                     return
                 }
-                processEvent(payload)
+                processUserConnectionEvent(payload)
 
             default:
                 break
@@ -216,7 +216,7 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
         }
     }
 
-    private func processEvent(_ payload: Payload.UserConnectionEvent) {
+    private func processUserConnectionEvent(_ payload: Payload.UserConnectionEvent) {
         let context = managedObjectContext
 
         let processor = ConnectionPayloadProcessor()
