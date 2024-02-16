@@ -74,6 +74,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var areServicesPresent: Bool = false
 
     var domain: String?
+
+    var isConversationEligibleForVideoCalls = false
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {

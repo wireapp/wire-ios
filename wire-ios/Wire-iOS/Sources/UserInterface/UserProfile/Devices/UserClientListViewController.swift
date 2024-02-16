@@ -27,7 +27,7 @@ final class UserClientListViewController: UIViewController,
 
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
-    private var clients: [UserClient]
+    private var clients: [UserClientType]
 
     private var tokens: [Any?] = []
     private var user: UserType
@@ -46,7 +46,7 @@ final class UserClientListViewController: UIViewController,
          contextProvider: ContextProvider?,
          mlsGroupId: MLSGroupID?) {
         self.user = user
-        self.clients = UserClientListViewController.clientsSortedByRelevance(for: user).compactMap({ $0 as? UserClient })
+        self.clients = UserClientListViewController.clientsSortedByRelevance(for: user)
         self.headerView = ParticipantDeviceHeaderView(userName: user.name ?? "")
         self.userSession = userSession
         self.contextProvider = contextProvider
@@ -115,10 +115,13 @@ final class UserClientListViewController: UIViewController,
                 clients = await clients.updateCertificates(
                     mlsGroupId: mlsGroupId, userSession: userSession)
             }
-            await MainActor.run {
-                collectionView.reloadData()
-            }
+            refreshView()
         }
+    }
+
+    @MainActor
+    func refreshView() {
+        collectionView.reloadData()
     }
 
     // MARK: - UICollectionViewDelegateFlowLayout & UICollectionViewDataSource
@@ -154,7 +157,7 @@ final class UserClientListViewController: UIViewController,
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let client = clients[indexPath.row]
+        guard let client = clients[indexPath.row] as? UserClient else { return }
         let profileClientViewController = ProfileClientViewController(
             client: client,
             fromConversation: true,
@@ -175,7 +178,7 @@ extension UserClientListViewController: UserObserving {
         // TODO: add clients to userType
         // swiftlint:enable todo_requires_jira_link
         headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.isEmpty == true
-        clients = UserClientListViewController.clientsSortedByRelevance(for: user).compactMap({ $0 as? UserClient })
+        clients = UserClientListViewController.clientsSortedByRelevance(for: user)
         updateCertificatesForUserClients()
     }
 
@@ -187,13 +190,16 @@ extension UserClientListViewController: ParticipantDeviceHeaderViewDelegate {
     }
 }
 
-extension Array where Element: UserClient {
+extension Array where Element: UserClientType {
 
     @MainActor
-    func updateCertificates(mlsGroupId: MLSGroupID, userSession: UserSession) async -> [UserClient] {
-        var updatedUserClients = [UserClient]()
+    func updateCertificates(mlsGroupId: MLSGroupID, userSession: UserSession) async -> [UserClientType] {
+        guard let userClients = self as? [UserClient] else {
+            return self
+        }
+        var updatedUserClients = [UserClientType]()
         let mlsResolver = MLSClientResolver()
-        let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: self.compactMap {
+        let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
             if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
                 ($0.clientId.hashValue, mlsClientId)
             } else {
@@ -205,7 +211,7 @@ extension Array where Element: UserClient {
             let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
                                                                                        clientIds: mlsClienIds)
             if certificates.isNonEmpty {
-                for client in self {
+                for client in userClients {
                     let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
                     client.e2eIdentityCertificate = certificates.first(where: { $0.clientId == mlsClientIdRawValue })
                     client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint

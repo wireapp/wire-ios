@@ -232,7 +232,6 @@ final class ProfileHeaderViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
         Task {
             do {
                 userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()

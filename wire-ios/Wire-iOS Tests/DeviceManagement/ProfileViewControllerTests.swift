@@ -278,7 +278,6 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let selfUser = MockUserType.createSelfUser(name: "Bob", inTeam: UUID())
         mockUser.emailAddress = nil
-
         let conversation = MockConversation.oneOnOneConversation()
         conversation.activeParticipants = [selfUser, mockUser]
 
