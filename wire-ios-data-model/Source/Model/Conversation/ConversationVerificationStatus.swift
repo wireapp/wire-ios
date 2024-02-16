@@ -32,4 +32,11 @@ public struct ConversationVerificationStatus {
         self.e2eiCertificationStatus = e2eiCertificationStatus
         self.proteusVerificationStatus = proteusVerificationStatus
     }
+
+    public init() {
+        self.init(
+            e2eiCertificationStatus: false,
+            proteusVerificationStatus: false
+        )
+    }
 }

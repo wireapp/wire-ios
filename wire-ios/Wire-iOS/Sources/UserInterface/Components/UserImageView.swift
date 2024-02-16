@@ -232,7 +232,7 @@ class UserImageView: AvatarImageView, UserObserving {
         }
     }
 
-    // MARK: -
+    // MARK: - Nested Types
 
     /// The different sizes for the avatar image.
     enum Size: Int {

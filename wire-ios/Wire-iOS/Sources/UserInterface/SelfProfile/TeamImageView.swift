@@ -24,6 +24,7 @@ final class TeamImageView: UIImageView {
         case big
     }
 
+    // TODO [WPB-765]: Consider unifying this type with `AvatarImageView.Avatar`
     enum Content {
         case teamImage(Data)
         case teamName(String)

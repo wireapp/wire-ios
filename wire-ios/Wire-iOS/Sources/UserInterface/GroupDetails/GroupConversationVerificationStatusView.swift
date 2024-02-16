@@ -19,17 +19,60 @@
 import SwiftUI
 import WireDataModel
 
-struct GroupConversationVerificationStatusView: View {
+final class GroupConversationVerificationStatusView: UIView {
 
-    let status: ConversationVerificationStatus
+    var status = ConversationVerificationStatus() {
+        didSet { updateSubviews() }
+    }
 
-    var body: some View {
-        Text("TODO")
+    private let label = UILabel()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupSubviews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    private func setupSubviews() {
+        let stackView = UIStackView(axis: .horizontal)
+        // stackView.spacing =
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+        NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            topAnchor.constraint(equalTo: stackView.topAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+
+        let label = UILabel()
+        stackView.addArrangedSubview(label)
+
+        let shieldImageView = UIImageView()
+        stackView.addArrangedSubview(shieldImageView)
+    }
+
+    private func updateSubviews() {
+        //
+    }
+}
+
+private struct GroupConversationVerificationStatusViewRepresentable: UIViewRepresentable {
+
+    @State var status = ConversationVerificationStatus()
+
+    func makeUIView(context: Context) -> GroupConversationVerificationStatusView {.init() }
+    func updateUIView(_ view: GroupConversationVerificationStatusView, context: Context) {
+        view.status = status
     }
 }
 
 #Preview("neither nor") {
-    GroupConversationVerificationStatusView(
+    GroupConversationVerificationStatusViewRepresentable(
         status: .init(
             e2eiCertificationStatus: false,
             proteusVerificationStatus: false
@@ -38,7 +81,7 @@ struct GroupConversationVerificationStatusView: View {
 }
 
 #Preview("verified") {
-    GroupConversationVerificationStatusView(
+    GroupConversationVerificationStatusViewRepresentable(
         status: .init(
             e2eiCertificationStatus: false,
             proteusVerificationStatus: true
@@ -47,7 +90,7 @@ struct GroupConversationVerificationStatusView: View {
 }
 
 #Preview("certified") {
-    GroupConversationVerificationStatusView(
+    GroupConversationVerificationStatusViewRepresentable(
         status: .init(
             e2eiCertificationStatus: true,
             proteusVerificationStatus: false
@@ -56,7 +99,7 @@ struct GroupConversationVerificationStatusView: View {
 }
 
 #Preview("both") {
-    GroupConversationVerificationStatusView(
+    GroupConversationVerificationStatusViewRepresentable(
         status: .init(
             e2eiCertificationStatus: true,
             proteusVerificationStatus: true
