@@ -71,12 +71,16 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
         let usersIDs = try await fetchUserIdsWithOneOnOneConversation(in: context)
 
-        for userID in usersIDs {
-            do {
-                try await self.resolveOneOnOneConversation(with: userID, in: context)
-            } catch {
-                // skip conversation migration for this user
-                WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
+        await withTaskGroup(of: Void.self) { group in
+            for userID in usersIDs {
+                group.addTask {
+                    do {
+                        try await self.resolveOneOnOneConversation(with: userID, in: context)
+                    } catch {
+                        // skip conversation migration for this user
+                        WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
+                    }
+                }
             }
         }
     }
