@@ -229,7 +229,8 @@ final class ProfileViewController: UIViewController {
             let userClientListViewController = UserClientListViewController(
                 user: viewModel.user,
                 userSession: viewModel.userSession,
-                contextProvider: viewModel.userSession as? ContextProvider
+                contextProvider: viewModel.userSession as? ContextProvider,
+                mlsGroupId: viewModel.conversation?.mlsGroupID
             )
             viewControllers.append(userClientListViewController)
         }

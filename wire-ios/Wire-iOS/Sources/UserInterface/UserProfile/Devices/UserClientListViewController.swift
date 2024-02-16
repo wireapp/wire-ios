@@ -27,7 +27,7 @@ final class UserClientListViewController: UIViewController,
 
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
-    private var clients: [UserClientType]
+    private var clients: [UserClient]
 
     private var tokens: [Any?] = []
     private var user: UserType
@@ -46,7 +46,7 @@ final class UserClientListViewController: UIViewController,
          contextProvider: ContextProvider?,
          mlsGroupId: MLSGroupID?) {
         self.user = user
-        self.clients = UserClientListViewController.clientsSortedByRelevance(for: user)
+        self.clients = UserClientListViewController.clientsSortedByRelevance(for: user).compactMap({ $0 as? UserClient })
         self.headerView = ParticipantDeviceHeaderView(userName: user.name ?? "")
         self.userSession = userSession
         self.contextProvider = contextProvider
@@ -175,7 +175,7 @@ extension UserClientListViewController: UserObserving {
         // TODO: add clients to userType
         // swiftlint:enable todo_requires_jira_link
         headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.isEmpty == true
-        clients = UserClientListViewController.clientsSortedByRelevance(for: user)
+        clients = UserClientListViewController.clientsSortedByRelevance(for: user).compactMap({ $0 as? UserClient })
         updateCertificatesForUserClients()
     }
 
