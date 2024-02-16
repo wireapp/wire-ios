@@ -164,7 +164,7 @@ class BaseAccountView: UIView {
     }
 }
 
-// MARK: -
+// MARK: - Nested Types
 
 enum AccountUnreadCountStyle {
     /// Do not display an unread count.
@@ -181,7 +181,7 @@ enum DisplayContext {
     case accountSelector
 }
 
-// MARK: -
+// MARK: - ZMConversationListObserver Conformance
 
 extension BaseAccountView: ZMConversationListObserver {
 
@@ -194,6 +194,8 @@ extension BaseAccountView: ZMConversationListObserver {
     }
 }
 
+// MARK: - UserObserving Conformance
+
 extension BaseAccountView: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
@@ -203,6 +205,8 @@ extension BaseAccountView: UserObserving {
     }
 }
 
+// MARK: - TeamType Extension
+
 extension TeamType {
 
     var teamImageViewContent: TeamImageView.Content? {
@@ -210,6 +214,8 @@ extension TeamType {
     }
 
 }
+
+// MARK: - Account Extension
 
 extension Account {
 
