@@ -53,6 +53,8 @@ final class GroupConversationVerificationStatusView: UIView {
         stackView.addArrangedSubview(label)
         stackView.addArrangedSubview(shieldImageView)
 
+        // TODO [WPB-765]: use predefined font
+        label.font = .systemFont(ofSize: 12)
         shieldImageView.contentMode = .center
     }
 

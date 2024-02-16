@@ -272,6 +272,7 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		5934DBEE2B7D34A4001B83A7 /* GroupConversationVerificationStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBED2B7D34A4001B83A7 /* GroupConversationVerificationStatusView.swift */; };
+		597313B32B7F86BD003A38AA /* GroupDetailsNavigationItemTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597313B22B7F86BD003A38AA /* GroupDetailsNavigationItemTitleView.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
 		598108B42B7F6DAB0021A0A9 /* GroupConversationVerificationStatusViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598108B32B7F6DAB0021A0A9 /* GroupConversationVerificationStatusViewSnapshotTests.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
@@ -2280,6 +2281,7 @@
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
 		5934DBED2B7D34A4001B83A7 /* GroupConversationVerificationStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupConversationVerificationStatusView.swift; sourceTree = "<group>"; };
+		597313B22B7F86BD003A38AA /* GroupDetailsNavigationItemTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsNavigationItemTitleView.swift; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
 		598108B32B7F6DAB0021A0A9 /* GroupConversationVerificationStatusViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupConversationVerificationStatusViewSnapshotTests.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
@@ -4292,6 +4294,7 @@
 				7CCA7CC1221AEC7B00A7CA2A /* ConversationDetailFooterView.swift */,
 				5934DBED2B7D34A4001B83A7 /* GroupConversationVerificationStatusView.swift */,
 				D586C51E20405CC200BBA492 /* GroupDetailsFooterView.swift */,
+				597313B22B7F86BD003A38AA /* GroupDetailsNavigationItemTitleView.swift */,
 				16D49327203DCC88008DDFFA /* GroupDetailsViewController.swift */,
 				BF5DF5C420F4B0B8002BCB67 /* UICollectionView+GroupedSections.swift */,
 				5EA73D7A20D900A10001D106 /* Cells */,
@@ -9812,6 +9815,7 @@
 				EE2538852166151C00932606 /* ConversationActionController+Notifications.swift in Sources */,
 				5E35F7782181D51300D3F4FE /* ConversationIconBasedCell.swift in Sources */,
 				7CEB45281F8FAAC400D772D5 /* UINavigationBarContainer.swift in Sources */,
+				597313B32B7F86BD003A38AA /* GroupDetailsNavigationItemTitleView.swift in Sources */,
 				87A540A81E09450B009028C5 /* CollectionViewLeftAlignedFlowLayout.swift in Sources */,
 				BF0515251E390E10000D5C22 /* CopyableLabel.swift in Sources */,
 				875E7D1B2188C25A00E571B7 /* ReplyRoundCornersView.swift in Sources */,

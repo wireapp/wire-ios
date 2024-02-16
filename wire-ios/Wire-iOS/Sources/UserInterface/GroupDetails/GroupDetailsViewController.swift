@@ -68,6 +68,16 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     private func createSubviews() {
+        let verificationStatusView = GroupConversationVerificationStatusView()
+        verificationStatusView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(verificationStatusView)
+        NSLayoutConstraint.activate([
+            verificationStatusView.topAnchor.constraint(equalTo: view.topAnchor),
+            verificationStatusView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            verificationStatusView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor)
+        ])
+        verificationStatusView.status.isProteusVerified = true
+
         let collectionView = UICollectionView(forGroupedSections: ())
         collectionView.accessibilityIdentifier = "group_details.list"
 
