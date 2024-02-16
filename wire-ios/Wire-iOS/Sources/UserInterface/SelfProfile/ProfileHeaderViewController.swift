@@ -267,7 +267,6 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func applyOptions() {
-        nameLabel.isHidden = options.contains(.hideUsername)
         updateHandleLabel()
         updateTeamLabel()
         updateImageButton()
@@ -276,7 +275,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateHandleLabel() {
-        if let handle = user.handle, !handle.isEmpty, !options.contains(.hideHandle) {
+        if let handle = user.handle, !handle.isEmpty {
             handleLabel.text = "@" + handle
             handleLabel.accessibilityValue = handleLabel.text
         } else {
@@ -318,12 +317,6 @@ final class ProfileHeaderViewController: UIViewController {
     struct Options: OptionSet {
 
         let rawValue: Int
-
-        /// Whether to hide the username of the user.
-        static let hideUsername = Options(rawValue: 1 << 0)
-
-        /// Whether to hide the handle of the user.
-        static let hideHandle = Options(rawValue: 1 << 1)
 
         /// Whether to hide the availability status of the user.
         static let hideAvailability = Options(rawValue: 1 << 2)
