@@ -68,7 +68,7 @@ extension ZMConversationMessage {
     }
 }
 
-class ParticipantsCellViewModel {
+final class ParticipantsCellViewModel {
 
     private typealias NameList = ParticipantsStringFormatter.NameList
     static let showMoreLinkURL = NSURL(string: "action://show-all")!

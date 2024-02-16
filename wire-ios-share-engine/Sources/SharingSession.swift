@@ -22,14 +22,14 @@ import WireTransport
 import WireRequestStrategy
 import WireLinkPreview
 
-class PushMessageHandlerDummy: NSObject, PushMessageHandler {
+final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
 
     func didFailToSend(_ message: ZMMessage) {
         // nop
     }
 }
 
-class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
+final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     let context: NSManagedObjectContext
 
@@ -50,7 +50,7 @@ class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 }
 
-class AuthenticationStatus: AuthenticationStatusProvider {
+final class AuthenticationStatus: AuthenticationStatusProvider {
 
     let transportSession: ZMTransportSession
 
@@ -79,7 +79,7 @@ extension BackendEnvironmentProvider {
     }
 }
 
-class ApplicationStatusDirectory: ApplicationStatus {
+final class ApplicationStatusDirectory: ApplicationStatus {
 
     let transportSession: ZMTransportSession
 
@@ -138,7 +138,7 @@ class ApplicationStatusDirectory: ApplicationStatus {
 /// for the entire lifetime.
 /// - warning: creating multiple sessions in the same process
 /// is not supported and will result in undefined behaviour
-public class SharingSession {
+public final class SharingSession {
 
     /// The failure reason of a `SharingSession` initialization
     /// - NeedsMigration: The database needs a migration which is only done in the main app
@@ -245,7 +245,7 @@ public class SharingSession {
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
         let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
+        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 

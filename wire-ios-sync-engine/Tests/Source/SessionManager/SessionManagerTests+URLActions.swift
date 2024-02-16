@@ -20,7 +20,7 @@ import Foundation
 import WireTesting
 @testable import WireSyncEngine
 
-class SessionManagerTests_URLActions: IntegrationTest {
+class SessionManagerURLActionsTests: IntegrationTest {
 
     var presentationDelegate: MockPresentationDelegate!
 

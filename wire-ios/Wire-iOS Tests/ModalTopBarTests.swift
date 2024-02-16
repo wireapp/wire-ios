@@ -19,7 +19,7 @@
 import SnapshotTesting
 @testable import Wire
 
-class ModalTopBarTests: BaseSnapshotTestCase {
+final class ModalTopBarTests: BaseSnapshotTestCase {
 
     var sut: ModalTopBar! = nil
 
