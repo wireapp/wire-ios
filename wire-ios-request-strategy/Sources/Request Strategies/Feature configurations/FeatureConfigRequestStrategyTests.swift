@@ -37,8 +37,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
         sut = FeatureConfigRequestStrategy(
             withManagedObjectContext: syncMOC,
-            applicationStatus: mockApplicationStatus,
-            syncStatus: MockSyncProgress()
+            applicationStatus: mockApplicationStatus
         )
 
         featureRepository = .init(context: syncMOC)
