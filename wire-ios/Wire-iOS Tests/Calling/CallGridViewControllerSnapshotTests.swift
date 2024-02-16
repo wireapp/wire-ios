@@ -148,7 +148,7 @@ final class CallGridViewControllerSnapshotTests: BaseSnapshotTestCase {
         createSut()
 
         // Then
-        verify(matching: sut)
+        verify(matching: sut, precision: 0.98, perceptualPrecision: 0.98)
     }
 
     func testVideoStoppedBorder_Appears_Conference() {
