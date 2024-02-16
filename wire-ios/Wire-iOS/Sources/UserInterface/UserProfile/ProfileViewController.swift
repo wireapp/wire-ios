@@ -190,11 +190,12 @@ final class ProfileViewController: UIViewController {
     // MARK: - Keyboard frame observer
 
     private func setupKeyboardFrameNotification() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameDidChange(notification:)),
-                                               name: UIResponder.keyboardDidChangeFrameNotification,
-                                               object: nil)
-
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameDidChange(notification:)),
+            name: UIResponder.keyboardDidChangeFrameNotification,
+            object: nil
+        )
     }
 
     @objc

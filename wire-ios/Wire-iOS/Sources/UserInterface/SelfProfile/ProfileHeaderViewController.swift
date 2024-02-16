@@ -153,7 +153,7 @@ final class ProfileHeaderViewController: UIViewController {
         let nameHandleStack = UIStackView(arrangedSubviews: [nameLabel, handleLabel])
         nameHandleStack.axis = .vertical
         nameHandleStack.alignment = .center
-        nameHandleStack.spacing = 2
+        nameHandleStack.spacing = 8
 
         teamNameLabel.accessibilityLabel = AccountPageStrings.TeamName.description
         teamNameLabel.accessibilityIdentifier = "team name"
