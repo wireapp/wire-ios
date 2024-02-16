@@ -17,8 +17,13 @@
 //
 
 import UIKit
+import SwiftUI
 
 extension UIFont {
+
+    public var swiftUIFont: Font {
+        Font(self as CTFont)
+    }
 
 //     Constants for weight values
 //     Those values come directly from the system

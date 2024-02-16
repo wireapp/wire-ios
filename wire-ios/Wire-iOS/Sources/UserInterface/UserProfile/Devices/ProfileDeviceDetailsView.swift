@@ -25,6 +25,7 @@ struct ProfileDeviceDetailsView: View {
 
     @StateObject var viewModel: ProfileDeviceDetailsViewModel
     @State var isCertificateViewPresented: Bool = false
+    @State var isDebugViewPresented: Bool = false
 
     var dismissedView: (() -> Void)?
 
@@ -47,8 +48,14 @@ struct ProfileDeviceDetailsView: View {
 
     var proteusView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
-            DeviceDetailsProteusView(viewModel: viewModel.deviceDetailsViewModel, isVerfied: viewModel.deviceDetailsViewModel.isProteusVerificationEnabled)
+            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title,
+                             description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(
+                                viewModel.deviceDetailsViewModel.userClient.user?.name ?? ""
+                             ))
+
+            DeviceDetailsProteusView(viewModel: viewModel.deviceDetailsViewModel,
+                                     isVerfied: viewModel.deviceDetailsViewModel.isProteusVerificationEnabled,
+                                     shouldShowActivatedDate: false)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
             if viewModel.deviceDetailsViewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
@@ -69,6 +76,24 @@ struct ProfileDeviceDetailsView: View {
         }
     }
 
+    var showDeviceFingerPrintView: some View {
+        HStack {
+            SwiftUI.Button {
+                Task {
+                    viewModel.onShowMyDeviceTapped()
+                }
+            } label: {
+                Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
+                .padding(.all, ViewConstants.Padding.standard)
+                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                .font(UIFont.font(for: .bodyTwoSemibold).swiftUIFont)
+            }
+            Spacer()
+            Asset.Images.chevronRight.swiftUIImage.padding(.trailing, ViewConstants.Padding.standard)
+        }
+        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+    }
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -79,6 +104,7 @@ struct ProfileDeviceDetailsView: View {
                     }
                 }
                 proteusView
+                showDeviceFingerPrintView
             }
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
@@ -107,7 +133,18 @@ struct ProfileDeviceDetailsView: View {
                 ToolbarItem(placement: .principal) {
                     DeviceView(viewModel: viewModel.deviceDetailsViewModel).titleView
                 }
-
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    SwiftUI.Button(
+                        action: {
+                            isDebugViewPresented.toggle()
+                        },
+                        label: {
+                            if viewModel.showDebugMenu {
+                                Text("Debug")
+                            }
+                        }
+                    )
+                }
             }
         }
 
@@ -135,14 +172,47 @@ struct ProfileDeviceDetailsView: View {
                 )
             }
         }
+        .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
+            SwiftUI.Button("Delete Device", action: {
+                  viewModel.onDeleteDeviceTapped()
+              })
+            SwiftUI.Button("Duplicate Session", action: {
+                  viewModel.onDuplicateClientTapped()
+              })
+            SwiftUI.Button("Corrupt Session", action: {
+                viewModel.onCorruptSessionTapped()
+            })
+            SwiftUI.Button("Cancel", role: .cancel, action: {
+                isDebugViewPresented.toggle()
+            })
+            }, message: {
+              Text("Tap to perform an action")
+            })
     }
 
     @ViewBuilder
-    func sectionTitleView(title: String) -> some View {
+    func sectionTitleView(title: String, description: String? = nil) -> some View {
         Text(title)
             .font(FontSpec.mediumRegularFont.swiftUIFont)
             .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-            .frame(height: ViewConstants.View.Height.small)
             .padding([.leading, .top], ViewConstants.Padding.standard)
+        if let description = description {
+            VStack(alignment: .leading) {
+                Text(description)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .font(UIFont.font(for: .subheadline).swiftUIFont)
+                    .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
+                    .frame(height: ViewConstants.View.Height.small)
+                    .padding([.leading, .top], ViewConstants.Padding.standard)
+                Link(destination: .wr_fingerprintHowToVerify) {
+                    Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
+                        .underline()
+                        .font(UIFont.font(for: .subheadline).swiftUIFont.bold())
+                        .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                        .padding(.leading)
+                }
+            }
+        }
     }
 }

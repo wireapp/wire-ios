@@ -17,19 +17,101 @@
 //
 
 import Foundation
+import WireSyncEngine
 
 final class ProfileDeviceDetailsViewModel: ObservableObject {
-    let deviceDetailsViewModel: DeviceInfoViewModel
+    @Published var deviceDetailsViewModel: DeviceInfoViewModel
     let isFromConversationView: Bool
     @Published var showDebugMenu = false
     @Published var showFingerPrint = false
+    var showDebugButton: Bool = false
 
     init(deviceDetailsViewModel: DeviceInfoViewModel, isFromConversationView: Bool) {
         self.deviceDetailsViewModel = deviceDetailsViewModel
         self.isFromConversationView = isFromConversationView
     }
 
-    func onAppear() {
+    func onShowMyDeviceTapped() {
+        guard let session = ZMUserSession.shared(),
+              let selfUserClient = session.selfUserClient else { return }
+
+        let selfClientController = SettingsClientViewController(userClient: selfUserClient,
+                                                                userSession: session,
+                                                                fromConversation: isFromConversationView)
+
+        let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
+
+        navigationControllerWrapper.modalPresentationStyle = .currentContext
+
+    }
+
+    func onDeleteDeviceTapped() {
+        let clientObjectID = deviceDetailsViewModel.userClient.objectID
+        guard let sync = deviceDetailsViewModel.userClient.managedObjectContext?.zm_sync else {
+            return
+        }
+        Task {
+            guard let client = try await sync.perform({ try sync.existingObject(with: clientObjectID) as? UserClient }) else {
+                return
+            }
+            await client.deleteClientAndEndSession()
+            _ = await sync.perform { sync.saveOrRollback() }
+            await MainActor.run {
+
+            }
+        }
+    }
+
+    func onCorruptSessionTapped() {
+        guard let sync = deviceDetailsViewModel.userClient.managedObjectContext?.zm_sync,
+              let selfClientObjectID = ZMUser.selfUser()?.selfClient()?.objectID else {
+            return
+        }
+        let userClientObjectID = deviceDetailsViewModel.userClient.objectID
+        Task {
+            do {
+                guard let client = try await sync.perform({ try sync.existingObject(with: userClientObjectID) as? UserClient }),
+                      let selfClient = try await sync.perform({ try sync.existingObject(with: selfClientObjectID) as? UserClient }) else {
+                    return
+                }
+                _ = await selfClient.establishSessionWithClient(client, usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY=")
+                _ = await sync.perform { sync.saveOrRollback() }
+                await MainActor.run {
+
+                }
+            } catch {
+                WireLogger.e2ei.debug(error.localizedDescription)
+            }
+        }
+    }
+
+    func onDuplicateClientTapped() {
+        guard let context = deviceDetailsViewModel.userClient.managedObjectContext?.zm_sync else {
+            return
+        }
+        context.performAndWait {
+            guard
+                let userID = deviceDetailsViewModel.userClient.user?.remoteIdentifier,
+                let domain = deviceDetailsViewModel.userClient.user?.domain ?? BackendInfo.domain
+            else {
+                return
+            }
+
+            let user = ZMUser.fetch(
+                with: userID,
+                domain: domain,
+                in: context
+            )
+
+            let duplicate = UserClient.insertNewObject(in: context)
+            duplicate.remoteIdentifier = deviceDetailsViewModel.userClient.remoteIdentifier
+            duplicate.user = user
+
+            context.saveOrRollback()
+        }
+    }
+
+    func onHowToDoThatTapped() {
 
     }
 }
