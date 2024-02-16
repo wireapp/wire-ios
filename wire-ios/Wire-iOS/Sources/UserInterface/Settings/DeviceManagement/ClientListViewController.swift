@@ -76,10 +76,10 @@ final class ClientListViewController: UIViewController,
         guard let selfClient = selfClient else {
             return nil
         }
-        return .from(userClient: selfClient, shouldSetType: false)
+        return .from(userClient: selfClient)
     }
     var clientTableViewCellModels: [ClientTableViewCellModel] {
-        return sortedClients.map { .from(userClient: $0, shouldSetType: false) }
+        return sortedClients.map { .from(userClient: $0) }
     }
     var sortedClients: [UserClient] = []
 
@@ -230,7 +230,7 @@ final class ClientListViewController: UIViewController,
     }
 
     @MainActor
-    private func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
+    private func fetchSelfConversation() async -> MLSGroupID? {
         guard let syncContext = contextProvider?.syncContext else {
             return nil
         }
@@ -500,22 +500,18 @@ final class ClientListViewController: UIViewController,
     }
 
     private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
-        let mlsGroupID = await fetchSelfConversationMLSGroupID()
+        let mlsGroupID = await fetchSelfConversation()
         if let mlsGroupID = mlsGroupID, let userSession = userSession {
             var updatedUserClients = [UserClient]()
             let mlsResolver = MLSClientResolver()
-            var allClients = userClients
-            if let selfClient = selfClient {
-                allClients += [selfClient]
-            }
-            let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: allClients.compactMap {
+            let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
                 if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
                     ($0.clientId.hashValue, mlsClientId)
                 } else {
                     nil
                 }
             })
-            let mlsClienIds = mlsClients.values.map({ $0 })
+            let mlsClienIds = Array(mlsClients.values)
             do {
                 let isE2eIEnabledForSelfClient = try await userSession.getIsE2eIdentityEnabled.invoke()
                 let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupID,
@@ -523,8 +519,7 @@ final class ClientListViewController: UIViewController,
                 if certificates.isNonEmpty {
                     for client in userClients {
                         let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
-                        client.e2eIdentityCertificate = certificates.first(where: { $0.clientId == mlsClientIdRawValue })
-                        client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint ?? client.mlsPublicKeys.ed25519
+                        client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
                         if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
                             client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
                         }
@@ -534,8 +529,7 @@ final class ClientListViewController: UIViewController,
                         selfClient.e2eIdentityCertificate = certificates.first(where: {
                             $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
                         })
-                        selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
-                        if certificates.isNonEmpty && selfClient.e2eIdentityCertificate == nil && selfClient.mlsThumbPrint != nil {
+                        if certificates.isNonEmpty {
                             selfClient.e2eIdentityCertificate = selfClient.notActivatedE2EIdenityCertificate()
                         }
                     }
@@ -543,9 +537,7 @@ final class ClientListViewController: UIViewController,
                 } else if isE2eIEnabledForSelfClient {
                     for client in clients {
                         let theClient = client
-                        if theClient.mlsPublicKeys.ed25519 != nil {
-                            theClient.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
-                        }
+                        theClient.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
                         updatedUserClients.append(theClient)
                     }
                     return updatedUserClients
@@ -598,7 +590,7 @@ extension ClientListViewController: UserObserving {
 
 }
 
-extension UserClient {
+private extension UserClient {
     func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
         guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
             return nil
