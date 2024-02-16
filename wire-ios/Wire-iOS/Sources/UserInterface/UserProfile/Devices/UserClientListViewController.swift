@@ -27,12 +27,7 @@ final class UserClientListViewController: UIViewController,
 
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
-    private var clients: [UserClientType] {
-        didSet {
-            self.clientInstances = clients.compactMap({ $0 as? UserClient })
-        }
-    }
-    private var clientInstances = [UserClient]()
+    private var clients: [UserClientType]
 
     private var tokens: [Any?] = []
     private var user: UserType
@@ -61,7 +56,6 @@ final class UserClientListViewController: UIViewController,
         tokens.append(userSession.addUserObserver(self, for: user))
 
         self.headerView.delegate = self
-        self.clientInstances = clients.compactMap({ $0 as? UserClient })
         title = L10n.Localizable.Profile.Devices.title
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
@@ -118,7 +112,7 @@ final class UserClientListViewController: UIViewController,
     private func updateCertificatesForUserClients() {
         Task {
             if let mlsGroupId = mlsGroupId {
-                clients = await clientInstances.updateCertificates(
+                clients = await clients.updateCertificates(
                     mlsGroupId: mlsGroupId, userSession: userSession)
             }
             await MainActor.run {
@@ -153,14 +147,14 @@ final class UserClientListViewController: UIViewController,
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserClientCell.self, for: indexPath)
-        let client = clientInstances[indexPath.row]
+        let client = clients[indexPath.row]
         cell.viewModel = .from(userClient: client)
 
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let client = clientInstances[indexPath.row]
+        let client = clients[indexPath.row]
         let profileClientViewController = ProfileClientViewController(
             client: client,
             fromConversation: true,
