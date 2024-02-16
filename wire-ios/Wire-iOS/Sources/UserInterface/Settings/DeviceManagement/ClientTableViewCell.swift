@@ -27,7 +27,7 @@ final class ClientTableViewCell: UITableViewCell {
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Properties
-    let nameLabel = DynamicFontLabel(fontSpec: .normalSemiboldFont,
+    let nameLabel = DynamicFontLabel(style: .headline,
                                      color: LabelColors.textDefault)
     let mlsThumbprintLabel = DynamicFontLabel(style: .caption1,
                                         color: LabelColors.textCellSubtitle)
