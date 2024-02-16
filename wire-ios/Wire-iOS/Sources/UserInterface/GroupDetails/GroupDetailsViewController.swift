@@ -21,6 +21,7 @@ import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
+    private let navigationItemTitleView = GroupDetailsNavigationItemTitleView()
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -68,16 +69,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     private func createSubviews() {
-        let verificationStatusView = GroupConversationVerificationStatusView()
-        verificationStatusView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(verificationStatusView)
-        NSLayoutConstraint.activate([
-            verificationStatusView.topAnchor.constraint(equalTo: view.topAnchor),
-            verificationStatusView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            verificationStatusView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor)
-        ])
-        verificationStatusView.status.isProteusVerified = true
-
         let collectionView = UICollectionView(forGroupedSections: ())
         collectionView.accessibilityIdentifier = "group_details.list"
 
@@ -108,8 +99,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // TODO: remove
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Participants.title.capitalized) // "participants.title"
+        navigationItemTitleView.translatesAutoresizingMaskIntoConstraints = false
+        navigationItem.titleView = navigationItemTitleView
+        navigationItemTitleView.title = L10n.Localizable.Participants.title.capitalized
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
@@ -408,3 +400,5 @@ extension ZMConversation {
         }
     }
 }
+
+// TODO [WPB-765]: how to get the verification status from the conversation?

@@ -29,7 +29,10 @@ final class GroupDetailsNavigationItemTitleView: UIView { // TODO [WPB-765]: or 
 
     var verificationStatus: ConversationVerificationStatus {
         get { verificationStatusView.status }
-        set { verificationStatusView.status = newValue }
+        set {
+            verificationStatusView.status = newValue
+            verificationStatusView.isHidden = !newValue.isE2EICertified && !newValue.isProteusVerified
+        }
     }
 
     private let stackView = UIStackView()
@@ -62,6 +65,7 @@ final class GroupDetailsNavigationItemTitleView: UIView { // TODO [WPB-765]: or 
         stackView.addArrangedSubview(verificationStatusView)
 
         titleLabel.textAlignment = .center
+        verificationStatusView.isHidden = true
     }
 }
 
@@ -84,15 +88,43 @@ private final class PreviewViewController: UIViewController {
     let navigationItemTitleView = GroupDetailsNavigationItemTitleView()
     override func viewDidLoad() {
         super.viewDidLoad()
+
         navigationItemTitleView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.titleView = navigationItemTitleView
     }
 }
 
-#Preview {
+#Preview("neither nor") {
     PreviewViewControllerRepresentable(
         verificationStatus: .init(
             isE2EICertified: false,
+            isProteusVerified: false
+        )
+    )
+}
+
+#Preview("only proteus") {
+    PreviewViewControllerRepresentable(
+        verificationStatus: .init(
+            isE2EICertified: false,
+            isProteusVerified: true
+        )
+    )
+}
+
+#Preview("only e2ei") {
+    PreviewViewControllerRepresentable(
+        verificationStatus: .init(
+            isE2EICertified: true,
+            isProteusVerified: false
+        )
+    )
+}
+
+#Preview("both") {
+    PreviewViewControllerRepresentable(
+        verificationStatus: .init(
+            isE2EICertified: true,
             isProteusVerified: true
         )
     )
