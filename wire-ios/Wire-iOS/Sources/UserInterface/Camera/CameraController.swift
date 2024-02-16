@@ -247,7 +247,7 @@ final class CameraController {
      * returned from `AVCapturePhotoOutput`. For each photo captured, there is
      * one unique delegate object responsible.
      */
-    private class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate {
+    private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate {
 
         private let settings: AVCapturePhotoSettings
         private let handler: (PhotoResult) -> Void

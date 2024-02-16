@@ -61,7 +61,7 @@ public protocol CanvasDelegate: AnyObject {
 
 }
 
-public class Canvas: UIView {
+public final class Canvas: UIView {
 
     fileprivate let minimumScale: CGFloat = 0.5
     fileprivate let maximumScale: CGFloat = 10.0

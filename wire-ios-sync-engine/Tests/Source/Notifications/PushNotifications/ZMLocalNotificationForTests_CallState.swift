@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class ZMLocalNotificationTests_CallState: MessagingTest {
+final class ZMLocalNotificationTests_CallState: MessagingTest {
 
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
 
@@ -56,14 +56,16 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
         // given
         let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
 
-        // when
-        guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+        syncMOC.performAndWait {
+            // when
+            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
 
-        // then
-        XCTAssertEqual(note.title, "Callie")
-        XCTAssertEqual(note.body, "is calling")
-        XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.incomingCall)
-        XCTAssertEqual(note.sound, .call)
+            // then
+            XCTAssertEqual(note.title, "Callie")
+            XCTAssertEqual(note.body, "is calling")
+            XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.incomingCall)
+            XCTAssertEqual(note.sound, .call)
+        }
     }
 
     func testIncomingAudioCall_WithAvailabilityAway() {
@@ -77,7 +79,9 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
         let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
 
         // then
-        XCTAssertNil(note(for: state))
+        syncMOC.performAndWait {
+            XCTAssertNil(note(for: state))
+        }
     }
 
     func testIncomingAudioCall_WithAllMutedConversation() {
@@ -90,7 +94,9 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
         let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
 
         // then
-        XCTAssertNil(note(for: state))
+        syncMOC.performAndWait {
+            XCTAssertNil(note(for: state))
+        }
     }
 
     func testIncomingAudioCall_ShouldRing_False() {
@@ -99,7 +105,9 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
         let state: CallState = .incoming(video: false, shouldRing: false, degraded: false)
 
         // then
-        XCTAssertNil(note(for: state))
+        syncMOC.performAndWait {
+            XCTAssertNil(note(for: state))
+        }
     }
 
     func testIncomingVideoCall() {
@@ -108,13 +116,15 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
         let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
 
         // when
-        guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+        syncMOC.performAndWait {
+            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
 
-        // then
-        XCTAssertEqual(note.title, "Callie")
-        XCTAssertEqual(note.body, "is calling with video")
-        XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.incomingCall)
-        XCTAssertEqual(note.sound, .call)
+            // then
+            XCTAssertEqual(note.title, "Callie")
+            XCTAssertEqual(note.body, "is calling with video")
+            XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.incomingCall)
+            XCTAssertEqual(note.sound, .call)
+        }
     }
 
     func testIncomingVideoCall_ShouldRing_False() {
@@ -123,22 +133,25 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
         let state: CallState = .incoming(video: true, shouldRing: false, degraded: false)
 
         // then
-        XCTAssertNil(note(for: state))
+        syncMOC.performAndWait {
+            XCTAssertNil(note(for: state))
+        }
     }
 
     func testCanceledCall() {
+        syncMOC.performAndWait {
+            // given
+            let state: CallState = .terminating(reason: .canceled)
 
-        // given
-        let state: CallState = .terminating(reason: .canceled)
+            // when
+            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
 
-        // when
-        guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
-
-        // then
-        XCTAssertEqual(note.title, "Callie")
-        XCTAssertEqual(note.body, "called")
-        XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.conversationWithMute)
-        XCTAssertEqual(note.sound, .newMessage)
+            // then
+            XCTAssertEqual(note.title, "Callie")
+            XCTAssertEqual(note.body, "called")
+            XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.conversationWithMute)
+            XCTAssertEqual(note.sound, .newMessage)
+        }
     }
 
     func testCallClosedReasonsWhichShouldBeIgnored() {
@@ -147,11 +160,13 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
         let ignoredCallClosedReasons: [CallClosedReason] = [.anweredElsewhere, .normal]
 
         for reason in ignoredCallClosedReasons {
-            // when
-            let note = self.note(for: .terminating(reason: reason))
+            syncMOC.performAndWait {
+                // when
+                let note = self.note(for: .terminating(reason: reason))
 
-            // then
-            XCTAssertNil(note)
+                // then
+                XCTAssertNil(note)
+            }
         }
     }
 
@@ -161,30 +176,34 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
         let state: CallState = .terminating(reason: .timeout)
 
         // when
-        guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+        syncMOC.performAndWait {
+            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
 
-        // then
-        XCTAssertEqual(note.title, "Callie")
-        XCTAssertEqual(note.body, "called")
-        XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.missedCall)
-        XCTAssertEqual(note.sound, .newMessage)
+            // then
+            XCTAssertEqual(note.title, "Callie")
+            XCTAssertEqual(note.body, "called")
+            XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.missedCall)
+            XCTAssertEqual(note.sound, .newMessage)
+        }
     }
 
     func testMissedCallFromSelfUser() {
-
         // given
         let state: CallState = .terminating(reason: .timeout)
-        let caller = ZMUser.selfUser(in: syncMOC)
-        caller.name = "SelfUser"
 
-        // when
-        guard let note = ZMLocalNotification(callState: state, conversation: conversation, caller: caller, moc: syncMOC) else { return XCTFail("Did not create notification") }
+        syncMOC.performAndWait {
+            let caller = ZMUser.selfUser(in: syncMOC)
+            caller.name = "SelfUser"
 
-        // then
-        XCTAssertEqual(note.title, "Callie")
-        XCTAssertEqual(note.body, "called")
-        XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.missedCall)
-        XCTAssertEqual(note.sound, .newMessage)
+            // when
+            guard let note = ZMLocalNotification(callState: state, conversation: conversation, caller: caller, moc: syncMOC) else { return XCTFail("Did not create notification") }
+
+            // then
+            XCTAssertEqual(note.title, "Callie")
+            XCTAssertEqual(note.body, "called")
+            XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.missedCall)
+            XCTAssertEqual(note.sound, .newMessage)
+        }
     }
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
@@ -214,10 +233,12 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
         // given
         let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
 
-        // when
-        guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+        syncMOC.performAndWait {
+            // when
+            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
 
-        // then
-        XCTAssertEqual(note.title, "Callie")
+            // then
+            XCTAssertEqual(note.title, "Callie")
+        }
     }
 }

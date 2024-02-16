@@ -61,7 +61,6 @@ final class ConversationViewController: UIViewController {
 
     private(set) var startCallController: ConversationCallController!
 
-    let session: ZMUserSessionInterface
     let contentViewController: ConversationContentViewController
     let inputBarController: ConversationInputBarViewController
 
@@ -72,6 +71,8 @@ final class ConversationViewController: UIViewController {
     let invisibleInputAccessoryView: InvisibleInputAccessoryView = InvisibleInputAccessoryView()
     let mediaBarViewController: MediaBarViewController
     private let titleView: ConversationTitleView
+
+    let userSession: UserSession
 
     var inputBarBottomMargin: NSLayoutConstraint?
     var inputBarZeroHeight: NSLayoutConstraint?
@@ -87,7 +88,7 @@ final class ConversationViewController: UIViewController {
 
         switch conversation.conversationType {
         case .group:
-            let groupDetailsViewController = GroupDetailsViewController(conversation: conversation)
+            let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
             viewController = groupDetailsViewController
         case .`self`, .oneOnOne, .connection:
             viewController = createUserDetailViewController()
@@ -100,21 +101,20 @@ final class ConversationViewController: UIViewController {
         return viewController?.wrapInNavigationController(setBackgroundColor: true)
     }
 
-    required init(session: ZMUserSessionInterface,
-                  conversation: ZMConversation,
+    required init(conversation: ZMConversation,
                   visibleMessage: ZMMessage?,
-                  zClientViewController: ZClientViewController) {
-        self.session = session
+                  zClientViewController: ZClientViewController,
+                  userSession: UserSession) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
         self.zClientViewController = zClientViewController
-
+        self.userSession = userSession
         contentViewController = ConversationContentViewController(conversation: conversation,
                                                                   message: visibleMessage,
                                                                   mediaPlaybackManager: zClientViewController.mediaPlaybackManager,
-                                                                  session: session)
+                                                                  userSession: userSession)
 
-        inputBarController = ConversationInputBarViewController(conversation: conversation)
+        inputBarController = ConversationInputBarViewController(conversation: conversation, userSession: userSession)
 
         mediaBarViewController = MediaBarViewController(mediaPlaybackManager: zClientViewController.mediaPlaybackManager)
 
@@ -151,9 +151,10 @@ final class ConversationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let session = session as? ZMUserSession {
-            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.conversations(inUserSession: session), userSession: session)
-        }
+        conversationListObserverToken = userSession.addConversationListObserver(
+            self,
+            for: userSession.conversationList()
+        )
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
@@ -179,6 +180,8 @@ final class ConversationViewController: UIViewController {
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted {
             inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(for: quote))
         }
+
+        resolveConversationIfOneOnOne()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -203,7 +206,7 @@ final class ConversationViewController: UIViewController {
                     }
                 })
             case .archive:
-                self?.session.enqueue({
+                self?.userSession.enqueue({
                     self?.conversation.isArchived = true
                 })
             }
@@ -363,6 +366,66 @@ final class ConversationViewController: UIViewController {
         updateRightNavigationItemsButtons()
     }
 
+    // MARK: Resolve 1-1 conversations
+
+    private func resolveConversationIfOneOnOne() {
+        guard
+            conversation.conversationType == .oneOnOne,
+            conversation.messageProtocol == .proteus
+        else {
+            return
+        }
+
+        guard
+            let otherUser = conversation.localParticipants.first(where: { !$0.isSelfUser }),
+            let otherUserID = otherUser.qualifiedID,
+            let viewContext = conversation.managedObjectContext,
+            let syncContext = viewContext.zm_sync
+        else {
+            WireLogger.conversation.warn("missing expected value to resolve 1-1 conversation!")
+            return
+        }
+
+        Task {
+
+            do {
+                guard let mlsService = await syncContext.perform({ syncContext.mlsService }) else {
+                    assertionFailure("mlsService is missing")
+                    return
+                }
+
+                let service = OneOnOneResolver(
+                    protocolSelector: OneOnOneProtocolSelector(),
+                    migrator: OneOnOneMigrator(mlsService: mlsService)
+                )
+                let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
+
+                if case .migratedToMLSGroup(let identifier) = resolvedState {
+                    await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
+                }
+            } catch {
+                WireLogger.conversation.warn("resolution of proteus 1-1 conversation failed: \(error)")
+            }
+        }
+    }
+
+    @MainActor
+    private func navigateToNewMLSConversation(
+        mlsGroupIdentifier: MLSGroupID,
+        in context: NSManagedObjectContext
+    ) async {
+        let mlsConversation = await context.perform {
+            ZMConversation.fetch(with: mlsGroupIdentifier, in: context)
+        }
+
+        guard let mlsConversation else {
+            assertionFailure("conversation with MLSGroupID \(mlsGroupIdentifier) is expected to be always available at this point!")
+            return
+        }
+
+        zClientViewController.showConversation(mlsConversation, at: nil)
+    }
+
     // MARK: - ParticipantsPopover
 
     private func hideAndDestroyParticipantsPopover() {
@@ -463,8 +526,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     func conversationInputBarViewControllerDidComposeText(text: String,
                                                           mentions: [Mention],
                                                           replyingTo message: ZMConversationMessage?) {
-        contentViewController.scrollToBottom()
-        inputBarController.sendController.sendTextMessage(text, mentions: mentions, replyingTo: message)
+        contentViewController.scrollToBottomIfNeeded()
+        inputBarController.sendController.sendTextMessage(text, mentions: mentions, userSession: userSession, replyingTo: message)
     }
 
     func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
@@ -472,7 +535,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             !controller.isReplyingToMessage {
             collectionController = nil
             contentViewController.searchQueries = []
-            contentViewController.scrollToBottom()
+            contentViewController.scrollToBottomIfNeeded()
         }
 
         setGuestBarForceHidden(true)
@@ -488,7 +551,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                                                             withText newText: String?,
                                                             mentions: [Mention]) {
         contentViewController.didFinishEditing(message)
-        session.enqueue({
+        userSession.enqueue({
             if let newText = newText,
                !newText.isEmpty {
                 let fetchLinkPreview = !Settings.disableLinkPreviews
@@ -514,7 +577,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     func conversationInputBarViewControllerDidComposeDraft(message: DraftMessage) {
-        ZMUserSession.shared()?.enqueue {
+        userSession.enqueue {
             self.conversation.draftMessage = message
         }
     }
@@ -544,7 +607,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     @objc
     private func onCollectionButtonPressed(_ sender: AnyObject?) {
         if collectionController == .none {
-            let collections = CollectionsViewController(conversation: conversation)
+            let collections = CollectionsViewController(conversation: conversation, userSession: userSession)
             collections.delegate = self
 
             collections.onDismiss = { [weak self] _ in

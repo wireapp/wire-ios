@@ -19,7 +19,7 @@
 import Foundation
 import WireRequestStrategy
 
-class AuthenticationStatus: AuthenticationStatusProvider {
+final class AuthenticationStatus: AuthenticationStatusProvider {
 
     // MARK: - Properties
 
@@ -39,18 +39,6 @@ class AuthenticationStatus: AuthenticationStatusProvider {
 
     private var isLoggedIn: Bool {
         return transportSession.cookieStorage.authenticationCookieData != nil
-    }
-
-}
-
-extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
-        let backendURL = self.backendURL.host!
-        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier)
-    }
-
-    public func isAuthenticated(_ account: Account) -> Bool {
-        return cookieStorage(for: account).authenticationCookieData != nil
     }
 
 }

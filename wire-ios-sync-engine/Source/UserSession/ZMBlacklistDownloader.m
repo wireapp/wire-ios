@@ -117,6 +117,7 @@ static NSString * const ExcludeVersionsKey = @"exclude";
                         readyForRequests: (BOOL)readyForRequests
                             workingGroup:(ZMSDispatchGroup *)workingGroup
                              application:(id<ZMApplication>)application
+                           minTLSVersion:(NSString * _Nullable)minTLSVersion
                        completionHandler:(void (^)(NSString *, NSArray *))completionHandler {
     return [self initWithURLSession:nil
                         environment:environment
@@ -128,6 +129,7 @@ static NSString * const ExcludeVersionsKey = @"exclude";
                        userDefaults:[NSUserDefaults standardUserDefaults]
                         application:application
                        workingGroup:workingGroup
+                      minTLSVersion:minTLSVersion
                   completionHandler:completionHandler];
 }
 
@@ -143,6 +145,7 @@ static NSString * const ExcludeVersionsKey = @"exclude";
                       userDefaults:(NSUserDefaults *)userDefaults
                        application:(id<ZMApplication>)application
                       workingGroup:(ZMSDispatchGroup *)workingGroup
+                     minTLSVersion:(NSString * _Nullable)minTLSVersion
                  completionHandler:(void (^)(NSString *, NSArray *))completionHandler
 {
     self = [super init];
@@ -162,6 +165,8 @@ static NSString * const ExcludeVersionsKey = @"exclude";
         } else {
             self.urlSession = [self defaultSessionWithProxyDictionary:proxyDictionary];
         }
+
+        [self.urlSession setMinTLSVersionIfNeeded:minTLSVersion];
 
         self.successCheckInterval = successCheckInterval;
         self.failureCheckInterval = MIN(failureCheckInterval,successCheckInterval);  // Make sure we don't download slower when unsuccessful

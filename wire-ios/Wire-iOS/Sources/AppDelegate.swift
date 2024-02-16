@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+// Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
 import UIKit
 import WireCommonComponents
@@ -38,7 +40,7 @@ extension Notification.Name {
 private let zmLog = ZMSLog(tag: "AppDelegate")
 private let pushLog = ZMSLog(tag: "Push")
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Private Property
 
@@ -58,14 +60,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TrackingOperation(),
         AppCenterOperation(),
         PerformanceDebuggerOperation(),
-        ZMSLogOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
         MediaManagerOperation(),
         FileBackupExcluderOperation(),
         BackendInfoOperation(),
         FontSchemeOperation(),
-        VoIPPushHelperOperation(),
         CleanUpDebugStateOperation()
     ]
     private var appStateCalculator = AppStateCalculator()
@@ -102,17 +102,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
+
     override init() {
         super.init()
     }
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // enable logs
+        _ = Settings.shared
+        // switch logs
+        ZMSLog.switchCurrentLogToPrevious()
+
         zmLog.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
         DatadogWrapper.shared?.startMonitoring()
         DatadogWrapper.shared?.log(level: .info, message: "start app")
+
         // Initial log line to indicate the client version and build
-        zmLog.info("Wire-ios version \(String(describing: Bundle.main.shortVersionString)) (\(String(describing: Bundle.main.infoDictionary?[kCFBundleVersionKey as String])))")
+        zmLog.safePublic(SanitizedString(stringLiteral: Bundle.main.appInfo.safeForLoggingDescription))
 
         return true
     }
@@ -124,7 +132,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         voIPPushManager.registerForVoIPPushes()
-        ZMSLog.switchCurrentLogToPrevious()
+
+        temporaryFilesService.removeTemporaryData()
 
         zmLog.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
 
@@ -296,7 +305,9 @@ private extension AppDelegate {
             pushTokenService: pushTokenService,
             callKitManager: voIPPushManager.callKitManager,
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
-            sharedUserDefaults: .applicationGroup
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+            deleteUserLogs: LogFileDestination.deleteAllLogs
         )
 
         voIPPushManager.delegate = sessionManager

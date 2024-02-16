@@ -21,6 +21,7 @@ import Ziphy
 import FLAnimatedImage
 import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 protocol GiphySearchViewControllerDelegate: AnyObject {
     func giphySearchViewController(_ giphySearchViewController: GiphySearchViewController, didSelectImageData imageData: Data, searchTerm: String)
@@ -53,8 +54,16 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     // MARK: - Initialization
 
-    convenience init(searchTerm: String, conversation: ZMConversation) {
-        let searchResultsController = ZiphySearchResultsController(client: .default, pageSize: 50, maxImageSize: 3)
+    convenience init(searchTerm: String, conversation: ZMConversation, userSession: UserSession) {
+        let searchResultsController = ZiphySearchResultsController(
+            client: ZiphyClient(
+                host: "api.giphy.com",
+                requester: ZiphySession(userSession: userSession),
+                downloadSession: URLSession.shared
+            ),
+            pageSize: 50,
+            maxImageSize: 3
+        )
         self.init(searchTerm: searchTerm, conversation: conversation, searchResultsController: searchResultsController)
     }
 
@@ -66,7 +75,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         let columnCount = AdaptiveColumnCount(compact: 2, regular: 3, large: 4)
         super.init(interItemSpacing: 1, interColumnSpacing: 1, columnCount: columnCount)
 
-        navigationItem.setupNavigationBarTitle(title: conversation.displayName.capitalized)
+        navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback.capitalized)
         performSearch()
     }
 
@@ -278,7 +287,10 @@ extension GiphySearchViewController {
 
         pendingFetchTask = searchResultsController.fetchMoreResults { [weak self] result in
             if case let .success(ziphs) = result {
-                self?.insertSearchResults(ziphs)
+                self?.collectionView.performBatchUpdates {
+                    self?.insertSearchResults(ziphs)
+                }
+
             }
 
             self?.pendingFetchTask = nil
@@ -298,7 +310,7 @@ extension GiphySearchViewController {
     @discardableResult
     func pushConfirmationViewController(ziph: Ziph?, previewImage: FLAnimatedImage?, animated: Bool = true) -> GiphyConfirmationViewController {
         let confirmationController = GiphyConfirmationViewController(withZiph: ziph, previewImage: previewImage, searchResultController: searchResultsController)
-        confirmationController.title = conversation.displayName.localizedUppercase
+        confirmationController.title = conversation.displayNameWithFallback
         confirmationController.delegate = self
         navigationController?.pushViewController(confirmationController, animated: animated)
 

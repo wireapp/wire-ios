@@ -29,7 +29,9 @@ extension ContactsViewController {
          inviteOthersButton,
          noContactsLabel,
          bottomContainerSeparatorView,
-         bottomContainerView].prepareForLayout()
+         bottomContainerView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         let standardOffset: CGFloat = 24.0
 

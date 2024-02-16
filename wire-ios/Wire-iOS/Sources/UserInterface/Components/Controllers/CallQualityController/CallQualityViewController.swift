@@ -282,7 +282,7 @@ final class CallQualityView: UIStackView {
 }
 
 // MARK: Quality Score Selector View
-class QualityScoreSelectorView: UIView {
+final class QualityScoreSelectorView: UIView {
     private let scoreStackView = UIStackView()
 
     weak var delegate: CallQualityViewControllerDelegate?
@@ -335,7 +335,7 @@ class QualityScoreSelectorView: UIView {
 }
 
 // MARK: Call Quality Animator
-class CallQualityAnimator: NSObject, UIViewControllerTransitioningDelegate {
+final class CallQualityAnimator: NSObject, UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController,
                              presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {

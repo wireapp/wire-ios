@@ -95,7 +95,7 @@ extension SettingsCellDescriptorFactory {
             ExternalScreen(title: "Show database statistics",
                            isDestructive: false,
                            presentationStyle: .navigation,
-                           presentationAction: {  DatabaseStatisticsController() })
+                           presentationAction: { DatabaseStatisticsController() })
         )
 
         if !Analytics.shared.isOptedOut && !TrackingManager.shared.disableAnalyticsSharing {

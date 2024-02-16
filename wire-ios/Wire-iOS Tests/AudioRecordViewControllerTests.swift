@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import avs
 @testable import Wire
 
-final private class MockAudioRecordViewControllerDelegate: NSObject, AudioRecordViewControllerDelegate {
+private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecordViewControllerDelegate {
 
     var cancelCallCount: UInt = 0
 
@@ -32,15 +33,17 @@ final private class MockAudioRecordViewControllerDelegate: NSObject, AudioRecord
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {}
 }
 
-final class AudioRecordViewControllerTests: ZMSnapshotTestCase {
+final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
 
     var sut: AudioRecordViewController!
     fileprivate var delegate: MockAudioRecordViewControllerDelegate!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
         accentColor = .strongBlue
-        sut = AudioRecordViewController()
+        userSession = UserSessionMock()
+        sut = AudioRecordViewController(userSession: userSession)
         delegate = MockAudioRecordViewControllerDelegate()
         sut.delegate = delegate
         sut.updateTimeLabel(123)
@@ -50,11 +53,21 @@ final class AudioRecordViewControllerTests: ZMSnapshotTestCase {
     override func tearDown() {
         sut = nil
         delegate = nil
+        userSession = nil
+
         super.tearDown()
     }
 
-    func verify() {
-        verifyInAllPhoneWidths(view: sut.prepareForSnapshot(), tolerance: 0.05)
+    func verify(file: StaticString = #file,
+                testName: String = #function,
+                line: UInt = #line) {
+
+        verifyInAllPhoneWidths(
+            matching: sut.prepareForSnapshot(),
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
     func testThatItRendersViewControllerCorrectlyState_Recording() {

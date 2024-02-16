@@ -39,7 +39,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             proxyUsername: nil,
             proxyPassword: nil,
             reachability: reachability,
-            analytics: nil
+            analytics: nil,
+            minTLSVersion: nil
         )
     }
 
@@ -59,6 +60,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             appVersion: appVersion,
             coreDataStack: coreDataStack,
             configuration: configuration,
+            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             sharedUserDefaults: sharedUserDefaults
         )
     }
@@ -104,7 +106,7 @@ extension IntegrationTest {
     @objc
     func _setUp() {
 
-        UserClientRequestFactory._test_overrideNumberOfKeys = 1
+        PrekeyGenerator._test_overrideNumberOfKeys = 1
 
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
@@ -117,7 +119,7 @@ extension IntegrationTest {
         application = ApplicationMock()
         notificationCenter = UserNotificationCenterMock()
         mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
-        mockTransportSession.cookieStorage = ZMPersistentCookieStorage(forServerName: mockEnvironment.backendURL.host!, userIdentifier: currentUserIdentifier)
+        mockTransportSession.cookieStorage = ZMPersistentCookieStorage(forServerName: mockEnvironment.backendURL.host!, userIdentifier: currentUserIdentifier, useCache: true)
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3IntegrationMock.self
         mockTransportSession.cookieStorage.deleteKeychainItems()
         createSessionManager()
@@ -140,7 +142,7 @@ extension IntegrationTest {
 
     @objc
     func _tearDown() {
-        UserClientRequestFactory._test_overrideNumberOfKeys = nil
+        PrekeyGenerator._test_overrideNumberOfKeys = nil
         destroyTimers()
         sharedSearchDirectory?.tearDown()
         sharedSearchDirectory = nil
@@ -455,7 +457,7 @@ extension IntegrationTest {
     @objc(userForMockUser:)
     func user(for mockUser: MockUser) -> ZMUser? {
         let uuid = mockUser.managedObjectContext!.performGroupedAndWait { _ in
-            return mockUser.identifier.uuid()
+            return UUID(transportString: mockUser.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
@@ -472,7 +474,7 @@ extension IntegrationTest {
     @objc(conversationForMockConversation:)
     func conversation(for mockConversation: MockConversation) -> ZMConversation? {
         let uuid = mockConversation.managedObjectContext!.performGroupedAndWait { _ in
-            return mockConversation.identifier.uuid()
+            return UUID(transportString: mockConversation.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
@@ -488,17 +490,19 @@ extension IntegrationTest {
 
     @objc(establishSessionWithMockUser:)
     func establishSession(with mockUser: MockUser) {
-        mockTransportSession.performRemoteChanges({ session in
+        mockTransportSession.performRemoteChanges { session in
             if mockUser.clients.count == 0 {
                 session.registerClient(for: mockUser)
             }
 
-            for client in mockUser.clients {
-                self.userSession?.syncManagedObjectContext.performGroupedBlockAndWait {
-                    self.establishSessionFromSelf(toRemote: client as! MockUserClient)
+            self.userSession.map { userSession in
+                WaitingGroupTask(context: userSession.syncManagedObjectContext) {
+                    for client in mockUser.clients {
+                        await self.establishSessionFromSelf(toRemote: client as! MockUserClient)
+                    }
                 }
             }
-        })
+        }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -579,13 +583,13 @@ extension IntegrationTest {
     }
 
     func performSlowSync() {
-        userSession?.applicationStatusDirectory?.syncStatus.forceSlowSync()
+        userSession?.applicationStatusDirectory.syncStatus.forceSlowSync()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func performQuickSync() {
-        userSession?.applicationStatusDirectory?.syncStatus.forceQuickSync()
+        userSession?.applicationStatusDirectory.syncStatus.forceQuickSync()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -633,7 +637,12 @@ extension IntegrationTest {
 
     @objc(remotelyAppendSelfConversationWithZMLastReadForMockConversation:atTime:)
     func remotelyAppendSelfConversationWithZMLastRead(for mockConversation: MockConversation, at time: Date) {
-        let genericMessage = GenericMessage(content: LastRead(conversationID: UUID(uuidString: mockConversation.identifier)!, lastReadTimestamp: time))
+        guard let uuid = UUID(uuidString: mockConversation.identifier) else {
+            XCTFail("There's no uuid")
+            return
+        }
+        let conversationID = QualifiedID(uuid: uuid, domain: "")
+        let genericMessage = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: time))
         mockTransportSession.performRemoteChanges { _ in
             do {
                 self.selfConversation.insertClientMessage(from: self.selfUser, data: try genericMessage.serializedData())
@@ -672,7 +681,7 @@ extension IntegrationTest: SessionManagerDelegate {
         setupTimers()
     }
 
-    public func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    public func sessionManagerDidReportLockChange(forSession session: UserSession) {
         // No op
     }
 
@@ -694,7 +703,7 @@ extension IntegrationTest: SessionManagerDelegate {
         // no-op
     }
 
-    public func sessionManagerDidFailToLoadDatabase() {
+    public func sessionManagerDidFailToLoadDatabase(error: Error) {
         // no-op
     }
 
@@ -705,11 +714,15 @@ extension IntegrationTest: SessionManagerDelegate {
         userSessionCanBeTornDown()
     }
 
-    public func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
+    public func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         // no op
     }
 
-    public func sessionManagerDidPerformAPIMigrations() {
+    public func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
+        // no op
+    }
+
+    public func sessionManagerAsksToRetryStart() {
         // no op
     }
 }

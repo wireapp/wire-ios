@@ -1,6 +1,6 @@
 // 
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,9 @@
 @protocol UserClientType;
 
 extern NSString * _Nonnull const ZMMessageIsExpiredKey;
+extern NSString * _Nonnull const ZMMessageExpirationReasonCodeKey;
 extern NSString * _Nonnull const ZMMessageMissingRecipientsKey;
+extern NSString * _Nonnull const ZMMessageFailedToSendRecipientsKey;
 extern NSString * _Nonnull const ZMMessageImageTypeKey;
 extern NSString * _Nonnull const ZMMessageIsAnimatedGifKey;
 extern NSString * _Nonnull const ZMMessageMediumRemoteIdentifierDataKey;
@@ -69,7 +71,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 @interface ZMMessage : ZMManagedObject
 
-+(instancetype _Nonnull )insertNewObjectInManagedObjectContext:(NSManagedObjectContext *_Nonnull)moc NS_UNAVAILABLE;
++ (instancetype _Nonnull)insertNewObjectInManagedObjectContext:(NSManagedObjectContext *_Nonnull)moc NS_UNAVAILABLE;
 - (instancetype _Nonnull)initWithNonce:(NSUUID * _Nonnull)nonce managedObjectContext:(NSManagedObjectContext * _Nonnull)managedObjectContext;
 + (nonnull NSSet <ZMMessage *> *)messagesWithRemoteIDs:(nonnull NSSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 
@@ -157,6 +159,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 @property (nonatomic, readonly) BOOL isUnreadMessage;
 @property (nonatomic, readonly) BOOL isExpired;
+@property (nonatomic) NSNumber * _Nullable expirationReasonCode;
 @property (nonatomic, readonly) NSDate * _Nullable expirationDate;
 @property (nonatomic, readonly) BOOL isObfuscated;
 @property (nonatomic, readonly) BOOL needsReadConfirmation;
@@ -165,7 +168,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 @property (nonatomic) NSSet <Reaction *> * _Nonnull reactions;
 @property (nonatomic, readonly) NSSet<ZMMessageConfirmation*> * _Nonnull confirmations;
 
-- (void)setExpirationDate;
+- (NSDate * _Nonnull)setExpirationDate;
 - (void)removeExpirationDate;
 - (void)expire;
 
@@ -190,7 +193,6 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 - (NSString * _Nonnull)shortDebugDescription;
 
 - (void)updateWithPostPayload:(NSDictionary * _Nonnull)payload updatedKeys:(NSSet * _Nonnull)updatedKeys;
-+ (BOOL)doesEventTypeGenerateMessage:(ZMUpdateEventType)type;
 
 /// Returns a predicate that matches messages that might expire if they are not sent in time
 + (NSPredicate * _Nonnull)predicateForMessagesThatWillExpire;
@@ -256,15 +258,16 @@ extern NSString *  _Nonnull const ZMMessageServerTimestampKey;
 @end
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZMSystemMessage (Internal)
 
-+ (BOOL)doesEventTypeGenerateSystemMessage:(ZMUpdateEventType)type;
-+ (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
-+ (NSPredicate * _Nonnull)predicateForSystemMessagesInsertedLocally;
++ (ZMSystemMessageType)systemMessageTypeFromUpdateEvent:(ZMUpdateEvent *)updateEvent;
++ (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent inManagedObjectContext:(NSManagedObjectContext *)moc;
 
 @end
 
-
+NS_ASSUME_NONNULL_END
 
 
 @interface ZMMessage (Ephemeral)

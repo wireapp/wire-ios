@@ -26,11 +26,13 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
     // MARK: - Properties
 
     private let messageProtocol: MessageProtocol
+    private let groupID: MLSGroupID?
 
     // MARK: - Life cycle
 
-    init(messageProtocol: MessageProtocol) {
+    init(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil) {
         self.messageProtocol = messageProtocol
+        self.groupID = groupID
         super.init()
     }
 
@@ -60,8 +62,8 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         case .proteus:
             return 1
 
-        case .mls:
-            return 2
+        case .mls, .mixed:
+            return Bundle.developerModeEnabled ? 3 : 2
         }
     }
 
@@ -88,6 +90,9 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
             cell.status = "MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 (0x0001)"
             cell.allowMultilineStatus = true
 
+        case (.mls, 2) where Bundle.developerModeEnabled:
+            cell.title = "Group ID (hashed)"
+            cell.status = groupID?.safeForLoggingDescription
         default:
             break
         }
@@ -132,6 +137,8 @@ private extension MessageProtocol {
 
         case .mls:
             return "MLS"
+        case .mixed:
+            return "Mixed"
         }
     }
 

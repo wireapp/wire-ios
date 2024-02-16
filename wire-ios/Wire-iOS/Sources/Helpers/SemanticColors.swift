@@ -39,6 +39,7 @@ public enum SemanticColors {
         static let textDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let textDefaultWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
         static let textWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.white)
+        static let textMessageDate = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
         static let textSectionFooter = UIColor(light: Asset.Colors.gray90, dark: Asset.Colors.gray20)
         static let textSectionHeader = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray50)
         static let textCellSubtitle = UIColor(light: Asset.Colors.gray90, dark: Asset.Colors.white)
@@ -55,6 +56,8 @@ public enum SemanticColors {
         static let textTabBar = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
         static let textFieldFloatingLabel = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
         static let textSecurityEnabled = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+
+        static let textReactionCounterSelected = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
         static let textInactive = UIColor(light: Asset.Colors.gray60, dark: Asset.Colors.gray70)
         static let textParticipantDisconnected = UIColor(light: Asset.Colors.red300Light, dark: Asset.Colors.red300Dark)
     }
@@ -89,6 +92,15 @@ public enum SemanticColors {
         static let backgroundPhoneCall = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let backgroundMissedPhoneCall = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let foregroundMicrophone = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
+        static let emojiCategoryDefault = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray60)
+        static let emojiCategorySelected = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
+
+        // The init here is different because in light mode we would like the color of the border
+        // to be clear. The initializer in all other cases in this file expects a type of ColorAsset
+        // in both light and dark mode.
+        static let borderMutedNotifications = UIColor { traits in
+            traits.userInterfaceStyle == .dark ? Asset.Colors.gray70.color : .clear
+        }
 
         static let foregroundElapsedTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
         static let foregroundRemainingTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
@@ -119,7 +131,6 @@ public enum SemanticColors {
         static let backgroundConversationList = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
         static let backgroundConversationListTableViewCell = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray95)
         static let borderConversationListTableViewCell = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray90)
-        static let borderConversationListTableViewCellBadgeReverted = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray70)
         static let backgroundCollectionCell = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray90)
         static let borderCollectionCell = UIColor(light: Asset.Colors.gray30, dark: Asset.Colors.gray80)
         static let backgroundSecurityLevel = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray95)
@@ -192,6 +203,8 @@ public enum SemanticColors {
         static let borderInputBarItemHighlighted = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
         static let textInputBarItemEnabled = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let textInputBarItemHighlighted = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.white)
+        static let reactionBorderSelected = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
+        static let reactionBackgroundSelected = UIColor(light: Asset.Colors.blue50Light, dark: Asset.Colors.blue800Dark)
 
         /// Calling buttons
         static let backgroundCallingNormal = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray90)
@@ -213,10 +226,18 @@ public enum SemanticColors {
         static let backgroundHangUp = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let textUnderlineEnabledDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
 
+        // Reaction Button
+        static let backroundReactionNormal = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
+        static let borderReactionNormal = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
+        static let backgroundReactionSelected = UIColor(light: Asset.Colors.blue50Light, dark: Asset.Colors.blue900Dark)
+        static let borderReactionSelected = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
+
         /// Audio Buttons
         static let backgroundAudioMessageOverlay = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
-
         static let backgroundconfirmSendingAudioMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+
+        // Scroll To Bottom Button
+        static let backgroundScrollToBottonEnabled = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
     }
 
     public enum DrawingColors {

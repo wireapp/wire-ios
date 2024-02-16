@@ -34,7 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 enum {
     TooManyRequestsStatusCode = 429,
     EnhanceYourCalmStatusCode = 420,
-    UnauthorizedStatusCode = 401
+    UnauthorizedStatusCode = 401,
+    FederationRemoteError = 533
 };
 
 

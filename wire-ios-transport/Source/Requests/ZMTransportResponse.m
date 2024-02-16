@@ -120,11 +120,10 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
 - (ZMTransportResponseStatus)result
 {
-    // TODO: [John] We need to properly handle all federation errors
     // This is a quick fix to handle remote federation errors. Without it, we would
     // return a "try again" error, which would cause infinite failures if the
     // remote federated backend is down.
-    if (self.HTTPStatus == 533) {
+    if (self.HTTPStatus == FederationRemoteError) {
         return ZMTransportResponseStatusPermanentError;
     }
 
@@ -137,6 +136,8 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
                     return ZMTransportResponseStatusTryAgainLater;
                 case ZMTransportSessionErrorCodeAuthenticationFailed:
                     return ZMTransportResponseStatusPermanentError;
+                case ZMTransportSessionErrorCodeCancelled:
+                    return ZMTransportResponseStatusCancelled;
                 default:
                     ZMLogWarn(@"Invalid ZMTransportSessionErrorCode %d", (int) self.transportSessionError.code);
                     break;

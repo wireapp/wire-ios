@@ -27,7 +27,7 @@
 
 - (ZMTransportResponse *)processAPIVersionRequest:(ZMTransportRequest *)request;
 {
-    if ([request matchesWithPath:@"/api-version" method:ZMMethodGET]) {
+    if ([request matchesWithPath:@"/api-version" method:ZMTransportRequestMethodGet]) {
         return [self processAPIVersionGetRequest:request];
     }
 

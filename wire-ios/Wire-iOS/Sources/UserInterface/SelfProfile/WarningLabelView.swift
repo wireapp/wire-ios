@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
-class WarningLabelView: UIView {
+final class WarningLabelView: UIView {
     private let stackView = UIStackView(axis: .horizontal)
     private let imageView = UIImageView(image: UIImage(named: "Info"))
     private let label = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
@@ -61,8 +61,11 @@ class WarningLabelView: UIView {
             self.isHidden = false
             label.text = profileDetails.requestedIdentityWarning
         }
+        guard let name = user.name else {
+            self.isHidden = true
+            return
+        }
         self.isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
-        guard let name = user.name else { return }
         label.text = profileDetails.identityWarning(name)
 
     }

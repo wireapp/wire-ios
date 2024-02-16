@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class MockAction: EntityAction, Equatable {
+private class MockAction: EntityAction, Equatable {
     let uuid = UUID()
     var resultHandler: ResultHandler?
 
@@ -31,7 +31,7 @@ class MockAction: EntityAction, Equatable {
     }
 }
 
-class MockActionHandler: ActionHandler<MockAction> {
+private class TestActionHandler: ActionHandler<MockAction> {
 
     var calledRequestForAction: Bool = false
     override func request(for action: ActionHandler<MockAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -48,11 +48,11 @@ class MockActionHandler: ActionHandler<MockAction> {
 
 class ActionHandlerTests: MessagingTestBase {
 
-    var sut: MockActionHandler!
+    private var sut: TestActionHandler!
 
     override func setUp() {
         super.setUp()
-        self.sut = MockActionHandler(context: uiMOC)
+        self.sut = TestActionHandler(context: uiMOC)
     }
 
     override func tearDown() {

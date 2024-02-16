@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+import XCTest
 @testable import Wire
 
-class AudioButtonOverlayTests: ZMSnapshotTestCase {
+final class AudioButtonOverlayTests: BaseSnapshotTestCase {
 
     var sut: AudioButtonOverlay!
     var buttonTapHistory: [AudioButtonOverlay.AudioButtonOverlayButtonType]!
@@ -38,43 +39,43 @@ class AudioButtonOverlayTests: ZMSnapshotTestCase {
 
     func testThatItRendersTheButtonOverlayCorrectInitially_Recording() {
         sut.setOverlayState(.default)
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItRendersTheButtonOverlayCorrectInitially_FinishedRecording() {
         sut.recordingState = .finishedRecording
         sut.setOverlayState(.default)
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItRendersTheButtonOverlayCorrectInitially_FinishedRecording_PlayingAudio() {
         sut.recordingState = .finishedRecording
         sut.playingState = .playing
         sut.setOverlayState(.default)
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItChangesItsSize_Expanded() {
         sut.setOverlayState(.expanded(0))
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItChangesItsSize_Expanded_Half() {
         sut.setOverlayState(.expanded(0.5))
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItChangesItsSize_Expanded_Full() {
         sut.setOverlayState(.expanded(1))
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItCallsTheButtonHandlerWithTheCorrectButtonType() {
         sut.playButton.sendActions(for: .touchUpInside)
-        XCTAssertArrayEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play])
+        XCTAssertEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play])
 
         sut.sendButton.sendActions(for: .touchUpInside)
-        XCTAssertArrayEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play, AudioButtonOverlay.AudioButtonOverlayButtonType.send])
+        XCTAssertEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play, AudioButtonOverlay.AudioButtonOverlayButtonType.send])
     }
 
 }

@@ -36,7 +36,7 @@ class RegisterPushTokenActionHandler: ActionHandler<RegisterPushTokenAction> {
 
         return ZMTransportRequest(
             path: "/push/tokens",
-            method: .methodPOST,
+            method: .post,
             payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )

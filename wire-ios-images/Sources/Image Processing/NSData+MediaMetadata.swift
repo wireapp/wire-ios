@@ -19,6 +19,7 @@
 import Foundation
 import ImageIO
 import MobileCoreServices
+import UniformTypeIdentifiers
 
 public enum MetadataError: Error {
     case unknownFormat
@@ -36,8 +37,10 @@ public extension NSData {
         swiftMetadataProperties[String(kCGImagePropertyIPTCDictionary)] = kCFNull
         swiftMetadataProperties[String(kCGImagePropertyCIFFDictionary)] = kCFNull
         swiftMetadataProperties[String(kCGImagePropertyMakerAppleDictionary)] = kCFNull
+        // swiftlint:disable todo_requires_jira_link
         // TODO: iOS8 is crashing when the following symbols are imported from ImageIO.
         // It looks like a linker issue, since the symbols are marked as available from iOS4.
+        // swiftlint:enable todo_requires_jira_link
         swiftMetadataProperties["{MakerCanon}"]   = kCFNull // kCGImagePropertyMakerCanonDictionary
         swiftMetadataProperties["{MakerNikon}"]   = kCFNull // kCGImagePropertyMakerNikonDictionary
         swiftMetadataProperties["{MakerMinolta}"] = kCFNull // kCGImagePropertyMakerMinoltaDictionary
@@ -59,7 +62,7 @@ public extension NSData {
         }
 
         // GIF file does not have properties in nullMetadataProperties. Tested some recreated GIF data from CGImageDestinationAddImageFromSource have the file size increased and lost animation. e.g. 1.6MB -> 9MB
-        if type == kUTTypeGIF {
+        if type == UTType.gif.identifier as CFString {
             return self
         }
 

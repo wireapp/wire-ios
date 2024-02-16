@@ -20,13 +20,9 @@ import XCTest
 import FLAnimatedImage
 @testable import Wire
 
-final class ConfirmAssetViewControllerTests: ZMSnapshotTestCase {
+final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
 
     var sut: ConfirmAssetViewController!
-
-    override func setUp() {
-        super.setUp()
-    }
 
     override func tearDown() {
         sut = nil
@@ -59,14 +55,14 @@ final class ConfirmAssetViewControllerTests: ZMSnapshotTestCase {
 
         verifyAllIPhoneSizes(matching: sut)
     }
-}
 
-// MARK: - GIF
+    // MARK: - GIF, Unit Tests
 
-extension ConfirmAssetViewControllerTests {
     func testThatItShowsEditOptionsForSignalFrameGIF() {
         // GIVEN & WHEN
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif"))))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif")))
+        )
 
         // THEN
         XCTAssert(sut.showEditingOptions)
@@ -80,4 +76,5 @@ extension ConfirmAssetViewControllerTests {
         // THEN
         XCTAssertFalse(sut.showEditingOptions)
     }
+
 }

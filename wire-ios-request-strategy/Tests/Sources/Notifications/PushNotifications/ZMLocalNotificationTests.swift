@@ -181,7 +181,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
         let payload: [String: Any] = [
             "from": senderID.transportString(),
             "conversation": conversationID.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "data": [
                 "user_ids": userIds,
                 "users": usersWithRoles
@@ -196,7 +196,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
         let payload: [String: Any] = [
             "from": senderID.transportString(),
             "conversation": conversationID.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "data": [
                 "user_ids": userIds
             ],
@@ -208,7 +208,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
     func createMessageTimerUpdateEvent(_ nonce: UUID,
                                        conversationID: UUID,
                                        senderID: UUID = UUID.create(),
-                                       timer: Int64 = 31536000,
+                                       timer: Int64 = 31536000000,
                                        timestamp: Date = Date()) -> ZMUpdateEvent {
 
        let payload: [String: Any] = [

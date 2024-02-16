@@ -57,9 +57,9 @@ extension ZMUser {
     }
 
     private func broadcast(identifier: UUID) {
-        guard let moc = managedObjectContext else { return }
-        let message = GenericMessage(content: DataTransfer(trackingIdentifier: identifier))
-        _ = try? ZMConversation.appendMessageToSelfConversation(message, in: moc)
+        guard let context = managedObjectContext else { return }
+        let message = DataTransfer(trackingIdentifier: identifier)
+        _ = try? ZMConversation.sendMessageToSelfClients(message, in: context)
     }
 
 }

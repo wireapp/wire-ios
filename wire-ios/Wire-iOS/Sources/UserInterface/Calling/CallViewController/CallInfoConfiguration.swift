@@ -18,6 +18,7 @@
 
 import Foundation
 import avs
+import WireCommonComponents
 import WireSyncEngine
 
 extension VoiceChannel {

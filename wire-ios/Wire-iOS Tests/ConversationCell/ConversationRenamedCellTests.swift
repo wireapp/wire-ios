@@ -19,12 +19,12 @@
 @testable import Wire
 import XCTest
 
-final class ConversationRenamedCellTests: XCTestCase {
+final class ConversationRenamedCellTests: ConversationMessageSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
 
-        SelfUser.provider = SelfProvider(selfUser: MockUserType.createSelfUser(name: "Alice"))
+        SelfUser.provider = SelfProvider(providedSelfUser: MockUserType.createSelfUser(name: "Alice"))
     }
 
     func testThatItRendersRenamedCellCorrectlySelf() {
@@ -50,7 +50,7 @@ final class ConversationRenamedCellTests: XCTestCase {
 
     // MARK: – Helpers
 
-    private func renamedMessage(fromSelf: Bool, name: String) -> ZMConversationMessage {
+    private func renamedMessage(fromSelf: Bool, name: String) -> ConversationMessage {
         let message = MockMessageFactory.systemMessage(with: .conversationNameChanged, users: 0, clients: 0)!
         message.backingSystemMessageData.systemMessageType = .conversationNameChanged
         message.backingSystemMessageData.text = name

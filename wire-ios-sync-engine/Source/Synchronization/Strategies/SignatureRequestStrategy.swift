@@ -144,7 +144,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         }
 
         return ZMTransportRequest(path: "/signature/request",
-                                  method: .methodPOST,
+                                  method: .post,
                                   payload: payload as ZMTransportData,
                                   apiVersion: apiVersion.rawValue)
     }
@@ -156,7 +156,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         }
 
         return ZMTransportRequest(path: "/signature/pending/\(responseID)",
-                                  method: .methodGET,
+                                  method: .get,
                                   payload: nil,
                                   apiVersion: apiVersion.rawValue)
     }

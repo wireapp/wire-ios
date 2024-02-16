@@ -22,28 +22,41 @@ import WireSyncEngine
 
 extension UIAlertController {
 
-  fileprivate enum CompanyLoginCopy: String {
-        case ssoAndEmail = "sso_and_email"
-        case ssoOnly = "sso_only"
+    fileprivate enum CompanyLoginCopy: String {
+
+        typealias LoginSSoAlertLocale = L10n.Localizable.Login.Sso.Alert
+
+        case ssoAndEmail
+        case ssoOnly
 
         init(ssoOnly: Bool) {
             self = ssoOnly ? .ssoOnly : .ssoAndEmail
         }
 
         var action: String {
-            return "login.sso.alert.action".localized
+            return LoginSSoAlertLocale.action
         }
 
         var title: String {
-            return "login.sso.alert.title".localized
+            return LoginSSoAlertLocale.title
         }
 
         var message: String {
-            return "login.sso.alert.message.\(self.rawValue)".localized
+            switch self {
+            case .ssoOnly:
+                return LoginSSoAlertLocale.Message.ssoOnly
+            case .ssoAndEmail:
+                return LoginSSoAlertLocale.Message.ssoAndEmail
+            }
         }
 
         var placeholder: String {
-            return "login.sso.alert.text_field.placeholder.\(self.rawValue)".localized
+            switch self {
+            case .ssoOnly:
+                return LoginSSoAlertLocale.TextField.Placeholder.ssoOnly
+            case .ssoAndEmail:
+                return LoginSSoAlertLocale.TextField.Placeholder.ssoAndEmail
+            }
         }
     }
 
@@ -62,19 +75,27 @@ extension UIAlertController {
         case unknown
 
         fileprivate func description(for copy: CompanyLoginCopy) -> String {
+
+            typealias LoginSSOErrorAlertLocale = L10n.Localizable.Login.Sso.Error.Alert
+
             switch self {
             case .invalidFormat:
-                return "login.sso.error.alert.invalid_format.message.\(copy.rawValue)".localized
+                switch copy {
+                case .ssoOnly:
+                    return LoginSSOErrorAlertLocale.InvalidFormat.Message.ssoOnly
+                case .ssoAndEmail:
+                    return LoginSSOErrorAlertLocale.InvalidFormat.Message.ssoAndEmail
+                }
             case .domainNotRegistered:
-                return "login.sso.error.alert.domain_not_registered.message".localized
+                return LoginSSOErrorAlertLocale.DomainNotRegistered.message
             case .domainAssociatedWithWrongServer:
-                return "login.sso.error.alert.domain_associated_with_wrong_server.message".localized
+                return LoginSSOErrorAlertLocale.DomainAssociatedWithWrongServer.message
             case .invalidCode:
-                return "login.sso.error.alert.invalid_code.message".localized
+                return LoginSSOErrorAlertLocale.InvalidCode.message
             case .invalidStatus(let status):
-                return "login.sso.error.alert.invalid_status.message".localized(args: String(status))
+                return LoginSSOErrorAlertLocale.InvalidStatus.message(String(status))
             case .unknown:
-                return "login.sso.error.alert.unknown.message".localized
+                return LoginSSOErrorAlertLocale.Unknown.message
             }
         }
     }
@@ -90,42 +111,42 @@ extension UIAlertController {
         error: CompanyLoginError? = nil,
         completion: @escaping (_ ssoCode: String?) -> Void) -> UIAlertController {
 
-        let copy = CompanyLoginCopy(ssoOnly: ssoOnly)
+            let copy = CompanyLoginCopy(ssoOnly: ssoOnly)
 
-        let controller = UIAlertController(
-            title: copy.title,
-            message: "\n\(copy.message)",
-            preferredStyle: .alert
-        )
-
-        if let error = error {
-            let attributedString = NSAttributedString.companyLoginString(
-                withMessage: copy.message,
-                error: error.description(for: copy)
+            let controller = UIAlertController(
+                title: copy.title,
+                message: "\n\(copy.message)",
+                preferredStyle: .alert
             )
-            controller.setValue(attributedString, forKey: "attributedMessage")
-        }
 
-        let loginAction = UIAlertAction(title: copy.action, style: .default) { [controller] _ in
-            completion(controller.textFields?.first?.text)
-        }
+            if let error = error {
+                let attributedString = NSAttributedString.companyLoginString(
+                    withMessage: copy.message,
+                    error: error.description(for: copy)
+                )
+                controller.setValue(attributedString, forKey: "attributedMessage")
+            }
 
-        controller.addTextField { textField in
-            textField.text = prefilledInput
-            textField.accessibilityIdentifier = "textfield.sso.code"
-            textField.placeholder = copy.placeholder
-        }
+            let loginAction = UIAlertAction(title: copy.action, style: .default) { [controller] _ in
+                completion(controller.textFields?.first?.text)
+            }
 
-        controller.addAction(.cancel { completion(nil) })
-        controller.addAction(loginAction)
-        return controller
-    }
+            controller.addTextField { textField in
+                textField.text = prefilledInput
+                textField.accessibilityIdentifier = "textfield.sso.code"
+                textField.placeholder = copy.placeholder
+            }
+
+            controller.addAction(.cancel { completion(nil) })
+            controller.addAction(loginAction)
+            return controller
+        }
 
     /// Creates an `UIAlertController` warning about no network connection.
     static func noInternetError() -> UIAlertController {
         let controller = UIAlertController(
-            title: "team.invite.error.no_internet".localized,
-            message: "login.sso.error.offline.alert.message".localized,
+            title: L10n.Localizable.Team.Invite.Error.noInternet,
+            message: L10n.Localizable.Login.Sso.Error.Offline.Alert.message,
             preferredStyle: .alert
         )
 

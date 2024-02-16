@@ -22,10 +22,6 @@ import Foundation
 
 class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
 
-    override func setUp() {
-        super.setUp()
-    }
-
     func testSystemMessageWhenCreatingConversationWithNoName() {
         syncMOC.performGroupedBlock {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

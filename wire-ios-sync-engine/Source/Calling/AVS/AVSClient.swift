@@ -24,11 +24,7 @@ public struct AVSClient: Hashable {
 
     public let userId: String
     public let clientId: String
-
-    public init(userId: AVSIdentifier, clientId: String) {
-        self.userId = userId.serialized
-        self.clientId = clientId
-    }
+    public var isMemberOfSubconversation = false
 
     init?(userClient: UserClient) {
         guard
@@ -38,7 +34,37 @@ public struct AVSClient: Hashable {
             return nil
         }
 
-        self.init(userId: userId, clientId: clientId)
+        self.init(
+            userId: userId,
+            clientId: clientId
+        )
+    }
+
+    public init?(member: MLSConferenceInfo.Member) {
+        guard let userID = UUID(uuidString: member.id.userID) else {
+            return nil
+        }
+
+        let avsID = AVSIdentifier(
+            identifier: userID,
+            domain: member.id.domain
+        )
+
+        self.init(
+            userId: avsID,
+            clientId: member.id.clientID,
+            isMemberOfSubconversation: member.isInSubconversation
+        )
+    }
+
+    public init(
+        userId: AVSIdentifier,
+        clientId: String,
+        isMemberOfSubconversation: Bool = false
+    ) {
+        self.userId = userId.serialized
+        self.clientId = clientId
+        self.isMemberOfSubconversation = isMemberOfSubconversation
     }
 
 }
@@ -46,10 +72,19 @@ public struct AVSClient: Hashable {
 extension AVSClient: Codable {
 
     enum CodingKeys: String, CodingKey {
+
         case userId = "userid"
         case clientId = "clientid"
+        case isMemberOfSubconversation = "in_subconv"
+
     }
 
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.userId = try container.decode(String.self, forKey: .userId)
+        self.clientId = try container.decode(String.self, forKey: .clientId)
+        self.isMemberOfSubconversation = try container.decodeIfPresent(Bool.self, forKey: .isMemberOfSubconversation) ?? false
+    }
 }
 
 extension AVSClient {

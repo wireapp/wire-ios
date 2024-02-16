@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Dotknij, aby wysłać";
 "conversation.input_bar.audio_message.too_long.title" = "Nagrywanie zatrzymane";
 "conversation.input_bar.audio_message.too_long.message" = "Wiadomości audio są ograniczone do %@.";
+"conversation.ping.many_participants_confirmation.title" = "Are you sure you want to ping %d people?";
+"conversation.ping.action.title" = "Ping";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "Rozmiar pliku wiadomości audio jest ograniczony do %@.";
 
@@ -320,9 +322,14 @@
 "conversation.create.receipts.title" = "Potwierdzenie odczytu";
 "conversation.create.receipts.subtitle" = "Gdy włączone, rozmówcy mogą zobaczyć, kiedy ich wiadomości zostały odczytane w tej rozmowie.";
 "conversation.create.mls.title" = "Protocol";
-"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Anuluj";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "Dowiedz się więcej";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Bieżące połączenie";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Nie możesz nagrać wiadomości audio podczas połączenia.";
@@ -424,6 +431,44 @@
 
 "content.system.services.warning" = "Usługi mają dostęp do treści tej rozmowy";
 
+"content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been added.";
+
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been removed.";
+
+// Both placesholders contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added_and_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ has been removed.";
+
+// Placeholder 1 contains a single name: e.g "Alice. Placeholder 2 contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.singular_plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ have been removed.";
+
+// Placeholder 1 contains a localized list of names, e.g "Alice, Bob, and Cate". Placeholder 2 contains a single name: e.g "Alice.
+"content.system.missing_messages.users_added_and_removed.plural_singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ has been removed.";
+
+// Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ have been removed.";
+
+// MLS Migration
+"content.system.mls_migration.started.description" = "The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS).";
+"content.system.mls_migration.started.update_latest_version" = "Ensure you use the latest version of Wire to be ready for MLS and continue communicating seamlessly.";
+"content.system.mls_migration.started.update_with_date" = "Update Wire until %@ to be ready for MLS and continue communicating seamlessly.";
+
+"content.system.mls_migration.finalized.done" = "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.";
+"content.system.mls_migration.join_afterwards" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
+"content.system.mls_migration.ongoing_call" = "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.";
+"content.system.mls_migration.learn_more" = "Learn more about MLS";
+"content.system.mls_migration.potentialGap" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
+"content.system.mls_migration.mls_not_supported_by_otherUser" = "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.";
+"content.system.mls_migration.mls_not_supported_by_you" = "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "Podgląd wideo z portalu YouTube";
@@ -463,9 +508,18 @@
 "content.system.message_sent_timestamp" = "Wyślij";
 "content.system.message_delivered_timestamp" = "Dostarczono";
 "content.system.message_read_timestamp" = "Przeczytane";
-"content.system.failedtosend_message_timestamp" = "Wysyłanie nie powiodło się!";
-"content.system.failedtosend_message_timestamp_resend" = "Wyślij ponownie";
-"content.system.failedtosend_message_timestamp_delete" = "Usuń";
+"content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
+"content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.from" = "**%@ from %@**";
+"content.system.failed_participants.learn_more" = "Więcej informacji";
+
+"content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
+
 "content.system.like_tooltip" = "Dotknij, aby polubić";
 "content.system.deleted_message_prefix_timestamp" = "Usunięto: %@";
 "content.system.edited_message_prefix_timestamp" = "Edytowano: %@";
@@ -476,7 +530,6 @@
 "content.system.ephemeral_time_remaining" = "pozostało: %@";
 
 "content.system.self_user_new_client" = "You started using [a new device](%@)";
-"content.system.self_user_new_self_client" = "You started using [this device](%@)";
 
 "content.system.you_started" = "Ty";
 
@@ -506,6 +559,9 @@
 "content.system.message_timer_off" = "%@ wyłączył(a) czas usuwania wiadomości";
 "content.system.message_timer_off-you" = "%@ wyłączył(a) czas usuwania wiadomości";
 
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
+
 // read receipt
 
 "content.system.message_read_receipt_on" = "%@ włączył(a) potwierdzenie odczytania wiadomości dla wszystkich";
@@ -518,14 +574,12 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "Ta rozmowa jest pod legalnym przechowywaniem";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "Legalne przechowywanie zostało wyłączone dla tej rozmowy";
 
 "content.system.message_legal_hold.learn_more" = "Dowiedz się więcej";
 
 //
-
-"content.system.reactivated_device" = "Zacząłeś używać ponownie [to urządzenie](%@). Wiadomości wysłane w międzyczasie nie pojawią się tutaj.";
 
 "content.system.is_verified" = "Wszystkie odciski palców są zweryfikowane";
 
@@ -534,9 +588,6 @@
 
 "content.system.unverified_self_devices" = "You unverified one of [your devices](%@)";
 "content.system.unverified_other_devices" = "You unverified one of [%1$@’s devices](%2$@)";
-
-"content.system.missing_messages.title" = "Dość długo nie używałeś tego urządzenia. Niektóre wiadomości nie będą pokazane.";
-"content.system.missing_messages.subtitle_start" = "Tymczasem,";
 
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
@@ -582,6 +633,7 @@
 "content.message.copy" = "Skopiuj";
 "content.message.download" = "Pobierz";
 "content.message.details" = "Szczegóły";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Odpowiedz";
@@ -600,6 +652,11 @@
 "content.reactions_list.likers" = "Lubiany przez";
 
 "content.file.too_big" = "Możesz wysyłać pliki do %@";
+
+// Reactions
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ zaczepił(a)";
 "content.ping.text-you" = "%@ zaczepił(a)";
@@ -624,6 +681,7 @@
 "error.connection.title" = "Błąd";
 "error.connection.missing_legalhold_consent" = "Nie możesz połączyć się z tym użytkownikiem ze względu na legalne przechowywanie.";
 "error.connection.generic_error" = "Coś poszło nie tak, spróbuj ponownie";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire potrzebuje dostępu do Twoich zdjęć";
@@ -693,6 +751,7 @@
 "call.overlay.switch_to.all" = "WSZYSTKIE";
 
 "call.grid.no_active_speakers" = "Brak aktywnych głośników wideo...";
+"call.grid.connecting" = "Connecting";
 
 "call.grid.hints.fullscreen" = "Dwukrotnie dotknij kafelek aby przejść w tryb pełnoekranowy";
 "call.grid.hints.go_back_or_zoom" = "Dotknij dwukrotnie, aby wrócić, pinch to zoom";
@@ -889,10 +948,12 @@
 "profile.details.blocking_reason" = "Ten użytkownik jest zablokowany z powodu statusu prawnego. [DOWIEDZ SIĘ WIĘCEJ](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.title.unavailable" = "Name not available";
 
 // Device list
 "profile.devices.title" = "Urządzenia";
 "profile.devices.fingerprint_message_unencrypted" = "%@ używa starszej wersji Wire. Brak urządzeń do wyświetlenia.";
+"profile.devices.no_device_data" = "No device data available.";
 "profile.devices.fingerprint_message.title" = "Wire nadaje każdemu urządzeniu unikalny odcisk palca. Porównaj je z %@ i zweryfikujcie swoją rozmowę.";
 "profile.devices.fingerprint_message.link" = "Dlaczego weryfikować konwersacje?";
 
@@ -931,7 +992,7 @@
 "group_details.receipt_options_cell.title" = "Potwierdzenie odczytu";
 "group_details.receipt_options_cell.description" = "Gdy włączone, rozmówcy mogą zobaczyć, kiedy ich wiadomości zostały odczytane w tej rozmowie.";
 
-"group_details.message_protocol.section_tile" = "Protocol details (beta)";
+"group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
@@ -941,7 +1002,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Tematy legalnego przechowywania";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "Legalne Przechowywanie";
 "legalhold.header.other_description" = "Legalne Przechowywanie zostało aktywowane dla co najmniej jednej osoby w tej rozmowie.\nWszystkie wiadomości zostaną zachowane dla przyszłego dostępu, w tym usunięte, edytowane i czasowe wiadomości.";
 "legalhold.header.self_description" = "Legalne Przechowywanie zostało aktywowane dla Twojego konta.\nWszystkie wiadomości zostaną zachowane dla przyszłego dostępu, w tym usunięte, edytowane i czasowe wiadomości.\nTwoi rozmówcy zostaną poinformowani o nagraniu.";
@@ -1525,6 +1586,14 @@
 "registration.signin.alert.password_needed.title" = "Wymagane hasło";
 "registration.signin.alert.password_needed.message" = "Wprowadź hasło, aby się zalogować.";
 
+"registration.signin.username.title" = "Your username";
+"registration.signin.username.message" = "Enter your username. It helps others to find you in Wire and connect with you.";
+"registration.signin.username.placeholder" = "username";
+"registration.signin.username.unknown_error.title" = "Couldn't update username";
+"registration.signin.username.unknown_error.message" = "Proszę spróbować ponownie później.";
+"registration.signin.username.already_taken_error.title" = "Username is already taken";
+"registration.signin.username.already_taken_error.message" = "The username is already taken, please try another one";
+
 "registration.devices.title" = "Urządzenia";
 "registration.devices.active_list_header" = "Aktywne";
 "registration.devices.current_list_header" = "Aktualne urządzenie";
@@ -1693,12 +1762,13 @@
 "jailbrokendevice.alert.message" = "Ze względów bezpieczeństwa nie można użyć Wire na tym urządzeniu. Wszelkie istniejące dane zostały usunięte.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Zbyt mało miejsca";
-"databaseloadingfailure.alert.message" = "Nie można załadować bazy danych z powodu niewystarczającej ilości pamięci. Przejrzyj użycie pamięci urządzenia i spróbuj ponownie.";
-"databaseloadingfailure.alert.settings" = "Przejdź do Ustawień";
-"databaseloadingfailure.alert.delete_database" = "Usuń bazę danych";
+"databaseloadingfailure.alert.title" = "Update Data storage";
+"databaseloadingfailure.alert.message" = "The database could not be loaded.\n Error: %@";
+"databaseloadingfailure.alert.save-backup" = "Save my data";
+"databaseloadingfailure.alert.delete_database" = "Clear my data and continue";
 "databaseloadingfailure.alert.delete_database.message" = "Usuwając bazę danych, wszystkie lokalne dane i wiadomości dla tego konta zostaną trwale usunięte.";
 "databaseloadingfailure.alert.delete_database.continue" = "Kontynuuj";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Server version not supported";
@@ -1827,14 +1897,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Nikt nie polubił tej wiadomości.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "Nikt jeszcze nie przeczytał tej wiadomości.";
 "message_details.read_receipts_disabled" = "Potwierdzenia odczytu nie były włączone, gdy ta wiadomość została wysłana.";
 "message_details.combined_title" = "Szczegóły wiadomości";
-"message_details.likes_title" = "Polubione";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Czytaj";
 "message_details.tabs.seen" = "Czytaj (%d)";
-"message_details.tabs.likes" = "Polubiono (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Wysłano: %@";
 "message_details.subtitle_edit_date" = "Edytowano: %@";
 "message_details.subtitle_label_voiceOver" = "Szczegóły wiadomości";
@@ -1989,3 +2059,7 @@
 "drawing.colors.pink" = "pink";
 "drawing.colors.chocolate" = "chocolate";
 "drawing.colors.gray" = "gray";
+
+// MARK: - Time
+
+"time.just_now" = "Just now";

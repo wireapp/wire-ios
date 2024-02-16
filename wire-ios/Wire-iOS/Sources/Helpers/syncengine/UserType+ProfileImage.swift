@@ -25,7 +25,7 @@ public var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 typealias ProfileImageCompletion = (_ image: UIImage?, _ cacheHit: Bool) -> Void
 
 extension UserType {
-    func fetchProfileImage(session: ZMUserSessionInterface,
+    func fetchProfileImage(session: UserSession,
                            imageCache: ImageCache<UIImage>,
                            sizeLimit: Int?,
                            isDesaturated: Bool,

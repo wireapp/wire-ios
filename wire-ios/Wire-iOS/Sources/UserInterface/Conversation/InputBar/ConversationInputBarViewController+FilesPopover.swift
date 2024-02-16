@@ -18,6 +18,7 @@
 
 import MobileCoreServices
 import WireSyncEngine
+import UniformTypeIdentifiers
 
 extension ConversationInputBarViewController: UIDocumentPickerDelegate {
 
@@ -47,7 +48,7 @@ extension ConversationInputBarViewController {
         // Alert actions  for debugging
         #if targetEnvironment(simulator)
         let plistHandler: ((UIAlertAction) -> Void) = { _ in
-            ZMUserSession.shared()?.enqueue({
+            self.userSession.enqueue({
                 let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
                 guard let basePath = paths.first,
                     let sourceLocation = Bundle.main.url(forResource: "CountryCodes", withExtension: "plist") else { return }
@@ -78,12 +79,12 @@ extension ConversationInputBarViewController {
 
         let uploadVideoHandler: ((UIAlertAction) -> Void) = { _ in
             self.presentImagePicker(with: .photoLibrary,
-                                    mediaTypes: [kUTTypeMovie as String], allowsEditing: true,
+                                    mediaTypes: [UTType.movie.identifier], allowsEditing: true,
                                     pointToView: self.videoButton.imageView)
         }
 
         controller.addAction(UIAlertAction(icon: .movie,
-                                           title: "content.file.upload_video".localized,
+                                           title: L10n.Localizable.Content.File.uploadVideo,
                                            tintColor: view.tintColor,
                                            handler: uploadVideoHandler))
 
@@ -92,12 +93,13 @@ extension ConversationInputBarViewController {
         }
 
         controller.addAction(UIAlertAction(icon: .cameraShutter,
-                                           title: "content.file.take_video".localized,
+                                           title: L10n.Localizable.Content.File.takeVideo,
                                            tintColor: view.tintColor,
                                            handler: takeVideoHandler))
 
         let browseHandler: ((UIAlertAction) -> Void) = { _ in
-            let documentPickerViewController = UIDocumentPickerViewController(documentTypes: [kUTTypeItem as String], in: .import)
+
+            let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item], asCopy: true)
             documentPickerViewController.modalPresentationStyle = self.isIPadRegular() ? .popover : .fullScreen
             if self.isIPadRegular(),
                 let sourceView = self.parent?.view,
@@ -112,7 +114,7 @@ extension ConversationInputBarViewController {
         }
 
         controller.addAction(UIAlertAction(icon: .ellipsis,
-                                           title: "content.file.browse".localized, tintColor: view.tintColor,
+                                           title: L10n.Localizable.Content.File.browse, tintColor: view.tintColor,
                                            handler: browseHandler))
 
         controller.addAction(.cancel())
@@ -139,13 +141,13 @@ extension ConversationInputBarViewController {
     private func recordVideo() {
         guard !CameraAccess.displayAlertIfOngoingCall(at: .recordVideo, from: self) else { return }
 
-        presentImagePicker(with: .camera, mediaTypes: [kUTTypeMovie as String], allowsEditing: false, pointToView: videoButton.imageView)
+        presentImagePicker(with: .camera, mediaTypes: [UTType.movie.identifier], allowsEditing: false, pointToView: videoButton.imageView)
     }
 
     #if targetEnvironment(simulator)
     private func uploadTestAlertAction(size: UInt, title: String, fileName: String) -> UIAlertAction {
         return UIAlertAction(title: title, style: .default, handler: {_ in
-            ZMUserSession.shared()?.enqueue({
+            self.userSession.enqueue({
                 let randomData = Data.secureRandomData(length: UInt(size))
 
                 if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {

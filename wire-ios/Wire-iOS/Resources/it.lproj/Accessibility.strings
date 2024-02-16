@@ -83,6 +83,9 @@
 "conversationSearch.item.hint" = "Double tap to open";
 "conversationSearch.itemPlay.hint" = "Double tap to play";
 
+"conversation.scrollToBottomButton.description" = "Scroll to the bottom of the conversation";
+"conversation.scrollToBottomButton.hint" = "Tap to scroll to the bottom of the conversation";
+
 "audioRecord.stopButton.description" = "Stop recording";
 "audioRecord.startButton.description" = "Start recording";
 "audioRecord.startButton.hint" = "Double tap to record";
@@ -248,6 +251,7 @@
 "calling.swipeUpParticipants.hint" = "Double tap to swipe up and view all participant’s details";
 "calling.swipeDownParticipants.hint" = "Double tap to swipe down and hide participant’s details";
 "calling.headerBar.description" = "Minimize calling view";
+"calling.status.connecting" = "Connecting";
 
 "tabBar.contacts.description" = "Contatti";
 "tabBar.contacts.hint" = "Double tap to search for people and open contact list";
@@ -267,3 +271,7 @@
 
 "connection.archiveButton.description" = "Archive connection";
 "connection.cancelButton.description" = "Cancel connection";
+
+// MARK: - Reactions
+"reactionPicker.dismissButton.description" = "Dismiss emoji keyboard";
+"reactionPicker.searchFieldPlaceholder.description" = "Search for emoji";

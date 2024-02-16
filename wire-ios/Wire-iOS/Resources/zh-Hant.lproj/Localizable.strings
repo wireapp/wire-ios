@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "點擊來發送";
 "conversation.input_bar.audio_message.too_long.title" = "錄音停止";
 "conversation.input_bar.audio_message.too_long.message" = "語音訊息長度上限是%@。";
+"conversation.ping.many_participants_confirmation.title" = "Are you sure you want to ping %d people?";
+"conversation.ping.action.title" = "招呼";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "語音訊息的檔案大小限制為%@。";
 
@@ -320,9 +322,14 @@
 "conversation.create.receipts.title" = "讀取回條";
 "conversation.create.receipts.subtitle" = "當這啓用時，參與者可以看到他們在此對話中的消息何時已閱讀。";
 "conversation.create.mls.title" = "Protocol";
-"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "取消";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "瞭解更多";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "通話中";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "在通話時不能錄製語音訊息。";
@@ -424,6 +431,44 @@
 
 "content.system.services.warning" = "服務可以存取這個對話內容";
 
+"content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been added.";
+
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been removed.";
+
+// Both placesholders contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added_and_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ has been removed.";
+
+// Placeholder 1 contains a single name: e.g "Alice. Placeholder 2 contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.singular_plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ have been removed.";
+
+// Placeholder 1 contains a localized list of names, e.g "Alice, Bob, and Cate". Placeholder 2 contains a single name: e.g "Alice.
+"content.system.missing_messages.users_added_and_removed.plural_singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ has been removed.";
+
+// Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ have been removed.";
+
+// MLS Migration
+"content.system.mls_migration.started.description" = "The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS).";
+"content.system.mls_migration.started.update_latest_version" = "Ensure you use the latest version of Wire to be ready for MLS and continue communicating seamlessly.";
+"content.system.mls_migration.started.update_with_date" = "Update Wire until %@ to be ready for MLS and continue communicating seamlessly.";
+
+"content.system.mls_migration.finalized.done" = "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.";
+"content.system.mls_migration.join_afterwards" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
+"content.system.mls_migration.ongoing_call" = "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.";
+"content.system.mls_migration.learn_more" = "Learn more about MLS";
+"content.system.mls_migration.potentialGap" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
+"content.system.mls_migration.mls_not_supported_by_otherUser" = "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.";
+"content.system.mls_migration.mls_not_supported_by_you" = "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "YouTube視頻預覽";
@@ -463,9 +508,18 @@
 "content.system.message_sent_timestamp" = "已送出";
 "content.system.message_delivered_timestamp" = "已傳送";
 "content.system.message_read_timestamp" = "閱";
-"content.system.failedtosend_message_timestamp" = "傳送失敗。";
-"content.system.failedtosend_message_timestamp_resend" = "重新發送";
-"content.system.failedtosend_message_timestamp_delete" = "刪除";
+"content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
+"content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.from" = "**%@ from %@**";
+"content.system.failed_participants.learn_more" = "瞭解詳情";
+
+"content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
+
 "content.system.like_tooltip" = "點一下讚好";
 "content.system.deleted_message_prefix_timestamp" = "已刪除: %@";
 "content.system.edited_message_prefix_timestamp" = "已編輯: %@";
@@ -476,7 +530,6 @@
 "content.system.ephemeral_time_remaining" = "餘下%@";
 
 "content.system.self_user_new_client" = "You started using [a new device](%@)";
-"content.system.self_user_new_self_client" = "You started using [this device](%@)";
 
 "content.system.you_started" = "您";
 
@@ -506,6 +559,9 @@
 "content.system.message_timer_off" = "%@關閉了訊息時限";
 "content.system.message_timer_off-you" = "%@關閉了訊息時限";
 
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
+
 // read receipt
 
 "content.system.message_read_receipt_on" = "%@為大家打開了讀取回條";
@@ -518,14 +574,12 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "此對話已啟用合法保留";
+"content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
 "content.system.message_legal_hold.disabled" = "此對話已停用合法保留";
 
 "content.system.message_legal_hold.learn_more" = "瞭解詳情";
 
 //
-
-"content.system.reactivated_device" = "You started using [this device](%@) again. Messages sent in the meantime will not appear here.";
 
 "content.system.is_verified" = "所有的指紋已完成驗證";
 
@@ -534,9 +588,6 @@
 
 "content.system.unverified_self_devices" = "You unverified one of [your devices](%@)";
 "content.system.unverified_other_devices" = "You unverified one of [%1$@’s devices](%2$@)";
-
-"content.system.missing_messages.title" = "您已有一段時間沒有使用此設備，可能不會顯示部分訊息。";
-"content.system.missing_messages.subtitle_start" = "同時，";
 
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
@@ -582,6 +633,7 @@
 "content.message.copy" = "複製";
 "content.message.download" = "下載";
 "content.message.details" = "詳細資訊";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "回覆";
@@ -600,6 +652,11 @@
 "content.reactions_list.likers" = "讚好";
 
 "content.file.too_big" = "您可以發送最大%@的檔案。";
+
+// Reactions
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
+
 // Someone pinged
 "content.ping.text" = "%@打了聲招呼";
 "content.ping.text-you" = "%@打了聲招呼";
@@ -624,6 +681,7 @@
 "error.connection.title" = "錯誤";
 "error.connection.missing_legalhold_consent" = "You cannot connect to this user due to legal hold.";
 "error.connection.generic_error" = "出了點問題，請再試一次";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire需要讀取你的照片庫";
@@ -693,6 +751,7 @@
 "call.overlay.switch_to.all" = "全部";
 
 "call.grid.no_active_speakers" = "沒有人在視像通話中發言...";
+"call.grid.connecting" = "Connecting";
 
 "call.grid.hints.fullscreen" = "雙擊方格以全屏顯示";
 "call.grid.hints.go_back_or_zoom" = "點兩下返回，兩指收放縮放";
@@ -889,10 +948,12 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.title.unavailable" = "Name not available";
 
 // Device list
 "profile.devices.title" = "設備";
 "profile.devices.fingerprint_message_unencrypted" = "%@使用舊版本的Wire，無法顯示設備。";
+"profile.devices.no_device_data" = "No device data available.";
 "profile.devices.fingerprint_message.title" = "Wire為每個設備設置了一個獨特的指紋。您可以和%@進行比對來驗證對話。";
 "profile.devices.fingerprint_message.link" = "為何要驗證對話？";
 
@@ -931,7 +992,7 @@
 "group_details.receipt_options_cell.title" = "讀取回條";
 "group_details.receipt_options_cell.description" = "當這啓用時, 參與者可以看到他們在此對話中的消息何時已閱讀。";
 
-"group_details.message_protocol.section_tile" = "Protocol details (beta)";
+"group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
@@ -941,7 +1002,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "合法保留對象";
+"legalhold.participants.section.title" = "Legal hold subjects %@";
 "legalhold.header.title" = "合法保留";
 "legalhold.header.other_description" = "Legal Hold has been activated for at least one person in this conversation.\nAll messages will be preserved for future access, including deleted, edited, and self-deleting messages.";
 "legalhold.header.self_description" = "您的帳戶的合法保留已被激活。 所有消息都將保留，以供將來訪問，包括刪除，編輯和自動刪除訊息。\n\n您的對話成員將被提醒記錄中。";
@@ -1525,6 +1586,14 @@
 "registration.signin.alert.password_needed.title" = "需要輸入密碼";
 "registration.signin.alert.password_needed.message" = "請輸入您的密碼以登入。";
 
+"registration.signin.username.title" = "Your username";
+"registration.signin.username.message" = "Enter your username. It helps others to find you in Wire and connect with you.";
+"registration.signin.username.placeholder" = "username";
+"registration.signin.username.unknown_error.title" = "Couldn't update username";
+"registration.signin.username.unknown_error.message" = "請稍後再重試。";
+"registration.signin.username.already_taken_error.title" = "Username is already taken";
+"registration.signin.username.already_taken_error.message" = "The username is already taken, please try another one";
+
 "registration.devices.title" = "設備";
 "registration.devices.active_list_header" = "其他已啟用的設備";
 "registration.devices.current_list_header" = "此設備";
@@ -1693,12 +1762,13 @@
 "jailbrokendevice.alert.message" = "出於安全原因，Wire不能在此設備上使用，現有的所有Wire數據已被消除。";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "存儲空間不足。";
-"databaseloadingfailure.alert.message" = "The database could not be loaded due to insufficient storage. Review your device storage usage and try again.";
-"databaseloadingfailure.alert.settings" = "前往設定";
-"databaseloadingfailure.alert.delete_database" = "刪除資料庫";
+"databaseloadingfailure.alert.title" = "Update Data storage";
+"databaseloadingfailure.alert.message" = "The database could not be loaded.\n Error: %@";
+"databaseloadingfailure.alert.save-backup" = "Save my data";
+"databaseloadingfailure.alert.delete_database" = "Clear my data and continue";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "繼續";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Server version not supported";
@@ -1827,14 +1897,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "目前還沒有人讚好這則訊息。";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "目前還沒有人讀取這則訊息。";
 "message_details.read_receipts_disabled" = "發送此郵件時沒有打開讀取回條。";
 "message_details.combined_title" = "訊息詳細資料";
-"message_details.likes_title" = "已按讚的項目";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "已閱讀";
 "message_details.tabs.seen" = "已閱讀（%d）";
-"message_details.tabs.likes" = "讚（%d）";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "已寄出：%@";
 "message_details.subtitle_edit_date" = "已編輯: %@";
 "message_details.subtitle_label_voiceOver" = "訊息詳細資料";
@@ -1989,3 +2059,7 @@
 "drawing.colors.pink" = "pink";
 "drawing.colors.chocolate" = "chocolate";
 "drawing.colors.gray" = "gray";
+
+// MARK: - Time
+
+"time.just_now" = "Just now";

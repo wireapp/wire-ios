@@ -22,7 +22,7 @@ import WireTransport
 import WireSyncEngine
 import WireCommonComponents
 
-protocol LandingViewControllerDelegate {
+protocol LandingViewControllerDelegate: AnyObject {
     func landingViewControllerDidChooseCreateAccount()
     func landingViewControllerDidChooseLogin()
     func landingViewControllerDidChooseEnterpriseLogin()
@@ -303,14 +303,18 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     private func activateRightConstraint() {
-        [contentViewLeadingConstraint,
-         contentViewTrailingConstraint,
-         createAccountButtomBottomConstraint].forEach {
+        [
+            contentViewLeadingConstraint,
+            contentViewTrailingConstraint,
+            createAccountButtomBottomConstraint
+        ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass == .compact
         }
 
-        [contentViewWidthConstraint,
-         createAccountInfoLabelTopConstraint].forEach {
+        [
+            contentViewWidthConstraint,
+            createAccountInfoLabelTopConstraint
+        ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass != .compact
         }
     }
@@ -332,7 +336,7 @@ final class LandingViewController: AuthenticationStepViewController {
             messageLabel,
             subMessageLabel,
             createAccountInfoLabel
-        ].prepareForLayout()
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
 
     private func createAndAddConstraints() {
@@ -415,7 +419,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     var isCustomBackend: Bool {
         switch backendEnvironment.environmentType.value {
-        case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .foma:
+        case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:
             return false
         case .custom:
             return true
@@ -435,6 +439,7 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     private func updateBarButtonItem() {
+        navigationItem.backButtonDisplayMode = .minimal
         if SessionManager.shared?.firstAuthenticatedAccount == nil {
             navigationItem.rightBarButtonItem = nil
         } else {

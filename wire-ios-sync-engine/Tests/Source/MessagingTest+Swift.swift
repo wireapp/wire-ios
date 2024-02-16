@@ -20,6 +20,21 @@
 
 extension MessagingTest {
 
+    @discardableResult
+    func createSelfUser() -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier = UUID()
+        syncMOC.saveOrRollback()
+        return selfUser
+    }
+
+    func createClient(for user: ZMUser) -> UserClient {
+        let client = UserClient.insertNewObject(in: syncMOC)
+        client.user = user
+        client.remoteIdentifier = UUID().transportString()
+        return client
+    }
+
     public func createClientTextMessage() -> ZMClientMessage? {
         return createClientTextMessageWith(text: self.name)
     }
@@ -37,6 +52,17 @@ extension MessagingTest {
             return nil
         }
         return message
+    }
+
+    @discardableResult
+    func createMLSSelfConversation() -> ZMConversation {
+        let selfConversation = ZMConversation.insertNewObject(in: syncMOC)
+        selfConversation.conversationType = .`self`
+        selfConversation.remoteIdentifier = UUID.create()
+        selfConversation.mlsGroupID = MLSGroupID(Data.secureRandomData(length: 8))
+        selfConversation.messageProtocol = .mls
+        selfConversation.mlsStatus = .ready
+        return selfConversation
     }
 
     @objc

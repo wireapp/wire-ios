@@ -18,7 +18,7 @@
 
 import UIKit
 
-@objc public class ZMAccentColorValidator: NSObject, ZMPropertyValidator {
+@objc public final class ZMAccentColorValidator: NSObject, ZMPropertyValidator {
 
     @objc(validateValue:error:)
     public static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws {
@@ -36,7 +36,7 @@ import UIKit
             ZMAccentColor.max.rawValue < value {
             let color = ZMAccentColor(rawValue:
                 ZMAccentColor.min.rawValue +
-                    Int16(arc4random_uniform(UInt32(ZMAccentColor.max.rawValue - ZMAccentColor.min.rawValue))))
+                    Int16(arc4random_uniform(UInt32(ZMAccentColor.max.rawValue - ZMAccentColor.min.rawValue)))) // swiftlint:disable:this legacy_random
             ioValue = NSNumber(value: color?.rawValue ?? 0)
         }
 

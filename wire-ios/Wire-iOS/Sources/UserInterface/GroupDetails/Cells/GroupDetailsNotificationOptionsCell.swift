@@ -40,7 +40,7 @@ final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCe
             return assertionFailure("Invalid muted message type.")
         }
 
-        status = key.localized
+        status = key
     }
 
     override var isHighlighted: Bool {

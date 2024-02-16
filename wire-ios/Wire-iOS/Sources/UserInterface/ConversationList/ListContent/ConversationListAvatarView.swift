@@ -110,7 +110,7 @@ extension Mode {
     }
 }
 
-final public class ConversationListAvatarView: UIView {
+public final class ConversationListAvatarView: UIView {
 
     public var conversation: ZMConversation? = .none {
         didSet {

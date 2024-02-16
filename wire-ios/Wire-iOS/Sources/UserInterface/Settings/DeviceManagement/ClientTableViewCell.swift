@@ -22,7 +22,7 @@ import Contacts
 import WireDataModel
 import WireCommonComponents
 
-class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
+final class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
 
     // MARK: - Properties
     typealias LabelColors = SemanticColors.Label
@@ -136,9 +136,10 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
     }
 
     private func createConstraints() {
-        [nameLabel, labelLabel, activationLabel, fingerprintLabel, verifiedLabel].forEach(contentView.addSubview)
-
-        [nameLabel, labelLabel, activationLabel, fingerprintLabel, verifiedLabel].prepareForLayout()
+        [nameLabel, labelLabel, activationLabel, fingerprintLabel, verifiedLabel].forEach { view in
+            view.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview(view)
+        }
 
         // Setting the constraints for the view
         NSLayoutConstraint.activate([

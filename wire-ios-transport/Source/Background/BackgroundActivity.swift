@@ -25,7 +25,7 @@ import UIKit
 private var activityCounter = 0
 private let activityCounterQueue = DispatchQueue(label: "wire-transport.background-activity-counter")
 
-@objc public class BackgroundActivity: NSObject {
+@objc public final class BackgroundActivity: NSObject {
 
     /// The name of the task, used for debugging purposes.
     @objc public let name: String

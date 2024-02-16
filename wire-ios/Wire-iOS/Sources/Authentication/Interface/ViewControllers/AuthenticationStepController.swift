@@ -113,10 +113,6 @@ class AuthenticationStepController: AuthenticationStepViewController {
         UIAccessibility.post(notification: .screenChanged, argument: headlineLabel)
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateConstraints(forRegularLayout: traitCollection.horizontalSizeClass == .regular)
@@ -311,7 +307,8 @@ class AuthenticationStepController: AuthenticationStepViewController {
         let button = AuthenticationNavigationBar.makeBackButton()
         button.accessibilityLabel = L10n.Accessibility.Authentication.BackButton.description
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+        navigationItem.backBarButtonItem = UIBarButtonItem(customView: button)
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     @objc private func backButtonTapped() {

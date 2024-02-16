@@ -69,13 +69,13 @@ extension ZMConversation: InputBarConversation {
 
     var isSelfDeletingMessageSendingDisabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureService(context: context).fetchSelfDeletingMesssages()
+        let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
         return feature.status == .disabled
     }
 
     var isSelfDeletingMessageTimeoutForced: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureService(context: context).fetchSelfDeletingMesssages()
+        let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
         return feature.config.enforcedTimeoutSeconds > 0
     }
 
@@ -101,6 +101,8 @@ protocol GroupDetailsConversation {
     var syncedMessageDestructionTimeout: TimeInterval { get }
 
     var messageProtocol: MessageProtocol { get }
+
+    var mlsGroupID: MLSGroupID? { get }
 }
 
 typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation

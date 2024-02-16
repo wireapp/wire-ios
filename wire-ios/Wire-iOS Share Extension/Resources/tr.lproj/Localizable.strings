@@ -1,0 +1,65 @@
+//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Share Extension
+
+
+
+"general.ok" = "TAMAM";
+
+"share_extension.conversation_selection.account" = "Hesap:";
+"share_extension.conversation_selection.title" = "Konuşma:";
+"share_extension.send_button.title" = "Gönder";
+"share_extension.conversation_selection.empty.value" = "Seç";
+"share_extension.input.placeholder" = "Bir mesaj yazın";
+"share_extension.sending_progress.title" = "Gönderiliyor…";
+"share_extension.preparing.title" = "Hazırlanıyor…";
+"share_extension.no_internet_connection.title" = "İnternet Bağlantısı Yok";
+"share_extension.not_signed_in.title" = "Bir şey paylaşabilmek için Wire'a giriş yapmanız gerekir";
+"share_extension.not_signed_in.close_button" = "Kapat";
+
+// Custom app lock - unlock
+"share_extension.unlock.title_label" = "Enter passcode to unlock Wire";
+"share_extension.unlock.submit_button.title" = "kilidi aç";
+"share_extension.unlock.textfield.placeholder" = "Parolanızı girin";
+"share_extension.unlock.hint_label" = "Parola";
+"share_extension.unlock.error_label" = "Yanlış Şifre";
+"share_extension.unlock.alert.message" = "Open Wire to create a passcode";
+"share_extension.unlock.reveal_passcode" = "Reveal passcode";
+
+"share_extension.timeout.title" = "Bağlantı zaman aşımına uğradı.";
+"share_extension.timeout.message" = "İnternet bağlantınızı kontrol edin ve tekrar deneyin. Ekleriniz konuşmaya kaydedildi.";
+
+"content.file.too_big" = "En fazla %@ dosya yükleyebilirsin";
+"content.file.unsupported_attachment" = "Unsupported attachment";
+"share_extension.error.conversation_does_not_exist.message" = "Please select a conversation for sharing";
+
+"share_extension.privacy_security.lock_app.description" = "Wire'ın kilidini aç";
+"share_extension.logged_out.title" = "Bu hesaptan çıkış yaptınız.";
+"share_extension.logged_out.message" = "Lütfen başka bir hesap seçin.";
+
+"conversation.displayname.emptygroup" = "Boş grup konuşması";
+"meta.degraded.degradation_reason_message.singular" = "%@ yeni bir cihaz kullanmaya başladı.";
+"meta.degraded.degradation_reason_message.plural" = "%@ yeni cihazlar kullanmaya başladı.";
+"meta.degraded.dialog_message" = "Hâlâ mesajınızı göndermek istiyor musunuz?";
+"meta.degraded.cancel_sending_button" = "Gönderme";
+"meta.degraded.send_anyway_button" = "Yine de gönder";
+
+//Feature flag - File sharing
+"feature.flag.file_sharing.alert.title" = "Dosya paylaşım kısıtlamaları";
+"feature.flag.file_sharing.alert.message" = "Bu özellik devre dışı bırakıldığı için bu dosyayı paylaşamazsınız.";

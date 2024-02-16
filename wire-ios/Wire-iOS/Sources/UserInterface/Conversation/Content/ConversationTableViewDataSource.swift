@@ -18,6 +18,7 @@
 
 import WireDataModel
 import DifferenceKit
+import WireSyncEngine
 
 extension Int: Differentiable { }
 extension String: Differentiable { }
@@ -60,6 +61,8 @@ final class ConversationTableViewDataSource: NSObject {
     private(set) var hasOlderMessagesToLoad = false
     private(set) var hasNewerMessagesToLoad = false
 
+    let userSession: UserSession
+
     func resetSectionControllers() {
         sectionControllers = [:]
         calculateSections()
@@ -84,7 +87,7 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    var messages: [ZMConversationMessage] {
+    var messages: [ConversationMessage] {
         // NOTE: We limit the number of messages to the `lastFetchedObjectCount` since the
         // NSFetchResultsController will add objects to `fetchObjects` if they are modified after
         // the initial fetch, which results in unwanted table view updates. This is normally what
@@ -141,11 +144,18 @@ final class ConversationTableViewDataSource: NSObject {
         return updatedSections
     }
 
-    init(conversation: ZMConversation, tableView: UpsideDownTableView, actionResponder: MessageActionResponder, cellDelegate: ConversationMessageCellDelegate) {
+    init(
+        conversation: ZMConversation,
+        tableView: UpsideDownTableView,
+        actionResponder: MessageActionResponder,
+        cellDelegate: ConversationMessageCellDelegate,
+        userSession: UserSession
+    ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
         self.conversation = conversation
         self.tableView = tableView
+        self.userSession = userSession
 
         super.init()
 
@@ -171,15 +181,18 @@ final class ConversationTableViewDataSource: NSObject {
         return actionController
     }
 
-    func sectionController(for message: ZMConversationMessage, at index: Int) -> ConversationMessageSectionController {
+    func sectionController(for message: ConversationMessage, at index: Int) -> ConversationMessageSectionController {
         if let cachedEntry = sectionControllers[message.objectIdentifier] {
             return cachedEntry
         }
 
         let context = self.context(for: message, at: index, firstUnreadMessage: firstUnreadMessage, searchQueries: self.searchQueries)
-        let sectionController = ConversationMessageSectionController(message: message,
-                                                                     context: context,
-                                                                     selected: message.isEqual(selectedMessage))
+        let sectionController = ConversationMessageSectionController(
+            message: message,
+            context: context,
+            selected: message.isEqual(selectedMessage),
+            userSession: userSession
+        )
         sectionController.useInvertedIndices = true
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
@@ -480,7 +493,16 @@ extension ConversationTableViewDataSource {
         // 45 minutes
         let significantTimeInterval: TimeInterval = 60 * 45
         let isTimeIntervalSinceLastMessageSignificant: Bool
+
+        let isTimestampInSameMinuteAsPreviousMessage: Bool
+
         let previousMessage = messagePrevious(to: message, at: index)
+
+        if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
+            isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
+        } else {
+            isTimestampInSameMinuteAsPreviousMessage = false
+        }
 
         if let timeIntervalToPreviousMessage = timeIntervalToPreviousMessage(from: message, at: index) {
             isTimeIntervalSinceLastMessageSignificant = timeIntervalToPreviousMessage > significantTimeInterval
@@ -492,6 +514,7 @@ extension ConversationTableViewDataSource {
         return ConversationMessageContext(
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index),
             isTimeIntervalSinceLastMessageSignificant: isTimeIntervalSinceLastMessageSignificant,
+            isTimestampInSameMinuteAsPreviousMessage: isTimestampInSameMinuteAsPreviousMessage,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index),
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
@@ -513,5 +536,16 @@ extension ConversationTableViewDataSource {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp, let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
+
+}
+
+extension Date {
+
+  func isInSameMinute(asDate date: Date) -> Bool {
+    let calendar = Calendar.current
+    let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
+    let otherComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+    return components == otherComponents
+  }
 
 }

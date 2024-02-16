@@ -19,6 +19,7 @@
 import WireShareEngine
 import WireCommonComponents
 import MobileCoreServices
+import UniformTypeIdentifiers
 
 enum AttachmentType: Int, CaseIterable {
     static func < (lhs: AttachmentType, rhs: AttachmentType) -> Bool {
@@ -35,11 +36,11 @@ enum AttachmentType: Int, CaseIterable {
 
 extension NSItemProvider {
     var hasGifImage: Bool {
-        return hasItemConformingToTypeIdentifier(kUTTypeGIF as String)
+        return hasItemConformingToTypeIdentifier(UTType.gif.identifier)
     }
 
     var hasImage: Bool {
-        return hasItemConformingToTypeIdentifier(kUTTypeImage as String)
+        return hasItemConformingToTypeIdentifier(UTType.image.identifier)
     }
 
     func hasFile(completion: @escaping (Bool) -> Void) {
@@ -57,20 +58,20 @@ extension NSItemProvider {
     }
 
     private var hasData: Bool {
-        return hasItemConformingToTypeIdentifier(kUTTypeData as String)
+        return hasItemConformingToTypeIdentifier(UTType.data.identifier)
     }
 
     var hasURL: Bool {
-        return hasItemConformingToTypeIdentifier(kUTTypeURL as String) && registeredTypeIdentifiers.count == 1
+        return hasItemConformingToTypeIdentifier(UTType.url.identifier) && registeredTypeIdentifiers.count == 1
     }
 
     var hasFileURL: Bool {
-        return hasItemConformingToTypeIdentifier(kUTTypeFileURL as String)
+        return hasItemConformingToTypeIdentifier(UTType.url.identifier)
     }
 
     var hasVideo: Bool {
         guard let uti = registeredTypeIdentifiers.first else { return false }
-        return UTTypeConformsTo(uti as CFString, kUTTypeMovie)
+        return UTType(uti)?.conforms(to: UTType.movie) ?? false
     }
 
     var hasWalletPass: Bool {
@@ -78,6 +79,6 @@ extension NSItemProvider {
     }
 
     var hasRawFile: Bool {
-        return hasItemConformingToTypeIdentifier(kUTTypeContent as String) && !hasItemConformingToTypeIdentifier(kUTTypePlainText as String)
+        return hasItemConformingToTypeIdentifier(UTType.content.identifier) && !hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
     }
 }

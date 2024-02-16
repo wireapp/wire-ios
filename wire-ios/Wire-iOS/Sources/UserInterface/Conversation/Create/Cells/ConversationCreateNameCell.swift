@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class ConversationCreateNameCell: UICollectionViewCell {
+final class ConversationCreateNameCell: UICollectionViewCell {
 
     let textField = SimpleTextField()
 
@@ -37,7 +37,7 @@ class ConversationCreateNameCell: UICollectionViewCell {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.isAccessibilityElement = true
         textField.accessibilityIdentifier = "textfield.newgroup.name"
-        textField.placeholder = "conversation.create.group_name.placeholder".localized(uppercased: true)
+        textField.placeholder = L10n.Localizable.Conversation.Create.GroupName.placeholder.localizedUppercase
         textField.accessibilityValue = L10n.Accessibility.CreateConversation.SearchView.description
 
         contentView.addSubview(textField)

@@ -44,7 +44,7 @@
 
 static NSString* ZMLogTag ZM_UNUSED = @"Conversations";
 
-NSString *const ZMConversationConnectionKey = @"connection";
+NSString *const ZMConversationOneOnOneUserKey = @"oneOnOneUser";
 NSString *const ZMConversationHasUnreadMissedCallKey = @"hasUnreadMissedCall";
 NSString *const ZMConversationHasUnreadUnsentMessageKey = @"hasUnreadUnsentMessage";
 NSString *const ZMConversationNeedsToCalculateUnreadMessagesKey = @"needsToCalculateUnreadMessages";
@@ -54,9 +54,7 @@ NSString *const ZMConversationAllMessagesKey = @"allMessages";
 NSString *const ZMConversationHiddenMessagesKey = @"hiddenMessages";
 NSString *const ZMConversationParticipantRolesKey = @"participantRoles";
 NSString *const ZMConversationNonTeamRolesKey = @"nonTeamRoles";
-NSString *const ZMConversationHasUnreadKnock = @"hasUnreadKnock";
 NSString *const ZMConversationUserDefinedNameKey = @"userDefinedName";
-NSString *const ZMIsDimmedKey = @"zmIsDimmed";
 NSString *const ZMNormalizedUserDefinedNameKey = @"normalizedUserDefinedName";
 NSString *const ZMConversationListIndicatorKey = @"conversationListIndicator";
 NSString *const ZMConversationConversationTypeKey = @"conversationType";
@@ -69,13 +67,13 @@ NSString *const ZMConversationExternalParticipantsStateKey = @"externalParticipa
 NSString *const ZMConversationNeedsToDownloadRolesKey = @"needsToDownloadRoles";
 NSString *const ZMConversationLegalHoldStatusKey = @"legalHoldStatus";
 NSString *const ZMConversationNeedsToVerifyLegalHoldKey = @"needsToVerifyLegalHold";
-NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey";
-NSString *const ZMConversationEstimatedUnreadCountKey = @"estimatedUnreadCount";
 NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data";
 NSString *const SecurityLevelKey = @"securityLevel";
 NSString *const ZMConversationLabelsKey = @"labels";
 NSString *const ZMConversationDomainKey = @"domain";
+NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
+NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -270,7 +268,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMConversationType internalConversationType = self.internalConversationType;
     
     if (internalConversationType == ZMConversationTypeOneOnOne || internalConversationType == ZMConversationTypeConnection) {
-        return self.connection.to;
+        return self.oneOnOneUser;
     }
     else if (self.conversationType == ZMConversationTypeOneOnOne) {
         return self.localParticipantsExcludingSelf.anyObject;
@@ -287,15 +285,15 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMConnectionStatus)relatedConnectionState
 {
-    if(self.connection != nil) {
-        return self.connection.status;
+    if(self.oneOnOneUser.connection != nil) {
+        return self.oneOnOneUser.connection.status;
     }
     return ZMConnectionStatusInvalid;
 }
 
 + (NSSet *)keyPathsForValuesAffectingRelatedConnectionState
 {
-    return [NSSet setWithObjects:@"connection.status", @"connection", nil];
+    return [NSSet setWithObjects:@"oneOnOneUser.connection.status", @"oneOnOneUser.connection", nil];
 }
 
 - (NSSet *)ignoredKeys;
@@ -305,7 +303,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     dispatch_once(&onceToken, ^{
         NSSet *keys = [super ignoredKeys];
         NSString * const KeysIgnoredForTrackingModifications[] = {
-            ZMConversationConnectionKey,
+            ZMConversationOneOnOneUserKey,
             ZMConversationConversationTypeKey,
             CreatorKey,
             DraftMessageDataKey,
@@ -352,11 +350,15 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             @"isSelfAnActiveMember", // DEPRECATED
             @"lastServerSyncedActiveParticipants", // DEPRECATED
             ZMConversationDomainKey,
+            ZMConversationIsPendingMetadataRefreshKey,
             ZMConversation.messageProtocolKey,
             ZMConversation.mlsGroupIdKey,
             ZMConversation.mlsStatusKey,
+            ZMConversation.mlsVerificationStatusKey,
             ZMConversation.commitPendingProposalDateKey,
+            ZMConversation.cipherSuiteKey,
             ZMConversation.epochKey,
+            ZMConversation.epochTimestampKey,
             ZMConversationIsDeletedRemotelyKey
         };
         
@@ -369,6 +371,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (BOOL)isReadOnly
 {
     return
+    self.isForcedReadOnly ||
     (self.conversationType == ZMConversationTypeInvalid) ||
     (self.conversationType == ZMConversationTypeSelf) ||
     (self.conversationType == ZMConversationTypeConnection) ||
@@ -377,13 +380,13 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingIsReadOnly;
 {
-    return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationParticipantRolesKey, nil];
+    return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationParticipantRolesKey, ZMConversationIsForcedReadOnlyKey, nil];
 }
 
 + (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ContextProvider>)session;
 {
     NOT_USED(session);
-    return otherUser.connection.conversation;
+    return otherUser.oneOnOneConversation;
 }
 
 - (void)setClearedTimeStamp:(NSDate *)clearedTimeStamp
@@ -447,7 +450,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMConversationType conversationType = [self internalConversationType];
     
     // Exception: the group conversation is considered a 1-1 if:
-    // 1. Belongs to the team.
+    // 1. Belongs to the self team.
     // 2. Has no name given.
     // 3. Conversation has only one other participant.
 
@@ -455,7 +458,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     // local participant roles, so check its count first to avoid unncessary iterations.
 
     if (conversationType == ZMConversationTypeGroup &&
-        self.teamRemoteIdentifier != nil &&
+        self.team != nil &&
         self.userDefinedName.length == 0 &&
         self.localParticipantRoles.count == 2 &&
         self.localParticipantsExcludingSelf.count == 1)
@@ -479,12 +482,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (BOOL)isPendingConnectionConversation;
 {
-    return self.connection != nil && self.connection.status == ZMConnectionStatusPending;
+    return self.oneOnOneUser.connection != nil && self.oneOnOneUser.connection.status == ZMConnectionStatusPending;
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsPendingConnectionConversation
 {
-    return [NSSet setWithObjects:ZMConversationConnectionKey, @"connection.status", nil];
+    return [NSSet setWithObjects:@"oneOnOneUser.connection", @"oneOnOneUser.connection.status", nil];
 }
 
 - (ZMConversationListIndicator)conversationListIndicator;
@@ -504,7 +507,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingConversationListIndicator
 {
-    return [[ZMConversation keyPathsForValuesAffectingUnreadListIndicator] union:[NSSet setWithObject: @"voiceChannelState"]];
+    NSMutableSet *keyPaths = [[NSMutableSet alloc] initWithSet:[ZMConversation keyPathsForValuesAffectingUnreadListIndicator]];
+    [keyPaths addObject:@"voiceChannelState"];
+    return keyPaths;
 }
 
 
@@ -591,7 +596,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 @implementation ZMConversation (Internal)
 
-@dynamic connection;
 @dynamic creator;
 @dynamic lastModifiedDate;
 @dynamic normalizedUserDefinedName;
@@ -643,22 +647,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMConversationType conversationType =  (ZMConversationType)[[self primitiveConversationType] shortValue];
     [self didAccessValueForKey:ZMConversationConversationTypeKey];
     return conversationType;
-}
-
-// Used to merge a local 1:1 conversation with the remote conversation after a connection
-// request has been accepted.
-- (void)mergeWithExistingConversationWithRemoteID:(NSUUID *)remoteID;
-{
-    ZMConversation *existingConversation = [ZMConversation internalFetchObjectWithRemoteIdentifier:remoteID inManagedObjectContext:self.managedObjectContext];
-    if ((existingConversation != nil) && ![existingConversation isEqual:self]) {
-        Require(self.remoteIdentifier == nil);
-        [self.mutableMessages unionSet:existingConversation.allMessages];
-        // Just to be on the safe side, force update:
-        self.needsToBeUpdatedFromBackend = YES;
-        // This is a duplicate. Delete the other one
-        [self.managedObjectContext deleteObject:existingConversation];
-    }
-    self.remoteIdentifier = remoteID;
 }
 
 + (NSPredicate *)predicateForSearchQuery:(NSString *)searchQuery team:(Team *)team moc:(NSManagedObjectContext *)moc
@@ -734,7 +722,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (NSString *)connectionMessage;
 {
-    return self.connection.message.stringByRemovingExtremeCombiningCharacters;
+    return self.oneOnOneUser.connection.message.stringByRemovingExtremeCombiningCharacters;
 }
 
 @end

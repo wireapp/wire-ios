@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class GroupDetailsFooterViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+final class GroupDetailsFooterViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
 
     var sut: GroupDetailsFooterView!
     var coreDataFixture: CoreDataFixture!

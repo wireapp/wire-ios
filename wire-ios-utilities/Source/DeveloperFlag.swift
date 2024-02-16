@@ -26,6 +26,9 @@ public enum DeveloperFlag: String, CaseIterable {
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
     case nseV2
+    case forceDatabaseLoadingFailure
+    case ignoreIncomingEvents
+    case debugDuplicateObjects
 
     public var description: String {
         switch self {
@@ -40,6 +43,14 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .nseV2:
             return "Turn on to use the new implementation of the notification service extension."
+
+        case .forceDatabaseLoadingFailure:
+            return "Turn on to force database loading failure in the process of database migration"
+
+        case .ignoreIncomingEvents:
+            return "Turn on to ignore incoming update events"
+        case .debugDuplicateObjects:
+            return "Turn on to have actions to insert duplicate users, conversations, teams"
         }
     }
 
@@ -74,13 +85,28 @@ public enum DeveloperFlag: String, CaseIterable {
             return "CreateMLSGroupEnabled"
         case .proteusViaCoreCrypto:
             return "ProteusByCoreCryptoEnabled"
-        case .nseV2:
+        case .forceDatabaseLoadingFailure:
+            return "ForceDatabaseLoadingFailure"
+        case .nseV2, .debugDuplicateObjects:
             return nil
+        case .ignoreIncomingEvents:
+            return "IgnoreIncomingEventsEnabled"
         }
+    }
+
+    /// Convenience method to set flag on or off
+    ///
+    /// - Note: it can be used in Tests to change storage if provided
+    public func enable(_ enabled: Bool, storage: UserDefaults? = nil) {
+        if let storage {
+            DeveloperFlag.storage = storage
+        }
+        var flag = self
+        flag.isOn = enabled
     }
 }
 
-private class DeveloperFlagsDefault {
+private final class DeveloperFlagsDefault {
 
     static func isEnabled(for bundleKey: String) -> Bool {
         return Bundle(for: self).infoForKey(bundleKey) == "1"

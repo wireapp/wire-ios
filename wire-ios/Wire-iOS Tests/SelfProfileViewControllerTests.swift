@@ -20,31 +20,49 @@ import XCTest
 @testable import Wire
 
 final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+
     var coreDataFixture: CoreDataFixture!
     var sut: SelfProfileViewController!
     var selfUser: MockUserType!
+    var userSession: UserSessionMock!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+
         coreDataFixture = CoreDataFixture()
+
         SelfUser.provider = coreDataFixture.selfUserProvider
+        selfUser = MockUserType.createSelfUser(name: "", inTeam: UUID())
+
+        userSession = UserSessionMock(mockUser: selfUser)
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
+        coreDataFixture = nil
+        SelfUser.provider = nil
         selfUser = nil
+        userSession = nil
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testForAUserWithNoTeam() {
         createSut(userName: "Tarja Turunen", teamMember: false)
-        verify(view: sut.view)
+        verify(matching: sut.view)
     }
 
     func testForAUserWithALongName() {
-        createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart")
-        verify(view: sut.view)
+        createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
+        verify(matching: sut.view)
     }
+
+    // MARK: - Unit Tests
 
     func testItRequestsToRefreshTeamMetadataIfSelfUserIsTeamMember() {
         createSut(userName: "Tarja Turunen", teamMember: true)
@@ -56,11 +74,76 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         XCTAssertEqual(selfUser.refreshTeamDataCount, 0)
     }
 
-    private func createSut(userName: String, teamMember: Bool = true) {
+    func testContentOfLoginAlertController_WithASingleClient() throws {
+        // GIVEN
+        let mockClient = MockUserClient()
+        mockClient.model = "iPhone X"
+        mockClient.activationDate = Calendar.current.date(from: DateComponents(year: 2022, month: 1, day: 1))
+
+        let model = try XCTUnwrap(mockClient.model, "Model is nil")
+        let activationDate = try XCTUnwrap(mockClient.activationDate, "Activation date is nil")
+        let formattedDate = activationDate.formattedDate
+
+        let clients = [mockClient]
+
+        // WHEN
+        let alertController = UIAlertController(forNewSelfClients: clients)
+
+        let deviceActivationDate = L10n.Localizable.Registration.Devices.activated(formattedDate)
+        let expectedDeviceNameAndDate = "\(model) \(deviceActivationDate)"
+
+        let expectedTitle = L10n.Localizable.Self.NewDeviceAlert.title
+        let expectedMessage = L10n.Localizable.Self.NewDeviceAlert.message(expectedDeviceNameAndDate)
+
+        let actualMessage = try XCTUnwrap(alertController.message, "AlertController's message is nil.")
+
+        // THEN
+        XCTAssertEqual(alertController.title, expectedTitle)
+        XCTAssertEqual(actualMessage, expectedMessage)
+    }
+
+    func testContentOfLoginAlertController_WithMultipleClients() throws {
+        // GIVEN
+        let mockClient1 = MockUserClient()
+        mockClient1.model = "iPhone X"
+        mockClient1.activationDate = Calendar.current.date(from: DateComponents(year: 2022, month: 1, day: 1))
+
+        let mockClient2 = MockUserClient()
+        mockClient2.model = "iPad Pro"
+        mockClient2.activationDate = Calendar.current.date(from: DateComponents(year: 2022, month: 1, day: 2))
+
+        let clients = [mockClient1, mockClient2]
+
+        // WHEN
+        let alertController = UIAlertController(forNewSelfClients: clients)
+
+        var expectedDeviceNameAndDates = [String]()
+        for client in clients {
+            let model = try XCTUnwrap(client.model, "Model is nil")
+            let activationDate = try XCTUnwrap(client.activationDate, "Activation date is nil")
+            let formattedDate = activationDate.formattedDate
+            let deviceActivationDate = L10n.Localizable.Registration.Devices.activated(formattedDate)
+            expectedDeviceNameAndDates.append("\(model) \(deviceActivationDate)")
+        }
+
+        let expectedDevicesNameAndDate = expectedDeviceNameAndDates.joined(separator: "\n\n")
+        let expectedTitle = L10n.Localizable.Self.NewDeviceAlert.title
+        let expectedMessage = L10n.Localizable.Self.NewDeviceAlert.messagePlural(expectedDevicesNameAndDate)
+
+        let actualMessage = try XCTUnwrap(alertController.message, "AlertController's message is nil.")
+
+        // THEN
+        XCTAssertEqual(alertController.title, expectedTitle)
+        XCTAssertEqual(actualMessage, expectedMessage)
+    }
+
+    // MARK: Helper Method
+
+    private func createSut(userName: String, teamMember: Bool) {
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
-        sut = SelfProfileViewController(selfUser: selfUser, userRightInterfaceType: MockUserRight.self, userSession: MockZMUserSession())
-        sut.view.backgroundColor = .black
+        sut = SelfProfileViewController(selfUser: selfUser, userRightInterfaceType: MockUserRight.self, userSession: userSession)
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 }

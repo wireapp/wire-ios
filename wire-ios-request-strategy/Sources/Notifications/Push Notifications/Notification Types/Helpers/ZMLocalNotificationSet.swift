@@ -27,7 +27,7 @@ import UserNotifications
     public var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
     public var notifications = Set<ZMLocalNotification>() {
-        didSet { updateArchive() }
+        didSet { try? updateArchive() }
     }
 
     public var oldNotifications = [NotificationUserInfo]()
@@ -53,6 +53,7 @@ import UserNotifications
         guard
             let archive = keyValueStore.storedValue(key: archivingKey) as? Data,
             let unarchivedNotes = NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
+
         else {
             return
 
@@ -62,8 +63,9 @@ import UserNotifications
     }
 
     /// Archives all scheduled notifications - this could be optimized
-    func updateArchive() {
-        let data = NSKeyedArchiver.archivedData(withRootObject: allNotifications)
+    func updateArchive() throws {
+        let data = try NSKeyedArchiver.archivedData(withRootObject: allNotifications, requiringSecureCoding: false)
+
         keyValueStore.store(value: data as NSData, key: archivingKey)
         keyValueStore.enqueueDelayedSave() // we need to save otherwise changes might not be stored
     }

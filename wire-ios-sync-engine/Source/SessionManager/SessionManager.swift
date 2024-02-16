@@ -26,8 +26,7 @@ import UserNotifications
 import WireDataModel
 import WireRequestStrategy
 
-private let log = ZMSLog(tag: "SessionManager")
-private let pushLog = ZMSLog(tag: "Push")
+private let log = WireLogger(tag: "SessionManager")
 
 public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
 
@@ -44,21 +43,23 @@ public extension Bundle {
 
 public protocol SessionActivationObserver: AnyObject {
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession)
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface)
+    func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
 
-public protocol SessionManagerDelegate: SessionActivationObserver {
+// sourcery: AutoMockable
+public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLogin(error: Error?)
     func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
     func sessionManagerWillOpenAccount(_ account: Account,
                                        from selectedAccount: Account?,
                                        userSessionCanBeTornDown: @escaping () -> Void)
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
-    func sessionManagerDidFailToLoadDatabase()
+    func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool)
-    func sessionManagerDidPerformAPIMigrations()
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
+    func sessionManagerAsksToRetryStart()
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
@@ -243,7 +244,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
-    var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager()
 
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
@@ -263,8 +263,11 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    // closure injected to remove all user related logs
+    var deleteUserLogs: (() -> Void)?
+
     let sharedContainerURL: URL
-    let dispatchGroup: ZMSDispatchGroup?
+    let dispatchGroup: ZMSDispatchGroup
     let jailbreakDetector: JailbreakDetectorProtocol?
     fileprivate var accountTokens: [UUID: [Any]] = [:]
     fileprivate var memoryWarningObserver: NSObjectProtocol?
@@ -303,6 +306,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
     }
 
+    private let minTLSVersion: String?
+
     public override init() {
         fatal("init() not implemented")
     }
@@ -324,7 +329,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         isUnauthenticatedTransportSessionReady: Bool = false,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        minTLSVersion: String?,
+        deleteUserLogs: @escaping () -> Void
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -334,6 +341,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         if let proxy = environment.proxy {
             proxyCredentials = ProxyCredentials.retrieve(for: proxy)
         }
+
+        let dispatchGroup = ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
 
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory(
             appVersion: appVersion,
@@ -352,7 +361,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             reachability: reachability,
-            analytics: analytics
+            analytics: analytics,
+            minTLSVersion: minTLSVersion
         )
 
         self.init(
@@ -365,6 +375,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             delegate: delegate,
             application: application,
             pushRegistry: PKPushRegistry(queue: nil),
+            dispatchGroup: dispatchGroup,
             environment: environment,
             configuration: configuration,
             detector: detector,
@@ -374,7 +385,9 @@ public final class SessionManager: NSObject, SessionManagerType {
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             proxyCredentials: proxyCredentials,
             isUnauthenticatedTransportSessionReady: isUnauthenticatedTransportSessionReady,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            minTLSVersion: minTLSVersion,
+            deleteUserLogs: deleteUserLogs
         )
 
         configureBlacklistDownload()
@@ -383,8 +396,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             forName: UIApplication.didReceiveMemoryWarningNotification,
             object: nil,
             queue: nil,
-            using: {[weak self] _ in
-                guard let `self` = self else {
+            using: { [weak self] _ in
+                guard let self else {
                     return
                 }
                 log.debug("Received memory warning, tearing down background user sessions.")
@@ -426,7 +439,7 @@ public final class SessionManager: NSObject, SessionManagerType {
          delegate: SessionManagerDelegate?,
          application: ZMApplication,
          pushRegistry: PushRegistry,
-         dispatchGroup: ZMSDispatchGroup? = nil,
+         dispatchGroup: ZMSDispatchGroup,
          environment: BackendEnvironmentProvider,
          configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
          detector: JailbreakDetectorProtocol = JailbreakDetector(),
@@ -436,7 +449,9 @@ public final class SessionManager: NSObject, SessionManagerType {
          isDeveloperModeEnabled: Bool = false,
          proxyCredentials: ProxyCredentials?,
          isUnauthenticatedTransportSessionReady: Bool = false,
-         sharedUserDefaults: UserDefaults
+         sharedUserDefaults: UserDefaults,
+         minTLSVersion: String? = nil,
+         deleteUserLogs: (() -> Void)? = nil
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -452,6 +467,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.proxyCredentials = proxyCredentials
         self.isUnauthenticatedTransportSessionReady = isUnauthenticatedTransportSessionReady
         self.sharedUserDefaults = sharedUserDefaults
+        self.minTLSVersion = minTLSVersion
+        self.deleteUserLogs = deleteUserLogs
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -530,6 +547,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 readyForRequests: self.isUnauthenticatedTransportSessionReady,
                 working: nil,
                 application: application,
+                minTLSVersion: minTLSVersion,
                 blacklistCallback: { [weak self] (blacklisted) in
                     guard let `self` = self, !self.isAppVersionBlacklisted else { return }
 
@@ -584,9 +602,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func start(launchOptions: LaunchOptions) {
         if let account = accountManager.selectedAccount {
             selectInitialAccount(account, launchOptions: launchOptions)
+            // swiftlint:disable todo_requires_jira_link
             // TODO: this might need to happen with a completion handler.
             // TODO: register as voip delegate?
             // TODO: process voip actions pending actions
+            // swiftlint:enable todo_requires_jira_link
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerDidFailToLogin(error: nil)
@@ -704,6 +724,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func logout(account: Account, error: Error? = nil) {
+        WireLogger.session.debug("Logging out account \(account.userIdentifier)...")
         log.debug("Logging out account \(account.userIdentifier)...")
 
         if let session = backgroundUserSessions[account.userIdentifier] {
@@ -720,6 +741,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteTemporaryData() {
+        // swiftlint:disable todo_requires_jira_link
+        // TODO: [F] replace with TemporaryFileServiceInterface
+        // swiftlint:enable todo_requires_jira_link
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
         try? manager
@@ -755,8 +779,10 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             if deleteAccount {
                 self?.deleteAccountData(for: account)
+                self?.deleteUserLogs?()
             }
 
+            // also deletes ZMSLogs from cache
             self?.clearCacheDirectory()
 
             // Clear tmp directory when the user logout from the session.
@@ -826,97 +852,60 @@ public final class SessionManager: NSObject, SessionManagerType {
         log.debug("Request to load session for \(account)")
         let group = self.dispatchGroup
 
-        group?.enter()
+        group.enter()
         self.sessionLoadingQueue.serialAsync { onWorkDone in
             if let session = self.backgroundUserSessions[account.userIdentifier] {
                 log.debug("Session for \(account) is already loaded")
                 completion(session)
                 onWorkDone()
-                group?.leave()
+                group.leave()
             } else {
-                let coreDataStack = CoreDataStack(
-                    account: account,
-                    applicationContainer: self.sharedContainerURL,
-                    dispatchGroup: self.dispatchGroup
-                )
-
-                if coreDataStack.needsMigration {
-                    self.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
-                }
-
-                coreDataStack.loadStores { error in
-                    if error != nil {
-                        self.delegate?.sessionManagerDidFailToLoadDatabase()
-                    } else {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack
-                        )
-
-                        self.migrateCryptoboxSessionsIfNeeded(
-                            in: coreDataStack.accountContainer,
-                            syncContext: userSession.syncContext
-                        ) {
-                            completion(userSession)
-                        }
-
+                self.setupUserSession(account: account) { userSession in
+                    if let userSession {
+                        completion(userSession)
                     }
 
                     onWorkDone()
-                    group?.leave()
+                    group.leave()
                 }
             }
         }
     }
 
-    /// Migrates all existing proteus data created by Cryptobox into Core Crypto, if needed.
+    public func retryStart() {
+        self.delegate?.sessionManagerAsksToRetryStart()
+    }
 
-    private func migrateCryptoboxSessionsIfNeeded(
-        in accountDirectory: URL,
-        syncContext: NSManagedObjectContext,
-        completion: @escaping () -> Void
+    private func setupUserSession(
+        account: Account,
+        onCompletion: @escaping (ZMUserSession?) -> Void
     ) {
-        guard cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
-            WireLogger.proteus.info("cryptobox migration is not needed")
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup
+        )
+        coreDataStack.setup(
+            onStartMigration: { [weak self] in
+                self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
 
-            syncContext.performAndWait {
-                do {
-                    try cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
-                } catch {
-                    WireLogger.proteus.critical("failed to complete migration: \(error.localizedDescription)")
-                    fatalError("failed to complete proteus initialization")
+            }, onFailure: { [weak self] error in
+                self?.delegate?.sessionManagerDidFailToLoadDatabase(error: error)
+                onCompletion(nil)
+
+            }, onCompletion: { [weak self] coreDataStack in
+                guard let self else {
+                    assertionFailure("expected 'self' to continue!")
+                    return
                 }
+
+                let userSession = self.startBackgroundSession(
+                    for: account,
+                    with: coreDataStack
+                )
+                onCompletion(userSession)
             }
-
-            completion()
-            return
-        }
-
-        WireLogger.proteus.info("preparing for cryptobox migration...")
-
-        delegate?.sessionManagerWillMigrateAccount {
-            syncContext.performAndWait {
-                do {
-                    try self.cryptoboxMigrationManager.performMigration(
-                        accountDirectory: accountDirectory,
-                        syncContext: syncContext
-                    )
-                } catch {
-                    WireLogger.proteus.critical("cryptobox migration failed: \(error.localizedDescription)")
-                    fatalError("Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)")
-                }
-
-                do {
-                    try self.cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
-                } catch {
-                    fatalError("failed to complete proteus initialization")
-                }
-
-                WireLogger.proteus.info("cryptobox migration success")
-
-                completion()
-            }
-        }
+        )
     }
 
     private func clearCacheDirectory() {
@@ -927,7 +916,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     fileprivate func deleteAccountData(for account: Account) {
         log.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
-
+        WireLogger.session.debug("Deleting the data for account \(account)")
         environment.cookieStorage(for: account).deleteKeychainItems()
         account.deleteKeychainItems()
 
@@ -938,6 +927,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(accountIdentifier: accountID, applicationContainer: sharedContainerURL))
         } catch let error {
             log.error("Impossible to delete the acccount \(account): \(error)")
+            WireLogger.session.error("Impossible to delete the acccount \(account): \(error)")
         }
     }
 
@@ -959,12 +949,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             self?.delegate?.sessionManagerDidReportLockChange(forSession: session)
         }
 
-        accountTokens[account.userIdentifier] = [teamObserver,
-                                                 selfObserver!,
-                                                 conversationListObserver,
-                                                 connectionRequestObserver,
-                                                 unreadCountObserver,
-                                                 databaseEncryptionObserverToken
+        accountTokens[account.userIdentifier] = [
+            teamObserver,
+            selfObserver!,
+            conversationListObserver,
+            connectionRequestObserver,
+            unreadCountObserver,
+            databaseEncryptionObserverToken
         ]
     }
 
@@ -1032,6 +1023,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     internal func tearDownBackgroundSession(for accountId: UUID) {
         guard let userSession = self.backgroundUserSessions[accountId] else {
+            WireLogger.session.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             log.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             return
         }
@@ -1071,7 +1063,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func updateProfileImage(imageData: Data) {
         activeUserSession?.enqueue {
-            self.activeUserSession?.userProfileImage?.updateImage(imageData: imageData)
+            self.activeUserSession?.userProfileImage.updateImage(imageData: imageData)
         }
     }
 
@@ -1202,9 +1194,9 @@ extension SessionManager: TeamObserver {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
-extension SessionManager: ZMUserObserver {
+extension SessionManager: UserObserving {
     public func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.teamsChanged || changeInfo.nameChanged || changeInfo.imageSmallProfileDataChanged {
             guard let user = changeInfo.user as? ZMUser,
@@ -1337,11 +1329,12 @@ extension SessionManager: UserSessionLogoutDelegate {
             return
         }
 
-        log.debug("Authentication invalidated for \(accountId): \(error.code)")
+        WireLogger.authentication.warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
 
         switch userSessionErrorCode {
         case .clientDeletedRemotely:
             delete(account: account, reason: .sessionExpired)
+
         case .accessTokenExpired:
             if configuration.wipeOnCookieInvalid {
                 delete(account: account, reason: .sessionExpired)

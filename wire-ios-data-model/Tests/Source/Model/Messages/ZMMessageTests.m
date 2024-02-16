@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 
 @import WireDataModel;
@@ -22,6 +22,7 @@
 @import Foundation;
 @import MobileCoreServices;
 @import WireImages;
+@import UniformTypeIdentifiers;
 
 #import "ModelObjectsTests.h"
 #import "ZMMessage+Internal.h"
@@ -30,7 +31,6 @@
 #import "ZMMessageTests.h"
 #import "MessagingTest+EventFactory.h"
 #import "ZMUpdateEvent+WireDataModel.h"
-#import "NSString+RandomString.h"
 #import "WireDataModelTests-Swift.h"
 
 NSString * const IsExpiredKey = @"isExpired";
@@ -233,6 +233,20 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertFalse(message.isExpired);
 }
 
+- (void)testThatItResetsTheExpirationReasonCodeWhenResending
+{
+    // given
+    ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
+    [message expire];
+    XCTAssertEqualObjects(message.expirationReasonCode, [NSNumber numberWithInt:0]);
+
+    // when
+    [message resend];
+
+    // then
+    XCTAssertNil(message.expirationReasonCode);
+}
+
 - (void)checkBaseMessageAttributeForClass:(Class)aClass;
 {
     [self checkAttributeForClass:aClass key:@"nonce" value:[NSUUID createUUID]];
@@ -335,25 +349,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     // then
     XCTAssertEqualObjects(message.keysTrackedForLocalModifications, expected);
-}
-
-- (void)testThat_doesEventGenerateMessage_returnsTrueForAllKnownTypes
-{
-    NSArray *validTypes = @[
-                            @(ZMUpdateEventTypeConversationMemberJoin),
-                            @(ZMUpdateEventTypeConversationMemberLeave),
-                            @(ZMUpdateEventTypeConversationRename),
-                            @(ZMUpdateEventTypeConversationMessageAdd),
-                            @(ZMUpdateEventTypeConversationClientMessageAdd),
-                            @(ZMUpdateEventTypeConversationOtrMessageAdd),
-                            @(ZMUpdateEventTypeConversationOtrAssetAdd),
-                            @(ZMUpdateEventTypeConversationMLSMessageAdd),
-                            @(ZMUpdateEventTypeConversationAssetAdd),
-                            @(ZMUpdateEventTypeConversationKnock),
-                            ];
-    for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt) {
-        XCTAssertEqual([ZMMessage doesEventTypeGenerateMessage:evt], [validTypes containsObject:@(evt)]);
-    }
 }
 
 - (void)testThatTheTextIsCopied
@@ -560,7 +555,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNotNil(message.mediumData);
     
     // then
-    NSString *expected = (__bridge NSString *) kUTTypeJPEG;
+    NSString *expected = UTTypeJPEG.identifier;
     XCTAssertEqualObjects(message.imageType, expected);
 }
 
@@ -576,7 +571,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNotNil(message.mediumData);
     
     // then
-    NSString *expected = (__bridge NSString *) kUTTypeGIF;
+    NSString *expected = UTTypeGIF.identifier;
     XCTAssertEqualObjects(message.imageType, expected);
 }
 
@@ -592,7 +587,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNotNil(message.mediumData);
     
     // then
-    NSString *expected = (__bridge NSString *) kUTTypeGIF;
+    NSString *expected = UTTypeGIF.identifier;
     XCTAssertEqualObjects(message.imageType, expected);
 }
 
@@ -622,7 +617,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     [self.uiMOC saveOrRollback];
     
     // expect
-    XCTestExpectation *imageDataArrived = [self expectationWithDescription:@"image data arrived"];
+    XCTestExpectation *imageDataArrived = [self customExpectationWithDescription:@"image data arrived"];
     
     // when
     [message fetchImageDataWithQueue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completionHandler:^(NSData *imageDataResult) {
@@ -734,20 +729,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 #pragma mark - CreateSystemMessageFromUpdateEvent
 
 
-- (void)testThat_isEventTypeGeneratingSystemMessage_returnsNo
-{
-    // valid types
-    NSArray *validTypes = @[
-        @(ZMUpdateEventTypeConversationMemberJoin),
-        @(ZMUpdateEventTypeConversationMemberLeave),
-        @(ZMUpdateEventTypeConversationRename)
-    ];
-    
-    for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt) {
-        XCTAssertEqual([ZMSystemMessage doesEventTypeGenerateSystemMessage:evt], [validTypes containsObject:@(evt)]);
-    }
-}
-
 - (ZMSystemMessage *)createSystemMessageFromType:(ZMUpdateEventType)updateEventType inConversation:(ZMConversation *)conversation withUsersIDs:(NSArray *)userIDs senderID:(NSUUID *)senderID
 {
     NSDictionary *data =@{
@@ -793,13 +774,98 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNil(message);
 }
 
-- (void)testThatItDoesNotGenerateSystemMessagesFromUpdateEventsOfTheWrongType
+- (void)testSystemMessageTypeFromUpdateEventReturnsParticipantsAdded;
 {
-    for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt)
-    {
-        if( ! [ZMSystemMessage doesEventTypeGenerateSystemMessage:evt] ) {
-            [self checkThatUpdateEventTypeDoesNotGenerateMessage:evt];
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationMemberJoin
+                                       forConversation:conversation
+                                                sender:nil
+                                                  data:nil];
+
+    // When
+    ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+
+    // Then
+    XCTAssertEqual(systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+}
+
+- (void)testSystemMessageTypeFromUpdateEventReturnsParticipantsRemoved;
+{
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationMemberLeave
+                                       forConversation:conversation
+                                                sender:nil
+                                                  data:nil];
+
+    // When
+    ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+
+    // Then
+    XCTAssertEqual(systemMessageType, ZMSystemMessageTypeParticipantsRemoved);
+}
+
+- (void)testSystemMessageTypeFromUpdateEventReturnsTeamMemberLeave;
+{
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationMemberLeave
+                                       forConversation:conversation
+                                                sender:nil
+                                                  data:@{ @"reason": @"user-deleted" }];
+
+    // When
+    ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+
+    // Then
+    XCTAssertEqual(systemMessageType, ZMSystemMessageTypeTeamMemberLeave);
+}
+
+- (void)testSystemMessageTypeFromUpdateEventReturnsConversationNameChanged;
+{
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationRename
+                                       forConversation:conversation
+                                                sender:nil
+                                                  data:nil];
+
+    // When
+    ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+
+    // Then
+    XCTAssertEqual(systemMessageType, ZMSystemMessageTypeConversationNameChanged);
+}
+
+- (void)testSystemMessageTypeFromUpdateEventReturnsInvalid;
+{
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    NSSet<NSNumber *> *skipValues = [NSSet setWithArray:@[
+        @(ZMUpdateEventTypeConversationMemberJoin),
+        @(ZMUpdateEventTypeConversationMemberLeave),
+        @(ZMUpdateEventTypeConversationRename)
+    ]];
+    for (NSNumber *value in [ZMUpdateEvent allTypes]) {
+        // skip valid values
+        if ([skipValues containsObject:value]) {
+            continue;
         }
+
+        ZMUpdateEventType updateEventType = value.unsignedIntegerValue;
+        ZMUpdateEvent *updateEvent = [self mockEventOfType:updateEventType forConversation:conversation sender:nil data:@{}];
+
+        // When
+        ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+
+        // Then
+        XCTAssertEqual(systemMessageType, ZMSystemMessageTypeInvalid);
     }
 }
 
@@ -1048,12 +1114,10 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     // then
     XCTAssertNotNil(imageData);
-    if (@available(iOS 14, *)) {
-        // TODO:  [Bill] check why 1 btye is removed from jpegData?
-        XCTAssertEqual(imageData.length, jpegData.length + 1);
-    } else {
-        XCTAssertEqual(imageData.length, jpegData.length);
-    }
+    // swiftlint:disable todo_requires_jira_link
+    // TODO:  [Bill] check why 1 btye is removed from jpegData?
+    // swiftlint:enable todo_requires_jira_link
+    XCTAssertEqual(imageData.length, jpegData.length + 1);
 }
 
 - (void)testThatFlagIsSetWhenSenderIsTheOnlyUser
@@ -1301,7 +1365,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     ZMClientMessage *message2 = (ZMClientMessage *)[conversation appendText:@"Test 2" mentions:@[] replyingToMessage:message1 fetchLinkPreview:NO nonce:NSUUID.createUUID];
     XCTAssertEqualObjects(message2.quote, message1);
     XCTAssertFalse(message1.replies.isEmpty);
-    
+
     // when
     [message2 removeMessageClearingSender:YES];
     [self.uiMOC saveOrRollback];
@@ -1327,7 +1391,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
     // when
     // this is the UI facing call to add reaction
-    [ZMMessage addReaction:MessageReactionLike toMessage:message];
+    [ZMMessage addReaction:@"❤️" to:message];
     [self.uiMOC saveOrRollback];
 
     //then
@@ -1350,7 +1414,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     //when
     NSString *reactionUnicode = @"❤️";
     // this is the UI facing call to add reaction
-    [textMessage addReaction:reactionUnicode forUser:selfUser];
+    [ZMMessage addReaction:reactionUnicode to:textMessage];
     [self.uiMOC saveOrRollback];
     
     
@@ -1362,45 +1426,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     NSArray<ZMUser *> *usersThatReacted = reactions[reactionUnicode];
     XCTAssertEqual(usersThatReacted.count, 1lu);
     XCTAssertEqualObjects([usersThatReacted lastObject], selfUser);
-}
-
-- (void)testThatAddingAReactionWithoutUnicodeRemoveUserOnReaction;
-{
-    //given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    
-    NSUUID *nonce = [NSUUID createUUID];
-    ZMTextMessage *textMessage = [[ZMTextMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
-    textMessage.visibleInConversation = conversation;
-    [self.uiMOC saveOrRollback];
-    
-    NSString *reactionUnicode = @"❤️";
-    // this is the UI facing call to add reaction
-    [textMessage addReaction:reactionUnicode forUser:selfUser];
-    [self.uiMOC saveOrRollback];
-
-    //sanity check
-    
-    textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
-    
-    NSDictionary *reactions = textMessage.usersReaction;
-    XCTAssertEqual(reactions.count, 1lu);
-    NSArray<ZMUser *> *usersThatReacted = reactions[reactionUnicode];
-    XCTAssertEqual(usersThatReacted.count, 1lu);
-    XCTAssertEqualObjects([usersThatReacted lastObject], selfUser);
-
-    //when
-    [textMessage addReaction:@"" forUser:selfUser];
-    [self.uiMOC saveOrRollback];
-    
-    //then
-    reactions = textMessage.usersReaction;
-    XCTAssertEqual(reactions.count, 0lu);
-    usersThatReacted = reactions[reactionUnicode];
-    XCTAssertEqual(usersThatReacted.count, 0lu);
-
 }
 
 - (void)testThatAddingAReactionForTwoUserWithSameUnicodeAgregates;
@@ -1418,8 +1443,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     //when
     NSString *reactionUnicode = @"❤️";
-    [textMessage addReaction:reactionUnicode forUser:selfUser];
-    [textMessage addReaction:reactionUnicode forUser:user1];
+    [textMessage setReactions:[NSSet setWithObjects:reactionUnicode, nil] forUser:selfUser newReactionsCreationDate: nil];
+    [textMessage setReactions:[NSSet setWithObjects:reactionUnicode, nil] forUser:user1 newReactionsCreationDate: nil];
     [self.uiMOC saveOrRollback];
     
     
@@ -1501,4 +1526,3 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 }
 
 @end
-

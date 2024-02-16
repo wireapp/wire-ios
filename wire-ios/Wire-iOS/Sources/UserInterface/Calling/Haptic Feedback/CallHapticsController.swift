@@ -85,7 +85,7 @@ final class CallHapticsController {
         let newVideoStates = createVideoStateMap(using: newParticipants)
         Log.haptics.debug("updating video state map: \(newVideoStates), old: \(videoStates)")
 
-        let mappedNewVideoStates = newVideoStates.mapKeys({$0.hashValue})
+        let mappedNewVideoStates = newVideoStates.mapKeys({ $0.hashValue })
         for (participant, wasSending) in videoStates {
 
             if let isSending = mappedNewVideoStates[participant.hashValue], isSending != wasSending {

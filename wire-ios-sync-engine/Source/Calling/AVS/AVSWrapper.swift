@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import avs
+import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
@@ -39,14 +39,18 @@ public protocol AVSWrapperType {
     func handleSFTResponse(data: Data?, context: WireCallMessageToken)
     func update(callConfig: String?, httpStatusCode: Int)
     func requestVideoStreams(_ videoStreams: AVSVideoStreams, conversationId: AVSIdentifier)
-    var muted: Bool { get set }
+
+    /// Let AVS know that we are batch-processing a stream of notifications.
+    /// This method should be called before processing with `isProcessingNotifications` set to `true` as well as
+    /// after processing has been completed with `isProcessingNotifications` set to `false`.
+    func notify(isProcessingNotifications isProcessing: Bool)
+
+    func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
+    var isMuted: Bool { get set }
 }
 
-/**
- * An object that provides an interface to the AVS APIs.
- */
-
-public class AVSWrapper: AVSWrapperType {
+/// An object that provides an interface to the AVS APIs.
+public final class AVSWrapper: AVSWrapperType {
 
     /// The wrapped `wcall` instance.
     private let handle: UInt32
@@ -65,34 +69,35 @@ public class AVSWrapper: AVSWrapperType {
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "AVSWrapper")
 
-    /**
-     * Creates the wrapper around `wcall`.
-     * - parameter userId: The identifier of the user that owns the calling center.
-     * - parameter clientId: The identifier of the current client (this device).
-     * - parameter observer: The raw pointer to the object that will receive events from AVS.
-     * This must be a pointer to a `WireCallCenterV3` object. If it isn't, the notifications
-     * won't be handled.
-     */
-
+    /// Creates the wrapper around `wcall`.
+    /// - parameter userId: The identifier of the user that owns the calling center.
+    /// - parameter clientId: The identifier of the current client (this device).
+    /// - parameter observer: The raw pointer to the object that will receive events from AVS.
+    /// This must be a pointer to a `WireCallCenterV3` object. If it isn't, the notifications
+    /// won't be handled.
     required public init(userId: AVSIdentifier, clientId: String, observer: UnsafeMutableRawPointer?) {
         Self.logger.trace("init")
+        defer { Self.logger.trace("init finished") }
+
         AVSWrapper.initialize()
 
-        handle = wcall_create(userId.serialized,
-                              clientId,
-                              readyHandler,
-                              sendCallMessageHandler,
-                              sendSFTCallMessageHandler,
-                              incomingCallHandler,
-                              missedCallHandler,
-                              answeredCallHandler,
-                              establishedCallHandler,
-                              closedCallHandler,
-                              callMetricsHandler,
-                              requestCallConfigHandler,
-                              constantBitRateChangeHandler,
-                              videoStateChangeHandler,
-                              observer)
+        handle = wcall_create(
+            userId.serialized,
+            clientId,
+            readyHandler,
+            sendCallMessageHandler,
+            sendSFTCallMessageHandler,
+            incomingCallHandler,
+            missedCallHandler,
+            answeredCallHandler,
+            establishedCallHandler,
+            closedCallHandler,
+            callMetricsHandler,
+            requestCallConfigHandler,
+            constantBitRateChangeHandler,
+            videoStateChangeHandler,
+            observer
+        )
 
         wcall_set_data_chan_estab_handler(handle, dataChannelEstablishedHandler)
         let timerIntervalInSeconds: Int32 = 5
@@ -102,29 +107,45 @@ public class AVSWrapper: AVSWrapperType {
         wcall_set_participant_changed_handler(handle, callParticipantHandler, observer)
         wcall_set_req_clients_handler(handle, requestClientsHandler)
         wcall_set_active_speaker_handler(handle, activeSpeakersHandler)
-        Self.logger.info("init finished")
+        wcall_set_req_new_epoch_handler(handle, requestNewEpochHandler)
     }
 
     // MARK: - Convenience Methods
 
-    public var muted: Bool {
-        get {
-            return wcall_get_mute(handle) != 0
-        }
-        set {
-            wcall_set_mute(handle, newValue ? 1 : 0)
-        }
+    public var isMuted: Bool {
+        get { wcall_get_mute(handle) != 0 }
+        set { wcall_set_mute(handle, newValue ? 1 : 0) }
     }
 
     /// Requests AVS to initiate a call.
-    public func startCall(conversationId: AVSIdentifier, callType: AVSCallType, conversationType: AVSConversationType, useCBR: Bool) -> Bool {
-        let didStart = wcall_start(handle, conversationId.serialized, callType.rawValue, conversationType.rawValue, useCBR ? 1 : 0)
+    public func startCall(
+        conversationId: AVSIdentifier,
+        callType: AVSCallType,
+        conversationType: AVSConversationType,
+        useCBR: Bool
+    ) -> Bool {
+        let didStart = wcall_start(
+            handle,
+            conversationId.serialized,
+            callType.rawValue,
+            conversationType.rawValue,
+            useCBR ? 1 : 0
+        )
         return didStart == 0
     }
 
     /// Marks the call as answered in AVS.
-    public func answerCall(conversationId: AVSIdentifier, callType: AVSCallType, useCBR: Bool) -> Bool {
-        let didAnswer = wcall_answer(handle, conversationId.serialized, callType.rawValue, useCBR ? 1 : 0)
+    public func answerCall(
+        conversationId: AVSIdentifier,
+        callType: AVSCallType,
+        useCBR: Bool
+    ) -> Bool {
+        let didAnswer = wcall_answer(
+            handle,
+            conversationId.serialized,
+            callType.rawValue,
+            useCBR ? 1 : 0
+        )
         return didAnswer == 0
     }
 
@@ -165,9 +186,11 @@ public class AVSWrapper: AVSWrapperType {
             error = EPROTO
             buffer = Data(count: 0)
         }
-
-        buffer.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) in
-            wcall_sft_resp(handle, error, bytes, buffer.count, context)
+        buffer.withUnsafeBytes {
+            guard let baseAddress = $0.bindMemory(to: UInt8.self).baseAddress else {
+                return
+            }
+            wcall_sft_resp(handle, error, baseAddress, buffer.count, context)
         }
     }
 
@@ -197,6 +220,36 @@ public class AVSWrapper: AVSWrapperType {
     ///   - conversationId: The conversation identifier linked to the call
     public func requestVideoStreams(_ videoStreams: AVSVideoStreams, conversationId: AVSIdentifier) {
         wcall_request_video_streams(handle, conversationId.serialized, 0, videoStreams.jsonString(encoder))
+    }
+
+    public func notify(isProcessingNotifications isProcessing: Bool) {
+        wcall_process_notifications(handle, isProcessing ? 1 : 0)
+    }
+
+    /// Set the MLS conference info for a given conversation.
+    ///
+    /// - Parameters:
+    ///   - conversationId: The conversation hosting the MLS conference.
+    ///   - info: The MLS conference info.
+
+    public func setMLSConferenceInfo(
+        conversationId: AVSIdentifier,
+        info: MLSConferenceInfo
+    ) {
+        let clients = info.members.compactMap(AVSClient.init)
+        let clientList = AVSClientList(clients: clients)
+
+        guard let clientListJSON = clientList.jsonString() else {
+            return
+        }
+
+        wcall_set_epoch_info(
+            handle,
+            conversationId.serialized,
+            UInt32(info.epoch),
+            clientListJSON,
+            info.keyData.base64EncodedString()
+        )
     }
 
     // MARK: - C Callback Handlers
@@ -285,7 +338,7 @@ public class AVSWrapper: AVSWrapperType {
         }
     }
 
-    private let sendCallMessageHandler: Handler.CallMessageSend = { token, conversationId, senderUserId, senderClientId, targetsCString, _, data, dataLength, _, _, contextRef in
+    private let sendCallMessageHandler: Handler.CallMessageSend = { token, conversationId, senderUserId, senderClientId, targetsCString, _, data, dataLength, _, myClientsOnly, contextRef in
         guard let token = token else {
             return EINVAL
         }
@@ -303,7 +356,8 @@ public class AVSWrapper: AVSWrapperType {
                                         senderUserId: AVSIdentifier.from(string: $2),
                                         senderClientId: $3,
                                         targets: targets,
-                                        data: transformedData)
+                                        data: transformedData,
+                                        overMLSSelfConversation: myClientsOnly == 1)
         }
     }
 
@@ -366,6 +420,12 @@ public class AVSWrapper: AVSWrapperType {
     private let activeSpeakersHandler: Handler.ActiveSpeakersChange = { _, conversationIdRef, json, contextRef in
         AVSWrapper.withCallCenter(contextRef, conversationIdRef, json) {
             $0.handleActiveSpeakersChange(conversationId: AVSIdentifier.from(string: $1), data: $2)
+        }
+    }
+
+    private let requestNewEpochHandler: Handler.RequestNewEpoch = { _, conversationIdRef, contextRef in
+        AVSWrapper.withCallCenter(contextRef, conversationIdRef) { (callCenter, conversationID: String) in
+            callCenter.handleNewEpochRequest(conversationID: .from(string: conversationID))
         }
     }
 

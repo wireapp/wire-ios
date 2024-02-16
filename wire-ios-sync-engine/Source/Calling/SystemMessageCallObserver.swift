@@ -31,10 +31,10 @@ final class CallSystemMessageGenerator: NSObject {
 
         switch callState {
         case .outgoing:
-            log.info("Setting call start date for \(conversation.displayName)")
+            log.info("Setting call start date for \(conversation.displayName ?? ""))")
             startDateByConversation[conversation] = Date()
         case .established:
-            log.info("Setting call connect date for \(conversation.displayName)")
+            log.info("Setting call connect date for \(conversation.displayName ?? "")")
             connectDateByConversation[conversation] = Date()
         case .terminating(reason: let reason):
         systemMessage = appendCallEndedSystemMessage(reason: reason, conversation: conversation, caller: caller, timestamp: timestamp, previousCallState: previousCallState)
@@ -49,14 +49,14 @@ final class CallSystemMessageGenerator: NSObject {
         var systemMessage: ZMSystemMessage?
         if let connectDate = connectDateByConversation[conversation] {
             let duration = -connectDate.timeIntervalSinceNow
-            log.info("Appending performed call message: \(duration), \(caller.name ?? ""), \"\(conversation.displayName)\"")
+            log.info("Appending performed call message: \(duration), \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
             systemMessage =  conversation.appendPerformedCallMessage(with: duration, caller: caller)
         } else {
             if caller.isSelfUser {
-                log.info("Appending performed call message: \(caller.name ?? ""), \"\(conversation.displayName)\"")
+                log.info("Appending performed call message: \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
                 systemMessage =  conversation.appendPerformedCallMessage(with: 0, caller: caller)
             } else if reason.isOne(of: .canceled, .timeout, .normal) {
-                log.info("Appending missed call message: \(caller.name ?? ""), \"\(conversation.displayName)\"")
+                log.info("Appending missed call message: \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
 
                 var isRelevant = true
                 if case .incoming(video: _, shouldRing: false, degraded: _)? = previousCallState {

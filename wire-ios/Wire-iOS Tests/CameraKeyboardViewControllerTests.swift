@@ -19,7 +19,7 @@
 import XCTest
 import AVFoundation
 import Photos
-import WireCommonComponents
+import SnapshotTesting
 @testable import Wire
 
 // MARK: - CameraKeyboardViewControllerDelegateMock
@@ -97,7 +97,7 @@ private final class CallingMockCameraKeyboardViewController: CameraKeyboardViewC
 
 // MARK: - CameraKeyboardViewControllerTests
 
-final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
+final class CameraKeyboardViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
@@ -111,12 +111,10 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-
         mockAssetLibrary = MockAssetLibrary(photoLibrary: MockPhotoLibrary())
         mockImageManager = MockImageManager()
         splitView = SplitLayoutObservableMock()
         delegateMock = CameraKeyboardViewControllerDelegateMock()
-        FontScheme.configure(with: .large)
     }
 
     // MARK: - tearDown

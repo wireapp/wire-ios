@@ -57,7 +57,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/push/tokens")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
     }
 
     // MARK: - Response handling
@@ -68,7 +68,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         var action = GetPushTokensAction(clientID: "clientA")
 
         // Expectation
-        let didSucceed = expectation(description: "didSucceed")
+        let didSucceed = customExpectation(description: "didSucceed")
         var receivedTokens = [PushToken]()
 
         action.onResult { result in
@@ -105,7 +105,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         var action = GetPushTokensAction(clientID: "clientID")
 
         // Expectation
-        let didFail = expectation(description: "didFail")
+        let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
             guard case .failure(.malformedResponse) = result else { return }
@@ -125,7 +125,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         var action = GetPushTokensAction(clientID: "clientID")
 
         // Expectation
-        let didFail = expectation(description: "didFail")
+        let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
             guard case .failure(.unknown(status: 999)) = result else { return }

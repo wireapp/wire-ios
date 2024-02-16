@@ -31,7 +31,7 @@ class ConversationMessageTimerTests: IntegrationTest {
         var payload: [String: Any] = [
             "from": user1.identifier,
             "conversation": conversation.remoteIdentifier!.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "type": "conversation.message-timer-update"
         ]
 
@@ -141,6 +141,6 @@ class ConversationMessageTimerTests: IntegrationTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1, "wrong request count", file: file, line: line)
         guard let request = mockTransportSession.receivedRequests().first else { return }
         XCTAssertEqual(request.path, "/conversations/\(identifier)/message-timer", "wrong path \(request.path)", file: file, line: line)
-        XCTAssertEqual(request.method, .methodPUT, "wrong method", file: file, line: line)
+        XCTAssertEqual(request.method, .put, "wrong method", file: file, line: line)
     }
 }

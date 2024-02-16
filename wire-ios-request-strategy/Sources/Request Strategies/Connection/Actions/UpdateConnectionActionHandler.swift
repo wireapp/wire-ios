@@ -22,12 +22,14 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = ConnectionPayloadProcessor()
+
     override func request(for action: UpdateConnectionAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
             return v0Request(for: action)
 
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             return v1Request(for: action)
         }
     }
@@ -44,7 +46,7 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
 
         return ZMTransportRequest(
             path: "/connections/\(userID)",
-            method: .methodPUT,
+            method: .put,
             payload: payload,
             apiVersion: 0
         )
@@ -62,7 +64,7 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
 
         return ZMTransportRequest(
             path: "/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
-            method: .methodPUT,
+            method: .put,
             payload: payload,
             apiVersion: 1
         )
@@ -109,6 +111,8 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
                 action.notifyResult(.failure(.notConnected))
             case (403, .connectionLimit):
                 action.notifyResult(.failure(.connectionLimitReached))
+            case (422, .federationDenied):
+                action.notifyResult(.failure(.federationDenied))
             default:
                 action.notifyResult(.failure(.unknown))
             }
@@ -116,9 +120,14 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
             return
         }
 
-        let connection = Payload.Connection(response, decoder: decoder)
-        connection?.updateOrCreate(in: context)
-        context.saveOrRollback()
+        if let connection = Payload.Connection(response, decoder: decoder) {
+            processor.updateOrCreateConnection(
+                from: connection,
+                in: context
+            )
+            context.saveOrRollback()
+        }
+
         action.notifyResult(.success(Void()))
     }
 

@@ -60,7 +60,7 @@ public final class AssetRequestFactory: NSObject {
         case .v0, .v1:
             path = "/assets/v3"
 
-        case .v2, .v3, .v4:
+        case .v2, .v3, .v4, .v5, .v6:
             path = "/assets"
         }
 
@@ -77,11 +77,11 @@ public final class AssetRequestFactory: NSObject {
         case .v0, .v1:
             path = "/assets/v3"
 
-        case .v2, .v3, .v4:
+        case .v2, .v3, .v4, .v5, .v6:
             path = "/assets"
         }
 
-        return ZMTransportRequest(path: path, method: .methodPOST, binaryData: multipartData, type: Constant.ContentType.multipart, contentDisposition: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, binaryData: multipartData, type: Constant.ContentType.multipart, contentDisposition: nil, apiVersion: apiVersion.rawValue)
     }
 
     func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention: Retention) throws -> Data {

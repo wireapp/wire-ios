@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-class ProfileImagePickerManager: ImagePickerManager {
+final class ProfileImagePickerManager: ImagePickerManager {
 
     func selectProfileImage() -> UIAlertController {
         let actionSheet = showActionSheet { image in
@@ -27,7 +27,7 @@ class ProfileImagePickerManager: ImagePickerManager {
                 return
             }
             ZMUserSession.shared()?.enqueue({
-                ZMUserSession.shared()?.userProfileImage?.updateImage(imageData: jpegData)
+                ZMUserSession.shared()?.userProfileImage.updateImage(imageData: jpegData)
             })
         }
         return actionSheet

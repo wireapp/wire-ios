@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsAction> {
 
@@ -48,7 +49,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             }
 
             do {
-                let payload = try JSONDecoder().decode(ResponsePayload.self, from: data)
+                let payload = try JSONDecoder.defaultDecoder.decode(ResponsePayload.self, from: data)
                 processPayload(payload)
                 action.succeed()
             } catch {
@@ -70,10 +71,10 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
     }
 
     private func processPayload(_ payload: ResponsePayload) {
-        let service = FeatureService(context: context)
+        let featureRepository = FeatureRepository(context: context)
 
         if let appLock = payload.appLock {
-            service.storeAppLock(
+            featureRepository.storeAppLock(
                 Feature.AppLock(
                     status: appLock.status,
                     config: appLock.config
@@ -82,7 +83,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         }
 
         if let classifiedDomains = payload.classifiedDomains {
-            service.storeClassifiedDomains(
+            featureRepository.storeClassifiedDomains(
                 Feature.ClassifiedDomains(
                     status: classifiedDomains.status,
                     config: classifiedDomains.config
@@ -91,7 +92,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         }
 
         if let conferenceCalling = payload.conferenceCalling {
-            service.storeConferenceCalling(
+            featureRepository.storeConferenceCalling(
                 Feature.ConferenceCalling(
                     status: conferenceCalling.status
                 )
@@ -99,7 +100,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         }
 
         if let conversationGuestLinks = payload.conversationGuestLinks {
-            service.storeConversationGuestLinks(
+            featureRepository.storeConversationGuestLinks(
                 Feature.ConversationGuestLinks(
                     status: conversationGuestLinks.status
                 )
@@ -107,7 +108,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         }
 
         if let digitalSignatures = payload.digitalSignatures {
-            service.storeDigitalSignature(
+            featureRepository.storeDigitalSignature(
                 Feature.DigitalSignature(
                     status: digitalSignatures.status
                 )
@@ -115,7 +116,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         }
 
         if let fileSharing = payload.fileSharing {
-            service.storeFileSharing(
+            featureRepository.storeFileSharing(
                 Feature.FileSharing(
                     status: fileSharing.status
                 )
@@ -123,7 +124,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         }
 
         if let mls = payload.mls {
-            service.storeMLS(
+            featureRepository.storeMLS(
                 Feature.MLS(
                     status: mls.status,
                     config: mls.config
@@ -131,11 +132,29 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             )
         }
 
+        if let mlsMigration = payload.mlsMigration {
+            featureRepository.storeMLSMigration(
+                Feature.MLSMigration(
+                    status: mlsMigration.status,
+                    config: mlsMigration.config
+                )
+            )
+        }
+
         if let selfDeletingMessages = payload.selfDeletingMessages {
-            service.storeSelfDeletingMessages(
+            featureRepository.storeSelfDeletingMessages(
                 Feature.SelfDeletingMessages(
                     status: selfDeletingMessages.status,
                     config: selfDeletingMessages.config
+                )
+            )
+        }
+
+        if let mlsMigration = payload.mlsMigration {
+            featureRepository.storeMLSMigration(
+                Feature.MLSMigration(
+                    status: mlsMigration.status,
+                    config: mlsMigration.config
                 )
             )
         }
@@ -157,6 +176,7 @@ extension GetFeatureConfigsActionHandler {
         let fileSharing: FeatureStatus?
         let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
         let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
+        let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
 
     }
 

@@ -19,7 +19,6 @@
 import WireTesting
 @testable import WireRequestStrategy
 
-@available(iOS 15, *)
 class StoreUpdateEventTests: MessagingTestBase {
 
     struct Failure: Error {
@@ -97,7 +96,7 @@ class StoreUpdateEventTests: MessagingTestBase {
             resp: false
         )
 
-        let calling = Calling(content: try callEventContent.encodeToJSONString())
+        let calling = Calling(content: try callEventContent.encodeToJSONString(), conversationId: .random())
         let genericMessage = GenericMessage(content: calling)
         let serializedData = try genericMessage.serializedData()
 

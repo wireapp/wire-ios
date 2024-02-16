@@ -91,6 +91,7 @@ extension UIView {
     ///   - view: the container view to fit in
     ///   - insets: a UIEdgeInsets for inset of self.
     func fitIn(view: UIView, insets: UIEdgeInsets = .zero) {
+        translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate(fitInConstraints(view: view, insets: insets))
     }
 

@@ -224,8 +224,8 @@ public class ZMLocalNotificationForEvent: ZMLocalNotification {
     func prepareForCopy(note: ZMLocalNotificationForEvent) { }
 
     func canCreateNotification() -> Bool {
-        guard (conversation != nil || !requiresConversation),
-              let lastEvent = lastEvent where (!senderIsSelfUser(lastEvent) || lastEvent.type == .CallState)
+        guard conversation != nil || !requiresConversation,
+              let lastEvent = lastEvent where !senderIsSelfUser(lastEvent) || lastEvent.type == .CallState
         else { return false }
 
         if let conversation = conversation {

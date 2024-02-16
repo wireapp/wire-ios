@@ -90,7 +90,9 @@ final class InputBarButtonsView: UIView {
         let widthConstraint = widthAnchor.constraint(equalToConstant: 600)
         widthConstraint.priority = UILayoutPriority(rawValue: 750)
 
-        [buttonInnerContainer, buttonOuterContainer].prepareForLayout()
+        [buttonInnerContainer, buttonOuterContainer].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
             buttonRowTopInset,
             buttonInnerContainer.leadingAnchor.constraint(equalTo: buttonOuterContainer.leadingAnchor),
@@ -185,11 +187,15 @@ final class InputBarButtonsView: UIView {
             expandRowButton.isHidden = true
         }
 
-        // Round buttons.
-        firstRow.first?.roundCorners(edge: .leading, radius: 12)
-        firstRow.last?.roundCorners(edge: .trailing, radius: 12)
-        secondRow.first?.roundCorners(edge: .leading, radius: 12)
-
+        // Round buttons
+        if firstRow.count == 1 {
+            firstRow.first?.layer.cornerRadius = 12
+            firstRow.first?.clipsToBounds = true
+        } else {
+            firstRow.first?.roundCorners(edge: .leading, radius: 12)
+            firstRow.last?.roundCorners(edge: .trailing, radius: 12)
+            secondRow.first?.roundCorners(edge: .leading, radius: 12)
+        }
         var constraints = constrainRowOfButtons(
             firstRow,
             inset: 0,
@@ -267,7 +273,7 @@ final class InputBarButtonsView: UIView {
             let isLastButton = rowIsFull && current == buttons.last
             let offset = constants.iconSize / 2 + buttonMargin
 
-            [previous, current].prepareForLayout()
+            [previous, current].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
             constraints.append(
                 previous.trailingAnchor.constraint(equalTo: current.leadingAnchor)
@@ -291,7 +297,7 @@ final class InputBarButtonsView: UIView {
         }
 
         if let reference = referenceButton, !rowIsFull {
-            [reference, lastButton].prepareForLayout()
+            [reference, lastButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             constraints.append(
                 lastButton.widthAnchor.constraint(equalTo: reference.widthAnchor)
             )
@@ -308,6 +314,7 @@ final class InputBarButtonsView: UIView {
         let firstTitleMargin = (conversationHorizontalMargins.left / 2) - constants.iconSize - (firstButtonLabelSize.width / 2)
         firstButton.contentHorizontalAlignment = .center
         firstButton.imageView?.contentMode = .center
+
         firstButton.titleEdgeInsets = UIEdgeInsets(top: constants.iconSize + firstButtonLabelSize.height + constants.titleTopMargin, left: firstTitleMargin, bottom: 0, right: 0)
 
         if rowIsFull {

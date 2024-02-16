@@ -28,7 +28,7 @@ class MigrateSenderClientTests: DiskDatabaseTest {
         userClient.remoteIdentifier = clientID
         let systemMessage = ZMSystemMessage(context: coreDataStack.viewContext)
         systemMessage.systemMessageType = .decryptionFailed
-        systemMessage.clients = Set(arrayLiteral: userClient)
+        systemMessage.clients = [userClient]
         coreDataStack.viewContext.saveOrRollback()
 
         // when

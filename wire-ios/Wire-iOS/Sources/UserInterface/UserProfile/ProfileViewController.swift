@@ -29,7 +29,6 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet)
 }
 
 protocol BackButtonTitleDelegate: AnyObject {
@@ -77,9 +76,9 @@ final class ProfileViewController: UIViewController {
                      conversation: ZMConversation? = nil,
                      context: ProfileViewControllerContext? = nil,
                      classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
-                     viewControllerDismisser: ViewControllerDismisser? = nil) {
+                     viewControllerDismisser: ViewControllerDismisser? = nil,
+                     userSession: UserSession) {
         let profileViewControllerContext: ProfileViewControllerContext
-
         if let context = context {
             profileViewControllerContext = context
         } else {
@@ -90,7 +89,8 @@ final class ProfileViewController: UIViewController {
                                                        conversation: conversation,
                                                        viewer: viewer,
                                                        context: profileViewControllerContext,
-                                                       classificationProvider: classificationProvider)
+                                                       classificationProvider: classificationProvider,
+                                                       userSession: userSession)
 
         self.init(viewModel: viewModel)
 
@@ -105,8 +105,8 @@ final class ProfileViewController: UIViewController {
 
         let user = viewModel.user
 
+        user.refreshData()
         if user.isTeamMember {
-            user.refreshData()
             user.refreshMembership()
         }
     }
@@ -134,7 +134,10 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
     private func bringUpConversationCreationFlow() {
 
-        let controller = ConversationCreationController(preSelectedParticipants: viewModel.userSet, selfUser: ZMUser.selfUser())
+        let controller = ConversationCreationController(
+            preSelectedParticipants: viewModel.userSet,
+            userSession: viewModel.userSession
+        )
         controller.delegate = self
 
         let wrappedController = controller.wrapInNavigationController(setBackgroundColor: true)
@@ -203,12 +206,15 @@ final class ProfileViewController: UIViewController {
     }
 
     private func setupProfileDetailsViewController() -> ProfileDetailsViewController {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Pass the whole view Model/stuct/context
+        // swiftlint:enable todo_requires_jira_link
         let profileDetailsViewController = ProfileDetailsViewController(user: viewModel.user,
                                                                         viewer: viewModel.viewer,
                                                                         conversation: viewModel.conversation,
-                                                                        context: viewModel.context)
-        profileDetailsViewController.title = "profile.details.title".localized
+                                                                        context: viewModel.context,
+                                                                        userSession: viewModel.userSession)
+        profileDetailsViewController.title = L10n.Localizable.Profile.Details.title
 
         return profileDetailsViewController
     }
@@ -220,7 +226,10 @@ final class ProfileViewController: UIViewController {
         viewControllers.append(profileDetailsViewController)
 
         if viewModel.hasUserClientListTab {
-            let userClientListViewController = UserClientListViewController(user: viewModel.user)
+            let userClientListViewController = UserClientListViewController(
+                user: viewModel.user,
+                userSession: viewModel.userSession
+            )
             viewControllers.append(userClientListViewController)
         }
 
@@ -244,7 +253,9 @@ final class ProfileViewController: UIViewController {
 
         let securityBannerHeight: CGFloat = securityLevelView.isHidden ? 0 : 24
 
-        [usernameDetailsView, securityLevelView, tabsView, profileFooterView, incomingRequestFooter].prepareForLayout()
+        [usernameDetailsView, securityLevelView, tabsView, profileFooterView, incomingRequestFooter].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         let incomingRequestFooterBottomConstraint = incomingRequestFooter.bottomAnchor.constraint(equalTo: view.bottomAnchor).withPriority(.defaultLow)
 
         NSLayoutConstraint.activate([
@@ -348,6 +359,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             bringUpCancelConnectionRequestSheet(from: targetView)
         case .openSelfProfile:
             openSelfProfile()
+        case .duplicateUser:
+            duplicateUser()
+        case .duplicateTeam:
+            duplicateTeam()
         }
     }
 
@@ -387,7 +402,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     @objc
     private func presentLegalHoldDetails() {
         let user = viewModel.user
-        LegalHoldDetailsViewController.present(in: self, user: user)
+        LegalHoldDetailsViewController.present(in: self, user: user, userSession: viewModel.userSession)
     }
 
     // MARK: Block
@@ -413,7 +428,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     private func presentNotificationsOptions(from targetView: UIView) {
         guard let conversation = viewModel.conversation else { return }
 
-        let title = "\(conversation.displayName) • \(NotificationResult.title)"
+        let title = "\(conversation.displayNameWithFallback) • \(NotificationResult.title)"
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         NotificationResult.allCases.map { $0.action(for: conversation, handler: viewModel.handleNotificationResult) }.forEach(controller.addAction)
         presentAlert(controller, targetView: targetView)
@@ -435,12 +450,12 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         let otherUser = viewModel.user
 
         let controller = UIAlertController(
-            title: "profile.remove_dialog_message".localized(args: otherUser.name ?? ""),
+            title: L10n.Localizable.Profile.removeDialogMessage(otherUser.name ?? ""),
             message: nil,
             preferredStyle: .actionSheet
         )
 
-        let removeAction = UIAlertAction(title: "profile.remove_dialog_button_remove_confirm".localized, style: .destructive) { _ in
+        let removeAction = UIAlertAction(title: L10n.Localizable.Profile.removeDialogButtonRemoveConfirm, style: .destructive) { _ in
             self.viewModel.conversation?.removeOrShowError(participant: otherUser) { result in
                 switch result {
                 case .success:
@@ -456,6 +471,56 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         presentAlert(controller, targetView: view)
     }
+
+    private func duplicateUser() {
+        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
+        guard let user = viewModel.user as? ZMUser, let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext else {
+            assertionFailure("couldn't get context to duplicateUser")
+            return
+        }
+
+        context.performAndWait {
+            guard let original = ZMUser.existingObject(for: user.objectID, in: context) else {
+                return
+            }
+            let duplicate = ZMUser.insertNewObject(in: context)
+            duplicate.remoteIdentifier = original.remoteIdentifier
+            duplicate.domain = original.domain
+            duplicate.name = "duplicate user \(original.name ?? "<nil>")"
+            duplicate.connection = original.connection
+            duplicate.participantRoles = original.participantRoles
+            duplicate.createdTeams = original.createdTeams
+            context.saveOrRollback()
+
+            WireLogger.conversation.debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
+        }
+    }
+
+    private func duplicateTeam() {
+        guard let user = viewModel.user as? ZMUser,
+              let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext,
+              let team = user.team else {
+            assertionFailure("couldn't get context or has no team to duplicateTeam")
+            WireLogger.conversation.debug("can't duplicate team")
+            return
+        }
+
+        context.performAndWait {
+            guard let original = Team.existingObject(for: team.objectID, in: context) else { return }
+            let duplicate = Team.insertNewObject(in: context)
+            duplicate.remoteIdentifier = original.remoteIdentifier
+            duplicate.name = "duplicate team \(original.name ?? "<nil>")"
+            duplicate.conversations = original.conversations
+            duplicate.members = original.members
+            duplicate.roles = original.roles
+            duplicate.creator = original.creator
+
+            context.saveOrRollback()
+
+            WireLogger.conversation.debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
+        }
+    }
+
 }
 
 extension ProfileViewController: ProfileViewControllerDelegate {
@@ -464,31 +529,24 @@ extension ProfileViewController: ProfileViewControllerDelegate {
         delegate?.profileViewController(controller, wantsToNavigateTo: conversation)
     }
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
-        // no-op
-    }
-
 }
 
 extension ProfileViewController: ConversationCreationControllerDelegate {
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
+        didCreateConversation conversation: ZMConversation
     ) {
         controller.dismiss(animated: true) { [weak self] in
-            self?.delegate?.profileViewController(
+            guard let self = self else { return }
+
+            delegate?.profileViewController(
                 self,
-                wantsToCreateConversationWithName: name,
-                users: participants
+                wantsToNavigateTo: conversation
             )
         }
     }
+
 }
 
 extension ProfileViewController: TabBarControllerDelegate {
@@ -545,6 +603,14 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     }
 
     func presentError(_ error: LocalizedError) {
-        presentLocalizedErrorAlert(error)
+        typealias Strings = L10n.Localizable.Error.Connection
+
+        if let connectionError = error as? ConnectToUserError,
+           connectionError == .federationDenied {
+            let message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
+            UIAlertController.showErrorAlert(title: "", message: message)
+        } else {
+            presentLocalizedErrorAlert(error)
+        }
     }
 }

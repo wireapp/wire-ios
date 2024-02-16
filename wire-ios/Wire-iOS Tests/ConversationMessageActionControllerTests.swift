@@ -75,7 +75,7 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         let doubleTapAction = actionController.doubleTapAction
 
         // THEN
-        XCTAssertEqual(doubleTapAction, .like)
+        XCTAssertEqual(doubleTapAction, .react("❤️"))
     }
 
     func testThatItDoesNotAllowToLikeEphemeralMessage() {
@@ -176,5 +176,19 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
 
         // THEN
         XCTAssertFalse(supportsForward)
+    }
+
+    func testGivenURLMessageThenSupportsVisitLink() {
+        // GIVEN
+        let message = MockMessageFactory.linkMessage()
+        message.senderUser = MockUserType.createUser(name: "Bob")
+        message.conversation = otherUserConversation
+
+        // WHEN
+        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let supportsVisitLink = actionController.canPerformAction(#selector(ConversationMessageActionController.visitLink(path:)))
+
+        // THEN
+        XCTAssertTrue(supportsVisitLink)
     }
 }

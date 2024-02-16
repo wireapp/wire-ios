@@ -20,29 +20,22 @@ import WireSyncEngine
 
 protocol SectionListCellType: AnyObject {
     var sectionName: String? { get set }
+    var obfuscatedSectionName: String? { get set }
     var cellIdentifier: String? { get set }
 }
 
 extension SectionListCellType {
+
     var identifier: String {
-        let prefix: String
-
-        if let sectionName = sectionName {
-            prefix = "\(sectionName) - "
-        } else {
-            prefix = ""
-        }
-
-        if let cellIdentifier = cellIdentifier {
-            return prefix + cellIdentifier
-        } else {
-            return prefix
-        }
+        return [obfuscatedSectionName ?? sectionName, cellIdentifier]
+            .compactMap(\.self)
+            .joined(separator: " - ")
     }
 }
 
 final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
     var sectionName: String?
+    var obfuscatedSectionName: String?
     var cellIdentifier: String?
 
     let itemView = ConversationListItemView()
@@ -124,7 +117,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         if newCount != currentConnectionRequestsCount {
             let connectionUsers = connectionRequests.map { conversation in
                 if let conversation = conversation as? ZMConversation {
-                    return conversation.connection?.to
+                    return conversation.oneOnOneUser
                 } else {
                     return nil
                 }
@@ -132,7 +125,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
 
             if let users = connectionUsers as? [ZMUser] {
                 currentConnectionRequestsCount = newCount
-                let title = String(format: NSLocalizedString("list.connect_request.people_waiting", comment: ""), newCount)
+                let title = L10n.Localizable.List.ConnectRequest.peopleWaiting(newCount)
                 itemView.configure(with: NSAttributedString(string: title), subtitle: NSAttributedString(), users: users)
             }
         }

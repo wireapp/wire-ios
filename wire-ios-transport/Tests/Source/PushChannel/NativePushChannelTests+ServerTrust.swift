@@ -28,7 +28,6 @@ class MockURLProtectionSpace: URLProtectionSpace {
     }
 }
 
-@available(iOS 13.0, *)
 class NativePushChannelTests_ServerTrust: XCTestCase {
 
     var mockEnvironment: MockEnvironment!
@@ -47,7 +46,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         mockSchedulerSession = FakeSchedulerSession()
         mockEnvironment = MockEnvironment()
 
-        let dispatchGroup = ZMSDispatchGroup(label: "scheduler")!
+        let dispatchGroup = ZMSDispatchGroup(label: "scheduler")
         let scheduler = ZMTransportRequestScheduler(session: mockSchedulerSession,
                                     operationQueue: .main,
                                     group: dispatchGroup,
@@ -59,6 +58,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
                                 environment: mockEnvironment,
                                 proxyUsername: nil,
                                 proxyPassword: nil,
+                                minTLSVersion: nil,
                                 queue: .main)
     }
 

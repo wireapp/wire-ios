@@ -22,15 +22,12 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
     var sut: LegalHoldRequestStrategy!
     var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockApplicationStatus: MockApplicationStatus!
 
     override func setUp() {
         super.setUp()
-        mockSyncStateDelegate = MockSyncStateDelegate()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            syncStateDelegate: mockSyncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
         mockApplicationStatus = MockApplicationStatus()
@@ -47,7 +44,6 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         sut = nil
         mockSyncStatus = nil
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         super.tearDown()
     }
 
@@ -210,7 +206,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
     // MARK: - Event Processing
 
-    func testThatItProcessesLegalHoldRequestEvent() {
+    func testThatItProcessesLegalHoldRequestEvent() async {
         // GIVEN
         var selfUser: ZMUser! = nil
 
@@ -220,12 +216,12 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
-        let payload = type(of: self).payloadForReceivingLegalHoldRequestEvent(request: legalHoldRequest)
-        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())!
+        self.syncMOC.performAndWait {
+            let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
+            let payload = type(of: self).payloadForReceivingLegalHoldRequestEvent(request: legalHoldRequest)
+            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())!
 
-        // WHEN
-        syncMOC.performGroupedBlockAndWait {
+            // WHEN
             self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
             // THEN
@@ -251,14 +247,13 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // WHEN
-        syncMOC.performGroupedBlockAndWait {
-            let payload: [String: Any] = [
-                "type": "user.legalhold-disable"
-            ]
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
+        let payload: [String: Any] = [
+            "type": "user.legalhold-disable"
+        ]
+        let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
+        syncMOC.performAndWait {
             self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedBlockAndWait {

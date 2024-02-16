@@ -18,7 +18,6 @@
 
 import XCTest
 import SnapshotTesting
-import WireCommonComponents
 @testable import Wire
 
 final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTestHelper {
@@ -28,7 +27,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
 
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
+
         coreDataFixture = CoreDataFixture()
         accentColor = .strongBlue
 

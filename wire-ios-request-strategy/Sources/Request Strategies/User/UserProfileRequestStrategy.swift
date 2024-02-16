@@ -34,6 +34,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     let userProfileByIDTranscoder: UserProfileByIDTranscoder
     let userProfileByQualifiedIDTranscoder: UserProfileByQualifiedIDTranscoder
 
+    let actionSync: EntityActionSync
+
     public init(managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 syncProgress: SyncProgress) {
@@ -47,6 +49,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         self.userProfileByQualifiedID = IdentifierObjectSync(managedObjectContext: managedObjectContext,
                                                              transcoder: userProfileByQualifiedIDTranscoder)
 
+        self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext)])
+
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [.allowsRequestsWhileOnline,
@@ -58,7 +62,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fetchAllConnectedUsers(for: apiVersion)
-        return userProfileByQualifiedID.nextRequest(for: apiVersion) ?? userProfileByID.nextRequest(for: apiVersion)
+
+        return [userProfileByID, userProfileByQualifiedID, actionSync].nextRequest(for: apiVersion)
     }
 
     func fetchAllConnectedUsers(for apiVersion: APIVersion) {
@@ -75,9 +80,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)
         } else {
             fetch(users: allConnectedUsers, for: apiVersion)
+            isFetchingAllConnectedUsers = true
         }
-
-        isFetchingAllConnectedUsers = true
     }
 
     func allConnectedUsers() -> Set<ZMUser> {
@@ -94,7 +98,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         case .v0:
             userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             } else if let domain = BackendInfo.domain {
@@ -132,7 +136,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
         guard let apiVersion = BackendInfo.apiVersion else { return }
 
         let usersNeedingToBeUpdated = objects
-            .compactMap { $0 as? ZMUser}
+            .compactMap { $0 as? ZMUser }
             .filter(\.needsToBeUpdatedFromBackend)
 
         fetch(users: Set(usersNeedingToBeUpdated), for: apiVersion)
@@ -182,16 +186,24 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
             return Logging.eventProcessing.error("Malformed user.update update event, skipping...")
         }
 
-        let user = ZMUser.fetchOrCreate(with: userID,
-                                        domain: userProfile.qualifiedID?.domain,
-                                        in: managedObjectContext)
-        userProfile.updateUserProfile(for: user, authoritative: false)
+        let user = ZMUser.fetchOrCreate(
+            with: userID,
+            domain: userProfile.qualifiedID?.domain,
+            in: managedObjectContext
+        )
+
+        let processor = UserProfilePayloadProcessor()
+        processor.updateUserProfile(
+            from: userProfile,
+            for: user,
+            authoritative: false
+        )
     }
 
     func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
         guard updateEvent.type == .userDelete else { return }
 
-        guard let userId = (updateEvent.payload["id"] as? String).flatMap(UUID.init),
+        guard let userId = (updateEvent.payload["id"] as? String).flatMap(UUID.init(transportString:)),
               let user = ZMUser.fetch(with: userId, in: managedObjectContext)
         else {
             return Logging.eventProcessing.error("Malformed user.delete update event, skipping...")
@@ -221,17 +233,21 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = UserProfilePayloadProcessor()
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard apiVersion == .v0 else { return nil }
         // GET /users?ids=?
         let userIDs = identifiers.map({ $0.transportString() }).joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
 
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
             if case .notFound = responseFailure.label {
@@ -248,7 +264,10 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        payload.updateUserProfiles(in: context)
+        processor.updateUserProfiles(
+            from: payload,
+            in: context
+        )
 
         let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.id))
         markUserProfilesAsFetched(missingIdentifiers)
@@ -274,6 +293,8 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = UserProfilePayloadProcessor()
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
@@ -289,17 +310,21 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 
         // POST /list-users
         let path = NSString.path(withComponents: ["/list-users"])
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
+
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
             guard case .notFound = responseFailure.label else { return }
             markUserProfilesAsFetched(identifiers)
             return
         }
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [John] proper federation error handling.
+        // swiftlint:enable todo_requires_jira_link
         // This is a quick fix to make the app somewhat usable when
         // a remote federated backend is down.
         if response.httpStatus == 533 {
@@ -318,12 +343,15 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                 return
             }
 
-            payload.updateUserProfiles(in: context)
+            processor.updateUserProfiles(
+                from: payload,
+                in: context
+            )
 
             let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.qualifiedID))
             markUserProfilesAsFetched(missingIdentifiers)
 
-        case .v4:
+        case .v4, .v5, .v6:
             guard
                 let rawData = response.rawData,
                 let payload = Payload.UserProfilesV4(rawData, decoder: decoder)
@@ -331,11 +359,15 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                 Logging.network.warn("Can't process response, aborting.")
                 return
             }
-            let foundUsers = payload.found
-            foundUsers.updateUserProfiles(in: context)
 
-            let missingIdentifiers = identifiers.subtracting(foundUsers.compactMap(\.qualifiedID))
-            markUserProfilesAsFetched(missingIdentifiers)
+            processor.updateUserProfiles(
+                from: payload.found,
+                in: context
+            )
+
+            if let failedIdentifiers = payload.failed {
+                markUserProfilesAsUnavailable(Set(failedIdentifiers))
+            }
         }
     }
 
@@ -349,7 +381,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     private func markUserProfilesAsUnavailable(_ users: Set<QualifiedID>) {
         for qualifiedID in users {
             let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
-            user?.name = "Username unavailable"
+            user?.isPendingMetadataRefresh = true
             user?.needsToBeUpdatedFromBackend = false
         }
     }

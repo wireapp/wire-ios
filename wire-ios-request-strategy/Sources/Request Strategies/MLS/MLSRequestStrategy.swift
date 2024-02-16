@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,17 +33,26 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
     ) {
         entitySync = EntityActionSync(actionHandlers: [
             SendMLSMessageActionHandler(context: managedObjectContext),
+            SendCommitBundleActionHandler(context: managedObjectContext),
             CountSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             UploadSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             ClaimMLSKeyPackageActionHandler(context: managedObjectContext),
             FetchBackendMLSPublicKeysActionHandler(context: managedObjectContext),
-            FetchPublicGroupStateActionHandler(context: managedObjectContext)
+            FetchMLSSubconversationGroupInfoActionHandler(context: managedObjectContext),
+            FetchMLSConversationGroupInfoActionHandler(context: managedObjectContext),
+            FetchSubgroupActionHandler(context: managedObjectContext),
+            DeleteSubgroupActionHandler(context: managedObjectContext),
+            LeaveSubconversationActionHandler(context: managedObjectContext),
+            FetchSupportedProtocolsActionHandler(context: managedObjectContext),
+            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext)
         ])
 
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
         )
+
+        configuration = [.allowsRequestsDuringSlowSync, .allowsRequestsWhileOnline]
     }
 
     // MARK: - Requests

@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 import WireSystem
 
-final public class SearchResultLabel: UILabel, Copyable {
+public final class SearchResultLabel: UILabel, Copyable {
 
     public convenience init(instance: SearchResultLabel) {
         self.init()

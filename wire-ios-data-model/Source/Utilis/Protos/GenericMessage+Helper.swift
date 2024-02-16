@@ -213,7 +213,7 @@ extension GenericMessage {
 
 public extension Text {
     func isMentioningSelf(_ selfUser: ZMUser) -> Bool {
-        return mentions.any {$0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
+        return mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
     }
 
     func isQuotingSelf(_ quotedMessage: ZMOTRMessage?) -> Bool {
@@ -311,6 +311,13 @@ public extension Proteus_ClientEntry {
     init(withClient client: UserClient, data: Data) {
         self = Proteus_ClientEntry.with {
             $0.client = client.clientId
+            $0.text = data
+        }
+    }
+
+    init(withClientId clientId: Proteus_ClientId, data: Data) {
+        self = Proteus_ClientEntry.with {
+            $0.client = clientId
             $0.text = data
         }
     }
@@ -442,9 +449,11 @@ extension Text {
         updatedText.expectsReadConfirmation = expectsReadConfirmation
 
         // We always keep the quote from the original message
-        hasQuote
-            ? updatedText.quote = quote
-            : updatedText.clearQuote()
+        if hasQuote {
+            updatedText.quote = quote
+        } else {
+            updatedText.clearQuote()
+        }
         return updatedText
     }
 
@@ -466,28 +475,58 @@ extension Text {
 // MARK: - Reaction
 
 extension WireProtos.Reaction {
-    public static func createReaction(emoji: String, messageID: UUID) -> WireProtos.Reaction {
-        return WireProtos.Reaction.with({
-            $0.emoji = emoji
+
+    public static func createReaction(
+        emojis: Set<String>,
+        messageID: UUID
+    ) -> WireProtos.Reaction {
+        let transportString = emojis
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .joined(separator: ",")
+
+        return WireProtos.Reaction.with {
+            $0.emoji = transportString
             $0.messageID = messageID.transportString()
-        })
+        }
     }
+
+    func toReactionSet() -> Set<String> {
+        guard !emoji.isEmpty else { return [] }
+
+        let result = emoji
+            .components(separatedBy: ",")
+            .map { String($0) }
+
+        return Set(result)
+    }
+
 }
 
 public enum ProtosReactionFactory {
-    public static func createReaction(emoji: String, messageID: UUID) -> WireProtos.Reaction {
-        return WireProtos.Reaction.createReaction(emoji: emoji,
-                                                  messageID: messageID)
+
+    public static func createReaction(
+        emojis: Set<String>,
+        messageID: UUID
+    ) -> WireProtos.Reaction {
+        return WireProtos.Reaction.createReaction(
+            emojis: emojis,
+            messageID: messageID
+        )
     }
+
 }
 
 // MARK: - LastRead
 
 extension LastRead {
-    public init(conversationID: UUID, lastReadTimestamp: Date) {
+    public init(conversationID: QualifiedID, lastReadTimestamp: Date) {
         self = LastRead.with {
-            $0.conversationID = conversationID.transportString()
+            $0.conversationID = conversationID.uuid.transportString()
             $0.lastReadTimestamp = Int64(lastReadTimestamp.timeIntervalSince1970 * 1000)
+            $0.qualifiedConversationID = WireProtos.QualifiedConversationId.with {
+                $0.id = conversationID.uuid.transportString()
+                $0.domain = conversationID.domain
+            }
         }
     }
 }
@@ -495,9 +534,13 @@ extension LastRead {
 // MARK: - Calling
 
 extension Calling {
-    public init(content: String) {
+    public init(content: String, conversationId: QualifiedID) {
         self = Calling.with {
             $0.content = content
+            $0.qualifiedConversationID = QualifiedConversationId.with {
+                $0.domain = conversationId.domain
+                $0.id = conversationId.uuid.transportString()
+            }
         }
     }
 }
@@ -540,7 +583,7 @@ extension MessageHide {
 extension MessageDelete {
     public init(messageId: UUID) {
         self = MessageDelete.with {
-         $0.messageID = messageId.transportString()
+            $0.messageID = messageId.transportString()
         }
     }
 }
@@ -609,25 +652,6 @@ public extension WireDataModel.Mention {
     }
 }
 
-// MARK: - Availability
-
-extension WireProtos.Availability {
-    public init(_ availability: AvailabilityKind) {
-        self = WireProtos.Availability.with {
-            switch availability {
-            case .none:
-                $0.type = .none
-            case .available:
-                $0.type = .available
-            case .away:
-                $0.type = .away
-            case .busy:
-                $0.type = .busy
-            }
-        }
-    }
-}
-
 // MARK: - LinkPreview
 
 public extension LinkPreview {
@@ -669,7 +693,7 @@ public extension LinkPreview {
             }
 
             guard let author = twitterMetadata.author,
-                let username = twitterMetadata.username else { return }
+                  let username = twitterMetadata.username else { return }
 
             $0.tweet = WireProtos.Tweet.with({
                 $0.author = author

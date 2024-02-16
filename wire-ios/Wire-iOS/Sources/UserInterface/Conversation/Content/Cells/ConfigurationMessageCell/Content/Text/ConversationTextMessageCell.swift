@@ -127,13 +127,16 @@ final class ConversationTextMessageCell: UIView,
 
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
-            menuPresenter?.showMenu()
+            if !Settings.isClipboardEnabled {
+                menuPresenter?.showSecuredMenu(for: textView.text)
+            } else {
+                menuPresenter?.showMenu()
+            }
         }
     }
 
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
-
         isAccessibilityElement = true
         accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }

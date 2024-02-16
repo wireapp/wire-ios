@@ -53,7 +53,7 @@ final class UserBlockingReasonCell: UITableViewCell {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.linkTextAttributes = [
             NSAttributedString.Key.underlineStyle: NSUnderlineStyle().rawValue as NSNumber,
-            NSAttributedString.Key.foregroundColor: SelfUser.provider?.selfUser.accentColor ?? UIColor.accent()
+            NSAttributedString.Key.foregroundColor: SelfUser.provider?.providedSelfUser.accentColor ?? UIColor.accent()
         ]
         contentView.addSubview(titleLabel)
     }

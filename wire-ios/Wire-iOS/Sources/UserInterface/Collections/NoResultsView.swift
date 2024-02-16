@@ -57,7 +57,7 @@ final class NoResultsView: UIView {
         iconView.contentMode = .scaleAspectFit
         addSubview(iconView)
 
-        [label, iconView].prepareForLayout()
+        [label, iconView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           iconView.topAnchor.constraint(equalTo: topAnchor),
           iconView.centerXAnchor.constraint(equalTo: centerXAnchor),

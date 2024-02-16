@@ -38,6 +38,7 @@ class DynamicFontButton: StylableButton, DynamicTypeCapable {
     @available(*, deprecated, message: "Use `init(style:)` instead")
     init(fontSpec: FontSpec = .normalRegularFont) {
         self.onRedrawFont = { return fontSpec.font }
+
         super.init(frame: .zero)
 
         titleLabel?.font = fontSpec.font

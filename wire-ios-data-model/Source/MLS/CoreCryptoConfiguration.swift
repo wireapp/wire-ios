@@ -94,7 +94,10 @@ public class CoreCryptoConfigProvider {
     }
 
     public func clientID(of selfUser: ZMUser) throws -> String {
-        guard let clientID = MLSQualifiedClientID(user: selfUser).qualifiedClientId else {
+        guard
+            let selfClient = selfUser.selfClient(),
+            let clientID = MLSClientID(userClient: selfClient)?.rawValue
+        else {
             throw ConfigurationSetupFailure.failedToGetClientId
         }
 
@@ -110,11 +113,11 @@ public class CoreCryptoConfigProvider {
 public extension ClientId {
 
     init?(from string: String) {
-        guard let bytes = string.data(using: .utf8)?.bytes else {
+        guard let data = string.data(using: .utf8) else {
             return nil
         }
 
-        self = bytes
+        self = data
     }
 
 }

@@ -19,7 +19,7 @@
 import Foundation
 import WireRequestStrategy
 
-class ApplicationStatusDirectory: ApplicationStatus {
+final class ApplicationStatusDirectory: ApplicationStatus {
 
     // MARK: - Properties
 

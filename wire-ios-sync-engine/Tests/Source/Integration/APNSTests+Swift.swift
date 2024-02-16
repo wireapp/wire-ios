@@ -18,6 +18,7 @@
 
 import Foundation
 import WireMockTransport
+import XCTest
 
 class APNSTests_Swift: APNSTestsBase {
 
@@ -50,11 +51,24 @@ class APNSTests_Swift: APNSTestsBase {
         XCTAssertEqual(self.application?.applicationIconBadgeNumber, 0)
 
         // WHEN
-        userSession?.receivedPushNotification(with: noticePayloadForLastEvent(), completion: {})
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        guard let userSession = userSession else {
+            XCTFail("missing userSession")
+            return
+        }
+
+        let exp = XCTestExpectation(description: "wait for receivedPushNotification to complete")
+        userSession.receivedPushNotification(with: noticePayloadForLastEvent(), completion: {
+            exp.fulfill()
+        })
+        wait(for: [exp], timeout: 5)
 
         // THEN
         XCTAssertEqual(self.application?.applicationIconBadgeNumber, 1)
+
+        // CLEANUP
+        application?.setActive()
+        application?.simulateApplicationWillEnterForeground()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
     }
 
 }

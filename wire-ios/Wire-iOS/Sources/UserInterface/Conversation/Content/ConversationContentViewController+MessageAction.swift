@@ -38,7 +38,7 @@ extension ConversationContentViewController {
             return
         }
 
-        messagePresenter.open(message, targetView: tableView.targetView(for: message, dataSource: dataSource), actionResponder: self)
+        messagePresenter.open(message, targetView: tableView.targetView(for: message, dataSource: dataSource), actionResponder: self, userSession: userSession)
     }
 
     func openSketch(for message: ZMConversationMessage, in editMode: CanvasViewControllerEditMode) {
@@ -47,7 +47,7 @@ extension ConversationContentViewController {
             canvasViewController.sketchImage = UIImage(data: imageData)
         }
         canvasViewController.delegate = self
-        canvasViewController.title = message.conversationLike?.displayName
+        canvasViewController.navigationItem.setupNavigationBarTitle(title: message.conversationLike?.displayName ?? "")
         canvasViewController.select(editMode: editMode, animated: false)
 
         present(canvasViewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
@@ -58,18 +58,18 @@ extension ConversationContentViewController {
                        view: UIView) {
         switch actionId {
         case .cancel:
-            session.enqueue({
+            userSession.enqueue({
                 message.fileMessageData?.cancelTransfer()
             })
         case .resend:
-            session.enqueue({
+            userSession.enqueue({
                 message.resend()
             })
         case .delete:
             assert(message.canBeDeleted)
 
             deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: presentedViewController ?? self)
-            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: view) { deleted in
+            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: view, userSession: userSession) { deleted in
                 if deleted {
                     self.presentedViewController?.dismiss(animated: true)
                 }
@@ -109,31 +109,7 @@ extension ConversationContentViewController {
             openSketch(for: message, in: .draw)
         case .sketchEmoji:
             openSketch(for: message, in: .emoji)
-        case .like, .unlike:
-            // The new liked state, the value is flipped
-            let updatedLikedState = !Message.isLikedMessage(message)
-            guard let indexPath = dataSource.topIndexPath(for: message) else { return }
 
-            let selectedMessage = dataSource.selectedMessage
-
-            session.perform({
-                Message.setLikedMessage(message, liked: updatedLikedState)
-            })
-
-            if updatedLikedState {
-                // Deselect if necessary to show list of likers
-                if selectedMessage == message {
-                    willSelectRow(at: indexPath, tableView: tableView)
-                }
-
-                Analytics.shared.tagLiked(in: conversation)
-            } else {
-                // Select if necessary to prevent message from collapsing
-                if !(selectedMessage == message) && !Message.hasReactions(message) {
-                    willSelectRow(at: indexPath, tableView: tableView)
-                    tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-                }
-            }
         case .forward:
             showForwardFor(message: message, from: view)
         case .showInConversation:
@@ -143,7 +119,7 @@ extension ConversationContentViewController {
         case .copy:
             message.copy(in: .general)
         case .download:
-            session.enqueue({
+            userSession.enqueue({
                 message.fileMessageData?.requestFileDownload()
             })
         case .reply:
@@ -155,13 +131,23 @@ extension ConversationContentViewController {
                 }
             }
         case .openDetails:
-            let detailsViewController = MessageDetailsViewController(message: message)
+            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
             parent?.present(detailsViewController, animated: true)
         case .resetSession:
             guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
             isLoadingViewVisible = true
             userClientToken = UserClientChangeInfo.add(observer: self, for: client)
             client.resetSession()
+        case .react(let reaction):
+            Analytics.shared.tagReacted(in: conversation)
+            userSession.perform {
+                message.react(reaction)
+            }
+        case .visitLink(let path):
+            if let url = URL(string: path),
+                UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
         }
     }
 
@@ -175,11 +161,11 @@ extension ConversationContentViewController {
     }
 
     private func presentDownloadNecessaryAlert(for message: ZMConversationMessage) {
-        let alertMessage = "digital_signature.alert.download_necessary".localized
+        let alertMessage = L10n.Localizable.DigitalSignature.Alert.downloadNecessary
         let alertController = UIAlertController(title: "",
                                                 message: alertMessage,
                                                 preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "general.close".localized,
+        let cancelAction = UIAlertAction(title: L10n.Localizable.General.close,
                                          style: .default)
         alertController.addAction(cancelAction)
         present(alertController, animated: true)
@@ -269,16 +255,16 @@ extension ConversationContentViewController: SignatureObserver {
         var message: String?
         switch errorType {
         case .noConsentURL:
-            message = "digital_signature.alert.error.no_consent_url".localized
+            message = L10n.Localizable.DigitalSignature.Alert.Error.noConsentUrl
         case .retrieveFailed:
-            message = "digital_signature.alert.error.no_signature".localized
+            message = L10n.Localizable.DigitalSignature.Alert.Error.noSignature
         }
 
         let alertController = UIAlertController(title: "",
                                                 message: message,
                                                 preferredStyle: .alert)
 
-        let closeAction = UIAlertAction(title: "general.close".localized,
+        let closeAction = UIAlertAction(title: L10n.Localizable.General.close,
                                         style: .default)
 
         alertController.addAction(closeAction)

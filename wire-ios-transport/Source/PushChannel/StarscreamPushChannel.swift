@@ -19,9 +19,8 @@
 import Foundation
 import Starscream
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 @objcMembers
-class StarscreamPushChannel: NSObject, PushChannelType {
+final class StarscreamPushChannel: NSObject, PushChannelType {
 
     var webSocket: WebSocket?
     var workQueue: OperationQueue
@@ -30,6 +29,7 @@ class StarscreamPushChannel: NSObject, PushChannelType {
     weak var consumer: ZMPushChannelConsumer?
     var consumerQueue: ZMSGroupQueue?
     var pingTimer: ZMTimer?
+    private let minTLSVersion: TLSVersion
 
     var clientID: String? {
         didSet {
@@ -66,17 +66,21 @@ class StarscreamPushChannel: NSObject, PushChannelType {
         return urlComponents?.url
     }
 
-    required init(scheduler: ZMTransportRequestScheduler,
-                  userAgentString: String,
-                  environment: BackendEnvironmentProvider,
-                  proxyUsername: String?,
-                  proxyPassword: String?,
-                  queue: OperationQueue) {
+    required init(
+        scheduler: ZMTransportRequestScheduler,
+        userAgentString: String,
+        environment: BackendEnvironmentProvider,
+        proxyUsername: String?,
+        proxyPassword: String?,
+        minTLSVersion: String?,
+        queue: OperationQueue
+    ) {
         self.environment = environment
         self.scheduler = scheduler
         self.proxyUsername = proxyUsername
         self.proxyPassword = proxyPassword
         self.workQueue = queue
+        self.minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
@@ -121,7 +125,14 @@ class StarscreamPushChannel: NSObject, PushChannelType {
         connectionRequest.setValue("\(accessToken.type) \(accessToken.token)", forHTTPHeaderField: "Authorization")
 
         let certificatePinning = StarscreamCertificatePinning(environment: environment)
-        webSocket = WebSocket(request: connectionRequest, certPinner: certificatePinning, useCustomEngine: environment.proxy == nil)
+
+        webSocket = WebSocket(
+            request: connectionRequest,
+            certPinner: certificatePinning,
+            useCustomEngine: environment.proxy == nil,
+            minTLSVersion: minTLSVersion.starscreamValue
+        )
+
         webSocket?.delegate = self
 
         if let proxySettings = environment.proxy {
@@ -200,7 +211,6 @@ class StarscreamPushChannel: NSObject, PushChannelType {
     }
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension StarscreamPushChannel: ZMTimerClient {
 
     func timerDidFire(_ timer: ZMTimer!) {
@@ -211,7 +221,6 @@ extension StarscreamPushChannel: ZMTimerClient {
 
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension StarscreamPushChannel: WebSocketDelegate {
     func didReceive(event: WebSocketEvent, client: WebSocketClient) {
         switch event {
@@ -250,7 +259,7 @@ extension StarscreamPushChannel: WebSocketDelegate {
 
 }
 
-class StarscreamCertificatePinning: CertificatePinning {
+final class StarscreamCertificatePinning: CertificatePinning {
 
     let environment: BackendEnvironmentProvider
 
@@ -263,6 +272,20 @@ class StarscreamCertificatePinning: CertificatePinning {
             completion(.success)
         } else {
             completion(.failed(nil))
+        }
+    }
+
+}
+
+private extension TLSVersion {
+
+    var starscreamValue: Starscream.TLSVersion {
+        switch self {
+        case .v1_2:
+            return .v1_2
+
+        case .v1_3:
+            return .v1_3
         }
     }
 

@@ -82,7 +82,7 @@ final class CountryCodeTableViewController: UITableViewController, UISearchContr
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
 
         definesPresentationContext = true
-        title = NSLocalizedString("registration.country_select.title", comment: "").localized
+        title = L10n.Localizable.Registration.CountrySelect.title
 
         if let title = title {
             navigationItem.setupNavigationBarTitle(title: title.capitalized)
@@ -140,7 +140,9 @@ extension CountryCodeTableViewController: UISearchBarDelegate {
 
 // MARK: - UISearchResultsUpdating
 
-/// TODO: test
+// swiftlint:disable todo_requires_jira_link
+// TODO: test
+// swiftlint:enable todo_requires_jira_link
 extension CountryCodeTableViewController: UISearchResultsUpdating {
 
     func filter(searchText: String?) -> [Any]? {

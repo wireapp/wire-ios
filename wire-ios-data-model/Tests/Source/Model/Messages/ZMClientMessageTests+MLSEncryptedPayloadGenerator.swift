@@ -38,12 +38,12 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
         $0.zmSHA256Digest()
     }
 
-    func test_EncryptForTransport_GenericMessage() throws {
+    func test_EncryptForTransport_GenericMessage() async throws {
         // Given
         let message = GenericMessage(content: Text(content: "Hello!"))
 
         // When
-        let encryptedMessage = try message.encryptForTransport(using: encryptionFunction)
+        let encryptedMessage = try await message.encryptForTransport(using: encryptionFunction)
 
         // Then
         let serializedMessage = try message.serializedData()
@@ -51,18 +51,22 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
         XCTAssertEqual(encryptedMessage, expectedEncryptedMessage)
     }
 
-    func test_EncryptForTransport_ClientMessage() throws {
-        syncMOC.performGroupedBlockAndWait {
-            // Given
-            guard let message = try? self.syncConversation.appendText(content: "Hello!") as? ZMClientMessage else {
-                return XCTFail("failed to create client message")
-            }
+    func test_EncryptForTransport_ClientMessage() async throws {
+        // Given
+        let message = await syncMOC.perform {
+            try? self.syncConversation.appendText(content: "Hello!") as? ZMClientMessage
+        }
 
-            // When
-            guard let encryptedMessage = try? message.encryptForTransport(using: self.encryptionFunction) else {
-                return XCTFail("failed to encrypt message")
-            }
+        guard let message  else {
+            return XCTFail("failed to create client message")
+        }
 
+        // When
+        guard let encryptedMessage = try? await message.encryptForTransport(using: self.encryptionFunction) else {
+            return XCTFail("failed to encrypt message")
+        }
+
+        await syncMOC.perform {
             // Then
             guard var genericMessage = message.underlyingMessage else {
                 return XCTFail("failed to get generic message")
@@ -81,18 +85,20 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
 
     }
 
-    func test_EncryptForTransport_AssetClientMessage() throws {
-        syncMOC.performGroupedBlockAndWait {
-            // Given
-            guard let message = try? self.syncConversation.appendImage(from: self.verySmallJPEGData()) as? ZMAssetClientMessage else {
-                return XCTFail("failed to create client message")
-            }
+    func test_EncryptForTransport_AssetClientMessage() async throws {
+        // Given
+        let message = try await syncMOC.perform {
+            try self.syncConversation.appendImage(from: self.verySmallJPEGData()) as? ZMAssetClientMessage
+        }
 
-            // When
-            guard let encryptedMessage = try? message.encryptForTransport(using: self.encryptionFunction) else {
-                return XCTFail("failed to encrypt message")
-            }
+        guard let message else {
+            return XCTFail("failed to create client message")
+        }
 
+        // When
+        let encryptedMessage = try await message.encryptForTransport(using: self.encryptionFunction)
+
+        await syncMOC.perform {
             // Then
             guard var genericMessage = message.underlyingMessage else {
                 return XCTFail("failed to get generic message")

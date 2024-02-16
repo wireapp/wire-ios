@@ -220,7 +220,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
             return
         }
 
-        [contentStackView, knobView].prepareForLayout()
+        [contentStackView, knobView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             contentStackView.leadingAnchor.constraint(equalTo: leadingAnchor),

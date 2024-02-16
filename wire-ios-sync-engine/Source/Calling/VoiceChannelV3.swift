@@ -131,12 +131,8 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     }
 
     public var muted: Bool {
-        get {
-            return callCenter?.muted ?? false
-        }
-        set {
-            callCenter?.muted = newValue
-        }
+        get { callCenter?.isMuted ?? false }
+        set { callCenter?.isMuted = newValue }
     }
 
     public var isConferenceCall: Bool {
@@ -196,12 +192,6 @@ extension VoiceChannelV3: CallActions {
     public func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {
         guard let conversation = conversation else { return }
         conversation.acknowledgePrivacyWarning(withResendIntent: false)
-        userSession.syncManagedObjectContext.performGroupedBlock {
-            let conversationId = conversation.objectID
-            if let syncConversation = (try? userSession.syncManagedObjectContext.existingObject(with: conversationId)) as? ZMConversation {
-                userSession.syncStrategy?.callingRequestStrategy?.dropPendingCallMessages(for: syncConversation)
-            }
-        }
         leave(userSession: userSession, completion: nil)
     }
 
@@ -233,18 +223,26 @@ extension VoiceChannelV3: CallActions {
 extension VoiceChannelV3: CallActionsInternal {
 
     public func join(video: Bool) -> Bool {
-        guard let conversation = conversation else { return false }
-
-        var joined = false
-
-        switch state {
-        case .incoming:
-            joined = callCenter?.answerCall(conversation: conversation, video: video) ?? false
-        default:
-            joined = callCenter?.startCall(conversation: conversation, video: video) ?? false
+        guard
+            let conversation = conversation,
+            let callCenter = callCenter
+        else {
+            return false
         }
 
-        return joined
+        do {
+            switch state {
+            case .incoming:
+                try callCenter.answerCall(conversation: conversation, video: video)
+                return true
+
+            default:
+                try callCenter.startCall(in: conversation, isVideo: video)
+                return true
+            }
+        } catch {
+            return false
+        }
     }
 
     public func leave() {

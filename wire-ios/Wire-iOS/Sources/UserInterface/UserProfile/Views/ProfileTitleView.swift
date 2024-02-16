@@ -58,7 +58,7 @@ final class ProfileTitleView: UIView {
     }
 
     private func createConstraints() {
-        [titleLabel, verifiedImageView].prepareForLayout()
+        [titleLabel, verifiedImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           titleLabel.topAnchor.constraint(equalTo: topAnchor),
           titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -71,8 +71,13 @@ final class ProfileTitleView: UIView {
     }
 
     func configure(with user: UserType) {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         let attributedTitle = user.nameIncludingAvailability(color: LabelColors.textDefault,
-                                                             selfUser: ZMUser.selfUser())
+                                                             selfUser: selfUser)
         titleLabel.attributedText = attributedTitle
         setupAccessibility()
     }

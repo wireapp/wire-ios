@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 public extension ChaCha20Poly1305 {
 

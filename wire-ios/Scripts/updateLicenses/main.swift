@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 // --------------------------------------------------------------------
 // This script updates the Wire-iOS/Resources/Licenses file with the
 // latest licenses and dependencies from Carthage.
@@ -109,16 +110,14 @@ func getLicenseURL(in directory: URL) -> URL? {
         return nil
     }
 
-    for spelling in licenseSpellings {
-        if topLevelItems.contains(spelling) {
-            let possibleURL = directory.appendingPathComponent(spelling)
+    for spelling in licenseSpellings where topLevelItems.contains(spelling) {
+        let possibleURL = directory.appendingPathComponent(spelling)
 
-            guard FileManager.default.fileExists(atPath: possibleURL.path) else {
-                continue
-            }
-
-            return possibleURL
+        guard FileManager.default.fileExists(atPath: possibleURL.path) else {
+            continue
         }
+
+        return possibleURL
     }
 
     return nil

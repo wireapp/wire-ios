@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import WireSyncEngine
 
 /// A window used to obfuscate the main content window when the app is inactive.
 
@@ -25,7 +26,7 @@ final class ScreenCurtain: UIWindow {
 
     // MARK: - Properties
 
-    weak var delegate: ScreenCurtainDelegate?
+    weak var userSession: UserSession?
 
     // MARK: - Life cycle
 
@@ -67,7 +68,7 @@ final class ScreenCurtain: UIWindow {
 
     @objc
     func applicationWillResignActive() {
-        let shouldShow = delegate?.shouldShowScreenCurtain ?? false
+        let shouldShow = userSession?.requiresScreenCurtain ?? false
         isHidden = !shouldShow
     }
 

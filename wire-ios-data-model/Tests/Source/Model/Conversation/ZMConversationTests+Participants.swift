@@ -17,24 +17,8 @@
 //
 
 import Foundation
+import WireDataModelSupport
 @testable import WireDataModel
-
-class MLSClientIDsProviderMock: MLSClientIDsProvider {
-
-    enum MockError: Error {
-        case unmockedMethodCalled
-    }
-
-    typealias FetchUserClientsMock = (QualifiedID, NotificationContext) async throws -> [MLSClientID]
-    var fetchUserClientsMock: FetchUserClientsMock?
-
-    override func fetchUserClients(for userID: QualifiedID, in context: NotificationContext) async throws -> [MLSClientID] {
-        guard let mock = fetchUserClientsMock else {
-            throw MockError.unmockedMethodCalled
-        }
-        return try await mock(userID, context)
-    }
-}
 
 final class ConversationParticipantsTests: ZMConversationTestsBase {
 
@@ -189,7 +173,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         let connection = ZMConnection.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .oneOnOne
-        conversation.connection = connection
+        user.connection = connection
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
 
         // when
@@ -197,6 +181,57 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertNotEqual(selfUser.connection, connection)
+    }
+
+    func testThatItCreatesAConnectionIfUserIsNotATeamMember() {
+        // given
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = .create()
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+
+        XCTAssertNil(otherUser.connection)
+        XCTAssertFalse(otherUser.isOnSameTeam(otherUser: selfUser))
+
+        // when
+        conversation.addParticipantAndSystemMessageIfMissing(otherUser, date: Date())
+
+        // then
+        XCTAssertNotNil(otherUser.connection)
+    }
+
+    func testThatItDoesntCreateAConnectionIfUserIsTeamMember() {
+        // given
+        let team = Team.insertNewObject(in: uiMOC)
+        team.remoteIdentifier = .create()
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfUserMembership = Member.insertNewObject(in: uiMOC)
+        selfUserMembership.team = team
+        selfUserMembership.user = selfUser
+
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = .create()
+        let otherUserMembership = Member.insertNewObject(in: uiMOC)
+        otherUserMembership.team = team
+        otherUserMembership.user = otherUser
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+
+        XCTAssertNil(otherUser.connection)
+        XCTAssertTrue(otherUser.isOnSameTeam(otherUser: selfUser))
+
+        // when
+        conversation.addParticipantAndSystemMessageIfMissing(otherUser, date: Date())
+
+        // then
+        XCTAssertNil(otherUser.connection)
     }
 
     func testThatItAddsParticipants() {
@@ -411,7 +446,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         connection.to = user
 
         // when
-        connection.conversation = conversation
+        user.oneOnOneConversation = conversation
 
         // then
         XCTAssertEqual(conversation.connectedUser, user)
@@ -426,7 +461,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         connection.to = user
 
         // when
-        connection.conversation = conversation
+        user.oneOnOneConversation = conversation
 
         // then
         XCTAssertEqual(conversation.connectedUser, user)
@@ -485,7 +520,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role}, [role1, role1])
+        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role }, [role1, role1])
     }
 
     func testThatItAddsParticipantsWithTheGivenRole() {
@@ -510,8 +545,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user2 }?.role, role2)
     }
 
     func testThatItDoesNotAddDeletedParticipants() {
@@ -536,7 +571,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
     }
 
     func testThatItUpdateParticipantWithTheGivenRole() {
@@ -565,13 +600,13 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user2 }?.role, role2)
     }
 
     func testThatItRefetchesRolesIfNoRoles() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -591,7 +626,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItRefetchesRolesIfRolesAreEmpty() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -612,7 +647,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItDoesNotRefetchRolesIfRolesAreNotEmpty() {
 
-        syncMOC.performGroupedAndWait { _ -> Void in
+        syncMOC.performGroupedAndWait { _ in
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -630,144 +665,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
             // then
             XCTAssertFalse(conversation.needsToDownloadRoles)
-        }
-    }
-
-    // Remove participant
-
-    func test_RemoveUser_FromMLSConversation() {
-        syncMOC.performAndWait {
-            // GIVEN
-            // set mock mlsService
-            let mockMLSService = MockMLSService()
-            syncMOC.mlsService = mockMLSService
-
-            // create conversation
-            let conversation = ZMConversation.insertNewObject(in: syncMOC)
-            conversation.remoteIdentifier = UUID.create()
-            conversation.conversationType = .group
-            conversation.messageProtocol = .mls
-            conversation.mlsGroupID = MLSGroupID(.random())
-
-            // create user
-            let user = ZMUser.insertNewObject(in: syncMOC)
-            user.remoteIdentifier = UUID.create()
-            user.domain = "domain.com"
-
-            // create user clients
-            let client1 = UserClient.insertNewObject(in: syncMOC)
-            client1.remoteIdentifier = "client 1"
-            client1.user = user
-
-            let client2 = UserClient.insertNewObject(in: syncMOC)
-            client2.remoteIdentifier = "client 2"
-            client2.user = user
-
-            // Fetch user clients expectations
-            let clientIDs = user.clients.compactMap(MLSClientID.init(userClient:))
-            let mlsClientsExpectation = XCTestExpectation(description: "Fetch User Clients")
-            let providerMock = MLSClientIDsProviderMock()
-
-            providerMock.fetchUserClientsMock = { _, _ in
-                mlsClientsExpectation.fulfill()
-                return clientIDs
-            }
-
-            // Remove member expectations
-            let removeMemberExpectation = XCTestExpectation(description: "Remove Member")
-            let expectedGroupID = conversation.mlsGroupID
-            let expectedClientIDs = clientIDs
-
-            XCTAssertEqual(expectedClientIDs.count, 2)
-
-            mockMLSService.removeMembersMock = { clientIDs, groupID in
-                XCTAssertEqual(groupID, expectedGroupID)
-                XCTAssertEqual(clientIDs, expectedClientIDs)
-                removeMemberExpectation.fulfill()
-            }
-
-            // WHEN
-            conversation.internalRemoveParticipant(user, completion: { _ in }, mlsClientIDsProvider: providerMock)
-
-            // THEN
-            wait(for: [mlsClientsExpectation, removeMemberExpectation], timeout: 0.5)
-        }
-    }
-
-    func test_RemoveSelfUser_FromMLSConversation() {
-        syncMOC.performAndWait {
-            // GIVEN
-            // set mock mlsService
-            let mockMLSService = MockMLSService()
-            syncMOC.mlsService = mockMLSService
-
-            // mock action handler
-            let mockActionHandler = MockActionHandler<RemoveParticipantAction>(
-                result: .success(()),
-                context: syncMOC.notificationContext
-            )
-
-            // create conversation
-            let conversation = ZMConversation.insertNewObject(in: syncMOC)
-            conversation.remoteIdentifier = UUID.create()
-            conversation.conversationType = .group
-            conversation.messageProtocol = .mls
-
-            // create self user
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-
-            // expect that we don't call clients provider
-            let providerMock = MLSClientIDsProviderMock()
-            let mlsClientsExpectation = XCTestExpectation(description: "User Clients Not Fetched")
-            mlsClientsExpectation.isInverted = true
-
-            providerMock.fetchUserClientsMock = { _, _ in
-                mlsClientsExpectation.fulfill()
-                return []
-            }
-
-            // expect that we dont call mlsService
-            let removeMembersExpectation = XCTestExpectation(description: "Remove Members Not Called")
-            removeMembersExpectation.isInverted = true
-
-            mockMLSService.removeMembersMock = { _, _ in
-                removeMembersExpectation.fulfill()
-            }
-
-            // WHEN
-            conversation.internalRemoveParticipant(selfUser, completion: { _ in }, mlsClientIDsProvider: providerMock)
-
-            // THEN
-            XCTAssertTrue(mockActionHandler.didPerformAction)
-            wait(for: [mlsClientsExpectation, removeMembersExpectation], timeout: 0.5)
-        }
-    }
-
-    func test_RemoveUser_FromProteusConversation() {
-        syncMOC.performAndWait {
-            // GIVEN
-            // mock action handler
-            let mockActionHandler = MockActionHandler<RemoveParticipantAction>(
-                result: .success(()),
-                context: syncMOC.notificationContext
-            )
-
-            // create conversation
-            let conversation = ZMConversation.insertNewObject(in: syncMOC)
-            conversation.remoteIdentifier = UUID.create()
-            conversation.conversationType = .group
-            conversation.messageProtocol = .proteus
-
-            // create user
-            let user = ZMUser.insertNewObject(in: syncMOC)
-            user.remoteIdentifier = UUID.create()
-            user.domain = "domain.com"
-
-            // WHEN
-            conversation.removeParticipant(selfUser, completion: { _ in })
-
-            // THEN
-            XCTAssertTrue(mockActionHandler.didPerformAction)
         }
     }
 

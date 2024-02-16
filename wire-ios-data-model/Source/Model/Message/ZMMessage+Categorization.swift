@@ -28,7 +28,7 @@ extension ZMMessage {
             return .undefined
         }
 
-        return category.union(self.likedCategory)
+        return category.union(self.reactedCategory)
     }
 
     /// Obj-c compatible function
@@ -129,8 +129,7 @@ extension ZMMessage {
                         self.knockCategory,
                         self.systemMessageCategory
         ]
-            .reduce(MessageCategory.none) {
-                (current: MessageCategory, other: MessageCategory) in
+            .reduce(MessageCategory.none) { (current: MessageCategory, other: MessageCategory) in
                 return current.union(other)
             }
         return category
@@ -141,7 +140,7 @@ extension ZMMessage {
             return .none
         }
         var category = MessageCategory.image
-        if let asset = self as? ZMAssetClientMessage, (asset.mediumGenericMessage == nil && imageMessageData.imageData == nil) {
+        if let asset = self as? ZMAssetClientMessage, asset.mediumGenericMessage == nil && imageMessageData.imageData == nil {
             category.update(with: .excludedFromCollection)
         }
         if imageMessageData.isAnimatedGIF {
@@ -159,8 +158,7 @@ extension ZMMessage {
         if textData.linkPreview != nil {
             category.update(with: .link)
             category.update(with: .linkPreview)
-        }
-        else {
+        } else {
             // does the text itself includes a link?
             let matches = linkParser.matches(in: text, range: NSRange(location: 0, length: text.count))
             if matches.count > 0 {
@@ -181,8 +179,7 @@ extension ZMMessage {
         }
         if fileData.isAudio {
             category.update(with: .audio)
-        }
-        else if fileData.isVideo {
+        } else if fileData.isVideo {
             category.update(with: .video)
         }
         return category
@@ -195,13 +192,13 @@ extension ZMMessage {
         return .none
     }
 
-    fileprivate var likedCategory: MessageCategory {
+    fileprivate var reactedCategory: MessageCategory {
         guard !self.reactions.isEmpty else {
             return .none
         }
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         for reaction in self.reactions where reaction.users.contains(selfUser) {
-            return .liked
+            return .reacted
         }
         return .none
     }
@@ -237,7 +234,7 @@ public struct MessageCategory: OptionSet {
     public static let audio = MessageCategory(rawValue: 1 << 6)
     public static let video = MessageCategory(rawValue: 1 << 7)
     public static let location = MessageCategory(rawValue: 1 << 8)
-    public static let liked = MessageCategory(rawValue: 1 << 9)
+    public static let reacted = MessageCategory(rawValue: 1 << 9)
     public static let knock = MessageCategory(rawValue: 1 << 10)
     public static let systemMessage = MessageCategory(rawValue: 1 << 11)
     public static let excludedFromCollection = MessageCategory(rawValue: 1 << 12)
@@ -260,7 +257,7 @@ extension MessageCategory: CustomDebugStringConvertible {
         .audio: "Audio",
         .video: "Video",
         .location: "Location",
-        .liked: "Liked",
+        .reacted: "Reacted",
         .knock: "Knock",
         .systemMessage: "System message",
         .excludedFromCollection: "Excluded from collection",

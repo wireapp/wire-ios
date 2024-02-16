@@ -20,50 +20,73 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-final class LegalHoldDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
+final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: LegalHoldDetailsViewController!
     var selfUser: MockUserType!
+    var userSession: UserSessionMock!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
-        selfUser = (SelfUser.current as! MockUserType)
+        selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         selfUser.handle = nil
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         SelfUser.provider = nil
-
+        userSession = nil
         super.tearDown()
     }
 
+    // MARK: - Helper method
+
+    func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
+
+        let createSut: () -> UIViewController = {
+            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
+            return self.sut.wrapInNavigationController()
+        }
+
+        return createSut
+    }
+
+    // MARK: - Snapshot Tests
+
     func testSelfUserUnderLegalHold() {
+        // GIVEN
         let conversation = MockGroupDetailsConversation()
         selfUser.isUnderLegalHold = true
         conversation.sortedActiveParticipantsUserTypes = [selfUser]
 
-        let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation)
-            return self.sut.wrapInNavigationController()
-        }
+        // WHEN
+        let sut =  setUpLegalHoldDetailsViewController(conversation: conversation)
 
-        verifyInAllColorSchemes(createSut: createSut)
+        // THEN
+        verifyInAllColorSchemes(createSut: sut)
     }
 
     func testOtherUserUnderLegalHold() {
+        // GIVEN
         let conversation = MockGroupDetailsConversation()
         let otherUser = SwiftMockLoader.mockUsers().first!
         otherUser.isUnderLegalHold = true
         conversation.sortedActiveParticipantsUserTypes = [otherUser]
 
         let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation)
+            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
             return self.sut.wrapInNavigationController()
         }
 
+        // THEN
         verifyInAllColorSchemes(createSut: createSut)
     }
 

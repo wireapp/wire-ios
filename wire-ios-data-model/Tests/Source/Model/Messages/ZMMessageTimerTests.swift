@@ -53,7 +53,7 @@ class ZMMessageTimerTests: BaseZMMessageTests {
     func testThatItRemovesTheInternalTimerAfterTimerFired() {
         // given
         let message = createClientTextMessage(withText: "hello")
-        let expectation = self.expectation(description: "timer fired")
+        let expectation = self.customExpectation(description: "timer fired")
         sut.timerCompletionBlock = { _, _ in expectation.fulfill() }
 
         // when

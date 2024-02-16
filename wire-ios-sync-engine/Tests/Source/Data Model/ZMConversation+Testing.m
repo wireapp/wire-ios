@@ -38,9 +38,11 @@
         mockMame = conversation.name;
         mockCreatorIdentifier = conversation.creator.identifier;
         mockIdentifier = conversation.identifier;
-        mockActiveUsersUUID = [NSMutableSet setWithArray:[conversation.activeUsers mapWithBlock:^id(MockUser *activeUser) {
-            return activeUser.identifier;
-        }].array];
+
+        mockActiveUsersUUID = [NSMutableSet new];
+        for (MockUser *user in conversation.activeUsers) {
+            [mockActiveUsersUUID addObject:user.identifier];
+        }
         [mockActiveUsersUUID removeObject:conversation.selfIdentifier];
     }];
     
@@ -48,7 +50,7 @@
         [failureRecorder recordFailure:@"Name doesn't match '%@' != '%@'",
          self.userDefinedName, mockMame];
     }
-    if (!([self.creator.remoteIdentifier isEqual:[mockCreatorIdentifier UUID]])) {
+    if (!([self.creator.remoteIdentifier isEqual:[NSUUID uuidWithTransportString: mockCreatorIdentifier]])) {
         [failureRecorder recordFailure:@"Creator doesn't match '%@' != '%@'",
                        self.creator.remoteIdentifier.transportString, mockCreatorIdentifier];
     }
@@ -64,7 +66,7 @@
          [[mockActiveUsersUUID.allObjects valueForKey:@"transportString"] componentsJoinedByString:@", "]];
     }
     
-    if (![self.remoteIdentifier isEqual:[mockIdentifier UUID]]) {
+    if (![self.remoteIdentifier isEqual:[NSUUID uuidWithTransportString:mockIdentifier]]) {
         [failureRecorder recordFailure:@"Remote ID doesn't match '%@' != '%@'",
          self.remoteIdentifier.transportString, mockIdentifier];
     }

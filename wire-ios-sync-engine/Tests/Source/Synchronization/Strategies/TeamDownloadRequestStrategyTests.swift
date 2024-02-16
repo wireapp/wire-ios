@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,16 +24,13 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
     let teamID = UUID.create()
 
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
-        mockSyncStateDelegate = MockSyncStateDelegate()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            syncStateDelegate: mockSyncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
         sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
@@ -47,7 +44,6 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         mockSyncStatus = nil
         sut = nil
         super.tearDown()
@@ -82,17 +78,19 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
     func testThatPredicateIsCorrect() {
         // given
-        let team1 = Team.insertNewObject(in: self.syncMOC)
-        team1.remoteIdentifier = .create()
-        team1.needsToBeUpdatedFromBackend = true
+        syncMOC.performAndWait {
+            let team1 = Team.insertNewObject(in: self.syncMOC)
+            team1.remoteIdentifier = .create()
+            team1.needsToBeUpdatedFromBackend = true
 
-        let team2 = Team.insertNewObject(in: self.syncMOC)
-        team2.remoteIdentifier = .create()
-        team2.needsToBeUpdatedFromBackend = false
+            let team2 = Team.insertNewObject(in: self.syncMOC)
+            team2.remoteIdentifier = .create()
+            team2.needsToBeUpdatedFromBackend = false
 
-        // then
-        XCTAssertTrue(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team1))
-        XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team2))
+            // then
+            XCTAssertTrue(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team1))
+            XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team2))
+        }
     }
 
     func testThatItDoesNotGenerateARequestInitially() {
@@ -128,7 +126,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
             // then
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/teams/\(team.remoteIdentifier!.transportString())")
         }
     }
@@ -307,14 +305,17 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItRemovesAMemberThatIsNotSelfUser() {
+    func testThatItRemovesAMemberThatIsNotSelfUser() async {
 
         let teamId = UUID.create()
         let userId = UUID.create()
 
+        var event: ZMUpdateEvent?
+        var team: Team!
+
         syncMOC.performGroupedBlockAndWait {
             // given
-            let team = Team.insertNewObject(in: self.syncMOC)
+            team = Team.insertNewObject(in: self.syncMOC)
             self.mockApplicationStatus.mockSynchronizationState = .online
             team.remoteIdentifier = teamId
 
@@ -330,11 +331,19 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
                 "type": "team.member-leave"
             ]
 
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload as NSDictionary, uuid: nil)!
+            event = ZMUpdateEvent(fromEventStreamPayload: payload as NSDictionary, uuid: nil)!
+        }
 
-            // when
+        guard let event else {
+            XCTFail("missing event")
+            return
+        }
+
+        // when
+        syncMOC.performGroupedAndWait { context in
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-            self.syncMOC.saveOrRollback()
+
+            context.saveOrRollback()
 
             // then
             let result = team.members.contains(where: { (member) -> Bool in
@@ -347,47 +356,118 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
     // MARK: Slow sync
 
-    func testThatItDownloadsAllTeams_DuringSlowSync_V0() {
-        internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v0)
+    func test_ItGeneratesRequest_DuringSlowSync_V0() throws {
+        // Given
+        mockFetchingTeamsSyncPhase()
+
+        // When
+        let request = try XCTUnwrap(sutNextRequest(for: .v0))
+
+        // Then
+        XCTAssertEqual(request.method, .get)
+        XCTAssertEqual(request.path, "/teams")
     }
 
-    func testThatItDownloadsAllTeams_DuringSlowSync_V3() {
-        internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v3)
+    func test_ItGeneratesRequest_DuringSlowSync_V1() throws {
+        // Given
+        mockFetchingTeamsSyncPhase()
+
+        // When
+        let request = try XCTUnwrap(sutNextRequest(for: .v1))
+
+        // Then
+        XCTAssertEqual(request.method, .get)
+        XCTAssertEqual(request.path, "/v1/teams")
     }
 
-    func testThatItDownloadsSelfUserTeam_DuringSlowSync_V4() {
-        internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v4)
+    func test_ItGeneratesRequest_DuringSlowSync_V2() throws {
+        // Given
+        mockFetchingTeamsSyncPhase()
+
+        // When
+        let request = try XCTUnwrap(sutNextRequest(for: .v2))
+
+        // Then
+        XCTAssertEqual(request.method, .get)
+        XCTAssertEqual(request.path, "/v2/teams")
     }
 
-    func internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for apiVersion: APIVersion) {
-        // given
+    func test_ItGeneratesRequest_DuringSlowSync_V3() throws {
+        // Given
+        mockFetchingTeamsSyncPhase()
+
+        // When
+        let request = try XCTUnwrap(sutNextRequest(for: .v3))
+
+        // Then
+        XCTAssertEqual(request.method, .get)
+        XCTAssertEqual(request.path, "/v3/teams")
+    }
+
+    func test_ItGeneratesRequest_DuringSlowSync_V4() throws {
+        // Given
+        mockFetchingTeamsSyncPhase()
+
+        // When
+        let request = try XCTUnwrap(sutNextRequest(for: .v4))
+
+        // Then
+        XCTAssertEqual(request.method, .get)
+        XCTAssertEqual(request.path, "/v4/teams/\(teamID.transportString())")
+    }
+
+    func test_ItDoesNotGenerateRequest_DuringSlowSync_NonTeamUser_V4() throws {
+        // Given
+        mockFetchingTeamsSyncPhase()
+        try mockNonTeamUser()
+
+        // When
+        XCTAssertNil(sutNextRequest(for: .v4))
+        XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
+    }
+
+    func test_ItGeneratesRequest_DuringSlowSync_V5() throws {
+        // Given
+        mockFetchingTeamsSyncPhase()
+
+        // When
+        let request = try XCTUnwrap(sutNextRequest(for: .v5))
+
+        // Then
+        XCTAssertEqual(request.method, .get)
+        XCTAssertEqual(request.path, "/v5/teams/\(teamID.transportString())")
+    }
+
+    func test_ItDoesNotGenerateRequest_DuringSlowSync_NonTeamUser_V5() throws {
+        // Given
+        mockFetchingTeamsSyncPhase()
+        try mockNonTeamUser()
+
+        // When
+        XCTAssertNil(sutNextRequest(for: .v5))
+        XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
+    }
+
+    private func mockFetchingTeamsSyncPhase() {
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
+    }
 
-        // when
-        guard let request = sut.nextRequest(for: apiVersion) else { return XCTFail("No request generated") }
-
-        // then
-        switch apiVersion {
-        case .v0:
-            XCTAssertEqual(request.path, "/teams")
-        case .v1:
-            XCTAssertEqual(request.path, "/v1/teams")
-        case .v2:
-            XCTAssertEqual(request.path, "/v2/teams")
-        case .v3:
-            XCTAssertEqual(request.path, "/v3/teams")
-        case .v4:
-            XCTAssertEqual(request.path, "/v4/teams/\(teamID.transportString())")
+    private func mockNonTeamUser() throws {
+        syncMOC.performGroupedBlockAndWait {
+            let user = ZMUser.selfUser(in: self.syncMOC)
+            user.teamIdentifier = nil
         }
-        XCTAssertEqual(request.method, .methodGET)
+        try syncMOC.performAndWait {
+            try syncMOC.save()
+        }
     }
 
     func testThatItCreatesLocalTeam_DuringSlowSync() {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+        guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
         let teamCreatorID = UUID.create()
         let teamID = UUID.create()
 
@@ -403,19 +483,21 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let team = Team.fetch(with: teamID, in: syncMOC)
-        XCTAssertNotNil(team)
-        XCTAssertEqual(team?.name, "Wire GmbH")
-        let creator = ZMUser.fetch(with: teamCreatorID, in: syncMOC)
-        XCTAssertNotNil(creator)
-        XCTAssertEqual(team!.creator, creator)
+        syncMOC.performAndWait {
+            let team = Team.fetch(with: teamID, in: syncMOC)
+            XCTAssertNotNil(team)
+            XCTAssertEqual(team?.name, "Wire GmbH")
+            let creator = ZMUser.fetch(with: teamCreatorID, in: syncMOC)
+            XCTAssertNotNil(creator)
+            XCTAssertEqual(team!.creator, creator)
+        }
     }
 
     func testThatItFailsTheSyncState_WhenThereIsAPermanentError() {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+        guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
 
         // when
         let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
@@ -433,7 +515,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // when
         do {
-            guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
             let payload: [String: Any] = [
                 "has_more": false,
                 "teams": [sampleResponse(teamID: UUID(), creatorId: UUID())]
@@ -453,7 +535,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // when
         do {
-            guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
             let payload: [String: Any] = [
                 "has_more": false,
                 "teams": []
@@ -464,5 +546,9 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // then
         XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
+    }
+
+    private func sutNextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+       syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
     }
 }

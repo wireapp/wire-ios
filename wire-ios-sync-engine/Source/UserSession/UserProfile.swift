@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public protocol UserProfile: NSObjectProtocol {
+// sourcery: AutoMockable
+@objc public protocol UserProfile {
 
     /// Requests phone number verification. Once this is called,
     /// the user is expected to receive a PIN code on her phone

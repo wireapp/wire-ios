@@ -37,7 +37,7 @@ public struct SafeValueForLogging<T: CustomStringConvertible>: SafeForLoggingStr
 
 extension Array: SafeForLoggingStringConvertible where Array.Element: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return String(describing: map { $0.safeForLoggingDescription})
+        return String(describing: map { $0.safeForLoggingDescription })
     }
 }
 

@@ -62,13 +62,13 @@ extension UnauthenticatedSession {
     /// - parameter domain: Domain to look up (e.g. example.com)
     /// - parameter completion: The result closure will with the result of the lookup.
 
-    public func lookup(domain: String, completion: @escaping (Result<DomainInfo>) -> Void) {
+    public func lookup(domain: String, completion: @escaping (Result<DomainInfo, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(DomainLookupError.noApiVersion))
         }
 
         let path = "/custom-backend/by-domain/\(domain.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!)"
-        let request = ZMTransportRequest(path: path, method: .methodGET, payload: nil, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
 
         request.add(ZMCompletionHandler(on: operationLoop.operationQueue!, block: { (response) in
 

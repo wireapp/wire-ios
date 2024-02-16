@@ -44,44 +44,59 @@ final class CallParticipantsListHelper {
 
 }
 
-final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
+final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: CallParticipantsListViewController!
     var mockParticipants: CallParticipantsList!
+    var selfUser: UserType!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         mockParticipants = CallParticipantsListHelper.participants(count: 10, videoState: .stopped, microphoneState: .muted, mockUsers: SwiftMockLoader.mockUsers())
+        selfUser = ZMUser.selfUser()
+        guard selfUser != nil else {
+            XCTFail("ZMUser.selfUser() is nil")
+            return
+        }
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
-        sut = nil
+        selfUser = nil
         mockParticipants = nil
+        sut = nil
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testCallParticipants_Overflowing_Light() {
-        // When
+        // GIVEN && WHEN
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.setNeedsLayout()
         sut.view.layoutIfNeeded()
         sut.view.backgroundColor = .white
 
-        // Then
+        // THEN
         verify(matching: sut.view)
     }
 
     func testCallParticipants_Overflowing_Dark() {
-        // When
+        // GIVEN && WHEN
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.setNeedsLayout()
@@ -89,70 +104,67 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         sut.view.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
 
-        // Then
+        // THEN
         verify(matching: sut.view)
     }
 
     func testCallParticipants_Truncated_Light() {
-        // When
+        // GIVEN && WHEN
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: false,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .white
 
-        // Then
+        // THEN
         verify(matching: sut.view)
     }
 
     func testCallParticipants_Truncated_Dark() {
-        // When
+        // GIVEN && WHEN
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: false,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
 
-        // Then
+        // THEN
         verify(matching: sut.view)
     }
 
-
     func testCallParticipants_ConnectingState_Light() {
-        // When
+        // GIVEN && WHEN
         let participants = CallParticipantsListHelper.participants(count: 3, mockUsers: SwiftMockLoader.mockUsers())
         sut = CallParticipantsListViewController(
             participants: participants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .white
 
-        // Then
+        // THEN
         verify(matching: sut.view)
     }
 
-
     func testCallParticipants_ConnectingState_Dark() {
-        // When
+        // GIVEN && WHEN
         let participants = CallParticipantsListHelper.participants(count: 3, mockUsers: SwiftMockLoader.mockUsers())
         sut = CallParticipantsListViewController(
             participants: participants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
 
-        // Then
+        // THEN
         verify(matching: sut.view)
     }
-
 }

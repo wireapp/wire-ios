@@ -53,6 +53,7 @@ class FetchClientRequestStrategyTests: MessagingTestBase {
         sut = nil
         NotificationCenter.default.removeObserver(self)
         apiVersion = nil
+        BackendInfo.storage = .standard
         super.tearDown()
     }
 
@@ -73,7 +74,7 @@ extension FetchClientRequestStrategyTests {
 
         createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for: apiVersion, clientUUID: clientUUID) { request in
             XCTAssertEqual(request.path, "/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -84,7 +85,7 @@ extension FetchClientRequestStrategyTests {
 
         createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for: apiVersion, clientUUID: clientUUID) { request in
             XCTAssertEqual(request.path, "/v1/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -94,7 +95,7 @@ extension FetchClientRequestStrategyTests {
 
         createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for: apiVersion) { request in
             XCTAssertEqual(request.path, "/v2/users/list-clients")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
         }
     }
 
@@ -107,7 +108,7 @@ extension FetchClientRequestStrategyTests {
             reportObjectsChanged: false
         ) { request in
             XCTAssertEqual(request.path, "/v2/users/list-clients")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
         }
     }
 
@@ -445,7 +446,7 @@ extension FetchClientRequestStrategyTests {
             if let request = request {
                 let path = "/users/\(user.remoteIdentifier!.transportString())/clients"
                 XCTAssertEqual(request.path, path)
-                XCTAssertEqual(request.method, .methodGET)
+                XCTAssertEqual(request.method, .get)
             } else {
                 XCTFail("Failed to create request")
             }
@@ -472,7 +473,7 @@ extension FetchClientRequestStrategyTests {
             if let request = request {
                 let path = "/v1/users/list-clients/v2"
                 XCTAssertEqual(request.path, path)
-                XCTAssertEqual(request.method, .methodPOST)
+                XCTAssertEqual(request.method, .post)
             } else {
                 XCTFail("Failed to create request")
             }
@@ -499,7 +500,7 @@ extension FetchClientRequestStrategyTests {
             if let request = request {
                 let path = "/v2/users/list-clients"
                 XCTAssertEqual(request.path, path)
-                XCTAssertEqual(request.method, .methodPOST)
+                XCTAssertEqual(request.method, .post)
             } else {
                 XCTFail("Failed to create request")
             }
@@ -566,7 +567,6 @@ extension FetchClientRequestStrategyTests {
         var client: UserClient!
         self.syncMOC.performGroupedBlockAndWait {
             client = self.createClient(user: self.otherUser)
-            XCTAssertFalse(client.hasSessionWithSelfClient)
             self.otherUser.fetchUserClients()
             payload = [["id": client.remoteIdentifier!, "class": "phone"]] as NSArray
         }
@@ -596,7 +596,9 @@ extension FetchClientRequestStrategyTests {
             sessionIdentifier = EncryptionSessionIdentifier(userId: self.otherUser!.remoteIdentifier.uuidString, clientId: remoteIdentifier)
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform {
                 try! $0.createClientSession(sessionIdentifier, base64PreKeyString: self.syncMOC.zm_cryptKeyStore.lastPreKey()) // just a bogus key is OK
             }

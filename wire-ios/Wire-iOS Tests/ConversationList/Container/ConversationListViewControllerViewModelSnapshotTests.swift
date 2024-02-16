@@ -20,9 +20,11 @@ import XCTest
 @testable import Wire
 
 final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
+
     var sut: ConversationListViewController.ViewModel!
     var mockView: UIView!
     private var mockViewController: MockConversationListContainer!
+    var userSession: UserSessionMock!
 
     var coreDataFixture: CoreDataFixture!
 
@@ -31,9 +33,11 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
 
         coreDataFixture = CoreDataFixture()
 
+        userSession = UserSessionMock()
+
         let account = Account.mockAccount(imageData: Data())
         let selfUser = MockUserType.createSelfUser(name: "Bob")
-        sut = ConversationListViewController.ViewModel(account: account, selfUser: selfUser)
+        sut = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
 
         mockViewController = MockConversationListContainer(viewModel: sut)
 
@@ -45,6 +49,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
         mockView = nil
         mockViewController = nil
         coreDataFixture = nil
+        userSession = nil
 
         super.tearDown()
     }

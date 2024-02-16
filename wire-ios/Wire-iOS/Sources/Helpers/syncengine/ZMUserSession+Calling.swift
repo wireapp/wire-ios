@@ -70,19 +70,4 @@ extension ZMUserSession {
             }
         }
     }
-
-    var ringingCallConversation: ZMConversation? {
-        guard let callCenter = self.callCenter else { return nil }
-
-        return callCenter.nonIdleCallConversations(in: self).first { (conversation) -> Bool in
-            guard let callState = conversation.voiceChannel?.state else { return false }
-
-            switch callState {
-            case .incoming, .outgoing:
-                return true
-            default:
-                return false
-            }
-        }
-    }
 }

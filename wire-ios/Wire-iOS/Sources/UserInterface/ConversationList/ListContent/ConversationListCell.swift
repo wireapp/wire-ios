@@ -54,6 +54,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     // MARK: - SectionListCellType
     var sectionName: String?
+    var obfuscatedSectionName: String?
     var cellIdentifier: String?
 
     private var hasCreatedInitialConstraints = false
@@ -161,7 +162,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         }
         hasCreatedInitialConstraints = true
 
-        [itemView, menuDotsView, menuView].prepareForLayout()
+        [itemView, menuDotsView, menuView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         itemView.fitIn(view: swipeView)
 

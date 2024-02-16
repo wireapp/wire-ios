@@ -554,8 +554,7 @@ extension ZMMessageTests_Confirmation {
             performPretendingUiMocIsSyncMoc {
                 message = ZMOTRMessage.createOrUpdate(from: messageEvent, in: self.uiMOC, prefetchResult: nil)
             }
-        }
-        else {
+        } else {
             message = ZMOTRMessage.createOrUpdate(from: messageEvent, in: MOC, prefetchResult: nil)
 
         }

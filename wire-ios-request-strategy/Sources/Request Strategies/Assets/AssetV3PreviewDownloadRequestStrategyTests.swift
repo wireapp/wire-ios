@@ -168,7 +168,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
             // THEN
             XCTAssertEqual(request.path, "/assets/v3/\(previewMeta.assetId)")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -198,7 +198,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
             XCTAssertEqual(request.path, "/assets/v3/\(previewMeta.assetId)")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
 
             // WHEN
             message.fileMessageData?.requestImagePreviewDownload()
@@ -241,7 +241,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
             // THEN
             XCTAssertEqual(request.path, "/v1/assets/v4/\(previewMeta.domain)/\(previewMeta.assetId)")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -272,7 +272,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(previewMeta.domain)/\(previewMeta.assetId)")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
 
             // WHEN
             message.fileMessageData?.requestImagePreviewDownload()

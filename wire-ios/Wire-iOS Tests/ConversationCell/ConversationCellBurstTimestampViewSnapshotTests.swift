@@ -17,25 +17,37 @@
 //
 
 import XCTest
+import SnapshotTesting
 @testable import Wire
 
-final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
+final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
+
     var sut: ConversationCellBurstTimestampView!
+    var userSession: UserSessionMock!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        userSession = UserSessionMock()
         sut = ConversationCellBurstTimestampView()
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 40))
         sut.unreadDot.backgroundColor = .red
-        sut.backgroundColor = .lightGray
+        sut.backgroundColor = SemanticColors.View.backgroundConversationView
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
+        userSession = nil
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForInitState() {
         verify(matching: sut)
@@ -43,7 +55,12 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
     func testForIncludeDayOfWeekAndDot() {
         // GIVEN & WHEN
-        sut.configure(with: Date(timeIntervalSinceReferenceDate: 0), includeDayOfWeek: true, showUnreadDot: true)
+        sut.configure(
+            with: Date(timeIntervalSinceReferenceDate: 0),
+            includeDayOfWeek: true,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
 
         // THEN
         verify(matching: sut)
@@ -51,9 +68,15 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
     func testForNotIncludeDayOfWeekAndDot() {
         // GIVEN & WHEN
-        sut.configure(with: Date(timeIntervalSinceReferenceDate: 0), includeDayOfWeek: false, showUnreadDot: false)
+        sut.configure(
+            with: Date(timeIntervalSinceReferenceDate: 0),
+            includeDayOfWeek: false,
+            showUnreadDot: false,
+            accentColor: userSession.selfUser.accentColor
+        )
 
         // THEN
         verify(matching: sut)
     }
+
 }

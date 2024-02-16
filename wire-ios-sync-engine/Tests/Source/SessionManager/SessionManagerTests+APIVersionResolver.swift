@@ -20,7 +20,7 @@ import XCTest
 import WireTesting
 @testable import WireSyncEngine
 
-class SessionManagerTests_APIVersionResolver: IntegrationTest {
+final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 
     func testThatDatabaseIsMigrated_WhenFederationIsEnabled() throws {
         // GIVEN
@@ -53,7 +53,7 @@ class SessionManagerTests_APIVersionResolver: IntegrationTest {
 
         // Setup expectation & Session Manager delegate
         let expectation = XCTestExpectation(description: "Migration completed")
-        let delegate = MockSessionManagerDelegate()
+        let delegate = MockSessionManagerExpectationDelegate()
         delegate.expectation = expectation
         sessionManager.delegate = delegate
 
@@ -81,10 +81,10 @@ class SessionManagerTests_APIVersionResolver: IntegrationTest {
     }
 }
 
-private class MockSessionManagerDelegate: SessionManagerDelegate {
+private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
     var didCallDidPerformFederationMigration: Bool = false
     var expectation: XCTestExpectation?
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         didCallDidPerformFederationMigration = true
         expectation?.fulfill()
     }
@@ -102,7 +102,7 @@ private class MockSessionManagerDelegate: SessionManagerDelegate {
         session = userSession
     }
 
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    func sessionManagerDidReportLockChange(forSession session: UserSession) {
         // no op
     }
 
@@ -118,7 +118,7 @@ private class MockSessionManagerDelegate: SessionManagerDelegate {
         // no op
     }
 
-    func sessionManagerDidFailToLoadDatabase() {
+    func sessionManagerDidFailToLoadDatabase(error: Error) {
         // no op
     }
 
@@ -130,7 +130,11 @@ private class MockSessionManagerDelegate: SessionManagerDelegate {
         // no op
     }
 
-    func sessionManagerDidPerformAPIMigrations() {
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
+        // no op
+    }
+
+    public func sessionManagerAsksToRetryStart() {
         // no op
     }
 

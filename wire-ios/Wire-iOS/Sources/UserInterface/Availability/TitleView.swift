@@ -46,7 +46,7 @@ class TitleView: UIView, DynamicTypeCapable {
 
     // MARK: - Private methods
     private func createConstraints() {
-        [titleButton, stackView, subtitleLabel].prepareForLayout()
+        [titleButton, stackView, subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         stackView.fitIn(view: self)
     }

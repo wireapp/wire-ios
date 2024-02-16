@@ -24,7 +24,11 @@ import UIKit
 extension ZMConversation: ShareDestination {
 
     var showsGuestIcon: Bool {
-        return ZMUser.selfUser().hasTeam &&
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return false
+        }
+        return selfUser.hasTeam &&
             self.conversationType == .oneOnOne &&
             self.localParticipants.first {
                 $0.isGuest(in: self) } != nil
@@ -198,7 +202,7 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
 
         keyboardAvoiding.presentationController?.delegate = self
 
-        shareViewController.onDismiss = { (shareController: ShareViewController<ZMConversation, ZMMessage>, _) -> Void in
+        shareViewController.onDismiss = { (shareController: ShareViewController<ZMConversation, ZMMessage>, _) in
             weak var presentingViewController = shareController.presentingViewController
 
             presentingViewController?.dismiss(animated: true)

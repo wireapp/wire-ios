@@ -19,11 +19,11 @@
 import XCTest
 @testable import Wire
 
-final class ConversationPingMessageTests: XCTestCase {
+final class ConversationPingMessageTests: ConversationMessageSnapshotTestCase {
 
     func testPing() {
         // GIVEN
-        SelfUser.provider = SelfProvider(selfUser: MockUserType.createSelfUser(name: "Alice"))
+        SelfUser.provider = SelfProvider(providedSelfUser: MockUserType.createSelfUser(name: "Alice"))
         let message = MockMessageFactory.pingMessage()
         message.senderUser = MockUserType.createSelfUser(name: "Alice")
 

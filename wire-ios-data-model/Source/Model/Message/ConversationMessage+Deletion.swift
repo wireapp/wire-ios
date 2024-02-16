@@ -24,13 +24,14 @@ extension ZMConversation {
         guard
             let messageId = message.nonce,
             let conversation = message.conversation,
-            let conversationId = conversation.remoteIdentifier
+            let conversationId = conversation.remoteIdentifier,
+            let context = message.managedObjectContext
         else {
             return
         }
 
-        let genericMessage = GenericMessage(content: MessageHide(conversationId: conversationId, messageId: messageId))
-        _ = try ZMConversation.appendMessageToSelfConversation(genericMessage, in: message.managedObjectContext!)
+        let message = MessageHide(conversationId: conversationId, messageId: messageId)
+        try ZMConversation.sendMessageToSelfClients(message, in: context)
     }
 }
 
@@ -66,7 +67,7 @@ extension ZMMessage {
     }
 
     @discardableResult @objc func deleteForEveryone() -> ZMClientMessage? {
-        guard !isZombieObject, let sender = sender, (sender.isSelfUser || isEphemeral) else { return nil }
+        guard !isZombieObject, let sender = sender, sender.isSelfUser || isEphemeral else { return nil }
         guard let conversation = conversation, let messageNonce = nonce else { return nil}
 
         do {

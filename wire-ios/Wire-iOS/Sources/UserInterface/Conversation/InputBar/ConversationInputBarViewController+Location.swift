@@ -46,7 +46,7 @@ extension ConversationInputBarViewController: LocationSelectionViewControllerDel
     func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData) {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        ZMUserSession.shared()?.enqueue {
+        userSession.enqueue {
             do {
                 try conversation.appendLocation(with: locationData)
                 Analytics.shared.tagMediaActionCompleted(.location, inConversation: conversation)

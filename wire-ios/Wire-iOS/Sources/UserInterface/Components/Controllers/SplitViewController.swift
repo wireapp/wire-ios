@@ -295,9 +295,9 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
 
         if animated {
-            UIView.animate(easing: .easeOutExpo, duration: 0.55, animations: {() -> Void in
+            UIView.animate(easing: .easeOutExpo, duration: 0.55, animations: {
                 self.view.layoutIfNeeded()
-            }, completion: {(_ finished: Bool) -> Void in
+            }, completion: { _ in
                 if self.layoutSize != .regularLandscape {
                     self.leftViewController?.endAppearanceTransition()
                     self.rightViewController?.endAppearanceTransition()
@@ -322,11 +322,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     }
 
     private var isiOSAppOnMac: Bool {
-        if #available(iOS 14.0, *) {
-            return ProcessInfo.processInfo.isiOSAppOnMac
-        }
-
-        return false
+        return ProcessInfo.processInfo.isiOSAppOnMac
     }
 
     /// Update layoutSize for the change of traitCollection and the current orientation

@@ -41,7 +41,7 @@ final class ZMConversationTests_Creation: ZMConversationTestsBase {
         )!
 
         // then
-        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role}, [role1, role1, role1])
+        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role }, [role1, role1, role1])
     }
 
     func testThatItCreatesConversationAndIncludesSelfUser() {

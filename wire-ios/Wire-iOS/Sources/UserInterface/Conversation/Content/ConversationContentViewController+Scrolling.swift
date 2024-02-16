@@ -26,7 +26,7 @@ extension ConversationContentViewController {
         if let message = message {
 
             if message.hasBeenDeleted {
-                presentAlertWithOKButton(message: "conversation.alert.message_deleted".localized)
+                presentAlertWithOKButton(message: L10n.Localizable.Conversation.Alert.messageDeleted)
             } else {
                 dataSource.loadMessages(near: message) { index in
 
@@ -52,12 +52,20 @@ extension ConversationContentViewController {
         updateTableViewHeaderView()
     }
 
-    func scrollToBottom() {
-        guard !isScrolledToBottom else { return }
+    /// Scrolls the tableView to the bottom-most row.
+    ///
+    /// This method checks if the tableView is not already scrolled to the bottom.
+    func scrollToBottomIfNeeded() {
+
+        guard !isScrolledToBottom else {
+            return
+        }
 
         dataSource.loadMessages()
-        tableView.scroll(toIndex: 0)
 
+        let shouldAnimate = !UIAccessibility.isReduceMotionEnabled
+
+        tableView.scroll(toIndex: 0, animated: shouldAnimate)
         updateTableViewHeaderView()
     }
 }

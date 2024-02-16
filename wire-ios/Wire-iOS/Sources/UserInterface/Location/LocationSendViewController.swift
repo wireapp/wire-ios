@@ -52,7 +52,7 @@ final class LocationSendViewController: UIViewController {
     }
 
     fileprivate func configureViews() {
-        sendButton.setTitle("location.send_button.title".localized, for: [])
+        sendButton.setTitle(L10n.Localizable.Location.SendButton.title, for: [])
         sendButton.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
         sendButton.accessibilityIdentifier = "sendLocation"
         addressLabel.accessibilityIdentifier = "selectedAddress"
@@ -61,7 +61,7 @@ final class LocationSendViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [containerView, addressLabel, sendButton].prepareForLayout()
+        [containerView, addressLabel, sendButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: view.topAnchor),
             containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),

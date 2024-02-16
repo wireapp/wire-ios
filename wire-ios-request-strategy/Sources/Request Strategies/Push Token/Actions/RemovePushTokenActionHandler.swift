@@ -29,7 +29,7 @@ class RemovePushTokenActionHandler: ActionHandler<RemovePushTokenAction> {
 
         return ZMTransportRequest(
             path: "/push/tokens/\(action.deviceToken)",
-            method: .methodDELETE,
+            method: .delete,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )

@@ -19,8 +19,12 @@
 import Foundation
 
 extension Encodable {
-    func jsonString(_ encoder: JSONEncoder = JSONEncoder()) -> String? {
+    func jsonString(_ encoder: JSONEncoder = JSONEncoder(), sortedKeys: Bool = false) -> String? {
+        if sortedKeys {
+            encoder.outputFormatting = .sortedKeys
+        }
         guard let data = try? encoder.encode(self) else { return nil }
+
         return String(data: data, encoding: .utf8)
     }
 }

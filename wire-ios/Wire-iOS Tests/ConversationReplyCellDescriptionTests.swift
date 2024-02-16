@@ -72,7 +72,7 @@ final class ConversationReplyCellDescriptionTests: CoreDataSnapshotTestCase {
         let cellDescription = ConversationReplyCellDescription(quotedMessage: message)
 
         // THEN
-        XCTAssertEqual(cellDescription.configuration.timestamp, "Original message from 9:41 AM")
+        XCTAssertEqual(cellDescription.configuration.timestamp, "Original message from 9:41 AM")
     }
 
 }

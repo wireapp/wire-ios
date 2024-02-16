@@ -31,10 +31,10 @@ class AVSVideoStreamsTest: XCTestCase {
 
         let expectedJson = """
         {\
-        "convid":"\(conversationId.transportString())",\
         "clients":[\
-        \(client.jsonString()!)\
-        ]\
+        \(client.jsonString(sortedKeys: true)!)\
+        ],\
+        "convid":"\(conversationId.transportString())"\
         }
         """
 
@@ -42,6 +42,6 @@ class AVSVideoStreamsTest: XCTestCase {
         let sut = AVSVideoStreams(conversationId: conversationId.transportString(), clients: [client])
 
         // then
-        XCTAssertEqual(sut.jsonString(), expectedJson)
+        XCTAssertEqual(sut.jsonString(sortedKeys: true), expectedJson)
     }
 }

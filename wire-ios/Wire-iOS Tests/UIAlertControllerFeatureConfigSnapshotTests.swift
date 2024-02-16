@@ -22,7 +22,7 @@ import SnapshotTesting
 
 final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
 
-    private func createSut(for featureChange: FeatureService.FeatureChange) -> UIAlertController? {
+    private func createSut(for featureChange: FeatureRepository.FeatureChange) -> UIAlertController? {
         let result = UIAlertController.fromFeatureChange(featureChange,
                                                          acknowledger: MockFeatureChangeAcknowledger())
         result?.view.backgroundColor = .white
@@ -53,7 +53,7 @@ final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
 
 }
 
-private class MockFeatureChangeAcknowledger: FeatureChangeAcknowledger {
+private final class MockFeatureChangeAcknowledger: FeatureChangeAcknowledger {
 
     func acknowledgeChange(for featureName: Feature.Name) {
         // no op

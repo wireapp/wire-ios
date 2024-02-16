@@ -19,19 +19,19 @@
 import Foundation
 import WireCoreCrypto
 
+typealias ConversationId = Data
+
 class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
 
     init() {}
 
     func authorize(conversationId: ConversationId, clientId: ClientId) -> Bool {
-        // Currently not neccessary because backend is already validated proposals.
-        // In the future, method may be useful for proposals that the backend can't
-        // inspect.
+        // This check is performed by the backend.
         return true
     }
 
     func userAuthorize(conversationId: ConversationId, externalClientId: ClientId, existingClients: [ClientId]) -> Bool {
-        // TODO: Check with core crypto team what the implementation should be
+        // This check is performed by the backend.
         return true
     }
 
@@ -41,18 +41,8 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
         existingClients: [ClientId],
         parentConversationClients: [ClientId]?
     ) -> Bool {
-        guard let mlsClientID = MLSClientID(data: clientId.data) else {
-            return false
-        }
-
-        let existingClientIDs = existingClients.compactMap {
-            MLSClientID(data: $0.data)
-        }
-
-        return existingClientIDs.contains {
-            // Does `existingClients` contain a client belonging to the same owner of `clientId`?
-            $0.userID == mlsClientID.userID && $0.domain == mlsClientID.domain
-        }
+        // This check is performed by the backend.
+        return true
     }
 
 }

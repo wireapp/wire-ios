@@ -19,7 +19,7 @@
 import Foundation
 @testable import Wire
 
-class MockCallGridViewControllerDelegate: CallGridViewControllerDelegate {
+final class MockCallGridViewControllerDelegate: CallGridViewControllerDelegate {
 
     var requestedClients: [AVSClient]?
 

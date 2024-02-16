@@ -19,7 +19,7 @@
 import Foundation
 @testable import Wire
 
-class StreamStubProvider {
+final class StreamStubProvider {
     func stream(
         user: UserType = MockUserType.createUser(name: "Bob"),
         client: AVSClient = AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString()),
@@ -29,7 +29,7 @@ class StreamStubProvider {
         paused: Bool = false) -> Wire.Stream {
         var callParticipantState: CallParticipantState = .connected(videoState: videoState,
                                                              microphoneState: muted ? .muted : .unmuted)
-            
+
         return Wire.Stream(
             streamId: client,
             user: user,

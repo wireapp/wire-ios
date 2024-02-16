@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireSyncEngine
+import MessageUI
 
 enum BlockerViewControllerContext {
     case blacklist
@@ -28,11 +29,14 @@ enum BlockerViewControllerContext {
 }
 
 final class BlockerViewController: LaunchImageViewController {
-
     private var context: BlockerViewControllerContext = .blacklist
+    private var error: Error?
     private var sessionManager: SessionManager?
 
-    init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil) {
+    private var observerTokens = [Any]()
+
+    init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil, error: Error? = nil) {
+        self.error = error
         self.context = context
         self.sessionManager = sessionManager
         super.init(nibName: nil, bundle: nil)
@@ -43,7 +47,13 @@ final class BlockerViewController: LaunchImageViewController {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupApplicationNotifications()
+    }
+
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         showAlert()
     }
 
@@ -83,22 +93,33 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     func showDatabaseFailureMessage() {
+        let message = L10n.Localizable.Databaseloadingfailure.Alert.message(error?.localizedDescription ?? "-")
 
         let databaseFailureAlert = UIAlertController(
             title: L10n.Localizable.Databaseloadingfailure.Alert.title,
-            message: L10n.Localizable.Databaseloadingfailure.Alert.message,
+            message: message,
             preferredStyle: .alert
         )
 
-        let settingsAction = UIAlertAction(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.settings,
+        let reportError = UIAlertAction(
+            title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
             style: .default,
-            handler: { _ in
-                UIApplication.shared.openSettings()
+            handler: { [weak self] _ in
+                self?.presentMailComposer(withLogs: true)
             }
         )
 
-        databaseFailureAlert.addAction(settingsAction)
+        databaseFailureAlert.addAction(reportError)
+
+        let retryAction = UIAlertAction(
+            title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
+            style: .default,
+            handler: { [weak self] _ in
+                self?.sessionManager?.retryStart()
+            }
+        )
+
+        databaseFailureAlert.addAction(retryAction)
 
         let deleteDatabaseAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.deleteDatabase,
@@ -134,9 +155,32 @@ final class BlockerViewController: LaunchImageViewController {
         let cancelAction = UIAlertAction(
             title: L10n.Localizable.General.cancel,
             style: .default,
-            handler: nil)
+            handler: { [weak self] _ in
+                self?.showDatabaseFailureMessage()
+            })
 
         deleteDatabaseConfirmationAlert.addAction(cancelAction)
         present(deleteDatabaseConfirmationAlert, animated: true)
     }
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        // shown after sending report logs, we should show other choices again
+        // in order not to be stuck on black screen
+        controller.presentingViewController?.dismiss(animated: true) {
+            self.showDatabaseFailureMessage()
+        }
+    }
 }
+
+// MARK: - Application state observing
+extension BlockerViewController: ApplicationStateObserving {
+    func addObserverToken(_ token: NSObjectProtocol) {
+        observerTokens.append(token)
+    }
+
+    func applicationDidBecomeActive() {
+        showAlert()
+    }
+}
+
+extension BlockerViewController: SendTechnicalReportPresenter {}

@@ -26,7 +26,7 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        sut = UserClientByQualifiedUserIDTranscoder(managedObjectContext: uiMOC)
+        sut = UserClientByQualifiedUserIDTranscoder(managedObjectContext: syncMOC)
     }
 
     override func tearDown() {
@@ -72,7 +72,7 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/v1/users/list-clients/v2")
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.apiVersion, 1)
 
         let payload = try payload(from: request)
@@ -88,11 +88,41 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/v2/users/list-clients")
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.apiVersion, 2)
 
         let payload = try payload(from: request)
         XCTAssertEqual(payload, RequestPayload(qualifiedIDs: [id1, id2]))
+    }
+
+    // MARK: - Response processing
+
+    typealias ReponsePayload = UserClientByQualifiedUserIDTranscoder.ResponsePayload
+
+    func test_responseProcessing_EmptyResults() throws {
+        try syncMOC.performAndWait {
+            // Given
+            let apiVersion = APIVersion.v2
+            let qualifiedID = try XCTUnwrap(otherUser.qualifiedID)
+            let identifiers = Set([qualifiedID])
+
+            // Backend may return an empty payload if the domain is offline.
+            let emptyPayload = ResponsePayload(qualifiedUsers: ["offline-domain.com": [:]])
+            let response = ZMTransportResponse(
+                payload: try emptyPayload.encodeToJSONString() as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            )
+
+            // When
+            sut.didReceive(
+                response: response,
+                for: identifiers) { }
+
+            // Then all clients are marked as updated, even if response was empty.
+            XCTAssertFalse(otherClient.needsToBeUpdatedFromBackend)
+        }
     }
 
 }

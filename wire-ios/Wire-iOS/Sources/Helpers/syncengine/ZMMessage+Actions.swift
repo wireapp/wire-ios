@@ -29,7 +29,7 @@ extension ZMConversationMessage {
     /// Whether the message can be digitally signed in.
     var canBeDigitallySigned: Bool {
         guard
-            let selfUser = SelfUser.provider?.selfUser,
+            let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.phoneNumber != nil,
             selfUser.isTeamMember,
             selfUser.hasDigitalSignatureEnabled
@@ -89,9 +89,9 @@ extension ZMConversationMessage {
 
         // Show the message details in Team groups.
         if conversation.teamRemoteIdentifier != nil {
-            return canBeLiked || isSentBySelfUser
+            return canAddReaction || isSentBySelfUser
         } else {
-            return canBeLiked
+            return canAddReaction
         }
     }
 

@@ -26,30 +26,33 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
     override func setUp() {
         super.setUp()
         action = SendMLSMessageAction(message: mlsMessage)
+        handler = SendMLSMessageActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation
-    func test_itGenerateARequest() throws {
+    func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v1/mls/messages",
-            expectedMethod: .methodPOST,
+            expectedPath: "/v5/mls/messages",
+            expectedMethod: .post,
             expectedData: mlsMessage,
             expectedContentType: "message/mls",
-            apiVersion: .v1
+            apiVersion: .v5
         )
     }
 
-    func test_itFailsToGenerateRequests() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v0,
-            expectedError: .endpointUnavailable
-        )
+    func test_itFailsToGenerateRequests_APIBelowV5() {
+        [.v0, .v1, .v2, .v3, .v4].forEach {
+            test_itDoesntGenerateARequest(
+                action: action,
+                apiVersion: $0,
+                expectedError: .endpointUnavailable
+            )
+        }
 
         test_itDoesntGenerateARequest(
             action: SendMLSMessageAction(message: Data()),
-            apiVersion: .v1,
+            apiVersion: .v5,
             expectedError: .malformedRequest
         )
     }

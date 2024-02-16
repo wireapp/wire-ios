@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 protocol CallAccessoryViewControllerDelegate: AnyObject {
     func callAccessoryViewControllerDidSelectShowMore(viewController: CallAccessoryViewController)
@@ -28,7 +29,8 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
 
     weak var delegate: CallAccessoryViewControllerDelegate?
     private let participantsViewController: CallParticipantsListViewController
-    private let avatarView = UserImageViewContainer(size: .big, maxSize: 240, yOffset: -8)
+
+    private let avatarView: UserImageViewContainer
     private let videoPlaceholderStatusLabel = UILabel(
         key: "video_call.camera_access.denied",
         size: .normal,
@@ -42,14 +44,26 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
         }
     }
 
-    init(configuration: CallInfoViewControllerInput,
-         selfUser: UserType) {
+    init(
+        configuration: CallInfoViewControllerInput,
+        selfUser: UserType,
+        userSession: UserSession
+    ) {
         self.configuration = configuration
+
         participantsViewController = CallParticipantsListViewController(
             participants: configuration.accessoryType.participants,
             showParticipants: false,
             selfUser: selfUser
         )
+
+        avatarView = UserImageViewContainer(
+            size: .big,
+            maxSize: 240,
+            yOffset: -8,
+            userSession: userSession
+        )
+
         super.init(nibName: nil, bundle: nil)
         participantsViewController.delegate = self
     }

@@ -20,6 +20,22 @@ import Foundation
 import CoreData
 import WireSystem
 
+enum CoreDataStackError: Error {
+    case simulateDatabaseLoadingFailure
+    case noDatabaseActivity
+}
+extension CoreDataStackError: LocalizedError {
+
+    var errorDescription: String? {
+        switch self {
+        case .simulateDatabaseLoadingFailure:
+            return "simulateDatabaseLoadingFailure"
+        case .noDatabaseActivity:
+            return "Could not create a background activity for database setup"
+        }
+    }
+}
+
 @objc
 public protocol ContextProvider {
 
@@ -82,6 +98,8 @@ public extension NSURL {
 
 }
 
+private let log = ZMSLog(tag: "core-data")
+
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
 
@@ -110,14 +128,14 @@ public class CoreDataStack: NSObject, ContextProvider {
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
+    private let migrator: CoreDataMessagingMigrator
+
     public init(account: Account,
                 applicationContainer: URL,
                 inMemoryStore: Bool = false,
                 dispatchGroup: ZMSDispatchGroup? = nil) {
 
-        if #available(iOSApplicationExtension 12.0, *) {
-            ExtendedSecureUnarchiveFromData.register()
-        }
+        ExtendedSecureUnarchiveFromData.register()
 
         self.applicationContainer = applicationContainer
         self.account = account
@@ -161,6 +179,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         self.messagesContainer = messagesContainer
         self.eventsContainer = eventContainer
+        self.migrator = CoreDataMessagingMigrator(isInMemoryStore: inMemoryStore)
 
         super.init()
 
@@ -181,13 +200,65 @@ public class CoreDataStack: NSObject, ContextProvider {
             try closeStores(in: eventsContainer)
         } catch let error {
             Logging.localStorage.error("Error while closing persistent store: \(error)")
+            log.safePublic("Error while closing persistent store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
         }
     }
 
     func closeStores(in container: PersistentContainer) throws {
-        try container.persistentStoreCoordinator.persistentStores.forEach({
+        try container.persistentStoreCoordinator.persistentStores.forEach {
             try container.persistentStoreCoordinator.remove($0)
-        })
+        }
+    }
+
+    public func setup(
+        onStartMigration: () -> Void,
+        onFailure: @escaping (Error) -> Void,
+        onCompletion: @escaping (CoreDataStack) -> Void
+    ) {
+        if needsMigration {
+            onStartMigration()
+        }
+        DispatchQueue.global(qos: .userInitiated).async {
+            if self.needsMessagingStoreMigration() {
+                log.safePublic("[setup] start migration of core data messaging store!")
+                WireLogger.localStorage.info("start migration of core data messaging store!")
+
+                do {
+                    try self.migrateMessagingStore()
+                    log.safePublic("[setup] finished migration of core data messaging store!")
+                    WireLogger.localStorage.info("finished migration of core data messaging store!")
+                } catch {
+                    let logMessage = "failed migration of core data messaging store: \(error.localizedDescription)."
+                    log.safePublic("[setup] \(SanitizedString(stringLiteral: logMessage))", level: .error)
+                    WireLogger.localStorage.error(logMessage)
+
+                    DispatchQueue.main.async {
+                        onFailure(error)
+                    }
+                    return
+                }
+            }
+
+            DispatchQueue.main.async {
+                WireLogger.localStorage.debug("load core data stores!")
+                log.safePublic("[setup] load core data stores!", level: .debug)
+                self.loadStores { error in
+                    if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
+                        // flip off the flag in order not to be stuck in failure
+                        var flag = DeveloperFlag.forceDatabaseLoadingFailure
+                        flag.isOn = false
+                        onFailure(CoreDataStackError.simulateDatabaseLoadingFailure)
+                        return
+                    }
+
+                    if let error {
+                        onFailure(error)
+                        return
+                    }
+                    onCompletion(self)
+                }
+            }
+        }
     }
 
     public func loadStores(completionHandler: @escaping (Error?) -> Void) {
@@ -199,6 +270,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         loadMessagesStore { (error) in
             if let error = error {
                 WireLogger.localStorage.error("failed to load message store: \(error)")
+                log.safePublic("failed to load message store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
@@ -208,6 +280,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         loadEventStore { (error) in
             if let error = error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
+                log.safePublic("failed to load event store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
@@ -277,7 +350,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     public var needsMigration: Bool {
-        return messagesContainer.needsMigration || eventsContainer.needsMigration
+        needsMessagingStoreMigration() || eventsContainer.needsMigration
     }
 
     public var storesExists: Bool {
@@ -322,7 +395,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 
-            FeatureService(context: context).createDefaultConfigsIfNeeded()
+            FeatureRepository(context: context).createDefaultConfigsIfNeeded()
         }
 
         // this will be done async, not to block the UI thread, but
@@ -368,6 +441,22 @@ public class CoreDataStack: NSObject, ContextProvider {
         return result
     }
 
+    // MARK: - Migration
+
+    public func needsMessagingStoreMigration() -> Bool {
+        guard let storeURL = messagesContainer.storeURL else {
+            return false
+        }
+        return migrator.requiresMigration(at: storeURL, toVersion: .current)
+    }
+
+    public func migrateMessagingStore() throws {
+        guard let storeURL = messagesContainer.storeURL else {
+            throw CoreDataMessagingMigratorError.missingStoreURL
+        }
+
+        try migrator.migrateStore(at: storeURL, toVersion: .current)
+    }
 }
 
 class PersistentContainer: NSPersistentContainer {

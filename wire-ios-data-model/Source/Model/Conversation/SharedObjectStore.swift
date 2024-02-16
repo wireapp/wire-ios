@@ -136,7 +136,7 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         do {
             var current = load()
             current.append(object)
-            let archived = NSKeyedArchiver.archivedData(withRootObject: current)
+            let archived = try NSKeyedArchiver.archivedData(withRootObject: current, requiringSecureCoding: false)
             try archived.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
             zmLog.debug("Stored object in shared container at \(url), object: \(object), all objects: \(current)")
             return true
@@ -154,7 +154,8 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
 
         do {
             let data = try Data(contentsOf: url)
-            let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
+            let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+            unarchiver.requiresSecureCoding = false
             unarchiver.delegate = self // If we are loading data saved before project rename the class will not be found
             let stored = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? [T]
             zmLog.debug("Loaded shared objects from \(url): \(String(describing: stored))")

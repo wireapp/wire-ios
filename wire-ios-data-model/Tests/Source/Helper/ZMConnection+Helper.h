@@ -26,7 +26,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZMConnection (Helper)
 
 + (instancetype)insertNewSentConnectionToUser:(ZMUser *)user;
-+ (instancetype)insertNewSentConnectionToUser:(ZMUser *)user existingConversation:(ZMConversation * _Nullable)conversation;
 
 @end
 

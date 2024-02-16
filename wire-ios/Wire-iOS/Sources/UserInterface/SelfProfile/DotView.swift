@@ -70,7 +70,7 @@ final class DotView: UIView {
     }
 
     private func createConstraints() {
-        [self, circleView, centerView].prepareForLayout()
+        [self, circleView, centerView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let centerViewConstraints = centerView.fitInConstraints(view: self, inset: 1)
 
@@ -88,7 +88,7 @@ final class DotView: UIView {
 
     private func createClientObservers() {
         guard let user = user else { return }
-        clientsObserverTokens = user.clients.map { UserClientChangeInfo.add(observer: self, for: $0) }
+        clientsObserverTokens = user.clients.compactMap { UserClientChangeInfo.add(observer: self, for: $0) }
     }
 
     func updateIndicator() {
@@ -98,7 +98,7 @@ final class DotView: UIView {
     }
 }
 
-extension DotView: ZMUserObserver {
+extension DotView: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
         guard changeInfo.trustLevelChanged ||

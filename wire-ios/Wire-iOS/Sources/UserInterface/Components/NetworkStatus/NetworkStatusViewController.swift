@@ -120,8 +120,8 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     func showOfflineAlert() {
-        let offlineAlert = UIAlertController(title: "system_status_bar.no_internet.title".localized,
-                                             message: "system_status_bar.no_internet.explanation".localized,
+        let offlineAlert = UIAlertController(title: L10n.Localizable.SystemStatusBar.NoInternet.title,
+                                             message: L10n.Localizable.SystemStatusBar.NoInternet.explanation,
                                              alertAction: .confirm())
         offlineAlert.presentTopmost()
     }
@@ -135,7 +135,9 @@ final class NetworkStatusViewController: UIViewController {
         case .onlineSynchronizing:
             return .onlineSynchronizing
         @unknown default:
+            // swiftlint:disable todo_requires_jira_link
             // TODO: ZMNetworkState change to NS_CLOSED_ENUM
+            // swiftlint:enable todo_requires_jira_link
             fatalError()
         }
     }

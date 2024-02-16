@@ -17,15 +17,18 @@
 //
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Share Extension
+// General
 
 
 
 "general.ok" = "Verstanden";
 
+// Conversation Selection
 "share_extension.conversation_selection.account" = "Konto:";
 "share_extension.conversation_selection.title" = "Unterhaltung:";
-"share_extension.send_button.title" = "Senden";
 "share_extension.conversation_selection.empty.value" = "Auswählen";
+
+"share_extension.send_button.title" = "Senden";
 "share_extension.input.placeholder" = "Eine Nachricht schreiben";
 "share_extension.sending_progress.title" = "Senden…";
 "share_extension.preparing.title" = "Vorbereiten…";
@@ -42,24 +45,35 @@
 "share_extension.unlock.alert.message" = "Öffnen Sie Wire, um ein Kennwort zu erstellen";
 "share_extension.unlock.reveal_passcode" = "Kennwort anzeigen";
 
+// Timeout
 "share_extension.timeout.title" = "Zeitüberschreitung beim Verbindungsversuch.";
 "share_extension.timeout.message" = "Überprüfen Sie ihre Internetverbindung und versuchen Sie es erneut. Der Anhang wurde in der Unterhaltung gespeichert.";
 
-"content.file.too_big" = "Sie können Dateien bis zu %@ senden";
-"content.file.unsupported_attachment" = "Nicht unterstützter Anhang";
+// Content
+"share_extension.content.file.too_big" = "Sie können Dateien bis zu %@ senden";
+"share_extension.content.file.unsupported_attachment" = "Nicht unterstützter Anhang";
+
 "share_extension.error.conversation_does_not_exist.message" = "Bitte wählen Sie eine Unterhaltung zum Teilen aus";
 
 "share_extension.privacy_security.lock_app.description" = "Wire entsperren";
 "share_extension.logged_out.title" = "Sie wurden von diesem Benutzerkonto abgemeldet.";
 "share_extension.logged_out.message" = "Bitte wählen Sie ein anderes Konto.";
 
-"conversation.displayname.emptygroup" = "Leere Gruppenunterhaltung";
-"meta.degraded.degradation_reason_message.singular" = "%@ hat ein neues Gerät hinzugefügt.";
-"meta.degraded.degradation_reason_message.plural" = "%@ haben neue Geräte hinzugefügt.";
-"meta.degraded.dialog_message" = "Möchten Sie die Nachricht noch senden?";
-"meta.degraded.cancel_sending_button" = "Nicht senden";
-"meta.degraded.send_anyway_button" = "Trotzdem senden";
+// Conversation Degraded (security level lowered)
+"share_extension.conversation.displayname.emptygroup" = "Leere Gruppe - Gespräch";
+"share_extension.meta.degraded.degradation_reason_message.singular" = "%@ hat begonnen, ein neues Gerät zu nutzen.";
+"share_extension.meta.degraded.degradation_reason_message.plural" = "%@ hat begonnen, neue Geräte zu nutzen.";
+"share_extension.meta.degraded.dialog_message" = "Möchten Sie die Nachricht noch senden?";
+"share_extension.meta.degraded.cancel_sending_button" = "Nicht senden";
+"share_extension.meta.degraded.send_anyway_button" = "Trotzdem senden";
+
+"share_extension.meta.legalhold.send_alert_title" = "Die Unterhaltung unterliegt der gesetzlichen Aufbewahrung.";
 
 //Feature flag - File sharing
-"feature.flag.file_sharing.alert.title" = "Einschränkungen beim Teilen von Dateien";
-"feature.flag.file_sharing.alert.message" = "Sie können diese Datei nicht teilen, da diese Funktion deaktiviert ist.";
+"share_extension.feature.flag.file_sharing.alert.title" = "Einschränkungen beim Teilen von Dateien";
+"share_extension.feature.flag.file_sharing.alert.message" = "Sie können diese Datei nicht teilen, da diese Funktion deaktiviert ist.";
+
+// Share Extension - Voice Over
+"share_extension.voiceover.conversation_under_legal_hold" = "Unterliegt der gesetzlichen Aufbewahrung.";
+"share_extension.voiceover.conversation_secure" = "Alle Geräte überprüft.";
+"share_extension.voiceover.conversation_secure_with_ignored" = "Nicht alle Geräte sind überprüft.";

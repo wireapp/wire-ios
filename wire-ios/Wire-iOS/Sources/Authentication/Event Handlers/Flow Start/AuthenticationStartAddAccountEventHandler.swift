@@ -22,7 +22,7 @@ import Foundation
  * Handles requests to add a new user account.
  */
 
-class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandler {
+final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandler {
 
     let featureProvider: AuthenticationFeatureProvider
     weak var statusProvider: AuthenticationStatusProvider?

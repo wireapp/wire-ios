@@ -19,7 +19,19 @@
 import XCTest
 @testable import Wire
 
-final class ProfileViewTests: ZMSnapshotTestCase {
+final class ProfileViewTests: BaseSnapshotTestCase {
+
+    var userSession: UserSessionMock!
+
+    override func setUp() {
+        super.setUp()
+        userSession = UserSessionMock()
+    }
+
+    override func tearDown() {
+        userSession = nil
+        super.tearDown()
+    }
 
     func test_DefaultOptions() {
         verifyProfile(options: [])
@@ -58,35 +70,60 @@ final class ProfileViewTests: ZMSnapshotTestCase {
     }
 
     func test_notConnectedUser() {
-        // given
+        // GIVEN
         let selfUser = MockUserType.createSelfUser(name: "selfUser", inTeam: UUID())
         let testUser = MockUserType.createUser(name: "Test")
         testUser.isConnected = false
 
         // when
-        let sut = ProfileHeaderViewController(user: testUser, viewer: selfUser, options: [])
+        let sut = ProfileHeaderViewController(
+            user: testUser,
+            viewer: selfUser,
+            options: [],
+            userSession: userSession
+        )
+
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
         sut.overrideUserInterfaceStyle = .dark
 
-        // then
-        verify(view: sut.view)
+        // THEN
+        verify(matching: sut.view)
     }
 
-    // MARK: - Helpers
-
-    func verifyProfile(options: ProfileHeaderViewController.Options, availability: AvailabilityKind = .available, file: StaticString = #file, line: UInt = #line) {
+    func verifyProfile(
+        options: ProfileHeaderViewController.Options,
+        availability: Availability = .available,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         let selfUser = MockUserType.createSelfUser(name: "selfUser", inTeam: UUID())
         selfUser.teamName = "Stunning"
         selfUser.handle = "browncow"
         selfUser.availability = availability
 
-        let sut = ProfileHeaderViewController(user: selfUser, viewer: selfUser, options: options)
+        let sut = setupProfileHeaderViewController(user: selfUser, viewer: selfUser, options: options)
+
+        verify(matching: sut.view, file: file, testName: testName, line: line)
+    }
+
+    func setupProfileHeaderViewController(
+        user: UserType,
+        viewer: UserType,
+        options: ProfileHeaderViewController.Options = []
+    ) -> ProfileHeaderViewController {
+        let sut = ProfileHeaderViewController(
+            user: user,
+            viewer: viewer,
+            options: options,
+            userSession: userSession
+        )
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
         sut.overrideUserInterfaceStyle = .dark
 
-        verify(view: sut.view, file: file, line: line)
+        return sut
     }
 
 }

@@ -61,10 +61,16 @@ extension ZMOTRMessage {
         // Insert the message
         switch content {
         case .lastRead where conversation.isSelfConversation:
-            ZMConversation.updateConversation(withLastReadFromSelfConversation: message.lastRead, inContext: moc)
+            ZMConversation.updateConversation(
+                withLastReadFromSelfConversation: message.lastRead,
+                in: moc
+            )
 
         case .cleared where conversation.isSelfConversation:
-            ZMConversation.updateConversation(withClearedFromSelfConversation: message.cleared, inContext: moc)
+            ZMConversation.updateConversation(
+                withClearedFromSelfConversation: message.cleared,
+                in: moc
+            )
 
         case .hidden where conversation.isSelfConversation:
             ZMMessage.remove(remotelyHiddenMessage: message.hidden, inContext: moc)
@@ -77,11 +83,7 @@ extension ZMOTRMessage {
             ZMMessage.remove(remotelyDeletedMessage: message.deleted, inConversation: conversation, senderID: senderID, inContext: moc)
 
         case .reaction:
-            // if we don't understand the reaction received, discard it
-            guard Reaction.validate(unicode: message.reaction.emoji) else {
-                return nil
-            }
-            ZMMessage.add(reaction: message.reaction, senderID: senderID, conversation: conversation, inContext: moc)
+            ZMMessage.add(reaction: message.reaction, senderID: senderID, conversation: conversation, creationDate: updateEvent.timestamp, inContext: moc)
 
         case .confirmation:
             ZMMessageConfirmation.createMessageConfirmations(message.confirmation, conversation: conversation, updateEvent: updateEvent)

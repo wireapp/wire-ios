@@ -32,13 +32,18 @@ extension ZClientViewController {
     }
 
     public func showConnectionRequest(userId: UUID) {
-        let searchUserViewConroller = SearchUserViewController(userId: userId, profileViewControllerDelegate: self)
+        let searchUserViewConroller = SearchUserViewController(userId: userId, profileViewControllerDelegate: self, userSession: userSession)
 
         wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
     }
 
     public func showUserProfile(user: UserType) {
-        let profileViewController = ProfileViewController(user: user, viewer: ZMUser.selfUser(), context: .profileViewer)
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
+        let profileViewController = ProfileViewController(user: user, viewer: selfUser, context: .profileViewer, userSession: userSession)
         profileViewController.delegate = self
 
         wrapInNavigationControllerAndPresent(viewController: profileViewController)

@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 import WireLinkPreview
 
+// MARK: - UIView extension
+
 extension UIView {
     fileprivate func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
         let container = ReplyRoundCornersView(containedView: self)
@@ -33,15 +35,18 @@ extension UIView {
     }
 }
 
-final class MessageReplyPreviewViewTests: ZMSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-    }
+// MARK: - MessageReplyPreviewViewTests
+
+final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
+
+    // MARK: - tearDown
 
     override func tearDown() {
         invalidateStyle()
         super.tearDown()
     }
+
+    // MARK: - Helper methods
 
     func invalidateStyle() {
         NSAttributedString.invalidateMarkdownStyle()
@@ -65,6 +70,8 @@ final class MessageReplyPreviewViewTests: ZMSnapshotTestCase {
         verifyViewInDarkScheme(createSut: { sut
         }, file: file, testName: testName, line: line)
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItRendersTextMessagePreview() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
@@ -90,6 +97,8 @@ final class MessageReplyPreviewViewTests: ZMSnapshotTestCase {
         verifyInDarkMode(message: message)
     }
 
+    // MARK: - Helper method
+
     private func mentionMessage() -> MockMessage {
         let message = MockMessageFactory.messageTemplate()
 
@@ -102,6 +111,8 @@ final class MessageReplyPreviewViewTests: ZMSnapshotTestCase {
 
         return message
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItRendersMention() {
 		verifyInLightMode(message: mentionMessage())
@@ -158,11 +169,11 @@ final class MessageReplyPreviewViewTests: ZMSnapshotTestCase {
         verify(matching: previewView.prepareForSnapshot())
     }
 
-    func testThatItRendersImageMessagePreview() {
+    func testThatItRendersImageMessagePreview() throws {
         let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
 
-        let previewView = message.replyPreview()!
+        let previewView = try XCTUnwrap(message.replyPreview())
         XCTAssert(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
         verify(matching: previewView.prepareForSnapshot())
@@ -190,6 +201,8 @@ final class MessageReplyPreviewViewTests: ZMSnapshotTestCase {
 
         verify(matching: previewView.prepareForSnapshot())
     }
+
+    // MARK: - Unit Test
 
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")

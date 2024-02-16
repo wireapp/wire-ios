@@ -16,44 +16,66 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
 @testable import Wire
 
-class BackupPasswordViewControllerTests: ZMSnapshotTestCase {
+final class BackupPasswordViewControllerTests: BaseSnapshotTestCase {
 
     func testDefaultState() {
         // GIVEN
-        let sut = BackupPasswordViewController { _, _ in }
+        let sut = makeViewController()
+
         // WHEN & THEN
-        self.verifyInIPhoneSize(view: sut.view)
+        verify(matching: sut.view)
     }
 
     func testThatItCallsTheCallback() {
         // GIVEN
-
         let validPassword = "Password123!"
         let expectation = self.expectation(description: "Callback called")
-        let sut = BackupPasswordViewController { _, password in
-            XCTAssertEqual(password!.value, validPassword)
+        let sut = makeViewController()
+        sut.onCompletion = { password in
+            XCTAssertEqual(password, validPassword)
             expectation.fulfill()
         }
+
         // WHEN
-        XCTAssertTrue(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: validPassword))
-        XCTAssertFalse(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "\n"))
+        XCTAssertTrue(
+            sut.textField(
+                UITextField(),
+                shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+                replacementString: validPassword
+            )
+        )
+        XCTAssertFalse(
+            sut.textField(
+                UITextField(),
+                shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+                replacementString: "\n"
+            )
+        )
+
         // THEN
-        self.waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
     }
 
     func testThatWhitespacesPasswordIsNotGood() {
         // GIVEN
-        let sut = BackupPasswordViewController { _, _ in
+        let sut = makeViewController()
+        sut.onCompletion = { _ in
             XCTFail("Sut is nil")
         }
+
         // WHEN
         XCTAssertFalse(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "              "))
         XCTAssertFalse(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "\n"))
+    }
+
+    // MARK: - Helpers
+
+    private func makeViewController() -> BackupPasswordViewController {
+        BackupPasswordViewController()
     }
 }

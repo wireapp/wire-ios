@@ -47,13 +47,13 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
             secondOtherUserClient = session.registerClient(for: otherUser!, label: "other2", type: "permanent", deviceClass: "phone")
         })
 
-        let redunduntClientId = NSString.createAlphanumerical() as String
+        let redunduntClientId: String = .randomClientIdentifier()
         let payload: ZMTransportData = [
             selfUser.identifier: [selfClient.identifier!, redunduntClientId],
             otherUser.identifier: [otherUserClient.identifier!, secondOtherUserClient.identifier!],
             thirdUser.identifier: [redunduntClientId]] as ZMTransportData
 
-        let response: ZMTransportResponse = self.response(forPayload: payload, path: "/users/prekeys", method: .methodPOST, apiVersion: .v0)
+        let response: ZMTransportResponse = self.response(forPayload: payload, path: "/users/prekeys", method: .post, apiVersion: .v0)
         XCTAssertEqual(response.httpStatus, 200)
 
         let expectedUsers: NSArray = [selfUser.identifier, otherUser.identifier, thirdUser.identifier]
@@ -82,7 +82,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         let userId = "1234"
 
         // when
-        let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET, apiVersion: .v0)
+        let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .get, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 404)
@@ -97,7 +97,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
 
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET, apiVersion: .v0) else { XCTFail(); return }
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .get, apiVersion: .v0) else { XCTFail(); return }
 
         // then
         XCTAssertEqual(response.httpStatus, 200)
@@ -120,7 +120,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
 
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET, apiVersion: .v0) else { XCTFail(); return }
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .get, apiVersion: .v0) else { XCTFail(); return }
 
         // then
         XCTAssertEqual(response.httpStatus, 200)
@@ -151,7 +151,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
 
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET, apiVersion: .v0) else { XCTFail(); return }
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .get, apiVersion: .v0) else { XCTFail(); return }
 
         // then
         XCTAssertEqual(response.httpStatus, 403)

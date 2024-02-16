@@ -25,7 +25,6 @@ protocol AccessAPIClientProtocol {
 
 }
 
-@available(iOS 15, *)
 final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
 
     // MARK: - Properties
@@ -86,7 +85,7 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
         let token_type: String
     }
 
-    func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure> {
+    func parseResponse(_ response: NetworkResponse) -> Result<Output, Failure> {
         logger.trace("parsing reponse: \(response, privacy: .public)")
 
         switch response {

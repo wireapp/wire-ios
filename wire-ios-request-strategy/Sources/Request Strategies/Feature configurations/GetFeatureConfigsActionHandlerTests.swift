@@ -37,10 +37,6 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         )
     }
 
-    let successPayload: ZMTransportData = [
-
-    ] as ZMTransportData
-
     // MARK: - Request generation
 
     func test_ItGeneratesARequest() throws {
@@ -53,19 +49,22 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/feature-configs")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
     }
 
     // MARK: - Response handling
 
     func test_ItHandlesResponse_200() throws {
-        syncMOC.performGroupedBlock {
+        try syncMOC.performAndWait {
             // Given
             let sut = GetFeatureConfigsActionHandler(context: self.syncMOC)
             var action = GetFeatureConfigsAction()
 
+            let mlsMigrationStartDate = Date()
+            let mlsMigrationFinaliseDate = Date()
+
             // Expectation
-            let gotResult = self.expectation(description: "gotResult")
+            let gotResult = self.customExpectation(description: "gotResult")
 
             action.onResult { result in
                 switch result {
@@ -87,10 +86,17 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 digitalSignatures: .init(status: .enabled),
                 fileSharing: .init(status: .enabled),
                 mls: .init(status: .enabled, config: .init(defaultProtocol: .mls)),
-                selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
+                selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22)),
+                mlsMigration: .init(
+                    status: .enabled,
+                    config: .init(
+                        startTime: mlsMigrationStartDate,
+                        finaliseRegardlessAfter: mlsMigrationFinaliseDate
+                    )
+                )
             )
 
-            guard let payloadData = try? JSONEncoder().encode(payload),
+            guard let payloadData = try? JSONEncoder.defaultEncoder.encode(payload),
                   let payloadString = String(data: payloadData, encoding: .utf8) else {
                 XCTFail("failed to encode payload")
                 return
@@ -101,36 +107,47 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureService = FeatureService(context: self.syncMOC)
+            let featureRepository = FeatureRepository(context: self.syncMOC)
 
-            let appLock = featureService.fetchAppLock()
+            let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
             XCTAssertEqual(appLock.config.enforceAppLock, true)
             XCTAssertEqual(appLock.config.inactivityTimeoutSecs, 11)
 
-            let classifiedDomains = featureService.fetchClassifiedDomains()
+            let classifiedDomains = featureRepository.fetchClassifiedDomains()
             XCTAssertEqual(classifiedDomains.status, .enabled)
             XCTAssertEqual(classifiedDomains.config.domains, ["foo"])
 
-            let conferenceCalling = featureService.fetchConferenceCalling()
+            let conferenceCalling = featureRepository.fetchConferenceCalling()
             XCTAssertEqual(conferenceCalling.status, .enabled)
 
-            let conversationGuestLinks = featureService.fetchConversationGuestLinks()
+            let conversationGuestLinks = featureRepository.fetchConversationGuestLinks()
             XCTAssertEqual(conversationGuestLinks.status, .enabled)
 
-            let digitalSignature = featureService.fetchDigitalSignature()
+            let digitalSignature = featureRepository.fetchDigitalSignature()
             XCTAssertEqual(digitalSignature.status, .enabled)
 
-            let fileSharing = featureService.fetchFileSharing()
+            let fileSharing = featureRepository.fetchFileSharing()
             XCTAssertEqual(fileSharing.status, .enabled)
 
-            let mls = featureService.fetchMLS()
+            let mls = featureRepository.fetchMLS()
             XCTAssertEqual(mls.status, .enabled)
             XCTAssertEqual(mls.config, .init(defaultProtocol: .mls))
 
-            let selfDeletingMessage = featureService.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
+
+            let mlsMigration = featureRepository.fetchMLSMigration()
+            XCTAssertEqual(mlsMigration.status, .enabled)
+            XCTAssertEqual(
+                String(describing: try XCTUnwrap(mlsMigration.config.startTime)),
+                String(describing: mlsMigrationStartDate)
+            )
+            XCTAssertEqual(
+                String(describing: try XCTUnwrap(mlsMigration.config.finaliseRegardlessAfter)),
+                String(describing: mlsMigrationFinaliseDate)
+            )
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -143,7 +160,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             var action = GetFeatureConfigsAction()
 
             // Expectation
-            let gotResult = self.expectation(description: "gotResult")
+            let gotResult = self.customExpectation(description: "gotResult")
 
             action.onResult { result in
                 switch result {
@@ -165,7 +182,8 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 digitalSignatures: nil,
                 fileSharing: nil,
                 mls: nil,
-                selfDeletingMessages: nil
+                selfDeletingMessages: nil,
+                mlsMigration: nil
             )
 
             guard let payloadData = try? JSONEncoder().encode(payload),
@@ -179,35 +197,39 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureService = FeatureService(context: self.syncMOC)
+            let featureRepository = FeatureRepository(context: self.syncMOC)
 
-            let appLock = featureService.fetchAppLock()
+            let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
             XCTAssertEqual(appLock.config, .init())
 
-            let classifiedDomains = featureService.fetchClassifiedDomains()
+            let classifiedDomains = featureRepository.fetchClassifiedDomains()
             XCTAssertEqual(classifiedDomains.status, .disabled)
             XCTAssertEqual(classifiedDomains.config, .init())
 
-            let conferenceCalling = featureService.fetchConferenceCalling()
+            let conferenceCalling = featureRepository.fetchConferenceCalling()
             XCTAssertEqual(conferenceCalling.status, .enabled)
 
-            let conversationGuestLinks = featureService.fetchConversationGuestLinks()
+            let conversationGuestLinks = featureRepository.fetchConversationGuestLinks()
             XCTAssertEqual(conversationGuestLinks.status, .enabled)
 
-            let digitalSignature = featureService.fetchDigitalSignature()
+            let digitalSignature = featureRepository.fetchDigitalSignature()
             XCTAssertEqual(digitalSignature.status, .disabled)
 
-            let fileSharing = featureService.fetchFileSharing()
+            let fileSharing = featureRepository.fetchFileSharing()
             XCTAssertEqual(fileSharing.status, .enabled)
 
-            let mls = featureService.fetchMLS()
+            let mls = featureRepository.fetchMLS()
             XCTAssertEqual(mls.status, .disabled)
             XCTAssertEqual(mls.config, .init())
 
-            let selfDeletingMessage = featureService.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
+
+            let mlsMigration = featureRepository.fetchMLSMigration()
+            XCTAssertEqual(mlsMigration.status, .disabled)
+            XCTAssertEqual(mlsMigration.config, .init())
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -219,7 +241,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -244,7 +266,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -269,7 +291,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -294,7 +316,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -319,7 +341,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {

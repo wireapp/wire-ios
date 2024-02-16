@@ -27,15 +27,15 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
         switch apiVersion {
-        case .v0, .v1:
+        case .v0, .v1, .v2, .v3, .v4:
             var action = action
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v2, .v3, .v4:
+        case .v5, .v6:
             return ZMTransportRequest(
                 path: "/mls/public-keys",
-                method: .methodGET,
+                method: .get,
                 payload: nil,
                 apiVersion: apiVersion.rawValue
             )
@@ -59,8 +59,8 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
     override func handleResponse(_ response: ZMTransportResponse, action: FetchBackendMLSPublicKeysAction) {
         var action = action
 
-        switch response.httpStatus {
-        case 200:
+        switch (response.httpStatus, response.payloadLabel()) {
+        case (200, _):
             guard
                 let data = response.rawData,
                 let payload = try? JSONDecoder().decode(ResponsePayload.self, from: data)
@@ -69,10 +69,13 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             }
 
             let ed25519RemovalKey = payload.removal.ed25519
-                .flatMap(\.base64EncodedBytes)
+                .flatMap(\.base64DecodedBytes)
                 .map(\.data)
 
             action.succeed(with: Action.Result(removal: .init(ed25519: ed25519RemovalKey)))
+
+        case (400, "mls-not-enabled"):
+            action.fail(with: .mlsNotEnabled)
 
         default:
             let error = response.errorInfo

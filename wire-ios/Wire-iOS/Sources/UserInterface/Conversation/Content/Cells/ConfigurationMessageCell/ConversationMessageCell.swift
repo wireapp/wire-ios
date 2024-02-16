@@ -20,13 +20,14 @@ import UIKit
 import WireUtilities
 import WireDataModel
 
-protocol ConversationMessageCellDelegate: MessageActionResponder {
+protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, messageDetailsViewController: MessageDetailsViewController)
+    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode)
     func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView)
     func conversationMessageWantsToOpenParticipantsDetails(_ cell: UIView, selectedUsers: [UserType], sourceView: UIView)
+    func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: MessageActionsViewController)
     func conversationMessageShouldUpdate()
 }
 
@@ -69,6 +70,8 @@ protocol ConversationMessageCell: AnyObject {
 
     /// Called after the cell as been moved off screen.
     func didEndDisplaying()
+
+    func prepareForReuse()
 }
 
 extension ConversationMessageCell {
@@ -91,6 +94,10 @@ extension ConversationMessageCell {
 
     func didEndDisplaying() {
         // to be overriden
+    }
+
+    func prepareForReuse() {
+
     }
 
 }
@@ -234,7 +241,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
  * A type erased box containing a conversation message cell description.
  */
 
-class AnyConversationMessageCellDescription: NSObject {
+final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
     private let viewGenerator: () -> UIView
     private let registrationBlock: (UITableView) -> Void

@@ -173,7 +173,7 @@ extension LegacyNotificationServiceTests {
 
 }
 
-class CallEventHandlerMock: CallEventHandlerProtocol {
+final class CallEventHandlerMock: CallEventHandlerProtocol {
 
     var reportIncomingVoIPCallCalled: Bool = false
 

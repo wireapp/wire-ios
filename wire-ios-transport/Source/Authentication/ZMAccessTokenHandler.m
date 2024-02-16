@@ -192,7 +192,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
     }
 
     if(self.cookieStorage.authenticationCookieData == nil) {
-        ZMLogError(@"No cookie to request access token");
+        [self logError:@"No cookie to request access token"];
         [self notifyTokenFailure:nil];
         return;
     }
@@ -296,6 +296,11 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
             newToken = [[ZMAccessToken alloc] initWithToken:token type:type expiresInSeconds:expiresIn];
         }
         didFail = (newToken == nil);
+
+        if (didFail) {
+            [self logDebug:@"Got success access token response but couldn't parse token"];
+        }
+
         needsToReRun = NO;
         
         if ( ! didFail) {
@@ -305,7 +310,8 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
         
     } else if (response.result == ZMTransportResponseStatusPermanentError &&
                response.HTTPStatus != EnhanceYourCalmStatusCode &&
-               response.HTTPStatus != TooManyRequestsStatusCode)
+               response.HTTPStatus != TooManyRequestsStatusCode &&
+               response.HTTPStatus != FederationRemoteError)
     {
         didFail = YES;
         needsToReRun = NO;
@@ -313,7 +319,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
     
     if (didFail) {
-        ZMLogInfo(@"Clearing access token and cookie");
+        [self logError:[NSString stringWithFormat:@"Failed to process access token response... clearing access token and cookie. Response result: %d, response status: %ld", response.result, (long)response.HTTPStatus]];
         self.accessToken = nil;
         self.cookieStorage.authenticationCookieData = nil;
         [self notifyTokenFailure:response];

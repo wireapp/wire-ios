@@ -18,15 +18,13 @@
 
 import XCTest
 import SnapshotTesting
-
 @testable import Wire
 
-final class AccountViewSnapshotTests: ZMSnapshotTestCase {
+final class AccountViewSnapshotTests: BaseSnapshotTestCase {
     var imageData: Data!
 
     override func setUp() {
         super.setUp()
-
         accentColor = .violet
         imageData = UIImage(inTestBundleNamed: "unsplash_matterhorn.jpg", for: AccountViewSnapshotTests.self)!.jpegData(compressionQuality: 0.9)
     }

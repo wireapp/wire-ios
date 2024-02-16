@@ -25,18 +25,36 @@ import Foundation
     let transportSession: TransportSessionType
     var isTornDown = false
 
+    private let refreshUsersMissingMetadataAction: RecurringAction
+    private let refreshConversationsMissingMetadataAction: RecurringAction
+
     deinit {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
     }
 
     public convenience init(userSession: ZMUserSession) {
-        self.init(searchContext: userSession.searchManagedObjectContext, contextProvider: userSession, transportSession: userSession.transportSession)
+        self.init(
+            searchContext: userSession.searchManagedObjectContext,
+            contextProvider: userSession,
+            transportSession: userSession.transportSession,
+            refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadataAction,
+            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction
+        )
     }
 
-    init(searchContext: NSManagedObjectContext, contextProvider: ContextProvider, transportSession: TransportSessionType) {
+    init(
+        searchContext: NSManagedObjectContext,
+        contextProvider: ContextProvider,
+        transportSession: TransportSessionType,
+        refreshUsersMissingMetadataAction: RecurringAction,
+        refreshConversationsMissingMetadataAction: RecurringAction
+    ) {
         self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.transportSession = transportSession
+
+        self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
+        self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
     }
 
     /// Perform a search request.
@@ -45,7 +63,7 @@ import Foundation
     public func perform(_ request: SearchRequest) -> SearchTask {
         let task = SearchTask(task: .search(searchRequest: request), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
 
-        task.onResult { [weak self] (result, _) in
+        task.addResultHandler { [weak self] result, _ in
             self?.observeSearchUsers(result)
         }
 
@@ -59,7 +77,7 @@ import Foundation
     public func lookup(userId: UUID) -> SearchTask {
         let task = SearchTask(task: .lookup(userId: userId), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
 
-        task.onResult { [weak self] (result, _) in
+        task.addResultHandler { [weak self] (result, _) in
             self?.observeSearchUsers(result)
         }
 
@@ -72,6 +90,10 @@ import Foundation
         result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
     }
 
+    public func updateIncompleteMetadataIfNeeded() {
+        refreshUsersMissingMetadataAction()
+        refreshConversationsMissingMetadataAction()
+    }
 }
 
 extension SearchDirectory: TearDownCapable {

@@ -128,7 +128,9 @@ class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
         if !keyboardFrameInView.origin.y.isInfinite,
             modalPresentationStyle == .formSheet,
             let frame = presentationController?.frameOfPresentedViewInContainerView {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: no need to add when no keyboard
+            // swiftlint:enable todo_requires_jira_link
             bottomOffset += frame.minY
         }
 

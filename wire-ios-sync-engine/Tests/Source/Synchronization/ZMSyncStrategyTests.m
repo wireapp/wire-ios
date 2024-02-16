@@ -61,41 +61,23 @@
     NOT_USED(taskIdentifier);
 }
 
-- (void)didStartSlowSync { }
-
-- (void)didFinishSlowSync { }
-
-- (void)didStartQuickSync { }
-
-- (void)didFinishQuickSync { }
-
-- (void)didRegisterSelfUserClient:(UserClient *)userClient {
-    NOT_USED(userClient);
-}
-
-- (void)didFailToRegisterSelfUserClient:(NSError *)error {
-    NOT_USED(error);
-}
-
-- (void)didDeleteSelfUserClient:(NSError *)error {
-    NOT_USED(error);
-}
-
 - (void)setUp
 {
     [super setUp];
     
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = self.userIdentifier;
-    
-    ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    selfConversation.remoteIdentifier = self.userIdentifier;
-    selfConversation.conversationType = ZMConversationTypeSelf;
+    [self.syncMOC performBlockAndWait:^{
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = self.userIdentifier;
 
-    [self.lastEventIDRepository storeLastEventID:[NSUUID UUID]];
-    
-    [self.syncMOC saveOrRollback];
-        
+        ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        selfConversation.remoteIdentifier = self.userIdentifier;
+        selfConversation.conversationType = ZMConversationTypeSelf;
+
+        [self.lastEventIDRepository storeLastEventID:[NSUUID UUID]];
+
+        [self.syncMOC saveOrRollback];
+    }];
+
     self.syncStateDelegate = [[MockSyncStateDelegate alloc] init];
     self.mockEventConsumer = [[MockEventConsumer alloc]  init];
     self.mockContextChangeTracker = [[MockContextChangeTracker alloc] init];
@@ -114,7 +96,6 @@
                                                                                          cookieStorage:[[FakeCookieStorage alloc] init]
                                                                                    requestCancellation:self
                                                                                            application:self.application
-                                                                                     syncStateDelegate:self
                                                                                  lastEventIDRepository:self.lastEventIDRepository
                                                                                              analytics:nil];
     
@@ -162,7 +143,10 @@
     self.mockContextChangeTracker.fetchRequest = self.fetchRequestForTrackedObjects2;
         
     // when
-    (void)[self.sut nextRequestForAPIVersion:APIVersionV0];
+    [self.syncMOC performBlockAndWait:^{
+        (void)[self.sut nextRequestForAPIVersion:APIVersionV0];
+    }];
+
     
     // then
     XCTAssertTrue(self.mockContextChangeTracker.addTrackedObjectsCalled);
@@ -225,7 +209,7 @@
     __block ZMUser *syncUser;
     
     // expect
-    [self expectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:nil];
+    [self customExpectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:nil];
     
     // when
     [self.syncMOC performGroupedBlockThenWaitForReasonableTimeout:^{
@@ -242,7 +226,7 @@
     NSString *name = @"very-unique-name_ps9ijsdnmf";
 
     // and expect
-    [self expectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:^BOOL(NSNotification *notification ZM_UNUSED) {
+    [self customExpectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:^BOOL(NSNotification *notification ZM_UNUSED) {
         return uiUser.name != nil;
     }];
     
@@ -339,9 +323,11 @@
     for (NSNotification *note in didSaveNotificationsA) {
         [[NSNotificationCenter defaultCenter] postNotification:note];
     }
-    for (NSNotification *note in didSaveNotificationsB) {
-        [[NSNotificationCenter defaultCenter] postNotification:note];
-    }
+    [self.syncMOC performGroupedBlock:^{
+        for (NSNotification *note in didSaveNotificationsB) {
+            [[NSNotificationCenter defaultCenter] postNotification:note];
+        }
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -423,7 +409,7 @@
 - (void)testThatItNotifiesTheOperationLoopOfNewOperationWhenEnteringBackground
 {
     // expect
-    [self expectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
+    [self customExpectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
 
     // when
     [self goToBackground];
@@ -435,7 +421,7 @@
 - (void)testThatItNotifiesTheOperationLoopOfNewOperationWhenEnteringForeground
 {
     // expect
-    [self expectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
+    [self customExpectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
     
     // when
     [self goToForeground];

@@ -45,15 +45,12 @@ public class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoc
             kSecReturnRef: true
         ]
 
-        var canUseContext = true
-        #if targetEnvironment(simulator)
-        canUseContext = false
-        #endif
-
-        if let context = context, canUseContext {
+        #if !targetEnvironment(simulator)
+        if let context = context {
             getQuery[kSecUseAuthenticationContext] = context
             getQuery[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
         }
+        #endif
     }
 
     // MARK: - Keychain item

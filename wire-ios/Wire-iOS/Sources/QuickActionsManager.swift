@@ -22,7 +22,7 @@ import UIKit
 extension UIApplicationShortcutItem {
     static let markAllAsReadType = "com.wire.shortcut.markAllAsRead"
     static let markAllAsRead = UIApplicationShortcutItem(type: markAllAsReadType,
-                                                         localizedTitle: "shortcut.mark_all_as_read.title".localized,
+                                                         localizedTitle: L10n.Localizable.Shortcut.MarkAllAsRead.title,
                                                          localizedSubtitle: nil,
                                                          icon: UIApplicationShortcutIcon(type: .taskCompleted),
                                                          userInfo: nil)

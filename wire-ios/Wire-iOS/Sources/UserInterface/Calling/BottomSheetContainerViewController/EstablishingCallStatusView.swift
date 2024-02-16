@@ -40,7 +40,7 @@ extension CallStatusViewState {
         switch self {
         case .none: return ""
         case .connecting: return CallStatus.connecting
-        case .ringingIncoming(name: let name?): return CallStatus.Incoming.user("\(name ?? "")")
+        case .ringingIncoming(name: let name?): return CallStatus.Incoming.user("\(name)")
         case .ringingIncoming(name: nil): return CallStatus.incoming
         case .ringingOutgoing: return CallStatus.outgoing
         case .established(duration: let duration): return callDurationFormatter.string(from: duration) ?? ""
@@ -50,7 +50,7 @@ extension CallStatusViewState {
     }
 }
 
-class EstablishingCallStatusView: UIView {
+final class EstablishingCallStatusView: UIView {
 
     private let titleLabel = DynamicFontLabel(
         text: "",
@@ -79,7 +79,7 @@ class EstablishingCallStatusView: UIView {
     }
 
     private func setupViews() {
-        [stackView, profileImageView, spaceView].prepareForLayout()
+        [stackView, profileImageView, spaceView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         stackView.alignment = .center
         stackView.spacing = 8
         addSubview(stackView)

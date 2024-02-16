@@ -58,9 +58,7 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
         let policy = SecPolicyCreateBasicX509()
 
         // leaf certificate
-        let certificate: SecCertificate? = SecTrustGetCertificateAtIndex(serverTrust, 0)
-
-        let certificatesCArray = [certificate] as CFArray
+        let certificatesCArray: CFArray = SecTrustCopyCertificateChain(serverTrust) ?? [] as CFArray
         var secTrust: SecTrust?
 
         guard SecTrustCreateWithCertificates(certificatesCArray, policy, &secTrust) == noErr,
@@ -68,20 +66,7 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
             return nil
         }
 
-        let key: SecKey?
-
-        if #available(iOS 14.0, *) {
-            key = SecTrustCopyKey(trust)
-        } else {
-            var result: SecTrustResultType = SecTrustResultType.invalid
-            var error: CFError?
-            _ = SecTrustEvaluateWithError(trust, &error)
-            SecTrustGetTrustResult(trust, &result)
-
-            key = SecTrustCopyPublicKey(trust)
-        }
-
-        return key
+        return SecTrustCopyKey(trust)
     }
 
     private func verifyServerTrustWithPinnedKeys(_ serverTrust: SecTrust, _ pinnedKeys: [SecKey]) -> Bool {

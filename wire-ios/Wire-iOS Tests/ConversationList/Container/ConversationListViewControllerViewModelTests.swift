@@ -24,13 +24,15 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
     private var mockViewController: MockConversationListContainer!
     private var selfUser: MockUserType!
     private var mockConversation: ZMConversation!
+    private var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
 
         let account = Account.mockAccount(imageData: Data())
         selfUser = .createSelfUser(name: "Bob")
-        sut = ConversationListViewController.ViewModel(account: account, selfUser: selfUser)
+        userSession = UserSessionMock(mockUser: selfUser)
+        sut = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
         mockViewController = MockConversationListContainer(viewModel: sut)
         sut.viewController = mockViewController
     }
@@ -40,6 +42,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         mockViewController = nil
         selfUser = nil
         mockConversation = nil
+        userSession = nil
 
         super.tearDown()
     }

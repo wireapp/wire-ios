@@ -19,11 +19,17 @@
 import Foundation
 
 public struct SearchResult {
+    /// Users already connected to.
     public var contacts: [ZMSearchUser]
+    /// Users from the team.
     public var teamMembers: [ZMSearchUser]
+    /// Legacy, not used anymore.
     public var addressBook: [ZMSearchUser]
+    /// Non-connected users.
     public var directory: [ZMSearchUser]
+    /// Group conversations.
     public var conversations: [ZMConversation]
+    /// Bots.
     public var services: [ServiceUser]
 }
 

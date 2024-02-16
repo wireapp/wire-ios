@@ -106,7 +106,9 @@ final class SavableImage: NSObject {
         applicationType.wr_requestOrWarnAboutPhotoLibraryAccess { granted in
             guard granted else { return cleanup(false) }
 
-            self.photoLibrary.performChanges(papply(self.saveImage, source)) { success, error in
+            self.photoLibrary.performChanges {
+                self.saveImage(using: source)
+            } completionHandler: { success, error in
                 DispatchQueue.main.async {
                     self.writeInProgess = false
                     error.apply(self.warnAboutError)
@@ -130,7 +132,7 @@ final class SavableImage: NSObject {
         log.error("error saving image: \(error)")
 
         let alert = UIAlertController(
-            title: "library.alert.permission_warning.title".localized,
+            title: L10n.Localizable.Library.Alert.PermissionWarning.title,
             message: (error as NSError).localizedDescription,
             alertAction: .ok(style: .cancel))
 

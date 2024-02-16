@@ -18,11 +18,10 @@
 
 import XCTest
 
-class AvailabilityTests: IntegrationTest {
+final class AvailabilityTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()
-
         createSelfUserAndConversation()
         createExtraUsersAndConversations()
     }
@@ -35,10 +34,6 @@ class AvailabilityTests: IntegrationTest {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         return mockTeam
-    }
-
-    override func tearDown() {
-        super.tearDown()
     }
 
     func testThatAvailabilityIsBroadcastedWhenChanged() {

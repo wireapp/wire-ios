@@ -128,26 +128,31 @@ final class DateFormatterTests: XCTestCase {
     func testWr_formattedDateForTwoHourBefore() {
         // GIVEN
         let twoHourBefore = Calendar.current.date(byAdding: .hour, value: -2, to: Date())!
-        var hour = Calendar.current.component(.hour, from: twoHourBefore)
-        var meridiem = "AM"
-        // to fit US 12hr format
-        if hour > 12 {
-            hour -= 12
-            meridiem = "PM"
-        } else if hour == 12 {
-            meridiem = "PM"
-        }
+        let hour = Calendar.current.component(.hour, from: twoHourBefore)
+        let minute = Calendar.current.component(.minute, from: twoHourBefore)
+        let dateFormatter = DateFormatter()
 
         // WHEN
         let dateString = twoHourBefore.formattedDate
 
         // THEN
-        XCTAssertFalse(dateString.contains("just now"), "dateString is \(dateString)")
-        // If two hours before is yesterday, dateString looks like "Yesterday at 11:17 PM"
-        XCTAssert(dateString.hasPrefix(String(hour)) ||
-            (dateString.replacingOccurrences(of: "Yesterday at ", with: "").hasPrefix(String(hour))
-            ), "hour is \(hour), dateString is \(dateString)")
-        XCTAssert(dateString.hasSuffix(meridiem), "meridiem is \(meridiem), dateString is \(dateString)")
+        dateFormatter.dateFormat = "h:mm\u{202f}a"
+        let expected12HoursString = dateFormatter.string(from: twoHourBefore)
+        dateFormatter.dateFormat = "H:mm"
+        let expected24HoursString = dateFormatter.string(from: twoHourBefore)
+        XCTAssert(
+            dateString.contains(expected24HoursString) || dateString.contains(expected12HoursString),
+            "dateString '\(dateString)' neither contains '\(expected12HoursString)' nor '\(expected24HoursString)'"
+        )
+    }
+
+    func testWr_formattedDateForNow() {
+        let now = Date()
+        // WHEN
+        let dateString = now.formattedDate
+
+        // THEN
+        XCTAssertTrue(dateString.contains("Just now"), "dateString is \(dateString)")
     }
 
     func testWr_formattedDateWouldChangeAfterDateChangeToThisYear() {

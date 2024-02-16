@@ -30,13 +30,13 @@ extension ConversationViewController {
         var localizedTitle: String {
             switch self {
             case .verifyDevices:
-                return "meta.degraded.verify_devices_button".localized
+                return L10n.Localizable.Meta.Degraded.verifyDevicesButton
             case .sendAnyway:
-                return "meta.degraded.send_anyway_button".localized
+                return L10n.Localizable.Meta.Degraded.sendAnywayButton
             case .legalHoldDetails:
-                return "meta.legalhold.info_button".localized
+                return L10n.Localizable.Meta.Legalhold.infoButton
             case .cancel:
-                return "general.cancel".localized
+                return L10n.Localizable.General.cancel
             }
         }
 
@@ -55,11 +55,11 @@ extension ConversationViewController {
     /// Presents an alert in response to a change in privacy (legal hold and/or client verification).
     func presentPrivacyWarningAlert(for changeInfo: ConversationChangeInfo) {
         let title: String
-        let message = "meta.degraded.dialog_message".localized
+        let message = L10n.Localizable.Meta.Degraded.dialogMessage
         var actions: [PrivacyAlertAction] = []
 
         if conversation.legalHoldStatus == .pendingApproval {
-            title = "meta.legalhold.send_alert_title".localized
+            title = L10n.Localizable.Meta.Legalhold.sendAlertTitle
             actions.append(.legalHoldDetails)
 
             if conversation.securityLevel == .secureWithIgnored {
@@ -110,19 +110,25 @@ extension ConversationViewController {
     }
 
     private func presentVerificationScreen() {
-        guard let selfUser = ZMUser.selfUser() else { return }
+        guard let selfUser = ZMUser.selfUser() else {
+            return
+        }
 
         if selfUser.hasUntrustedClients {
             ZClientViewController.shared?.openClientListScreen(for: selfUser)
         } else if let connectedUser = conversation.connectedUser, conversation.conversationType == .oneOnOne {
-            let profileViewController = ProfileViewController(user: connectedUser, viewer: selfUser, conversation: conversation, context: .deviceList)
+            let profileViewController = ProfileViewController(user: connectedUser, viewer: selfUser, conversation: conversation, context: .deviceList, userSession: userSession)
             profileViewController.delegate = self
             profileViewController.viewControllerDismisser = self
             let navigationController = profileViewController.wrapInNavigationController(setBackgroundColor: true)
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
         } else if conversation.conversationType == .group {
-            let participantsViewController = GroupParticipantsDetailViewController(selectedParticipants: [], conversation: conversation)
+            let participantsViewController = GroupParticipantsDetailViewController(
+                selectedParticipants: [],
+                conversation: conversation,
+                userSession: userSession
+            )
             let navigationController = participantsViewController.wrapInNavigationController(setBackgroundColor: true)
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
@@ -130,7 +136,7 @@ extension ConversationViewController {
     }
 
     private func presentLegalHoldDetails() {
-        LegalHoldDetailsViewController.present(in: self, conversation: conversation)
+        LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
     }
 
 }

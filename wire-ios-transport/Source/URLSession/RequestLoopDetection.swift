@@ -28,7 +28,8 @@ import Foundation
 
 /// Monitors the REST requests that are sent over the network
 /// to detect suspicious request loops
-@objcMembers public class RequestLoopDetection: NSObject {
+@objcMembers
+public final class RequestLoopDetection: NSObject {
 
     /// List of requests
     fileprivate var recordedRequests: [IdentifierDate] = []
@@ -95,11 +96,9 @@ extension RequestLoopDetection: RequestRecorder {
         // I assume most (if not all) request are inserted in ascending order, so I will
         // search backwards
         var insertionIndex = 0
-        for i in (0..<self.recordedRequests.count).lazy.reversed() {
-            if self.recordedRequests[i].date < identifier.date {
-                insertionIndex = i+1
-                break
-            }
+        for i in (0..<recordedRequests.count).lazy.reversed() where recordedRequests[i].date < identifier.date {
+            insertionIndex = i+1
+            break
         }
         self.recordedRequests.insert(identifier, at: insertionIndex)
     }

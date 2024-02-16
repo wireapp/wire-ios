@@ -39,10 +39,11 @@ extension Notification.Name {
         }
     }
 
+    weak var syncStateDelegate: ZMSyncStateDelegate?
+
     private let lastEventIDRepository: LastEventIDRepositoryInterface
     fileprivate var lastUpdateEventID: UUID?
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
-    fileprivate unowned var syncStateDelegate: ZMSyncStateDelegate
     fileprivate var forceSlowSyncToken: Any?
 
     public internal (set) var isFetchingNotificationStream: Bool = false
@@ -72,16 +73,12 @@ extension Notification.Name {
 
     public init(
         managedObjectContext: NSManagedObjectContext,
-        syncStateDelegate: ZMSyncStateDelegate,
         lastEventIDRepository: LastEventIDRepositoryInterface
     ) {
         self.managedObjectContext = managedObjectContext
-        self.syncStateDelegate = syncStateDelegate
         self.lastEventIDRepository = lastEventIDRepository
-        super.init()
 
-        currentSyncPhase = hasPersistedLastEventID ? .fetchingMissedEvents : .fetchingLastUpdateEventID
-        notifySyncPhaseDidStart()
+        super.init()
 
         self.forceSlowSyncToken = NotificationInContext.addObserver(name: .ForceSlowSync, context: managedObjectContext.notificationContext) { [weak self] (_) in
             self?.forceSlowSync()
@@ -99,12 +96,17 @@ extension Notification.Name {
     fileprivate func notifySyncPhaseDidStart() {
         switch currentSyncPhase {
         case .fetchingMissedEvents:
-            syncStateDelegate.didStartQuickSync()
+            syncStateDelegate?.didStartQuickSync()
         case .fetchingLastUpdateEventID:
-            syncStateDelegate.didStartSlowSync()
+            syncStateDelegate?.didStartSlowSync()
         default:
             break
         }
+    }
+
+    public func determineInitialSyncPhase() {
+        currentSyncPhase = hasPersistedLastEventID ? .fetchingMissedEvents : .fetchingLastUpdateEventID
+        notifySyncPhaseDidStart()
     }
 
     public func forceSlowSync() {
@@ -113,7 +115,7 @@ extension Notification.Name {
         // Set the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
         self.log("slow sync")
-        syncStateDelegate.didStartSlowSync()
+        syncStateDelegate?.didStartSlowSync()
     }
 
     public func performQuickSync() async {
@@ -131,7 +133,7 @@ extension Notification.Name {
     }
 
     func notifyQuickSyncDidFinish() {
-        syncStateDelegate.didFinishQuickSync()
+        syncStateDelegate?.didFinishQuickSync()
         quickSyncContinuation?.resume()
         quickSyncContinuation = nil
     }
@@ -157,7 +159,7 @@ extension SyncStatus {
 
         if phase.isLastSlowSyncPhase {
             persistLastUpdateEventID()
-            syncStateDelegate.didFinishSlowSync()
+            syncStateDelegate?.didFinishSlowSync()
         }
 
         currentSyncPhase = phase.nextPhase
@@ -248,7 +250,7 @@ extension SyncStatus {
 
         if !currentSyncPhase.isSyncing {
             // As soon as the pushChannel closes we should notify the UI that we are syncing (if we are not already syncing)
-            self.syncStateDelegate.didStartQuickSync()
+            self.syncStateDelegate?.didStartQuickSync()
         }
     }
 

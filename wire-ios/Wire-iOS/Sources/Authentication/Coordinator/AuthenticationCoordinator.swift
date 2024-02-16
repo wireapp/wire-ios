@@ -32,7 +32,7 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
      * to this device.
      */
 
-    func userAuthenticationDidComplete(addedAccount: Bool)
+    func userAuthenticationDidComplete(userSession: UserSession, addedAccount: Bool)
 
 }
 
@@ -46,7 +46,7 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
  * or delegate call from one of the abstracted components.
  */
 
-class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
+final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
 
     /// The handle to the OS log for authentication events.
     let log = ZMSLog(tag: "Authentication")
@@ -203,7 +203,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             var viewControllers = presenter.viewControllers
             let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
             if let rewindedController = rewindedController {
-                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0)}, [rewindedController], [stepViewController]].flatMap { $0 }
+                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0) }, [rewindedController], [stepViewController]].flatMap { $0 }
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
                 presenter.setViewControllers([stepViewController], animated: true)
@@ -306,10 +306,16 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 presentErrorAlert(for: alertModel)
 
             case .completeLoginFlow:
-                delegate?.userAuthenticationDidComplete(addedAccount: addedAccount)
+                delegate?.userAuthenticationDidComplete(
+                    userSession: statusProvider.sharedUserSession!,
+                    addedAccount: addedAccount
+                )
 
             case .completeRegistrationFlow:
-                delegate?.userAuthenticationDidComplete(addedAccount: true)
+                delegate?.userAuthenticationDidComplete(
+                    userSession: statusProvider.sharedUserSession!,
+                    addedAccount: true
+                )
 
             case .startPostLoginFlow:
                 registerPostLoginObserversIfNeeded()
@@ -359,11 +365,14 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     self?.startRegistration(unverifiedCredential)
                 }
 
-            case .setUserName(let userName):
-                updateUnregisteredUser(\.name, userName)
+            case .setFullName(let fullName):
+                updateUnregisteredUser(\.name, fullName)
 
             case .setUserPassword(let password):
                 updateUnregisteredUser(\.password, password)
+
+            case .setUsername(let username):
+                updateUsername(username)
 
             case .updateBackendEnvironment(let url):
                 companyLoginController?.updateBackendEnvironment(with: url)
@@ -469,10 +478,19 @@ extension AuthenticationCoordinator {
     /// Signs the current user out with a warning.
     private func signOut(warn: Bool) {
         if warn {
-            let signOutAction = AuthenticationCoordinatorAlertAction(title: "general.ok".localized, coordinatorActions: [.showLoadingView, .signOut(warn: false)], style: .destructive)
+            let signOutAction = AuthenticationCoordinatorAlertAction(
+                title: L10n.Localizable.General.ok,
+                coordinatorActions: [
+                    .showLoadingView,
+                    .signOut(
+                        warn: false
+                    )
+                ],
+                style: .destructive
+            )
 
-            let alertModel = AuthenticationCoordinatorAlert(title: "self.settings.account_details.log_out.alert.title".localized,
-                                                            message: "self.settings.account_details.log_out.alert.message".localized,
+            let alertModel = AuthenticationCoordinatorAlert(title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
+                                                            message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
                                                             actions: [.cancel, signOutAction])
 
             presentAlert(for: alertModel)
@@ -859,6 +877,33 @@ extension AuthenticationCoordinator {
                 self?.sessionManager.markNetworkSessionsAsReady(false)
             }
             action(error)
+        }
+    }
+
+    private func updateUsername(_ username: String) {
+        typealias AlreadyTakenError = L10n.Localizable.Registration.Signin.Username.AlreadyTakenError
+        typealias UnknownError = L10n.Localizable.Registration.Signin.Username.UnknownError
+
+        let changeUsername = statusProvider.sharedUserSession?.changeUsername
+
+        Task {
+            do {
+                try await changeUsername?.invoke(username: username)
+            } catch let error as ChangeUsernameError {
+                await MainActor.run {
+                    let alert = switch error {
+                    case .taken:
+                        AuthenticationCoordinatorAlert(title: AlreadyTakenError.title,
+                                                       message: AlreadyTakenError.message,
+                                                       actions: [.ok])
+                    case .unknown:
+                        AuthenticationCoordinatorAlert(title: UnknownError.title,
+                                                       message: UnknownError.message,
+                                                       actions: [.ok])
+                    }
+                    executeAction(.presentAlert(alert))
+                }
+            }
         }
     }
 }

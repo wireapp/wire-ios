@@ -27,7 +27,7 @@ class ConversationTests_Deletion: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // WHEN
-        let conversationIsDeleted = expectation(description: "Team conversation is deleted")
+        let conversationIsDeleted = customExpectation(description: "Team conversation is deleted")
         let teamConversation = conversation(for: groupConversationWithWholeTeam)!
         teamConversation.delete(in: userSession!, completion: { (result) in
             if case .success = result {
@@ -37,7 +37,6 @@ class ConversationTests_Deletion: ConversationTestsBase {
             }
         })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertTrue(teamConversation.isDeletedRemotely)
@@ -58,7 +57,7 @@ class ConversationTests_Deletion: ConversationTestsBase {
         }
 
         // WHEN
-        let conversationDeletionFailed = expectation(description: "Team conversation deletion failed")
+        let conversationDeletionFailed = customExpectation(description: "Team conversation deletion failed")
         let teamConversation = conversation(for: groupConversationWithWholeTeam)!
         teamConversation.delete(in: userSession!, completion: { (result) in
             if case .failure = result {

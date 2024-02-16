@@ -61,13 +61,11 @@ infix operator += : AssignmentPrecedence
 }
 
 @discardableResult func += (left: inout NSAttributedString, right: String) -> NSAttributedString {
-    // swiftlint:disable:next shorthand_operator
     left = left + right
     return left
 }
 
 @discardableResult func += (left: inout NSAttributedString, right: NSAttributedString) -> NSAttributedString {
-    // swiftlint:disable:next shorthand_operator
     left = left + right
     return left
 }
@@ -195,12 +193,6 @@ extension String {
     /// Returns the NSLocalizedString version of self as found in specified table
     func localized(table tableName: String, bundle: Bundle = Bundle.main) -> String {
         return NSLocalizedString(self, tableName: tableName, bundle: bundle, value: "", comment: "")
-    }
-
-    /// Returns the text and uppercases it if needed.
-    func localized(uppercased: Bool) -> String {
-        let text = NSLocalizedString(self, comment: "")
-        return uppercased ? text.localizedUppercase : text
     }
 
     /// Used to generate localized strings with plural rules from the stringdict

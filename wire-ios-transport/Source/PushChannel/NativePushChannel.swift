@@ -18,9 +18,8 @@
 
 import Foundation
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 @objcMembers
-class NativePushChannel: NSObject, PushChannelType {
+final class NativePushChannel: NSObject, PushChannelType {
 
     var clientID: String? {
         didSet {
@@ -58,25 +57,34 @@ class NativePushChannel: NSObject, PushChannelType {
     var consumerQueue: ZMSGroupQueue?
     var workQueue: OperationQueue
     var pingTimer: ZMTimer?
+    private let minTLSVersion: TLSVersion
 
-    required init(scheduler: ZMTransportRequestScheduler,
-                  userAgentString: String,
-                  environment: BackendEnvironmentProvider,
-                  proxyUsername: String?,
-                  proxyPassword: String?,
-                  queue: OperationQueue) {
+    required init(
+        scheduler: ZMTransportRequestScheduler,
+        userAgentString: String,
+        environment: BackendEnvironmentProvider,
+        proxyUsername: String?,
+        proxyPassword: String?,
+        minTLSVersion: String?,
+        queue: OperationQueue
+    ) {
         self.environment = environment
         self.scheduler = scheduler
         self.workQueue = queue
         self.proxyUsername = proxyUsername
         self.proxyPassword = proxyPassword
+        self.minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
         super.init()
-        self.session = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: queue)
+
+        let sessionConfig = URLSessionConfiguration.ephemeral
+        sessionConfig.tlsMinimumSupportedProtocolVersion = self.minTLSVersion.secValue
 
         if let settings = environment.proxy?.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword) {
-            self.session?.configuration.httpShouldUsePipelining = true
-            self.session?.configuration.connectionProxyDictionary = settings
+            sessionConfig.httpShouldUsePipelining = true
+            sessionConfig.connectionProxyDictionary = settings
         }
+
+        self.session = URLSession(configuration: sessionConfig, delegate: self, delegateQueue: queue)
     }
 
     func close() {
@@ -212,7 +220,6 @@ class NativePushChannel: NSObject, PushChannelType {
 
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension NativePushChannel: ZMTimerClient {
 
     func timerDidFire(_ timer: ZMTimer!) {
@@ -227,7 +234,6 @@ extension NativePushChannel: ZMTimerClient {
 
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension NativePushChannel: URLSessionWebSocketDelegate {
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
@@ -243,11 +249,10 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
     }
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension NativePushChannel: URLSessionDataDelegate {
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        Logging.pushChannel.debug("Websocket open connection task did fail: \(error.map({ String(describing: $0)}) ?? "n/a" )")
+        Logging.pushChannel.debug("Websocket open connection task did fail: \(error.map({ String(describing: $0) }) ?? "n/a" )")
 
         websocketTask = nil
     }

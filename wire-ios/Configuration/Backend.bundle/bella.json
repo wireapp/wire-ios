@@ -1,4 +1,5 @@
 {
+    "title" : "Bella Federation Environment",
     "endpoints" : {
         "backendURL" : "https://nginz-https.bella.wire.link",
         "backendWSURL" : "https://nginz-ssl.bella.wire.link",
@@ -6,6 +7,5 @@
         "teamsURL" : "https://teams.bella.wire.link",
         "accountsURL" : "https://account.anta.bella.link",
         "websiteURL" : "https://wire.com"
-    },
-    "title" : "Bella Federation Environment"
+    }
 }

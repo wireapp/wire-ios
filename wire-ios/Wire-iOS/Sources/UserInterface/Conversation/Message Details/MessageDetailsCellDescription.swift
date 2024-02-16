@@ -58,11 +58,13 @@ final class MessageDetailsCellDescription: NSObject {
 
 extension MessageDetailsCellDescription {
 
+    typealias MessageDetails = L10n.Localizable.MessageDetails
+
     static func makeReactionCells(_ users: [UserType]) -> [MessageDetailsCellDescription] {
         return users.map {
             let handle = $0.handle.map { "@" + $0 }
             return MessageDetailsCellDescription(user: $0, subtitle: handle,
-                                                 accessibleSubtitleLabel: "message_details.user_handle_subtitle_label".localized,
+                                                 accessibleSubtitleLabel: MessageDetails.userHandleSubtitleLabel,
                                                  accessibleSubtitleValue: $0.handle)
         }
     }
@@ -73,7 +75,7 @@ extension MessageDetailsCellDescription {
             let formattedAccessibleDate = $0.serverTimestamp.map(Message.spellOutDateTimeFormatter.string)
 
             return MessageDetailsCellDescription(user: $0.userType, subtitle: formattedDate,
-                                                 accessibleSubtitleLabel: "message_details.user_read_timestamp_subtitle_label".localized,
+                                                 accessibleSubtitleLabel: MessageDetails.userReadTimestampSubtitleLabel,
                                                  accessibleSubtitleValue: formattedAccessibleDate)
         }
     }

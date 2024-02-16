@@ -60,7 +60,7 @@ final class CollectionHeaderView: UICollectionReusableView {
             actionButton.isHidden = totalItemsCount == 0
             titleLabel.accessibilityHint = actionButton.isHidden ? "" : ConversationSearch.Section.hint
 
-            let totalCountText = String(format: "collections.section.all.button".localized, totalItemsCount)
+            let totalCountText = L10n.Localizable.Collections.Section.All.button(Int(totalItemsCount))
             actionButton.setTitle(totalCountText, for: .normal)
         }
     }
@@ -103,7 +103,9 @@ final class CollectionHeaderView: UICollectionReusableView {
         iconImageView.contentMode = .center
         addSubview(iconImageView)
 
-        [titleLabel, actionButton, iconImageView].prepareForLayout()
+        [titleLabel, actionButton, iconImageView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
           iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
           iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),

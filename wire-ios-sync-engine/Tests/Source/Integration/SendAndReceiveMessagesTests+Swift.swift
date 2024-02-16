@@ -70,7 +70,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let convIDString = conversation?.remoteIdentifier?.transportString()
 
         self.mockTransportSession.responseGeneratorBlock = { request in
-            if request.path.contains("messages") && request.method == ZMTransportRequestMethod.methodPOST {
+            if request.path.contains("messages") && request.method == ZMTransportRequestMethod.post {
                 if request.path.contains(convIDString!) {
                     return ZMTransportResponse.init(transportSessionError: NSError.requestExpiredError(), apiVersion: APIVersion.v0.rawValue)
                 }

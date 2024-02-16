@@ -18,23 +18,25 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class LegalHoldDetailsViewController: UIViewController {
 
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let collectionViewController: SectionCollectionViewController
     private let conversation: LegalHoldDetailsConversation
+    let userSession: UserSession
 
-    convenience init?(user: UserType) {
+    convenience init?(user: UserType, userSession: UserSession) {
         guard let conversation = user.oneToOneConversation else { return nil }
-        self.init(conversation: conversation)
+        self.init(conversation: conversation, userSession: userSession)
     }
 
-    init(conversation: LegalHoldDetailsConversation) {
+    init(conversation: LegalHoldDetailsConversation, userSession: UserSession) {
         self.conversation = conversation
         self.collectionViewController = SectionCollectionViewController()
         self.collectionViewController.collectionView = collectionView
-
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
 
         setupViews()
@@ -49,15 +51,15 @@ final class LegalHoldDetailsViewController: UIViewController {
     }
 
     @discardableResult
-    static func present(in parentViewController: UIViewController, user: UserType) -> UINavigationController? {
-        guard let legalHoldDetailsViewController = LegalHoldDetailsViewController(user: user) else { return nil }
+    static func present(in parentViewController: UIViewController, user: UserType, userSession: UserSession) -> UINavigationController? {
+        guard let legalHoldDetailsViewController = LegalHoldDetailsViewController(user: user, userSession: userSession) else { return nil }
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }
 
     @discardableResult
-    static func present(in parentViewController: UIViewController, conversation: ZMConversation) -> UINavigationController {
-        let legalHoldDetailsViewController = LegalHoldDetailsViewController(conversation: conversation)
+    static func present(in parentViewController: UIViewController, conversation: ZMConversation, userSession: UserSession) -> UINavigationController {
+        let legalHoldDetailsViewController = LegalHoldDetailsViewController(conversation: conversation, userSession: userSession)
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }
@@ -65,7 +67,7 @@ final class LegalHoldDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "legalhold.header.title".localized.localizedUppercase
+        title = L10n.Localizable.Legalhold.Header.title.localizedUppercase
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
@@ -112,7 +114,17 @@ final class LegalHoldDetailsViewController: UIViewController {
 extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionControllerDelegate {
 
     func legalHoldParticipantsSectionWantsToPresentUserProfile(for user: UserType) {
-        let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, context: .deviceList)
+        guard let viewer = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: viewer,
+            context: .deviceList,
+            userSession: userSession
+        )
         show(profileViewController, sender: nil)
     }
 

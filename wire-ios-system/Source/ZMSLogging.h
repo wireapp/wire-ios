@@ -21,7 +21,7 @@
 #import <WireSystem/ZMSAsserts.h>
 
 /// Log levels
-typedef NS_ENUM(int8_t, ZMLogLevel_t) {
+typedef NS_CLOSED_ENUM(int8_t, ZMLogLevel_t) {
     ZMLogLevelPublic = 0,
     ZMLogLevelError,
     ZMLogLevelWarn,

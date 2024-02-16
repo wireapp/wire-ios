@@ -28,8 +28,4 @@ extension ProfilePresenter: ProfileViewControllerDelegate {
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
         }
     }
-
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
-        // no-op.
-    }
 }

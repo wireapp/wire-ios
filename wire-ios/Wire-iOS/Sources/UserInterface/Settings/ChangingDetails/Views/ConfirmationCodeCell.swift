@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class ConfirmationCodeCell: UITableViewCell {
+final class ConfirmationCodeCell: UITableViewCell {
 
     let textField: CharacterInputField = {
         let textField = CharacterInputField(maxLength: 6, characterSet: .decimalDigits, size: CGSize(width: 375, height: 56))
@@ -47,7 +47,7 @@ class ConfirmationCodeCell: UITableViewCell {
 
         textField.keyboardType = .decimalPad
         textField.accessibilityIdentifier = "VerificationCode"
-        textField.accessibilityLabel = "verification.code_label".localized
+        textField.accessibilityLabel = L10n.Localizable.Verification.codeLabel
         textField.isAccessibilityElement = true
     }
 

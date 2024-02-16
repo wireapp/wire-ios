@@ -22,7 +22,7 @@ import WireSyncEngine
 /// Observes a single key path in `MessageChangeInfo` and calls a change handler when the key path changes.
 ///
 /// The observer is active as long as the `MessageKeyPathObserver` instance is retained.
-class MessageKeyPathObserver: NSObject, ZMMessageObserver {
+final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
 
     typealias ChangedBlock = (_ message: ZMConversationMessage) -> Void
 

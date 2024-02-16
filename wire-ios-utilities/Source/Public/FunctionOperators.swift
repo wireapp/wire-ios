@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public prefix func !<T>(f: @escaping (T) -> Bool) -> (T) -> Bool {
+public prefix func ! <T>(f: @escaping (T) -> Bool) -> (T) -> Bool {
     return { !f($0) }
 }

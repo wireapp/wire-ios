@@ -20,7 +20,7 @@ import Foundation
 import WireTesting
 @testable import WireSyncEngine
 
-class SessionManagerTests_URLActions: IntegrationTest {
+class SessionManagerURLActionsTests: IntegrationTest {
 
     var presentationDelegate: MockPresentationDelegate!
 
@@ -108,6 +108,7 @@ class SessionManagerTests_URLActions: IntegrationTest {
 
     func testThatItDelaysURLActionProcessing_UntilUserSessionBecomesUnlocked() throws {
         throw XCTSkip("disable this test for now, possibly flaky")
+
         // given: user session is availablle but it is locked
         XCTAssertTrue(login())
 

@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class ConversationCreateGuestsSectionController: ConversationCreateSectionController {
+final class ConversationCreateGuestsSectionController: ConversationCreateSectionController {
 
     typealias Cell = ConversationCreateGuestsCell
 
@@ -29,7 +29,7 @@ class ConversationCreateGuestsSectionController: ConversationCreateSectionContro
         super.prepareForUse(in: collectionView)
         collectionView.flatMap(Cell.register)
         headerHeight = 40
-        footerText = "conversation.create.guests.subtitle".localized
+        footerText = L10n.Localizable.Conversation.Create.Guests.subtitle
     }
 }
 

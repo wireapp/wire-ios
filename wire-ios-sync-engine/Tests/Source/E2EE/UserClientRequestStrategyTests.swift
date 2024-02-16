@@ -21,31 +21,37 @@ import WireUtilities
 import WireTesting
 import WireMockTransport
 import WireDataModel
+import WireDataModelSupport
 
 @objcMembers
-public class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
+public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
+
+    public var didCallRegisterMLSClient: Bool = false
+    public func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {
+        didCallRegisterMLSClient = true
+    }
 
     public var currentError: Error?
 
     public var didCallRegisterSelfUserClient: Bool = false
-    public func didRegisterSelfUserClient(_ userClient: UserClient!) {
+    public func didRegisterSelfUserClient(_ userClient: UserClient) {
         didCallRegisterSelfUserClient = true
     }
 
     public var didCallFailRegisterSelfUserClient: Bool = false
-    public func didFailToRegisterSelfUserClient(error: Error!) {
+    public func didFailToRegisterSelfUserClient(error: Error) {
         currentError = error
         didCallFailRegisterSelfUserClient = true
     }
 
     public var didCallDeleteSelfUserClient: Bool = false
-    public func didDeleteSelfUserClient(error: Error!) {
+    public func didDeleteSelfUserClient(error: Error) {
         currentError = error
         didCallDeleteSelfUserClient = true
     }
 }
 
-class UserClientRequestStrategyTests: RequestStrategyTestBase {
+final class UserClientRequestStrategyTests: RequestStrategyTestBase {
 
     var sut: UserClientRequestStrategy!
     var clientRegistrationStatus: ZMMockClientRegistrationStatus!
@@ -59,37 +65,45 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
     var spyKeyStore: SpyUserClientKeyStore!
     var proteusService: MockProteusServiceInterface!
     var proteusProvider: MockProteusProvider!
+    var coreCrypto: MockSafeCoreCrypto!
+    var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     var postLoginAuthenticationObserverToken: Any?
 
     override func setUp() {
         super.setUp()
         self.syncMOC.performGroupedBlockAndWait {
-            self.spyKeyStore = SpyUserClientKeyStore(
+            let spyKeyStore = SpyUserClientKeyStore(
                 accountDirectory: self.accountDirectory,
                 applicationContainer: self.sharedContainerURL
             )
+            self.spyKeyStore = spyKeyStore
             self.proteusService = MockProteusServiceInterface()
             self.proteusProvider = MockProteusProvider(
                 mockProteusService: self.proteusService,
-                mockKeyStore: self.spyKeyStore
+                mockKeyStore: spyKeyStore
             )
-            self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: self.userIdentifier)
+            self.coreCrypto = MockSafeCoreCrypto()
+            self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
+            self.coreCryptoProvider.coreCryptoRequireMLS_MockValue = self.coreCrypto
+            self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: self.userIdentifier, useCache: true)
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
                 managedObjectContext: self.syncMOC,
-                cookieStorage: self.cookieStorage,
-                registrationStatusDelegate: self.mockClientRegistrationStatusDelegate
+                cookieStorage: self.cookieStorage
             )
+            self.clientRegistrationStatus.registrationStatusDelegate = self.mockClientRegistrationStatusDelegate
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
             self.sut = UserClientRequestStrategy(
                 clientRegistrationStatus: self.clientRegistrationStatus,
                 clientUpdateStatus: self.clientUpdateStatus,
                 context: self.syncMOC,
-                proteusProvider: self.proteusProvider
+                proteusProvider: self.proteusProvider,
+                coreCryptoProvider: self.coreCryptoProvider
             )
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.userIdentifier
+            selfUser.handle = "handle"
             self.syncMOC.saveOrRollback()
         }
     }
@@ -119,12 +133,53 @@ extension UserClientRequestStrategyTests {
         return selfClient
     }
 
-    func testThatItReturnsRequestForInsertedObject() {
+    func testThatMLSPublicKeysAreCreatedBeforeAttemptingToRegisterMLSClient() {
         syncMOC.performGroupedBlockAndWait {
 
             // given
             let client = self.createSelfClient(self.sut.managedObjectContext!)
+            self.clientRegistrationStatus.mockPhase = .registeringMLSClient
+
+            // when
+            XCTAssertNil(self.sut.nextRequest(for: .v0))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertEqual(self.coreCryptoProvider.coreCryptoRequireMLS_Invocations.count, 1)
+        }
+    }
+
+    func testThatPrekeysAreGeneratedBeforeAttemptingToRegisterClient() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let client = self.createSelfClient(self.sut.managedObjectContext!)
             self.sut.notifyChangeTrackers(client)
+            self.clientRegistrationStatus.prepareForClientRegistration()
+
+            // when
+            XCTAssertNil(self.sut.nextRequest(for: .v0))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertNotNil(self.clientRegistrationStatus.prekeys)
+            XCTAssertNotNil(self.clientRegistrationStatus.lastResortPrekey)
+        }
+    }
+
+    func testThatItReturnsRequestForInsertedObject() {
+        syncMOC.performGroupedBlockAndWait {
+
+            // given
+            let prekeys = [[NSNumber(value: 1): "prekey1"]]
+            let lastResortPrekey = "last-resort-prekey"
+            let client = self.createSelfClient(self.sut.managedObjectContext!)
+            self.sut.notifyChangeTrackers(client)
+            self.clientRegistrationStatus.prekeys = prekeys
+            self.clientRegistrationStatus.lastResortPrekey = lastResortPrekey
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             // when
@@ -133,7 +188,13 @@ extension UserClientRequestStrategyTests {
             let request = self.sut.nextRequest(for: .v0)
 
             // then
-            let expectedRequest = try! self.sut.requestsFactory.registerClientRequest(client, credentials: self.fakeCredentialsProvider.emailCredentials(), cookieLabel: "mycookie", apiVersion: .v0).transportRequest!
+            let expectedRequest = try! self.sut.requestsFactory.registerClientRequest(
+                client,
+                credentials: self.fakeCredentialsProvider.emailCredentials(),
+                cookieLabel: "mycookie",
+                prekeys: self.clientRegistrationStatus.idPrekeysTuple!,
+                lastRestortPrekey: self.clientRegistrationStatus.lastResortIdPrekeyTuple!,
+                apiVersion: .v0).transportRequest!
 
             AssertOptionalNotNil(request, "Should return request if there is inserted UserClient object") { request in
                 XCTAssertNotNil(request.payload, "Request should contain payload")
@@ -147,6 +208,7 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
 
             // given
+            self.clientRegistrationStatus.isWaitingForLoginValue = true
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             self.sut.notifyChangeTrackers(client)
 
@@ -167,6 +229,8 @@ extension UserClientRequestStrategyTests {
             // given
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             self.sut.managedObjectContext!.saveOrRollback()
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
 
             let remoteIdentifier = "superRandomIdentifer"
             let payload = ["id": remoteIdentifier]
@@ -190,9 +254,12 @@ extension UserClientRequestStrategyTests {
 
         var client: UserClient! = nil
         var maxID_before: UInt16! = nil
+        let expectedMaxID: UInt16 = 1
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: expectedMaxID): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             client = self.createSelfClient(self.sut.managedObjectContext!)
@@ -211,9 +278,6 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
             // then
             let maxID_after = UInt16(client.preKeysRangeMax)
-            let expectedMaxID = self.spyKeyStore.lastGeneratedKeys.last?.id
-
-            XCTAssertNotEqual(maxID_after, maxID_before)
             XCTAssertEqual(maxID_after, expectedMaxID)
         }
     }
@@ -223,6 +287,8 @@ extension UserClientRequestStrategyTests {
         var client: UserClient! = nil
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             client = self.createSelfClient(self.syncMOC)
@@ -249,6 +315,8 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             let client = self.createSelfClient(self.syncMOC)
@@ -270,6 +338,8 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             let client = self.createSelfClient(self.syncMOC)
@@ -298,6 +368,8 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -333,6 +405,8 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.cookieStorage.authenticationCookieData = Data()
             self.clientRegistrationStatus.mockPhase = .unregistered
 
@@ -367,11 +441,35 @@ extension UserClientRequestStrategyTests {
 // MARK: Updating
 extension UserClientRequestStrategyTests {
 
+    func testThatPrekeysAreGeneratedBeforeRefillingPrekeys() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.clientRegistrationStatus.mockPhase = .registered
+            let client = self.createSelfClient(self.sut.managedObjectContext!)
+            client.remoteIdentifier = UUID.create().transportString()
+            client.numberOfKeysRemaining = Int32(self.sut.minNumberOfRemainingKeys - 1)
+            client.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
+            self.sut.managedObjectContext!.saveOrRollback()
+            self.sut.notifyChangeTrackers(client)
+
+            // when
+            XCTAssertNil(self.sut.nextRequest(for: .v0))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertNotNil(self.clientUpdateStatus.prekeys)
+        }
+    }
+
     func testThatItReturnsRequestIfNumberOfRemainingKeysIsLessThanMinimum() {
 
         syncMOC.performGroupedBlockAndWait {
             // given
+            let prekeys = [IdPrekeyTuple(id: 1, prekey: "prekey1")]
             self.clientRegistrationStatus.mockPhase = .registered
+            self.clientUpdateStatus.didGeneratePrekeys(prekeys)
 
             let client = UserClient.insertNewObject(in: self.sut.managedObjectContext!)
             let userClientNumberOfKeysRemainingKeySet: Set<AnyHashable> = [ZMUserClientNumberOfKeysRemainingKey]
@@ -389,7 +487,11 @@ extension UserClientRequestStrategyTests {
             }
 
             // then
-            let expectedRequest = try! self.sut.requestsFactory.updateClientPreKeysRequest(client, apiVersion: .v0).transportRequest
+            let expectedRequest = try! self.sut.requestsFactory.updateClientPreKeysRequest(
+                client,
+                prekeys: prekeys,
+                apiVersion: .v0
+            ).transportRequest
 
             AssertOptionalNotNil(request, "Should return request if there is inserted UserClient object") { request in
                 XCTAssertNotNil(request.payload, "Request should contain payload")
@@ -425,6 +527,8 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
 
             // given
+            self.clientRegistrationStatus.mockPhase = .registered
+
             let client = UserClient.insertNewObject(in: self.sut.managedObjectContext!)
             client.remoteIdentifier = UUID.create().transportString()
             self.sut.managedObjectContext!.saveOrRollback()
@@ -451,7 +555,7 @@ extension UserClientRequestStrategyTests {
             self.sut.managedObjectContext!.saveOrRollback()
 
             client.numberOfKeysRemaining = Int32(self.sut.minNumberOfRemainingKeys - 1)
-            let expectedNumberOfKeys = client.numberOfKeysRemaining + Int32(self.sut.requestsFactory.keyCount)
+            let expectedNumberOfKeys = client.numberOfKeysRemaining + Int32(self.sut.prekeyGenerator.keyCount)
 
             // when
             let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
@@ -460,6 +564,29 @@ extension UserClientRequestStrategyTests {
 
             // then
             XCTAssertEqual(client.numberOfKeysRemaining, expectedNumberOfKeys)
+        }
+    }
+
+    func testThatItReturnsRequestIfItNeedsToRegisterMLSClient() {
+        var selfClient: UserClient!
+        let request = syncMOC.performAndWait {
+            // given
+            selfClient = UserClient.insertNewObject(in: self.sut.managedObjectContext!)
+            selfClient.remoteIdentifier = UUID.create().transportString()
+            selfClient.mlsPublicKeys = UserClient.MLSPublicKeys.init(ed25519: "key")
+            self.sut.managedObjectContext!.saveOrRollback()
+            self.clientRegistrationStatus.mockPhase = .registeringMLSClient
+            self.sut.notifyChangeTrackers(selfClient)
+
+            // when
+            return self.sut.nextRequest(for: .v0)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        syncMOC.performAndWait {
+            XCTAssertEqual(request?.method, .put)
+            XCTAssertEqual(request?.path, "/clients/\(selfClient.remoteIdentifier!)")
         }
     }
 }
@@ -490,6 +617,7 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.clientUpdateStatus.mockPhase = .fetchingClients
             let nextResponse = ZMTransportResponse(payload: self.payloadForClients() as ZMTransportData?, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             // when
@@ -569,7 +697,7 @@ extension UserClientRequestStrategyTests {
                     "email": self.clientUpdateStatus.mockCredentials.email!,
                     "password": self.clientUpdateStatus.mockCredentials.password!
                     ])
-                XCTAssertEqual($0.method, ZMTransportRequestMethod.methodDELETE)
+                XCTAssertEqual($0.method, ZMTransportRequestMethod.delete)
             }
         }
     }

@@ -18,7 +18,6 @@
 
 import Foundation
 
-@available(iOS 15, *)
 protocol URLRequestable {
     func data(for request: URLRequest, delegate: URLSessionTaskDelegate?) async throws -> (Data, URLResponse)
 }

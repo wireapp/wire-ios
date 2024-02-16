@@ -142,10 +142,11 @@ class BaseAccountView: UIView {
     var onTap: ((Account?) -> Void)? = .none
 
     var accessibilityState: String {
-        var result = "conversation_list.header.self_team.accessibility_value.\(selected ? "active" : "inactive")".localized
+       typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
+        var result = selected ? ConversationListHeaderAccessibilityLocale.active : ConversationListHeaderAccessibilityLocale.inactive
 
         if hasUnreadMessages {
-            result += " \("conversation_list.header.self_team.accessibility_value.has_new_messages".localized)"
+            result += "\(L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue.hasNewMessages)"
         }
 
         return result
@@ -164,7 +165,7 @@ class BaseAccountView: UIView {
         }
 
         if let userSession = SessionManager.shared?.activeUserSession {
-            selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.selfUser, in: userSession)
+            selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
         }
 
         selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
@@ -186,7 +187,9 @@ class BaseAccountView: UIView {
             iconWidth = CGFloat.AccountView.iconWidth
         }
 
-        [self, dotView, selectionView, imageViewContainer].prepareForLayout()
+        [self, dotView, selectionView, imageViewContainer].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate(
             dotConstraints +
@@ -249,7 +252,7 @@ extension BaseAccountView: ZMConversationListObserver {
     }
 }
 
-extension BaseAccountView: ZMUserObserver {
+extension BaseAccountView: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
             updateAppearance()
@@ -310,7 +313,7 @@ final class PersonalAccountView: AccountView {
 
     override func update() {
         super.update()
-        self.accessibilityValue = String(format: "conversation_list.header.self_team.accessibility_value".localized, self.account.userName) + " " + accessibilityState
+        self.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(self.account.userName) + " " + accessibilityState
         if let imageData = self.account.imageData {
             userImageView.avatar = UIImage(data: imageData).map(AvatarImageView.Avatar.image)
         } else {
@@ -322,7 +325,7 @@ final class PersonalAccountView: AccountView {
     func createDotConstraints() -> [NSLayoutConstraint] {
         let dotSize: CGFloat = 9
 
-        [dotView, imageViewContainer].prepareForLayout()
+        [dotView, imageViewContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         return [ dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -3),
                                       dotView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor, constant: -6),

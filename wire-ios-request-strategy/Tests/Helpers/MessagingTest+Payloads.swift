@@ -34,8 +34,8 @@ extension MessagingTestBase {
             from: nil,
             to: connection.to.remoteIdentifier,
             qualifiedTo: connection.to.qualifiedID,
-            conversationID: connection.conversation.remoteIdentifier,
-            qualifiedConversationID: connection.conversation.qualifiedID,
+            conversationID: connection.to.oneOnOneConversation!.remoteIdentifier,
+            qualifiedConversationID: connection.to.oneOnOneConversation!.qualifiedID,
             lastUpdate: lastUpdate,
             status: Payload.ConnectionStatus(status)!)
     }
@@ -57,7 +57,7 @@ extension MessagingTestBase {
     }
 
     func responseFailure(code: Int, label: Payload.ResponseFailure.Label, message: String = "", apiVersion: APIVersion) -> ZMTransportResponse {
-        let responseFailure = Payload.ResponseFailure(code: code, label: label, message: message)
+        let responseFailure = Payload.ResponseFailure(code: code, label: label, message: message, data: nil)
         let payloadData = responseFailure.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
         let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
@@ -100,12 +100,12 @@ extension MessagingTestBase {
 
         return Payload.ConversationEvent<Event>(
             id: conversationID?.uuid,
-            qualifiedID: conversationID,
+            data: data,
             from: senderID?.uuid,
+            qualifiedID: conversationID,
             qualifiedFrom: senderID,
             timestamp: timestamp,
-            type: ZMUpdateEvent.eventTypeString(for: Event.eventType),
-            data: data
+            type: ZMUpdateEvent.eventTypeString(for: Event.eventType)
         )
 
     }

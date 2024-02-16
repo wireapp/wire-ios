@@ -65,7 +65,7 @@ extension UIViewController {
         let navigationController = navigationControllerClass.init(navigationBarClass: navigationBarClass, toolbarClass: nil)
         navigationController.setViewControllers([self], animated: false)
 
-        if #available(iOS 15, *), setBackgroundColor {
+        if setBackgroundColor {
             navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
         }
 

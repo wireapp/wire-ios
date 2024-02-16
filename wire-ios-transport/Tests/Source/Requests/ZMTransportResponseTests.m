@@ -167,8 +167,7 @@
             continue;
         }
 
-        // TODO: [John] remove this exception when we properly handle
-        // federation errors.
+        // Federation errors
         if (i == 533) {
             continue;
         }

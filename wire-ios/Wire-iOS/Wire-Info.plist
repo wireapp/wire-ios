@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>MinTLSVersion</key>
+	<string>$(MIN_TLS_VERSION)</string>
 	<key>BackupEnabled</key>
 	<string>${BACKUP_ENABLED}</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -82,6 +84,8 @@
 	<string>${WIRE_BUILD_NUMBER}</string>
 	<key>CameraRollEnabled</key>
 	<string>${CAMERA_ROLL_ENABLED}</string>
+	<key>ClipboardEnabled</key>
+	<string>$(CLIPBOARD_ENABLED)</string>
 	<key>CountlyAppKey</key>
 	<string>$(COUNTLY_APP_KEY)</string>
 	<key>CountlyHost</key>

@@ -26,7 +26,7 @@
 
 - (ZMTransportResponse *)processBroadcastRequest:(ZMTransportRequest *)request
 {
-    if ([request matchesWithPath:@"/broadcast/otr/messages" method:ZMMethodPOST])
+    if ([request matchesWithPath:@"/broadcast/otr/messages" method:ZMTransportRequestMethodPost])
     {
         if (request.binaryData != nil) {
             return [self processBroascastOTRMessageToConversationWithProtobuffData:request.binaryData

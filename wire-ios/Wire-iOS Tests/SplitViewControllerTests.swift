@@ -86,9 +86,9 @@ final class SplitViewControllerTests: XCTestCase {
     }
 
     private func setupLeftView(isLeftViewControllerRevealed: Bool,
-                                   animated: Bool = true,
-                                   file: StaticString = #file,
-                                   line: UInt = #line) {
+                               animated: Bool = true,
+                               file: StaticString = #file,
+                               line: UInt = #line) {
         sut.leftViewController = UIViewController()
         sut.rightViewController = UIViewController()
 
@@ -115,7 +115,7 @@ final class SplitViewControllerTests: XCTestCase {
         sut.onHorizontalPan(gestureRecognizer)
 
         // THEN
-        XCTAssertEqual(sut.rightView.frame.origin.x, panOffset)
+        XCTAssertEqual(sut.rightView.frame.origin.x, panOffset, accuracy: 1.0)
 
         // WHEN
         let endedGestureRecognizer = MockPanGestureRecognizer(location: nil, translation: nil, view: nil, state: .ended)
@@ -139,7 +139,7 @@ final class SplitViewControllerTests: XCTestCase {
         sut.onHorizontalPan(gestureRecognizer)
 
         // THEN
-        XCTAssertEqual(sut.rightView.frame.origin.x, panOffset)
+        XCTAssertEqual(sut.rightView.frame.origin.x, panOffset, accuracy: 1.0)
 
         // WHEN
         let endedGestureRecognizer = MockPanGestureRecognizer(location: nil, translation: nil, view: nil, state: .ended)

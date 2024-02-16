@@ -69,7 +69,7 @@ public struct SearchOptions: OptionSet {
 }
 
 extension SearchOptions {
-    public mutating func updateForSelfUserTeamRole(selfUser: ZMUser) {
+    public mutating func updateForSelfUserTeamRole(selfUser: UserType) {
         if selfUser.teamRole == .partner {
             insert(.excludeNonActiveTeamMembers)
             remove(.directory)

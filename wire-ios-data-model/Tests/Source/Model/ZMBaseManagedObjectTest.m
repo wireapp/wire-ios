@@ -31,8 +31,6 @@
 #import "ZMMessage+Internal.h"
 #import "ZMConversation+UnreadCount.h"
 
-#import "NSString+RandomString.h"
-
 @import WireTransport.Testing;
 
 @interface ZMBaseManagedObjectTest ()
@@ -160,6 +158,23 @@
 
 @end
 
+@implementation ZMBaseManagedObjectTest (ObjectCreation)
+
+- (nonnull ZMConversation *)insertValidOneOnOneConversationInContext:(nonnull NSManagedObjectContext *)context
+{
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:context];
+    conversation.conversationType = ZMConversationTypeOneOnOne;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:context];
+    user.remoteIdentifier = [NSUUID createUUID];
+    user.oneOnOneConversation = conversation;
+    ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:context];
+    connection.to = user;
+    connection.status = ZMConnectionStatusAccepted;
+    return conversation;
+}
+
+@end
+
 
 @implementation ZMBaseManagedObjectTest (UserTesting)
 
@@ -218,7 +233,7 @@
     selfUser = [ZMUser selfUserInContext:moc];
     selfUser.remoteIdentifier = selfUser.remoteIdentifier ?: [NSUUID createUUID];
     UserClient *selfClient = [UserClient insertNewObjectInManagedObjectContext:moc];
-    selfClient.remoteIdentifier = [NSString createAlphanumericalString];
+    selfClient.remoteIdentifier = [NSString randomRemoteIdentifier];
     selfClient.user = selfUser;
     
     [moc setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMPersistedClientIdKey];
@@ -233,30 +248,9 @@
     return selfClient;
 }
 
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser
+- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSelfUser
 {
-    return [self createClientForUser:user createSessionWithSelfUser:createSessionWithSeflUser onMOC:self.uiMOC];
-}
-
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(NSManagedObjectContext *)moc
-{
-    if(user.remoteIdentifier == nil) {
-        user.remoteIdentifier = [NSUUID createUUID];
-    }
-    UserClient *userClient = [UserClient insertNewObjectInManagedObjectContext:moc];
-    userClient.remoteIdentifier = [NSString createAlphanumericalString];
-    userClient.user = user;
-    
-    if (createSessionWithSeflUser) {
-        UserClient *selfClient = [ZMUser selfUserInContext:moc].selfClient;
-        [self performPretendingUiMocIsSyncMoc:^{
-            NSError *error;
-            // TODO: [John] use flag here
-            NSString *key = [moc.zm_cryptKeyStore lastPreKeyAndReturnError:&error];
-            NOT_USED([selfClient establishSessionWithClient:userClient usingPreKey:key]);
-        }];
-    }
-    return userClient;
+    return [self createClientForUser:user createSessionWithSelfUser:createSessionWithSelfUser onMOC:self.uiMOC];
 }
 
 @end

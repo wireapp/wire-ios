@@ -26,47 +26,39 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
     override func setUp() {
         super.setUp()
         action = SendCommitBundleAction(commitBundle: commitBundle)
+        handler = SendCommitBundleActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation
-    func test_itGenerateARequest() throws {
+    func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v3/mls/commit-bundles",
-            expectedMethod: .methodPOST,
+            expectedPath: "/v5/mls/commit-bundles",
+            expectedMethod: .post,
             expectedData: commitBundle,
-            expectedContentType: "application/x-protobuf",
-            apiVersion: .v3
+            expectedContentType: "message/mls",
+            apiVersion: .v5
         )
     }
 
-    func test_itFailsToGenerateRequests() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v0,
-            expectedError: .endpointUnavailable
-        )
-
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v1,
-            expectedError: .endpointUnavailable
-        )
-
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v2,
-            expectedError: .endpointUnavailable
-        )
+    func test_itFailsToGenerateRequests_APIBelowV5() {
+        [.v0, .v1, .v2, .v3, .v4].forEach {
+            test_itDoesntGenerateARequest(
+                action: action,
+                apiVersion: $0,
+                expectedError: .endpointUnavailable
+            )
+        }
 
         test_itDoesntGenerateARequest(
             action: SendCommitBundleAction(commitBundle: Data()),
-            apiVersion: .v3,
+            apiVersion: .v5,
             expectedError: .malformedRequest
         )
     }
 
     // MARK: - Response handling
+
     func test_itHandlesSuccess() throws {
         // Given
         let payload: [AnyHashable: Any] = [
@@ -122,5 +114,23 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
             .failure(status: 422, error: .mlsUnsupportedMessage, label: "mls-unsupported-message"),
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
         ])
+    }
+
+    func test_itHandlesUnreachableBackendsFailure() {
+        let domains = ["example.com"]
+        let payload = ["unreachable_backends": domains]
+        test_itHandlesFailure(
+            status: 533,
+            payload: payload as ZMTransportData,
+            expectedError: SendCommitBundleAction.Failure.unreachableDomains(Set(domains)))
+    }
+
+    func test_itHandlesNonFederatingBackendsFailure() {
+        let domains = ["example.com"]
+        let payload = ["non_federating_backends": domains]
+        test_itHandlesFailure(
+            status: 409,
+            payload: payload as ZMTransportData,
+            expectedError: SendCommitBundleAction.Failure.nonFederatingDomains(Set(domains)))
     }
 }

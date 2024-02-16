@@ -135,6 +135,10 @@ public extension FontSpec {
         return self.init(.buttonSmall, .bold)
     }
 
+    static var buttonSmallSemibold: Self {
+        return self.init(.buttonSmall, .semibold)
+    }
+
     // MARK: - Button Big
     static var buttonBigSemibold: Self {
         return self.init(.buttonBig, .semibold)

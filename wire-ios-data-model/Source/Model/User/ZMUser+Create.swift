@@ -65,3 +65,19 @@ public extension ZMUser {
     }
 
 }
+
+extension ZMUser {
+
+    public var oneToOneConversation: ZMConversation? {
+        guard let moc = managedObjectContext else {
+            return nil
+        }
+
+        if isSelfUser {
+            return ZMConversation.selfConversation(in: moc)
+        } else {
+            return oneOnOneConversation
+        }
+    }
+
+}

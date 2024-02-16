@@ -25,7 +25,7 @@ protocol Paginatable: Decodable {
 
 class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
 
-    typealias CompletionHandler = (Swift.Result<PayloadType, PaginatedSyncError>) -> Void
+    typealias CompletionHandler = (Result<PayloadType, PaginatedSyncError>) -> Void
 
     enum Status: Equatable {
         case fetching(_ state: String)
@@ -123,7 +123,7 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
             return nil
         }
 
-        return ZMTransportRequest(path: basePath, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: basePath, method: .post, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
 }

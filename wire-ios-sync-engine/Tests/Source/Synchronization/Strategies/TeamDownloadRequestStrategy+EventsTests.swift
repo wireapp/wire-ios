@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,20 +19,17 @@
 import WireTesting
 @testable import WireSyncEngine
 
-class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
+final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
 
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
-        mockSyncStateDelegate = MockSyncStateDelegate()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            syncStateDelegate: mockSyncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
         sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
@@ -46,7 +43,6 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
     override func tearDown() {
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         mockSyncStatus = nil
         sut = nil
         super.tearDown()
@@ -96,7 +92,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         XCTAssertFalse(team.needsToBeUpdatedFromBackend)
     }
 
-    // MARK: - Team Delete 
+    // MARK: - Team Delete
 
     func testThatRequestAccountDeletionWhenReceivingATeamDeleteUpdateEvent() {
         // given
@@ -117,7 +113,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "data": NSNull()
         ]
 
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -156,11 +152,11 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "data": NSNull()
         ]
 
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
-                else {
-                    return false
+            else {
+                return false
             }
             return true
         }
@@ -170,249 +166,6 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    // MARK: - Team Update
-
-    func testThatItUpdatesATeamsNameWhenReceivingATeamUpdateUpdateEvent() {
-        // given
-        let dataPayload = ["name": "Wire GmbH"]
-
-        // when
-        guard let team = assertThatItUpdatesTeamsProperties(with: dataPayload) else { return XCTFail("No Team") }
-
-        // then
-        XCTAssertEqual(team.name, "Wire GmbH")
-    }
-
-    func testThatItUpdatesATeamsIconWhenReceivingATeamUpdateUpdateEvent() {
-        // given
-        let newAssetId = UUID.create().transportString()
-        let dataPayload = ["icon": newAssetId]
-
-        // when
-        guard let team = assertThatItUpdatesTeamsProperties(with: dataPayload) else { return XCTFail("No Team") }
-
-        // then
-        XCTAssertEqual(team.pictureAssetId, newAssetId)
-    }
-
-    func testThatItUpdatesATeamsIconKeyWhenReceivingATeamUpdateUpdateEvent() {
-        // given
-        let newAssetKey = UUID.create().transportString()
-        let dataPayload = ["icon_key": newAssetKey]
-
-        // when
-        guard let team = assertThatItUpdatesTeamsProperties(with: dataPayload) else { return XCTFail("No Team") }
-
-        // then
-        XCTAssertEqual(team.pictureAssetKey, newAssetKey)
-    }
-
-    func assertThatItUpdatesTeamsProperties(
-        with dataPayload: [String: Any]?,
-        preExistingTeam: Bool = true,
-        file: StaticString = #file,
-        line: UInt = #line) -> Team? {
-
-        // given
-        let teamId = UUID.create()
-
-        if preExistingTeam {
-            syncMOC.performGroupedBlock {
-                let team = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)!
-                team.name = "Some Team"
-                team.remoteIdentifier = teamId
-                team.pictureAssetId = UUID.create().transportString()
-                team.pictureAssetKey = UUID.create().transportString()
-                XCTAssert(self.syncMOC.saveOrRollback())
-            }
-
-            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1), file: file, line: line)
-            XCTAssertNotNil(Team.fetchOrCreate(with: teamId, create: false, in: uiMOC, created: nil))
-        }
-
-        let payload: [String: Any] = [
-            "type": "team.update",
-            "team": teamId.transportString(),
-            "time": Date().transportString(),
-            "data": dataPayload ?? NSNull()
-        ]
-
-        // when
-        processEvent(fromPayload: payload)
-
-        // then
-        return Team.fetchOrCreate(with: teamId, create: false, in: uiMOC, created: nil)
-    }
-
-    func testThatItDoesNotCreateATeamIfItDoesNotAlreadyExistWhenReceivingATeamUpdateUpdateEvent() {
-        // given
-        let dataPayload = ["name": "Wire GmbH"]
-
-        // then
-        XCTAssertNil(assertThatItUpdatesTeamsProperties(with: dataPayload, preExistingTeam: false))
-    }
-
-    // MARK: - Team Member-Join
-
-    func testThatItAddsANewTeamMemberAndUserWhenReceivingATeamMemberJoinUpdateEventExistingTeam() {
-        // given
-        let teamId = UUID.create()
-        let userId = UUID.create()
-
-        syncMOC.performGroupedBlock {
-            _ = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)!
-            XCTAssert(self.syncMOC.saveOrRollback())
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
-
-        let payload: [String: Any] = [
-            "type": "team.member-join",
-            "team": teamId.transportString(),
-            "time": Date().transportString(),
-            "data": ["user": userId.transportString()]
-        ]
-
-        // when
-        processEvent(fromPayload: payload)
-
-        // then
-        guard let user = ZMUser.fetch(with: userId, in: uiMOC) else { return XCTFail("No user") }
-        guard let team = Team.fetch(with: teamId, in: uiMOC) else { return XCTFail("No team") }
-        guard let member = user.membership else { return XCTFail("No member") }
-
-        XCTAssert(user.needsToBeUpdatedFromBackend)
-        XCTAssert(member.needsToBeUpdatedFromBackend)
-        XCTAssertFalse(team.needsToBeUpdatedFromBackend)
-        XCTAssertFalse(team.needsToRedownloadMembers)
-        XCTAssertEqual(member.team, team)
-    }
-
-    func testThatItAddsANewTeamMemberToAnExistingUserWhenReceivingATeamMemberJoinUpdateEventExistingTeam() {
-        // given
-        let teamId = UUID.create()
-        let userId = UUID.create()
-
-        syncMOC.performGroupedBlockAndWait {
-            let user = ZMUser.insertNewObject(in: self.syncMOC)
-            user.remoteIdentifier = userId
-            let team = Team.insertNewObject(in: self.syncMOC)
-            team.remoteIdentifier = teamId
-            XCTAssert(self.syncMOC.saveOrRollback())
-        }
-
-        let payload: [String: Any] = [
-            "type": "team.member-join",
-            "team": teamId.transportString(),
-            "time": Date().transportString(),
-            "data": ["user": userId.transportString()]
-        ]
-
-        // when
-        processEvent(fromPayload: payload)
-
-        // then
-        syncMOC.performGroupedBlockAndWait {
-            guard let user = ZMUser.fetch(with: userId, in: self.syncMOC) else { return XCTFail("No user") }
-            guard let team = Team.fetch(with: teamId, in: self.syncMOC) else { return XCTFail("No team") }
-            guard let member = user.membership else { return XCTFail("No member") }
-
-            XCTAssert(user.needsToBeUpdatedFromBackend)
-            XCTAssert(member.needsToBeUpdatedFromBackend)
-            XCTAssertFalse(team.needsToBeUpdatedFromBackend)
-            XCTAssertFalse(team.needsToRedownloadMembers)
-            XCTAssertEqual(member.team, team)
-        }
-    }
-
-    func testThatItAddsANewTeamMemberAndUserToAnExistingUserWhenReceivingATeamMemberJoinUpdateEventExistingTeam() {
-        // given
-        let teamId = UUID.create()
-        let userId = UUID.create()
-
-        syncMOC.performGroupedBlockAndWait {
-            let team = Team.insertNewObject(in: self.syncMOC)
-            team.remoteIdentifier = teamId
-            XCTAssert(self.syncMOC.saveOrRollback())
-        }
-
-        let payload: [String: Any] = [
-            "type": "team.member-join",
-            "team": teamId.transportString(),
-            "time": Date().transportString(),
-            "data": ["user": userId.transportString()]
-        ]
-
-        // when
-        processEvent(fromPayload: payload)
-
-        // then
-        syncMOC.performGroupedBlockAndWait {
-            guard let user = ZMUser.fetch(with: userId, in: self.syncMOC) else { return XCTFail("No user") }
-            guard let team = Team.fetch(with: teamId, in: self.syncMOC) else { return XCTFail("No team") }
-            guard let member = user.membership else { return XCTFail("No member") }
-
-            XCTAssert(user.needsToBeUpdatedFromBackend)
-            XCTAssert(member.needsToBeUpdatedFromBackend)
-            XCTAssertFalse(team.needsToBeUpdatedFromBackend)
-            XCTAssertFalse(team.needsToRedownloadMembers)
-            XCTAssertEqual(member.team, team)
-        }
-    }
-
-    func testThatItDoesNotCreateALocalTeamWhenReceivingAMemberJoinEventForTheSelfUserWithoutExistingTeam() {
-        // given
-        let teamId = UUID.create()
-        let userId = UUID.create()
-
-        let payload: [String: Any] = [
-            "type": "team.member-join",
-            "team": teamId.transportString(),
-            "time": Date().transportString(),
-            "data": ["user": userId.transportString()]
-        ]
-
-        // when
-        processEvent(fromPayload: payload)
-
-        // then
-        syncMOC.performGroupedBlockAndWait {
-            XCTAssertNil(ZMUser.fetch(with: userId, in: self.syncMOC))
-            XCTAssertNil(Team.fetch(with: teamId, in: self.syncMOC))
-        }
-    }
-
-    func testThatItFlagsAddedTeamMembersToBeRefetchedWhenItReceivesAMemberJoinForTheSelfUserEvenIfThereWasALocalTeam() {
-        // given
-        let teamId = UUID.create()
-        var userId: UUID!
-
-        syncMOC.performGroupedBlockAndWait {
-            let user = ZMUser.selfUser(in: self.syncMOC)
-            userId = user.remoteIdentifier
-            let team = Team.insertNewObject(in: self.syncMOC)
-            team.remoteIdentifier = teamId
-            XCTAssert(self.syncMOC.saveOrRollback())
-        }
-
-        let payload: [String: Any] = [
-            "type": "team.member-join",
-            "team": teamId.transportString(),
-            "time": Date().transportString(),
-            "data": ["user": userId.transportString()]
-        ]
-
-        // when
-        processEvent(fromPayload: payload)
-
-        // then
-        syncMOC.performGroupedBlockAndWait {
-            guard let team = Team.fetch(with: teamId, in: self.syncMOC) else { return XCTFail("No team") }
-            XCTAssertFalse(team.needsToRedownloadMembers)
-            guard let member = Member.fetch(with: userId, in: self.syncMOC) else { return XCTFail("No member") }
-            XCTAssert(member.needsToBeUpdatedFromBackend)
-        }
     }
 
     // MARK: - Team Member-Leave
@@ -471,7 +224,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         }
 
         // expect
-        expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
+        customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
             guard
                 (wrappedNote.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification) != nil
             else {
@@ -637,15 +390,17 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         processEvent(fromPayload: payload)
 
         // then
-        guard let user = ZMUser.fetch(with: userId, in: uiMOC) else { return XCTFail("No user") }
-        guard let team = Team.fetch(with: teamId, in: uiMOC) else { return XCTFail("No team") }
-        guard let member = user.membership else { return XCTFail("No member") }
+        uiMOC.performAndWait { [self] in
+            guard let user = ZMUser.fetch(with: userId, in: uiMOC) else { return XCTFail("No user") }
+            guard let team = Team.fetch(with: teamId, in: uiMOC) else { return XCTFail("No team") }
+            guard let member = user.membership else { return XCTFail("No member") }
 
-        XCTAssertFalse(user.needsToBeUpdatedFromBackend)
-        XCTAssert(member.needsToBeUpdatedFromBackend)
-        XCTAssertFalse(team.needsToBeUpdatedFromBackend)
-        XCTAssertFalse(team.needsToRedownloadMembers)
-        XCTAssertEqual(member.team, team)
+            XCTAssertFalse(user.needsToBeUpdatedFromBackend)
+            XCTAssert(member.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(team.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(team.needsToRedownloadMembers)
+            XCTAssertEqual(member.team, team)
+        }
     }
 
     // MARK: - Team Conversation-Create

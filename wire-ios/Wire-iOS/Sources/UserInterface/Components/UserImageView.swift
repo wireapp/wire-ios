@@ -22,7 +22,7 @@ import WireSyncEngine
  * A view that displays the avatar for a remote user.
  */
 
-class UserImageView: AvatarImageView, ZMUserObserver {
+class UserImageView: AvatarImageView, UserObserving {
 
     /**
      * The different sizes for the avatar image.
@@ -60,7 +60,7 @@ class UserImageView: AvatarImageView, ZMUserObserver {
     // MARK: - Remote User
 
     /// The user session to use to download images.
-    var userSession: ZMUserSessionInterface? {
+    var userSession: UserSession? {
         didSet {
             updateUser()
         }
@@ -230,7 +230,7 @@ class UserImageView: AvatarImageView, ZMUserObserver {
             return
         }
 
-        let defaultAvatar = Avatar.text(initials.localizedUppercase)
+        let defaultAvatar = initials.isEmpty ? Avatar.image(Asset.Images.unavailableUser.image) : Avatar.text(initials.localizedUppercase)
         setAvatar(defaultAvatar, user: user, animated: false)
         if !ProcessInfo.processInfo.isRunningTests,
            let userSession = userSession as? ZMUserSession {

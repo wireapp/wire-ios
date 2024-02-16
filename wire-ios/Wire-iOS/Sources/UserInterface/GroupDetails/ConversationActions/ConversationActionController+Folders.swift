@@ -33,7 +33,6 @@ extension ConversationActionController {
 extension ConversationActionController: FolderPickerViewControllerDelegate {
 
     func didPickFolder(_ folder: LabelType, for conversation: ZMConversation) {
-        guard let userSession = ZMUserSession.shared() else { return }
 
         userSession.enqueue {
             conversation.moveToFolder(folder)

@@ -66,13 +66,15 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     weak var delegate: ConfirmEmailDelegate?
     typealias SettingsAccountSectionEmailLocalizable = L10n.Localizable.Self.Settings.AccountSection.Email.Change
     let newEmail: String
+    let userSession: UserSession
     fileprivate var observer: NSObjectProtocol?
 
     // MARK: - Init
 
-    init(newEmail: String, delegate: ConfirmEmailDelegate?) {
+    init(newEmail: String, delegate: ConfirmEmailDelegate?, userSession: UserSession) {
         self.newEmail = newEmail
         self.delegate = delegate
+        self.userSession = userSession
         super.init(style: .grouped)
         setupViews()
     }
@@ -86,10 +88,12 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        if let userSession = ZMUserSession.shared() {
-            observer = UserChangeInfo.add(observer: self, for: ZMUser.selfUser(), in: userSession)
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
         }
+
+        observer = userSession.addUserObserver(self, for: selfUser)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -149,14 +153,19 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
-extension ConfirmEmailViewController: ZMUserObserver {
+extension ConfirmEmailViewController: UserObserving {
     func userDidChange(_ note: WireDataModel.UserChangeInfo) {
         if note.user.isSelfUser {
             // we need to check if the notification really happened because
             // the email got changed to what we expected
-            if let currentEmail = ZMUser.selfUser().emailAddress, currentEmail == newEmail {
+            guard let selfUser = ZMUser.selfUser() else {
+                assertionFailure("ZMUser.selfUser() is nil")
+                return
+            }
+
+            if let currentEmail = selfUser.emailAddress, currentEmail == newEmail {
                 delegate?.didConfirmEmail(inController: self)
             }
         }

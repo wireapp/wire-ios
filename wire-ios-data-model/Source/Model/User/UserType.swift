@@ -22,7 +22,7 @@ import Foundation
 public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// The identifier which uniquely idenitifies the user in its domain
-    var remoteIdentifier: UUID? { get }
+    var remoteIdentifier: UUID! { get }
 
     /// The domain which the user originates from
     var domain: String? { get }
@@ -49,7 +49,10 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     var isFederated: Bool { get }
 
     /// The availability of the user
-    var availability: AvailabilityKind { get set }
+    var availability: Availability { get set }
+
+    /// Team membership for this user.
+    var membership: TeamMembership? { get }
 
     /// The name of the team the user belongs to.
     var teamName: String? { get }
@@ -78,7 +81,10 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the account of the user is deleted
     var isAccountDeleted: Bool { get }
 
-    /// Wheater the user is under legal hold
+    /// Determines if the user may have incomplete metadata.
+    var isPendingMetadataRefresh: Bool { get }
+
+    /// Whether the user is under legal hold.
     var isUnderLegalHold: Bool { get }
 
     var accentColorValue: ZMAccentColor { get }

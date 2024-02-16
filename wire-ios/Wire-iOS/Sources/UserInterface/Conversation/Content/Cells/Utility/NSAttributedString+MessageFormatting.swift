@@ -119,7 +119,7 @@ extension NSAttributedString {
 
         // Do emoji substition (but not inside link or mentions)
         let linkAttachmentRanges = links.compactMap { Range<Int>($0.range) }
-        let mentionRanges = mentionTextObjects.compactMap { $0.range(in: markdownText.string as String)}
+        let mentionRanges = mentionTextObjects.compactMap { $0.range(in: markdownText.string as String) }
         markdownText.replaceEmoticons(excluding: linkAttachmentRanges + mentionRanges)
         markdownText.removeTrailingWhitespace()
 
@@ -161,7 +161,7 @@ extension NSAttributedString {
         // Do emoji substition (but not inside link or mentions)
         let links = markdownText.links()
         let linkAttachmentRanges = links.compactMap { Range<Int>($0.range) }
-        let mentionRanges = mentionTextObjects.compactMap { $0.range(in: markdownText.string as String)}
+        let mentionRanges = mentionTextObjects.compactMap { $0.range(in: markdownText.string as String) }
         let codeBlockRanges =  markdownText.ranges(of: .code).compactMap { Range<Int>($0) }
         markdownText.replaceEmoticons(excluding: linkAttachmentRanges + mentionRanges + codeBlockRanges)
 
@@ -185,7 +185,7 @@ extension NSMutableAttributedString {
         let allowedIndexSet = IndexSet(integersIn: Range<Int>(wholeRange)!, excluding: excludedRanges)
 
         // Reverse the order of replacing, if we start replace from the beginning, the string may be shorten and other ranges may be invalid.
-        for range in allowedIndexSet.rangeView.sorted(by: {$0.lowerBound > $1.lowerBound}) {
+        for range in allowedIndexSet.rangeView.sorted(by: { $0.lowerBound > $1.lowerBound }) {
             let convertedRange = NSRange(location: range.lowerBound, length: range.upperBound - range.lowerBound)
             mutableString.resolveEmoticonShortcuts(in: convertedRange)
         }
@@ -220,7 +220,7 @@ extension NSMutableAttributedString {
 
 }
 
-fileprivate extension String {
+private extension String {
 
     mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
         return mentions.sorted(by: {
@@ -235,6 +235,21 @@ fileprivate extension String {
 
             return textObject
         })
+    }
+
+}
+
+private extension IndexSet {
+
+    init(integersIn range: Range<IndexSet.Element>, excluding: [Range<IndexSet.Element>]) {
+
+        var excludedIndexSet = IndexSet()
+        var includedIndexSet = IndexSet()
+
+        excluding.forEach({ excludedIndexSet.insert(integersIn: $0) })
+        includedIndexSet.insert(integersIn: range)
+
+        self = includedIndexSet.subtracting(excludedIndexSet)
     }
 
 }

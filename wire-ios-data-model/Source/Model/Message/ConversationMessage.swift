@@ -32,6 +32,12 @@ public enum ZMDeliveryState: UInt {
 }
 
 @objc
+public enum MessageSendFailure: Int {
+    case unknown
+    case federationRemoteError
+}
+
+@objc
 public protocol ReadReceipt {
 
     @available(*, deprecated, message: "Use `userType` instead")
@@ -97,6 +103,8 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     var locationMessageData: LocationMessageData? { get }
 
     var usersReaction: [String: [UserType]] { get }
+    var reactionData: Set<ReactionData> { get }
+    func reactionsSortedByCreationDate() -> [ReactionData]
 
     /// In case this message failed to deliver, this will resend it
     func resend()
@@ -161,6 +169,16 @@ public protocol ZMConversationMessage: NSObjectProtocol {
 public protocol ConversationCompositeMessage {
     /// The composite message associated with the message. If the message is not a composite message, it will be nil
     var compositeMessageData: CompositeMessageData? { get }
+}
+
+public protocol SwiftConversationMessage {
+
+    /// Reason why the message has not been sent
+    var failedToSendReason: MessageSendFailure? { get }
+
+    /// The list of users who didn't receive the message (e.g their backend is offline)
+    var failedToSendUsers: [UserType] { get }
+
 }
 
 public extension ZMConversationMessage {
@@ -275,15 +293,16 @@ extension ZMMessage: ZMConversationMessage {
 
     public var isRestricted: Bool {
         guard
-            (self.isFile || self.isImage),
+            self.isFile || self.isImage,
             let managedObjectContext = self.managedObjectContext
         else { return false }
 
-        let featureService = FeatureService(context: managedObjectContext)
-        let fileSharingFeature = featureService.fetchFileSharing()
+        let featureRepository = FeatureRepository(context: managedObjectContext)
+        let fileSharingFeature = featureRepository.fetchFileSharing()
 
         return fileSharingFeature.status == .disabled
     }
+
 }
 
 extension ZMMessage {
@@ -323,12 +342,30 @@ extension ZMMessage {
         return .delivered
     }
 
-    @objc public var usersReaction: [String: [UserType]] {
-        var result = [String: [ZMUser]]()
+    @objc public var reactionData: Set<ReactionData> {
+        var result = Set<ReactionData>()
         for reaction in reactions where reaction.users.count > 0 {
-            result[reaction.unicodeValue!] = [ZMUser](reaction.users)
+            result.insert(
+                ReactionData(
+                    reactionString: reaction.unicodeValue!,
+                    users: Array(reaction.users),
+                    creationDate: reaction.creationDate
+                )
+            )
         }
         return result
+    }
+
+    @objc public var usersReaction: [String: [UserType]] {
+        return Array(reactionData)
+            .partition(by: \.reactionString)
+            .mapValues { $0.flatMap { $0.users } }
+    }
+
+    @objc public func reactionsSortedByCreationDate() -> [ReactionData] {
+        return self.reactionData.sorted {
+            return $0.creationDate < $1.creationDate
+        }
     }
 
     @objc public var canBeDeleted: Bool {
@@ -357,4 +394,11 @@ extension ZMMessage {
     @objc public var deletionTimeout: TimeInterval {
         return -1
     }
+}
+
+// MARK: - Message send failure properties
+extension ZMMessage {
+
+    @NSManaged public var failedToSendRecipients: Set<ZMUser>?
+
 }

@@ -33,6 +33,7 @@
                       userDefaults:(NSUserDefaults *)userDefaults
                        application:(id<ZMApplication>)application
                       workingGroup:(ZMSDispatchGroup *)workingGroup
+                     minTLSVersion:(NSString *)minTLSVersion
                  completionHandler:(void (^)(NSString *, NSArray *))completionHandler;
 
 @end

@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-class CompanyLoginRequesterTests: XCTestCase {
+final class CompanyLoginRequesterTests: XCTestCase {
 
     func testThatItGeneratesLoginURLForToken() {
         // GIVEN
@@ -188,7 +188,7 @@ class CompanyLoginRequesterTests: XCTestCase {
 
 // MARK: - Helper
 
-private class MockSession: NSObject, URLSessionProtocol {
+private final class MockSession: NSObject, URLSessionProtocol {
 
     class MockURLSessionDataTask: URLSessionDataTask {
         override func resume() {
@@ -204,7 +204,7 @@ private class MockSession: NSObject, URLSessionProtocol {
         super.init()
     }
 
-    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+    func dataTask(with request: URLRequest, completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
         let (data, response, error) = handler(request)
         completionHandler(data, response, error)
         return MockURLSessionDataTask()

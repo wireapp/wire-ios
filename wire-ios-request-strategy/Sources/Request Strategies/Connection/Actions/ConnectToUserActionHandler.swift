@@ -22,11 +22,13 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = ConnectionPayloadProcessor()
+
     override func request(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
             return nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
@@ -44,7 +46,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         }
 
         return ZMTransportRequest(path: "/connections",
-                                  method: .methodPOST,
+                                  method: .post,
                                   payload: payloadAsString as ZMTransportData,
                                   apiVersion: apiVersion.rawValue)
 
@@ -60,7 +62,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         }
 
         return ZMTransportRequest(path: "/connections/\(domain)/\(action.userID.transportString())",
-                                  method: .methodPOST,
+                                  method: .post,
                                   payload: nil,
                                   apiVersion: apiVersion.rawValue)
     }
@@ -83,6 +85,8 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
                 action.notifyResult(.failure(.missingLegalholdConsent))
             case (403, .connectionLimit):
                 action.notifyResult(.failure(.connectionLimitReached))
+            case (422, .federationDenied):
+                action.notifyResult(.failure(.federationDenied))
             default:
                 action.notifyResult(.failure(.unknown))
             }
@@ -90,9 +94,14 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
             return
         }
 
-        let connection = Payload.Connection(response, decoder: decoder)
-        connection?.updateOrCreate(in: context)
-        context.saveOrRollback()
+        if let connection = Payload.Connection(response, decoder: decoder) {
+            processor.updateOrCreateConnection(
+                from: connection,
+                in: context
+            )
+            context.saveOrRollback()
+        }
+
         action.notifyResult(.success(Void()))
     }
 

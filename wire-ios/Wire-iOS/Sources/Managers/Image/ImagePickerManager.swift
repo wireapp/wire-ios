@@ -19,6 +19,7 @@
 import UIKit
 import MobileCoreServices
 import WireSyncEngine
+import UniformTypeIdentifiers
 
 extension UIImage {
     var jpegData: Data? {
@@ -55,7 +56,7 @@ class ImagePickerManager: NSObject {
 
         // Choose from gallery option, if security flag enabled
         if mediaShareRestrictionManager.isPhotoLibraryEnabled {
-            let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ -> Void in
+            let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ in
                 self?.sourceType = .photoLibrary
                 self?.getImage(fromSourceType: .photoLibrary)
             }
@@ -63,7 +64,7 @@ class ImagePickerManager: NSObject {
         }
 
         // Take photo
-        let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ -> Void in
+        let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ in
             self?.sourceType = .camera
             self?.getImage(fromSourceType: .camera)
         }
@@ -84,7 +85,7 @@ class ImagePickerManager: NSObject {
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
         imagePickerController.sourceType = sourceType
-        imagePickerController.mediaTypes = [kUTTypeImage as String]
+        imagePickerController.mediaTypes = [UTType.image.identifier]
 
         switch sourceType {
         case .camera:

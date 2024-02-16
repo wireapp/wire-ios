@@ -98,7 +98,9 @@ final class TopPeopleCell: UICollectionViewCell {
 
     override func updateConstraints() {
         if !initialConstraintsCreated {
-            [contentView, badgeUserImageView, avatarContainer, conversationImageView, nameLabel].prepareForLayout()
+            [contentView, badgeUserImageView, avatarContainer, conversationImageView, nameLabel].forEach {
+                $0.translatesAutoresizingMaskIntoConstraints = false
+            }
 
             var constraints: [NSLayoutConstraint] = []
             constraints.append(contentsOf: [contentView.trailingAnchor.constraint(equalTo: trailingAnchor),

@@ -153,7 +153,7 @@ extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDel
         inputBar.setInputBarState(.writing(ephemeral: timeout != 0 ? .message : .none), animated: true)
         updateMarkdownButton()
 
-        ZMUserSession.shared()?.enqueue {
+        userSession.enqueue {
             conversation.setMessageDestructionTimeoutValue(.init(rawValue: timeout), for: .selfUser)
             self.updateRightAccessoryView()
         }

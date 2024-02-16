@@ -112,7 +112,7 @@ public class ZMSearchUser: NSObject, UserType {
     public var providerIdentifier: String?
     public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
-    public var remoteIdentifier: UUID?
+    public var remoteIdentifier: UUID!
     public var teamIdentifier: UUID?
     @objc public var contact: ZMAddressBookContact?
     @objc public var user: ZMUser?
@@ -173,7 +173,7 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.initials ?? internalInitials
     }
 
-    public var availability: AvailabilityKind {
+    public var availability: Availability {
         get { return user?.availability ?? .none }
         set { user?.availability = newValue }
     }
@@ -192,6 +192,10 @@ public class ZMSearchUser: NSObject, UserType {
         return user.isSelfUser
     }
 
+    public var membership: Member? {
+        user?.membership
+    }
+
     public var teamName: String? {
         return user?.teamName
     }
@@ -202,6 +206,12 @@ public class ZMSearchUser: NSObject, UserType {
         } else {
             return internalIsTeamMember
         }
+    }
+
+    public var isPendingMetadataRefresh: Bool {
+        guard let user = user else { return false }
+
+        return user.isPendingMetadataRefresh
     }
 
     public var hasDigitalSignatureEnabled: Bool {

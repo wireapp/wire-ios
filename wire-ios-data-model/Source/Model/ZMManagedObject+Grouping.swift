@@ -24,7 +24,7 @@ private var zmLog = ZMSLog(tag: "ZMManagedObjectGrouping")
 // Key => [Value, 
 //         Value, 
 //         ...]
-public protocol TupleKeyArrayType {
+private protocol TupleKeyArrayType {
     associatedtype Key: Hashable
     associatedtype Value: Any
     var key: Key { get }
@@ -33,12 +33,12 @@ public protocol TupleKeyArrayType {
 
 // Struct to store the pairs of key-value, where value is an array of @c Value.
 // Generic struct conforming to @c TupleKeyArrayType.
-public struct TupleKeyArray<Key: Hashable, Value: Any>: TupleKeyArrayType {
+private struct TupleKeyArray<Key: Hashable, Value: Any>: TupleKeyArrayType {
     public let key: Key
     public let value: [Value]
 }
 
-extension Array where Element: TupleKeyArrayType {
+private extension Array where Element: TupleKeyArrayType {
     // Merges the array in the format of
     // [[Key_a => [Value_v1_1,
     //             Value_v1_2,
@@ -63,7 +63,7 @@ extension Array where Element: TupleKeyArrayType {
     //            ...]
     //  ...]
     // (Dictionary from @c Key to array of @c Value)
-    public func merge() -> [Element.Key: [Element.Value]] {
+    func merge() -> [Element.Key: [Element.Value]] {
         let initialValue: [Element.Key: [Element.Value]] = [:]
         return self.reduce(initialValue) {
             var objectsForKey = $0[$1.key] ?? []
@@ -81,7 +81,7 @@ extension NSManagedObjectContext {
     /// - Parameter keyPath: valid keyPath that can be fetched from the disk store (computed properties are not permitted).
     /// - Returns: dictionary containing the pairs of value and array of objects containing the value for `keyPath`.
 
-    public func findDuplicated<T: ZMManagedObject, ValueForKey>(by keyPath: String) -> [ValueForKey: [T]] {
+    func findDuplicated<T: ZMManagedObject, ValueForKey>(by keyPath: String) -> [ValueForKey: [T]] {
         return findDuplicated(entityName: T.entityName(), by: keyPath)
     }
 
@@ -91,7 +91,7 @@ extension NSManagedObjectContext {
     ///   - keyPath: valid keyPath that can be fetched from the disk store (computed properties are not permitted).
     /// - Returns: dictionary containing the pairs of value and array of objects containing the value for `keyPath`.
 
-    public func findDuplicated<T: NSManagedObject, ValueForKey>(entityName: String, by keyPath: String) -> [ValueForKey: [T]] {
+    func findDuplicated<T: NSManagedObject, ValueForKey>(entityName: String, by keyPath: String) -> [ValueForKey: [T]] {
         if let storeURL = self.persistentStoreCoordinator?.persistentStores.first?.url,
            !storeURL.isFileURL {
             zmLog.error("findDuplicated<T> does not support in-memory store")
@@ -146,7 +146,7 @@ extension Array where Element: NSObject {
     // Groups the elements of the array by the equal values in @keyPath.
     // @param keyPath the key path in @c Element to group by.
     // @return dictionary containing the pairs of value and array of objects containing the value for @keyPath.
-    public func group<ValueForKey>(by keyPath: String) -> [ValueForKey: [Element]] {
+    func group<ValueForKey>(by keyPath: String) -> [ValueForKey: [Element]] {
         let tuples: [TupleKeyArray<ValueForKey, Element>?] = self.map {
             guard let valueForKey = $0.value(forKey: keyPath) as? ValueForKey else {
                 return nil

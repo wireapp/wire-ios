@@ -23,14 +23,10 @@ enum LeaveResult: AlertResultConfiguration {
     case leave(delete: Bool), cancel
 
     var title: String {
-        return localizationKey.localized
-    }
-
-    private var localizationKey: String {
         switch self {
-        case .cancel: return "general.cancel"
-        case .leave(delete: true): return "meta.leave_conversation_button_leave_and_delete"
-        case .leave(delete: false): return "meta.leave_conversation_button_leave"
+        case .cancel: return L10n.Localizable.General.cancel
+        case .leave(delete: true): return L10n.Localizable.Meta.leaveConversationButtonLeaveAndDelete
+        case .leave(delete: false): return L10n.Localizable.Meta.leaveConversationButtonLeave
         }
     }
 
@@ -44,7 +40,7 @@ enum LeaveResult: AlertResultConfiguration {
     }
 
     static var title: String {
-        return "meta.leave_conversation_dialog_message".localized
+        return L10n.Localizable.Meta.leaveConversationDialogMessage
     }
 
     static var all: [LeaveResult] {
@@ -55,13 +51,18 @@ enum LeaveResult: AlertResultConfiguration {
 extension ConversationActionController {
 
     func handleLeaveResult(_ result: LeaveResult, for conversation: ZMConversation) {
-        guard case .leave(delete: let delete) = result else { return }
+        guard  case .leave(delete: let delete) = result else { return }
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
         transitionToListAndEnqueue {
             if delete {
                 conversation.clearMessageHistory()
             }
 
-            conversation.removeOrShowError(participant: SelfUser.current)
+            conversation.removeOrShowError(participant: user)
         }
     }
 

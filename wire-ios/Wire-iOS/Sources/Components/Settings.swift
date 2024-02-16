@@ -180,6 +180,9 @@ class Settings {
             ExtensionSettings.shared.disableLinkPreviews = newValue
         }
     }
+    static var isClipboardEnabled: Bool {
+        return SecurityFlags.clipboard.isEnabled
+    }
 
     // MARK: - MediaManager
     func restoreLastUsedAVSSettings() {

@@ -65,12 +65,12 @@ final class LinkInteractionTextView: UITextView {
     /// Returns an alert controller configured to open the given URL.
     private func confirmationAlert(for url: URL) -> UIAlertController {
         let alert = UIAlertController(
-            title: "content.message.open_link_alert.title".localized,
-            message: "content.message.open_link_alert.message".localized(args: url.absoluteString),
+            title: L10n.Localizable.Content.Message.OpenLinkAlert.title,
+            message: L10n.Localizable.Content.Message.OpenLinkAlert.message(url.absoluteString),
             preferredStyle: .alert
         )
 
-        let okAction = UIAlertAction(title: "content.message.open_link_alert.open".localized, style: .default) { _ in
+        let okAction = UIAlertAction(title: L10n.Localizable.Content.Message.OpenLinkAlert.open, style: .default) { _ in
             _ = self.interactionDelegate?.textView(self, open: url)
         }
 
@@ -111,11 +111,11 @@ extension LinkInteractionTextView: UITextViewDelegate {
                   shouldInteractWith URL: URL,
                   in characterRange: NSRange,
                   interaction: UITextItemInteraction) -> Bool {
-
         // present system context preview
         if  UIApplication.shared.canOpenURL(URL),
             interaction == .presentActions,
-            !isMarkdownLink(in: characterRange) {
+            !isMarkdownLink(in: characterRange),
+            Settings.isClipboardEnabled {
             return true
         }
 
@@ -126,14 +126,6 @@ extension LinkInteractionTextView: UITextViewDelegate {
                 return false // Don't open link/show alert if menu controller is visible
             }
 
-            let needFixForRepeatedGesture: Bool
-
-            if #available(iOS 13.2, *) {
-                needFixForRepeatedGesture = false
-            } else {
-                needFixForRepeatedGesture = true
-            }
-
             let performLinkInteraction: () -> Bool = {
                 // if alert shown, link opening is handled in alert actions
                 if self.showAlertIfNeeded(for: URL, in: characterRange) { return false }
@@ -142,17 +134,7 @@ extension LinkInteractionTextView: UITextViewDelegate {
                 return self.dataDetectedURLSchemes.contains(URL.scheme ?? "") || !(self.interactionDelegate?.textView(self, open: URL) ?? false)
             }
 
-            if needFixForRepeatedGesture {
-                // Workaround for iOS 13 - this delegate method is called multiple times and we only want to handle it when the state == .ended
-                // the issue is fixed on iOS 13.2 and no need this workaround
-                if textView.gestureRecognizers?.contains(where: {$0.isKind(of: UITapGestureRecognizer.self) && $0.state == .ended}) == true {
-                    return performLinkInteraction()
-                }
-
-                return true
-            } else {
-                return performLinkInteraction()
-            }
+            return performLinkInteraction()
 
         case .presentActions,
              .preview:

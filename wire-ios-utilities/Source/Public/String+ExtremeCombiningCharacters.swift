@@ -31,12 +31,14 @@ public extension CharacterSet {
     private static let diacriticsCombiningCodesHalfMarks     = CharacterSet(charactersIn: UnicodeScalar(0xfe20 as UInt16)!...UnicodeScalar(0xfe2f as UInt16)!)
 
     static var diacriticsCombining: CharacterSet = {
-        return  [diacriticsCombiningCodes,
-                 diacriticsCombiningCodesExtended,
-                 diacriticsCombiningCodesSupplementary,
-                 diacriticsCombiningCodesForSymbols,
-                 diacriticsCombiningCodesHalfMarks].reduce(CharacterSet()) { (current: CharacterSet, new: CharacterSet) -> CharacterSet in
-            return current.union(new)
+        [
+            diacriticsCombiningCodes,
+            diacriticsCombiningCodesExtended,
+            diacriticsCombiningCodesSupplementary,
+            diacriticsCombiningCodesForSymbols,
+            diacriticsCombiningCodesHalfMarks
+        ].reduce(CharacterSet()) { (current: CharacterSet, new: CharacterSet) -> CharacterSet in
+            current.union(new)
         }
     }()
 }
@@ -71,7 +73,7 @@ public extension String {
         // With moving window from the end to the start
         var currentWindowPosition: Int = -1
         for scalar in unicodeScalars {
-            currentWindowPosition = currentWindowPosition + 1
+            currentWindowPosition += 1
 
             let endOfRange = min(isDiacriticsMap.endIndex, currentWindowPosition + extremeDiacriticsViewWindowSize)
             let range = currentWindowPosition..<endOfRange

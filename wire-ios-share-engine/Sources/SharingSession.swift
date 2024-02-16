@@ -22,14 +22,14 @@ import WireTransport
 import WireRequestStrategy
 import WireLinkPreview
 
-class PushMessageHandlerDummy: NSObject, PushMessageHandler {
+final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
 
     func didFailToSend(_ message: ZMMessage) {
         // nop
     }
 }
 
-class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
+final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     let context: NSManagedObjectContext
 
@@ -50,7 +50,7 @@ class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 }
 
-class AuthenticationStatus: AuthenticationStatusProvider {
+final class AuthenticationStatus: AuthenticationStatusProvider {
 
     let transportSession: ZMTransportSession
 
@@ -71,7 +71,7 @@ class AuthenticationStatus: AuthenticationStatusProvider {
 extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
         let backendURL = self.backendURL.host!
-        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier)
+        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier, useCache: false)
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {
@@ -79,7 +79,7 @@ extension BackendEnvironmentProvider {
     }
 }
 
-class ApplicationStatusDirectory: ApplicationStatus {
+final class ApplicationStatusDirectory: ApplicationStatus {
 
     let transportSession: ZMTransportSession
 
@@ -138,7 +138,7 @@ class ApplicationStatusDirectory: ApplicationStatus {
 /// for the entire lifetime.
 /// - warning: creating multiple sessions in the same process
 /// is not supported and will result in undefined behaviour
-public class SharingSession {
+public final class SharingSession {
 
     /// The failure reason of a `SharingSession` initialization
     /// - NeedsMigration: The database needs a migration which is only done in the main app
@@ -201,8 +201,8 @@ public class SharingSession {
     let earService: EARServiceInterface
 
     public var fileSharingFeature: Feature.FileSharing {
-        let featureService = FeatureService(context: coreDataStack.viewContext)
-        return featureService.fetchFileSharing()
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchFileSharing()
     }
 
     /// Initializes a new `SessionDirectory` to be used in an extension environment
@@ -218,7 +218,8 @@ public class SharingSession {
         hostBundleIdentifier: String,
         environment: BackendEnvironmentProvider,
         appLockConfig: AppLockController.LegacyConfig?,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        minTLSVersion: String?
     ) throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -241,8 +242,10 @@ public class SharingSession {
 
         guard storeError == nil else { throw InitializationError.missingSharedContainer }
 
-        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier)
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
+        // Don't cache the cookie because if the user logs out and back in again in the main app
+        // process, then the cached cookie will be invalid.
+        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
+        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
@@ -256,7 +259,8 @@ public class SharingSession {
             reachability: reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
-            applicationVersion: "1.0.0"
+            applicationVersion: "1.0.0",
+            minTLSVersion: minTLSVersion
         )
 
         try self.init(
@@ -281,8 +285,10 @@ public class SharingSession {
         operationLoop: RequestGeneratingOperationLoop,
         strategyFactory: StrategyFactory,
         appLockConfig: AppLockController.LegacyConfig?,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager(),
-        earService: EARServiceInterface? = nil,
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        earService: EARServiceInterface,
+        proteusService: ProteusServiceInterface,
+        mlsDecryptionService: MLSDecryptionServiceInterface,
         sharedUserDefaults: UserDefaults
     ) throws {
 
@@ -294,14 +300,7 @@ public class SharingSession {
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
 
-        self.earService = earService ?? EARService(
-            accountID: accountIdentifier,
-            databaseContexts: [
-                coreDataStack.viewContext,
-                coreDataStack.syncContext
-            ],
-            sharedUserDefaults: sharedUserDefaults
-        )
+        self.earService = earService
 
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
         self.appLockController = AppLockController(userId: accountIdentifier, selfUser: selfUser, legacyConfig: appLockConfig)
@@ -313,13 +312,14 @@ public class SharingSession {
             throw InitializationError.pendingCryptoboxMigration
         }
 
-        setUpCoreCryptoStack(
-            sharedContainerURL: coreDataStack.applicationContainer,
-            syncContext: coreDataStack.syncContext
-        )
-
         coreDataStack.syncContext.performAndWait {
-            try? cryptoboxMigrationManager.completeMigration(syncContext: coreDataStack.syncContext)
+            if DeveloperFlag.proteusViaCoreCrypto.isOn, coreDataStack.syncContext.proteusService == nil {
+                coreDataStack.syncContext.proteusService = proteusService
+            }
+
+            if DeveloperFlag.enableMLSSupport.isOn, coreDataStack.syncContext.mlsDecryptionService == nil {
+                coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
+            }
         }
 
         setupCaches(at: cachesDirectory)
@@ -342,7 +342,8 @@ public class SharingSession {
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            linkPreviewPreprocessor: linkPreviewPreprocessor
+            linkPreviewPreprocessor: linkPreviewPreprocessor,
+            transportSession: transportSession
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
@@ -358,6 +359,34 @@ public class SharingSession {
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
         let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainer)
 
+        let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let coreCryptoProvider = CoreCryptoProvider(
+            selfUserID: accountIdentifier,
+            sharedContainerURL: coreDataStack.applicationContainer,
+            accountDirectory: coreDataStack.accountContainer,
+            syncContext: coreDataStack.syncContext,
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            allowCreation: false
+        )
+        let commitSender = CommitSender(
+            coreCryptoProvider: coreCryptoProvider,
+            notificationContext: coreDataStack.syncContext.notificationContext
+        )
+        let mlsActionExecutor = MLSActionExecutor(
+            coreCryptoProvider: coreCryptoProvider,
+            commitSender: commitSender
+        )
+        let earService = EARService(
+            accountID: accountIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext
+            ],
+            sharedUserDefaults: sharedUserDefaults
+        )
+        let proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
+        let mlsDecryptionService = MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
+
         try self.init(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
@@ -369,6 +398,10 @@ public class SharingSession {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: appLockConfig,
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            earService: earService,
+            proteusService: proteusService,
+            mlsDecryptionService: mlsDecryptionService,
             sharedUserDefaults: sharedUserDefaults
         )
     }

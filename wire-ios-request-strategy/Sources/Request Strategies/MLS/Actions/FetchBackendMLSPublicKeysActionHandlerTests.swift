@@ -25,6 +25,7 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
     override func setUp() {
         super.setUp()
         action = FetchBackendMLSPublicKeysAction()
+        handler = FetchBackendMLSPublicKeysActionHandler(context: syncMOC)
     }
 
     override func tearDown() {
@@ -33,38 +34,23 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
     }
     // MARK: - Request generation
 
-    func test_itGeneratesARequest_APIV3() throws {
+    func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-               expectedPath: "/v3/mls/public-keys",
-               expectedMethod: .methodGET,
-               apiVersion: .v3
+               expectedPath: "/v5/mls/public-keys",
+               expectedMethod: .get,
+               apiVersion: .v5
         )
     }
 
-    func test_itGeneratesARequest_APIV2() throws {
-        try test_itGeneratesARequest(
-            for: action,
-            expectedPath: "/v2/mls/public-keys",
-            expectedMethod: .methodGET,
-            apiVersion: .v2
-        )
-    }
-
-    func test_itDoesntGenerateRequests_APIV1() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v1,
-            expectedError: .endpointUnavailable
-        )
-    }
-
-    func test_itDoesntGenerateRequests_APIV0() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v0,
-            expectedError: .endpointUnavailable
-        )
+    func test_itDoesntGenerateRequests_APIBelowV5() {
+        [.v0, .v1, .v2, .v3, .v4].forEach {
+            test_itDoesntGenerateARequest(
+                action: action,
+                apiVersion: $0,
+                expectedError: .endpointUnavailable
+            )
+        }
     }
 
     // MARK: - Response handling

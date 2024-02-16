@@ -31,10 +31,9 @@ public protocol CallEventHandlerProtocol {
     func reportIncomingVoIPCall(_ payload: [String: Any])
 }
 
-class CallEventHandler: CallEventHandlerProtocol {
+final class CallEventHandler: CallEventHandlerProtocol {
 
     func reportIncomingVoIPCall(_ payload: [String: Any]) {
-        guard #available(iOS 14.5, *) else { return }
         WireLogger.calling.info("waking up main app to handle call event")
         CXProvider.reportNewIncomingVoIPPushPayload(payload) { error in
             if let error = error {
@@ -45,7 +44,7 @@ class CallEventHandler: CallEventHandlerProtocol {
 
 }
 
-public class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
+public final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
 
     // MARK: - Properties
 
@@ -131,9 +130,7 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
             return finishWithoutShowingNotification()
         }
 
-        if #available(iOS 15, *) {
-            content.interruptionLevel = .timeSensitive
-        }
+        content.interruptionLevel = .timeSensitive
 
         if let badgeCount = totalUnreadCount(unreadConversationCount) {
             WireLogger.notifications.info("setting badge count to \(badgeCount.intValue)")
@@ -178,7 +175,8 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
           accountIdentifier: accountID,
           environment: BackendEnvironment.shared,
           analytics: nil,
-          sharedUserDefaults: .applicationGroup
+          sharedUserDefaults: .applicationGroup,
+          minTLSVersion: SecurityFlags.minTLSVersion.stringValue
       )
 
       session.delegate = self

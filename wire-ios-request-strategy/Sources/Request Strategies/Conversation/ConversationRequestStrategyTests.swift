@@ -18,6 +18,7 @@
 import Foundation
 import XCTest
 import WireDataModel
+import WireDataModelSupport
 @testable import WireRequestStrategy
 
 class ConversationRequestStrategyTests: MessagingTestBase {
@@ -25,6 +26,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     var sut: ConversationRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
+    var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
+    var mockMLSService: MockMLSServiceInterface!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -38,10 +41,16 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockSyncProgress = MockSyncProgress()
+        mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
+        mockMLSService = MockMLSServiceInterface()
 
-        sut = ConversationRequestStrategy(withManagedObjectContext: syncMOC,
-                                          applicationStatus: mockApplicationStatus,
-                                          syncProgress: mockSyncProgress)
+        sut = ConversationRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncProgress: mockSyncProgress,
+            mlsService: mockMLSService,
+            removeLocalConversation: mockRemoveLocalConversation
+        )
 
         apiVersion = .v0
     }
@@ -50,6 +59,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
+        mockRemoveLocalConversation = nil
         apiVersion = nil
 
         super.tearDown()
@@ -72,7 +82,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -90,63 +100,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
-        }
-    }
-
-    func testThatRequestToCreateConversationIsGenerated_WhenRemoteIdentifierIsNotSet() {
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            self.apiVersion = .v1
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            conversation.conversationType = .group
-            conversation.userDefinedName = "Hello World"
-            conversation.addParticipantAndUpdateConversationState(user: self.otherUser, role: nil)
-            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-            self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([conversation])) })
-
-            // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
-            let payload = Payload.NewConversation(request)
-
-            // then
-            XCTAssertEqual(request.path, "/v1/conversations")
-            XCTAssertEqual(request.method, .methodPOST)
-            XCTAssertEqual(payload?.name, conversation.userDefinedName)
-            XCTAssertEqual(Set(payload!.qualifiedUsers!), Set(conversation.localParticipantsExcludingSelf.qualifiedUserIDs!))
-        }
-    }
-
-    func testThatRequestToCreateConversationIsGenerated_V2() {
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            self.apiVersion = .v2
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            conversation.conversationType = .group
-            conversation.userDefinedName = "Hello World"
-            conversation.messageProtocol = .mls
-            conversation.addParticipantAndUpdateConversationState(user: self.otherUser, role: nil)
-            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-            self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([conversation])) })
-
-            // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
-
-            guard let payload = Payload.NewConversation(request) else {
-                XCTFail("failed to create payload")
-                return
-            }
-
-            // then
-            XCTAssertEqual(request.path, "/v2/conversations")
-            XCTAssertEqual(request.method, .methodPOST)
-            XCTAssertEqual(payload.name, conversation.userDefinedName)
-            XCTAssertEqual(payload.messageProtocol, "mls")
-            XCTAssertNil(payload.qualifiedUsers)
-            XCTAssertNil(payload.users)
-            XCTAssertEqual(payload.creatorClient, self.selfClient.remoteIdentifier!)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -167,7 +121,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/name")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             XCTAssertEqual(payload?.name, self.groupConversation.userDefinedName)
         }
     }
@@ -189,7 +143,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/self")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             XCTAssertEqual(payload?.archived, true)
         }
     }
@@ -211,7 +165,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/self")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             XCTAssertEqual(payload?.mutedStatus, Int(MutedMessageTypes.all.rawValue))
         }
     }
@@ -324,6 +278,21 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
+    func testThatConversationIsPendingMetadataRefresh_WhenFailedDuringSlowSyncPhase() {
+        // given
+        self.apiVersion = .v4
+        startSlowSync()
+        fetchConversationListDuringSlowSync()
+
+        // when
+        fetchConversationsDuringSlowSync(failed: [qualifiedID(for: groupConversation)])
+
+        // then
+        syncMOC.performGroupedBlockAndWait {
+            XCTAssertTrue(self.groupConversation.isPendingMetadataRefresh)
+        }
+    }
+
     func testThatConversationIsCreatedAndMarkedToFetched_WhenFailingDuringSlowSyncPhase() throws {
         // given
         self.apiVersion = .v1
@@ -345,61 +314,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Response processing
 
-    func testThatMLSGroupIsCreated() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // given
-            let mlsService = MockMLSService()
-            self.syncMOC.mlsService = mlsService
-
-            let id = UUID.create()
-            let qualifiedID = QualifiedID(uuid: id, domain: self.owningDomain)
-            let mlsGroupID = MLSGroupID([1, 2, 3])
-
-            guard let request = self.sut.request(
-                forInserting: self.groupConversation,
-                forKeys: nil,
-                apiVersion: .v2
-            ) else {
-                XCTFail("Failed to create request")
-                return
-            }
-
-            let payload = Payload.Conversation(
-                qualifiedID: qualifiedID,
-                id: id,
-                type: BackendConversationType.group.rawValue,
-                messageProtocol: "mls",
-                mlsGroupID: mlsGroupID.base64EncodedString
-            )
-
-            let payloadData = payload.payloadData()!
-            let payloadString = String(bytes: payloadData, encoding: .utf8)!
-
-            let response = ZMTransportResponse(
-                payload: payloadString as ZMTransportData,
-                httpStatus: 201,
-                transportSessionError: nil,
-                apiVersion: 2
-            )
-
-            // when
-            self.sut.updateInsertedObject(
-                self.groupConversation,
-                request: request,
-                response: response
-            )
-
-            // then
-            XCTAssertEqual(mlsService.createGroupCalls.count, 1)
-
-            let createGroupCall = mlsService.createGroupCalls.element(atIndex: 0)
-            XCTAssertEqual(createGroupCall, self.groupConversation.mlsGroupID)
-            XCTAssertEqual(self.groupConversation.mlsStatus, .ready)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
     func testThatConversationResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors() {
         // given
         let response = responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
@@ -415,7 +329,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatConversationIsDeleted_WhenResponseIs_404() {
+    func testThatLocalConversationRemovalUseCaseIsExecuted_WhenResponseIs_404() {
         // given
         let response = responseFailure(code: 404, label: .notFound, apiVersion: apiVersion)
 
@@ -423,9 +337,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         fetchConversation(groupConversation, with: response, apiVersion: apiVersion)
 
         // then
-        self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(self.groupConversation.isZombieObject)
-        }
+        XCTAssertEqual(
+            mockRemoveLocalConversation.invokeCalls,
+            [groupConversation]
+        )
     }
 
     func testThatSelfUserIsRemovedFromParticipantsList_WhenResponseIs_403() {
@@ -438,672 +353,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         // then
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssertFalse(self.groupConversation.isSelfAnActiveMember)
-        }
-    }
-
-    // MARK: - Event processing
-
-    // MARK: Conversation Creation
-
-    func testThatItProcessesConversationCreateEvents() {
-        syncMOC.performAndWait {
-            // given
-            let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier!
-            let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
-            let payload = Payload.Conversation.stub(
-                qualifiedID: qualifiedID,
-                type: .group,
-                name: "Hello World",
-                members: .init(selfMember: Payload.ConversationMember(id: selfUserID),
-                others: [])
-            )
-            let event = updateEvent(from: payload,
-                                    conversationID: .init(uuid: UUID(), domain: owningDomain),
-                                    senderID: otherUser.qualifiedID!,
-                                    timestamp: Date())
-
-            // when
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // then
-            let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC)
-            XCTAssertNotNil(conversation)
-        }
-    }
-
-    // MARK: Conversation deletion
-
-    func testThatItHandlesConversationDeletedUpdateEvent() {
-
-        syncMOC.performAndWait {
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-
-            // GIVEN
-            let payload: [String: Any] = [
-                "from": selfUser.remoteIdentifier!.transportString(),
-                "conversation": self.groupConversation!.remoteIdentifier!.transportString(),
-                "time": NSDate(timeIntervalSinceNow: 100).transportString(),
-                "data": NSNull(),
-                "type": "conversation.delete"
-            ]
-
-            // WHEN
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertTrue(self.groupConversation.isDeletedRemotely)
-        }
-    }
-
-    // MARK: Conversation renaming
-
-    func testThatItHandlesConverationNameUpdateEvent() {
-        syncMOC.performAndWait {
-            // given
-            let newName = "Hello World"
-            let payload = Payload.UpdateConversationName(name: newName)
-            let event = updateEvent(from: payload,
-                                    conversationID: self.groupConversation.qualifiedID,
-                                    senderID: self.otherUser.qualifiedID!,
-                                    timestamp: Date())
-
-            // when
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertEqual(self.groupConversation.userDefinedName, newName)
-        }
-    }
-
-    // MARK: Receipt Mode
-
-    func receiptModeUpdateEvent(enabled: Bool) -> ZMUpdateEvent {
-        let payload = [
-            "from": self.otherUser.remoteIdentifier!.transportString(),
-            "conversation": self.groupConversation.remoteIdentifier!.transportString(),
-            "time": NSDate().transportString(),
-            "data": ["receipt_mode": enabled ? 1 : 0],
-            "type": "conversation.receipt-mode-update"
-        ] as [String: Any]
-        return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
-    }
-
-    func testThatItUpdatesHasReadReceiptsEnabled_WhenReceivingReceiptModeUpdateEvent() {
-        self.syncMOC.performAndWait {
-            // GIVEN
-            let event = receiptModeUpdateEvent(enabled: true)
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertEqual(self.groupConversation.hasReadReceiptsEnabled, true)
-        }
-    }
-
-    func testThatItInsertsSystemMessageEnabled_WhenReceivingReceiptModeUpdateEvent() {
-        self.syncMOC.performAndWait {
-            // GIVEN
-            let event = receiptModeUpdateEvent(enabled: true)
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(message.systemMessageType, .readReceiptsEnabled)
-        }
-    }
-
-    func testThatItInsertsSystemMessageDisabled_WhenReceivingReceiptModeUpdateEvent() {
-        self.syncMOC.performAndWait {
-            // GIVEN
-            let event = receiptModeUpdateEvent(enabled: false)
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(message.systemMessageType, .readReceiptsDisabled)
-        }
-    }
-
-    func testThatItDoesntInsertsSystemMessage_WhenReceivingReceiptModeUpdateEventWhichHasAlreadybeenApplied() {
-        self.syncMOC.performAndWait {
-            // GIVEN
-            let event = receiptModeUpdateEvent(enabled: true)
-            groupConversation.lastServerTimeStamp = event.timestamp
-
-            // WHEN
-            performIgnoringZMLogError {
-                self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-            }
-
-            // THEN
-            XCTAssertEqual(self.groupConversation?.allMessages.count, 0)
-        }
-    }
-
-    // MARK: Access Mode
-
-    func testThatItHandlesAccessModeUpdateEvent() {
-        self.syncMOC.performAndWait {
-
-            let newAccessMode = ConversationAccessMode(values: ["code", "invite"])
-            let newAccessRole: Set<ConversationAccessRoleV2> = [.teamMember, .guest]
-
-            XCTAssertNotEqual(self.groupConversation.accessMode, newAccessMode)
-            XCTAssertNotEqual(self.groupConversation.accessRoles, newAccessRole)
-
-            // GIVEN
-            let event = self.updateEvent(type: "conversation.access-update",
-                                         senderID: self.otherUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: [
-                                            "access": newAccessMode.stringValue,
-                                            "access_role_v2": newAccessRole.map(\.rawValue)
-                                         ])
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertEqual(self.groupConversation.accessMode, newAccessMode)
-            XCTAssertEqual(self.groupConversation.accessRoles, newAccessRole)
-        }
-    }
-
-    // MARK: Access Role
-
-    func testThatItHandlesAccessRoleUpdateEventWhenMappingFromLegacyAccessRoleToAccessRoleV2() {
-        self.syncMOC.performAndWait {
-            let newAccessMode = ConversationAccessMode(values: ["code", "invite"])
-            let legacyAccessRole: ConversationAccessRole = .team
-
-            // GIVEN
-            let event = self.updateEvent(
-                type: "conversation.access-update",
-                senderID: self.otherUser.remoteIdentifier!,
-                conversationID: self.groupConversation.remoteIdentifier!,
-                timestamp: Date(),
-                dataPayload: [
-                    "access": newAccessMode.stringValue,
-                    "access_role": legacyAccessRole.rawValue
-                ])
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            let newAccessRole = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
-            XCTAssertEqual(self.groupConversation.accessRoles, newAccessRole)
-        }
-    }
-
-    // MARK: Message Timer
-
-    func testThatItHandlesMessageTimerUpdateEvent_Value() {
-        syncMOC.performGroupedBlockAndWait {
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
-
-            // GIVEN
-            let event = self.updateEvent(type: "conversation.message-timer-update",
-                                         senderID: self.otherUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: ["message_timer": 31536000000])
-
-            // WHEN
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .init(rawValue: 31536000))
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
-        }
-    }
-
-    func testThatItHandlesMessageTimerUpdateEvent_NoValue() {
-        syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.setMessageDestructionTimeoutValue(.init(rawValue: 300), for: .groupConversation)
-            XCTAssertEqual(self.groupConversation.activeMessageDestructionTimeoutValue!, .fiveMinutes)
-            XCTAssertEqual(self.groupConversation.activeMessageDestructionTimeoutType!, .groupConversation)
-
-            // Given
-            let event = self.updateEvent(type: "conversation.message-timer-update",
-                                         senderID: self.otherUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: ["message_timer": NSNull()])
-
-            // WHEN
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
-            guard let message = self.groupConversation.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
-        }
-    }
-
-    func testThatItGeneratesCorrectSystemMessageWhenSyncedTimeoutTurnedOff() {
-        // GIVEN: local & synced timeouts exist
-        syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
-        }
-
-        syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.setMessageDestructionTimeoutValue(.oneHour, for: .groupConversation)
-        }
-
-        syncMOC.performGroupedBlockAndWait {
-            XCTAssertNotNil(self.groupConversation.activeMessageDestructionTimeoutValue)
-
-            // "turn off" synced timeout
-            let event = self.updateEvent(type: "conversation.message-timer-update",
-                                         senderID: self.otherUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: ["message_timer": 0])
-
-            // WHEN
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN: the local timeout still exists
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .fiveMinutes)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .selfUser)
-            guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
-
-            // but the system message timer reflects the update to the synced timeout
-            XCTAssertEqual(0, message.messageTimer)
-        }
-    }
-
-    func testThatItDiscardsDoubleSystemMessageWhenSyncedTimeoutChanges_Value() {
-
-        syncMOC.performGroupedBlockAndWait {
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
-
-            // Given
-            let messageTimerMillis = 31536000000
-            let messageTimer = MessageDestructionTimeoutValue(rawValue: TimeInterval(messageTimerMillis / 1000))
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-
-            let event = self.updateEvent(type: "conversation.message-timer-update",
-                                         senderID: selfUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: ["message_timer": messageTimerMillis])
-
-            // WHEN
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil) // First event
-
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            guard let firstMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(firstMessage.systemMessageType, .messageTimerUpdate)
-
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil) // Second duplicated event
-
-            // THEN
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(firstMessage, secondMessage) // Check that no other messages are appended in the conversation
-        }
-    }
-
-    func testThatItDiscardsDoubleSystemMessageWhenSyncedTimeoutChanges_NoValue() {
-
-        syncMOC.performGroupedBlockAndWait {
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
-
-            // Given
-            let valuedMessageTimerMillis = 31536000000
-            let valuedMessageTimer = MessageDestructionTimeoutValue(rawValue: TimeInterval(valuedMessageTimerMillis / 1000))
-
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-
-            let valuedEvent = self.updateEvent(type: "conversation.message-timer-update",
-                                               senderID: selfUser.remoteIdentifier!,
-                                               conversationID: self.groupConversation.remoteIdentifier!,
-                                               timestamp: Date(),
-                                               dataPayload: ["message_timer": valuedMessageTimerMillis])
-
-            let event = self.updateEvent(type: "conversation.message-timer-update",
-                                         senderID: selfUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(timeIntervalSinceNow: 100),
-                                         dataPayload: ["message_timer": 0])
-
-            // WHEN
-
-            // First event with valued timer
-            self.sut?.processEvents([valuedEvent], liveEvents: true, prefetchResult: nil)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, valuedMessageTimer)
-
-            // Second event with timer = nil
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-            XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
-
-            guard let firstMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(firstMessage.systemMessageType, .messageTimerUpdate)
-
-            // Third event with timer = nil
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
-            guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(firstMessage, secondMessage) // Check that no other messages are appended in the conversation
-        }
-    }
-
-    // MARK: Member join
-
-    func testThatItCreatesAndNotifiesSystemMessagesFromAMemberJoinEvent() {
-
-        self.syncMOC.performAndWait {
-
-            // GIVEN
-            let event = self.updateEvent(type: "conversation.member-join",
-                                         senderID: self.otherUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: [
-                                            "user_ids": [self.thirdUser.remoteIdentifier!.transportString()]
-                                         ])
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            guard let message = self.groupConversation.lastMessage as? ZMSystemMessage else {
-                XCTFail("Last conversation message is not a system message")
-                return
-            }
-            XCTAssertEqual(message.systemMessageType, .participantsAdded)
-        }
-    }
-
-    func testThatItAddsUsersWithRolesToAConversationAfterAMemberJoinEvent() {
-
-        self.syncMOC.performAndWait {
-            // GIVEN
-            let user2 = ZMUser.insertNewObject(in: self.syncMOC)
-            user2.remoteIdentifier = UUID.create()
-            let event = self.updateEvent(type: "conversation.member-join",
-                                         senderID: self.otherUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: [
-                                            "user_ids": [user2.remoteIdentifier!.transportString()],
-                                            "users": [[
-                                                "id": user2.remoteIdentifier!.transportString(),
-                                                "conversation_role": "wire_admin"
-                                            ]]
-                                         ])
-
-            // WHEN
-            groupConversation.addParticipantsAndUpdateConversationState(users: [otherUser], role: nil)
-            XCTAssertEqual(self.groupConversation.localParticipants.count, 2)
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertEqual(groupConversation.localParticipants.count, 3)
-            let admins = groupConversation.participantRoles.filter({ (participantRole) -> Bool in
-                participantRole.role?.name == "wire_admin"
-            })
-            XCTAssertEqual(admins.count, 1)
-        }
-    }
-
-    func testThatItIgnoresMemberJoinEvents_IfMemberIsAlreadyPartOfConversation() {
-
-        self.syncMOC.performAndWait {
-
-            // GIVEN
-            self.groupConversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
-
-            let event = self.updateEvent(type: "conversation.member-join",
-                                         senderID: self.otherUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: [
-                                            "user_ids": [self.otherUser.remoteIdentifier!.transportString()]
-                                         ])
-            let messageCountBeforeProcessing = self.groupConversation.allMessages.count
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertEqual(self.groupConversation.allMessages.count, messageCountBeforeProcessing)
-        }
-    }
-
-    // MARK: Member leave
-
-    func testThatItCreatesAndNotifiesSystemMessagesFromAMemberLeaveEvent() {
-
-        self.syncMOC.performAndWait {
-
-            // GIVEN
-            self.groupConversation.addParticipantAndUpdateConversationState(user: thirdUser, role: nil)
-            let event = self.updateEvent(type: "conversation.member-leave",
-                                         senderID: self.otherUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: [
-                                            "user_ids": [self.thirdUser.remoteIdentifier!.transportString()]
-                                         ])
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            guard let message = self.groupConversation.lastMessage as? ZMSystemMessage else {
-                XCTFail("Last conversation message is not a system message")
-                return
-            }
-            print(message.systemMessageType.rawValue)
-            XCTAssertEqual(message.systemMessageType, .participantsRemoved)
-        }
-    }
-
-    func testThatItIgnoresMemberLeaveEvents_IfMemberIsNotPartOfConversation() {
-
-        self.syncMOC.performAndWait {
-
-            // GIVEN
-            let event = self.updateEvent(type: "conversation.member-leave",
-                                         senderID: self.otherUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(),
-                                         dataPayload: [
-                                            "user_ids": [self.thirdUser.remoteIdentifier!.transportString()]
-                                         ])
-            let messageCountBeforeProcessing = self.groupConversation.allMessages.count
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertEqual(self.groupConversation.allMessages.count, messageCountBeforeProcessing)
-        }
-    }
-
-    // MARK: Member update
-
-    func testThatItAddsAUserReceivedWithAMemberUpdate() {
-
-        syncMOC.performAndWait {
-
-            let userId = UUID.create()
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-
-            // GIVEN
-            let event = self.updateEvent(type: "conversation.member-update",
-                                         senderID: selfUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(timeIntervalSinceNow: 100),
-                                         dataPayload: [
-                                            "target": userId.transportString(),
-                                            "conversation_role": "new"
-                                         ])
-
-            // WHEN
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            guard let participant = self.groupConversation.participantRoles
-                    .first(where: {$0.user?.remoteIdentifier == userId}) else {
-                        return XCTFail("No user in convo")
-                    }
-            XCTAssertEqual(participant.role?.name, "new")
-        }
-    }
-
-    func testThatItChangesRoleAfterMemberUpdate() {
-
-        syncMOC.performAndWait {
-
-            let userId = UUID.create()
-
-            let user = ZMUser.insertNewObject(in: self.syncMOC)
-            user.remoteIdentifier = userId
-
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-
-            let oldRole = Role.insertNewObject(in: self.syncMOC)
-            oldRole.name = "old"
-            oldRole.conversation = self.groupConversation
-
-            self.groupConversation.addParticipantAndUpdateConversationState(user: user, role: oldRole)
-
-            let newRole = Role.insertNewObject(in: self.syncMOC)
-            newRole.name = "new"
-            newRole.conversation = self.groupConversation
-            self.syncMOC.saveOrRollback()
-
-            // GIVEN
-            let event = self.updateEvent(type: "conversation.member-update",
-                                         senderID: selfUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(timeIntervalSinceNow: 100),
-                                         dataPayload: [
-                                            "target": userId.transportString(),
-                                            "conversation_role": "new"
-                                         ])
-
-            // WHEN
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            guard let participant = self.groupConversation.participantRoles
-                    .first(where: {$0.user == user}) else {
-                        return XCTFail("No user in convo")
-                    }
-            XCTAssertEqual(participant.role, newRole)
-        }
-    }
-
-    func testThatItChangesSelfRoleAfterMemberUpdate() {
-
-        syncMOC.performAndWait {
-
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-
-            let oldRole = Role.insertNewObject(in: self.syncMOC)
-            oldRole.name = "old"
-            oldRole.conversation = self.groupConversation
-
-            self.groupConversation.addParticipantAndUpdateConversationState(user: selfUser, role: oldRole)
-
-            let newRole = Role.insertNewObject(in: self.syncMOC)
-            newRole.name = "new"
-            newRole.conversation = self.groupConversation
-            self.syncMOC.saveOrRollback()
-
-            // GIVEN
-            let event = self.updateEvent(type: "conversation.member-update",
-                                         senderID: selfUser.remoteIdentifier!,
-                                         conversationID: self.groupConversation.remoteIdentifier!,
-                                         timestamp: Date(timeIntervalSinceNow: 100),
-                                         dataPayload: [
-                                            "target": selfUser.remoteIdentifier.transportString(),
-                                            "conversation_role": "new"
-                                         ])
-
-            // WHEN
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            guard let participant = self.groupConversation.participantRoles
-                    .first(where: {$0.user == selfUser}) else {
-                        return XCTFail("No user in convo")
-                    }
-            XCTAssertEqual(participant.role, newRole)
-        }
-    }
-
-    // MARK: - MLS Welcome
-
-    func testThatItProcessesMLSWelcomeEvents() {
-        syncMOC.performAndWait {
-            // GIVEN
-            let mlsEventProcessorMock = MockMLSEventProcessor()
-            MLSEventProcessor.setMock(mlsEventProcessorMock)
-
-            let message = "welcome message"
-            let event = Payload.UpdateConversationMLSWelcome(
-                id: self.groupConversation.remoteIdentifier!,
-                qualifiedID: self.groupConversation.qualifiedID,
-                from: self.otherUser.remoteIdentifier,
-                qualifiedFrom: self.otherUser.qualifiedID,
-                timestamp: Date(),
-                type: "conversation.mls-welcome",
-                data: message
-            )
-
-            let updateEvent = self.updateEvent(from: event.payloadData()!)
-
-            // WHEN
-            self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertEqual(mlsEventProcessorMock.calls.processWelcomeMessage.first, message)
-
-            MLSEventProcessor.reset()
         }
     }
 
@@ -1208,7 +457,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                             notFound: [QualifiedID],
                             failed: [QualifiedID]) -> ZMTransportResponse {
 
-        let found = request.qualifiedIDs.map({ conversation(uuid: $0.uuid, domain: $0.domain)})
+        let found = request.qualifiedIDs.map({ conversation(uuid: $0.uuid, domain: $0.domain) })
         let payload = Payload.QualifiedConversationList(found: found, notFound: notFound, failed: failed)
         let payloadData = payload.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
@@ -1226,21 +475,4 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             type: type
         )
     }
-
-    func updateEvent(type: String,
-                     senderID: UUID,
-                     conversationID: UUID,
-                     timestamp: Date,
-                     dataPayload: [String: Any]) -> ZMUpdateEvent {
-        let payload: [String: Any] = [
-            "from": senderID.transportString(),
-            "conversation": conversationID.transportString(),
-            "time": timestamp.transportString(),
-            "data": dataPayload,
-            "type": type
-        ]
-
-        return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
-    }
-
 }

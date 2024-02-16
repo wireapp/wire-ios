@@ -62,13 +62,12 @@ extension ZMConversation {
                             transportSession: TransportSessionType,
                             eventProcessor: UpdateEventProcessor,
                             contextProvider: ContextProvider,
-                            completion: @escaping (Result<ZMConversation>) -> Void) {
+                            completion: @escaping (Result<ZMConversation, Error>) -> Void) {
 
         guard let request = ConversationJoinRequestFactory.requestForJoinConversation(key: key, code: code) else {
             return completion(.failure(ConversationJoinError.unknown))
         }
 
-        let syncContext = contextProvider.syncContext
         let viewContext = contextProvider.viewContext
 
         request.add(ZMCompletionHandler(on: viewContext, block: { response in
@@ -80,14 +79,16 @@ extension ZMConversation {
                     return completion(.failure(ConversationJoinError.unknown))
                 }
 
-                syncContext.performGroupedBlock {
-                    eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
-
+                Task {
+                    // swiftlint:disable todo_requires_jira_link
+                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    try? await eventProcessor.processEvents([event])
                     viewContext.performGroupedBlock {
                         guard let conversationId = UUID(uuidString: conversationString),
                               let conversation = ZMConversation.fetch(with: conversationId, in: viewContext)
                         else {
-                            return completion(.failure(ConversationJoinError.unknown))
+                            completion(.failure(ConversationJoinError.unknown))
+                            return
                         }
 
                         completion(.success(conversation))
@@ -96,8 +97,9 @@ extension ZMConversation {
 
             /// The user is already a participant in the conversation
             case 204:
-                /// If we get to this case, then we need to re-sync local conversations
-                /// TODO: implement re-syncing conversations
+                // If we get to this case, then we need to re-sync local conversations
+                // TODO: implement re-syncing conversations
+                // swiftlint:enable todo_requires_jira_link
                 Logging.network.debug("Local conversations should be re-synced with remote ones")
                 return completion(.failure(ConversationJoinError.unknown))
 
@@ -115,15 +117,13 @@ extension ZMConversation {
     ///   - key: stable conversation identifier
     ///   - code: conversation code
     ///   - transportSession: session to handle requests
-    ///   - eventProcessor: update event processor
     ///   - contextProvider: context provider
     ///   - completion: a handler when the network request completes with the response payload that contains the conversation ID and name
     static func fetchIdAndName(key: String,
                                code: String,
                                transportSession: TransportSessionType,
-                               eventProcessor: UpdateEventProcessor,
                                contextProvider: ContextProvider,
-                               completion: @escaping (Result<(conversationId: UUID, conversationName: String)>) -> Void) {
+                               completion: @escaping (Result<(conversationId: UUID, conversationName: String), Error>) -> Void) {
 
         guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code) else {
             completion(.failure(ConversationFetchError.unknown))
@@ -167,7 +167,7 @@ struct ConversationJoinRequestFactory {
             URLQueryItem.Key.conversationCode: code
         ]
 
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
     static func requestForGetConversation(key: String, code: String) -> ZMTransportRequest? {
@@ -181,7 +181,7 @@ struct ConversationJoinRequestFactory {
             return nil
         }
 
-        return ZMTransportRequest(path: urlString, method: .methodGET, payload: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: urlString, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
 }

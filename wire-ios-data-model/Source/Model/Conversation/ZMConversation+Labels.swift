@@ -57,7 +57,7 @@ extension ZMConversation {
         let existingFolders = labels.filter({ $0.kind == .folder })
         labels.subtract(existingFolders)
 
-        for emptyFolder in existingFolders.filter({ $0.conversations.isEmpty}) {
+        for emptyFolder in existingFolders.filter({ $0.conversations.isEmpty }) {
             emptyFolder.markForDeletion()
         }
     }

@@ -32,7 +32,7 @@ extension ParticipantRole: ObjectInSnapshot {
 }
 
 @objcMembers
-final public class ParticipantRoleChangeInfo: ObjectChangeInfo {
+public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
 
     static let ParticipantRoleChangeInfoKey = "participantRoleChanges"
 
@@ -44,8 +44,10 @@ final public class ParticipantRoleChangeInfo: ObjectChangeInfo {
         participantRole = object as! ParticipantRole
         super.init(object: object)
     }
-
-    public let participantRole: ParticipantRole // TODO: create ParticipantRoleType
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: create ParticipantRoleType
+    // swiftlint:enable todo_requires_jira_link
+    public let participantRole: ParticipantRole
 
     public var roleChanged: Bool {
         return changedKeys.contains(#keyPath(ParticipantRole.role))

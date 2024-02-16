@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import WireUtilities
 
 extension ZMConversation {
 
-    // MARK: - Keys
+    // MARK: Keys
 
     @objc
     static let messageProtocolKey = "messageProtocol"
@@ -32,14 +33,27 @@ extension ZMConversation {
     static let mlsStatusKey = "mlsStatus"
 
     @objc
+    static let mlsVerificationStatusKey = "mlsVerificationStatus"
+
+    @objc
     static let commitPendingProposalDateKey = "commitPendingProposalDate"
+
+    @objc
+    static let cipherSuiteKey = #keyPath(cipherSuite)
 
     @objc
     static let epochKey = #keyPath(epoch)
 
-    // MARK: - Properties
+    @objc
+    static let epochTimestampKey = #keyPath(epochTimestamp)
+
+    // MARK: Properties
+
+    @NSManaged public var cipherSuite: NSNumber?
 
     @NSManaged public var epoch: UInt64
+
+    @NSManaged public var epochTimestamp: Date?
 
     @NSManaged private var primitiveMessageProtocol: NSNumber
 
@@ -51,7 +65,7 @@ extension ZMConversation {
             let value = primitiveMessageProtocol.int16Value
             didAccessValue(forKey: Self.messageProtocolKey)
 
-            guard let result = MessageProtocol(rawValue: value) else {
+            guard let result = MessageProtocol(int16Value: value) else {
                 fatalError("failed to init MessageProtocol from rawValue: \(value)")
             }
 
@@ -60,7 +74,7 @@ extension ZMConversation {
 
         set {
             willChangeValue(forKey: Self.messageProtocolKey)
-            primitiveMessageProtocol = NSNumber(value: newValue.rawValue)
+            primitiveMessageProtocol = NSNumber(value: newValue.int16Value)
             didChangeValue(forKey: Self.messageProtocolKey)
         }
     }
@@ -93,7 +107,6 @@ extension ZMConversation {
     ///
     /// If this conversation is an mls group (which it should be if the
     /// `messageProtocol` is `mls`), then this status should exist.
-
     public var mlsStatus: MLSGroupStatus? {
         get {
             willAccessValue(forKey: Self.mlsStatusKey)
@@ -123,6 +136,29 @@ extension ZMConversation {
     /// to commit.
     @NSManaged public var commitPendingProposalDate: Date?
 
+    /// The mls verification status.
+    ///
+    /// If this conversation is an mls group (which it should be if the
+    /// `messageProtocol` is `mls`), then this identifier should exist.
+
+    public var mlsVerificationStatus: MLSVerificationStatus? {
+        get {
+            willAccessValue(forKey: Self.mlsVerificationStatusKey)
+            let value = primitiveValue(forKey: Self.mlsVerificationStatusKey) as? MLSVerificationStatus.RawValue
+            didAccessValue(forKey: Self.mlsVerificationStatusKey)
+
+            guard let value = value else { return nil }
+            guard let status = MLSVerificationStatus(rawValue: value) else {
+                fatalError("failed to init MLSVerificationStatus from rawValue: \(value)")
+            }
+            return status
+        }
+        set {
+            willChangeValue(forKey: Self.mlsVerificationStatusKey)
+            setPrimitiveValue(newValue?.rawValue, forKey: Self.mlsVerificationStatusKey)
+            didChangeValue(forKey: Self.mlsVerificationStatusKey)
+        }
+    }
 }
 
 // MARK: - Fetch by group id
@@ -159,4 +195,140 @@ public extension ZMConversation {
         return context.executeFetchRequestOrAssert(request) as? [ZMConversation] ?? []
     }
 
+    static func fetchConversationsWithMLSGroupStatus(
+        mlsGroupStatus: MLSGroupStatus,
+        in context: NSManagedObjectContext
+    ) throws -> [ZMConversation] {
+
+        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        let matchingGroupStatus = NSPredicate(
+            format: "%K == \(mlsGroupStatus.rawValue)",
+            argumentArray: [Self.mlsStatusKey]
+        )
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            matchingGroupStatus, .isMLSConversation
+        ])
+
+        return try context.fetch(request)
+    }
+
+    static func fetchSelfMLSConversation(
+        in context: NSManagedObjectContext
+    ) -> ZMConversation? {
+        let request = Self.fetchRequest()
+        request.fetchLimit = 2
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            .hasConversationType(.`self`), .isMLSConversation
+        ])
+
+        let result = context.executeFetchRequestOrAssert(request)
+        require(result.count <= 1, "More than one conversation found for a single group id")
+        return result.first as? ZMConversation
+    }
+
+    static func fetchMLSConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+        let request = NSFetchRequest<Self>(entityName: Self.entityName())
+        request.predicate = .isMLSConversation
+        return context.fetchOrAssert(request: request)
+    }
+
+    func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
+        guard let syncContext = self.managedObjectContext?.zm_sync else {
+            completion?(JoinNewMLSGroupError.couldNotFindSyncContext)
+            return
+        }
+
+        syncContext.perform {
+            guard let mlsService = syncContext.mlsService else { return }
+
+            Task {
+                do {
+                    try await mlsService.joinNewGroup(with: mlsGroupID)
+                } catch {
+                    WireLogger.mls.error("failed to join new MLS Group \(mlsGroupID.safeForLoggingDescription)")
+                    completion?(error)
+                    return
+                }
+                completion?(nil)
+            }
+        }
+    }
+
+    enum JoinNewMLSGroupError: Error {
+        case couldNotFindSyncContext
+    }
+}
+
+// MARK: - Migration releated fetch requests
+
+public extension ZMConversation {
+
+    static func fetchAllTeamGroupConversations(
+        messageProtocol: MessageProtocol,
+        in context: NSManagedObjectContext
+    ) throws -> [ZMConversation] {
+        let selfUser = ZMUser.selfUser(in: context)
+        guard let selfUserTeamIdentifier = selfUser.teamIdentifier else {
+            assertionFailure("this method is supposed to be called for users which are part of a team")
+            return []
+        }
+
+        let request = NSFetchRequest<Self>(entityName: Self.entityName())
+        request.predicate = NSCompoundPredicate(
+            andPredicateWithSubpredicates: [
+                .hasConversationType(.group),
+                .hasMessageProtocol(messageProtocol),
+                .teamRemoteIdentifier(matches: selfUserTeamIdentifier)
+            ]
+        )
+
+        return try context.fetch(request)
+    }
+}
+
+// MARK: - NSPredicate Extensions
+
+private extension NSPredicate {
+
+    static var isMLSConversation: NSPredicate {
+        NSPredicate(
+            format: "%K == %i && %K != nil",
+            argumentArray: [
+                ZMConversation.messageProtocolKey,
+                MessageProtocol.mls.int16Value,
+                ZMConversation.mlsGroupIdKey
+            ]
+        )
+    }
+
+    static func hasConversationType(_ conversationType: ZMConversationType) -> NSPredicate {
+        .init(
+            format: "%K == %i",
+            argumentArray: [
+                ZMConversationConversationTypeKey,
+                conversationType.rawValue
+            ]
+        )
+    }
+
+    static func hasMessageProtocol(_ messageProtocol: MessageProtocol) -> NSPredicate {
+        .init(
+            format: "%K == %i",
+            argumentArray: [
+                ZMConversation.messageProtocolKey,
+                messageProtocol.int16Value
+            ]
+        )
+    }
+
+    static func teamRemoteIdentifier(matches teamRemoteIdentifier: UUID) -> NSPredicate {
+        .init(
+            format: "%K == %@",
+            argumentArray: [
+                TeamRemoteIdentifierDataKey,
+                (teamRemoteIdentifier as NSUUID).data() as Data
+            ]
+        )
+    }
 }

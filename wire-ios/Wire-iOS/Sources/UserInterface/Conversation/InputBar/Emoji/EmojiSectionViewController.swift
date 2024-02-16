@@ -21,7 +21,7 @@ import UIKit
 import WireCommonComponents
 
 protocol EmojiSectionViewControllerDelegate: AnyObject {
-    func sectionViewController(_ viewController: EmojiSectionViewController, didSelect: EmojiSectionType, scrolling: Bool)
+    func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool)
 }
 
 final class EmojiSectionViewController: UIViewController {
@@ -96,7 +96,7 @@ final class EmojiSectionViewController: UIViewController {
 
     @objc private func didTappButton(_ sender: IconButton) {
         guard let type = typesByButton[sender] else { return }
-        sectionDelegate?.sectionViewController(self, didSelect: type, scrolling: false)
+        sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
     }
 
     @objc private func didPan(_ recognizer: UIPanGestureRecognizer) {
@@ -109,7 +109,7 @@ final class EmojiSectionViewController: UIViewController {
             let location = recognizer.location(in: view)
             guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first else { return }
             guard let type = typesByButton[button] else { return }
-            sectionDelegate?.sectionViewController(self, didSelect: type, scrolling: true)
+            sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
             selectedType = type
         case .ended, .failed, .cancelled:
             ignoreSelectionUpdates = false

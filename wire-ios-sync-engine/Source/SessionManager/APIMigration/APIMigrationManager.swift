@@ -23,7 +23,7 @@ protocol APIMigration {
     var version: APIVersion { get }
 }
 
-class APIMigrationManager {
+final class APIMigrationManager {
     let migrations: [APIMigration]
     var previousAPIVersion: APIVersion?
 

@@ -32,13 +32,12 @@ protocol UnlockViewControllerDelegate: AnyObject {
 /// This VC should be wrapped in KeyboardAvoidingViewController as the "unlock" button would be covered on 4 inch iPhone
 final class UnlockViewController: UIViewController {
 
-    typealias Session = ZMUserSessionInterface & UserSessionAppLockInterface
     typealias Unlock = L10n.Localizable.Unlock
 
     weak var delegate: UnlockViewControllerDelegate?
 
     private let selfUser: UserType
-    private var userSession: Session?
+    private var userSession: UserSession?
 
     private let stackView: UIStackView = UIStackView.verticalStackView()
     private let upperStackView = UIStackView.verticalStackView()
@@ -123,7 +122,7 @@ final class UnlockViewController: UIViewController {
         return button
     }()
 
-    init(selfUser: UserType, userSession: Session? = nil) {
+    init(selfUser: UserType, userSession: UserSession? = nil) {
         self.selfUser = selfUser
         self.userSession = userSession
 
@@ -142,12 +141,14 @@ final class UnlockViewController: UIViewController {
 
         contentView.addSubview(stackView)
 
-        [accountIndicator,
-         titleLabel,
-         UILabel.createHintLabel(),
-         validatedTextField,
-         errorLabel,
-         wipeButton].forEach(upperStackView.addArrangedSubview)
+        [
+            accountIndicator,
+            titleLabel,
+            UILabel.createHintLabel(),
+            validatedTextField,
+            errorLabel,
+            wipeButton
+        ].forEach(upperStackView.addArrangedSubview)
 
         [upperStackView, unlockButton].forEach(stackView.addArrangedSubview)
 
@@ -166,11 +167,13 @@ final class UnlockViewController: UIViewController {
 
     private func createConstraints() {
 
-        [userImageView,
-         nameLabel,
-         contentView,
-         upperStackView,
-         stackView].prepareForLayout()
+        [
+            userImageView,
+            nameLabel,
+            contentView,
+            upperStackView,
+            stackView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
 
@@ -213,8 +216,8 @@ final class UnlockViewController: UIViewController {
     private func unlock() -> Bool {
         guard
             let passcode = validatedTextField.text,
-            let session = userSession,
-            session.appLockController.evaluateAuthentication(customPasscode: passcode) == .granted
+            let userSession = userSession,
+            userSession.evaluateAuthentication(customPasscode: passcode) == .granted
         else {
             return false
         }

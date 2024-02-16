@@ -27,15 +27,17 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var router: ActiveCallRouterProtocolMock!
     var conversation: ZMConversation!
     var callConversationProvider: MockCallConversationProvider!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+        userSession = UserSessionMock()
         coreDataFixture = CoreDataFixture()
         router = ActiveCallRouterProtocolMock()
         conversation = ZMConversation.createOtherUserConversation(moc: coreDataFixture.uiMOC,
                                                                   otherUser: otherUser)
         callConversationProvider = MockCallConversationProvider()
-        sut = CallController()
+        sut = CallController(userSession: userSession)
         sut.callConversationProvider = callConversationProvider
         sut.router = router
     }
@@ -176,7 +178,7 @@ extension CallControllerTests {
 }
 
 // MARK: - ActiveCallRouterMock
-class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
+final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
     var presentActiveCallIsCalled: Bool = false
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
@@ -216,7 +218,7 @@ class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 }
 
 // MARK: - MockCallConversationProvider
-class MockCallConversationProvider: CallConversationProvider {
+final class MockCallConversationProvider: CallConversationProvider {
     var priorityCallConversation: ZMConversation?
     var ongoingCallConversation: ZMConversation?
     var ringingCallConversation: ZMConversation?

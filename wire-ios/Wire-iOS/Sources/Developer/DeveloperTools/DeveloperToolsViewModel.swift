@@ -25,7 +25,6 @@ import UIKit
 import SwiftUI
 import WireCommonComponents
 
-@available(iOS 14, *)
 final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Models
@@ -93,6 +92,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Properties
 
+    let router: AppRootRouter?
     var onDismiss: (() -> Void)?
 
     // MARK: - State
@@ -107,17 +107,32 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Life cycle
 
-    init(onDismiss: (() -> Void)? = nil) {
+    init(
+        router: AppRootRouter? = nil,
+        onDismiss: (() -> Void)? = nil
+    ) {
+        self.router = router
         self.onDismiss = onDismiss
         sections = []
 
+        setupSections()
+    }
+
+    private func setupSections() {
         sections.append(Section(
             header: "Actions",
             items: [
-                .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
-                .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
-                .destination(DestinationItem(title: "Configure flags", makeView: {
+                .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
+                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
+                })),
+                .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
+                })),
+                .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
+                    AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
+                        router: self?.router,
+                        onDismiss: self?.onDismiss
+                    )))
                 }))
             ]
         ))
@@ -126,7 +141,8 @@ final class DeveloperToolsViewModel: ObservableObject {
             header: "App info",
             items: [
                 .text(TextItem(title: "App version", value: appVersion)),
-                .text(TextItem(title: "Build number", value: buildNumber))
+                .text(TextItem(title: "Build number", value: buildNumber)),
+                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier))
             ]
         ))
 
@@ -136,11 +152,15 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Self user",
                 items: [
-                    .text(TextItem(title: "Handle", value: selfUser.handle ?? "None")),
+                    .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
                     .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
                     .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
                     .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
                     .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
+                    .text(TextItem(
+                        title: "Supported protocols",
+                        value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
+                    ),
                     .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.ed25519?.uppercased() ?? "None"))
                 ]
             ))
@@ -162,7 +182,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 header: "Datadog",
                 items: [
                     .text(TextItem(title: "User ID", value: String(describing: dataDogUserId))),
-                    .button(.init(title: "Crash Report Test", action: { fatalError("crash app") }))
+                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
                 ]
             ))
         }
@@ -187,6 +207,9 @@ final class DeveloperToolsViewModel: ObservableObject {
         })))
 
         items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
+        items.append(.button(ButtonItem(title: "Stop federating with Foma", action: stopFederatingFoma)))
+        items.append(.button(ButtonItem(title: "Stop federating with Bella", action: stopFederatingBella)))
+        items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: stopBellaFomaFederating)))
 
         return Section(
             header: header,
@@ -218,17 +241,6 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     // MARK: - Actions
-
-    private func sendDebugLogs() {
-        DebugLogSender.sendLogsByEmail(message: "Send logs")
-    }
-
-    private func performQuickSync() {
-        Task {
-            guard let session = ZMUserSession.shared() else { return }
-            await session.syncStatus?.performQuickSync()
-        }
-    }
 
     private func checkRegisteredTokens() {
         guard
@@ -266,6 +278,10 @@ final class DeveloperToolsViewModel: ObservableObject {
         return Bundle.main.shortVersionString ?? "Unknown"
     }
 
+    private var bundleIdentifier: String {
+        return Bundle.main.bundleIdentifier ?? "Unknown"
+    }
+
     private var buildNumber: String {
         return Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
     }
@@ -295,6 +311,38 @@ final class DeveloperToolsViewModel: ObservableObject {
     private var selfClient: UserClient? {
         guard let session = ZMUserSession.shared() else { return nil }
         return session.selfUserClient
+    }
+
+    private func stopFederatingBella() {
+        stopFederatingDomain(domain: "bella.wire.link")
+    }
+
+    private func stopFederatingFoma() {
+        stopFederatingDomain(domain: "foma.wire.link")
+    }
+
+    private func stopBellaFomaFederating() {
+        guard
+            let selfClient = selfClient,
+            let context = selfClient.managedObjectContext
+        else {
+            return
+        }
+
+        let manager = FederationTerminationManager(with: context)
+        manager.handleFederationTerminationBetween("bella.wire.link", otherDomain: "foma.wire.link")
+    }
+
+    private func stopFederatingDomain(domain: String) {
+        guard
+            let selfClient = selfClient,
+            let context = selfClient.managedObjectContext
+        else {
+            return
+        }
+
+        let manager = FederationTerminationManager(with: context)
+        manager.handleFederationTerminationWith(domain)
     }
 
 }

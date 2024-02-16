@@ -21,13 +21,19 @@ import XCTest
 import WireDataModel
 @testable import Wire
 
+// MARK: - Mock Message
+
 extension MockMessage {
     var message: ZMConversationMessage {
         return self as Any as! ZMConversationMessage
     }
 }
 
-final class CollectionsViewControllerTests: ZMSnapshotTestCase {
+// MARK: - CollectionsViewControllerTests
+
+final class CollectionsViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var emptyCollection: AssetCollectionWrapper!
     var imageMessage: ZMConversationMessage!
@@ -48,10 +54,13 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
     var deletedFileMessage: ZMConversationMessage!
     var deletedLinkMessage: ZMConversationMessage!
 
+    var userSession: UserSessionMock!
+
     override func setUp() {
         super.setUp()
-
         accentColor = .strongBlue
+
+        userSession = UserSessionMock()
 
         let conversation = MockConversation() as Any as! ZMConversation
         let assetCollection = MockCollection.empty
@@ -77,6 +86,8 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
         deletedAudioMessage = MockMessageFactory.deletedAudioMessage()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         emptyCollection = nil
         imageMessage = nil
@@ -97,16 +108,19 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
         deletedFileMessage = nil
         deletedLinkMessage = nil
 
+        userSession = nil
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testThatNoElementStateIsShownWhenCollectionIsEmpty() {
-        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: true)
+        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: true, userSession: userSession)
         verifyAllIPhoneSizes(matching: controller)
     }
 
     func testThatLoadingIsShownWhenFetching() {
-        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: false)
+        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: false, userSession: userSession)
         controller.view.layer.speed = 0 // Disable animations so that the spinner would always be in the same phase
         verifyAllIPhoneSizes(matching: controller)
     }
@@ -195,12 +209,14 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
 
 extension CollectionsViewControllerTests {
 
+    // MARK: - Helper method
+
     func createController(showingCollection assetCollection: MockCollection) -> CollectionsViewController {
         let conversation = MockConversation() as Any as! ZMConversation
         let delegate = AssetCollectionMulticastDelegate()
         let collection = AssetCollectionWrapper(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: [])
 
-        let controller = CollectionsViewController(collection: collection)
+        let controller = CollectionsViewController(collection: collection, userSession: userSession)
         _ = controller.view
         delegate.assetCollectionDidFetch(collection: assetCollection, messages: assetCollection.messages, hasMore: false)
         delegate.assetCollectionDidFinishFetching(collection: assetCollection, result: .success)

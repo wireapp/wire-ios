@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,15 +17,19 @@
 //
 
 import Foundation
+import WireDataModel
 
 final class SyncConversationActionHandler: ActionHandler<SyncConversationAction> {
+
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: MLSEventProcessor(context: context),
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
 
     // MARK: - Request generation
 
     struct RequestPayload: Codable, Equatable {
-
         let qualified_ids: [QualifiedID]
-
     }
 
     override func request(
@@ -42,15 +47,15 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
         case .v0, .v1:
             return ZMTransportRequest(
                 path: "/conversations/list/v2",
-                method: .methodPOST,
+                method: .post,
                 payload: payload as ZMTransportData,
                 apiVersion: apiVersion.rawValue
             )
 
-        case .v2, .v3, .v4:
+        case .v2, .v3, .v4, .v5, .v6:
             return ZMTransportRequest(
                 path: "/conversations/list",
-                method: .methodPOST,
+                method: .post,
                 payload: payload as ZMTransportData,
                 apiVersion: apiVersion.rawValue
             )
@@ -60,11 +65,9 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
     // MARK: - Response handling
 
     struct ResponsePayload: Codable {
-
         let found: [Payload.Conversation]
         let failed: [QualifiedID]
         let not_found: [QualifiedID]
-
     }
 
     override func handleResponse(
@@ -88,8 +91,23 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
                 return
             }
 
-            conversationData.updateOrCreate(in: context)
-            action.succeed()
+            Task { [action, context] in
+                await processor.updateOrCreateConversation(
+                    from: conversationData,
+                    in: context
+                )
+                await context.perform {
+                    do {
+                        try context.save()
+                    } catch {
+                        Logging.network.warn("SyncConversationActionHandler: failed to save context: \(error)")
+                        assertionFailure("SyncConversationActionHandler: failed to save context: \(error)")
+                    }
+                }
+
+                var action = action
+                action.succeed()
+            }
 
         case 400:
             action.fail(with: .invalidBody)
@@ -99,5 +117,4 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
             action.fail(with: .unknownError(code: error.status, label: error.label, message: error.message))
         }
     }
-
 }

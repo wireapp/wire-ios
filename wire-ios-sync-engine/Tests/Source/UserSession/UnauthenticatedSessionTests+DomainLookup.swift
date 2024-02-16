@@ -63,7 +63,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)
         XCTAssertEqual(transportSession.lastEnqueuedRequest?.path, "/custom-backend/by-domain/example.com")
-        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.methodGET)
+        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.get)
     }
 
     func testThatItURLEncodeRequest() {
@@ -76,7 +76,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)
         XCTAssertEqual(transportSession.lastEnqueuedRequest?.path, "/custom-backend/by-domain/example%20com")
-        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.methodGET)
+        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.get)
     }
 
     func testThatItLookupReturnsNoAPiVersionError() {
@@ -84,7 +84,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         setCurrentAPIVersion(nil)
         let domain = "example com"
 
-        let expectation = self.expectation(description: "should get an error")
+        let expectation = self.customExpectation(description: "should get an error")
         var gettingExpectedError = false
         // when
         sut.lookup(domain: domain) { result in
@@ -146,8 +146,8 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
     // MARK: - Helpers
 
-    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<DomainInfo>, payload: ZMTransportData?) {
-        let resultExpectation = expectation(description: "Expected result: \(expectedResult)")
+    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<DomainInfo, Error>, payload: ZMTransportData?) {
+        let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")
 
         // given
         sut.lookup(domain: "example.com") { result in

@@ -19,7 +19,6 @@
 import XCTest
 @testable import Wire_Notification_Service_Extension
 
-@available(iOS 15, *)
 class JobTests: XCTestCase {
 
     var mockNetworkSession: MockNetworkSession!
@@ -74,7 +73,7 @@ class JobTests: XCTestCase {
         mockNetworkSession.isAuthenticated = false
 
         // Then
-        await assertThrows(expectedError: NotificationServiceError.userNotAuthenticated) {
+        await assertItThrows(error: NotificationServiceError.userNotAuthenticated) {
             // When
             _ = try await self.sut.execute()
         }
@@ -87,7 +86,7 @@ class JobTests: XCTestCase {
         }
 
         // Then
-        await assertThrows(expectedError: AccessTokenEndpoint.Failure.authenticationError) {
+        await assertItThrows(error: AccessTokenEndpoint.Failure.authenticationError) {
             // When
             _ = try await self.sut.execute()
         }
@@ -104,7 +103,7 @@ class JobTests: XCTestCase {
         }
 
         // Then
-        await assertThrows(expectedError: NotificationByIDEndpoint.Failure.notifcationNotFound) {
+        await assertItThrows(error: NotificationByIDEndpoint.Failure.notifcationNotFound) {
             // When
             _ = try await self.sut.execute()
         }
@@ -180,7 +179,7 @@ class JobTests: XCTestCase {
 
 }
 
-class MockNetworkSession: NetworkSessionProtocol {
+final class MockNetworkSession: NetworkSessionProtocol {
 
     var accessToken: AccessToken?
     var isAuthenticated = true
@@ -211,7 +210,7 @@ class MockNetworkSession: NetworkSessionProtocol {
 
 }
 
-class MockAccessAPIClient: AccessAPIClientProtocol {
+final class MockAccessAPIClient: AccessAPIClientProtocol {
 
     var mockFetchAccessToken: (() async throws -> AccessToken)?
 
@@ -225,7 +224,7 @@ class MockAccessAPIClient: AccessAPIClientProtocol {
 
 }
 
-class MockNotificationsAPIClient: NotificationsAPIClientProtocol {
+final class MockNotificationsAPIClient: NotificationsAPIClientProtocol {
 
     var mockFetchEvent: ((UUID) async throws -> ZMUpdateEvent)?
 

@@ -58,50 +58,6 @@
     XCTAssertTrue([self login]);
 }
 
-- (void)testThatAConversationIsResyncedAfterRestartingFromScratch
-{
-    NSString *conversationName = @"My conversation";
-    {
-        // Create a UI context
-        XCTAssertTrue([self login]);
-        // Get the users:
-        ZMUser *user1 = [self userForMockUser:self.user1];
-        XCTAssertNotNil(user1);
-        ZMUser *user2 = [self userForMockUser:self.user2];
-        XCTAssertNotNil(user2);
-        
-        // Create a conversation
-        __block ZMConversation *conversation;
-        [self.userSession performChanges:^{
-            conversation = [ZMConversation
-                            insertGroupConversationIntoManagedObjectContext :self.userSession.managedObjectContext
-                            withParticipants:@[user1, user2]];
-            conversation.userDefinedName = conversationName;
-        }];
-        
-        // Wait for merge ui->sync to be done
-        WaitForAllGroupsToBeEmpty(0.5);
-        XCTAssert([self waitOnMainLoopUntilBlock:^BOOL{
-            return conversation.lastModifiedDate != nil;
-        } timeout:0.5]);
-    }
-    
-    // Tears down context(s) &
-    // Re-create contexts
-    [self recreateSessionManagerAndDeleteLocalData];
-
-    {
-        // Wait for sync to be done
-        XCTAssertTrue([self login]);
-        
-        // Check that conversation is there
-        ZMConversation *conversation = [[ZMConversationList conversationsInUserSession:self.userSession] firstObjectMatchingWithBlock:^BOOL(ZMConversation *c) {
-            return [c.userDefinedName isEqual:conversationName];
-        }];
-        XCTAssertNotNil(conversation);
-    }
-}
-
 - (void)testThatChangeToAConversationNameIsResyncedAfterRestartingFromScratch;
 {
     NSString *name = @"My New Name";
@@ -141,7 +97,7 @@
 - (void)testThatChangeToAConversationNameIsNotResyncedIfNil;
 {
     ZMConversation *conversation = nil;
-    
+
     NSString *name = nil;
     NSString *formerName = nil;
     {
@@ -150,7 +106,7 @@
         // Get the group conversation
         [self.mockTransportSession resetReceivedRequests];
         conversation = [self conversationForMockConversation:self.groupConversation];
-        
+
         XCTAssertNotNil(conversation);
         // Change the name & save
         formerName = conversation.userDefinedName;
@@ -158,23 +114,23 @@
         [self.userSession saveOrRollbackChanges];
         XCTAssertFalse(conversation.hasChanges, @"Rollback?");
         XCTAssertTrue([conversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
-        
+
         // Wait for merge ui->sync to be done
         WaitForAllGroupsToBeEmpty(0.5);
         ZMConversation *syncConversation = [self.userSession.syncManagedObjectContext objectWithID:conversation.objectID];
-        
+
         XCTAssertFalse([syncConversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
         XCTAssertFalse([conversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
         XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 0lu);
     }
-    
+
     // Tears down context(s) &
     // Re-create contexts
     [self recreateSessionManagerAndDeleteLocalData];
-    
+
     // Wait for sync to be done
     XCTAssertTrue([self login]);
-    
+
     // Check that conversation name is updated:
     {
         // Get the group conversation
@@ -183,9 +139,7 @@
     }
 }
 
-@end
-
-@implementation ConversationTests (DisplayName)
+// MARK: - DisplayName
 
 - (void)testThatReceivingAPushEventForNameChangeChangesTheConversationName
 {
@@ -359,10 +313,7 @@
 }
 
 
-@end
-
-#pragma mark - Conversation list
-@implementation ConversationTests (ConversationStatusAndOrder)
+// MARK: - Conversation list
 
 - (void)testThatAConversationListListenerOnlyReceivesNotificationsForTheSpecificListItSignedUpFor
 {
@@ -465,7 +416,7 @@
         ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
         NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
         XCTAssertEqualObjects(request.path, expectedPath);
-        XCTAssertEqual(request.method, ZMMethodPUT);
+        XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_archived_ref"], conversation.archivedChangedTimestamp.transportString);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_archived"], @(conversation.isArchived));
     }
@@ -508,7 +459,7 @@
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
     XCTAssertEqualObjects(request.path, expectedPath);
-    XCTAssertEqual(request.method, ZMMethodPUT);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
     XCTAssertEqualObjects(conversation.lastServerTimeStamp, conversation.archivedChangedTimestamp);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_archived_ref"], conversation.archivedChangedTimestamp.transportString);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_archived"], @(conversation.isArchived));
@@ -533,7 +484,7 @@
         ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
         NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
         XCTAssertEqualObjects(request.path, expectedPath);
-        XCTAssertEqual(request.method, ZMMethodPUT);
+        XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
         XCTAssertEqualObjects(conversation.lastServerTimeStamp, conversation.silencedChangedTimestamp);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_ref"], conversation.silencedChangedTimestamp.transportString);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_status"], @(conversation.isFullyMuted ? 3 : 0));
@@ -571,7 +522,7 @@
         ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
         NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
         XCTAssertEqualObjects(request.path, expectedPath);
-        XCTAssertEqual(request.method, ZMMethodPUT);
+        XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
         XCTAssertEqualObjects(conversation.lastServerTimeStamp, conversation.silencedChangedTimestamp);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_ref"], conversation.silencedChangedTimestamp.transportString);
         XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_status"], @(conversation.isFullyMuted ? 3 : 0));
@@ -615,7 +566,7 @@
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
     XCTAssertEqualObjects(request.path, expectedPath);
-    XCTAssertEqual(request.method, ZMMethodPUT);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_ref"], conversation.lastServerTimeStamp.transportString);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_status"], @0);
 }
@@ -643,7 +594,7 @@
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
     XCTAssertEqualObjects(request.path, expectedPath);
-    XCTAssertEqual(request.method, ZMMethodPUT);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodPut);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_ref"], conversation.lastServerTimeStamp.transportString);
     XCTAssertEqualObjects(request.payload.asDictionary[@"otr_muted_status"], @0);
 }
@@ -676,7 +627,7 @@
     
     // then the conversation should not be in the active list anymore
     XCTAssertTrue(user1.isBlocked);
-    XCTAssertEqual(conversation.connection.status, ZMConnectionStatusBlocked);
+    XCTAssertEqual(user1.connection.status, ZMConnectionStatusBlocked);
 
     XCTAssertEqual(active.count, 4u);
     XCTAssertFalse([active containsObject:conversation]);
@@ -829,7 +780,7 @@
 {
     // given
     XCTAssertTrue([self login]);
-    
+
     ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
     [self.userSession performChanges:^{
         ZMMessage *message = (id)[conversation appendMessageWithText:@"lalala"];
@@ -842,7 +793,7 @@
     // when
     [self remotelyAppendSelfConversationWithZMLastReadForMockConversation:self.selfToUser1Conversation atTime:newLastRead];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // then
     XCTAssertEqual([conversation.lastReadServerTimeStamp timeIntervalSince1970], [newLastRead timeIntervalSince1970]);
 }
@@ -908,7 +859,7 @@
     // when
     NSString *reactionEmoji = @"❤️";
     [self.userSession performChanges:^{
-        [ZMMessage addReaction:MessageReactionLike toMessage:message];
+        [ZMMessage addReaction:reactionEmoji to:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -941,8 +892,9 @@
     MessageChangeObserver *observer = [[MessageChangeObserver alloc] initWithMessage:message];
 
     // when
+    NSString *reactionEmoji = @"❤️";
     [self.userSession performChanges:^{
-        [ZMMessage addReaction:MessageReactionLike toMessage:message];
+        [ZMMessage addReaction:reactionEmoji to:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -969,8 +921,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
+    NSString *reactionEmoji = @"❤️";
     [self.userSession performChanges:^{
-        [ZMMessage addReaction:MessageReactionLike toMessage:message];
+        [ZMMessage addReaction:reactionEmoji to:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -978,7 +931,7 @@
     
     [self.userSession performChanges:^{
         // removes reaction for self user
-        [ZMMessage removeReactionOnMessage:message];
+        [ZMMessage removeReaction:reactionEmoji from:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -1005,8 +958,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
+    NSString *reactionEmoji = @"❤️";
     [self.userSession performChanges:^{
-        [ZMMessage addReaction:MessageReactionLike toMessage:message];
+        [ZMMessage addReaction:reactionEmoji to:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
@@ -1024,4 +978,3 @@
 }
 
 @end
-

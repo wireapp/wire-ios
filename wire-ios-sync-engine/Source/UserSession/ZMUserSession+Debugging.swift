@@ -49,12 +49,15 @@ extension ZMUserSession {
     }
 
     static func initDebugCommands() -> [String: DebugCommand] {
-        return [
+        let commands = [
             DebugCommandLogEncryption(),
             DebugCommandShowIdentifiers(),
             DebugCommandHelp(),
             DebugCommandVariables()
-        ].dictionary { (key: $0.keyword, value: $0) }
+        ]
+        return commands.reduce(into: [:]) { partialResult, command in
+            partialResult[command.keyword] = command
+        }
     }
 
     func restoreDebugCommandsState() {
@@ -66,7 +69,7 @@ extension ZMUserSession {
 
     fileprivate var debugStateUserDefaultsKey: String? {
         guard
-            let identifier = (self.selfUser as! ZMUser).remoteIdentifier
+            let identifier = (self.providedSelfUser as! ZMUser).remoteIdentifier
         else { return nil }
         return "Wire-debugCommandsState-\(identifier)"
     }
@@ -203,7 +206,9 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         let subject = arguments[1]
 
         userSession.syncManagedObjectContext.perform {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             guard let keyStore = userSession.syncManagedObjectContext.zm_cryptKeyStore else {
                 return onComplete(.failure(error: "No encryption context"))
             }
@@ -272,7 +277,7 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
         onComplete: @escaping ((DebugCommandResult) -> Void)) {
         guard
             let client = userSession.selfUserClient,
-            let user = userSession.selfUser as? ZMUser
+            let user = userSession.providedSelfUser as? ZMUser
         else {
             onComplete(.failure(error: "No user"))
             return

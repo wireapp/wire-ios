@@ -161,7 +161,7 @@ extension LocalNotificationType {
     }
 
     fileprivate func conversationKey(_ conversation: ZMConversation?) -> String? {
-        if conversation?.conversationType != .oneOnOne && conversation?.meaningfulDisplayName == nil {
+        if conversation?.conversationType != .oneOnOne && conversation?.displayName == nil {
             return NoConversationNameKey
         }
 
@@ -194,7 +194,7 @@ extension LocalNotificationType {
         }
 
         let teamName = selfUser.team?.name
-        let conversationName = conversation?.meaningfulDisplayName
+        let conversationName = conversation?.displayName
 
         if let conversationName = conversationName, let teamName = teamName {
             return .localizedStringWithFormat(ZMPushStringTitle.pushFormatString, arguments: [conversationName, teamName])

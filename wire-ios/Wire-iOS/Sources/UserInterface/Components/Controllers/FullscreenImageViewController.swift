@@ -82,6 +82,8 @@ final class FullscreenImageViewController: UIViewController {
         }
     }
 
+    let userSession: UserSession
+
     private var messageObserverToken: NSObjectProtocol?
 
     // MARK: - init
@@ -90,9 +92,9 @@ final class FullscreenImageViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(message: ZMConversationMessage) {
+    init(message: ZMConversationMessage, userSession: UserSession) {
         self.message = message
-
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
 
         setupScrollView()
@@ -239,10 +241,8 @@ final class FullscreenImageViewController: UIViewController {
 
     }
 
-    fileprivate func setupObservers() {
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        messageObserverToken = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
+    private func setupObservers() {
+        messageObserverToken = userSession.addMessageObserver(self, for: message)
     }
 
     private func setupGestureRecognizers() {
@@ -306,7 +306,7 @@ final class FullscreenImageViewController: UIViewController {
             if imageIsAnimatedGIF == true,
                let gifImageData = imageData {
                 mediaAsset = FLAnimatedImage(animatedGIFData: gifImageData)
-            } else if let image = imageData.map(UIImage.init) as? UIImage {
+            } else if let imageData = imageData, let image = UIImage(data: imageData) {
                 mediaAsset = image
             } else {
                 return
@@ -737,7 +737,7 @@ extension FullscreenImageViewController: MessageActionResponder {
                 self.perform(action: action)
             }
         case .openDetails:
-            let detailsViewController = MessageDetailsViewController(message: message)
+            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
             present(detailsViewController, animated: true)
         default:
             perform(action: action)

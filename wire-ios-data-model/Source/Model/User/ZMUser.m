@@ -54,6 +54,7 @@ static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
 static NSString *const ConversationsCreatedKey = @"conversationsCreated";
 static NSString *const ActiveCallConversationsKey = @"activeCallConversations";
 static NSString *const ConnectionKey = @"connection";
+static NSString *const OneOnOneConversationKey = @"oneOnOneConversation";
 static NSString *const EmailAddressKey = @"emailAddress";
 static NSString *const PhoneNumberKey = @"phoneNumber";
 static NSString *const NameKey = @"name";
@@ -95,6 +96,8 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
 static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
 static NSString *const DomainKey = @"domain";
+static NSString *const IsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
+static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSendRecipient";
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -243,20 +246,6 @@ static NSString *const DomainKey = @"domain";
     return self.managedBy == nil || [self.managedBy isEqualToString:@"wire"];
 }
 
-- (ZMConversation *)oneToOneConversation
-{
-    if (self.isSelfUser) {
-        return [ZMConversation selfConversationInContext:self.managedObjectContext];
-    } else if (self.isTeamMember) {
-        return [ZMConversation fetchOrCreateOneToOneTeamConversationWithMoc:self.managedObjectContext
-                                                        participant:self
-                                                               team:self.team
-                                                    participantRole:nil];
-    } else {
-        return self.connection.conversation;
-    }
-}
-
 - (BOOL)canBeConnected;
 {
     if (self.isServiceUser || self.isWirelessUser) {
@@ -339,6 +328,7 @@ static NSString *const DomainKey = @"domain";
                                            ConversationsCreatedKey,
                                            ActiveCallConversationsKey,
                                            ConnectionKey,
+                                           OneOnOneConversationKey,
                                            ConversationsCreatedKey,
                                            ParticipantRolesKey,
                                            NormalizedEmailAddressKey,
@@ -367,7 +357,9 @@ static NSString *const DomainKey = @"domain";
                                            NeedsToAcknowledgeLegalHoldStatusKey,
                                            NeedsToRefetchLabelsKey,
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
-                                           DomainKey
+                                           DomainKey,
+                                           MessagesFailedToSendRecipientKey,
+                                           IsPendingMetadataRefreshKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -482,8 +474,8 @@ static NSString *const DomainKey = @"domain";
     NSDictionary *qualifiedID = [transportData optionalDictionaryForKey:@"qualified_id"];
     if (qualifiedID != nil) {
         NSString *domain = [qualifiedID stringForKey:@"domain"];
-        NSUUID *remoteIdentifier = [qualifiedID[@"id"] UUID];
-        
+        NSUUID *remoteIdentifier = [NSUUID uuidWithTransportString:qualifiedID[@"id"]];
+
         if (self.domain == nil) {
             self.domain = domain;
         } else {
@@ -501,7 +493,7 @@ static NSString *const DomainKey = @"domain";
         }
         
     } else {
-        NSUUID *remoteID = [transportData[@"id"] UUID];
+        NSUUID *remoteID = [NSUUID uuidWithTransportString:transportData[@"id"]];
         if (self.remoteIdentifier == nil) {
             self.remoteIdentifier = remoteID;
         } else {

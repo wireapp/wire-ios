@@ -15,10 +15,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import DifferenceKit
+import Foundation
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"
@@ -29,7 +30,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
     weak var popoverPointToView: UIView?
 
     weak var contentDelegate: ConversationListContentDelegate?
-    let listViewModel: ConversationListViewModel = ConversationListViewModel()
+    let listViewModel: ConversationListViewModel
     private var focusOnNextSelection = false
     private var animateNextSelection = false
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
@@ -39,21 +40,22 @@ final class ConversationListContentController: UICollectionViewController, Popov
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
+    let userSession: UserSession
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
 
-    init() {
+    init(userSession: UserSession) {
+        self.userSession = userSession
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.sectionInset = .zero
-
+        self.listViewModel = ConversationListViewModel(userSession: userSession)
         super.init(collectionViewLayout: flowLayout)
 
         registerSectionHeader()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(showErrorAlertForConversationRequest), name: ZMConversation.missingLegalHoldConsentNotificationName, object: nil)
     }
 
     @available(*, unavailable)
@@ -93,12 +95,6 @@ final class ConversationListContentController: UICollectionViewController, Popov
             NotificationCenter.default.removeObserver(token)
             self.token = nil
         }
-    }
-
-    @objc
-    func showErrorAlertForConversationRequest() {
-        typealias ConversationError = L10n.Localizable.Error.Conversation
-        UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.missingLegalholdConsent)
     }
 
     private func activeMediaPlayerChanged() {
@@ -280,7 +276,12 @@ final class ConversationListContentController: UICollectionViewController, Popov
         }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
-            return ConversationPreviewViewController(conversation: conversation, presentingViewController: self, sourceView: collectionView.cellForItem(at: indexPath))
+            return ConversationPreviewViewController(
+                conversation: conversation,
+                presentingViewController: self,
+                sourceView: collectionView.cellForItem(at: indexPath),
+                userSession: self.userSession
+            )
         }
 
         let actionProvider: UIContextMenuActionProvider = { _ in
@@ -288,13 +289,13 @@ final class ConversationListContentController: UICollectionViewController, Popov
                 UIAction(title: action.title, image: nil) { _ in
                     let actionController = ConversationActionController(conversation: conversation,
                                                                         target: self,
-                                                                        sourceView: collectionView.cellForItem(at: indexPath))
+                                                                        sourceView: collectionView.cellForItem(at: indexPath), userSession: self.userSession)
 
                     actionController.handleAction(action)
                 }
             }
 
-            return UIMenu(title: conversation.displayName, children: actions)
+            return UIMenu(title: conversation.displayNameWithFallback, children: actions)
         }
 
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath,
@@ -331,11 +332,13 @@ final class ConversationListContentController: UICollectionViewController, Popov
             fatal("Unknown cell type")
         }
 
-        (cell as? SectionListCellType)?.sectionName = listViewModel.sectionCanonicalName(of: indexPath.section)
-        (cell as? SectionListCellType)?.cellIdentifier = "conversation_list_cell"
+        if let cell = cell as? SectionListCellType {
+            cell.sectionName = listViewModel.sectionCanonicalName(of: indexPath.section)
+            cell.obfuscatedSectionName = listViewModel.obfuscatedSectionName(of: indexPath.section)
+            cell.cellIdentifier = "conversation_list_cell"
+        }
 
         cell.autoresizingMask = .flexibleWidth
-
         return cell
     }
 }
@@ -394,7 +397,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         } else if item is ConversationListConnectRequestsItem {
             ZClientViewController.shared?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
         } else {
-            assert(false, "Invalid item in conversation list view model!!")
+            assertionFailure("Invalid item in conversation list view model!!")
         }
         // Make sure the correct item is selected in the list, without triggering a collection view
         // callback
@@ -455,7 +458,7 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
 
         previewingContext.sourceRect = layoutAttributes.frame
 
-        return ConversationPreviewViewController(conversation: conversation, presentingViewController: self, sourceView: collectionView.cellForItem(at: indexPath))
+        return ConversationPreviewViewController(conversation: conversation, presentingViewController: self, sourceView: collectionView.cellForItem(at: indexPath), userSession: userSession)
     }
 }
 

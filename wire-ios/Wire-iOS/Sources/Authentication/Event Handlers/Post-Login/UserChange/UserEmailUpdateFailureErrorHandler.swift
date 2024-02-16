@@ -22,7 +22,7 @@ import Foundation
  * Handles error when addding the e-mail to the user.
  */
 
-class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
+final class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

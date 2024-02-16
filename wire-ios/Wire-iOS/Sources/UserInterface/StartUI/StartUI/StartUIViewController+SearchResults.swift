@@ -31,7 +31,7 @@ extension StartUIViewController {
         guard let indexPath = indexPath,
             let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath) else { return }
 
-        profilePresenter.presentProfileViewController(for: bareUser, in: self, from: view.convert(cell.bounds, from: cell), onDismiss: {
+        profilePresenter.presentProfileViewController(for: bareUser, in: self, from: view.convert(cell.bounds, from: cell), userSession: userSession, onDismiss: {
             if self.isIPadRegular() {
                 let indexPaths = self.searchResultsViewController.searchResultsView.collectionView.indexPathsForVisibleItems
                 self.searchResultsViewController.searchResultsView.collectionView.reloadItems(at: indexPaths)
@@ -78,8 +78,11 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didTapOnSeviceUser user: ServiceUser) {
 
-        let detail = ServiceDetailViewController(serviceUser: user,
-                                                 actionType: .openConversation) { [weak self] result in
+        let detail = ServiceDetailViewController(
+            serviceUser: user,
+            actionType: .openConversation,
+            userSession: userSession
+        ) { [weak self] result in
             guard let weakSelf = self else { return }
 
             if let result = result {
@@ -108,7 +111,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func openCreateGroupController() {
-        let controller = ConversationCreationController()
+        let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
         controller.delegate = self
 
         if self.traitCollection.horizontalSizeClass == .compact {
@@ -124,56 +127,71 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func createGuestRoom() {
-        guard let userSession = ZMUserSession.shared() else {
-            fatal("No user session present")
+        // swiftlint:disable todo_requires_jira_link
+        // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
+        // swiftlint:enable todo_requires_jira_link
+        guard let userSession = userSession as? ZMUserSession else {
+            return WireLogger.conversation.error("failed to create guest room: no user session")
         }
 
         isLoadingViewVisible = true
 
-        userSession.perform { [weak self] in
-            guard let weakSelf = self else { return }
+        let service = ConversationService(context: userSession.viewContext)
+        service.createGroupConversation(
+            name: L10n.Localizable.General.guestRoomName,
+            users: [],
+            allowGuests: true,
+            allowServices: true,
+            enableReceipts: false,
+            messageProtocol: .proteus
+        ) { [weak self] in
+            switch $0 {
+            case .success(let conversation):
+                guard let self = self else { return }
+                self.delegate?.startUI(
+                    self,
+                    didSelect: conversation
+                )
 
-            if let conversation = ZMConversation.insertGroupConversation(session: userSession,
-                                                                      participants: [],
-                                                                      name: "general.guest-room-name".localized,
-                                                                      team: ZMUser.selfUser().team) {
-                weakSelf.delegate?.startUI(weakSelf, didSelect: conversation)
+            case .failure(let error):
+                WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
             }
+
         }
     }
 }
 
 extension StartUIViewController: ConversationCreationControllerDelegate {
-    func dismiss(controller: ConversationCreationController, completion: (() -> Void)? = nil) {
-        if traitCollection.horizontalSizeClass == .compact {
-            navigationController?.popToRootViewController(animated: true) {
-                completion?()
-            }
-        } else {
-            controller.navigationController?.dismiss(animated: true, completion: completion)
-        }
-    }
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
+        didCreateConversation conversation: ZMConversation
     ) {
         dismiss(controller: controller) { [weak self] in
-            guard let weakSelf = self else { return }
+            guard let self = self else { return }
 
-            weakSelf.delegate?.startUI(
-                weakSelf,
-                createConversationWith: participants,
-                name: name,
-                allowGuests: allowGuests,
-                allowServices: allowServices,
-                enableReceipts: enableReceipts,
-                encryptionProtocol: encryptionProtocol
+            delegate?.startUI(
+                self,
+                didSelect: conversation
+            )
+        }
+    }
+
+    func dismiss(
+        controller: ConversationCreationController,
+        completion: (() -> Void)? = nil
+    ) {
+        switch traitCollection.horizontalSizeClass {
+        case .compact:
+            navigationController?.popToRootViewController(
+                animated: true,
+                completion: completion
+            )
+
+        default:
+            controller.navigationController?.dismiss(
+                animated: true,
+                completion: completion
             )
         }
     }

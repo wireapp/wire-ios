@@ -500,7 +500,7 @@ extension ZMAssetClientMessageTests {
             sut.transferState = .uploaded
             XCTAssertTrue(self.syncMOC.saveOrRollback())
 
-            let expectation = self.expectation(description: "Notification fired")
+            let expectation = self.customExpectation(description: "Notification fired")
             let token = NotificationInContext.addObserver(
                 name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
                 context: self.uiMOC.notificationContext,
@@ -512,7 +512,7 @@ extension ZMAssetClientMessageTests {
             sut.fileMessageData?.cancelTransfer()
 
             // then
-            withExtendedLifetime(token) { () -> Void in
+            withExtendedLifetime(token) {
                 XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
             }
         }
@@ -881,7 +881,7 @@ extension ZMAssetClientMessageTests {
         uiMOC.saveOrRollback()
 
         // expect
-        let expectation = self.expectation(description: "Image arrived")
+        let expectation = self.customExpectation(description: "Image arrived")
 
         // when
         message.imageMessageData?.fetchImageData(with: DispatchQueue.global(qos: .background), completionHandler: { (imageData) in
@@ -945,7 +945,7 @@ extension ZMAssetClientMessageTests {
         message.managedObjectContext?.saveOrRollback()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: message.objectID,
@@ -957,7 +957,7 @@ extension ZMAssetClientMessageTests {
         message.imageMessageData?.requestFileDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -1305,7 +1305,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(sut.hasDownloadedPreview)
         XCTAssertEqual(sut.version, 3)
 
-        let expectation = self.expectation(description: "preview data was retreived")
+        let expectation = self.customExpectation(description: "preview data was retreived")
         sut.fileMessageData?.fetchImagePreviewData(queue: .global(qos: .background), completionHandler: { (previewDataResult) in
             XCTAssertEqual(previewDataResult, previewData)
             expectation.fulfill()
@@ -1344,7 +1344,7 @@ extension ZMAssetClientMessageTests {
         uiMOC.saveOrRollback()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: sut.objectID,
@@ -1356,7 +1356,7 @@ extension ZMAssetClientMessageTests {
         sut.fileMessageData?.requestImagePreviewDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -1374,7 +1374,7 @@ extension ZMAssetClientMessageTests {
         uiMOC.saveOrRollback()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMAssetClientMessage.assetDownloadNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: sut.objectID,
@@ -1386,7 +1386,7 @@ extension ZMAssetClientMessageTests {
         sut.imageMessageData?.requestFileDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }

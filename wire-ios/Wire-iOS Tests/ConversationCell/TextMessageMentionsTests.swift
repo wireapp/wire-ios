@@ -18,12 +18,11 @@
 
 import XCTest
 import SnapshotTesting
-import WireCommonComponents
 @testable import Wire
 
 // MARK: - Mentions
 
-final class TextMessageMentionsTests: XCTestCase {
+final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Properties
 
@@ -39,7 +38,6 @@ final class TextMessageMentionsTests: XCTestCase {
         super.setUp()
         otherUser = MockUserType.createUser(name: "Bruno")
         selfUser = MockUserType.createDefaultSelfUser()
-        FontScheme.configure(with: .large)
         UIColor.setAccentOverride(.vividRed)
     }
 
@@ -108,12 +106,10 @@ final class TextMessageMentionsTests: XCTestCase {
     }
 
     func testThatItRendersMentions_SelfMention_LongText() {
-        // swiftlint:disable line_length
         let messageText =
         """
         She was a liar. She had no diseases at all. I had seen her at Free and Clear, my blood parasites group Thursdays. Then at Hope, my bimonthly sickle cell circle. And again at Seize the Day, my tuberculosis Friday night. @Marla, the big tourist. Her lie reflected my lie, and suddenly, I felt nothing.
         """
-        // swiftlint:enable line_length
 
         selfUser.name = "Tyler Durden"
         selfUser.initials = "TD"
@@ -124,12 +120,10 @@ final class TextMessageMentionsTests: XCTestCase {
     func testThatItRendersMentions_SelfMention_LongText_Dark() {
         setColorScheme(.dark)
 
-        // swiftlint:disable line_length
         let messageText =
         """
         She was a liar. She had no diseases at all. I had seen her at Free and Clear, my blood parasites group Thursdays. Then at Hope, my bimonthly sickle cell circle. And again at Seize the Day, my tuberculosis Friday night. @Marla, the big tourist. Her lie reflected my lie, and suddenly, I felt nothing.
         """
-        // swiftlint:enable line_length
 
         selfUser.name = "Tyler Durden"
         selfUser.initials = "TD"

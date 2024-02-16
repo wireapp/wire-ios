@@ -37,10 +37,13 @@ final class TextSearchViewController: NSObject {
         }
     }
 
+    private let userSession: UserSession
+
     private var searchStartedDate: Date?
 
-    init(conversation: ConversationLike) {
+    init(conversation: ConversationLike, userSession: UserSession) {
         self.conversation = conversation
+        self.userSession = userSession
         super.init()
         loadViews()
     }
@@ -160,7 +163,13 @@ extension TextSearchViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TextSearchResultCell.reuseIdentifier) as! TextSearchResultCell
-        cell.configure(with: results[indexPath.row], queries: searchQuery?.components(separatedBy: .whitespacesAndNewlines) ?? [])
+        cell.configure(
+            with: results[indexPath.row],
+            queries: searchQuery?.components(
+                separatedBy: .whitespacesAndNewlines
+            ) ?? [],
+            userSession: userSession
+        )
         return cell
     }
 

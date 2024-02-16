@@ -21,26 +21,35 @@ import XCTest
 
 extension SelfUser {
 
+    // MARK: - Helper method
+
     /// setup self user as a team member if providing teamID with the name Tarja Turunen
     /// - Parameter teamID: when providing a team ID, self user is a team member
     static func setupMockSelfUser(inTeam teamID: UUID? = nil) {
-        provider = SelfProvider(selfUser: MockUserType.createSelfUser(name: "Tarja Turunen", inTeam: teamID))
+        provider = SelfProvider(providedSelfUser: MockUserType.createSelfUser(name: "Tarja Turunen", inTeam: teamID))
     }
 }
 
+// MARK: - ConversationImagesViewControllerTests
+
 final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: ConversationImagesViewController! = nil
     var navigatorController: UINavigationController! = nil
+    var userSession: UserSessionMock!
 
     override var needsCaches: Bool {
         return true
     }
 
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
         SelfUser.setupMockSelfUser()
-
+        userSession = UserSessionMock()
         snapshotBackgroundColor = UIColor.white
 
         let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
@@ -49,25 +58,40 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         let collection = MockCollection(messages: [ imagesCategoryMatch: [initialMessage] ])
         let delegate = AssetCollectionMulticastDelegate()
 
-        let assetWrapper = AssetCollectionWrapper(conversation: otherUserConversation, assetCollection: collection, assetCollectionDelegate: delegate, matchingCategories: [imagesCategoryMatch])
-        sut = ConversationImagesViewController(collection: assetWrapper, initialMessage: initialMessage, inverse: true)
+        let assetWrapper = AssetCollectionWrapper(
+            conversation: otherUserConversation,
+            assetCollection: collection,
+            assetCollectionDelegate: delegate,
+            matchingCategories: [imagesCategoryMatch]
+        )
+
+        sut = ConversationImagesViewController(
+            collection: assetWrapper,
+            initialMessage: initialMessage,
+            inverse: true,
+            userSession: userSession
+        )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testForWrappedInNavigationController() {
-        verify(view: navigatorController.view)
+        verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Normal() {
         sut.setBoundsSizeAsIPhone4_7Inch()
 
-        verify(view: navigatorController.view)
+        verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Ephemeral() {
@@ -81,10 +105,12 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         // Calls viewWillAppear
         sut.beginAppearanceTransition(true, animated: false)
 
-        verify(view: navigatorController.view)
+        verify(matching: navigatorController.view)
     }
 
-    // MARK: - Update toolbar buttons for switching between ephemeral/normal messages
+    // MARK: - Unit Tests
+    // Update toolbar buttons for switching between ephemeral/normal messages
+
     func testThatToolBarIsUpdateAfterScollToAnEphemeralImage() {
         // GIVEN
         let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
@@ -96,7 +122,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         sut.viewDidLoad()
 
         // THEN
-        XCTAssertEqual(sut.buttonsBar.buttons.count, 8)
+        XCTAssertEqual(sut.buttonsBar.buttons.count, 7)
 
         // WHEN
         message.isEphemeral = true

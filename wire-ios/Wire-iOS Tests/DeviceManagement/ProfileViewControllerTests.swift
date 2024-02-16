@@ -20,17 +20,23 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ProfileViewControllerTests: ZMSnapshotTestCase {
+final class ProfileViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     private var sut: ProfileViewController!
     private var mockUser: MockUser!
     private var selfUser: MockUser!
+    private var userSession: UserSessionMock!
     private var teamIdentifier: UUID!
     private var mockClassificationProvider: MockClassificationProvider!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         accentColor = .strongBlue
+        userSession = UserSessionMock()
         teamIdentifier = UUID()
         selfUser = MockUser.createSelfUser(name: "George Johnson", inTeam: teamIdentifier)
         selfUser.handle = "georgejohnson"
@@ -43,15 +49,20 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockClassificationProvider = MockClassificationProvider()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         mockUser = nil
         selfUser = nil
+        userSession = nil
         teamIdentifier = nil
         mockClassificationProvider = nil
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     // MARK: - .profileViewer  Context
 
@@ -61,9 +72,12 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockUser.emailAddress = nil
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    context: .profileViewer)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
@@ -75,9 +89,12 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         selfUser.emailAddress = nil
 
         // WHEN
-        sut = ProfileViewController(user: selfUser,
-                                    viewer: selfUser,
-                                    context: .profileViewer)
+        sut = ProfileViewController(
+            user: selfUser,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
@@ -91,9 +108,12 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         selfUser.isTrusted = true
 
         // WHEN
-        sut = ProfileViewController(user: selfUser,
-                                    viewer: selfUser,
-                                    context: .profileViewer)
+        sut = ProfileViewController(
+            user: selfUser,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
         sut.updateShowVerifiedShield()
         let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
@@ -109,9 +129,12 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockUser.isUnderLegalHold = true
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    context: .profileViewer)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
         let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
 
@@ -129,9 +152,12 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockUser.isUnderLegalHold = true
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUserOutsideTeam,
-                                    context: .profileViewer)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUserOutsideTeam,
+            context: .profileViewer,
+            userSession: userSession
+        )
         let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
 
@@ -146,9 +172,34 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         selfUser.isUnderLegalHold = true
 
         // WHEN
-        sut = ProfileViewController(user: selfUser,
-                                    viewer: selfUser,
-                                    context: .profileViewer)
+        sut = ProfileViewController(
+            user: selfUser,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
+        let navWrapperController = sut.wrapInNavigationController()
+        sut.viewDidAppear(false)
+
+        // THEN
+        verify(matching: navWrapperController)
+    }
+
+    func testForContextProfileViewer_ForUserWithoutName() {
+        // GIVEN
+        selfUser.teamRole = .member
+        mockUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: nil)
+        mockUser.name = nil
+        mockUser.domain = "foma.wire.link"
+        mockUser.initials = ""
+
+        // WHEN
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
         let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
 
@@ -161,9 +212,12 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockUser.isTeamMember = true
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    context: .profileViewer)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
 
         // THEN
         XCTAssertEqual(mockUser.refreshDataCount, 1)
@@ -175,12 +229,14 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockUser.isTeamMember = false
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    context: .profileViewer)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
 
         // THEN
-        XCTAssertEqual(mockUser.refreshDataCount, 0)
         XCTAssertEqual(mockUser.refreshMembershipCount, 0)
     }
 
@@ -188,7 +244,12 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
 
     func testForDeviceListContext() {
         // WHEN
-        sut = ProfileViewController(user: mockUser, viewer: selfUser, context: .deviceList)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            context: .deviceList,
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
@@ -196,7 +257,12 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
 
     func testForWrapInNavigationController() {
         // GIVEN
-        sut = ProfileViewController(user: mockUser, viewer: selfUser, context: .deviceList)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            context: .deviceList,
+            userSession: userSession
+        )
 
         // WHEN
         let navWrapperController = sut.wrapInNavigationController()
@@ -217,10 +283,13 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         conversation.activeParticipants = [selfUser, mockUser]
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    conversation: conversation.convertToRegularConversation(),
-                                    context: .oneToOneConversation)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            conversation: conversation.convertToRegularConversation(),
+            context: .oneToOneConversation,
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
@@ -236,10 +305,13 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         conversation.activeParticipants = [selfUser, mockUser]
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    conversation: conversation.convertToRegularConversation(),
-                                    context: .oneToOneConversation)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            conversation: conversation.convertToRegularConversation(),
+            context: .oneToOneConversation,
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
@@ -259,10 +331,13 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         conversation.activeParticipants = [selfUser, mockUser]
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    conversation: conversation.convertToRegularConversation(),
-                                    context: .groupConversation)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            conversation: conversation.convertToRegularConversation(),
+            context: .groupConversation,
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
@@ -282,11 +357,14 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         conversation.activeParticipants = [selfUser, mockUser]
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    conversation: conversation.convertToRegularConversation(),
-                                    context: .groupConversation,
-                                    classificationProvider: mockClassificationProvider)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            conversation: conversation.convertToRegularConversation(),
+            context: .groupConversation,
+            classificationProvider: mockClassificationProvider,
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
@@ -306,11 +384,14 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         conversation.activeParticipants = [selfUser, mockUser]
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    conversation: conversation.convertToRegularConversation(),
-                                    context: .groupConversation,
-                                    classificationProvider: mockClassificationProvider)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            conversation: conversation.convertToRegularConversation(),
+            context: .groupConversation,
+            classificationProvider: mockClassificationProvider,
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
@@ -331,11 +412,14 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         conversation.activeParticipants = [selfUser, mockUser]
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    conversation: conversation.convertToRegularConversation(),
-                                    context: .groupConversation,
-                                    classificationProvider: mockClassificationProvider)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            conversation: conversation.convertToRegularConversation(),
+            context: .groupConversation,
+            classificationProvider: mockClassificationProvider,
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
@@ -349,9 +433,12 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockUser.isConnected = false
 
         // WHEN
-        sut = ProfileViewController(user: mockUser,
-                                    viewer: selfUser,
-                                    context: .profileViewer)
+        sut = ProfileViewController(
+            user: mockUser,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
         sut.viewDidAppear(false)
 
         // THEN

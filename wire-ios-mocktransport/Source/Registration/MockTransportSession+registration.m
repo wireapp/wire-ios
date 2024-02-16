@@ -49,7 +49,7 @@
 /// Handles "/register"
 - (ZMTransportResponse *)processRegistrationRequest:(ZMTransportRequest *)request
 {
-    if(request.method == ZMMethodPOST) {
+    if(request.method == ZMTransportRequestMethodPost) {
         
         NSDictionary *userDetails = [request.payload asDictionary];
         
@@ -136,7 +136,7 @@
 /// Handles "/activate"
 - (ZMTransportResponse *)processPhoneActivationRequest:(ZMTransportRequest *)request;
 {
-    if (request.method == ZMMethodPOST) {
+    if (request.method == ZMTransportRequestMethodPost) {
         NSDictionary *userDetails = [request.payload asDictionary];
         
         NSString *code = [userDetails optionalStringForKey:@"code"];
@@ -198,7 +198,7 @@
 /// Handles "/active/send"
 - (ZMTransportResponse *)processVerificationCodeRequest:(ZMTransportRequest *)request
 {
-    if (request.method == ZMMethodPOST) {
+    if (request.method == ZMTransportRequestMethodPost) {
         NSDictionary *userDetails = [request.payload asDictionary];
         
         NSString *email = [userDetails optionalStringForKey:@"email"];

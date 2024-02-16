@@ -152,7 +152,7 @@
 
 // Conversation list voiceover accessibility
 "conversation_list.voiceover.open_conversation.hint" = "Открыть беседу";
-"conversation_list.voiceover.status.pending_connection" = "ожидает";
+"conversation_list.voiceover.status.pending_connection" = "ожидание";
 "conversation_list.voiceover.status.active_call" = "активный вызов";
 "conversation_list.voiceover.status.missed_call" = "пропущенный вызов";
 "conversation_list.voiceover.status.pause_media" = "поставить на паузу";
@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Нажмите для отправки";
 "conversation.input_bar.audio_message.too_long.title" = "Запись остановлена";
 "conversation.input_bar.audio_message.too_long.message" = "Размер аудиосообщений ограничен %@.";
+"conversation.ping.many_participants_confirmation.title" = "Вы действительно хотите отправить пинг %d пользователям?";
+"conversation.ping.action.title" = "Пинг";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "Размер файла аудиосообщения ограничен %@.";
 
@@ -320,9 +322,14 @@
 "conversation.create.receipts.title" = "Отчеты о прочтении";
 "conversation.create.receipts.subtitle" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "conversation.create.mls.title" = "Протокол";
-"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
 "conversation.create.mls.cancel" = "Отмена";
+"conversation.create.non_federating_domains_error.title" = "Невозможно создать группу";
+"conversation.create.non_federating_domains_error.message" = "Пользователи бэкэндов %@ не могут присоединиться к одной групповой беседе.\nДля создания группы удалите затронутых участников.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Изменить список участников";
+"conversation.create.non_federating_domains_error.learn_more" = "Подробнее";
+"conversation.create.non_federating_domains_error.abort" = "Отменить создание группы";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Исходящий звонок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Вы не можете записать аудиосообщение во время звонка.";
@@ -422,7 +429,45 @@
 "content.system.other_removed_you" = "%@ удалил вас";
 "content.system.you_removed_other" = "Вы удалили %@";
 
-"content.system.services.warning" = "Сервисы имеют доступ к содержимому этой беседы";
+"content.system.services.warning" = "Сервисы имеют доступ к контенту этой беседы";
+
+"content.system.missing_messages" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.";
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added.singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) добавлен(а) %@.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added.plural" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время были добавлены %@.";
+
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_removed.singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) удален(а) %@.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_removed.plural" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время были удалены %@.";
+
+// Both placesholders contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added_and_removed.singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) добавлен(а) %1$@, был(а) удален(а) %2$@.";
+
+// Placeholder 1 contains a single name: e.g "Alice. Placeholder 2 contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.singular_plural" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) добавлен(а) %1$@, были удалены %2$@.";
+
+// Placeholder 1 contains a localized list of names, e.g "Alice, Bob, and Cate". Placeholder 2 contains a single name: e.g "Alice.
+"content.system.missing_messages.users_added_and_removed.plural_singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время были добавлены %1$@, был(а) удален(а) %2$@.";
+
+// Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.plural" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время были добавлены %1$@, были удалены %2$@.";
+
+// MLS Migration
+"content.system.mls_migration.started.description" = "Стандартный протокол обмена сообщениями меняется с Proteus на новый Messaging Layer Security (MLS).";
+"content.system.mls_migration.started.update_latest_version" = "Убедитесь, что вы используете последнюю версию Wire, чтобы быть готовым к MLS и обеспечить бесперебойное общение.";
+"content.system.mls_migration.started.update_with_date" = "Обновите Wire до %@, чтобы быть готовым к MLS и продолжить бесперебойное общение.";
+
+"content.system.mls_migration.finalized.done" = "Теперь в этой беседе используется новый протокол Messaging Layer Security (MLS). Для обеспечения надежной связи всегда используйте последнюю версию Wire на своих устройствах.";
+"content.system.mls_migration.join_afterwards" = "Вы давно не обновляли это устройство. За это время стандартный протокол обмена сообщениями изменился с Proteus на Messaging Layer Security (MLS). В связи с этим некоторые сообщения могут не отображаться.";
+"content.system.mls_migration.ongoing_call" = "При переходе на MLS могут возникнуть проблемы с текущим вызовом. В этом случае прервите разговор и позвоните снова.";
+"content.system.mls_migration.learn_more" = "Узнайте больше о MLS";
+"content.system.mls_migration.potentialGap" = "Вы давно не обновляли это устройство. За это время стандартный протокол обмена сообщениями изменился с Proteus на Messaging Layer Security (MLS). В связи с этим некоторые сообщения могут не отображаться.";
+"content.system.mls_migration.mls_not_supported_by_otherUser" = "Общение с %@ больше невозможно, поскольку теперь вы используете разные протоколы. Когда %@ обновится, вы снова сможете звонить, отправлять сообщения и файлы.";
+"content.system.mls_migration.mls_not_supported_by_you" = "Общение с %@ больше невозможно, поскольку ваше устройство не поддерживает необходимый протокол. [**Скачайте последнюю версию MLS Wire**](%@), чтобы снова звонить, отправлять сообщения и файлы.";
 
 // Link attachment messages
 
@@ -434,7 +479,7 @@
 "digital_signature.alert.error" = "К сожалению, ваша цифровая подпись не сработала.";
 "digital_signature.alert.error.no_consent_url" = "К сожалению, форма подписи не открылась. Пожалуйста, попробуйте еще раз.";
 "digital_signature.alert.error.no_signature" = "К сожалению, ваша цифровая подпись не сработала. Пожалуйста, попробуйте еще раз.";
-"digital_signature.alert.download_necessary" = "Пожалуйста, перед тем, как подписывать документ, сохраните его и прочтите.";
+"digital_signature.alert.download_necessary" = "Пожалуйста, сохраните и прочитайте документ перед его подписанием.";
 
 // New conversation participants added / removed / started system message
 
@@ -443,13 +488,13 @@
 "content.system.conversation.other.removed" = "%@ удалил %@";
 "content.system.conversation.other.removed.legalhold" = "%@ был удален из этой беседы, поскольку были активированы юридические ограничения. _Подробнее_";
 "content.system.conversation.others.removed.legalhold" = "%@ были удалены из этой беседы, поскольку были активированы юридические ограничения. _Подробнее_";
-"content.system.conversation.other.left" = "%@ покинул(-а) беседу";
+"content.system.conversation.other.left" = "%@ покинул(-а)";
 
 "content.system.conversation.you.started" = "%@ начал беседу с %@";
 "content.system.conversation.you.added" = "%@ добавили %@";
 "content.system.conversation.you.removed" = "%@ удалили %@";
 "content.system.conversation.you.removed.legalhold" = "%@ были удалены из этой беседы, поскольку были активированы юридические ограничения.";
-"content.system.conversation.you.left" = "%@ покинули беседу";
+"content.system.conversation.you.left" = "%@ покинули";
 "content.system.conversation.team.member-leave" = "%@ был удален из команды.";
 "content.system.conversation.guest.joined" = "%@ присоединился";
 "content.system.conversation.guest.you_joined" = "Вы присоединились";
@@ -463,9 +508,18 @@
 "content.system.message_sent_timestamp" = "Отправлено";
 "content.system.message_delivered_timestamp" = "Доставлено";
 "content.system.message_read_timestamp" = "Прочитано";
-"content.system.failedtosend_message_timestamp" = "Отправка не удалась.";
-"content.system.failedtosend_message_timestamp_resend" = "Отправить повторно";
-"content.system.failedtosend_message_timestamp_delete" = "Удалить";
+"content.system.failedtosend_message.general_reason" = "Не удалось отправить сообщение из-за проблем с подключением.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Сообщение не может быть отправлено, поскольку бэкэнд **%@** недоступен. [Узнать больше](%@)";
+"content.system.failedtosend_message.retry" = "Повторить";
+
+"content.system.failedtosend_participants.show_details" = "Подробнее";
+"content.system.failedtosend_participants.hide_details" = "Скрыть сведения";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ участников** не получили ваше сообщение.";
+"content.system.failedtosend_participants.from" = "**%@ от %@**";
+"content.system.failed_participants.learn_more" = "Подробнее";
+
+"content.system.failedtoadd_participants.count" = "Не удалось добавить в группу **%@ участников**.";
+
 "content.system.like_tooltip" = "Нажмите, чтобы лайкнуть";
 "content.system.deleted_message_prefix_timestamp" = "Удалено: %@";
 "content.system.edited_message_prefix_timestamp" = "Изменено: %@";
@@ -476,7 +530,6 @@
 "content.system.ephemeral_time_remaining" = "осталось %@";
 
 "content.system.self_user_new_client" = "Вы начали использовать [новое устройство](%@)";
-"content.system.self_user_new_self_client" = "Вы начали использовать [это устройство](%@)";
 
 "content.system.you_started" = "Вы";
 
@@ -506,6 +559,9 @@
 "content.system.message_timer_off" = "%@ отключил(-а) таймер сообщения";
 "content.system.message_timer_off-you" = "%@ отключил таймер сообщения";
 
+"content.system.backends_stop_federating.self_backend" = "**Ваш бэкэнд** прекратил взаимодействие с **%@**. [Подробнее](%@)";
+"content.system.backends_stop_federating.other_backends" = "Бэкэнды **%@** и **%@** прекратили взаимодействие. [Подробнее](%@)";
+
 // read receipt
 
 "content.system.message_read_receipt_on" = "%@ включил(-а) отчеты о прочтении для всех";
@@ -518,14 +574,12 @@
 
 // legal hold
 
-"content.system.message_legal_hold.enabled" = "Эта беседа находится под правовой защитой";
+"content.system.message_legal_hold.enabled" = "Эта беседа находится под юридическими ограничениями [ПОДРОБНЕЕ](%@)";
 "content.system.message_legal_hold.disabled" = "Для этой беседы деактивированы юридические ограничения";
 
 "content.system.message_legal_hold.learn_more" = "Подробнее";
 
 //
-
-"content.system.reactivated_device" = "Вы снова начали использовать [это устройство]%@. Сообщения, отправленные ранее, не будут отображаться здесь.";
 
 "content.system.is_verified" = "Все отпечатки верифицированы";
 
@@ -534,9 +588,6 @@
 
 "content.system.unverified_self_devices" = " Вы отозвали верификацию одного из [своих устройств](%@)";
 "content.system.unverified_other_devices" = "Вы отозвали верификацию одного из [%1$@ устройств](%2$@)";
-
-"content.system.missing_messages.title" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.";
-"content.system.missing_messages.subtitle_start" = "Тем временем,";
 
 "content.system.cannot_decrypt.self" = "Не удалось расшифровать ваше сообщение.";
 "content.system.cannot_decrypt.other" = "Не удалось расшифровать сообщение от %@.";
@@ -580,8 +631,9 @@
 "content.message.open" = "Открыть";
 "content.message.sign" = "Подписать";
 "content.message.copy" = "Скопировать";
-"content.message.download" = "Скачать";
+"content.message.download" = "Загрузить";
 "content.message.details" = "Профиль";
+"content.message.reactions" = "Реакции";
 
 // Reply
 "content.message.reply" = "Ответить";
@@ -589,7 +641,7 @@
 "content.message.reply.original_timestamp.date" = "Исходное сообщение от %@";
 "content.message.reply.original_timestamp.time" = "Исходное сообщение от %@";
 "content.message.reply.broken_message" = "Вы не можете увидеть это сообщение.";
-"content.message.reply.edited_message" = "Отредактировано";
+"content.message.reply.edited_message" = "Изменено";
 
 "content.message.open_link_alert.title" = "Перейти по ссылке";
 "content.message.open_link_alert.message" = "Это приведет вас к\n%@";
@@ -600,6 +652,11 @@
 "content.reactions_list.likers" = "Понравилось";
 
 "content.file.too_big" = "Вы можете отправлять файлы до %@";
+
+// Reactions
+"content.reactions.title" = "Выбрать реакцию";
+"content.reactions.search" = "Поиск смайликов";
+
 // Someone pinged
 "content.ping.text" = "%@ отправил(-а) пинг";
 "content.ping.text-you" = "%@ отправили пинг";
@@ -624,6 +681,7 @@
 "error.connection.title" = "Ошибка";
 "error.connection.missing_legalhold_consent" = "Вы не можете подключиться к этому пользователю из-за юридических ограничений.";
 "error.connection.generic_error" = "Что-то пошло не так. Пожалуйста, попробуйте еще раз";
+"error.connection.federation_denied_message" = "Ваш бэкэнд не взаимодействует с бэкэндом %@. Вы не можете соединиться с ним.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire необходим доступ к вашим фото";
@@ -647,7 +705,7 @@
 "voice.degradation_incoming.prompt" = "Вы действительно хотите принять вызов?";
 "voice.accept_button.title" = "Принять";
 "voice.decline_button.title" = "Отклонить";
-"voice.hang_up_button.title" = "Повесить трубку";
+"voice.hang_up_button.title" = "Завершить вызов";
 "voice.mute_button.title" = "Микрофон";
 "voice.video_button.title" = "Камера";
 "voice.flip_video_button.title" = "Переключить камеру";
@@ -679,7 +737,7 @@
 "call.status.connecting" = "Подключение…";
 "call.status.incoming.user" = "%@ вызывает…";
 "call.status.incoming" = "Вызывает…";
-"call.status.outgoing" = "Звонит…";
+"call.status.outgoing" = "Вызываем…";
 "call.status.outgoing.user" = "Вызов %@…";
 "call.status.reconnecting" = "Переподключение…";
 "call.status.terminating" = "Разъединение…";
@@ -693,6 +751,7 @@
 "call.overlay.switch_to.all" = "ВСЕ";
 
 "call.grid.no_active_speakers" = "Нет активных видеоспикеров...";
+"call.grid.connecting" = "Подключение";
 
 "call.grid.hints.fullscreen" = "Дважды коснитесь плитки для перехода в полноэкранный режим";
 "call.grid.hints.go_back_or_zoom" = "Дважды коснитесь, чтобы вернуться, сведите или раздвиньте для изменения масштаба";
@@ -706,7 +765,7 @@
 "call.degraded.alert.title" = "Новое устройство";
 "call.degraded.alert.message.self" = "Вы начали использовать новое устройство.";
 "call.degraded.alert.message.user" = "%@ начал(-а) использовать новое устройство.";
-"call.degraded.alert.message.unknown" = "Кто-то начал(-а) использовать новое устройство.";
+"call.degraded.alert.message.unknown" = "Кто-то начал использовать новое устройство.";
 "call.degraded.alert.action.continue" = "Все равно позвонить";
 
 "call.degraded.ended.alert.title" = "Вызов завершен";
@@ -808,13 +867,13 @@
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
 "meta.degraded.degradation_reason_message.plural" = "%@ начал(-а) использовать новые устройства.";
-"meta.degraded.degradation_reason_message.someone" = "Кто-то начал(-а) использовать новое устройство.";
-"meta.degraded.dialog_message" = "Вы все еще хотите отправить свое сообщение?";
+"meta.degraded.degradation_reason_message.someone" = "Кто-то начал использовать новое устройство.";
+"meta.degraded.dialog_message" = "Вы все еще хотите отправить ваше сообщение?";
 "meta.degraded.verify_devices_button" = "Верифицируйте устройства…";
 "meta.degraded.send_anyway_button" = "Отправить в любом случае";
 "meta.degraded.cancel_sending_button" = "Отмена";
 "meta.legalhold.info_button" = "Что такое юридические ограничения?";
-"meta.legalhold.send_alert_title" = "Эта беседа теперь является предметом юридических ограничений.";
+"meta.legalhold.send_alert_title" = "Эта беседа теперь является субъектом юридических ограничений.";
 
 // Remove from conversation dialogue
 "profile.remove_dialog_title" = "Удалить?";
@@ -846,7 +905,7 @@
 
 // Delete group
 "conversation.delete_request_dialog.title" = "Удалить беседы группы?";
-"conversation.delete_request_dialog.message" = "Это действие удалит группу и весь контент для всех участников на всех устройствах. Контент будет удален без возможности восстановления. Будут уведомлены все участники.";
+"conversation.delete_request_dialog.message" = "Это приведет к удалению группы и всего содержимого для всех участников на всех устройствах. Восстановить контент будет невозможно. Все участники будут оповещены.";
 "conversation.delete_request_error_dialog.title" = "Произошла ошибка при попытке удалить группу %@. Пожалуйста, попробуйте еще раз.";
 "conversation.delete_request_error_dialog.button_delete_group" = "Удалить группу";
 
@@ -888,11 +947,13 @@
 "profile.details.federated" = "Федеративный";
 "profile.details.blocking_reason" = "Этот пользователь заблокирован из-за юридических ограничений. [ПОДРОБНЕЕ](%@)";
 "profile.details.identity_warning" = "Перед добавлением убедитесь в личности %@.";
-"profile.details.requested_identity_warning" = "Прежде чем принять запрос на добавление, подтвердите личность пользователя.";
+"profile.details.requested_identity_warning" = "Прежде чем принять запрос на добавление, верифицируйте личность собеседника.";
+"profile.details.title.unavailable" = "Имя недоступно";
 
 // Device list
 "profile.devices.title" = "Устройства";
 "profile.devices.fingerprint_message_unencrypted" = "%@ использует устаревшую версию Wire. Устройства не отображаются.";
+"profile.devices.no_device_data" = "Нет данных об устройстве.";
 "profile.devices.fingerprint_message.title" = "Wire присваивает каждому устройству уникальный отпечаток. Сравните их с %@ и верифицируйте вашу беседу.";
 "profile.devices.fingerprint_message.link" = "Зачем верифицировать беседы?";
 
@@ -931,7 +992,7 @@
 "group_details.receipt_options_cell.title" = "Отчеты о прочтении";
 "group_details.receipt_options_cell.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 
-"group_details.message_protocol.section_tile" = "Сведения о протоколе (beta)";
+"group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Протокол";
 "group_details.message_protocol.cipher_suite" = "Набор шифров";
 
@@ -941,7 +1002,7 @@
 
 // Legal hold details
 
-"legalhold.participants.section.title" = "Субъекты юридических ограничений";
+"legalhold.participants.section.title" = "Субъекты юридических ограничений %@";
 "legalhold.header.title" = "Юридические ограничения";
 "legalhold.header.other_description" = "В этой беседе активированы юридические ограничения как минимум для одного участника. Все сообщения будут сохранены для последующего доступа, включая удаленные, отредактированные и самоудаляющиеся.";
 "legalhold.header.self_description" = "Для вашей учетной записи активированы юридические ограничения. Все сообщения будут сохранены для последующего доступа, включая удаленные, отредактированные и самоудаляющиеся. Ваши собеседники будут уведомлены об этом.";
@@ -1026,7 +1087,7 @@
 "self.settings.account_details.key_fingerprint.title" = "Отпечаток ключа";
 "self.settings.account_details.remove_device.message" = "Для удаления устройства необходимо ввести пароль";
 "self.settings.account_details.remove_device.password" = "Пароль";
-"self.settings.account_details.remove_device.password.error" = "Неправильный пароль";
+"self.settings.account_details.remove_device.password.error" = "Неверный пароль";
 
 "self.settings.account_appearance_group.title" = "Внешний вид";
 
@@ -1165,7 +1226,7 @@
 // dark theme
 "dark_theme.option.dark" = "Темная";
 "dark_theme.option.light" = "Светлая";
-"dark_theme.option.system" = "Синхронизировать с настройками системы";
+"dark_theme.option.system" = "Как в системе";
 
 // Open in
 "self.settings.external_apps.header" = "Открыть с помощью";
@@ -1212,7 +1273,7 @@
 "self.settings.privacy_security.lock_app.subtitle.touch_id" = "Разблокируйте с помощью Touch ID или введите ваш код доступа.";
 "self.settings.privacy_security.lock_app.subtitle.face_id" = "Разблокируйте с помощью Face ID или введите ваш код доступа.";
 "self.settings.privacy_security.lock_app.subtitle.none" = "Для разблокировки введите ваш код доступа.";
-"self.settings.privacy_security.lock_app.subtitle.custom_app_lock_reminder" = "Если вы забудете свой код доступа, восстановить его будет невозможно.";
+"self.settings.privacy_security.lock_app.subtitle.custom_app_lock_reminder" = "Если вы забудете ваш код доступа, восстановить его будет невозможно.";
 
 "self.settings.privacy_security.lock_app.description" = "Разблокировать Wire";
 "self.settings.privacy_security.lock_password.description.unlock" = "Разблокировать с помощью пароля.";
@@ -1225,7 +1286,7 @@
 "self.settings.privacy_analytics_menu.devices.title" = "Устройства";
 
 "self.settings.privacy.clear_history.title" = "Очистить историю";
-"self.settings.privacy.clear_history.subtitle" = "Это действие навсегда удалит содержимое всех ваших бесед.";
+"self.settings.privacy.clear_history.subtitle" = "Это действие навсегда удалит контент всех ваших бесед.";
 
 "self.settings.advanced.title" = "Дополнительные настройки";
 "self.settings.advanced.troubleshooting.title" = "Устранение неполадок";
@@ -1525,6 +1586,14 @@
 "registration.signin.alert.password_needed.title" = "Введите пароль";
 "registration.signin.alert.password_needed.message" = "Для входа необходимо ввести пароль.";
 
+"registration.signin.username.title" = "Ваш псевдоним";
+"registration.signin.username.message" = "Введите свой псевдоним. Это поможет другим найти вас в Wire и связаться.";
+"registration.signin.username.placeholder" = "псевдоним";
+"registration.signin.username.unknown_error.title" = "Не удалось обновить псевдоним";
+"registration.signin.username.unknown_error.message" = "Пожалуйста, повторите попытку позже.";
+"registration.signin.username.already_taken_error.title" = "Псевдоним уже занят";
+"registration.signin.username.already_taken_error.message" = "Псевдоним уже занят, выберите другой";
+
 "registration.devices.title" = "Устройства";
 "registration.devices.active_list_header" = "Активные";
 "registration.devices.current_list_header" = "Текущее";
@@ -1693,12 +1762,13 @@
 "jailbrokendevice.alert.message" = "С целью обеспечения безопасности Wire нельзя использовать на этом устройстве. Все существующие данные Wire были удалены.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Недостаточно места";
-"databaseloadingfailure.alert.message" = "База данных не может быть загружена из-за нехватки места на вашем устройстве. Проверьте использование памяти вашего устройства и попробуйте еще раз.";
-"databaseloadingfailure.alert.settings" = "Перейти в настройки";
-"databaseloadingfailure.alert.delete_database" = "Удалить базу данных";
+"databaseloadingfailure.alert.title" = "Обновить хранилище данных";
+"databaseloadingfailure.alert.message" = "Не удалось загрузить базу данных.\n Ошибка: %@";
+"databaseloadingfailure.alert.save-backup" = "Сохранить мои данные";
+"databaseloadingfailure.alert.delete_database" = "Очистить мои данные и продолжить";
 "databaseloadingfailure.alert.delete_database.message" = "При удалении базы данных все локальные данные и сообщения этого аккаунта будут удалены навсегда.";
 "databaseloadingfailure.alert.delete_database.continue" = "Продолжить";
+"databaseloadingfailure.alert.retry" = "Повторить";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Версия сервера не поддерживается";
@@ -1752,7 +1822,7 @@
 "availability.message.cancel" = "Отмена";
 "availability.message.set_status" = "Установить статус";
 
-"availability.none" = "Отключены";
+"availability.none" = "Отключен";
 "availability.available" = "Доступен";
 "availability.away" = "Отошел";
 "availability.busy" = "Занят";
@@ -1813,7 +1883,7 @@
 "url_action.invalid_conversation.message" = "Возможно, у вас нет разрешения на использование этой учетной записи, либо этот человек отсутствует в Wire.";
 
 "url_action.authorization_required.title" = "Требуется авторизация.";
-"url_action.authorization_required.message" = "Для просмотра этого содержимого необходимо войти в систему.";
+"url_action.authorization_required.message" = "Для просмотра этого контента необходимо авторизоваться.";
 
 "url_action.invalid_link.title" = "Недействительная ссылка.";
 "url_action.invalid_link.message" = "Открытая вами ссылка недействительна.";
@@ -1827,14 +1897,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Это сообщение никому пока не понравилось.";
+"message_details.empty_likes" = "На сообщение еще никто не отреагировал";
 "message_details.empty_read_receipts" = "Сообщение еще никем не прочитано.";
 "message_details.read_receipts_disabled" = "Отчетов о прочтении не существовало, когда это сообщение было отправлено.";
 "message_details.combined_title" = "Сведения о сообщении";
-"message_details.likes_title" = "Понравилось";
+"message_details.reactions_title" = "Реакции";
 "message_details.receipts_title" = "Прочитано";
 "message_details.tabs.seen" = "Прочитано (%d)";
-"message_details.tabs.likes" = "Понравилось (%d)";
+"message_details.tabs.reactions" = "Реакции (%d)";
 "message_details.subtitle_send_date" = "Отправлено: %@";
 "message_details.subtitle_edit_date" = "Изменено: %@";
 "message_details.subtitle_label_voiceOver" = "Сведения о сообщении";
@@ -1848,7 +1918,7 @@
 
 // Legal Hold Deactivation
 "legal_hold.deactivated.title" = "Юридические ограничения деактивированы";
-"legal_hold.deactivated.message" = "Будущие сообщения не будут сохраняться.";
+"legal_hold.deactivated.message" = "Будущие сообщения записываться не будут.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Share Extension
@@ -1857,9 +1927,9 @@
 "share_extension.voiceover.conversation_secure_with_ignored" = "Не все клиенты верифицированы.";
 
 // Legal hold - alert
-"legalhold_request.button.accessibility" = "В ожидании принятия.";
+"legalhold_request.button.accessibility" = "Ожидание принятия.";
 "legalhold_request.alert.title" = "Запрошены юридические ограничения";
-"legalhold_request.alert.detail" = "Все будущие сообщения будут записываться устройством с отпечатком:\n\n%@\n\nСюда входят удаленные, отредактированные и самоудаляющиеся сообщения во всех беседах.";
+"legalhold_request.alert.detail" = "Все будущие сообщения будут записываться устройством с отпечатком:\n\n%@\n\nК ним относятся удаленные, отредактированные и самоудаляющиеся сообщения во всех беседах.";
 "legalhold_request.alert.detail.enter_password" = "Введите пароль для подтверждения.";
 "legalhold_request.alert.error_wrong_password" = "Неверный пароль";
 
@@ -1916,7 +1986,7 @@
 // Wipe database
 
 "wipe_database.title_label" = "Забыли код доступа к приложению?";
-"wipe_database.info_label" = "Доступ к данным, хранящимся на этом устройстве, возможен только с помощью кода доступа к приложению. Если вы его забыли, то можете сбросить это устройство. Для этого введите пароль учетной записи Wire и снова авторизуйтесь. Сбросив это устройство,";
+"wipe_database.info_label" = "Доступ к данным, хранящимся на этом устройстве, возможен только с помощью кода доступа к приложению. Если вы его забыли, то можете сбросить это устройство. Для этого после сброса устройства введите пароль учетной записи Wire и снова авторизуйтесь.";
 "wipe_database.info_label.highlighted" = "все локальные данные и сообщения этого аккаунта будут удалены навсегда.";
 
 "wipe_database.button.title" = "Сбросить устройство";
@@ -1963,7 +2033,7 @@
 "proxy-credentials.password.placeholder" = "Пароль";
 
 "landing.alert.create-new-account.not-supported.title" = "Не поддерживается";
-"landing.alert.create-new-account.not-supported.message" = "Нельзя создать персональный аккаунт во внутреннем бэкэнде с поддержкой прокси.";
+"landing.alert.create-new-account.not-supported.message" = "Нельзя создать личный аккаунт во внутреннем бэкэнде с поддержкой прокси.";
 "landing.alert.sso.not-supported.title" = "Не поддерживается";
 "landing.alert.sso.not-supported.message" = "Нельзя авторизоваться через SSO во внутреннем бэкэнде с поддержкой прокси.";
 "credentials.general-error.alert.title" = "Неверная информация";
@@ -1989,3 +2059,7 @@
 "drawing.colors.pink" = "розовый";
 "drawing.colors.chocolate" = "шоколад";
 "drawing.colors.gray" = "серый";
+
+// MARK: - Time
+
+"time.just_now" = "Только что";

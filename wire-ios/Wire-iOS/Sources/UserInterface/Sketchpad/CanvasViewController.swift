@@ -194,12 +194,14 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     private func createConstraints() {
         guard let colorPicker = colorPickerController.view else { return }
 
-        [canvas,
-         colorPicker,
-         toolbar,
-         separatorLine,
-         hintImageView,
-         hintLabel].prepareForLayout()
+        [
+            canvas,
+            colorPicker,
+            toolbar,
+            separatorLine,
+            hintImageView,
+            hintLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             colorPicker.topAnchor.constraint(equalTo: view.topAnchor),
@@ -300,7 +302,7 @@ extension CanvasViewController: CanvasDelegate {
 
 // MARK: - EmojiKeyboardViewControllerDelegate
 
-extension CanvasViewController: EmojiKeyboardViewControllerDelegate {
+extension CanvasViewController: EmojiPickerViewControllerDelegate {
 
     func showEmojiKeyboard(animated: Bool) {
         guard !isEmojiKeyboardInTransition, let emojiKeyboardView = emojiKeyboardViewController.view else { return }
@@ -368,15 +370,13 @@ extension CanvasViewController: EmojiKeyboardViewControllerDelegate {
         }
     }
 
-    func emojiKeyboardViewControllerDeleteTapped(_ viewController: EmojiKeyboardViewController) {
+    func emojiPickerDeleteTapped() {}
 
-    }
-
-    func emojiKeyboardViewController(_ viewController: EmojiKeyboardViewController, didSelectEmoji emoji: String) {
+    func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
 
         let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 82)]
 
-        if let image = emoji.image(renderedWithAttributes: attributes)?.imageWithAlphaTrimmed {
+        if let image = emoji.value.image(renderedWithAttributes: attributes)?.imageWithAlphaTrimmed {
             canvas.insert(image: image, at: CGPoint(x: canvas.center.x - image.size.width / 2, y: canvas.center.y - image.size.height / 2))
         }
 

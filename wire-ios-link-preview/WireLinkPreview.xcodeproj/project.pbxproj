@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -57,7 +57,7 @@
 		BF4F2B4A1E925AE8000B22D1 /* OpenGraphMockDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B471E925AE8000B22D1 /* OpenGraphMockDataProvider.swift */; };
 		BF4F2B4B1E925AE8000B22D1 /* URLMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B481E925AE8000B22D1 /* URLMocks.swift */; };
 		BF4F2B561E925AFE000B22D1 /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4C1E925AFE000B22D1 /* ImageDownloaderTests.swift */; };
-		BF4F2B571E925AFE000B22D1 /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4D1E925AFE000B22D1 /* IntegrationTests.swift */; };
+		BF4F2B571E925AFE000B22D1 /* E2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4D1E925AFE000B22D1 /* E2ETests.swift */; };
 		BF4F2B581E925AFE000B22D1 /* LinkPreviewDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4E1E925AFE000B22D1 /* LinkPreviewDetectorTests.swift */; };
 		BF4F2B591E925AFE000B22D1 /* MetaStreamContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4F1E925AFE000B22D1 /* MetaStreamContainerTests.swift */; };
 		BF4F2B5A1E925AFE000B22D1 /* OpenGraphDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B501E925AFE000B22D1 /* OpenGraphDataTests.swift */; };
@@ -164,7 +164,7 @@
 		BF4F2B471E925AE8000B22D1 /* OpenGraphMockDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OpenGraphMockDataProvider.swift; path = WireLinkPreviewTests/OpenGraphMockDataProvider.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B481E925AE8000B22D1 /* URLMocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = URLMocks.swift; path = WireLinkPreviewTests/URLMocks.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B4C1E925AFE000B22D1 /* ImageDownloaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageDownloaderTests.swift; path = WireLinkPreviewTests/ImageDownloaderTests.swift; sourceTree = SOURCE_ROOT; };
-		BF4F2B4D1E925AFE000B22D1 /* IntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IntegrationTests.swift; path = WireLinkPreviewTests/IntegrationTests.swift; sourceTree = SOURCE_ROOT; };
+		BF4F2B4D1E925AFE000B22D1 /* E2ETests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = E2ETests.swift; path = WireLinkPreviewTests/E2ETests.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B4E1E925AFE000B22D1 /* LinkPreviewDetectorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LinkPreviewDetectorTests.swift; path = WireLinkPreviewTests/LinkPreviewDetectorTests.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B4F1E925AFE000B22D1 /* MetaStreamContainerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MetaStreamContainerTests.swift; path = WireLinkPreviewTests/MetaStreamContainerTests.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B501E925AFE000B22D1 /* OpenGraphDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OpenGraphDataTests.swift; path = WireLinkPreviewTests/OpenGraphDataTests.swift; sourceTree = SOURCE_ROOT; };
@@ -316,7 +316,11 @@
 				BFF0578B1D25434D004A2C29 /* Products */,
 				BF3DD26D1D25445600D51DED /* Resources */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		BFF0578B1D25434D004A2C29 /* Products */ = {
 			isa = PBXGroup;
@@ -356,7 +360,7 @@
 			isa = PBXGroup;
 			children = (
 				BF4F2B4C1E925AFE000B22D1 /* ImageDownloaderTests.swift */,
-				BF4F2B4D1E925AFE000B22D1 /* IntegrationTests.swift */,
+				BF4F2B4D1E925AFE000B22D1 /* E2ETests.swift */,
 				BF4F2B4E1E925AFE000B22D1 /* LinkPreviewDetectorTests.swift */,
 				5E9EA4C7224257C100D401B2 /* NSDataDetectorLinksTests.swift */,
 				5E9EA4C922425C4E00D401B2 /* NSDataDetectorAttachmentTests.swift */,
@@ -541,12 +545,14 @@
 /* Begin PBXShellScriptBuildPhase section */
 		E9EBFEE1276218B700F0DEBC /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/../scripts/run-swiftlint.sh",
 			);
 			name = "Run SwiftLint";
 			outputFileListPaths = (
@@ -555,7 +561,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n \nif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "../scripts/run-swiftlint.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -596,7 +602,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E9EA4CE2242785900D401B2 /* LinkAttachmentDetectorTests.swift in Sources */,
-				BF4F2B571E925AFE000B22D1 /* IntegrationTests.swift in Sources */,
+				BF4F2B571E925AFE000B22D1 /* E2ETests.swift in Sources */,
 				BF4F2B5B1E925AFE000B22D1 /* OpenGraphScannerTests.swift in Sources */,
 				5E9EA4CC2242732F00D401B2 /* LinkAttachmentTypesTests.swift in Sources */,
 				BF4F2B5E1E925AFE000B22D1 /* StringXMLEntityParserTests.swift in Sources */,
@@ -703,7 +709,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = WireLinkPreviewTestsHost/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -769,7 +774,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = WireLinkPreviewTestsHost/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

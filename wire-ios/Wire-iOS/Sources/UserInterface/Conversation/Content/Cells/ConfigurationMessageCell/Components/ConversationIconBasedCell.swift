@@ -86,7 +86,7 @@ class ConversationIconBasedCell: UIView {
 
         textLabel.linkTextAttributes = [
             NSAttributedString.Key.underlineStyle: NSUnderlineStyle().rawValue as NSNumber,
-            NSAttributedString.Key.foregroundColor: SelfUser.provider?.selfUser.accentColor ?? UIColor.accent()
+            NSAttributedString.Key.foregroundColor: SelfUser.provider?.providedSelfUser.accentColor ?? UIColor.accent()
         ]
 
         lineView.backgroundColor = SemanticColors.View.backgroundSeparatorConversationView
@@ -167,6 +167,8 @@ class ConversationIconBasedCell: UIView {
 extension ConversationIconBasedCell: UITextViewDelegate {
     public func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         // Fixes Swift 5.0 release build child class overridden method not called bug
+
+        UIApplication.shared.open(url)
         return false
     }
 }

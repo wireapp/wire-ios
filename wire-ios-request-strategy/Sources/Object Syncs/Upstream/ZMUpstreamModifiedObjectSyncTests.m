@@ -367,7 +367,7 @@ static NSString *foo = @"foo";
 - (void)testThatItGetsTheNextObjectToSynchronizeFromTheUpdateObjectsSet_canCreateRequestImplemented_YES
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     // expect
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:nil] anyObjectToSynchronize];
@@ -379,7 +379,7 @@ static NSString *foo = @"foo";
 - (void)testThatItGetsTheNextObjectToSynchronizeFromTheUpdateObjectsSet_canCreateRequestImplemented_NO
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(NO)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(NO)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
     
     // expect
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:nil] anyObjectToSynchronize];
@@ -391,7 +391,7 @@ static NSString *foo = @"foo";
 - (void)testThatItAsksTheTranscoderToCreateARequestForTheNextObjectToSynchronizeAndThatItReturnsThatRequest
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = [NSSet setWithObject:@"field"];
@@ -416,7 +416,7 @@ static NSString *foo = @"foo";
 - (void)testThatItCallsDidStartSynchronizingObjectWhenTheTranscoderReturnsANonNilRequest
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = entity.keysTrackedForLocalModifications;
@@ -442,7 +442,7 @@ static NSString *foo = @"foo";
 - (void)testThatItCallsDidFinishSynchronizingObjectWithTokenWhenTheRequestIsCompleted
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = entity.keysTrackedForLocalModifications;
@@ -471,7 +471,7 @@ static NSString *foo = @"foo";
 - (void)testThatItCallsDidFailToSynchronizingTokenWhenTheRequestFails
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = entity.keysTrackedForLocalModifications;
@@ -500,7 +500,7 @@ static NSString *foo = @"foo";
 - (void)testThatItCallsDidNotFinishToSynchronizeTokenWhenTheRequestFailsWithATemporaryError
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = entity.keysTrackedForLocalModifications;
@@ -526,7 +526,7 @@ static NSString *foo = @"foo";
 - (void)testThatItForwardsKeysToParseAfterSyncingTokenToTranscoderAfterTheRequestIsCompleted
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = entity.keysTrackedForLocalModifications;
@@ -558,7 +558,7 @@ static NSString *foo = @"foo";
 - (void)testThatItCalls_DidSynchronizeToken_IfTheTranscoderReturns_NO_For_UpdateUpdatedObjects
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = entity.keysTrackedForLocalModifications;
@@ -590,7 +590,7 @@ static NSString *foo = @"foo";
 - (void)testThatItCalls_DidSynchronizeToken_IfTheTranscoderReturns_YES_For_UpdateUpdatedObjects
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = entity.keysTrackedForLocalModifications;
@@ -625,7 +625,7 @@ static NSString *foo = @"foo";
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:entity forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:entity forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
     ZMUpstreamRequest *fakeRequest = [self dummyRequestWithKeys:keysToSync];
@@ -710,7 +710,7 @@ static NSString *foo = @"foo";
 - (void)testThatItAsksTheTranscoderForObjectsToRefetchOnAFailedRequest
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     MockEntity2 *entity2 = [MockEntity2 insertNewObjectInManagedObjectContext:self.testMOC];
@@ -745,7 +745,7 @@ static NSString *foo = @"foo";
 - (void)testThatWhenTheRequestExpiresItNotifiesTheTranscoder
 {
     // given
-    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     NSSet *keysToSync = entity.keysTrackedForLocalModifications;

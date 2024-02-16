@@ -60,7 +60,7 @@ class LaunchImageViewController: UIViewController {
         loadingScreenLabel.font = .systemFont(ofSize: 12)
         loadingScreenLabel.textColor = .white
 
-        loadingScreenLabel.text = "migration.please_wait_message".localized.uppercased(with: NSLocale.current)
+        loadingScreenLabel.text = L10n.Localizable.Migration.pleaseWaitMessage.localizedUppercase
         loadingScreenLabel.isHidden = true
 
         view.addSubview(loadingScreenLabel)
@@ -74,7 +74,9 @@ class LaunchImageViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [contentView, loadingScreenLabel, activityIndicator].prepareForLayout()
+        [contentView, loadingScreenLabel, activityIndicator].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         var constraints: [NSLayoutConstraint] = []
 

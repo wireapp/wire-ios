@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ final class ProfileViewControllerViewModel: NSObject {
     let viewer: UserType
     let context: ProfileViewControllerContext
     let classificationProvider: ClassificationProviding?
+    let userSession: UserSession
 
     weak var delegate: ProfileViewControllerDelegate? {
         didSet {
@@ -54,19 +55,18 @@ final class ProfileViewControllerViewModel: NSObject {
          conversation: ZMConversation?,
          viewer: UserType,
          context: ProfileViewControllerContext,
-         classificationProvider: ClassificationProviding? = ZMUserSession.shared()
+         classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
+         userSession: UserSession
     ) {
         self.user = user
         self.conversation = conversation
         self.viewer = viewer
         self.context = context
         self.classificationProvider = classificationProvider
-
+        self.userSession = userSession
         super.init()
 
-        if let userSession = ZMUserSession.shared() {
-            observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
-        }
+        observerToken = userSession.addUserObserver(self, for: user)
     }
 
     var classification: SecurityClassification {
@@ -129,16 +129,23 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     func openOneToOneConversation() {
-        var conversation: ZMConversation?
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
 
-        ZMUserSession.shared()?.enqueue({
-            conversation = self.user.oneToOneConversation
-        }, completionHandler: {
-            guard let conversation = conversation else { return }
+        if let conversation = user.oneToOneConversation {
+            transition(to: conversation)
+        } else {
+            userSession.createTeamOneOnOne(with: user) { [weak self] in
+                switch $0 {
+                case .success(let conversation):
+                    self?.transition(to: conversation)
 
-            self.delegate?.profileViewController(self.viewModelDelegate as? ProfileViewController,
-                                                 wantsToNavigateTo: conversation)
-        })
+                case .failure(let error):
+                    WireLogger.conversation.error("failed to create team one on one from profile view: \(error)")
+                }
+            }
+        }
     }
 
     // MARK: - Action Handlers
@@ -162,7 +169,7 @@ final class ProfileViewControllerViewModel: NSObject {
     // MARK: - Notifications
 
     func updateMute(enableNotifications: Bool) {
-        ZMUserSession.shared()?.enqueue {
+        userSession.enqueue {
             self.conversation?.mutedMessageTypes = enableNotifications ? .none : .all
             // update the footer view to display the correct mute/unmute button
             self.viewModelDelegate?.updateFooterViews()
@@ -171,7 +178,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func handleNotificationResult(_ result: NotificationResult) {
         if let mutedMessageTypes = result.mutedMessageTypes {
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 self.conversation?.mutedMessageTypes = mutedMessageTypes
             }
         }
@@ -181,10 +188,15 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func handleDeleteResult(_ result: ClearContentResult) {
         guard case .delete(leave: let leave) = result else { return }
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
         transitionToListAndEnqueue {
             self.conversation?.clearMessageHistory()
             if leave {
-                self.conversation?.removeOrShowError(participant: SelfUser.current)
+                self.conversation?.removeOrShowError(participant: user)
             }
         }
     }
@@ -199,13 +211,21 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     func enqueueChanges(_ block: @escaping () -> Void) {
-        ZMUserSession.shared()?.enqueue(block)
+        userSession.enqueue(block)
+    }
+
+    private func transition(to conversation: ZMConversation) {
+        delegate?.profileViewController(
+            viewModelDelegate as? ProfileViewController,
+            wantsToNavigateTo: conversation)
     }
 
     // MARK: - Factories
 
     func makeUserNameDetailViewModel() -> UserNameDetailViewModel {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: add addressBookEntry to ZMUser
+        // swiftlint:enable todo_requires_jira_link
         return UserNameDetailViewModel(user: user, fallbackName: user.name ?? "", addressBookName: (user as? ZMUser)?.addressBookEntry?.cachedName)
     }
 
@@ -226,7 +246,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func acceptConnectionRequest() {
         user.accept { [weak self] error in
-            if let error = error as? ConnectToUserError {
+            if let error = error as? LocalizedError {
                 self?.viewModelDelegate?.presentError(error)
             } else {
                 self?.user.refreshData()
@@ -247,7 +267,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
 }
 
-extension ProfileViewControllerViewModel: ZMUserObserver {
+extension ProfileViewControllerViewModel: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
         if note.trustLevelChanged {
             viewModelDelegate?.updateShowVerifiedShield()

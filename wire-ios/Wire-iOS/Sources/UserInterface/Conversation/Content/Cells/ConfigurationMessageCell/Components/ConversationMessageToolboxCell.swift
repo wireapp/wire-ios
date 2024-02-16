@@ -18,18 +18,17 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
 
     struct Configuration: Equatable {
         let message: ZMConversationMessage
-        let selected: Bool
         let deliveryState: ZMDeliveryState
 
         static func == (lhs: ConversationMessageToolboxCell.Configuration, rhs: ConversationMessageToolboxCell.Configuration) -> Bool {
             return lhs.deliveryState == rhs.deliveryState &&
-                   lhs.message == rhs.message &&
-                   lhs.selected == rhs.selected
+            lhs.message == rhs.message
         }
     }
 
@@ -37,8 +36,8 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    var isSelected: Bool = false
     var observerToken: Any?
+    var isSelected: Bool = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -70,20 +69,17 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        toolboxView.configureForMessage(object.message, forceShowTimestamp: object.selected, animated: animated)
+        toolboxView.configureForMessage(object.message, animated: animated)
     }
 
     func messageToolboxDidRequestOpeningDetails(_ messageToolboxView: MessageToolboxView, preferredDisplayMode: MessageDetailsDisplayMode) {
-        let detailsViewController = MessageDetailsViewController(message: message!, preferredDisplayMode: preferredDisplayMode)
-        delegate?.conversationMessageWantsToOpenMessageDetails(self, messageDetailsViewController: detailsViewController)
+        guard let message, let delegate else { return }
+        delegate.conversationMessageWantsToOpenMessageDetails(self, for: message, preferredDisplayMode: preferredDisplayMode)
+
     }
 
     private func perform(action: MessageAction, sender: UIView? = nil) {
         delegate?.perform(action: action, for: message, view: selectionView ?? sender ?? self)
-    }
-
-    func messageToolboxViewDidRequestLike(_ messageToolboxView: MessageToolboxView) {
-        perform(action: .like)
     }
 
     func messageToolboxViewDidSelectDelete(_ sender: UIView?) {
@@ -113,9 +109,9 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     let accessibilityIdentifier: String? = "MessageToolbox"
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage, selected: Bool) {
+    init(message: ZMConversationMessage) {
         self.message = message
-        self.configuration = View.Configuration(message: message, selected: selected, deliveryState: message.deliveryState)
+        self.configuration = View.Configuration(message: message, deliveryState: message.deliveryState)
     }
 
 }

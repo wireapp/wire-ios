@@ -54,7 +54,7 @@ final class SearchServicesSectionController: SearchSectionController {
     }
 
     override var sectionTitle: String {
-        return "peoplepicker.header.services".localized
+        return L10n.Localizable.Peoplepicker.Header.services
     }
 
     func service(for indexPath: IndexPath) -> ServiceUser {
@@ -76,8 +76,11 @@ final class SearchServicesSectionController: SearchSectionController {
             let service = self.service(for: indexPath)
 
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
-
-            cell.configure(with: service, selfUser: ZMUser.selfUser())
+            if let selfUser = ZMUser.selfUser() {
+                cell.configure(with: service, selfUser: selfUser)
+            } else {
+                assertionFailure("ZMUser.selfUser() is nil")
+            }
             cell.accessoryIconView.isHidden = false
             cell.showSeparator = (services.count - 1) != indexPath.row
 

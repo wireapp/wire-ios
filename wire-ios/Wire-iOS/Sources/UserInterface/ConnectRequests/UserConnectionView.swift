@@ -118,10 +118,12 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private func createConstraints() {
-        [userImageView,
-         labelContainer,
-         guestIndicator,
-         guestWarningView].prepareForLayout()
+        [
+            userImageView,
+            labelContainer,
+            guestIndicator,
+            guestWarningView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             labelContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -145,8 +147,12 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private func updateGuestAccountViews() {
-        let viewer = SelfUser.current
-        let isGuest = !viewer.isTeamMember || !viewer.canAccessCompanyInformation(of: user)
-        guestIndicator.isHidden = !isGuest
+        if let viewer = SelfUser.provider?.providedSelfUser {
+            let isGuest = !viewer.isTeamMember || !viewer.canAccessCompanyInformation(of: user)
+            guestIndicator.isHidden = !isGuest
+        } else {
+            // show guest indicator
+            guestIndicator.isHidden = false
+        }
     }
 }

@@ -33,7 +33,8 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersLastReadMessageTypeAsKnownMessage() {
-        let lastReadMessageType = GenericMessage(content: LastRead(conversationID: UUID.create(), lastReadTimestamp: Date()))
+        let conversationID = QualifiedID(uuid: UUID.create(), domain: "")
+        let lastReadMessageType = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: Date()))
         XCTAssertTrue(lastReadMessageType.knownMessage)
     }
 
@@ -56,7 +57,7 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersCallingMessageTypeAsKnownMessage() {
-        let callingMessageType = GenericMessage(content: Calling(content: "Calling"))
+        let callingMessageType = GenericMessage(content: Calling(content: "Calling", conversationId: .random()))
         XCTAssertTrue(callingMessageType.knownMessage)
     }
 
@@ -81,7 +82,7 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersCreatingReactionMessageTypeAsKnownMessage() {
-        let creatingReactionMessageType = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "test", messageID: UUID.create()))
+        let creatingReactionMessageType = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["❤️"], messageID: UUID.create()))
         XCTAssertTrue(creatingReactionMessageType.knownMessage)
     }
 

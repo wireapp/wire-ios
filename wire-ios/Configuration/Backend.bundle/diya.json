@@ -1,0 +1,11 @@
+{
+    "title" : "Diya Federation Environment",
+    "endpoints" : {
+        "backendURL" : "https://nginz-https.diya.wire.link",
+        "backendWSURL" : "https://nginz-ssl.diya.wire.link",
+        "blackListURL" : "https://clientblacklist.wire.com/staging",
+        "teamsURL" : "https://teams.diya.wire.link",
+        "accountsURL" : "https://account.diya.wire.link",
+        "websiteURL" : "https://wire.com"
+    }
+}

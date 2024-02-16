@@ -106,7 +106,7 @@ final class URLActionRouterTests: XCTestCase {
     }
 }
 
-class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
+final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func updateActiveCallPresentationState() { }
 
@@ -119,7 +119,7 @@ class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
 
 }
 
-class MockURLActionRouterDelegate: URLActionRouterDelegate {
+final class MockURLActionRouterDelegate: URLActionRouterDelegate {
 
     var didCallWillShowCompanyLoginError: Bool = false
     func urlActionRouterWillShowCompanyLoginError() {
@@ -133,7 +133,7 @@ class MockURLActionRouterDelegate: URLActionRouterDelegate {
 
 }
 
-class TestableURLActionRouter: URLActionRouter {
+final class TestableURLActionRouter: URLActionRouter {
 
     var presentedAlert: UIAlertController?
     override func internalPresentAlert(_ alert: UIAlertController) {

@@ -50,6 +50,7 @@ static dispatch_queue_t isolationQueue(void)
 
 @property (nonatomic, readonly) NSString *serverName;
 @property (nonatomic, readonly) NSArray<NSHTTPCookie *> *authenticationCookies;
+@property (nonatomic, readonly) BOOL useCache;
 
 @end
 
@@ -70,9 +71,9 @@ static dispatch_queue_t isolationQueue(void)
 
 #pragma mark - Creation
 
-+ (instancetype)storageForServerName:(NSString *)serverName userIdentifier:(NSUUID *)userIdentifier
++ (instancetype)storageForServerName:(NSString *)serverName userIdentifier:(NSUUID *)userIdentifier useCache:(BOOL)useCache
 {
-    return [[self alloc] initWithServerName:serverName userIdentifier:userIdentifier];
+    return [[self alloc] initWithServerName:serverName userIdentifier:userIdentifier useCache:useCache];
 }
 
 - (instancetype)init
@@ -80,12 +81,13 @@ static dispatch_queue_t isolationQueue(void)
     return nil;
 }
 
-- (instancetype)initWithServerName:(NSString *)serverName userIdentifier:(NSUUID *)userIdentifier
+- (instancetype)initWithServerName:(NSString *)serverName userIdentifier:(NSUUID *)userIdentifier useCache:(BOOL)useCache
 {
     self = [super init];
     if (self) {
         _serverName = [serverName copy];
         _userIdentifier = [userIdentifier copy];
+        _useCache = useCache;
     }
     return self;
 }
@@ -95,6 +97,11 @@ static dispatch_queue_t isolationQueue(void)
 + (void)setDoNotPersistToKeychain:(BOOL)disabled;
 {
     KeychainDisabled = disabled;
+}
+
+- (BOOL)isCacheEmpty
+{
+    return [NonPersistedPassword count] == 0;
 }
 
 #pragma mark - Public API
@@ -270,6 +277,10 @@ static dispatch_queue_t isolationQueue(void)
 
 - (void)addNonPersistedPassword:(NSData *)password
 {
+    if (!_useCache) {
+        return;
+    }
+
     if (NonPersistedPassword == nil) {
         NonPersistedPassword = [NSMutableDictionary dictionary];
     }
@@ -439,8 +450,8 @@ static dispatch_queue_t isolationQueue(void)
 
 - (ZMPersistentCookieStorage *)createStoreMigratingLegacyStoreIfNeeded
 {
-    ZMPersistentCookieStorage *oldStorage = [ZMPersistentCookieStorage storageForServerName:self.serverName userIdentifier:(NSUUID *_Nonnull)nil];
-    ZMPersistentCookieStorage *newStorage = [ZMPersistentCookieStorage storageForServerName:self.serverName userIdentifier:self.userIdentifier];
+    ZMPersistentCookieStorage *oldStorage = [ZMPersistentCookieStorage storageForServerName:self.serverName userIdentifier:(NSUUID *_Nonnull)nil useCache:YES];
+    ZMPersistentCookieStorage *newStorage = [ZMPersistentCookieStorage storageForServerName:self.serverName userIdentifier:self.userIdentifier useCache:YES];
     NSData *cookieData = oldStorage.authenticationCookieData;
 
     if (nil != cookieData) {

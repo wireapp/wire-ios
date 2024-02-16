@@ -23,7 +23,7 @@ import WireCommonComponents
 
 // MARK: - ShowAllParticipantsCell
 
-class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
+final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 
     // MARK: - Properties
 
@@ -36,6 +36,7 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     var contentStackView: UIStackView!
 
     var sectionName: String?
+    var obfuscatedSectionName: String?
     var cellIdentifier: String?
 
     // MARK: - Init and overrides

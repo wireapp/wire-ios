@@ -21,7 +21,7 @@ import WireSystem
 import WireDataModel
 import WireSyncEngine
 
-final public class AutomationEmailCredentials: NSObject {
+public final class AutomationEmailCredentials: NSObject {
     public var email: String
     public var password: String
     init(email: String, password: String) {
@@ -52,7 +52,9 @@ public final class AutomationHelper: NSObject {
     }
     /// Whether analytics should be used
     public var useAnalytics: Bool {
+    // swiftlint:disable todo_requires_jira_link
     // TODO: get it from xcconfig?
+    // swiftlint:enable todo_requires_jira_link
     // return UserDefaults.standard.bool(forKey: "UseAnalytics")
         return true
     }
@@ -86,8 +88,9 @@ public final class AutomationHelper: NSObject {
     /// Whether the calling overlay should disappear automatically.
     public let keepCallingOverlayVisible: Bool
 
-    public var preferredAPIversion: APIVersion?
+    public var preferredAPIVersion: APIVersion?
     public var allowMLSGroupCreation: Bool?
+    public var enableMLSSupport: Bool?
 
     override init() {
         let url = URL(string: NSTemporaryDirectory())?.appendingPathComponent(fileArgumentsName)
@@ -122,14 +125,14 @@ public final class AutomationHelper: NSObject {
         self.delayInAddressBookRemoteSearch = AutomationHelper.addressBookSearchDelay(arguments)
 
         if
-            let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIversion.rawValue),
+            let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
             let apiVersion = Int32(value)
         {
-            WireLogger.environment.info("automation helper will set preferred api version to \(apiVersion)")
-            BackendInfo.preferredAPIVersion = APIVersion(rawValue: apiVersion)
+            preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 
         allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
+        enableMLSSupport = arguments.hasFlag(AutomationKey.enableMLSSupport.rawValue)
 
         super.init()
     }
@@ -150,9 +153,10 @@ public final class AutomationHelper: NSObject {
         case disableInteractiveKeyboardDismissal = "disable-interactive-keyboard-dismissal"
         case useAppCenter = "use-app-center"
         case keepCallingOverlayVisible = "keep-calling-overlay-visible"
-        case preferredAPIversion = "preferred-api-version"
+        case preferredAPIVersion = "preferred-api-version"
         case allowMLSGroupCreation = "allow-mls-group-creation"
         case deprecatedCallingUI = "deprecated-calling-ui"
+        case enableMLSSupport = "enable-mls-support"
     }
     /// Returns the login email and password credentials if set in the given arguments
     private static func credentials(_ arguments: ArgumentsType) -> AutomationEmailCredentials? {

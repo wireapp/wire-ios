@@ -21,25 +21,28 @@ import XCTest
 import SnapshotTesting
 import WireDataModel
 
-final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
+final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     var sut: ConnectRequestsViewController!
     var mockConnectionRequest: SwiftMockConversation!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
 
-        UIColor.setAccentOverride(.vividRed)
-
-        sut = ConnectRequestsViewController()
-
-        sut.loadViewIfNeeded()
-
-        mockConnectionRequest = SwiftMockConversation()
         let mockUser = MockUserType.createSelfUser(name: "Bruno")
         mockUser.accentColorValue = .brightOrange
         mockUser.handle = "bruno"
+
+        mockConnectionRequest = SwiftMockConversation()
         mockConnectionRequest.connectedUserType = mockUser
+
+        userSession = UserSessionMock(mockUser: mockUser)
+
+        UIColor.setAccentOverride(.vividRed)
+        sut = ConnectRequestsViewController(userSession: userSession)
+
+        sut.loadViewIfNeeded()
 
         sut.connectionRequests = [mockConnectionRequest]
         sut.reload()
@@ -49,6 +52,7 @@ final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        userSession = nil
         mockConnectionRequest = nil
 
         super.tearDown()

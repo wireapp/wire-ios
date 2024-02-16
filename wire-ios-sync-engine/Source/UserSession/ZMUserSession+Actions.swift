@@ -26,7 +26,7 @@ import Foundation
 
         guard let senderID = userInfo.senderID,
               let sender = ZMUser.fetch(with: senderID, in: managedObjectContext),
-              let conversation = sender.connection?.conversation
+              let conversation = sender.oneOnOneConversation
         else { return }
 
         sender.accept(completion: { [weak self] _ in
@@ -114,7 +114,7 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory?.operationStatus.startBackgroundTask { [weak self] (result) in
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
             guard let `self` = self else { return }
 
             self.messageReplyObserver = nil
@@ -194,7 +194,7 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory?.operationStatus.startBackgroundTask { [weak self] (result) in
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
             guard let `self` =  self else { return }
 
             self.likeMesssageObserver = nil
@@ -206,7 +206,7 @@ import Foundation
         }
 
         enqueue {
-            guard let reaction = ZMMessage.addReaction(.like, toMessage: message) else { return }
+            guard let reaction = ZMMessage.addReaction("❤️", to: message) else { return }
             self.appendReadReceiptIfNeeded(with: userInfo, in: conversation)
             self.likeMesssageObserver = ManagedObjectContextChangeObserver(context: self.managedObjectContext, callback: { [weak self] in
                 self?.updateBackgroundTask(with: reaction)
@@ -216,9 +216,9 @@ import Foundation
 
     func updateBackgroundTask(with message: ZMConversationMessage) {
         if message.isSent {
-            applicationStatusDirectory?.operationStatus.finishBackgroundTask(withTaskResult: .finished)
+            applicationStatusDirectory.operationStatus.finishBackgroundTask(withTaskResult: .finished)
         } else if message.deliveryState == .failedToSend {
-            applicationStatusDirectory?.operationStatus.finishBackgroundTask(withTaskResult: .failed)
+            applicationStatusDirectory.operationStatus.finishBackgroundTask(withTaskResult: .failed)
         }
     }
 

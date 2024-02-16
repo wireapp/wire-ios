@@ -17,15 +17,18 @@
 //
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Share Extension
+// General
 
 
 
 "general.ok" = "OK";
 
+// Conversation Selection
 "share_extension.conversation_selection.account" = "Rekening:";
 "share_extension.conversation_selection.title" = "Percakapan:";
-"share_extension.send_button.title" = "Kirim";
 "share_extension.conversation_selection.empty.value" = "Memilih";
+
+"share_extension.send_button.title" = "Kirim";
 "share_extension.input.placeholder" = "Mengetik pesan";
 "share_extension.sending_progress.title" = "Mengirim…";
 "share_extension.preparing.title" = "Mempersiapkan...";
@@ -42,24 +45,35 @@
 "share_extension.unlock.alert.message" = "Open Wire to create a passcode";
 "share_extension.unlock.reveal_passcode" = "Reveal passcode";
 
+// Timeout
 "share_extension.timeout.title" = "Sambungan telah habis waktunya.";
 "share_extension.timeout.message" = "Periksa koneksi internet Anda dan coba lagi. Lampiran tersimpan dalam percakapan .";
 
-"content.file.too_big" = "Anda dapat mengirim file ke %@";
-"content.file.unsupported_attachment" = "Unsupported attachment";
+// Content
+"share_extension.content.file.too_big" = "Anda dapat mengirim file ke %@";
+"share_extension.content.file.unsupported_attachment" = "Unsupported attachment";
+
 "share_extension.error.conversation_does_not_exist.message" = "Please select a conversation for sharing";
 
 "share_extension.privacy_security.lock_app.description" = "Buka Kawat";
 "share_extension.logged_out.title" = "You've been logged out from this account.";
 "share_extension.logged_out.message" = "Please choose another account.";
 
-"conversation.displayname.emptygroup" = "Percakapan kelompok kosong";
-"meta.degraded.degradation_reason_message.singular" = "%@ mulai menggunakan perangkat baru.";
-"meta.degraded.degradation_reason_message.plural" = "%@ mulai menggunakan perangkat baru.";
-"meta.degraded.dialog_message" = "Apakah Anda tetap ingin mengirim pesan Anda?";
-"meta.degraded.cancel_sending_button" = "Jangan dikirim";
-"meta.degraded.send_anyway_button" = "Kirim saja";
+// Conversation Degraded (security level lowered)
+"share_extension.conversation.displayname.emptygroup" = "Percakapan kelompok kosong";
+"share_extension.meta.degraded.degradation_reason_message.singular" = "%@ mulai menggunakan perangkat baru.";
+"share_extension.meta.degraded.degradation_reason_message.plural" = "%@ mulai menggunakan perangkat baru.";
+"share_extension.meta.degraded.dialog_message" = "Apakah Anda masih ingin mengirim pesan Anda?";
+"share_extension.meta.degraded.cancel_sending_button" = "Do not send";
+"share_extension.meta.degraded.send_anyway_button" = "Send anyway";
+
+"share_extension.meta.legalhold.send_alert_title" = "The conversation is now subject to legal hold.";
 
 //Feature flag - File sharing
-"feature.flag.file_sharing.alert.title" = "File sharing restrictions";
-"feature.flag.file_sharing.alert.message" = "You can not share this file because this feature is disabled.";
+"share_extension.feature.flag.file_sharing.alert.title" = "File sharing restrictions";
+"share_extension.feature.flag.file_sharing.alert.message" = "You can not share this file because this feature is disabled.";
+
+// Share Extension - Voice Over
+"share_extension.voiceover.conversation_under_legal_hold" = "Under legal hold.";
+"share_extension.voiceover.conversation_secure" = "All clients verified.";
+"share_extension.voiceover.conversation_secure_with_ignored" = "Not all clients verified.";

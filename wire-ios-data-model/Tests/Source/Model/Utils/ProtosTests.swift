@@ -20,11 +20,11 @@ import XCTest
 import WireProtos
 
 @testable import WireDataModel
-// swiftlint:disable line_length
+
 class ProtosTests: XCTestCase {
 
     func testTextMessageEncodingPerformance() {
-        measure { () -> Void in
+        measure {
             for _ in 0..<1000 {
                 let text = Text(content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
                 let message = GenericMessage(content: text, nonce: UUID.create())
@@ -37,7 +37,7 @@ class ProtosTests: XCTestCase {
         let text = Text(content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
         var message = GenericMessage(content: text, nonce: UUID.create())
 
-        measure { () -> Void in
+        measure {
             for _ in 0..<1000 {
                 try? message.merge(serializedData: message.serializedData())
             }
@@ -117,7 +117,7 @@ class ProtosTests: XCTestCase {
     }
 
     func testThatItCanCreateLastRead() {
-        let conversationID = UUID.create()
+        let conversationID = QualifiedID(uuid: UUID.create(), domain: "")
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = UUID.create()
         let message = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: timeStamp as Date), nonce: nonce)
@@ -125,7 +125,7 @@ class ProtosTests: XCTestCase {
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasLastRead)
         XCTAssertEqual(message.messageID, nonce.transportString())
-        XCTAssertEqual(message.lastRead.conversationID, conversationID.transportString())
+        XCTAssertEqual(message.lastRead.conversationID, conversationID.uuid.transportString())
         XCTAssertEqual(message.lastRead.lastReadTimestamp, Int64(timeStamp.timeIntervalSince1970 * 1000))
         let storedDate = NSDate(timeIntervalSince1970: Double(message.lastRead.lastReadTimestamp/1000))
         XCTAssertEqual(storedDate, timeStamp)

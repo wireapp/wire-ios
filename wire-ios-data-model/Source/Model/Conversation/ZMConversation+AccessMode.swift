@@ -134,6 +134,24 @@ public enum ConversationAccessRoleV2: String {
             return []
         }
     }
+
+    public static func from(
+        allowGuests: Bool,
+        allowServices: Bool
+    ) -> Set<ConversationAccessRoleV2> {
+        var roles: Set<ConversationAccessRoleV2> = [.teamMember]
+
+        if allowGuests {
+            roles.insert(.guest)
+            roles.insert(.nonTeamMember)
+        }
+
+        if allowServices {
+            roles.insert(.service)
+        }
+
+        return roles
+    }
 }
 
 public extension ConversationAccessRole {

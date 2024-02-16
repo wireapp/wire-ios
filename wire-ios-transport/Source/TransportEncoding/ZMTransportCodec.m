@@ -24,10 +24,10 @@
 
 + (id<ZMTransportData>)interpretResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError *)error;
 {
-    if ((data == nil) || (error != nil) || response.statusCode >= 500) {
+    if (data == nil) {
         return nil;
     }
-    
+
     // checks that the type is the expected one
     NSString *contentType = [[response allHeaderFields] objectForKey:@"Content-Type"];
     if(!contentType) {

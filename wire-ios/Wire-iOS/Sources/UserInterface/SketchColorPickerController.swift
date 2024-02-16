@@ -43,11 +43,14 @@ final class SketchColorPickerController: UIViewController {
             resetColorToBrushWidthMapper()
 
             colorsCollectionView.reloadData()
-            colorsCollectionView.selectItem(
-                at: IndexPath(row: selectedColorIndex, section: 0),
-                animated: false,
-                scrollPosition: []
-            )
+
+            if canSelectColor(atIndex: selectedColorIndex) {
+                colorsCollectionView.selectItem(
+                    at: IndexPath(row: selectedColorIndex, section: 0),
+                    animated: false,
+                    scrollPosition: []
+                )
+            }
         }
     }
 
@@ -63,6 +66,8 @@ final class SketchColorPickerController: UIViewController {
 
     var selectedColorIndex: Int = 0 {
         didSet {
+            guard canSelectColor(atIndex: selectedColorIndex) else { return }
+
             colorsCollectionView.selectItem(
                 at: IndexPath(row: selectedColorIndex, section: 0),
                 animated: false,
@@ -71,6 +76,10 @@ final class SketchColorPickerController: UIViewController {
 
             delegate?.sketchColorPickerController(self, changedSelectedColor: selectedColor.color)
         }
+    }
+
+    private func canSelectColor(atIndex index: Int) -> Bool {
+        return colorsCollectionView.cellForItem(at: IndexPath(row: index, section: 0)) != nil
     }
 
     /// Read only: Use the selectedColorIndex to change the selected color

@@ -82,6 +82,25 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         }
     }
 
+    func testThatRequestInV4_DoesNotUseLegacyEndpointWhenNoRequestFromCurrentEndpoint() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.apiVersion = .v0
+            self.otherUser.domain = "example.com"
+            self.otherUser.needsToBeUpdatedFromBackend = true
+            // By reporting the otherUser did change while on v0, sut will case the legacy transcoder to get in a state where it would produce a next request
+            self.sut.objectsDidChange(Set([self.otherUser]))
+
+            // when
+            // By switching to v4 and asking for a next request, we get nil because we would only ask the non legacy transcoder for a request, but it's not in a state to do that
+            self.apiVersion = .v4
+            let request = self.sut.nextRequest(for: self.apiVersion)
+
+            // then
+            // non legacy transcoder's endpoint should not be used
+            XCTAssertNil(request)
+        }
+    }
     // MARK: - Slow Sync
 
     func testThatRequestToFetchConnectedUsersIsGenerated_DuringFetchingUsersSyncPhase() {
@@ -179,6 +198,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingUsers)
+            XCTAssertFalse(self.sut.isFetchingAllConnectedUsers)
         }
     }
 
@@ -195,12 +215,13 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingUsers)
+            XCTAssertFalse(self.sut.isFetchingAllConnectedUsers)
         }
     }
 
     // MARK: - Response processing
 
-    func testThatUsesLegacyEndpoint_WhenFederatedEndpointIsDisabled() {
+    func testThatUsesLegacyEndpointOnV0_WhenFederatedEndpointIsDisabled() {
         syncMOC.performGroupedBlockAndWait {
             // given
             self.otherUser.domain = "example.com"
@@ -268,6 +289,36 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertFalse(self.otherUser.needsToBeUpdatedFromBackend)
+        }
+    }
+
+    func testThatItIsPendingMetadataRefresh_WhenSuccessfullyProcessingResponseWithFailedUsers_V4() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.apiVersion = .v4
+            self.otherUser.domain = "example.com"
+            self.otherUser.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set([self.otherUser]))
+            let failedUser: QualifiedID = QualifiedID(uuid: self.otherUser.remoteIdentifier, domain: self.otherUser.domain ?? "")
+            guard let request = self.sut.nextRequest(for: self.apiVersion) else {
+                return XCTFail("No request generated")
+            }
+
+            // when
+            guard let payload = Payload.QualifiedUserIDList(request) else {
+                return XCTFail("Payload is invalid")
+            }
+
+            guard let response = self.successfulResponse(for: payload, failed: [failedUser], apiVersion: self.apiVersion) else {
+                return XCTFail("Response is invalid")
+            }
+            request.complete(with: response)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertTrue(self.otherUser.isPendingMetadataRefresh)
         }
     }
 
@@ -426,9 +477,11 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             let event = self.userDeleteEvent(userID: ZMUser.selfUser(in: self.syncMOC).remoteIdentifier)
 
             // expect
-            self.expectation(forNotification: AccountDeletedNotification.notificationName,
-                             object: nil,
-                             handler: nil)
+            self.customExpectation(
+                forNotification: AccountDeletedNotification.notificationName,
+                object: nil,
+                handler: nil
+            )
 
             // when
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
@@ -465,7 +518,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
                              source: .webSocket)!
     }
 
-    func successfulResponse(for request: Payload.QualifiedUserIDList, apiVersion: APIVersion) -> ZMTransportResponse? {
+    func successfulResponse(for request: Payload.QualifiedUserIDList, failed: [QualifiedID]? = nil, apiVersion: APIVersion) -> ZMTransportResponse? {
         let userProfiles = request.qualifiedIDs.map({
             return userProfile(for: $0.uuid, domain: $0.domain)
         })
@@ -474,8 +527,8 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             payloadData = userProfiles.payloadData()
-        case .v4:
-            let userProfiles = Payload.UserProfilesV4(found: userProfiles, failed: nil)
+        case .v4, .v5, .v6:
+            let userProfiles = Payload.UserProfilesV4(found: userProfiles, failed: failed)
             payloadData = userProfiles.payloadData()
         }
 

@@ -19,7 +19,7 @@
 import UIKit
 @testable import Wire
 
-class MockCell: UIView, ConversationMessageCell {
+final class MockCell: UIView, ConversationMessageCell {
     struct Configuration {
         let backgroundColor: UIColor
     }

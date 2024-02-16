@@ -26,7 +26,7 @@
 
 - (ZMTransportResponse *)processFeatureConfigsRequest:(ZMTransportRequest *)request;
 {
-    if ([request matchesWithPath:@"/feature-configs" method:ZMMethodGET]) {
+    if ([request matchesWithPath:@"/feature-configs" method:ZMTransportRequestMethodGet]) {
         return [self processGetFeatureConfigsRequest: request];
     } else {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil apiVersion:request.apiVersion];

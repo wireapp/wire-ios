@@ -39,7 +39,7 @@ public struct Brush {
 
 }
 
-class Stroke: Renderable {
+final class Stroke: Renderable {
 
     private var points: [CGPoint]
     private let minimumStrokeDistance = 0.1

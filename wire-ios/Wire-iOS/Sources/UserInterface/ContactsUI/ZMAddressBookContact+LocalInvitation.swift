@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 import MessageUI
 
-class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
+final class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
     static let sharedInstance: EmailInvitePresenter = EmailInvitePresenter()
 
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
@@ -63,11 +63,11 @@ extension ZMAddressBookContact {
 
     private func invitationBody() -> String {
         guard
-            let handle = SelfUser.provider?.selfUser.handle
+            let handle = SelfUser.provider?.providedSelfUser.handle
         else {
-            return "send_invitation_no_email.text".localized
+            return L10n.Localizable.SendInvitationNoEmail.text
         }
 
-        return "send_invitation.text".localized(args: "@" + handle)
+        return L10n.Localizable.SendInvitation.text("@" + handle)
     }
 }

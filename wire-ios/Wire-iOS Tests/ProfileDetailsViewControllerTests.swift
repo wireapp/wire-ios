@@ -20,14 +20,16 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
+final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
 
     var selfUserTeam: UUID!
     var selfUser: MockUserType!
     var defaultRichProfile: [UserRichProfileField]!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+
         selfUserTeam = UUID()
         selfUser = MockUserType.createSelfUser(name: "George Johnson", inTeam: selfUserTeam)
 
@@ -35,12 +37,16 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
             UserRichProfileField(type: "Title", value: "Chief Design Officer"),
             UserRichProfileField(type: "Entity", value: "ACME/OBS/EQUANT/CSO/IBO/OEC/SERVICE OP/CS MGT/CSM EEMEA")
         ]
+
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
         selfUser = nil
         selfUserTeam = nil
         defaultRichProfile = nil
+        userSession = nil
+
         super.tearDown()
     }
 
@@ -575,7 +581,9 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [])
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // FIXME: can self user disable myself as admin? In this test since self user.isConnected == false we do not show it.
+    // swiftlint:enable todo_requires_jira_link
     func test_Group_SelfUser_SCIM() {
         // GIVEN
         selfUser.availability = .busy
@@ -1132,7 +1140,7 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         let details = ProfileDetailsViewController(user: user,
                                                    viewer: viewer,
                                                    conversation: conversation?.convertToRegularConversation(),
-                                                   context: context)
+                                                   context: context, userSession: userSession)
 
         verify(matching: details,
                file: file,

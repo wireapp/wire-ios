@@ -20,7 +20,7 @@ import Foundation
 import WireUtilities
 import UIKit
 
-class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
+final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
 
     let backButton: BackButtonDescription?
     var mainView: ViewDescriptor & ValueSubmission {
@@ -36,8 +36,8 @@ class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
 
     init() {
         backButton = BackButtonDescription()
-        headline = "registration.add_email_password.hero.title".localized
-        subtext = "registration.add_email_password.hero.paragraph".localized
+        headline = L10n.Localizable.Registration.AddEmailPassword.Hero.title
+        subtext = L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph
         initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
         footerView = nil
 
@@ -79,7 +79,7 @@ extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
 
 // MARK: - CTAFooterDescription
 
-private class CTAFooterDescription: ViewDescriptor, AuthenticationSecondaryViewDescription {
+private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondaryViewDescription {
     var views: [ViewDescriptor] {
         [self]
     }

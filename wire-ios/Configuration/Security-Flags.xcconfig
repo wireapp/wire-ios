@@ -30,3 +30,8 @@ FILE_SHARING_ENABLED=1
 /// Whether encryption at rest is enabled and can't be disabled.
 
 FORCE_ENCRYPTION_AT_REST_ENABLED=0
+
+// The minimum TLS version used by the app.
+// Possible values are [1.2, 1.3].
+
+MIN_TLS_VERSION=1.2

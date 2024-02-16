@@ -38,7 +38,7 @@ struct AuthenticationPrefilledCredentials: Equatable {
  * An authentication step to ask the user for login credentials.
  */
 
-class LogInStepDescription: AuthenticationStepDescription {
+final class LogInStepDescription: AuthenticationStepDescription {
 
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
@@ -50,7 +50,7 @@ class LogInStepDescription: AuthenticationStepDescription {
     init() {
         backButton = BackButtonDescription()
         mainView = EmptyViewDescription()
-        headline = "registration.signin.title".localized
+        headline = L10n.Localizable.Registration.Signin.title
         subtext = nil
         secondaryView = nil
         footerView = nil

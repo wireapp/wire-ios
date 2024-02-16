@@ -22,7 +22,7 @@ private let log = ZMSLog(tag: "APIVersion")
 
 extension SessionManager: APIVersionResolverDelegate {
 
-    public func resolveAPIVersion(completion: @escaping (Error?) -> Void = {_ in }) {
+    public func resolveAPIVersion(completion: @escaping (Error?) -> Void = { _ in }) {
         if apiVersionResolver == nil {
             apiVersionResolver = createAPIVersionResolver()
         }
@@ -68,7 +68,7 @@ extension SessionManager: APIVersionResolverDelegate {
                     sessions: sessions,
                     to: apiVersion
                 )
-                self.delegate?.sessionManagerDidPerformAPIMigrations()
+                self.delegate?.sessionManagerDidPerformAPIMigrations(activeSession: self.activeUserSession)
             }
         }
     }
@@ -115,28 +115,26 @@ extension SessionManager: APIVersionResolverDelegate {
             }
 
             // The migration above will call enter() / leave() on the dispatch group
-            dispatchGroup?.wait(forInterval: 5)
+            dispatchGroup.wait(forInterval: 5)
 
             // 3. Reload sessions
-            var authenticated = false
             self.accountManager.accounts.forEach { account in
-                dispatchGroup?.enter()
+                dispatchGroup.enter()
 
                 if account == self.accountManager.selectedAccount {
                     // When completed, this should trigger an AppState change through the SessionManagerDelegate
                     self.loadSession(for: account) { _ in
-                        authenticated = true
-                        dispatchGroup?.leave()
+                        dispatchGroup.leave()
                     }
                 } else {
                     self.withSession(for: account) { _ in
-                        dispatchGroup?.leave()
+                        dispatchGroup.leave()
                     }
                 }
             }
 
-            dispatchGroup?.wait(forInterval: 1)
-            self.delegate?.sessionManagerDidPerformFederationMigration(authenticated: authenticated)
+            dispatchGroup.wait(forInterval: 1)
+            self.delegate?.sessionManagerDidPerformFederationMigration(activeSession: activeUserSession)
         }
     }
 

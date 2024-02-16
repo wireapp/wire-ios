@@ -31,6 +31,7 @@ final class TextFieldDescription: NSObject, ValueSubmission {
     var canSubmit: (() -> Bool)?
     var textField: ValidatedTextField?
     var useDeferredValidation: Bool = false
+    var acceptInvalidInput: Bool = true
 
     init(placeholder: String, actionDescription: String, kind: ValidatedTextField.Kind) {
         self.placeholder = placeholder
@@ -99,7 +100,16 @@ extension TextFieldDescription: UITextFieldDelegate {
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        return acceptsInput
+        guard !acceptInvalidInput else { return acceptsInput }
+
+        let editedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string)
+
+        if let textField = self.textField, let editedText = editedText {
+            validationError = textField.validateText(text: editedText)
+            return validationError == nil || validationError == .tooShort(kind: kind)
+        } else {
+            return acceptsInput
+        }
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

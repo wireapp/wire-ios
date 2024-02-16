@@ -57,13 +57,6 @@ final class PerformanceDebuggerOperation: LaunchSequenceOperation {
 }
 
 // MARK: - ZMSLogOperation
-final class ZMSLogOperation: LaunchSequenceOperation {
-    func execute() {
-        ZMSLog.switchCurrentLogToPrevious()
-    }
-}
-
-// MARK: - ZMSLogOperation
 final class AVSLoggingOperation: LaunchSequenceOperation {
     func execute() {
         SessionManager.startAVSLogging()
@@ -74,6 +67,11 @@ final class AVSLoggingOperation: LaunchSequenceOperation {
 final class AutomationHelperOperation: LaunchSequenceOperation {
     func execute() {
         AutomationHelper.sharedHelper.installDebugDataIfNeeded()
+
+        if AutomationHelper.sharedHelper.enableMLSSupport == true {
+            var flag = DeveloperFlag.enableMLSSupport
+            flag.isOn = true
+        }
     }
 }
 
@@ -175,7 +173,7 @@ extension AppCenterOperation: DistributeDelegate {
             })
         }
 
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default) {_ in })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .default) { _ in })
 
         window.endEditing(true)
         rootViewController.present(alertController, animated: true)
@@ -209,7 +207,8 @@ final class BackendInfoOperation: LaunchSequenceOperation {
     func execute() {
         BackendInfo.storage = .applicationGroup
 
-        if let preferredVersion = AutomationHelper.sharedHelper.preferredAPIversion {
+        if let preferredVersion = AutomationHelper.sharedHelper.preferredAPIVersion {
+            WireLogger.environment.info("automation helper will set preferred api version to \(preferredVersion)")
             BackendInfo.preferredAPIVersion = preferredVersion
         }
     }

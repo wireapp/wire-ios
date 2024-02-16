@@ -24,34 +24,31 @@ enum AvailabilityLabelStyle: Int {
     case list, participants
 }
 
-extension AvailabilityKind {
-    var canonicalName: String {
-        switch self {
-        case .none:
-            return "none"
-        case .available:
-            return "available"
-        case .away:
-            return "away"
-        case .busy:
-            return "busy"
-        }
-    }
+extension Availability {
 
     var localizedName: String {
-        return "availability.\(canonicalName)".localized
+        switch self {
+        case .none:
+            L10n.Localizable.Availability.none
+        case .available:
+            L10n.Localizable.Availability.available
+        case .away:
+            L10n.Localizable.Availability.away
+        case .busy:
+            L10n.Localizable.Availability.busy
+        }
     }
 
     var iconType: StyleKitIcon? {
         switch self {
         case .none:
-            return nil
+            nil
         case .available:
-            return .statusAvailable
+            .statusAvailable
         case .away:
-            return .statusAway
+            .statusAway
         case .busy:
-            return .statusBusy
+            .statusBusy
         }
     }
 }

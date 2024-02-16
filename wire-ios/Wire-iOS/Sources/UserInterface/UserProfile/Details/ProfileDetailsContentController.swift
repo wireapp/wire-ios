@@ -40,7 +40,7 @@ protocol ProfileDetailsContentControllerDelegate: AnyObject {
 final class ProfileDetailsContentController: NSObject,
                                              UITableViewDataSource,
                                              UITableViewDelegate,
-                                             ZMUserObserver {
+                                             UserObserving {
 
     /**
      * The type of content that can be displayed in the profile details.
@@ -58,6 +58,9 @@ final class ProfileDetailsContentController: NSObject,
 
         /// Display the reason for the forced user block.
         case blockingReason
+
+        /// Display the message protocol used for a 1:1 conversation
+        case messageProtocol(MessageProtocol)
     }
 
     /// The user to display the details of.
@@ -84,6 +87,7 @@ final class ProfileDetailsContentController: NSObject,
 
     private var observerToken: Any?
     private let userPropertyCellID = "UserPropertyCell"
+    private let messageProtocolCellID = "MessageProtocolCell"
 
     // MARK: - Initialization
 
@@ -126,25 +130,23 @@ final class ProfileDetailsContentController: NSObject,
         }
     }
 
-    private var richProfileInfoWithEmail: ProfileDetailsContentController.Content? {
+    private var richProfileInfoWithEmailAndDomain: ProfileDetailsContentController.Content? {
         var richProfile = user.richProfile
-
-        if (!viewerCanAccessRichProfile || richProfile.isEmpty) && user.emailAddress == nil {
-            return nil
-        }
-
-        guard let email = user.emailAddress else { return .richProfile(richProfile) }
 
         // If viewer can't access rich profile information,
         // delete all rich profile info just for displaying purposes.
-
-        if !viewerCanAccessRichProfile && richProfile.count > 0 {
+        if !viewerCanAccessRichProfile && !richProfile.isEmpty {
             richProfile.removeAll()
         }
 
-        richProfile.insert(UserRichProfileField(type: "email.placeholder".localized, value: email), at: 0)
+        if let email = user.emailAddress {
+            richProfile.insert(UserRichProfileField(type: L10n.Localizable.Email.placeholder, value: email), at: 0)
+        }
+        if let domain = user.domain {
+            richProfile.append(UserRichProfileField(type: L10n.Localizable.Self.Settings.AccountSection.Domain.title, value: domain))
+        }
 
-        return .richProfile(richProfile)
+        return richProfile.isEmpty ? nil : .richProfile(richProfile)
     }
 
     /// Updates the content for the current configuration.
@@ -166,7 +168,7 @@ final class ProfileDetailsContentController: NSObject,
                 }
             }
 
-            if let richProfile = richProfileInfoWithEmail {
+            if let richProfile = richProfileInfoWithEmailAndDomain {
                 // If there is rich profile data and the user is allowed to see it, display it.
                 items.append(richProfile)
             }
@@ -179,12 +181,16 @@ final class ProfileDetailsContentController: NSObject,
 
         case .oneOnOne:
             let readReceiptsEnabled = viewer.readReceiptsEnabled
-            if let richProfile = richProfileInfoWithEmail {
+            if let richProfile = richProfileInfoWithEmailAndDomain {
                 // If there is rich profile data and the user is allowed to see it, display it and the read receipts status.
                 contents = [richProfile, .readReceiptsStatus(enabled: readReceiptsEnabled)]
             } else {
                 // If there is no rich profile data, show the read receipts.
                 contents = [.readReceiptsStatus(enabled: readReceiptsEnabled)]
+            }
+
+            if let conversation, Bundle.developerModeEnabled, !ProcessInfo.processInfo.isRunningTests {
+                contents.append(.messageProtocol(conversation.messageProtocol))
             }
 
         default:
@@ -215,6 +221,8 @@ final class ProfileDetailsContentController: NSObject,
             return 1
         case .blockingReason:
             return 1
+        case .messageProtocol:
+            return 1
         }
     }
 
@@ -226,16 +234,20 @@ final class ProfileDetailsContentController: NSObject,
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
         case .richProfile:
-            header.titleLabel.text = "profile.extended_metadata.header".localized(uppercased: true)
+            header.titleLabel.text = L10n.Localizable.Profile.ExtendedMetadata.header.uppercased()
             header.accessibilityIdentifier = "InformationHeader"
         case .readReceiptsStatus(let enabled):
             header.accessibilityIdentifier = "ReadReceiptsStatusHeader"
             if enabled {
-                header.titleLabel.text = "profile.read_receipts_enabled_memo.header".localized(uppercased: true)
+                header.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsEnabledMemo.header.uppercased()
             } else {
-                header.titleLabel.text = "profile.read_receipts_disabled_memo.header".localized(uppercased: true)
+                header.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsDisabledMemo.header.uppercased()
             }
         case .blockingReason:
+            header.titleLabel.text = nil
+            header.accessibilityIdentifier = nil
+
+        case .messageProtocol:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
         }
@@ -270,6 +282,17 @@ final class ProfileDetailsContentController: NSObject,
         case .blockingReason:
             let cell = tableView.dequeueReusableCell(withIdentifier: UserBlockingReasonCell.zm_reuseIdentifier, for: indexPath) as! UserBlockingReasonCell
             return cell
+
+        case .messageProtocol(let messageProtocol):
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: messageProtocolCellID
+            ) as? UserPropertyCell ?? UserPropertyCell(
+                style: .default,
+                reuseIdentifier: messageProtocolCellID
+            )
+            cell.propertyName = "Message protocol"
+            cell.propertyValue = messageProtocol.rawValue
+            return cell
         }
     }
 
@@ -279,16 +302,19 @@ final class ProfileDetailsContentController: NSObject,
             return nil
         case .readReceiptsStatus:
             let footer = SectionTableFooter()
-            footer.titleLabel.text = "profile.read_receipts_memo.body".localized
+            footer.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsMemo.body
             footer.accessibilityIdentifier = "ReadReceiptsStatusFooter"
             return footer
         case .groupAdminStatus:
             let footer = SectionTableFooter()
-            footer.titleLabel.text = "profile.group_admin_status_memo.body".localized
+            footer.titleLabel.text = L10n.Localizable.Profile.GroupAdminStatusMemo.body
             footer.accessibilityIdentifier = "GroupAdminStatusFooter"
             return footer
         case .blockingReason:
            return nil
+
+        case .messageProtocol:
+            return nil
         }
     }
 

@@ -50,7 +50,6 @@ public enum FontWeight: String, CaseIterable {
     case black
 }
 
-@available(iOSApplicationExtension 8.2, *)
 extension FontWeight {
     static let weightMapping: [FontWeight: UIFont.Weight] = [
         .ultraLight: UIFont.Weight.ultraLight,
@@ -94,11 +93,7 @@ extension FontWeight {
 
 extension UIFont {
     public static func systemFont(ofSize size: CGFloat, contentSizeCategory: UIContentSizeCategory, weight: FontWeight) -> UIFont {
-        if #available(iOSApplicationExtension 8.2, *) {
-            return self.systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)), weight: weight.fontWeight())
-        } else {
-            return self.systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)))
-        }
+        return self.systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)), weight: weight.fontWeight())
     }
 }
 
@@ -240,9 +235,12 @@ public enum FontScheme {
         fontsByFontSpec[FontSpec(.subHeadline, .regular, .none)] = .systemFont(ofSize: 15, contentSizeCategory: contentSizeCategory, weight: .regular)
         // FontSize: BodyTwo
         fontsByFontSpec[FontSpec(.bodyTwo, .semibold, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .semibold)
+
         // FontSize: ButtonSmall
         fontsByFontSpec[FontSpec(.buttonSmall, .bold, .none)] = .systemFont(ofSize: 14, contentSizeCategory: contentSizeCategory, weight: .bold)
-        // FontSize: ButtonSmall
+        fontsByFontSpec[FontSpec(.buttonSmall, .semibold, .none)] = .systemFont(ofSize: 14, contentSizeCategory: contentSizeCategory, weight: .semibold)
+
+        // FontSize: Body
         fontsByFontSpec[FontSpec(.body, .regular, .none)] = .systemFont(ofSize: 17, contentSizeCategory: contentSizeCategory, weight: .regular)
 
         // FontSize: ButtonBig

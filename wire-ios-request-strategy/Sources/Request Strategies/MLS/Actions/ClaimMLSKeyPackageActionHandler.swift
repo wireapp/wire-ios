@@ -25,7 +25,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
     override func request(for action: ClaimMLSKeyPackageAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
-        guard apiVersion > .v0 else {
+        guard apiVersion >= .v5 else {
             action.fail(with: .endpointUnavailable)
             return nil
         }
@@ -44,7 +44,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
 
         return ZMTransportRequest(
             path: path,
-            method: .methodPOST,
+            method: .post,
             payload: payload,
             apiVersion: apiVersion.rawValue
         )
@@ -68,6 +68,11 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             let keyPackagesExcludingSelfClient = payload.keyPackages.filter {
                 $0.client != action.excludedSelfClientId
             }
+            let selfUser = ZMUser.selfUser(in: context)
+            let isSelfUserRequesting = selfUser.remoteIdentifier == action.userId && selfUser.domain == action.domain
+            guard isSelfUserRequesting || keyPackagesExcludingSelfClient.isNonEmpty else {
+                return action.fail(with: .emptyKeyPackages)
+            }
 
             action.succeed(with: keyPackagesExcludingSelfClient)
 
@@ -81,6 +86,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             action.fail(with: .unknown(status: response.httpStatus))
         }
     }
+
 }
 
 extension ClaimMLSKeyPackageActionHandler {

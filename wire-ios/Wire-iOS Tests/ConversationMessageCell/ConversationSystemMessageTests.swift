@@ -18,15 +18,13 @@
 
 import XCTest
 import SnapshotTesting
-import WireCommonComponents
 @testable import Wire
 
-final class ConversationSystemMessageTests: XCTestCase {
+final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
-        SelfUser.provider = SelfProvider(selfUser: MockUserType.createSelfUser(name: "Alice"))
+        SelfUser.provider = SelfProvider(providedSelfUser: MockUserType.createSelfUser(name: "Alice"))
     }
 
     override func tearDown() {
@@ -36,6 +34,12 @@ final class ConversationSystemMessageTests: XCTestCase {
 
     func testConversationIsSecure() {
         let message = MockMessageFactory.systemMessage(with: .conversationIsSecure)!
+
+        verify(message: message)
+    }
+
+    func testFailedToAddParticipants() throws {
+        let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .failedToAddParticipants, users: 1))
 
         verify(message: message)
     }
@@ -118,7 +122,8 @@ final class ConversationSystemMessageTests: XCTestCase {
     }
 
     func testSessionReset_Self() {
-        let message = MockMessageFactory.systemMessage(with: .sessionReset, users: 1, clients: 1, sender: SelfUser.current)!
+        let user = SelfUser.provider?.providedSelfUser
+        let message = MockMessageFactory.systemMessage(with: .sessionReset, users: 1, clients: 1, sender: user)!
 
         verify(message: message)
     }
@@ -207,19 +212,6 @@ final class ConversationSystemMessageTests: XCTestCase {
         verify(message: message)
     }
 
-    func testUsingNewDevice() {
-        let message = MockMessageFactory.systemMessage(with: .usingNewDevice, users: 1, clients: 1)!
-        message.backingSystemMessageData?.userTypes = Set<AnyHashable>([MockUserType.createSelfUser(name: "")])
-
-        verify(message: message)
-    }
-
-    func testReactivatedDevice() {
-        let message = MockMessageFactory.systemMessage(with: .reactivatedDevice)!
-
-        verify(message: message)
-    }
-
     // MARK: - read receipt
 
     func testReadReceiptIsOn() {
@@ -281,7 +273,7 @@ final class ConversationSystemMessageTests: XCTestCase {
         verify(message: message)
     }
 
-    func testPotentialGap_addedUsers() {
+    func testPotentialGap_addedUser() {
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
@@ -289,7 +281,15 @@ final class ConversationSystemMessageTests: XCTestCase {
         verify(message: message)
     }
 
-    func testPotentialGap_removedUsers() {
+    func testPotentialGap_addedUsers() {
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_removedUser() {
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(1))
@@ -297,7 +297,15 @@ final class ConversationSystemMessageTests: XCTestCase {
         verify(message: message)
     }
 
-    func testPotentialGap_addedAndRemovedUsers() {
+    func testPotentialGap_removedUsers() {
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedAndRemovedOneUser() {
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
@@ -306,11 +314,71 @@ final class ConversationSystemMessageTests: XCTestCase {
         verify(message: message)
     }
 
+    func testPotentialGap_addedOneUserAndRemovedMultipleUsers() {
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUser()
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().suffix(4))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedMultipleUsersAndRemovedOneUser() {
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().suffix(4))
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().suffix(1))
+
+        verify(message: message)
+    }
+
+    // MARK: - Domains stopped federating
+
+    func testRemoveParticipants_federationTermination() {
+        let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 5, clients: 0, reason: .federationTermination)!
+        message.senderUser = SwiftMockLoader.mockUsers().last
+
+        verify(message: message, allWidths: false)
+    }
+
+    func testRemoveParticipant_federationTermination() {
+        let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 1, clients: 0, reason: .federationTermination)!
+        message.senderUser = SwiftMockLoader.mockUsers().last
+
+        verify(message: message, allWidths: false)
+    }
+
+    func testSelfDomainStoppedFederatingWithOtherDomain() {
+        let selfUser = SelfUser.provider?.providedSelfUser
+        let selfDomain = selfUser?.domain ?? ""
+        let message = MockMessageFactory.systemMessage(with: .domainsStoppedFederating,
+                                                       users: 1,
+                                                       clients: 0,
+                                                       domains: [selfDomain, "anta.wire.link"])!
+        message.senderUser = SwiftMockLoader.mockUsers().last
+
+        verify(message: message, allWidths: false)
+    }
+
+    func testTwoDomainsStoppedFederating() {
+        let message = MockMessageFactory.systemMessage(with: .domainsStoppedFederating,
+                                                       users: 1,
+                                                       clients: 0,
+                                                       domains: ["anta.wire.link", "foma.wire.link"])!
+        message.senderUser = SwiftMockLoader.mockUsers().last
+
+        verify(message: message, allWidths: false)
+    }
+
 }
 
 extension MockMessage {
     func assignMockAddedUser() {
         backingSystemMessageData?.addedUserTypes = Set<AnyHashable>(Array(SwiftMockLoader.mockUsers().prefix(1)))
+    }
+
+    func assignMockAddedUsers(users: ArraySlice<MockUserType>) {
+        backingSystemMessageData?.addedUserTypes = Set<MockUserType>(users)
     }
 
     func assignMockRemovedUsers(users: ArraySlice<MockUserType>) {

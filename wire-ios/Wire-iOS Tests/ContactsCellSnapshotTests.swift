@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ContactsCellSnapshotTests: ZMSnapshotTestCase {
+final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
 
     var sut: ContactsCell!
 
@@ -60,6 +60,7 @@ final class ContactsCellSnapshotTests: ZMSnapshotTestCase {
     func testForNoSubtitle() {
         let user = SwiftMockLoader.mockUsers()[0]
         user.handle = nil
+        user.domain = nil
         sut.user = user
         sut.action = .open
 

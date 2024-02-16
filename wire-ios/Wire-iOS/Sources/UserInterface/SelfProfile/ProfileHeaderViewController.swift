@@ -105,7 +105,7 @@ final class ProfileHeaderViewController: UIViewController {
     let remainingTimeLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
                                               color: LabelColors.textDefault)
     let imageView =  UserImageView(size: .big)
-    let availabilityTitleViewController: AvailabilityTitleViewController
+    let userStatusViewController: UserStatusViewController
 
     let guestIndicatorStack = UIStackView()
     let groupRoleIndicator = LabelIndicator(context: .groupRole)
@@ -121,17 +121,18 @@ final class ProfileHeaderViewController: UIViewController {
     /**
      * Creates a profile view for the specified user and options.
      * - parameter user: The user to display the profile of.
+     * - parameter conversation: The conversation.
      * - parameter options: The options for the appearance and behavior of the view.
+     * - parameter userSession: The user session.
      * - note: You can change the options later through the `options` property.
      */
-
-    init(user: UserType, viewer: UserType = SelfUser.current, conversation: ZMConversation? = nil, options: Options) {
+    init(user: UserType, viewer: UserType, conversation: ZMConversation? = nil, options: Options, userSession: UserSession) {
         self.user = user
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        self.availabilityTitleViewController = AvailabilityTitleViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint])
+        self.userStatusViewController = UserStatusViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint], userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -195,18 +196,21 @@ final class ProfileHeaderViewController: UIViewController {
         updateHandleLabel()
         updateTeamLabel()
 
-        addChild(availabilityTitleViewController)
+        addChild(userStatusViewController)
 
-        stackView = CustomSpacingStackView(customSpacedArrangedSubviews: [nameHandleStack,
-                                                                          teamNameLabel,
-                                                                          imageView,
-                                                                          availabilityTitleViewController.view,
-                                                                          guestIndicatorStack,
-                                                                          externalIndicator,
-                                                                          federatedIndicator,
-                                                                          groupRoleIndicator,
-                                                                          warningView
-                                                                         ])
+        stackView = CustomSpacingStackView(
+            customSpacedArrangedSubviews: [
+                nameHandleStack,
+                teamNameLabel,
+                imageView,
+                userStatusViewController.view,
+                guestIndicatorStack,
+                externalIndicator,
+                federatedIndicator,
+                groupRoleIndicator,
+                warningView
+            ]
+        )
 
         stackView.alignment = .center
         stackView.axis = .vertical
@@ -226,7 +230,7 @@ final class ProfileHeaderViewController: UIViewController {
         configureConstraints()
         applyOptions()
 
-        availabilityTitleViewController.didMove(toParent: self)
+        userStatusViewController.didMove(toParent: self)
 
         if let team = (user as? ZMUser)?.team {
             teamObserver = TeamChangeInfo.add(observer: self, for: team)
@@ -298,7 +302,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     private func updateTeamLabel() {
         if let teamName = user.teamName, !options.contains(.hideTeamName) {
-            teamNameLabel.text = teamName.localized
+            teamNameLabel.text = teamName
             teamNameLabel.accessibilityValue = teamNameLabel.text
             teamNameLabel.isHidden = false
         } else {
@@ -308,7 +312,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     private func updateAvailabilityVisibility() {
         let isHidden = options.contains(.hideAvailability) || !options.contains(.allowEditingAvailability) && user.availability == .none
-        availabilityTitleViewController.view?.isHidden = isHidden
+        userStatusViewController.view?.isHidden = isHidden
     }
 
     private func updateImageButton() {
@@ -325,9 +329,9 @@ final class ProfileHeaderViewController: UIViewController {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
-extension ProfileHeaderViewController: ZMUserObserver {
+extension ProfileHeaderViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
 

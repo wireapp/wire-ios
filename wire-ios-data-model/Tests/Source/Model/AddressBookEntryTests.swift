@@ -34,7 +34,6 @@ class AddressBookEntryTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(keys.isEmpty)
     }
 
-    @available(iOS 9.0, *)
     func testThatItCreatesEntryFromContact() {
 
         // GIVEN

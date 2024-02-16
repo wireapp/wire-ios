@@ -67,8 +67,7 @@ final class AnimatedPenView: UIView {
     }
 
     private func setupConstraints() {
-        [dots,
-         pen].prepareForLayout()
+        [dots, pen].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let distributeConstraint = pen.leftAnchor.constraint(equalTo: dots.rightAnchor, constant: 2)
 
@@ -165,10 +164,12 @@ final class TypingIndicatorView: UIView {
     }
 
     private func setupConstraints() {
-        [nameLabel,
-         container,
-         animatedPen,
-         expandingLine].prepareForLayout()
+        [
+            nameLabel,
+            container,
+            animatedPen,
+            expandingLine
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         // Lower the priority to prevent this breaks when container's height = 0
         let nameLabelBottomConstraint = container.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4)
@@ -206,12 +207,12 @@ final class TypingIndicatorView: UIView {
 
     func setHidden(_ hidden: Bool, animated: Bool, completion: Completion? = nil) {
 
-        let collapseLine = { () -> Void in
+        let collapseLine = {
             self.expandingLineWidth.constant = 0
             self.layoutIfNeeded()
         }
 
-        let expandLine = { () -> Void in
+        let expandLine = {
             self.expandingLineWidth.constant = self.bounds.width
             self.layoutIfNeeded()
         }

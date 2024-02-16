@@ -24,7 +24,7 @@ private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 extension ZMConversationList {
 
     func toOrderedSetState() -> OrderedSetState<ZMConversation> {
-        return OrderedSetState(array: self.map {$0 as! ZMConversation})
+        return OrderedSetState(array: self.map { $0 as! ZMConversation })
     }
 
 }

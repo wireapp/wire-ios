@@ -86,7 +86,7 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(label,
-                                                     modifier: { $0.name =  "foo"},
+                                                     modifier: { $0.name =  "foo" },
                                                      expectedChangedFields: [#keyPath(LabelChangeInfo.nameChanged)]
         )
 

@@ -34,6 +34,15 @@ class ZMLogTests: XCTestCase {
         super.tearDown()
     }
 
+    func testNumberOfPreviousZipLogURLs() {
+        // given
+        let count = ZMSLog.previousZipLogURLs.count
+
+        // when
+        // then
+        XCTAssertEqual(count, 5)
+    }
+
     func testThatTheLoggerRegistersATag() {
 
         // given
@@ -409,13 +418,13 @@ extension ZMLogTests {
 
         // GIVEN
         let sut = ZMSLog(tag: "foo")
-        let currentLog = ZMSLog.currentLog
+        let currentLog = ZMSLog.currentZipLog
 
         // WHEN
         sut.error("PANIC")
 
         // THEN
-        XCTAssertEqual(ZMSLog.currentLog, currentLog)
+        XCTAssertEqual(ZMSLog.currentZipLog, currentLog)
 
     }
 
@@ -456,7 +465,7 @@ extension ZMLogTests {
         sut.safePublic("Item: \(item)")
 
         // THEN
-        let currentLog = ZMSLog.currentLog
+        let currentLog = ZMSLog.currentZipLog
         XCTAssertNil(currentLog)
     }
 
@@ -486,7 +495,7 @@ extension ZMLogTests {
         XCTAssertTrue(lines.first!.hasSuffix("[3] [foo] Item: hidden"))
     }
 
-    func testThatItDiscardsLogsWhenStopped() {
+    func testThatItDiscardsLogsWhenStopped() throws {
 
         // GIVEN
         let sut = ZMSLog(tag: "foo")
@@ -498,8 +507,11 @@ extension ZMLogTests {
         ZMSLog.stopRecording()
 
         // THEN
-        XCTAssertNil(ZMSLog.currentLog)
-        XCTAssertNil(ZMSLog.previousLog)
+        XCTAssertNil(ZMSLog.currentZipLog)
+
+        try ZMSLog.previousZipLogURLs.forEach { url in
+            XCTAssertThrowsError(try Data(contentsOf: url))
+        }
     }
 }
 
@@ -519,10 +531,10 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        XCTAssertNotNil(ZMSLog.currentLog)
+        XCTAssertNotNil(ZMSLog.currentZipLog)
     }
 
-    func testThatSwitchesCurrentLogToPrevious() {
+    func testThatSwitchesCurrentLogToPrevious() throws {
 
         // given
         let sut = ZMSLog(tag: "foo")
@@ -534,23 +546,69 @@ extension ZMLogTests {
 
         Thread.sleep(forTimeInterval: 0.2)
 
-        let currentLog = ZMSLog.currentLog
         ZMSLog.switchCurrentLogToPrevious()
 
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        XCTAssertNotNil(ZMSLog.previousLog)
-        XCTAssertEqual(ZMSLog.previousLog, currentLog)
-        XCTAssertNil(ZMSLog.currentLog)
-
+        let path = try XCTUnwrap(ZMSLog.currentLogURL?.path)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: path))
     }
 
+    func testThatSwitchesCurrentLogToPrevious_multipleFiles() throws {
+
+        // given
+        let sut = ZMSLog(tag: "foo")
+        ZMSLog.startRecording()
+
+        // when
+        sut.warn("DON'T")
+        sut.error("PANIC")
+
+        ZMSLog.switchCurrentLogToPrevious()
+
+        sut.warn("DON'T")
+        ZMSLog.switchCurrentLogToPrevious()
+
+        sut.warn("DON'T")
+        ZMSLog.switchCurrentLogToPrevious()
+
+        sut.warn("DON'T")
+        ZMSLog.switchCurrentLogToPrevious()
+
+        sut.warn("DON'T")
+        ZMSLog.switchCurrentLogToPrevious()
+
+        Thread.sleep(forTimeInterval: 0.2)
+
+        // then
+        XCTAssertNil(ZMSLog.currentZipLog)
+
+        try ZMSLog.previousZipLogURLs.forEach {
+            let data = try Data(contentsOf: $0, options: [.uncached])
+            XCTAssertNotNil(data)
+        }
+    }
+
+    func test_currentZipLogIsNotEmpty() {
+        // given
+        let sut = ZMSLog(tag: "foo")
+        ZMSLog.startRecording()
+
+        // when
+        sut.warn("DON'T")
+        sut.error("PANIC")
+
+        Thread.sleep(forTimeInterval: 0.2)
+
+        // then
+        XCTAssertNotNil(ZMSLog.currentZipLog)
+    }
 }
 
 extension ZMLogTests {
 
-    func testThatItSavesDebugTagsInProduction() {
+    func testThatItSavesDebugTagsInProduction() throws {
 
         // given
         let tag = "tag"
@@ -573,13 +631,15 @@ extension ZMLogTests {
         ZMSLog.set(level: .debug, tag: tag)
         sut.debug("DEBUG")
 
-        Thread.sleep(forTimeInterval: 0.5)
+        Thread.sleep(forTimeInterval: 0.2)
 
         let lines = getLinesFromCurrentLog()
 
         // then
         XCTAssertEqual(lines.count, 1)
-        XCTAssertFalse(lines.first!.hasSuffix("[0] [tag] ERROR"))
+
+        let firstsLine = try XCTUnwrap(lines.first)
+        XCTAssertFalse(firstsLine.hasSuffix("[0] [tag] ERROR"))
     }
 
     func testThatItSavesAllLevelsOnInternals() {
@@ -606,7 +666,7 @@ extension ZMLogTests {
         ZMSLog.set(level: .debug, tag: tag)
         sut.debug("DEBUG")
 
-        Thread.sleep(forTimeInterval: 0.5)
+        Thread.sleep(forTimeInterval: 0.2)
 
         let lines = getLinesFromCurrentLog()
 
@@ -621,8 +681,9 @@ extension ZMLogTests {
 
     func getLinesFromCurrentLog(file: StaticString = #file, line: UInt = #line) -> [String] {
 
-        guard let currentLog = ZMSLog.currentLog,
-            let logContent = String(data: currentLog, encoding: .utf8) else {
+        guard let currentLog = ZMSLog.currentLogURL,
+              let data = FileManager.default.contents(atPath: currentLog.path),
+            let logContent = String(data: data, encoding: .utf8) else {
                 XCTFail(file: file, line: line)
                 return []
         }

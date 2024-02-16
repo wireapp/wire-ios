@@ -18,7 +18,7 @@
 
 import Foundation
 
-class UserEmailUpdateCodeSentEventHandler: AuthenticationEventHandler {
+final class UserEmailUpdateCodeSentEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

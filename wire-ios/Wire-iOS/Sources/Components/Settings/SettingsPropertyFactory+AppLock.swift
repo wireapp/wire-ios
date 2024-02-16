@@ -21,25 +21,21 @@ import WireSyncEngine
 // MARK: - AppLock helper
 extension SettingsPropertyFactory {
 
-    private var appLock: AppLockType? {
-        return userSession?.appLockController
-    }
-
     var isAppLockActive: Bool {
-        get { userSession?.appLockController.isActive ?? false }
-        set { userSession?.appLockController.isActive = newValue }
+        get { userSession?.isAppLockActive ?? false }
+        set { userSession?.isAppLockActive = newValue }
     }
 
     var timeout: UInt {
-        return appLock?.timeout ?? .max
+        return userSession?.appLockTimeout ?? .max
     }
 
     var isAppLockForced: Bool {
-        return appLock?.isForced ?? false
+        return userSession?.isAppLockForced ?? false
     }
 
     var isAppLockAvailable: Bool {
-        return appLock?.isAvailable ?? false
+        return userSession?.isAppLockAvailable ?? false
     }
 
 }

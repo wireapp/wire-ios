@@ -18,7 +18,7 @@
 
 import Foundation
 
-class MockAppLock: AppLockType {
+final class MockAppLock: AppLockType {
 
     // MARK: - Metrics
 

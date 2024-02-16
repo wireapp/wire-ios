@@ -56,7 +56,7 @@ open class SetChangeInfo<T: Hashable>: NSObject {
     open var updatedIndexes: IndexSet { return changeSet.updatedIndexes }
     open var movedIndexPairs: [MovedIndex] { return changeSet.movedIndexes }
     // for temporary objC-compatibility
-    open var zm_movedIndexPairs: [ZMMovedIndex] { return changeSet.movedIndexes.map {ZMMovedIndex(from: UInt($0.from), to: UInt($0.to))}}
+    open var zm_movedIndexPairs: [ZMMovedIndex] { return changeSet.movedIndexes.map { ZMMovedIndex(from: UInt($0.from), to: UInt($0.to)) } }
     convenience init(observedObject: NSObject) {
         let orderSetState = OrderedSetState<T>(array: [])
         self.init(observedObject: observedObject,

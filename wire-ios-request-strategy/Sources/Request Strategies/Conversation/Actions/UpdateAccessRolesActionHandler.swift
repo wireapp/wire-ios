@@ -34,6 +34,8 @@ extension UpdateAccessRolesError {
 
 final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesAction> {
 
+    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+
     // MARK: - Methods
 
     override func request(for action: UpdateAccessRolesAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -50,13 +52,13 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
         switch apiVersion {
         case .v0:
             return ZMTransportRequest(path: "/conversations/\(conversationID)/access",
-                                      method: .methodPUT,
+                                      method: .put,
                                       payload: payloadAsString as ZMTransportData?,
                                       apiVersion: apiVersion.rawValue)
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
             return ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/access",
-                                      method: .methodPUT,
+                                      method: .put,
                                       payload: payloadAsString as ZMTransportData?,
                                       apiVersion: apiVersion.rawValue)
         }
@@ -71,17 +73,20 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
         case 200:
             guard
                 let payload = response.payload,
-                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
-                let rawData = response.rawData,
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationAccess>(rawData, decoder: .defaultDecoder)
+                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
             else {
                 Logging.network.warn("Can't process response, aborting.")
                 action.notifyResult(.failure(.unknown))
                 return
             }
 
-            conversationEvent.process(in: context, originalEvent: updateEvent)
-            action.notifyResult(.success(Void()))
+            let success = {
+                action.notifyResult(.success(Void()))
+            }
+            Task {
+                await eventProcessor.processConversationEvents([updateEvent])
+                success()
+            }
 
         default:
             action.notifyResult(.failure(UpdateAccessRolesError(response: response) ?? .unknown))

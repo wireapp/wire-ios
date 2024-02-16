@@ -26,32 +26,17 @@ public enum SecurityClassification {
 
 extension ZMUserSession {
 
-    public func classification(with users: [UserType], conversationDomain: String? = nil) -> SecurityClassification {
-        guard isSelfClassified else { return .none }
-
-        if let conversationDomain = conversationDomain,
-           classifiedDomainsFeature.config.domains.contains(conversationDomain) == false {
-            return .notClassified
-        }
-
-        let isClassified = users.allSatisfy {
-            classification(with: $0) == .classified
-        }
-
-        return isClassified ? .classified : .notClassified
-    }
-
-    private func classification(with user: UserType) -> SecurityClassification {
+    func classification(with user: UserType) -> SecurityClassification {
         guard isSelfClassified else { return .none }
 
         guard let otherDomain = domain(for: user),
               user.isTemporaryUser == false else { return .notClassified }
-        
+
         return classifiedDomainsFeature.config.domains.contains(otherDomain) ? .classified : .notClassified
     }
 
-    private var isSelfClassified: Bool {
-        classifiedDomainsFeature.status == .enabled && selfUser.domain != nil
+     var isSelfClassified: Bool {
+        classifiedDomainsFeature.status == .enabled && providedSelfUser.domain != nil
     }
 
     // If other user does not have a domain the conversation will be marked as unclassified

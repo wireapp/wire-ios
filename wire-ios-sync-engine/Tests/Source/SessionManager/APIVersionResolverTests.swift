@@ -87,7 +87,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         transportSession.isAPIVersionEndpointAvailable = false
 
         // When version is resolved.
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -118,7 +118,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertNil(BackendInfo.apiVersion)
 
         // When version is resolved.
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -146,7 +146,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertNil(BackendInfo.apiVersion)
 
         // When version is resolved.
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -179,7 +179,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertNil(BackendInfo.apiVersion)
 
         // When version is resolved.
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -210,7 +210,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertNil(BackendInfo.apiVersion)
 
         // When version is resolved.
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -241,7 +241,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertNil(BackendInfo.apiVersion)
 
         // When version is resolved.
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -268,7 +268,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         )
 
         // When
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -297,7 +297,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         )
 
         // When version is resolved
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -327,7 +327,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         )
 
         // When version is resolved
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -360,7 +360,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         )
 
         // When version is resolved.
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -389,7 +389,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         )
 
         // When version is resolved.
-        let done = expectation(description: "done")
+        let done = customExpectation(description: "done")
         sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 

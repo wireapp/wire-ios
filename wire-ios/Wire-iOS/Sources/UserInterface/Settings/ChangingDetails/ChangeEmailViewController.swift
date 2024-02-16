@@ -97,7 +97,10 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     let emailPasswordCell = EmailPasswordTextFieldCell(style: .default, reuseIdentifier: nil)
     let validationCell = ValueValidationCell(initialValidation: .info(PasswordRuleSet.localizedErrorMessage))
 
-    init(user: UserType) {
+    let userSession: UserSession
+
+    init(user: UserType, userSession: UserSession) {
+        self.userSession = userSession
         state = ChangeEmailState(currentEmail: user.emailAddress)
         super.init(style: .grouped)
         setupViews()
@@ -232,7 +235,7 @@ extension ChangeEmailViewController: UserProfileUpdateObserver {
         navigationController?.isLoadingViewVisible = false
         updateSaveButtonState()
         if let newEmail = state.newEmail {
-            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self)
+            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
             navigationController?.pushViewController(confirmController, animated: true)
         }
     }

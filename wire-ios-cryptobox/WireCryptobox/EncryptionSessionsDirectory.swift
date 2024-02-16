@@ -212,7 +212,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
             fatal("Can't migrate session \(previousSessionIdentifier) because file \(oldPath) does not exist")
         }
 
-        guard let _ = try? FileManager.default.moveItem(at: oldPath, to: newPath) else {
+        guard (try? FileManager.default.moveItem(at: oldPath, to: newPath)) != nil else {
             fatal("Can't migrate session \(newIdentifier) because the move failed")
         }
 
@@ -731,16 +731,12 @@ public struct EncryptionSessionIdentifier: Hashable, Equatable {
         self.domain = String()
     }
 
-    public var hashValue: Int {
-        return self.rawValue.hashValue
-    }
-
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(hashValue)
+        hasher.combine(rawValue)
     }
 }
 
-public func ==(lhs: EncryptionSessionIdentifier, rhs: EncryptionSessionIdentifier) -> Bool {
+public func == (lhs: EncryptionSessionIdentifier, rhs: EncryptionSessionIdentifier) -> Bool {
     return lhs.rawValue == rhs.rawValue
 }
 

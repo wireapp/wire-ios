@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objc final public class ManagedObjectContextChangeObserver: NSObject {
+@objc public final class ManagedObjectContextChangeObserver: NSObject {
 
     public typealias ChangeCallback = () -> Void
     private unowned var context: NSManagedObjectContext
@@ -37,7 +37,7 @@ import Foundation
             forName: .NSManagedObjectContextObjectsDidChange,
             object: context,
             queue: nil,
-            using: {  [weak self] _ in self?.callback() }
+            using: { [weak self] _ in self?.callback() }
         )
     }
 
