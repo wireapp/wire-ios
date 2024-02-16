@@ -163,10 +163,36 @@ final class UserClientListViewController: UIViewController,
             fromConversation: true,
             userSession: userSession
         )
-        profileClientViewController.showBackButton = false
-
-        show(profileClientViewController, sender: nil)
+        openDetailsOfClient(client)
     }
+
+    private func openDetailsOfClient(_ client: UserClient) {
+            guard let navigationController = self.navigationController
+            else {
+                assertionFailure("Unable to display details from conversations as navigation instance is nil")
+                return
+            }
+            let viewModel = DeviceInfoViewModel.map(
+                certificate: client.e2eIdentityCertificate,
+                userClient: client,
+                title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
+                addedDate: client.activationDate?.formattedDate ?? "",
+                proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16),
+                isSelfClient: client.isSelfClient(),
+                userSession: userSession,
+                credentials: .none,
+                gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+                mlsThumbprint: client.mlsPublicKeys.ed25519?.splitStringIntoLines(charactersPerLine: 16),
+                getProteusFingerprint: userSession.getUserClientFingerprint
+            )
+            let detailsView = ProfileDeviceDetailsView(viewModel: .init(deviceDetailsViewModel: viewModel, isFromConversationView: true)) {
+                self.navigationController?.setNavigationBarHidden(false, animated: false)
+            }
+            let hostingViewController = UIHostingController(rootView: detailsView)
+            hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+            navigationController.pushViewController(hostingViewController, animated: true)
+            navigationController.isNavigationBarHidden = true
+        }
 }
 
 extension UserClientListViewController: UserObserving {
