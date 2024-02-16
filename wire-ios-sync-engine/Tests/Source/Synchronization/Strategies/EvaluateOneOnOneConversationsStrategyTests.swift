@@ -22,20 +22,23 @@ import WireDataModelSupport
 
 final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
-    private let coreDataHelper = CoreDataStackHelper()
-    private var coreDataStack: CoreDataStack!
+    private var coreDataHelper: CoreDataStackHelper!
 
     // need to decide on some api version, even though it should be not relevant for this test.
     private let apiVersion: APIVersion = .v5
 
     private var mockApplicationStatus: MockApplicationStatus!
+    private var mockCoreDataStack: CoreDataStack!
     private var mockLastEventIDRepository: LastEventIDRepository!
     private var mockSyncStatus: MockSyncStatus!
+
+    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
     override func setUp() async throws {
         try await super.setUp()
 
-        coreDataStack = try await coreDataHelper.createStack()
+        coreDataHelper = CoreDataStackHelper()
+        mockCoreDataStack = try await coreDataHelper.createStack()
 
         mockApplicationStatus = MockApplicationStatus()
         mockLastEventIDRepository = LastEventIDRepository(
@@ -43,7 +46,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
             sharedUserDefaults: .temporary()
         )
         mockSyncStatus = MockSyncStatus(
-            managedObjectContext: coreDataStack.syncContext,
+            managedObjectContext: syncContext,
             lastEventIDRepository: mockLastEventIDRepository
         )
     }
@@ -53,8 +56,9 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         mockSyncStatus = nil
         mockApplicationStatus = nil
 
-        coreDataStack = nil
+        mockCoreDataStack = nil
         try coreDataHelper.cleanupDirectory()
+        coreDataHelper = nil
 
         try await super.tearDown()
     }
@@ -62,7 +66,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
     func testInitialState() {
         // given
         let strategy = EvaluateOneOnOneConversationsStrategy(
-            withManagedObjectContext: coreDataStack.syncContext,
+            withManagedObjectContext: syncContext,
             applicationStatus: mockApplicationStatus,
             syncStatus: mockSyncStatus
         )
@@ -72,35 +76,46 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         XCTAssertEqual(strategy.syncPhase, .evaluate1on1ConversationsForMLS)
     }
 
-    func testNextRequest_givenSyncPhaseEvaluate1on1ConversationsForMLS_thenCallFinishSync() {
+    func testNextRequest_givenSyncPhaseEvaluate1on1ConversationsForMLS_thenCallFinishSync() async {
         // given
         mockSyncStatus.mockPhase = .evaluate1on1ConversationsForMLS
 
+        let expectation = self.expectation(description: "EvaluateOneOnOneConversationsStrategy")
         let strategy = EvaluateOneOnOneConversationsStrategy(
-            withManagedObjectContext: coreDataStack.syncContext,
+            withManagedObjectContext: syncContext,
             applicationStatus: mockApplicationStatus,
             syncStatus: mockSyncStatus
         )
+        strategy.taskCompletion = { expectation.fulfill() }
 
         // when
-        // then
         XCTAssertNil(strategy.nextRequest(for: apiVersion))
+
+        // then
+        await fulfillment(of: [expectation], timeout: 0.1)
+
         XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
     }
 
-    func testNextRequest_givenOtherSyncPhase_thenDoNotCallFinishSync() {
+    func testNextRequest_givenOtherSyncPhase_thenDoNotCallFinishSync() async {
         // given
         mockSyncStatus.mockPhase = .fetchingLastUpdateEventID
 
+        let expectation = self.expectation(description: "EvaluateOneOnOneConversationsStrategy")
+        expectation.isInverted = true
         let strategy = EvaluateOneOnOneConversationsStrategy(
-            withManagedObjectContext: coreDataStack.syncContext,
+            withManagedObjectContext: syncContext,
             applicationStatus: mockApplicationStatus,
             syncStatus: mockSyncStatus
         )
+        strategy.taskCompletion = { expectation.fulfill() }
 
         // when
-        // then
         XCTAssertNil(strategy.nextRequest(for: apiVersion))
+
+        // then
+        await fulfillment(of: [expectation], timeout: 0.1)
+
         XCTAssertFalse(mockSyncStatus.didCallFinishCurrentSyncPhase)
     }
 }

@@ -152,7 +152,7 @@ extension Notification.Name {
 extension SyncStatus {
 
     public func finishCurrentSyncPhase(phase: SyncPhase) {
-        precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase")
+        precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase '\(currentSyncPhase)'!")
 
         zmLog.debug("finished sync phase: \(phase)")
         log("finished sync phase")

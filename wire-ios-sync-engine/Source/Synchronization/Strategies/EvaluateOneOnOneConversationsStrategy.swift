@@ -26,6 +26,10 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
     private var isSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
 
+    private var task: Task<Void, Never>?
+
+    var taskCompletion: (() -> Void)?
+
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
@@ -36,15 +40,54 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
     }
 
-    override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if isSyncing {
-            // TODO: [WPB-5812] epic implementation
-            // - Produce a list of the users we have 1:1 conversations with
-            // - Loop through the list and evaluate the 1:1 conversation for each user.
+    deinit {
+        task?.cancel()
+    }
 
-            syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+    override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard isSyncing, task == nil else {
+            return nil
+        }
+
+        WireLogger.conversation.info("EvaluateOneOnOneConversationsStrategy: start evaluate one on one conversations!")
+
+        precondition(managedObjectContext.zm_isSyncContext, "can only execute on syncContext!")
+        let syncContext = managedObjectContext
+
+        // store task to avoid duplicated entries and concurrency issues
+        task = Task { [weak self] in
+            guard let self else {
+                assertionFailure("EvaluateOneOnOneConversationsStrategy: cannot perform without self reference!")
+                return
+            }
+
+            do {
+                let resolver = OneOnOneResolver(syncContext: syncContext)
+                try await resolver.resolveAllOneOnOneConversations(in: syncContext)
+
+                await syncContext.perform {
+                    self.finishCurrentSyncPhase()
+                }
+            } catch {
+                await syncContext.perform {
+                    self.failCurrentSyncPhase(errorMessage: "EvaluateOneOnOneConversationsStrategy: failed to resolve all 1-1 conversations!")
+                }
+            }
+
+            self.task = nil
+            self.taskCompletion?()
         }
 
         return nil
+    }
+
+    private func failCurrentSyncPhase(errorMessage: String) {
+        WireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: \(errorMessage)!")
+        syncStatus.failCurrentSyncPhase(phase: syncPhase)
+    }
+
+    private func finishCurrentSyncPhase() {
+        WireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: finishCurrentSyncPhase!")
+        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
     }
 }

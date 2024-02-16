@@ -221,7 +221,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus),
+                syncProgress: applicationStatusDirectory.syncStatus,
+                oneOneOneResolver: OneOnOneResolver(mlsService: mlsService)
+            ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,

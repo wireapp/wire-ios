@@ -80,6 +80,10 @@ extension ZMUser {
         return NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
     }
 
+    static func predicateForUsersWithOneOnOneConversation() -> NSPredicate {
+        NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
+    }
+
     public static func predicateForConnectedUsers(hostedOnDomain domain: String) -> NSPredicate {
         return NSPredicate.isHostedOnDomain(domain)
                           .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue]))
@@ -92,6 +96,8 @@ extension ZMUser {
     }
 
 }
+
+// MARK: - Domain
 
 private extension NSPredicate {
 
