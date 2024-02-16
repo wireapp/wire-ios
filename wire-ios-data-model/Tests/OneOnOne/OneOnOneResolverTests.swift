@@ -27,19 +27,20 @@ final class OneOnOneResolverTests: XCTestCase {
     private var sut: OneOnOneResolver!
 
     private var mockCoreDataStack: CoreDataStack!
-    private var mockProtocolSelector: MockOneOnOneProtocolSelectorInterface!
-    private var mockMigrator: MockOneOnOneMigratorInterface!
+    private var mockProtocolSelector: MockActorOneOnOneProtocolSelectorInterface!
+    private var mockMigrator: MockActorOneOnOneMigratorInterface!
 
     private var viewContext: NSManagedObjectContext { mockCoreDataStack.viewContext }
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
 
         coreDataStackHelper = CoreDataStackHelper()
 
         mockCoreDataStack = try await coreDataStackHelper.createStack()
-        mockProtocolSelector = MockOneOnOneProtocolSelectorInterface()
-        mockMigrator = MockOneOnOneMigratorInterface()
+        mockProtocolSelector = MockActorOneOnOneProtocolSelectorInterface()
+        mockMigrator = MockActorOneOnOneMigratorInterface()
         sut = OneOnOneResolver(protocolSelector: mockProtocolSelector, migrator: mockMigrator)
     }
 
@@ -57,6 +58,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
     // MARK: - Tests
 
+    @MainActor
     func test_resolveAllOneOnOneConversations_givenZeroUsers() async throws {
         // Given
 
@@ -68,6 +70,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertTrue(mockMigrator.migrateToMLSUserIDIn_Invocations.isEmpty)
     }
 
+    @MainActor
     func test_resolveAllOneOnOneConversations_givenMultipleUsers_thenMigrateAll() async throws {
         // Given
         mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
@@ -89,6 +92,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 2)
     }
 
+    @MainActor
     func test_resolveAllOneOnOneConversations_givenUserWithoutConnection_thenSkipOneMigration() async throws {
         // Given
         mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
@@ -109,6 +113,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 1)
     }
 
+    @MainActor
     func test_resolveAllOneOnOneConversations_givenUserWithoutDomain_thenSkipOneMigration() async throws {
         // Given
         mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
@@ -131,6 +136,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 1)
     }
 
+    @MainActor
     func test_resolveAllOneOnOneConversations_givenMigrationFailure() async throws {
         // Given
         mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
@@ -152,6 +158,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 2)
     }
 
+    @MainActor
     func test_ResolveOneOnOneConversation_MLSSupported() async throws {
         // Given
         let userID: QualifiedID = .random()
@@ -169,6 +176,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(invocation.userID, userID)
     }
 
+    @MainActor
     func test_ResolveOneOnOneConversation_ProteusSupported() async throws {
         // Given
         let userID: QualifiedID = .random()
@@ -183,6 +191,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 0)
     }
 
+    @MainActor
     func test_ResolveOneOnOneConversation_NoCommonProtocols() async throws {
         // Given
         let userID: QualifiedID = .random()
@@ -253,4 +262,64 @@ final class OneOnOneResolverTests: XCTestCase {
 
 enum MockOneOnOneResolverError: Error {
     case failed
+}
+
+@MainActor
+public class MockActorOneOnOneMigratorInterface: OneOnOneMigratorInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - migrateToMLS
+
+    public var migrateToMLSUserIDIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
+    public var migrateToMLSUserIDIn_MockError: Error?
+    public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> MLSGroupID)?
+    public var migrateToMLSUserIDIn_MockValue: MLSGroupID?
+
+    @discardableResult
+    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
+        migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
+
+        if let error = migrateToMLSUserIDIn_MockError {
+            throw error
+        }
+
+        if let mock = migrateToMLSUserIDIn_MockMethod {
+            return try await mock(userID, context)
+        } else if let mock = migrateToMLSUserIDIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `migrateToMLSUserIDIn`")
+        }
+    }
+
+}
+
+@MainActor
+public class MockActorOneOnOneProtocolSelectorInterface: OneOnOneProtocolSelectorInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - getProtocolForUser
+
+    public var getProtocolForUserWithIn_Invocations: [(id: QualifiedID, context: NSManagedObjectContext)] = []
+    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async -> MessageProtocol?)?
+    public var getProtocolForUserWithIn_MockValue: MessageProtocol??
+
+    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) async -> MessageProtocol? {
+        getProtocolForUserWithIn_Invocations.append((id: id, context: context))
+
+        if let mock = getProtocolForUserWithIn_MockMethod {
+            return await mock(id, context)
+        } else if let mock = getProtocolForUserWithIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getProtocolForUserWithIn`")
+        }
+    }
+
 }
