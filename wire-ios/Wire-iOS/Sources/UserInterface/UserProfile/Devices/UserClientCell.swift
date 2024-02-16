@@ -36,8 +36,6 @@ final class UserClientCell: SeparatorCollectionViewCell {
     // MARK: - Properties
     let nameLabel = DynamicFontLabel(style: .headline,
                                      color: LabelColors.textDefault)
-    let labelLabel = DynamicFontLabel(style: .subheadline,
-                                      color: LabelColors.textDefault)
     let mlsThumbprintLabel = DynamicFontLabel(style: .caption1,
                                         color: LabelColors.textCellSubtitle)
     let proteusIdLabel = DynamicFontLabel(style: .caption1,
@@ -48,17 +46,11 @@ final class UserClientCell: SeparatorCollectionViewCell {
     private let contentStackView = UIStackView()
     private let accessoryIconView = UIImageView()
 
-    var showLabel: Bool = false {
-        didSet {
-            updateLabel()
-        }
-    }
-
     var viewModel: ClientTableViewCellModel? {
         didSet {
-            nameLabel.text = viewModel?.title
-            proteusIdLabel.text = viewModel?.proteusLabelText
-            mlsThumbprintLabel.text = viewModel?.mlsThumbprintLabelText
+            nameLabel.text = viewModel?.title.clippedValue(offsetValue: 35)
+            proteusIdLabel.text = viewModel?.proteusLabelText.clippedValue(offsetValue: 35)
+            mlsThumbprintLabel.text = viewModel?.mlsThumbprintLabelText.clippedValue(offsetValue: 50)
             statusStackView.removeArrangedSubviews()
             if let e2eIdentityStatusImage = viewModel?.e2eIdentityStatus?.uiImage {
                 statusStackView.addArrangedSubview(UIImageView(image: e2eIdentityStatusImage))
@@ -66,7 +58,6 @@ final class UserClientCell: SeparatorCollectionViewCell {
             if viewModel?.isProteusVerified ?? false {
                 statusStackView.addArrangedSubview(UIImageView(image: verifiedImage))
             }
-            updateLabel()
             setupAccessibility()
         }
     }
@@ -90,7 +81,6 @@ final class UserClientCell: SeparatorCollectionViewCell {
     // MARK: - Methods
     func setupStyle() {
         nameLabel.accessibilityIdentifier = "device name"
-        labelLabel.accessibilityIdentifier = "device label"
         proteusIdLabel.accessibilityIdentifier = "device proteus ID"
         mlsThumbprintLabel.accessibilityIdentifier = "device mls thumbprint"
         mlsThumbprintLabel.numberOfLines = 1
@@ -106,7 +96,6 @@ final class UserClientCell: SeparatorCollectionViewCell {
     private func createConstraints() {
         [
             nameLabel,
-            labelLabel,
             proteusIdLabel,
             mlsThumbprintLabel,
             statusStackView
@@ -117,50 +106,48 @@ final class UserClientCell: SeparatorCollectionViewCell {
         contentWrapView.translatesAutoresizingMaskIntoConstraints = false
 
         statusStackView.axis = .horizontal
+        statusStackView.spacing = 4
         contentStackView.addArrangedSubview(contentWrapView)
         contentStackView.addArrangedSubview(accessoryIconView)
         contentStackView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(contentStackView)
         // Setting the constraints for the view
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: contentWrapView.topAnchor, constant: EdgeInsetConstants.default),
-            nameLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor, constant: EdgeInsetConstants.default),
-            nameLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
+            nameLabel.topAnchor.constraint(equalTo: contentWrapView.topAnchor,
+                                           constant: EdgeInsetConstants.default),
+            nameLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor,
+                                            constant: EdgeInsetConstants.default),
+            nameLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor,
+                                             constant: -EdgeInsetConstants.default),
 
-            labelLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: EdgeInsetConstants.small),
-            labelLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor, constant: EdgeInsetConstants.default),
-            labelLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
+            statusStackView.topAnchor.constraint(equalTo: nameLabel.topAnchor,
+                                                 constant: EdgeInsetConstants.small),
+            statusStackView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor,
+                                                  constant: EdgeInsetConstants.medium),
+            statusStackView.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor,
+                                                   constant: -EdgeInsetConstants.default),
 
-            statusStackView.topAnchor.constraint(equalTo: nameLabel.topAnchor, constant: EdgeInsetConstants.small),
-            statusStackView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: EdgeInsetConstants.medium),
-            statusStackView.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
-
-            mlsThumbprintLabel.topAnchor.constraint(equalTo: labelLabel.bottomAnchor, constant: EdgeInsetConstants.medium),
-            mlsThumbprintLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor, constant: EdgeInsetConstants.default),
-            mlsThumbprintLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
+            mlsThumbprintLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor,
+                                                    constant: EdgeInsetConstants.medium),
+            mlsThumbprintLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor,
+                                                     constant: EdgeInsetConstants.default),
+            mlsThumbprintLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor,
+                                                      constant: -EdgeInsetConstants.default),
 
             proteusIdLabel.topAnchor.constraint(equalTo: mlsThumbprintLabel.bottomAnchor),
-            proteusIdLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor, constant: EdgeInsetConstants.default),
-            proteusIdLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor, constant: -EdgeInsetConstants.default),
-            proteusIdLabel.bottomAnchor.constraint(equalTo: contentWrapView.bottomAnchor, constant: -EdgeInsetConstants.default),
+            proteusIdLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor,
+                                                 constant: EdgeInsetConstants.default),
+            proteusIdLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor,
+                                                  constant: -EdgeInsetConstants.default),
+            proteusIdLabel.bottomAnchor.constraint(equalTo: contentWrapView.bottomAnchor,
+                                                   constant: -EdgeInsetConstants.default),
 
             contentStackView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            contentStackView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -EdgeInsetConstants.default),
+            contentStackView.rightAnchor.constraint(equalTo: contentView.rightAnchor,
+                                                    constant: -EdgeInsetConstants.default),
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
-    }
-
-    private func updateLabel() {
-        if let userClientLabel = viewModel?.label, showLabel {
-            labelLabel.text = userClientLabel
-        } else {
-            labelLabel.text = ""
-        }
-    }
-
-    func redrawFont() {
-        updateLabel()
     }
 
     override func prepareForReuse() {
