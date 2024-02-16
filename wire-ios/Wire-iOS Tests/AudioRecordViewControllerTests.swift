@@ -70,14 +70,6 @@ final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
         )
     }
 
-    func testThatItRendersViewControllerCorrectlyState_Recording() {
-        // when
-        XCTAssertEqual(sut.recordingState, AudioRecordState.recording)
-
-        // then
-        verify()
-    }
-
     func testThatItRendersViewControllerCorrectlyState_Recording_WithTime() {
         // when
         XCTAssertEqual(sut.recordingState, AudioRecordState.recording)
