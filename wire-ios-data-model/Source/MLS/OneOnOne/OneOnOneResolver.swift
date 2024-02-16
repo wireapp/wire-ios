@@ -69,19 +69,19 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     // MARK: - Methods
 
     public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
-        let users: [ZMUser] = try await context.perform {
-            let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-            request.predicate = ZMUser.predicateForUsersWithOneOnOneConversation()
-            return try context.fetch(request)
-        }
+        let usersIDs = try await fetchUserIdsWithOneOnOneConversation(in: context)
 
-        for user in users {
-            guard let userID = await context.perform({ user.qualifiedID }) else {
-                WireLogger.conversation.error("required to have a user's qualifiedID to resolve 1-1 conversation!")
-                return
+        await withTaskGroup(of: Void.self) { group in
+            for userID in usersIDs {
+                group.addTask {
+                    do {
+                        try await self.resolveOneOnOneConversation(with: userID, in: context)
+                    } catch {
+                        // skip conversation migration for this user
+                        WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
+                    }
+                }
             }
-
-            try await resolveOneOnOneConversation(with: userID, in: context)
         }
     }
 
@@ -139,4 +139,22 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
     }
 
+    // MARK: Helpers
+
+    private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws -> [QualifiedID] {
+        try await context.perform {
+            let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            request.predicate = ZMUser.predicateForUsersWithOneOnOneConversation()
+
+            return try context
+                .fetch(request)
+                .compactMap { user in
+                    guard let userID = user.qualifiedID else {
+                        WireLogger.conversation.error("required to have a user's qualifiedID to resolve 1-1 conversation!")
+                        return nil
+                    }
+                    return userID
+                }
+        }
+    }
 }
