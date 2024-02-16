@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class CountryCodeTableViewControllerTests: XCTestCase {
+final class CountryCodeTableViewControllerTests: BaseSnapshotTestCase {
 
     var sut: CountryCodeTableViewController!
 
