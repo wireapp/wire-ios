@@ -439,6 +439,7 @@ public class ZMUserSession: NSObject {
         )
 
         self.cRLsChecker = cRLsChecker ?? CertificateRevocationListsChecker(
+            userID: userId,
             crlAPI: CertificateRevocationListAPI(),
             mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
             coreCryptoProvider: coreCryptoProvider,

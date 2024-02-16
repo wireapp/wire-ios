@@ -18,19 +18,12 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol CRLExpirationDatesRepositoryProtocol {
     func crlExpirationDateExists(for distributionPoint: URL) -> Bool
     func storeCRLExpirationDate(_ expirationDate: Date, for distributionPoint: URL)
     func fetchAllCRLExpirationDates() -> [URL: Date]
 }
-
-// TODO: Perhaps it's better to use core data?
-// Seems less error prone to have a well defined entity 
-// that stores the distribution point and the expiration date
-// in a single place rather than maintaining a list of distribution points
-// separately from expiration dates in user defaults
-//
-// However, I'm not sure the scaffolding around setting up a new core data entity is worth it
 
 public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol {
 
@@ -77,7 +70,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
     }
 
     public func fetchAllCRLExpirationDates() -> [URL: Date] {
-        guard let knownDistributionPoints = storage.object(forKey: Key.distributionPoints) as? Set<String> else {
+        guard let knownDistributionPoints = storage.object(forKey: Key.distributionPoints) as? [String] else {
             return [:]
         }
 
@@ -102,11 +95,17 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
     // MARK: - Helpers
 
     private func storeDistributionPointIfNeeded(_ dpString: String) {
-        if var knownDistributionPoints = storage.object(forKey: Key.distributionPoints) as? Set<String> {
-            knownDistributionPoints.insert(dpString)
+        let knownDistributionPoints = storage.object(forKey: Key.distributionPoints) as? [String]
+
+        if var knownDistributionPoints = knownDistributionPoints, !knownDistributionPoints.contains(dpString) {
+            knownDistributionPoints.append(dpString)
             storage.set(knownDistributionPoints, forKey: .distributionPoints)
-        } else {
-            storage.set(Set([dpString]) as Any, forKey: .distributionPoints)
+            return
+        }
+
+        if knownDistributionPoints == nil {
+            storage.set([dpString], forKey: .distributionPoints)
+            return
         }
     }
 

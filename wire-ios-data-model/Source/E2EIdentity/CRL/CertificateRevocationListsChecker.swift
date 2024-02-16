@@ -18,18 +18,23 @@
 
 import Foundation
 
-// This needs to be defined at the DataModel level for visibility but needs to be
+// `CertificateRevocationListAPIProtocol` needs to be defined at the DataModel level for visibility but needs to be
 // implemented on the RequestStrategy level because of dependencies on HttpClientE2EI
+
+// sourcery: AutoMockable
 public protocol CertificateRevocationListAPIProtocol {
     func getRevocationList(from distributionPoint: URL) async throws -> Data
 }
 
+// sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
     func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async
     func checkExpiringCRLs() async
 }
 
 public class CertificateRevocationListsChecker: CertificateRevocationListsChecking {
+
+    // MARK: - Properties
 
     private let crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol
     private let crlAPI: CertificateRevocationListAPIProtocol
@@ -41,6 +46,10 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             try await coreCryptoProvider.coreCrypto(requireMLS: true)
         }
     }
+
+    private let logger = WireLogger.e2ei
+
+    // MARK: - Life cycle
 
     public convenience init(
         userID: UUID,
@@ -57,7 +66,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             context: context
         )
     }
-    
+
     init(
         crlAPI: CertificateRevocationListAPIProtocol,
         crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
@@ -71,6 +80,8 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
     }
+
+    // MARK: - Public interface
 
     public func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async {
 
@@ -89,6 +100,8 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
         await checkCertificateRevocationLists(from: Set(distributionPointsOfExpiringCRLs))
     }
+
+    // MARK: - Private methods
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
 
@@ -114,7 +127,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                     try await mlsConversationsVerificationUpdater.updateAllStatuses()
                 }
             } catch {
-                // TODO: Log
+                logger.warn("failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))")
                 continue
             }
         }

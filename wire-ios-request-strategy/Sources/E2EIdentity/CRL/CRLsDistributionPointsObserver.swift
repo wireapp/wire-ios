@@ -36,11 +36,6 @@ public class CRLsDistributionPointsObserver: CRLsDistributionPointsObserving {
         self.cRLsChecker = cRLsChecker
     }
 
-    // Is this necessary?
-    deinit {
-        cancellables.forEach { $0.cancel() }
-    }
-
     public func startObservingNewCRLsDistributionPoints(
         from publisher: AnyPublisher<CRLsDistributionPoints, Never>
     ) {

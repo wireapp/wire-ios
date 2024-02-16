@@ -29,8 +29,22 @@ public class CertificateRevocationListAPI: CertificateRevocationListAPIProtocol 
     public func getRevocationList(from distributionPoint: URL) async throws -> Data {
         var request = URLRequest(url: distributionPoint)
         request.httpMethod = "GET"
-        let (data, _) = try await httpClient.send(request)
+        let (data, response) = try await httpClient.send(request)
 
-        return data
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NetworkError.notAnHTTPResponse
+        }
+
+        switch httpResponse.statusCode {
+        case 200...299:
+            return data
+        default:
+            throw NetworkError.invalidStatusCode(httpResponse.statusCode)
+        }
+    }
+
+    enum NetworkError: Error, Equatable {
+        case notAnHTTPResponse
+        case invalidStatusCode(Int)
     }
 }

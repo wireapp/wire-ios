@@ -205,6 +205,7 @@
 		630D41BC2B07DA3E00633867 /* ProteusConversationParticipantsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41BB2B07DA3E00633867 /* ProteusConversationParticipantsServiceTests.swift */; };
 		6313CF252B67C13400B41A33 /* CertificateRevocationListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6313CF242B67C13400B41A33 /* CertificateRevocationListAPI.swift */; };
 		6313CF2D2B6A790F00B41A33 /* CRLsDistributionPointsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6313CF2C2B6A790F00B41A33 /* CRLsDistributionPointsObserver.swift */; };
+		633722BF2B7E2C3100BE4E45 /* CRLsDistributionPointsObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633722BE2B7E2C3100BE4E45 /* CRLsDistributionPointsObserverTests.swift */; };
 		633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */; };
 		63457C062B2C6F4200AFFEF3 /* ReplaceSelfMLSKeyPackagesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63457C052B2C6F4200AFFEF3 /* ReplaceSelfMLSKeyPackagesActionHandlerTests.swift */; };
 		63457C082B2CA8E300AFFEF3 /* E2eIKeyPackageRotatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63457C072B2CA8E300AFFEF3 /* E2eIKeyPackageRotatorTests.swift */; };
@@ -227,6 +228,7 @@
 		63F0781029F2D65C0031E19D /* FetchSubgroupActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F0780E29F2D6220031E19D /* FetchSubgroupActionHandlerTests.swift */; };
 		63F5AAC7298A96C000712528 /* Payload+CodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F5AAC6298A96C000712528 /* Payload+CodingTests.swift */; };
 		63F5AAC9298A974F00712528 /* Payload+ConversationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F5AAC8298A974F00712528 /* Payload+ConversationTests.swift */; };
+		63FD7E9F2B7E5EE300C9B210 /* CertificateRevocationListAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FD7E9E2B7E5EE300C9B210 /* CertificateRevocationListAPITests.swift */; };
 		70C781FD2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C781FC2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift */; };
 		70E77B79273187660021EE70 /* UpdateRoleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */; };
 		7A111DE8285C90A90085BF91 /* SendMLSMessageActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A111DE7285C90A90085BF91 /* SendMLSMessageActionHandler.swift */; };
@@ -707,6 +709,7 @@
 		630D41BB2B07DA3E00633867 /* ProteusConversationParticipantsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusConversationParticipantsServiceTests.swift; sourceTree = "<group>"; };
 		6313CF242B67C13400B41A33 /* CertificateRevocationListAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateRevocationListAPI.swift; sourceTree = "<group>"; };
 		6313CF2C2B6A790F00B41A33 /* CRLsDistributionPointsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLsDistributionPointsObserver.swift; sourceTree = "<group>"; };
+		633722BE2B7E2C3100BE4E45 /* CRLsDistributionPointsObserverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLsDistributionPointsObserverTests.swift; sourceTree = "<group>"; };
 		633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Decryption.swift"; sourceTree = "<group>"; };
 		63457C052B2C6F4200AFFEF3 /* ReplaceSelfMLSKeyPackagesActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSelfMLSKeyPackagesActionHandlerTests.swift; sourceTree = "<group>"; };
 		63457C072B2CA8E300AFFEF3 /* E2eIKeyPackageRotatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIKeyPackageRotatorTests.swift; sourceTree = "<group>"; };
@@ -729,6 +732,7 @@
 		63F0780E29F2D6220031E19D /* FetchSubgroupActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchSubgroupActionHandlerTests.swift; sourceTree = "<group>"; };
 		63F5AAC6298A96C000712528 /* Payload+CodingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Payload+CodingTests.swift"; sourceTree = "<group>"; };
 		63F5AAC8298A974F00712528 /* Payload+ConversationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationTests.swift"; sourceTree = "<group>"; };
+		63FD7E9E2B7E5EE300C9B210 /* CertificateRevocationListAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateRevocationListAPITests.swift; sourceTree = "<group>"; };
 		70C781FC2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoleActionHandlerTests.swift; sourceTree = "<group>"; };
 		70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoleActionHandler.swift; sourceTree = "<group>"; };
 		7A111DE7285C90A90085BF91 /* SendMLSMessageActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMLSMessageActionHandler.swift; sourceTree = "<group>"; };
@@ -992,6 +996,7 @@
 		06474D6124B31CA8002C695D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				633722BD2B7E2C0400BE4E45 /* E2EIdentity */,
 				E6E59B062B56D04500E90D36 /* Stubs */,
 				06ADF692264B4666002E0C7A /* Mocks */,
 				0693113B24F798EF00D14DF5 /* Notifications */,
@@ -1418,6 +1423,15 @@
 				6313CF2C2B6A790F00B41A33 /* CRLsDistributionPointsObserver.swift */,
 			);
 			path = CRL;
+			sourceTree = "<group>";
+		};
+		633722BD2B7E2C0400BE4E45 /* E2EIdentity */ = {
+			isa = PBXGroup;
+			children = (
+				633722BE2B7E2C3100BE4E45 /* CRLsDistributionPointsObserverTests.swift */,
+				63FD7E9E2B7E5EE300C9B210 /* CertificateRevocationListAPITests.swift */,
+			);
+			path = E2EIdentity;
 			sourceTree = "<group>";
 		};
 		63DA339D286DF6DA00818C3C /* Helpers */ = {
@@ -2604,9 +2618,11 @@
 				F18401F02073C26C00E9F4CC /* LinkPreviewAssetDownloadRequestStrategyTests.swift in Sources */,
 				16BBA1F62AF3D41200CDF38A /* MessageDependencyResolverTests.swift in Sources */,
 				63CC83F2285CB96A008549AD /* ActionHandlerTestBase.swift in Sources */,
+				63FD7E9F2B7E5EE300C9B210 /* CertificateRevocationListAPITests.swift in Sources */,
 				F18401FF2073C2EA00E9F4CC /* MessagingTestBase.swift in Sources */,
 				16189D0A268B2C34004831BE /* ModifiedKeyObjectSyncTests.swift in Sources */,
 				F1956200202A141B005347C0 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */,
+				633722BF2B7E2C3100BE4E45 /* CRLsDistributionPointsObserverTests.swift in Sources */,
 				06D61FB62B0CBE1E00C2699A /* AcmeAPITests.swift in Sources */,
 				16BBA1F42AF3952300CDF38A /* MessageSenderTests.swift in Sources */,
 				EE88079B2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift in Sources */,

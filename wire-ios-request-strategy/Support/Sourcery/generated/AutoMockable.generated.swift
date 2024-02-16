@@ -32,6 +32,7 @@ import AppKit
 #endif
 
 import WireCoreCrypto
+import Combine
 
 @testable import WireRequestStrategy
 
