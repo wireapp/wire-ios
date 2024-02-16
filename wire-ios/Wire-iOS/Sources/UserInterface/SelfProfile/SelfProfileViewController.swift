@@ -115,7 +115,8 @@ final class SelfProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        profileHeaderViewController.imageView.addTarget(self, action: #selector(userDidTapProfileImage), for: .touchUpInside)
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(userDidTapProfileImage))
+        profileHeaderViewController.imageView.addGestureRecognizer(tapGestureRecognizer)
 
         addChild(profileHeaderViewController)
         profileContainerView.addSubview(profileHeaderViewController.view)
@@ -194,7 +195,7 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Events
 
-    @objc func userDidTapProfileImage(sender: UserImageView) {
+    @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
         guard userCanSetProfilePicture else { return }
 
         let alertViewController = profileImagePicker.selectProfileImage()

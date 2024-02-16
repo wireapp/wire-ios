@@ -334,8 +334,9 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
             cell.configure(
-                with: description.user,
-                selfUser: selfUser,
+                user: description.user,
+                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+                isSelfUserPartOfATeam: selfUser.hasTeam,
                 subtitle: description.attributedSubtitle,
                 conversation: conversation
             )
@@ -413,8 +414,8 @@ extension MessageDetailsContentViewController {
         presentedController.modalPresentationStyle = .formSheet
 
         if let popover = presentedController.popoverPresentationController {
-            popover.sourceRect = cell.avatar.bounds
-            popover.sourceView = cell.avatar
+            popover.sourceRect = cell.avatarImageView.bounds
+            popover.sourceView = cell.avatarImageView
             popover.backgroundColor = .white
         }
 

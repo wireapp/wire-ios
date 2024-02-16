@@ -22,34 +22,6 @@ import WireCommonComponents
 
 final class ProfileHeaderViewController: UIViewController {
 
-    /**
-     * The options to customize the appearance and behavior of the view.
-     */
-
-    struct Options: OptionSet {
-
-        let rawValue: Int
-
-        /// Whether to hide the username of the user.
-        static let hideUsername = Options(rawValue: 1 << 0)
-
-        /// Whether to hide the handle of the user.
-        static let hideHandle = Options(rawValue: 1 << 1)
-
-        /// Whether to hide the availability status of the user.
-        static let hideAvailability = Options(rawValue: 1 << 2)
-
-        /// Whether to hide the team name of the user.
-        static let hideTeamName = Options(rawValue: 1 << 3)
-
-        /// Whether to allow the user to change their availability.
-        static let allowEditingAvailability = Options(rawValue: 1 << 4)
-
-        /// Whether to allow the user to change their availability.
-        static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
-
-    }
-
     /// The options to customize the appearance and behavior of the view.
     var options: Options {
         didSet {
@@ -62,6 +34,8 @@ final class ProfileHeaderViewController: UIViewController {
 
     /// The user that is displayed.
     let user: UserType
+
+    private let userSession: UserSession
 
     /// The user who is viewing this view
     let viewer: UserType
@@ -128,18 +102,28 @@ final class ProfileHeaderViewController: UIViewController {
      */
     init(user: UserType, viewer: UserType, conversation: ZMConversation? = nil, options: Options, userSession: UserSession) {
         self.user = user
+        self.userSession = userSession
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        self.userStatusViewController = UserStatusViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint], userSession: userSession)
+        userStatusViewController = .init(
+            options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
+            settings: .shared
+        )
 
         super.init(nibName: nil, bundle: nil)
+
+        userStatusViewController.delegate = self
+        userStatusViewController.userStatus = .init(
+            user: user,
+            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+        )
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
@@ -327,30 +311,75 @@ final class ProfileHeaderViewController: UIViewController {
             imageView.isUserInteractionEnabled = false
         }
     }
+
+    // MARK: -
+
+    /// The options to customize the appearance and behavior of the view.
+    struct Options: OptionSet {
+
+        let rawValue: Int
+
+        /// Whether to hide the username of the user.
+        static let hideUsername = Options(rawValue: 1 << 0)
+
+        /// Whether to hide the handle of the user.
+        static let hideHandle = Options(rawValue: 1 << 1)
+
+        /// Whether to hide the availability status of the user.
+        static let hideAvailability = Options(rawValue: 1 << 2)
+
+        /// Whether to hide the team name of the user.
+        static let hideTeamName = Options(rawValue: 1 << 3)
+
+        /// Whether to allow the user to change their availability.
+        static let allowEditingAvailability = Options(rawValue: 1 << 4)
+
+        /// Whether to allow the user to change their availability.
+        static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
+
+    }
+}
+
+// MARK: - UserStatusViewControllerDelegate
+
+extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
+
+    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
+        guard viewController === userStatusViewController else { return }
+
+        userSession.perform { [weak self] in
+            self?.user.availability = availability
+        }
+    }
 }
 
 // MARK: - ZMUserObserving
 
 extension ProfileHeaderViewController: UserObserving {
 
-    func userDidChange(_ changeInfo: UserChangeInfo) {
+    func userDidChange(_ changes: UserChangeInfo) {
 
-        if changeInfo.nameChanged {
-            nameLabel.text = changeInfo.user.name
-        }
-        if changeInfo.handleChanged {
-            updateHandleLabel()
+        if changes.nameChanged {
+            userStatusViewController.userStatus.name = changes.user.name ?? ""
+            nameLabel.text = changes.user.name
         }
 
-        if changeInfo.availabilityChanged {
+        if changes.availabilityChanged {
+            userStatusViewController.userStatus.availability = changes.user.availability
             updateAvailabilityVisibility()
+        }
+
+        if changes.handleChanged {
+            updateHandleLabel()
         }
     }
 }
 
 extension ProfileHeaderViewController: TeamObserver {
-    func teamDidChange(_ changeInfo: TeamChangeInfo) {
-        if changeInfo.nameChanged {
+
+    func teamDidChange(_ changes: TeamChangeInfo) {
+
+        if changes.nameChanged {
             updateTeamLabel()
         }
     }

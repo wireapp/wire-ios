@@ -18,12 +18,10 @@
 import UIKit
 import WireDataModel
 
-final class TeamAccountView: AccountView {
+final class TeamAccountView: BaseAccountView, AccountView {
 
     override var collapsed: Bool {
-        didSet {
-            self.imageView.isHidden = collapsed
-        }
+        didSet { imageView.isHidden = collapsed }
     }
 
     private let imageView: TeamImageView
@@ -71,15 +69,16 @@ final class TeamAccountView: AccountView {
     }
 
     private func createConstraints() {
-        let inset = CGFloat.TeamAccountView.imageInset
-        [imageView, imageViewContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
 
+        let insets = Constants.teamAccountViewImageInsets
         NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: inset),
-            imageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: inset),
-            imageView.trailingAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -inset),
-            imageView.bottomAnchor.constraint(equalTo: imageViewContainer.bottomAnchor, constant: -inset)
-            ])
+            imageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: insets.left),
+            imageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: insets.top),
+            imageViewContainer.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: insets.right),
+            imageViewContainer.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: insets.bottom)
+        ])
     }
 
     @available(*, unavailable)
@@ -89,33 +88,37 @@ final class TeamAccountView: AccountView {
 
     override func update() {
         super.update()
-        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(self.account.teamName ?? "") + " " + accessibilityState
-        accessibilityIdentifier = "\(self.account.teamName ?? "") team"
+
+        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(account.teamName ?? "") + " " + accessibilityState
+        accessibilityIdentifier = "\(account.teamName ?? "") team"
     }
 
     func createDotConstraints() -> [NSLayoutConstraint] {
         let dotSize: CGFloat = 9
         let dotInset: CGFloat = 2
 
-        [dotView, imageViewContainer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        dotView.translatesAutoresizingMaskIntoConstraints = false
+        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
 
-        return [ dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -dotInset),
-                                      dotView.centerYAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: dotInset),
-
-                                      dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
-                                      dotView.widthAnchor.constraint(equalToConstant: dotSize)
-            ]
+        return [
+            dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -dotInset),
+            dotView.centerYAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: dotInset),
+            dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
+            dotView.widthAnchor.constraint(equalToConstant: dotSize)
+        ]
     }
 }
 
 extension TeamAccountView: TeamObserver {
+
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
+
         if changeInfo.imageDataChanged {
             changeInfo.team.requestImage()
         }
 
-        guard let content = changeInfo.team.teamImageViewContent else { return }
-
-        imageView.content = content
+        if let content = changeInfo.team.teamImageViewContent {
+            imageView.content = content
+        }
     }
 }

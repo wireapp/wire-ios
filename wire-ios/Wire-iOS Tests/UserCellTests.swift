@@ -52,20 +52,25 @@ final class UserCellTests: BaseSnapshotTestCase {
 
     // MARK: - Helper method
 
-    private func verify(mockUser: UserType,
-                        conversation: GroupDetailsConversationType,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
+    private func verify(
+        mockUser: UserType,
+        conversation: GroupDetailsConversationType,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
         }
 
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
-        sut.configure(with: mockUser,
-                      selfUser: user,
-                      conversation: conversation)
+        sut.configure(
+            user: mockUser,
+            isCertified: false,
+            isSelfUserPartOfATeam: user.hasTeam,
+            conversation: conversation
+        )
         sut.accessoryIconView.isHidden = false
 
         verifyInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)

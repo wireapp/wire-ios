@@ -52,13 +52,19 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     var availability: Availability { get set }
 
     /// Team membership for this user.
+    /// This property is `nil` even for users, who are part of a
+    /// team, but not the same team as the self user.
     var membership: TeamMembership? { get }
 
     /// The name of the team the user belongs to.
     var teamName: String? { get }
 
     /// Whether this is the member of a team
+    /// Rename this property eventually to `isMemberOfSelfTeam`.
     var isTeamMember: Bool { get }
+
+    /// Returns `true` if the user is part of any team.
+    @objc var hasTeam: Bool { get }
 
     /// Whether the PDF digial signature is enable
     var hasDigitalSignatureEnabled: Bool { get }
@@ -217,10 +223,6 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// Whether all user's devices are verified by the selfUser
     var isTrusted: Bool { get }
-
-    /// the user has team or not
-    @objc
-    var hasTeam: Bool { get }
 
     /// Whether the user is allowed to create MLS groups.
     var canCreateMLSGroups: Bool { get }
