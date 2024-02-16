@@ -57,11 +57,11 @@ final class GroupConversationVerificationStatusView: UIView {
     }
 
     private func updateSubviews() {
-        if status.e2eiCertificationStatus {
+        if status.isE2EICertified {
             label.text = L10n.Localizable.GroupDetails.ConversationVerificationStatus.e2ei
             label.textColor = SemanticColors.DrawingColors.green
             shieldImageView.image = .init(resource: .certificateValid)
-        } else if status.proteusVerificationStatus {
+        } else if status.isProteusVerified {
             label.text = L10n.Localizable.GroupDetails.ConversationVerificationStatus.proteus
             label.textColor = SemanticColors.DrawingColors.blue
             shieldImageView.image = .init(resource: .verifiedShield)
@@ -97,32 +97,32 @@ private struct GroupConversationVerificationStatusViewRepresentable: UIViewRepre
         Text("neither nor:").font(.callout)
         GroupConversationVerificationStatusViewRepresentable(
             status: .init(
-                e2eiCertificationStatus: false,
-                proteusVerificationStatus: false
+                isE2EICertified: false,
+                isProteusVerified: false
             )
         )
         Divider()
         Text("verified:").font(.callout)
         GroupConversationVerificationStatusViewRepresentable(
             status: .init(
-                e2eiCertificationStatus: false,
-                proteusVerificationStatus: true
+                isE2EICertified: false,
+                isProteusVerified: true
             )
         )
         Divider()
         Text("certified:").font(.callout)
         GroupConversationVerificationStatusViewRepresentable(
             status: .init(
-                e2eiCertificationStatus: true,
-                proteusVerificationStatus: false
+                isE2EICertified: true,
+                isProteusVerified: false
             )
         )
         Divider()
         Text("both:").font(.callout)
         GroupConversationVerificationStatusViewRepresentable(
             status: .init(
-                e2eiCertificationStatus: true,
-                proteusVerificationStatus: true
+                isE2EICertified: true,
+                isProteusVerified: true
             )
         )
         Spacer()

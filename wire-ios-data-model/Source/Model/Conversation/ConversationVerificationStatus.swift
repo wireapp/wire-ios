@@ -16,27 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// TODO: add documentation
 public struct ConversationVerificationStatus {
 
-    /// TODO: add documentation
-    public var e2eiCertificationStatus: Bool // TODO [WPB-765]: consider using WireCoreCrypto.E2eiConversationState or MLSVerificationStatus
-
-    /// TODO: add documentation
-    public var proteusVerificationStatus: Bool
+    public var isE2EICertified: Bool // TODO [WPB-765]: consider using WireCoreCrypto.E2eiConversationState or MLSVerificationStatus
+    public var isProteusVerified: Bool
 
     public init(
-        e2eiCertificationStatus: Bool,
-        proteusVerificationStatus: Bool
+        isE2EICertified: Bool,
+        isProteusVerified: Bool
     ) {
-        self.e2eiCertificationStatus = e2eiCertificationStatus
-        self.proteusVerificationStatus = proteusVerificationStatus
+        self.isE2EICertified = isE2EICertified
+        self.isProteusVerified = isProteusVerified
     }
 
     public init() {
         self.init(
-            e2eiCertificationStatus: false,
-            proteusVerificationStatus: false
+            isE2EICertified: false,
+            isProteusVerified: false
         )
     }
 }
