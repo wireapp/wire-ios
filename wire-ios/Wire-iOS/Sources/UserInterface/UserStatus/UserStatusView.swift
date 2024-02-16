@@ -21,28 +21,21 @@ import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
 
-typealias AvailabilityTitleView = UserStatusView
-
 /// A title view subclass that displays the availability of the user.
 final class UserStatusView: TitleView {
 
     // MARK: - Properties
 
     private let options: Options
-    public var userStatus = UserStatus(name: "", availability: .none, isCertified: false, isVerified: false) {
-        didSet {
-            updateConfiguration()
-        }
+    public var userStatus = UserStatus() {
+        didSet { updateConfiguration() }
     }
 
     // MARK: - Initialization
 
     /// Creates a view for the specific user and options.
     /// - parameter options: The options to display the availability.
-    init(
-        options: Options,
-        userSession: UserSession
-    ) {
+    init(options: Options) {
         self.options = options
         super.init()
         updateConfiguration()
@@ -75,17 +68,29 @@ final class UserStatusView: TitleView {
 
         let availability = userStatus.availability
         let fontStyle: FontSize = options.contains(.useLargeFont) ? .normal : .small
-        let icon = AvailabilityStringBuilder.icon(
-            for: availability,
-            with: AvailabilityStringBuilder.color(for: availability),
-            and: fontStyle
-        )
+        let leadingIcons = [
+            AvailabilityStringBuilder.icon(
+                for: availability,
+                with: AvailabilityStringBuilder.color(for: availability),
+                and: fontStyle
+            )
+        ]
+        var trailingIcons = [NSTextAttachment?]()
         let isInteractive = options.contains(.allowSettingStatus)
         var title = ""
 
         if options.contains(.displayUserName) {
             title = userStatus.name
-            accessibilityLabel = title
+            var accessibilityLabel = title
+            if userStatus.isCertified {
+                trailingIcons += [.e2eiCertifiedShield]
+                // TODO [WPB-765]: add accessibility label for the E2EI verified shield.
+            }
+            if userStatus.isVerified {
+                trailingIcons += [.proteusVerifiedShield]
+                accessibilityLabel += ", " + L10n.Accessibility.ClientsList.DeviceVerified.description
+            }
+            self.accessibilityLabel = accessibilityLabel
         } else if availability == .none && options.contains(.allowSettingStatus) {
             title = L10n.Localizable.Availability.Message.setStatus
             accessibilityLabel = title
@@ -95,7 +100,14 @@ final class UserStatusView: TitleView {
         }
 
         let showInteractiveIcon = isInteractive && !options.contains(.hideActionHint)
-        super.configure(icon: icon, title: title, interactive: isInteractive, showInteractiveIcon: showInteractiveIcon)
+        configure(
+            leadingIcons: leadingIcons.compactMap { $0 },
+            title: title,
+            trailingIcons: trailingIcons.compactMap { $0 },
+            subtitle: nil,
+            interactive: isInteractive,
+            showInteractiveIcon: showInteractiveIcon
+        )
 
         accessibilityValue = availability != .none ? availability.localizedName : ""
         if options.contains(.allowSettingStatus) {
@@ -136,5 +148,24 @@ extension UserStatusView {
 
         /// The default options for using the view in a title bar.
         static var header: Options = [.allowSettingStatus, .hideActionHint, .displayUserName, .useLargeFont]
+    }
+}
+
+extension NSTextAttachment {
+
+    fileprivate static var e2eiCertifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .certificateValid)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
+    }
+
+    fileprivate static var proteusVerifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .verifiedShield)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
     }
 }
