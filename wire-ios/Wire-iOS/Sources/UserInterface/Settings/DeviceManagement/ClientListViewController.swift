@@ -511,7 +511,7 @@ final class ClientListViewController: UIViewController,
                     nil
                 }
             })
-            let mlsClienIds = mlsClients.values.map({$0})
+            let mlsClienIds = Array(mlsClients.values)
             do {
                 let isE2eIEnabledForSelfClient = try await userSession.getIsE2eIdentityEnabled.invoke()
                 let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupID,
@@ -519,7 +519,7 @@ final class ClientListViewController: UIViewController,
                 if certificates.isNonEmpty {
                     for client in userClients {
                         let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
-                        client.e2eIdentityCertificate = certificates.first(where: {$0.clientId == mlsClientIdRawValue})
+                        client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
                         if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
                             client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
                         }
