@@ -26,6 +26,8 @@ final class GroupConversationVerificationStatusView: UIView {
     }
 
     private let label = UILabel()
+    private let shieldImageView = UIImageView()
+    private let stackView = UIStackView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,8 +40,6 @@ final class GroupConversationVerificationStatusView: UIView {
     }
 
     private func setupSubviews() {
-        let stackView = UIStackView(axis: .horizontal)
-        // stackView.spacing =
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
         NSLayoutConstraint.activate([
@@ -48,16 +48,30 @@ final class GroupConversationVerificationStatusView: UIView {
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-
-        let label = UILabel()
+        stackView.axis = .horizontal
+        stackView.spacing = 6
         stackView.addArrangedSubview(label)
-
-        let shieldImageView = UIImageView()
         stackView.addArrangedSubview(shieldImageView)
+
+        shieldImageView.contentMode = .center
     }
 
     private func updateSubviews() {
-        //
+        if status.e2eiCertificationStatus {
+            label.text = NSLocalizedString("Verified (End-to-end Identity)", comment: "")
+            label.textColor = SemanticColors.DrawingColors.green
+            shieldImageView.image = .init(resource: .certificateValid)
+        } else if status.proteusVerificationStatus {
+            label.text = NSLocalizedString("Verified (Proteus)", comment: "")
+            label.textColor = SemanticColors.DrawingColors.blue
+            shieldImageView.image = .init(resource: .verifiedShield)
+        } else {
+            label.text = ""
+            shieldImageView.image = nil
+        }
+
+        label.isHidden = label.text == ""
+        shieldImageView.isHidden = label.isHidden
     }
 }
 
@@ -65,44 +79,52 @@ private struct GroupConversationVerificationStatusViewRepresentable: UIViewRepre
 
     @State var status = ConversationVerificationStatus()
 
-    func makeUIView(context: Context) -> GroupConversationVerificationStatusView {.init() }
+    func makeUIView(context: Context) -> GroupConversationVerificationStatusView {
+        let view = GroupConversationVerificationStatusView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.status = status
+        return view
+    }
+
     func updateUIView(_ view: GroupConversationVerificationStatusView, context: Context) {
         view.status = status
     }
 }
 
-#Preview("neither nor") {
-    GroupConversationVerificationStatusViewRepresentable(
-        status: .init(
-            e2eiCertificationStatus: false,
-            proteusVerificationStatus: false
+#Preview {
+    VStack(alignment: .leading) {
+        Divider()
+        Text("neither nor:").font(.callout)
+        GroupConversationVerificationStatusViewRepresentable(
+            status: .init(
+                e2eiCertificationStatus: false,
+                proteusVerificationStatus: false
+            )
         )
-    )
-}
-
-#Preview("verified") {
-    GroupConversationVerificationStatusViewRepresentable(
-        status: .init(
-            e2eiCertificationStatus: false,
-            proteusVerificationStatus: true
+        Divider()
+        Text("verified:").font(.callout)
+        GroupConversationVerificationStatusViewRepresentable(
+            status: .init(
+                e2eiCertificationStatus: false,
+                proteusVerificationStatus: true
+            )
         )
-    )
-}
-
-#Preview("certified") {
-    GroupConversationVerificationStatusViewRepresentable(
-        status: .init(
-            e2eiCertificationStatus: true,
-            proteusVerificationStatus: false
+        Divider()
+        Text("certified:").font(.callout)
+        GroupConversationVerificationStatusViewRepresentable(
+            status: .init(
+                e2eiCertificationStatus: true,
+                proteusVerificationStatus: false
+            )
         )
-    )
-}
-
-#Preview("both") {
-    GroupConversationVerificationStatusViewRepresentable(
-        status: .init(
-            e2eiCertificationStatus: true,
-            proteusVerificationStatus: true
+        Divider()
+        Text("both:").font(.callout)
+        GroupConversationVerificationStatusViewRepresentable(
+            status: .init(
+                e2eiCertificationStatus: true,
+                proteusVerificationStatus: true
+            )
         )
-    )
+        Spacer()
+    }.padding()
 }
