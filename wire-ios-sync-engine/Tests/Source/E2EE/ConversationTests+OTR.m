@@ -903,6 +903,10 @@
     
     ZMUser *user1 = [self userForMockUser:self.user1];
     [self.userSession performChanges:^{
+        if(user1.clients.isEmpty) {
+            XCTFail(@"expected to have clients");
+            return;
+        }
         [selfClient trustClient:user1.clients.anyObject];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1125,6 +1129,10 @@
         for (UserClient *client in selfUser.clients){
             [selfUser.selfClient trustClient:client];
         }
+        if(user1.clients.isEmpty) {
+            XCTFail(@"expected to have clients");
+            return;
+        }
         [selfUser.selfClient trustClient:user1.clients.anyObject];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1160,7 +1168,11 @@
     }];
     ZMUser *user1 = [self userForMockUser:self.user1];
     XCTAssertNotNil(notSelfClient);
-    
+  
+    if(user1 == nil || user1.clients.isEmpty) {
+        XCTFail(@"user1 should exist");
+        return;
+    }
     // when
     [self.userSession performChanges:^{
         [selfUser.selfClient trustClient:user1.clients.anyObject];
