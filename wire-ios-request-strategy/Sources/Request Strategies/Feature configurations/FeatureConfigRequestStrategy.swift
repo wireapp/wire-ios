@@ -131,54 +131,13 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         }
 
         do {
-            let payload = try JSONSerialization.data(withJSONObject: data, options: [])
-            try processResponse(featureName: featureName, data: payload)
+            let payloadData = try JSONSerialization.data(withJSONObject: data, options: [])
+            let repository = FeatureRepository(context: managedObjectContext)
+
+            let processor = FeatureConfigsPayloadProcessor()
+            try processor.processEventPayload(data: payloadData, featureName: featureName, repository: repository)
         } catch {
             zmLog.error("Failed to process feature config update event: \(error.localizedDescription)")
         }
     }
-
-    private func processResponse(featureName: Feature.Name, data: Data) throws {
-        let featureRepository = FeatureRepository(context: managedObjectContext)
-        let decoder = JSONDecoder.defaultDecoder
-
-        switch featureName {
-        case .conferenceCalling:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
-            featureRepository.storeConferenceCalling(.init(status: response.status))
-
-        case .fileSharing:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
-            featureRepository.storeFileSharing(.init(status: response.status))
-
-        case .appLock:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.AppLock.Config>.self, from: data)
-            featureRepository.storeAppLock(.init(status: response.status, config: response.config))
-
-        case .selfDeletingMessages:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self, from: data)
-            featureRepository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
-
-        case .conversationGuestLinks:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
-            featureRepository.storeConversationGuestLinks(.init(status: response.status))
-
-        case .classifiedDomains:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>.self, from: data)
-            featureRepository.storeClassifiedDomains(.init(status: response.status, config: response.config))
-
-        case .digitalSignature:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
-            featureRepository.storeDigitalSignature(.init(status: response.status))
-
-        case .mls:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
-            featureRepository.storeMLS(.init(status: response.status, config: response.config))
-
-        case .mlsMigration:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.MLSMigration.Config>.self, from: data)
-            featureRepository.storeMLSMigration(.init(status: response.status, config: response.config))
-        }
-    }
-
 }

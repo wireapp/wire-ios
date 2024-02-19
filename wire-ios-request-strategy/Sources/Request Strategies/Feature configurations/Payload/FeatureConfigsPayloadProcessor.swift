@@ -20,10 +20,10 @@ import Foundation
 
 struct FeatureConfigsPayloadProcessor {
 
-    private let jsonDecoder = JSONDecoder.defaultDecoder
+    private let decoder = JSONDecoder.defaultDecoder
 
     func processPayloadData(_ data: Data, featureRepository: FeatureRepositoryInterface) throws {
-        let payload = try jsonDecoder.decode(FeatureConfigsPayload.self, from: data)
+        let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
 
         if let appLock = payload.appLock {
             featureRepository.storeAppLock(
@@ -109,6 +109,50 @@ struct FeatureConfigsPayloadProcessor {
                     config: mlsMigration.config
                 )
             )
+        }
+    }
+
+    func processEventPayload(
+        data: Data,
+        featureName: Feature.Name,
+        repository: FeatureRepositoryInterface
+    ) throws {
+        switch featureName {
+        case .conferenceCalling:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
+            repository.storeConferenceCalling(.init(status: response.status))
+
+        case .fileSharing:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
+            repository.storeFileSharing(.init(status: response.status))
+
+        case .appLock:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.AppLock.Config>.self, from: data)
+            repository.storeAppLock(.init(status: response.status, config: response.config))
+
+        case .selfDeletingMessages:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self, from: data)
+            repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
+
+        case .conversationGuestLinks:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
+            repository.storeConversationGuestLinks(.init(status: response.status))
+
+        case .classifiedDomains:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>.self, from: data)
+            repository.storeClassifiedDomains(.init(status: response.status, config: response.config))
+
+        case .digitalSignature:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
+            repository.storeDigitalSignature(.init(status: response.status))
+
+        case .mls:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
+            repository.storeMLS(.init(status: response.status, config: response.config))
+
+        case .mlsMigration:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.MLSMigration.Config>.self, from: data)
+            repository.storeMLSMigration(.init(status: response.status, config: response.config))
         }
     }
 }
