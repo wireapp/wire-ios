@@ -183,13 +183,13 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
 
 }
 
-struct FeatureStatus: Codable {
+struct FeatureStatus: Decodable {
 
     let status: Feature.Status
 
 }
 
-struct FeatureStatusWithConfig<Config: Codable>: Codable {
+struct FeatureStatusWithConfig<Config: Codable>: Decodable {
 
     let status: Feature.Status
     let config: Config

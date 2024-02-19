@@ -171,7 +171,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
 
 extension GetFeatureConfigsActionHandler {
 
-    struct ResponsePayload: Codable {
+    struct ResponsePayload: Decodable {
 
         let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
         let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>?
