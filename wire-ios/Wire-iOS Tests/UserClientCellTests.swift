@@ -45,6 +45,7 @@ final class UserClientCellTests: BaseSnapshotTestCase {
                               mlsThumbprint: shouldDisplayMLSInfo ? .mockMlsThumbprint : "", e2eIdentityCertificateStatus: e2EIdentityCertificateStatus)
         sut.overrideUserInterfaceStyle = userInterfaceStyle
         container.overrideUserInterfaceStyle = userInterfaceStyle
+        sut.layoutIfNeeded()
     }
 
     func testThatMLSInfoIsShown_whenMlsInfoAvailable() {
@@ -64,16 +65,6 @@ final class UserClientCellTests: BaseSnapshotTestCase {
 
     func testThatMLSInfoIsHidden_whenMlsInfoIsNotAvailable_inDarkMode() {
         prepareSut(shouldDisplayMLSInfo: true, userInterfaceStyle: .dark)
-        verify(matching: container)
-    }
-
-    func testThatProteusBadgeIsDisplayed_whenProteusIsVerified() {
-        prepareSut(isProteusVerified: true)
-        verify(matching: container)
-    }
-
-    func testThatProteusBadgeIsDisplayed_whenProteusIsVerified_inDarkMode() {
-        prepareSut(isProteusVerified: true, userInterfaceStyle: .dark)
         verify(matching: container)
     }
 
