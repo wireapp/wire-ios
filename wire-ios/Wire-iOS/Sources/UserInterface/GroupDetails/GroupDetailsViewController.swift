@@ -32,9 +32,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     let userSession: UserSession
 
     var didCompleteInitialSync = false {
-        didSet {
-            collectionViewController.sections = computeVisibleSections()
-        }
+        didSet { collectionViewController.sections = computeVisibleSections() }
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -102,6 +100,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         navigationItemTitleView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.titleView = navigationItemTitleView
         navigationItemTitleView.title = L10n.Localizable.Participants.title.capitalized
+        navigationItemTitleView.verificationStatus.isProteusVerified = conversation.sortedOtherParticipants.allSatisfy { $0.isVerified }
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
