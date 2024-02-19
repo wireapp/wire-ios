@@ -46,7 +46,6 @@
   },
   "testTargets" : [
     {
-      "enabled" : false,
       "skippedTests" : [
         "AvailabilityTests",
         "EventProcessingPerformanceTests",
