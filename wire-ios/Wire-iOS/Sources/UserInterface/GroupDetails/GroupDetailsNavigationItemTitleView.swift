@@ -19,8 +19,7 @@
 import SwiftUI
 import WireDataModel
 
-// TODO [WPB-765]: ensure accessibility labels are correctly set
-final class GroupDetailsNavigationItemTitleView: UIView { // TODO [WPB-765]: or ModalTopBar?
+final class GroupDetailsNavigationItemTitleView: UIView {
 
     var title: String {
         get { titleLabel.text ?? "" }

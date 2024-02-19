@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: replace this with existing types (conversation can only be none/proteus/e2ei)
 public struct ConversationVerificationStatus {
 
-    public var isE2EICertified: Bool // TODO [WPB-765]: consider using WireCoreCrypto.E2eiConversationState or MLSVerificationStatus
+    public var isE2EICertified: Bool
     public var isProteusVerified: Bool
 
     public init(

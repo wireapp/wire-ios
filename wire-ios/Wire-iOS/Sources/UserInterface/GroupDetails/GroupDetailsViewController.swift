@@ -399,5 +399,3 @@ extension ZMConversation {
         }
     }
 }
-
-// TODO [WPB-765]: how to get the verification status from the conversation?
