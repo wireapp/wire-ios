@@ -130,7 +130,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
             return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: httpStatus, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let inviteResults = responses.map({ InviteResult.init(response: $0, email: "")})
+        let inviteResults = responses.map({ InviteResult.init(response: $0, email: "") })
         let expectedResults: [InviteResult] = [.success(email: ""),
                                                 .failure(email: "", error: .tooManyTeamInvitations),
                                                 .failure(email: "", error: .blacklistedEmail),

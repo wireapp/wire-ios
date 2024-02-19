@@ -64,7 +64,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func createSubviews() {
@@ -134,8 +134,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         if !participants.isEmpty {
 
-            let admins = participants.filter({$0.isGroupAdmin(in: conversation)})
-            let members = participants.filter({!$0.isGroupAdmin(in: conversation)})
+            let admins = participants.filter({ $0.isGroupAdmin(in: conversation) })
+            let members = participants.filter({ !$0.isGroupAdmin(in: conversation) })
 
             let maxNumberOfDisplayed = Int.ConversationParticipants.maxNumberOfDisplayed
             let maxNumberWithoutTruncation = Int.ConversationParticipants.maxNumberWithoutTruncation
