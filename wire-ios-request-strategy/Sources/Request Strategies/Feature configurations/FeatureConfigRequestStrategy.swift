@@ -20,7 +20,7 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "feature configurations")
 
-public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
+public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, GetFeatureConfigsActionHandlerDelegate {
 
     // MARK: - Properties
 
@@ -33,7 +33,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
     private let getFeatureConfigsActionHandler: GetFeatureConfigsActionHandler
     private let actionSync: EntityActionSync
 
-    private var task: Task<Void, Never>?
+    private var slowSyncTask: Task<Void, Never>?
 
     // MARK: - Life cycle
 
@@ -58,36 +58,45 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
             .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileInBackground
         ]
+
+        getFeatureConfigsActionHandler.delegate = self
     }
 
     deinit {
-        task?.cancel()
+        slowSyncTask?.cancel()
     }
 
     // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if isSlowSyncing, task == nil {
-            task = Task { [weak self] in
-                guard let self, !Task.isCancelled else { return }
+        if isSlowSyncing, slowSyncTask == nil {
+            slowSyncTask = Task {
+                guard !Task.isCancelled else { return }
 
                 WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync start fetch feature config!")
 
-                if #available(iOS 16, *) {
-                    try? await Task.sleep(for: .seconds(1))
-                } else {
-                    try? await Task.sleep(nanoseconds: 1_000_000)
-                }
-
-                syncStatus.finishCurrentSyncPhase(phase: self.syncPhase)
-
-                self.task = nil
+                // task will finish via `GetFeatureConfigsActionHandlerDelegate`
             }
         }
 
         return actionSync.nextRequest(for: apiVersion)
     }
 
+    // MARK: - GetFeatureConfigsActionHandlerDelegate
+
+    func didFinishGetFeatureConfig() {
+        if slowSyncTask == nil { return }
+        WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync did finish fetch feature config!")
+        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+        self.slowSyncTask = nil
+    }
+
+    func didFailGetFeatureConfig() {
+        if slowSyncTask == nil { return }
+        WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync did fail fetch feature config!")
+        syncStatus.failCurrentSyncPhase(phase: syncPhase)
+        self.slowSyncTask = nil
+    }
 }
 
 // MARK: - Event processing
