@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
 class FeatureConfigRequestStrategyTests: MessagingTestBase {

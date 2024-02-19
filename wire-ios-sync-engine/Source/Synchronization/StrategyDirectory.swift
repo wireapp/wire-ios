@@ -324,7 +324,7 @@ mlsService: mlsService,
             EvaluateOneOnOneConversationsStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus
+                syncProgress: applicationStatusDirectory.syncStatus
             )
         ]
 

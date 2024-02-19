@@ -18,6 +18,7 @@
 
 import XCTest
 import WireDataModelSupport
+import WireRequestStrategySupport
 @testable import WireSyncEngine
 
 final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
@@ -29,8 +30,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
     private var mockApplicationStatus: MockApplicationStatus!
     private var mockCoreDataStack: CoreDataStack!
-    private var mockLastEventIDRepository: LastEventIDRepository!
-    private var mockSyncStatus: MockSyncStatus!
+    private var mockSyncStatus: MockSyncProgress!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
@@ -41,18 +41,10 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         mockCoreDataStack = try await coreDataHelper.createStack()
 
         mockApplicationStatus = MockApplicationStatus()
-        mockLastEventIDRepository = LastEventIDRepository(
-            userID: UUID(),
-            sharedUserDefaults: .temporary()
-        )
-        mockSyncStatus = MockSyncStatus(
-            managedObjectContext: syncContext,
-            lastEventIDRepository: mockLastEventIDRepository
-        )
+        mockSyncStatus = MockSyncProgress()
     }
 
     override func tearDown() async throws {
-        mockLastEventIDRepository = nil
         mockSyncStatus = nil
         mockApplicationStatus = nil
 
@@ -65,11 +57,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
     func testInitialState() {
         // given
-        let strategy = EvaluateOneOnOneConversationsStrategy(
-            withManagedObjectContext: syncContext,
-            applicationStatus: mockApplicationStatus,
-            syncStatus: mockSyncStatus
-        )
+        let strategy = makeStrategy()
 
         // when
         // then
@@ -78,15 +66,14 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
     func testNextRequest_givenSyncPhaseEvaluate1on1ConversationsForMLS_thenCallFinishSync() async {
         // given
-        mockSyncStatus.mockPhase = .evaluate1on1ConversationsForMLS
-
         let expectation = self.expectation(description: "EvaluateOneOnOneConversationsStrategy")
-        let strategy = EvaluateOneOnOneConversationsStrategy(
-            withManagedObjectContext: syncContext,
-            applicationStatus: mockApplicationStatus,
-            syncStatus: mockSyncStatus
-        )
-        strategy.taskCompletion = { expectation.fulfill() }
+
+        mockSyncStatus.currentSyncPhase = .evaluate1on1ConversationsForMLS
+        mockSyncStatus.finishCurrentSyncPhasePhase_MockMethod = { _ in
+            expectation.fulfill()
+        }
+
+        let strategy = makeStrategy()
 
         // when
         XCTAssertNil(strategy.nextRequest(for: apiVersion))
@@ -94,21 +81,20 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         // then
         await fulfillment(of: [expectation], timeout: 0.1)
 
-        XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
+        XCTAssertEqual(mockSyncStatus.finishCurrentSyncPhasePhase_Invocations.count, 1)
     }
 
     func testNextRequest_givenOtherSyncPhase_thenDoNotCallFinishSync() async {
         // given
-        mockSyncStatus.mockPhase = .fetchingLastUpdateEventID
-
         let expectation = self.expectation(description: "EvaluateOneOnOneConversationsStrategy")
         expectation.isInverted = true
-        let strategy = EvaluateOneOnOneConversationsStrategy(
-            withManagedObjectContext: syncContext,
-            applicationStatus: mockApplicationStatus,
-            syncStatus: mockSyncStatus
-        )
-        strategy.taskCompletion = { expectation.fulfill() }
+
+        mockSyncStatus.currentSyncPhase = .fetchingLastUpdateEventID
+        mockSyncStatus.finishCurrentSyncPhasePhase_MockMethod = { _ in
+            expectation.fulfill()
+        }
+
+        let strategy = makeStrategy()
 
         // when
         XCTAssertNil(strategy.nextRequest(for: apiVersion))
@@ -116,6 +102,16 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         // then
         await fulfillment(of: [expectation], timeout: 0.1)
 
-        XCTAssertFalse(mockSyncStatus.didCallFinishCurrentSyncPhase)
+        XCTAssert(mockSyncStatus.finishCurrentSyncPhasePhase_Invocations.isEmpty)
+    }
+
+    // MARK: - Helpers
+
+    private func makeStrategy() -> EvaluateOneOnOneConversationsStrategy {
+        EvaluateOneOnOneConversationsStrategy(
+            withManagedObjectContext: syncContext,
+            applicationStatus: mockApplicationStatus,
+            syncProgress: mockSyncStatus
+        )
     }
 }

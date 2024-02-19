@@ -2000,13 +2000,6 @@
 			path = Availability;
 			sourceTree = "<group>";
 		};
-		597A3BB82B641EA20020E337 /* UserStatus */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = UserStatus;
-			sourceTree = "<group>";
-		};
 		59D1C3012B1DE6FF0016F6B2 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -2743,7 +2736,6 @@
 			isa = PBXGroup;
 			children = (
 				597A3BB52B6418090020E337 /* Availability */,
-				597A3BB82B641EA20020E337 /* UserStatus */,
 				1687ABAB20EBE0770007C240 /* UserType.swift */,
 				EEF4010623A9213B007B1A97 /* UserType+Team.swift */,
 				1607AAF1243768D200A93D29 /* UserType+Materialize.swift */,
