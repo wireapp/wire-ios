@@ -239,7 +239,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                                                                         backoff:nil
                                                              initialAccessToken:initialAccessToken];
 
-        self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel: LevelInfo];
+        self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel:LevelInfo];
 
         ZM_WEAK(self);
         self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {
