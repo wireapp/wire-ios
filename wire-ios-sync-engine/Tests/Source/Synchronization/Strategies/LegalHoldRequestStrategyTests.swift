@@ -115,7 +115,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
 
             // WHEN
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -164,7 +164,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
             expectedLegalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
 
             let payload = type(of: self).payloadForReceivingLegalHoldRequestStatus(request: expectedLegalHoldRequest)
@@ -189,7 +189,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
 
             let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
@@ -242,7 +242,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
 
             let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)

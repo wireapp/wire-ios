@@ -56,7 +56,7 @@ extension MembershipPayload {
     @discardableResult
     func createOrUpdateMember(team: Team, in managedObjectContext: NSManagedObjectContext) -> Member? {
         let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: managedObjectContext)
-        let member = Member.getOrCreateMember(for: user, in: team, context: managedObjectContext)
+        let member = Member.getOrUpdateMember(for: user, in: team, context: managedObjectContext)
 
         if let permissions = permissions.flatMap({ Permissions(rawValue: $0.selfPermissions) }) {
             member.permissions = permissions

@@ -427,7 +427,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             user.remoteIdentifier = userId
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = teamId
-            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             XCTAssertNotNil(member)
             XCTAssertEqual(user.membership, member)
             XCTAssert(self.syncMOC.saveOrRollback())
@@ -465,7 +465,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             userId = user.remoteIdentifier!
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = teamId
-            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             XCTAssertNotNil(member)
             XCTAssertEqual(user.membership, member)
         }
@@ -513,7 +513,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             teamConversation1.team = team
             let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user, otherUser])
             conversation?.remoteIdentifier = conversationId
-            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             XCTAssertNotNil(member)
             XCTAssertEqual(user.membership, member)
         }
@@ -568,7 +568,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
             let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user, otherUser])
             conversation?.remoteIdentifier = conversationId
-            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             XCTAssertNotNil(member)
             XCTAssertEqual(user.membership, member)
         }
@@ -620,7 +620,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             let team = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)!
             let user = ZMUser.fetchOrCreate(with: userId, domain: nil, in: self.syncMOC)
             user.needsToBeUpdatedFromBackend = false
-            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             member.needsToBeUpdatedFromBackend = false
             XCTAssert(self.syncMOC.saveOrRollback())
         }

@@ -270,7 +270,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             teamConversation.team = team
             let user = ZMUser.insertNewObject(in: moc)
             user.remoteIdentifier = .create()
-            let member = Member.getOrCreateMember(for: user, in: team, context: moc)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: moc)
             XCTAssert(moc.saveOrRollback())
 
             // when
@@ -296,9 +296,9 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             user2.remoteIdentifier = userId2
             let team = Team.insertNewObject(in: moc)
 
-            let member1User1 = Member.getOrCreateMember(for: user1, in: team, context: moc)
-            let member2User1 = Member.getOrCreateMember(for: user1, in: team, context: moc)
-            let member1User2 = Member.getOrCreateMember(for: user2, in: team, context: moc)
+            let member1User1 = Member.getOrUpdateMember(for: user1, in: team, context: moc)
+            let member2User1 = Member.getOrUpdateMember(for: user1, in: team, context: moc)
+            let member1User2 = Member.getOrUpdateMember(for: user2, in: team, context: moc)
             XCTAssert(moc.saveOrRollback())
 
             // when
