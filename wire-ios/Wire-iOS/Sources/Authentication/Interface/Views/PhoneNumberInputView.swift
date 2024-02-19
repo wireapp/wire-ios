@@ -32,7 +32,7 @@ protocol PhoneNumberInputViewDelegate: AnyObject {
  * A view providing an input field for phone numbers and a button for choosing the country.
  */
 
-class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDelegate, TextContainer {
+final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDelegate, TextContainer {
 
     typealias RegistrationEnterPhoneNumber = L10n.Localizable.Registration.EnterPhoneNumber
 

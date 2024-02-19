@@ -111,7 +111,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.userDefinedName = "Phil"},
+                                                     modifier: { conversation, _ in conversation.userDefinedName = "Phil" },
                                                      expectedChangedField: "nameChanged",
                                                      expectedChangedKeys: ["displayName"]
         )
@@ -278,7 +278,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in try! conversation.appendText(content: "foo")},
+                                                     modifier: { conversation, _ in try! conversation.appendText(content: "foo") },
                                                      expectedChangedFields: ["messagesChanged", "lastModifiedDateChanged"],
                                                      expectedChangedKeys: ["allMessages", "lastModifiedDate"])
     }
@@ -344,7 +344,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         // when
         checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                modifier: {conversation, _ in conversation.removeParticipantsAndUpdateConversationState(users: Set([user]), initiatingUser: selfUser) },
+                                                modifier: { conversation, _ in conversation.removeParticipantsAndUpdateConversationState(users: Set([user]), initiatingUser: selfUser) },
                                                 expectedChangedFields: ["participantsChanged",
                                                                         "nameChanged",
                                                                         "activeParticipantsChanged"],

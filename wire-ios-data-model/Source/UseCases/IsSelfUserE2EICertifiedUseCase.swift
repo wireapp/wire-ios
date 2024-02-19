@@ -43,7 +43,7 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
     }
 
     public func invoke() async throws -> Bool {
-        let (conversationID, userID) = try await context.perform(schedule: schedule) {
+        let (conversationID, userID, clientCount) = try await context.perform(schedule: schedule) {
             // conversationID
             guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context) else {
                 throw Error.couldNotFetchMLSSelfConversation
@@ -60,7 +60,7 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
             else {
                 throw Error.failedToGetSelfUserID
             }
-            return (mlsGroupID, userID)
+            return (mlsGroupID, userID, selfUser.allClients.count)
         }
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
@@ -76,7 +76,7 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
             return identities
         }
 
-        return !identities.isEmpty && identities.allSatisfy { $0.status == .valid }
+        return !identities.isEmpty && identities.count == clientCount && identities.allSatisfy { $0.status == .valid }
     }
 }
 

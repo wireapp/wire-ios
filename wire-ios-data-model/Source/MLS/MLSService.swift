@@ -46,7 +46,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func wipeGroup(_ groupID: MLSGroupID) async throws
 
-    func commitPendingProposals() async throws
+    func commitPendingProposalsIfNeeded()
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws
 
@@ -1304,11 +1304,21 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    /// Commit all pending proposals for all groups.
-    ///
-    /// - Throws: `MLSCommitPendingProposalsError` if proposals couldn't be commited.
+    public func commitPendingProposalsIfNeeded() {
+        guard let context = context else {
+            return
+        }
 
-    public func commitPendingProposals() async throws {
+        WaitingGroupTask(context: context) { [self] in
+            do {
+                try await commitPendingProposals()
+            } catch {
+                WireLogger.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+            }
+        }
+    }
+
+    func commitPendingProposals() async throws {
         guard context != nil else {
             return
         }
@@ -1325,12 +1335,19 @@ public final class MLSService: MLSServiceInterface {
                 try await commitPendingProposals(in: groupID)
             } else {
                 logger.info("commit scheduled in the future, waiting...")
-                // swiftlint:disable todo_requires_jira_link
-                // FIXME: change logic not to wait for all commits
-                // swiftlint:enable todo_requires_jira_link
-                try await Task.sleep(nanoseconds: timestamp.timeIntervalSinceNow.nanoseconds)
-                logger.info("scheduled commit is ready, committing...")
-                try await commitPendingProposals(in: groupID)
+                // Committing proposals for each group is independent and should not wait for
+                // each other.
+                await withTaskGroup(of: Void.self) { group in
+                    group.addTask { [self] in
+                        do {
+                            try await Task.sleep(nanoseconds: timestamp.timeIntervalSinceNow.nanoseconds)
+                            logger.info("scheduled commit is ready, committing...")
+                            try await commitPendingProposals(in: groupID)
+                        } catch {
+                            logger.error("failed to commit pending proposals: \(String(describing: error))")
+                        }
+                    }
+                }
             }
         }
     }

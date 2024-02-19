@@ -66,7 +66,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     fileprivate func movedIndexes(_ changeSet: ConversationListChangeInfo) -> [MovedIndex] {
         var array: [MovedIndex] = []
-        changeSet.enumerateMovedIndexes {(x: Int, y: Int) in array.append(MovedIndex(from: x, to: y)) }
+        changeSet.enumerateMovedIndexes { (x: Int, y: Int) in array.append(MovedIndex(from: x, to: y)) }
         return array
     }
 
@@ -287,8 +287,8 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
         let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
-        XCTAssertEqual(conversationList.map { ($0 as! ZMConversation).objectID},
-                       [conversation3, conversation2, conversation1].map {$0.objectID}, file: file, line: line)
+        XCTAssertEqual(conversationList.map { ($0 as! ZMConversation).objectID },
+                       [conversation3, conversation2, conversation1].map { $0.objectID }, file: file, line: line)
 
         self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         XCTAssertEqual(conversationList.count, 3, file: file, line: line)
@@ -298,8 +298,8 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
         // then
-        XCTAssertEqual(conversationList.map { ($0 as! ZMConversation).objectID},
-                       [conversation2, conversation3, conversation1].map {$0.objectID}, file: file, line: line)
+        XCTAssertEqual(conversationList.map { ($0 as! ZMConversation).objectID },
+                       [conversation2, conversation3, conversation1].map { $0.objectID }, file: file, line: line)
         XCTAssertEqual(conversationList.count, 3, file: file, line: line)
         XCTAssertEqual(testObserver.changes.count, 1, file: file, line: line)
         if let first = testObserver.changes.last {

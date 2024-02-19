@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
+final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
 
     var cell: GroupDetailsNotificationOptionsCell!
     var conversation: ZMConversation!

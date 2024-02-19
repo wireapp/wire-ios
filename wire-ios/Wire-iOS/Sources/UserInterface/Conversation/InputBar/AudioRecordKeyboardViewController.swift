@@ -423,7 +423,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
                 duration: 0.35,
                 options: [.curveEaseIn],
                 animations: changes,
-                completion: { _ in picker.didMove(toParent: self)}
+                completion: { _ in picker.didMove(toParent: self) }
             )
 
             self.effectPickerViewController = picker
