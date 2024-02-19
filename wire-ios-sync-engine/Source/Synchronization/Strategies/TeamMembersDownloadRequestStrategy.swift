@@ -63,7 +63,7 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
             let rawData = response.rawData,
             let payload = MembershipListPayload(rawData)
         else {
-            syncStatus.failCurrentSyncPhase(phase: .fetchingTeamMembers)
+            failSyncPhase()
             return
         }
 
@@ -76,8 +76,11 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         completeSyncPhase()
     }
 
+    func failSyncPhase() {
+        syncStatus.failCurrentSyncPhase(phase: .fetchingTeamMembers)
+    }
+
     func completeSyncPhase() {
         syncStatus.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
     }
-
 }
