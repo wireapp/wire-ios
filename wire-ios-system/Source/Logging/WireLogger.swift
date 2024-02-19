@@ -185,4 +185,5 @@ public extension WireLogger {
     static let session = WireLogger(tag: "session")
     static let sync = WireLogger(tag: "sync")
     static let system = WireLogger(tag: "system")
+    static let featureConfigs = WireLogger(tag: "feature-configurations")
 }

@@ -299,7 +299,9 @@ mlsService: mlsService,
                 applicationStatus: applicationStatusDirectory),
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
+            ),
             TerminateFederationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
