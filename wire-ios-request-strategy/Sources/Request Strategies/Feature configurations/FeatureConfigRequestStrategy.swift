@@ -24,16 +24,20 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, GetFea
 
     // MARK: - Properties
 
-    let syncPhase: SyncPhase = .fetchingFeatureConfig
+    // Slow Sync
 
     private unowned var syncStatus: SyncProgress
 
+    private let syncPhase: SyncPhase = .fetchingFeatureConfig
+
     private var isSlowSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
 
-    private let getFeatureConfigsActionHandler: GetFeatureConfigsActionHandler
-    private let actionSync: EntityActionSync
-
     private var slowSyncTask: Task<Void, Never>?
+
+    // Action
+
+    private let actionHandler: GetFeatureConfigsActionHandler
+    private let actionSync: EntityActionSync
 
     // MARK: - Life cycle
 
@@ -42,8 +46,8 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, GetFea
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress
     ) {
-        getFeatureConfigsActionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
-        actionSync = EntityActionSync(actionHandlers: [getFeatureConfigsActionHandler])
+        actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
+        actionSync = EntityActionSync(actionHandlers: [actionHandler])
         self.syncStatus = syncProgress
 
         super.init(
@@ -59,7 +63,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, GetFea
             .allowsRequestsWhileInBackground
         ]
 
-        getFeatureConfigsActionHandler.delegate = self
+        // getFeatureConfigsActionHandler.delegate = self
     }
 
     deinit {
@@ -70,12 +74,33 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, GetFea
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if isSlowSyncing, slowSyncTask == nil {
-            slowSyncTask = Task {
-                guard !Task.isCancelled else { return }
+            slowSyncTask = Task { [weak self, syncStatus, syncPhase] in
+                guard let self, !Task.isCancelled else { return }
 
                 WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync start fetch feature config!")
 
-                // task will finish via `GetFeatureConfigsActionHandlerDelegate`
+                do {
+                    // perform action notifies the registered action handler `GetFeatureConfigsActionHandler`.
+                    // the action stay pending until in the operation loop creates and executes the next request.
+                    // Here the task waits for the result and then continues to report to syncStatus.
+
+                    var action = GetFeatureConfigsAction()
+                    try await action.perform(in: managedObjectContext.notificationContext)
+
+                    WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync finished fetch feature config!")
+
+                    await managedObjectContext.perform {
+                        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+                    }
+                } catch {
+                    WireLogger.conversation.error("FeatureConfigRequestStrategy: slow sync failed fetch feature config!")
+
+                    await managedObjectContext.perform {
+                        syncStatus.failCurrentSyncPhase(phase: syncPhase)
+                    }
+                }
+
+                self.slowSyncTask = nil
             }
         }
 
