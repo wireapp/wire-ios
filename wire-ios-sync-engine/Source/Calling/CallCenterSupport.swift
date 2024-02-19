@@ -43,19 +43,6 @@ public enum AVSConversationType: Int32 {
 
 }
 
-extension AVSConversationType {
-
-    var isConference: Bool {
-        switch self {
-        case .conference, .mlsConference:
-            return true
-
-        default:
-            return false
-        }
-    }
-}
-
  /// An object that represents a calling event.
 
 public struct CallEvent {
