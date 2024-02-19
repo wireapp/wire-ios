@@ -27,13 +27,13 @@ public protocol CoreCryptoProviderProtocol {
     /// This function is safe to be called concurrently from multiple Tasks
     func coreCrypto() async throws -> SafeCoreCryptoProtocol
 
-    /// Initialise an new MLS client with basic credentials
+    /// Initialise a new MLS client with basic credentials
     ///
     /// - parameters:
     ///   - mlsClientID: qualified client ID of the self client
     func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws
 
-    /// Initialise an new MLS client after completing end to end identity enrollment
+    /// Initialise a new MLS client after completing end to end identity enrollment
     /// 
     /// - parameters:
     ///   - enrollment: enrollment instance which was used to establish end to end identity
