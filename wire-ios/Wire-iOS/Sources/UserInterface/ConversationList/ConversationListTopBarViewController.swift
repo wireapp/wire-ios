@@ -30,7 +30,7 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     private var account: Account
-    // private var userStatus: UserStatus ?
+    private var userStatus: UserStatus
     private let selfUser: SelfUserType
     private var userSession: UserSession
     // remove in favor of UserStatus?
@@ -90,6 +90,7 @@ final class ConversationListTopBarViewController: UIViewController {
     // MARK: - Title View
 
     func updateTitleView() {
+        TODO: weak userStatusViewController and don't create it each time
         if let userStatusViewController {
             removeChild(userStatusViewController)
         }
@@ -98,6 +99,7 @@ final class ConversationListTopBarViewController: UIViewController {
                 options: .header,
                 settings: .shared
             )
+        TODO: use self.userStatus
             userStatusViewController.userStatus = .init(
                 user: selfUser,
                 isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
@@ -312,19 +314,16 @@ extension ConversationListTopBarViewController: UserStatusViewControllerDelegate
 
 extension UIView {
 
-    func wrapInAvatarSizeContainer() -> UIView {
+    fileprivate func wrapInAvatarSizeContainer() -> UIView {
         let container = UIView()
-
         container.addSubview(self)
-
         NSLayoutConstraint.activate([
             container.widthAnchor.constraint(equalToConstant: CGFloat.ConversationAvatarView.iconSize),
             container.heightAnchor.constraint(equalToConstant: CGFloat.ConversationAvatarView.iconSize),
 
             container.centerYAnchor.constraint(equalTo: centerYAnchor),
-            container.centerXAnchor.constraint(equalTo: centerXAnchor)])
-
+            container.centerXAnchor.constraint(equalTo: centerXAnchor)
+        ])
         return container
-
     }
 }
