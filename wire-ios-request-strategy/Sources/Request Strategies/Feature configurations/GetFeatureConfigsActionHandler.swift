@@ -52,7 +52,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             }
 
             do {
-                let payload = try JSONDecoder.defaultDecoder.decode(ResponsePayload.self, from: data)
+                let payload = try JSONDecoder.defaultDecoder.decode(FeatureConfigsPayload.self, from: data)
                 processPayload(payload)
 
                 action.succeed()
@@ -75,7 +75,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         }
     }
 
-    private func processPayload(_ payload: ResponsePayload) {
+    private func processPayload(_ payload: FeatureConfigsPayload) {
         let featureRepository = FeatureRepository(context: context)
 
         if let appLock = payload.appLock {
@@ -164,25 +164,4 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             )
         }
     }
-
-}
-
-// MARK: - Response Payload
-
-extension GetFeatureConfigsActionHandler {
-
-    struct ResponsePayload: Decodable {
-
-        let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
-        let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>?
-        let conferenceCalling: FeatureStatus?
-        let conversationGuestLinks: FeatureStatus?
-        let digitalSignatures: FeatureStatus?
-        let fileSharing: FeatureStatus?
-        let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
-        let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
-        let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
-
-    }
-
 }
