@@ -147,8 +147,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         if !participants.isEmpty {
 
-            let admins = participants.filter({$0.isGroupAdmin(in: conversation)})
-            let members = participants.filter({!$0.isGroupAdmin(in: conversation)})
+            let admins = participants.filter({ $0.isGroupAdmin(in: conversation) })
+            let members = participants.filter({ !$0.isGroupAdmin(in: conversation) })
 
             let maxNumberOfDisplayed = Int.ConversationParticipants.maxNumberOfDisplayed
             let maxNumberWithoutTruncation = Int.ConversationParticipants.maxNumberWithoutTruncation
@@ -352,27 +352,27 @@ private extension GroupDetailsViewController {
         typealias ConversationVerificationStatus = L10n.Localizable.GroupDetails.ConversationVerificationStatus
 
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             return ConversationVerificationStatus.proteus
-        case .mls, .mixed:
+        case .mls:
             return ConversationVerificationStatus.e2ei
         }
     }
 
     var verificationStatusIcon: UIImage {
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             return Asset.Images.verifiedShield.image
-        case .mls, .mixed:
+        case .mls:
             return Asset.Images.certificateValid.image
         }
     }
 
     var verificationStatusColor: UIColor {
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             return SemanticColors.Label.textCertificateVerified
-        case .mls, .mixed:
+        case .mls:
             return SemanticColors.Label.textCertificateValid
         }
     }

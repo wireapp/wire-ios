@@ -25,37 +25,44 @@ public typealias OAuthBlock = (_ idP: URL,
 
 public protocol EnrollE2eICertificateUseCaseInterface {
 
-    func invoke(e2eiClientId: E2eIClientID,
-                userName: String,
-                userHandle: String,
-                team: UUID,
-                isUpgradingMLSClient: Bool,
-                authenticate: OAuthBlock) async throws
+    func invoke(authenticate: OAuthBlock) async throws
 
 }
 
 /// This class provides an interface to issue an E2EI certificate.
 public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInterface {
 
-    var e2eiRepository: E2eIRepositoryInterface
+    // MARK: - Types
 
-    public init(e2eiRepository: E2eIRepositoryInterface) {
-        self.e2eiRepository = e2eiRepository
+    enum Failure: Error {
+        case missingIdentityProvider
+        case missingClientId
+        case failedToDecodeCertificate
+        case failedToEnrollCertificate(_ underlyingError: Error)
     }
 
-    public func invoke(e2eiClientId: E2eIClientID,
-                       userName: String,
-                       userHandle: String,
-                       team: UUID,
-                       isUpgradingMLSClient: Bool,
-                       authenticate: OAuthBlock) async throws {
-        try await e2eiRepository.fetchTrustAnchor()
+    // MARK: - Properties
 
-        let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId,
-                                                                   userName: userName,
-                                                                   handle: userHandle,
-                                                                   team: team,
-                                                                   isUpgradingClient: isUpgradingMLSClient)
+    private let logger = WireLogger.e2ei
+    private let e2eiRepository: E2eIRepositoryInterface
+    private let context: NSManagedObjectContext
+
+    // MARK: - Life cycle
+
+    public init(e2eiRepository: E2eIRepositoryInterface,
+                context: NSManagedObjectContext) {
+        self.e2eiRepository = e2eiRepository
+        self.context = context
+    }
+
+    public func invoke(authenticate: OAuthBlock) async throws {
+        do {
+            try await e2eiRepository.fetchTrustAnchor()
+        } catch {
+            logger.warn("failed to register trust anchor: \(error.localizedDescription)")
+        }
+
+        let enrollment = try await e2eiRepository.createEnrollment(context: context)
 
         let acmeNonce = try await enrollment.getACMENonce()
         let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)
@@ -70,17 +77,23 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let acmeAudience = oidcAuthorization.challenge.url
 
         guard let identityProvider = URL(string: oidcAuthorization.challenge.target) else {
-            throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
+            throw Failure.missingIdentityProvider
         }
 
         guard let clientId = extractClientId(from: oidcAuthorization.challenge.target) else {
-            throw EnrollE2EICertificateUseCaseFailure.missingClientId
+            throw Failure.missingClientId
         }
 
+        let selfClientId = await context.perform {
+            ZMUser.selfUser(in: self.context).selfClient()?.remoteIdentifier
+        }
+        let s = await context.perform {
+            ZMUser.selfUser(in: self.context).selfClient()?.hasRegisteredMLSClient ?? false
+        }
         let (idToken, refreshToken) = try await authenticate(identityProvider, clientId, keyauth, acmeAudience)
-        let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
+        let wireNonce = try await enrollment.getWireNonce(clientId: selfClientId ?? "")
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
-        let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
+        let wireAccessToken = try await enrollment.getWireAccessToken(clientId: selfClientId ?? "",
                                                                       dpopToken: dpopToken)
 
         let refreshTokenFromCC = try? await enrollment.getOAuthRefreshToken()
@@ -101,15 +114,16 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
 
         do {
             guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
-                throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
+                throw Failure.failedToDecodeCertificate
             }
+
             if isUpgradingMLSClient {
                 try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
             } else {
                 try await enrollment.createMLSClient(certificateChain: certificateChain)
             }
-        } catch is DecodingError {
-            throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
+        } catch {
+            throw Failure.failedToEnrollCertificate(error)
         }
 
     }
@@ -121,14 +135,5 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         }
         return clientId
     }
-
-}
-
-enum EnrollE2EICertificateUseCaseFailure: Error {
-
-    case failedToSetupEnrollment
-    case missingIdentityProvider
-    case missingClientId
-    case failedToDecodeCertificate
 
 }

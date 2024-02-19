@@ -19,7 +19,7 @@
 import Foundation
 import XCTest
 
-class ZMUserSessionTimersTests: ZMUserSessionTestsBase {
+final class ZMUserSessionTimersTests: ZMUserSessionTestsBase {
 
     func testThatTimersAreStartedWhenUserSessionIsCreated() {
         // then

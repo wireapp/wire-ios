@@ -54,7 +54,7 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         otherUser.remoteIdentifier = UUID()
         otherUser.name = "Bruno"
         userSession = UserSessionMock()
-        conversation = createOneToOneConversation(selfUser: selfUser, otherUser: otherUser, messageProtocol: .proteus)
+        conversation = createOneOnOneConversation(selfUser: selfUser, otherUser: otherUser, messageProtocol: .proteus)
         mockVoiceChannel = MockVoiceChannel(conversation: conversation)
         mockVoiceChannel.mockVideoState = VideoState.started
         mockVoiceChannel.mockIsVideoCall = true
@@ -160,9 +160,11 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
 
     // MARK: - Mock ZMConversation
 
-    func createOneToOneConversation(selfUser: ZMUser,
-                                    otherUser: ZMUser,
-                                    messageProtocol: MessageProtocol) -> ZMConversation {
+    func createOneOnOneConversation(
+        selfUser: ZMUser,
+        otherUser: ZMUser,
+        messageProtocol: MessageProtocol
+    ) -> ZMConversation {
 
         let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
         mockConversation.messageProtocol = messageProtocol
@@ -170,12 +172,11 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
 
         mockConversation.conversationType = .oneOnOne
         mockConversation.remoteIdentifier = UUID.create()
+        mockConversation.oneOnOneUser = otherUser
+
         let connection = ZMConnection.insertNewObject(in: uiMOC)
         connection.to = otherUser
         connection.status = .accepted
-        connection.conversation = mockConversation
-
-        connection.add(user: otherUser)
 
         return mockConversation
     }

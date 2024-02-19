@@ -2283,8 +2283,8 @@ internal enum L10n {
           internal static let cancel = L10n.tr("Localizable", "conversation.create.mls.cancel", fallback: "Cancel")
           /// Select Protocol
           internal static let pickerTitle = L10n.tr("Localizable", "conversation.create.mls.picker_title", fallback: "Select Protocol")
-          /// Select MLS to create a group using Messaging Layer Security protocol (beta version).
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a group using Messaging Layer Security protocol (beta version).")
+          /// Select MLS to create a group using the Messaging Layer Security protocol.
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a group using the Messaging Layer Security protocol.")
           /// Protocol
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
@@ -3097,6 +3097,21 @@ internal enum L10n {
             internal static let enabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.enabled", fallback: "Generating guest links is now enabled for all group admins.")
           }
         }
+        internal enum MlsE2ei {
+          /// As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.
+          /// Enter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.
+          internal static let message = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.message", fallback: "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\nEnter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.")
+          /// End-to-end identity certificate
+          internal static let title = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.title", fallback: "End-to-end identity certificate")
+          internal enum Button {
+            /// Get Certificate
+            internal static let getCertificate = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.get_certificate", fallback: "Get Certificate")
+            /// Learn More
+            internal static let learnMore = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.learn_more", fallback: "Learn More")
+            /// Remind Me Later
+            internal static let remindMeLater = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.remind_me_later", fallback: "Remind Me Later")
+          }
+        }
         internal enum SelfDeletingMessages {
           internal enum Message {
             /// Self-deleting messages are disabled.
@@ -3316,8 +3331,8 @@ internal enum L10n {
       internal enum MessageProtocol {
         /// Cipher Suite
         internal static let cipherSuite = L10n.tr("Localizable", "group_details.message_protocol.cipher_suite", fallback: "Cipher Suite")
-        /// Protocol details (beta)
-        internal static let sectionTile = L10n.tr("Localizable", "group_details.message_protocol.section_tile", fallback: "Protocol details (beta)")
+        /// Protocol details
+        internal static let sectionTile = L10n.tr("Localizable", "group_details.message_protocol.section_tile", fallback: "Protocol details")
         /// Protocol
         internal static let title = L10n.tr("Localizable", "group_details.message_protocol.title", fallback: "Protocol")
       }

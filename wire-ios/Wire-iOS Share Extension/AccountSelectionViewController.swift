@@ -23,7 +23,7 @@ import WireDataModel
 
 private let cellReuseIdentifier = "AccountCell"
 
-class AccountSelectionViewController: UITableViewController {
+final class AccountSelectionViewController: UITableViewController {
 
     private var accounts: [Account]
     private var current: Account?

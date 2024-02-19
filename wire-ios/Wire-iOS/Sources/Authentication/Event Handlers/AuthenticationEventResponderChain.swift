@@ -49,7 +49,7 @@ protocol AuthenticationEventResponderChainDelegate: AnyObject {
  * state and who will be responsible from
  */
 
-class AuthenticationEventResponderChain {
+final class AuthenticationEventResponderChain {
 
     /**
      * The supported event types.

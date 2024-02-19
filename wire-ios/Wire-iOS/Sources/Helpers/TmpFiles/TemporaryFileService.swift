@@ -25,7 +25,7 @@ protocol TemporaryFileServiceInterface {
     func removeTemporaryData()
 }
 
-class TemporaryFileService: TemporaryFileServiceInterface {
+final class TemporaryFileService: TemporaryFileServiceInterface {
     func removeTemporaryData() {
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
@@ -36,6 +36,5 @@ class TemporaryFileService: TemporaryFileServiceInterface {
                 try? manager.removeItem(atPath: file.path)
             }
         WireLogger.localStorage.debug("clearing temp directory!!")
-        zmLog.safePublic("clearing temp directory!!", level: .debug)
     }
 }

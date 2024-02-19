@@ -60,19 +60,18 @@ final class ProfileDetailsViewController: UIViewController {
 
     // MARK: - Initialization
 
-    /**
-     * Creates a new profile details screen for the specified configuration.
-     * - parameter user: The user whose profile is displayed.
-     * - parameter viewer: The user that views the profile.
-     * - parameter conversation: The conversation where the profile is displayed.
-     * - parameter context: The context of the profile screen.
-     */
-
-    init(user: UserType,
-         viewer: UserType,
-         conversation: ZMConversation?,
-         context: ProfileViewControllerContext,
-         userSession: UserSession) {
+    /// Creates a new profile details screen for the specified configuration.
+    /// - parameter user: The user whose profile is displayed.
+    /// - parameter viewer: The user that views the profile.
+    /// - parameter conversation: The conversation where the profile is displayed.
+    /// - parameter context: The context of the profile screen.
+    init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation?,
+        context: ProfileViewControllerContext,
+        userSession: UserSession
+    ) {
 
         var profileHeaderOptions: ProfileHeaderViewController.Options = [.hideUsername, .hideHandle, .hideTeamName]
 
@@ -84,8 +83,20 @@ final class ProfileDetailsViewController: UIViewController {
         self.viewer = viewer
         self.conversation = conversation
         self.context = context
-        profileHeaderViewController = ProfileHeaderViewController(user: user, viewer: viewer, conversation: conversation, options: profileHeaderOptions, userSession: userSession)
-        contentController = ProfileDetailsContentController(user: user, viewer: viewer, conversation: conversation)
+        profileHeaderViewController = .init(
+            user: user,
+            viewer: viewer,
+            conversation: conversation,
+            options: profileHeaderOptions,
+            userSession: userSession,
+            isSelfUserProteusVerifiedUseCase: userSession.isSelfUserProteusVerifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
+        )
+        contentController = .init(
+            user: user,
+            viewer: viewer,
+            conversation: conversation
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -178,5 +189,4 @@ extension ProfileDetailsViewController: ProfileDetailsContentControllerDelegate 
     func profileDetailsContentDidChange() {
         tableView.reloadData()
     }
-
 }

@@ -87,8 +87,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic, strong, nullable) NSUUID* overrideNextSinceParameter;
 
-+ (NSString *)binaryDataTypeAsMIME:(NSString *)type;
-
 - (void)addPushToken:(NSString *)token payload:(NSDictionary *)payload;
 - (void)removePushToken:(NSString *)token;
 

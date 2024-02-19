@@ -160,7 +160,7 @@
     XCTAssertTrue([self login]);
     
     ZMUser *selfUser = [ZMUser selfUserInContext:self.userSession.managedObjectContext];
-    UserChangeObserver *observer = [[UserChangeObserver alloc] initWithUser:selfUser];
+    ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
     
     [self.mockTransportSession performRemoteChanges:^(id<MockTransportSessionObjectCreation> _Nonnull session) {

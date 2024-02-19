@@ -180,7 +180,7 @@ final class BackgroundViewController: UIViewController {
     }
 }
 
-extension BackgroundViewController: ZMUserObserver {
+extension BackgroundViewController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         updateFor(imageMediumDataChanged: changeInfo.imageMediumDataChanged,
                        accentColorValueChanged: changeInfo.accentColorValueChanged)

@@ -20,12 +20,12 @@ import Foundation
 import WireDataModel
 
 protocol MLSClientResolving {
-    func mlsClientId(for userClient: UserClient) -> MLSClientID?
+    func mlsClientId(for userClient: UserClientType) -> MLSClientID?
 }
 
 final class MLSClientResolver: MLSClientResolving {
 
-    func mlsClientId(for userClient: UserClient) -> MLSClientID? {
+    func mlsClientId(for userClient: UserClientType) -> MLSClientID? {
         return MLSClientID(userClient: userClient)
     }
 

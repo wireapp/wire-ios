@@ -65,7 +65,7 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
 
 }
 
-private class MockDelegate: NSObject, ConversationInputBarViewControllerDelegate {
+private final class MockDelegate: NSObject, ConversationInputBarViewControllerDelegate {
 
     var composedDrafts = [DraftMessage]()
 

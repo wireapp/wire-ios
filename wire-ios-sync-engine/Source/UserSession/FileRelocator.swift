@@ -30,6 +30,7 @@ extension ZMUserSession {
     /// and moves them to a folder named `wire-account-{accountIdentifier}` if there is no user-account folder yet
     /// It asserts if the caches folder contains unassigned files even though there is already an existing user account folder as this would be considered a programmer error
     @objc public static func moveCachesIfNeededForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) {
+        // swiftlint:disable todo_requires_jira_link
         // FIXME: accountIdentifier should be non-nullable
         guard let accountIdentifier = accountIdentifier else { return }
 
@@ -41,8 +42,8 @@ extension ZMUserSession {
         else { return }
 
         fm.createAndProtectDirectory(at: newCacheLocation)
-
         // FIXME: Use dictionary grouping in Swift4
+        // swiftlint:enable todo_requires_jira_link
         // see https://developer.apple.com/documentation/swift/dictionary/2893436-init
         let result = group(fileNames: files.filter { !whitelistedFiles.contains($0) })
         if result.assigned.count == 0 {

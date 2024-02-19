@@ -50,7 +50,7 @@ final class MockAudioRecorder: AudioRecorderType {
     var recordLevelCallBack: ((RecordingLevel) -> Void)?
     var playingStateCallback: ((PlayingState) -> Void)?
     var recordStartedCallback: (() -> Void)?
-    var recordEndedCallback: ((Swift.Result<Void, Error>) -> Void)?
+    var recordEndedCallback: ((Result<Void, Error>) -> Void)?
 
     var startRecordingHitCount = 0
     func startRecording(_ completion: @escaping (Bool) -> Void) {

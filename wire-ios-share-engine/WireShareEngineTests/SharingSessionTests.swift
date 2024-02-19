@@ -21,7 +21,7 @@ import WireDataModel
 import WireTesting
 @testable import WireShareEngine
 
-class SharingSessionTests: BaseSharingSessionTests {
+final class SharingSessionTests: BaseSharingSessionTests {
 
     func createConversation(type: ZMConversationType, archived: Bool) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)

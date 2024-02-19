@@ -64,7 +64,7 @@ extension ZMMessageTests_GenericMessage {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let senderClientID = try XCTUnwrap(NSString.createAlphanumerical())
+        let senderClientID = String.randomClientIdentifier()
         let nonce = UUID.create()
         let knockMessage = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: nonce)
 

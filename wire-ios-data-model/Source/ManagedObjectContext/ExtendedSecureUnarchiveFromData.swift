@@ -22,6 +22,7 @@ import Foundation
 /// custom classes.
 ///
 /// NOTE: Every transformable property should use this secure transformer.
+@objc(ExtendedSecureUnarchiveFromData) @objcMembers
 public class ExtendedSecureUnarchiveFromData: NSSecureUnarchiveFromDataTransformer {
 
     /// The name of the transformer. This is the name used to register the transformer using ValueTransformer.setValueTrandformer(_"forName:)`.
@@ -37,5 +38,4 @@ public class ExtendedSecureUnarchiveFromData: NSSecureUnarchiveFromDataTransform
         // NOTE: NSSet is included for compatibility with iOS 12
         super.allowedTopLevelClasses + [LinkAttachment.self, NSSet.self]
     }
-
 }

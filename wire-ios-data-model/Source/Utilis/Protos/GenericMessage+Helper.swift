@@ -213,7 +213,7 @@ extension GenericMessage {
 
 public extension Text {
     func isMentioningSelf(_ selfUser: ZMUser) -> Bool {
-        return mentions.any {$0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
+        return mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
     }
 
     func isQuotingSelf(_ quotedMessage: ZMOTRMessage?) -> Bool {
@@ -647,25 +647,6 @@ public extension WireDataModel.Mention {
             $0.qualifiedUserID =  WireProtos.QualifiedUserId.with {
                 $0.id = userID
                 $0.domain = domain
-            }
-        }
-    }
-}
-
-// MARK: - Availability
-
-extension WireProtos.Availability {
-    public init(_ availability: AvailabilityKind) {
-        self = WireProtos.Availability.with {
-            switch availability {
-            case .none:
-                $0.type = .none
-            case .available:
-                $0.type = .available
-            case .away:
-                $0.type = .away
-            case .busy:
-                $0.type = .busy
             }
         }
     }

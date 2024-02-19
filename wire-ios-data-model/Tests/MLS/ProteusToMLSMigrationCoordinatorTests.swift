@@ -259,8 +259,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        // TODO: Assert we update the conversation protocol
-        // https://wearezeta.atlassian.net/browse/WPB-542
+        // TODO: [WPB-542] Assert we update the conversation protocol
     }
 
     func test_ItUpdatesConversationProtocolToMLS_IfFinalisationTimeHasBeenReached() async throws {
@@ -276,8 +275,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        // TODO: Assert we update the conversation protocol
-        // https://wearezeta.atlassian.net/browse/WPB-542
+        // TODO: [WPB-542] Assert we update the conversation protocol
     }
 
     func test_ItDoesntUpdateProtocolToMLS_IfParticipantsDontSupportMLS_AndFinalisationTimeHasNotBeenReached() async throws {
@@ -293,8 +291,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        // TODO: Assert we don't update the conversation protocol
-        // https://wearezeta.atlassian.net/browse/WPB-542
+        // TODO: [WPB-542] Assert we update the conversation protocol
     }
 
     // MARK: - Helpers
@@ -312,7 +309,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await syncMOC.perform { [syncMOC] in
             let user = ZMUser.insertNewObject(in: syncMOC)
 
-            // TODO: Set supported protocols on the users
+            // TODO: [WPB-542] Set supported protocols on the users
             // https://wearezeta.atlassian.net/browse/WPB-542
             //
             // user.supportedProtocols = [protocol]

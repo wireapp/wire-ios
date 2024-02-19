@@ -19,7 +19,7 @@
 import Foundation
 import avs
 
-class SoundPreviewPlayer {
+final class SoundPreviewPlayer {
 
     fileprivate var mediaManager: AVSMediaManager
     fileprivate var stopTimer: Timer?

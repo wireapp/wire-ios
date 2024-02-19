@@ -134,19 +134,19 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         observers.append(
             NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
                                               context: self.managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0)})
+                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0) })
             )
 
         observers.append(
             NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
                                               context: self.managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0)})
+                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0) })
         )
 
         observers.append(
             NotificationInContext.addObserver(name: ZMConversation.clearTypingNotificationName,
                                               context: self.managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.shouldClearTypingForConversation(note: $0)})
+                                              using: { [weak self] in self?.shouldClearTypingForConversation(note: $0) })
         )
     }
 

@@ -21,7 +21,7 @@ import WireTransport
 @testable import WireSyncEngine
 import XCTest
 
-class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
 
     func test_itRenewsAccessTokenAfterClientRegistration_StartingFromApiV3() {
         syncMOC.performAndWait {

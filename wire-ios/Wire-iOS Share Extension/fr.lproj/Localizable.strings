@@ -1,0 +1,79 @@
+//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Share Extension
+// General
+
+
+
+"general.ok" = "OK";
+
+// Conversation Selection
+"share_extension.conversation_selection.account" = "Compte :";
+"share_extension.conversation_selection.title" = "Conversation :";
+"share_extension.conversation_selection.empty.value" = "Choisir";
+
+"share_extension.send_button.title" = "Envoyer";
+"share_extension.input.placeholder" = "Écrivez un message";
+"share_extension.sending_progress.title" = "Envoi…";
+"share_extension.preparing.title" = "Préparation en cours…";
+"share_extension.no_internet_connection.title" = "Pas de connexion internet";
+"share_extension.not_signed_in.title" = "Vous devez vous connecter sur Wire avant de pouvoir partager du contenu";
+"share_extension.not_signed_in.close_button" = "Fermer";
+
+// Custom app lock - unlock
+"share_extension.unlock.title_label" = "Entrez le code d'accès pour déverrouiller Wire";
+"share_extension.unlock.submit_button.title" = "déverrouiller";
+"share_extension.unlock.textfield.placeholder" = "Saisissez votre code d'accès";
+"share_extension.unlock.hint_label" = "Code d'accès";
+"share_extension.unlock.error_label" = "Code d'accès erroné";
+"share_extension.unlock.alert.message" = "Ouvrez Wire pour créer un code d'accès";
+"share_extension.unlock.reveal_passcode" = "Révéler le code d'accès";
+
+// Timeout
+"share_extension.timeout.title" = "La connexion a expiré.";
+"share_extension.timeout.message" = "Vérifiez votre connexion internet et réessayez. Les pièces jointes ont été enregistrées dans la conversation.";
+
+// Content
+"share_extension.content.file.too_big" = "Vous pouvez envoyer des fichiers jusqu'à %@";
+"share_extension.content.file.unsupported_attachment" = "Unsupported attachment";
+
+"share_extension.error.conversation_does_not_exist.message" = "Sélectionnez une conversation à partager.";
+
+"share_extension.privacy_security.lock_app.description" = "Déverrouiller Wire";
+"share_extension.logged_out.title" = "Vous avez été déconnecté de ce compte.";
+"share_extension.logged_out.message" = "Veuillez choisir un autre compte.";
+
+// Conversation Degraded (security level lowered)
+"share_extension.conversation.displayname.emptygroup" = "Conversation de groupe vide";
+"share_extension.meta.degraded.degradation_reason_message.singular" = "%@ utilise un nouvel appareil.";
+"share_extension.meta.degraded.degradation_reason_message.plural" = "%@ utilisent de nouveaux appareils.";
+"share_extension.meta.degraded.dialog_message" = "Voulez-vous quand même envoyer votre message ?";
+"share_extension.meta.degraded.cancel_sending_button" = "Do not send";
+"share_extension.meta.degraded.send_anyway_button" = "Send anyway";
+
+"share_extension.meta.legalhold.send_alert_title" = "La conversation est maintenant soumise à la conservation à des fins juridiques.";
+
+//Feature flag - File sharing
+"share_extension.feature.flag.file_sharing.alert.title" = "File sharing restrictions";
+"share_extension.feature.flag.file_sharing.alert.message" = "You can not share this file because this feature is disabled.";
+
+// Share Extension - Voice Over
+"share_extension.voiceover.conversation_under_legal_hold" = "Soumis à la conservation à des fins juridiques.";
+"share_extension.voiceover.conversation_secure" = "Tous les clients ont été vérifiés.";
+"share_extension.voiceover.conversation_secure_with_ignored" = "Tous les clients n'ont pas été vérifiés.";

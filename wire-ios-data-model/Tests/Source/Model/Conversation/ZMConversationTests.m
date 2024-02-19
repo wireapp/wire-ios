@@ -879,9 +879,12 @@
 - (void)testThatGroupConversationInTeamWithOnlyTwoParticipantsIsConsideredOneToOne
 {
     // given
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    team.remoteIdentifier = [NSUUID createUUID];
+
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
-    conversation.teamRemoteIdentifier = [NSUUID createUUID];
+    conversation.team = team;
 
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
@@ -898,9 +901,12 @@
 - (void)testThatGroupConversationInTeamWithOnlyBotIsConsideredGroup
 {
     // given
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    team.remoteIdentifier = [NSUUID createUUID];
+
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
-    conversation.teamRemoteIdentifier = [NSUUID createUUID];
+    conversation.team = team;
 
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
@@ -977,9 +983,12 @@
 - (void)testThatOneToOneConversationInTeamReturnsAConnectedUser
 {
     // given
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    team.remoteIdentifier = [NSUUID createUUID];
+
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
-    conversation.teamRemoteIdentifier = [NSUUID createUUID];
+    conversation.team = team;
 
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
@@ -1120,8 +1129,10 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.oneOnOneConversation = conversation;
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    connection.conversation = conversation;
+    connection.to = user;
     NSString *message = @"HELLOOOOOO!!!!";
     connection.message = message;
     
@@ -1136,7 +1147,7 @@
     ZMConnection *connection = [ZMConnection insertNewSentConnectionToUser:user];
 
     // then
-    AssertDateIsRecent(connection.conversation.lastModifiedDate);
+    AssertDateIsRecent(connection.to.oneOnOneConversation.lastModifiedDate);
 }
 
 
@@ -1144,8 +1155,10 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.oneOnOneConversation = conversation;
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    connection.conversation = conversation;
+    connection.to = user;
     connection.status = ZMConnectionStatusPending;
     
     // then
@@ -1165,8 +1178,10 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.oneOnOneConversation = conversation;
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    connection.conversation = conversation;
+    user.connection = connection;
     NSArray *statusesToTest = @[
                         @(ZMConnectionStatusAccepted),
                         @(ZMConnectionStatusBlocked),
@@ -1207,7 +1222,7 @@
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     
     connection.to = user;
-    connection.conversation = connectionConversation;
+    user.oneOnOneConversation = connectionConversation;
     
     // when
     ZMConversation *fetchedConversation = [ZMConversation existingOneOnOneConversationWithUser:user inUserSession:self.coreDataStack];
@@ -1220,8 +1235,10 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.oneOnOneConversation = conversation;
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    connection.conversation = conversation;
+    connection.to = user;
     connection.status = ZMConnectionStatusPending;
     
     XCTAssertTrue(conversation.isPendingConnectionConversation);
@@ -1242,11 +1259,13 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.oneOnOneConversation = conversation;
     ZMConnection *connection1 = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    connection1.conversation = conversation;
+    connection1.to = user;
     connection1.status = ZMConnectionStatusPending;
     
-    XCTAssertEqualObjects(conversation.connection, connection1);
+    XCTAssertEqualObjects(user.connection, connection1);
     XCTAssertTrue(conversation.isPendingConnectionConversation);
 
     // expect
@@ -1255,10 +1274,10 @@
     // when
     ZMConnection *connection2 = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     connection1.status = ZMConnectionStatusAccepted;
-    conversation.connection = connection2;
+    connection2.to = user;
     
     // then
-    XCTAssertEqualObjects(conversation.connection, connection2);
+    XCTAssertEqualObjects(user.connection, connection2);
     XCTAssertFalse(conversation.isPendingConnectionConversation);
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
@@ -1292,10 +1311,10 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMUser *user = [self createUser];
     user.name = @"Foo Bar Baz";
+    user.oneOnOneConversation = conversation;
     conversation.conversationType = ZMConversationTypeConnection;
     conversation.userDefinedName = @"JKAHJKADSKHJ";
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    connection.conversation = conversation;
     connection.status = ZMConnectionStatusPending;
     connection.to = user;
     [self.uiMOC saveOrRollback];
@@ -1313,10 +1332,10 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMUser *user = [self createUser];
     user.name = @"Foo Bar Baz";
+    user.oneOnOneConversation = conversation;
     conversation.conversationType = ZMConversationTypeConnection;
     conversation.userDefinedName = @"JKAHJKADSKHJ";
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    connection.conversation = conversation;
     connection.status = ZMConnectionStatusSent;
     connection.to = user;
     [self.uiMOC saveOrRollback];
@@ -1334,10 +1353,10 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMUser *user = [self createUser];
     user.name = @"Foo Bar Baz";
+    user.oneOnOneConversation = conversation;
     conversation.conversationType = ZMConversationTypeOneOnOne;
     conversation.userDefinedName = @"JKAHJKADSKHJ";
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    connection.conversation = conversation;
     connection.status = ZMConnectionStatusPending;
     connection.to = user;
     [self.uiMOC saveOrRollback];
@@ -1444,9 +1463,11 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeOneOnOne;
-    conversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.connection.to.name = @"User 1";
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.name = @"User 1";
+    user.oneOnOneConversation = conversation;
+    user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+
     [self.uiMOC saveOrRollback];
     
     // then
@@ -1458,9 +1479,10 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeOneOnOne;
-    conversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.connection.to.name = nil;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.oneOnOneConversation = conversation;
+    user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.name = nil;
     [self.uiMOC saveOrRollback];
     
     // then
@@ -1488,7 +1510,7 @@
         user.needsToBeUpdatedFromBackend = YES;
         ZMConnection *connection = [ZMConnection insertNewSentConnectionToUser:user];
         connection.message = @"Hey, there!";
-        ZMConversation *conversation = connection.conversation;
+        ZMConversation *conversation = user.oneOnOneConversation;
         XCTAssert([self.syncMOC saveOrRollback]);
         moid = conversation.objectID;
     }];
@@ -1509,7 +1531,7 @@
         user.needsToBeUpdatedFromBackend = YES;
         ZMConnection *connection = [ZMConnection insertNewSentConnectionToUser:user];
         connection.message = @"Hey, there!";
-        ZMConversation *conversation = connection.conversation;
+        ZMConversation *conversation = user.oneOnOneConversation;
         XCTAssert([self.syncMOC saveOrRollback]);
         moid = conversation.objectID;
     }];
@@ -2359,8 +2381,10 @@
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.conversationType = ZMConversationTypeConnection;
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        user.oneOnOneConversation = conversation;
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.conversation = conversation;
+        connection.to = user;
         connection.status = ZMConnectionStatusPending;
         
         // when
@@ -2378,8 +2402,10 @@
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.conversationType = ZMConversationTypeConnection;
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        user.oneOnOneConversation = conversation;
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.conversation = conversation;
+        connection.to = user;
         connection.status = ZMConnectionStatusSent;
         
         // when
@@ -2398,8 +2424,10 @@
     
         ZMConversation *conversation = [self insertConversationWithUnread:YES context:self.syncMOC];
         conversation.conversationType = ZMConversationTypeOneOnOne;
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        user.oneOnOneConversation = conversation;
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.conversation = conversation;
+        connection.to = user;
         connection.status = ZMConnectionStatusBlocked;
         
         // when
@@ -2418,8 +2446,10 @@
 
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.conversationType = ZMConversationTypeConnection;
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        user.oneOnOneConversation = conversation;
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-        connection.conversation = conversation;
+        connection.to = user;
         connection.status = ZMConnectionStatusIgnored;
         
         // when
@@ -2480,9 +2510,10 @@
 - (void)setConversationAsBeingPending:(ZMConversation *)conversation inContext:(NSManagedObjectContext *)context
 {
     conversation.conversationType = ZMConversationTypeConnection;
-    conversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:context];
-    conversation.connection.to = [ZMUser insertNewObjectInManagedObjectContext:context];
-    conversation.connection.status = ZMConnectionStatusSent;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:context];
+    user.oneOnOneConversation = conversation;
+    user.connection = [ZMConnection insertNewObjectInManagedObjectContext:context];
+    user.connection.status = ZMConnectionStatusSent;
 }
 
 
@@ -2871,8 +2902,9 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
-    
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
+
     // then
     XCTAssertFalse([sut evaluateWithObject:conversation]);
 }
@@ -2893,8 +2925,9 @@
     XCTAssertNil(conversation.clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
-    
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
+
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
 }
@@ -2919,8 +2952,9 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
-    
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
+
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
 }
@@ -2943,8 +2977,9 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
 
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
-    
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
+
     // then
     XCTAssertFalse([sut evaluateWithObject:conversation]);
 }
@@ -2967,7 +3002,8 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
     
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);

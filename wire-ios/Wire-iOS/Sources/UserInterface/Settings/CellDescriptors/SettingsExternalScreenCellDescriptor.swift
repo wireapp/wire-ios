@@ -40,6 +40,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     let presentationStyle: PresentationStyle
     let identifier: String?
     let icon: StyleKitIcon?
+    var copiableText: String?
 
     private let accessoryViewMode: AccessoryViewMode
 
@@ -58,7 +59,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             identifier: nil,
             presentationAction: presentationAction,
             previewGenerator: nil,
-            icon: .none
+            icon: .none,
+            copiableText: nil
         )
     }
 
@@ -68,7 +70,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
                      presentationAction: @escaping () -> (UIViewController?),
                      previewGenerator: PreviewGeneratorType? = .none,
                      icon: StyleKitIcon? = nil,
-                     accessoryViewMode: AccessoryViewMode = .default) {
+                     accessoryViewMode: AccessoryViewMode = .default,
+                     copiableText: String? = nil) {
         self.init(
             title: title,
             isDestructive: isDestructive,
@@ -77,7 +80,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             presentationAction: presentationAction,
             previewGenerator: previewGenerator,
             icon: icon,
-            accessoryViewMode: accessoryViewMode
+            accessoryViewMode: accessoryViewMode,
+            copiableText: copiableText
         )
     }
 
@@ -88,7 +92,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
          presentationAction: @escaping () -> (UIViewController?),
          previewGenerator: PreviewGeneratorType? = .none,
          icon: StyleKitIcon? = nil,
-         accessoryViewMode: AccessoryViewMode = .default) {
+         accessoryViewMode: AccessoryViewMode = .default,
+         copiableText: String?) {
 
         self.title = title
         self.destructive = isDestructive
@@ -98,6 +103,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.previewGenerator = previewGenerator
         self.icon = icon
         self.accessoryViewMode = accessoryViewMode
+        self.copiableText = copiableText
     }
 
     func select(_ value: SettingsPropertyValue?) {

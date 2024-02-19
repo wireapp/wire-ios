@@ -20,8 +20,11 @@ import Foundation
 @testable import Wire
 
 final class MockMLSClientResolver: MLSClientResolving {
-
-    func mlsClientId(for userClient: UserClient) -> MLSClientID? {
-        return MLSClientID(userID: .random(length: 5), clientID: .random(length: 5), domain: .random(length: 6))
+    func mlsClientId(for userClient: WireDataModel.UserClientType) -> WireDataModel.MLSClientID? {
+        .init(
+            userID: .randomAlphanumerical(length: 5),
+            clientID: .randomAlphanumerical(length: 5),
+            domain: .randomAlphanumerical(length: 6)
+        )
     }
 }

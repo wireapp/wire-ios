@@ -54,7 +54,7 @@ extension MockUser {
 
         pendingClient.user = self
 
-        let identifier = NSString.createAlphanumerical() as String
+        let identifier = String.randomClientIdentifier()
         pendingClient.identifier = identifier
 
         // Generate the prekeys

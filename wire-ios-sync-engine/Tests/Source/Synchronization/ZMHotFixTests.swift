@@ -272,7 +272,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
         }
 
         // expect
-        let expectation = customExpectation(description: "Notified")
+        let expectation = XCTestExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: UpdateAccessRolesAction.notificationName,
                                                       context: self.syncMOC.notificationContext,
                                                       using: { note in
@@ -286,7 +286,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
 
         // then
         withExtendedLifetime(token) {
-            XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+            wait(for: [expectation], timeout: 0.5)
         }
     }
 

@@ -47,7 +47,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
             secondOtherUserClient = session.registerClient(for: otherUser!, label: "other2", type: "permanent", deviceClass: "phone")
         })
 
-        let redunduntClientId = NSString.createAlphanumerical() as String
+        let redunduntClientId: String = .randomClientIdentifier()
         let payload: ZMTransportData = [
             selfUser.identifier: [selfClient.identifier!, redunduntClientId],
             otherUser.identifier: [otherUserClient.identifier!, secondOtherUserClient.identifier!],

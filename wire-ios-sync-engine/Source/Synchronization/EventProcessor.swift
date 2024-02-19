@@ -158,7 +158,9 @@ actor EventProcessor: UpdateEventProcessor {
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                     }
                 }
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: [F] @Jacob should this be done on syncContext to keep every thing in sync?
+                // swiftlint:enable todo_requires_jira_link
                 for eventConsumer in self.eventAsyncConsumers {
                     await eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                 }

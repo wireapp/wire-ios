@@ -27,7 +27,7 @@ public protocol E2eISetupServiceInterface {
         clientID: E2eIClientID,
         userName: String,
         handle: String,
-        team: UUID,
+        teamId: UUID,
         isUpgradingClient: Bool
     ) async throws -> E2eiEnrollment
 
@@ -63,7 +63,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         clientID: E2eIClientID,
         userName: String,
         handle: String,
-        team: UUID,
+        teamId: UUID,
         isUpgradingClient: Bool
     ) async throws -> E2eiEnrollment {
         do {
@@ -71,7 +71,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
                 clientID: clientID,
                 userName: userName,
                 handle: handle,
-                teamId: team,
+                teamId: teamId,
                 isUpgradingClient: isUpgradingClient
             )
         } catch {

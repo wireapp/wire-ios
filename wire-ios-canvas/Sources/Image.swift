@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class Image: Editable {
+final class Image: Editable {
 
     let image: UIImage
     var scale: CGFloat {

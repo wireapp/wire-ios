@@ -33,7 +33,7 @@ class DispatchQueueHelperTests: XCTestCase {
         }
 
         // Then
-        group?.notify(on: .main) {
+        group.notify(on: .main) {
             XCTAssertEqual(result, 42)
             groupExpectation.fulfill()
         }

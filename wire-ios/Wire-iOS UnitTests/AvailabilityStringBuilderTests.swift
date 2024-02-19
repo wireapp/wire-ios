@@ -33,6 +33,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
         fixture = CoreDataFixture()
         selfUser = ZMUser.selfUser(in: fixture.uiMOC)
         otherUser = ZMUser.insertNewObject(in: fixture.uiMOC)
@@ -51,6 +52,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         team1 = nil
         team2 = nil
         fixture = nil
+
         super.tearDown()
     }
 
@@ -68,8 +70,22 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         selfMember.team = team1
 
         // WHEN
-        let listString = AvailabilityStringBuilder.string(for: otherUser, with: .list, color: UIColor.black)
-        let participantsString = AvailabilityStringBuilder.string(for: otherUser, with: .participants, color: UIColor.black)
+        let listString = AvailabilityStringBuilder.titleForUser(
+            name: otherUser.name ?? "",
+            availability: otherUser.availability,
+            isCertified: false,
+            isVerified: false,
+            style: .list,
+            color: .black
+        )
+        let participantsString = AvailabilityStringBuilder.titleForUser(
+            name: otherUser.name ?? "",
+            availability: otherUser.availability,
+            isCertified: false,
+            isVerified: false,
+            style: .participants,
+            color: .black
+        )
 
         // THEN
         XCTAssertFalse(listString!.allAttachments.isEmpty)
@@ -88,8 +104,22 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         selfMember.team = team1
 
         // WHEN
-        let listString = AvailabilityStringBuilder.string(for: otherUser, with: .list, color: UIColor.black)
-        let participantsString = AvailabilityStringBuilder.string(for: otherUser, with: .participants, color: UIColor.black)
+        let listString = AvailabilityStringBuilder.titleForUser(
+            name: otherUser.name ?? "",
+            availability: otherUser.availability,
+            isCertified: false,
+            isVerified: false,
+            style: .list,
+            color: .black
+        )
+        let participantsString = AvailabilityStringBuilder.titleForUser(
+            name: otherUser.name ?? "",
+            availability: otherUser.availability,
+            isCertified: false,
+            isVerified: false,
+            style: .participants,
+            color: .black
+        )
 
         // THEN
         XCTAssertFalse(listString!.allAttachments.isEmpty)
@@ -104,8 +134,22 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         selfUser.updateAvailability(.available)
 
         // WHEN
-        let listString = AvailabilityStringBuilder.string(for: selfUser, with: .list, color: UIColor.black)
-        let participantsString = AvailabilityStringBuilder.string(for: selfUser, with: .participants, color: UIColor.black)
+        let listString = AvailabilityStringBuilder.titleForUser(
+            name: selfUser.name ?? "",
+            availability: selfUser.availability,
+            isCertified: false,
+            isVerified: false,
+            style: .list,
+            color: .black
+        )
+        let participantsString = AvailabilityStringBuilder.titleForUser(
+            name: selfUser.name ?? "",
+            availability: selfUser.availability,
+            isCertified: false,
+            isVerified: false,
+            style: .participants,
+            color: .black
+        )
 
         // THEN
         XCTAssertFalse(listString!.allAttachments.isEmpty)

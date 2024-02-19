@@ -92,6 +92,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Properties
 
+    let router: AppRootRouter?
     var onDismiss: (() -> Void)?
 
     // MARK: - State
@@ -106,7 +107,11 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Life cycle
 
-    init(onDismiss: (() -> Void)? = nil) {
+    init(
+        router: AppRootRouter? = nil,
+        onDismiss: (() -> Void)? = nil
+    ) {
+        self.router = router
         self.onDismiss = onDismiss
         sections = []
 
@@ -118,11 +123,17 @@ final class DeveloperToolsViewModel: ObservableObject {
             header: "Actions",
             items: [
                 .button(ButtonItem(title: "Enroll e2ei certificate", action: enrollE2EICertificate)),
-                .destination(DestinationItem(title: "Debug actions", makeView: {
-                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self.selfClient)))
+                .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
+                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
+                })),
+                .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
+                    AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
+                        router: self?.router,
+                        onDismiss: self?.onDismiss
+                    )))
                 }))
             ]
         ))
@@ -142,11 +153,15 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Self user",
                 items: [
-                    .text(TextItem(title: "Handle", value: selfUser.handle ?? "None")),
+                    .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
                     .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
                     .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
                     .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
                     .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
+                    .text(TextItem(
+                        title: "Supported protocols",
+                        value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
+                    ),
                     .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.ed25519?.uppercased() ?? "None"))
                 ]
             ))
@@ -168,7 +183,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 header: "Datadog",
                 items: [
                     .text(TextItem(title: "User ID", value: String(describing: dataDogUserId))),
-                    .button(.init(title: "Crash Report Test", action: { fatalError("crash app") }))
+                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
                 ]
             ))
         }
@@ -196,9 +211,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.button(ButtonItem(title: "Stop federating with Foma", action: stopFederatingFoma)))
         items.append(.button(ButtonItem(title: "Stop federating with Bella", action: stopFederatingBella)))
         items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: stopBellaFomaFederating)))
-        items.append(.destination(DestinationItem(title: "Device details view settings", makeView: {
-            AnyView(DeveloperDeviceDetailsSettingsSelectionView(viewModel: DeveloperDeviceDetailsSettingsSelectionViewModel()))
-        })))
         return Section(
             header: header,
             items: items
@@ -238,26 +250,10 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
 
-        guard
-            let selfUser = selfUser,
-            let userName = selfUser.name,
-            let handle = selfUser.handle,
-            let teamId = selfUser.team?.remoteIdentifier,
-            let e2eiClientId = E2eIClientID(user: selfUser)
-        else {
-            return
-        }
-
-        let isUpgradingMLSClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
-
         Task {
             do {
-                _ = try await e2eiCertificateUseCase?.invoke(e2eiClientId: e2eiClientId,
-                                                             userName: userName,
-                                                             userHandle: handle,
-                                                             team: teamId,
-                                                             isUpgradingMLSClient: isUpgradingMLSClient,
-                                                             authenticate: oauthUseCase.invoke)
+                _ = try await e2eiCertificateUseCase?.invoke(
+                    authenticate: oauthUseCase.invoke)
             } catch {
                 WireLogger.e2ei.error("failed to enroll e2ei: \(error)")
             }

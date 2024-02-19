@@ -181,7 +181,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
         let payload: [String: Any] = [
             "from": senderID.transportString(),
             "conversation": conversationID.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "data": [
                 "user_ids": userIds,
                 "users": usersWithRoles
@@ -196,7 +196,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
         let payload: [String: Any] = [
             "from": senderID.transportString(),
             "conversation": conversationID.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "data": [
                 "user_ids": userIds
             ],

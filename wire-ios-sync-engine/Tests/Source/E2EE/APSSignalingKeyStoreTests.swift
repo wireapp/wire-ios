@@ -21,9 +21,9 @@ import XCTest
 import WireTesting
 import WireTransport
 
-class APSSignalingKeyStoreTests: MessagingTest {
+final class APSSignalingKeyStoreTests: MessagingTest {
 
-    override class func setUp() {
+    override func setUp() {
         super.setUp()
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false

@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-typealias ConversationCreatedBlock = (Swift.Result<ZMConversation, Error>) -> Void
+typealias ConversationCreatedBlock = (Result<ZMConversation, Error>) -> Void
 
 extension UserType {
 
@@ -33,30 +33,6 @@ extension UserType {
 
     var hasUntrustedClients: Bool {
         return allClients.contains { !$0.verified }
-    }
-
-    func createTeamOneToOneConversation(
-        in context: NSManagedObjectContext,
-        completion: @escaping ConversationCreatedBlock
-    ) {
-        guard
-            self.isTeamMember,
-            let user = self.materialize(in: context)
-        else {
-            return
-        }
-        let conversationService = ConversationService(context: context)
-
-        conversationService.createTeamOneToOneConversation(user: user) { result in
-            switch result {
-            case .success(let conversation):
-                completion(.success(conversation))
-
-            case .failure(let error):
-                WireLogger.conversation.error("failed to create one to one conversation: \(String(describing: error))")
-                completion(.failure(error))
-            }
-        }
     }
 
 }

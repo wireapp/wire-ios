@@ -22,7 +22,7 @@
 
 #import "ZMBaseManagedObjectTest.h"
 
-@interface ZMSearchUserTests : ZMBaseManagedObjectTest <ZMUserObserver>
+@interface ZMSearchUserTests : ZMBaseManagedObjectTest <ZMUserObserving>
 @property (nonatomic) NSMutableArray *userNotifications;
 @end
 

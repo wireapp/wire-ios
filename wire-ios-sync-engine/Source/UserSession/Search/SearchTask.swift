@@ -142,8 +142,8 @@ extension SearchTask {
                 let copiedConnectedUsers = connectedUsers.compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
 
                 let result = SearchResult(
-                    contacts: copiedConnectedUsers.map { ZMSearchUser(contextProvider: contextProvider, user: $0)},
-                    teamMembers: copiedOne2oneConversationUsers.map { ZMSearchUser(contextProvider: contextProvider, user: $0)},
+                    contacts: copiedConnectedUsers.map { ZMSearchUser(contextProvider: contextProvider, user: $0) },
+                    teamMembers: copiedOne2oneConversationUsers.map { ZMSearchUser(contextProvider: contextProvider, user: $0) },
                     addressBook: [],
                     directory: [],
                     conversations: [],
@@ -227,7 +227,9 @@ extension SearchTask {
     }
 
     func conversations(matchingQuery query: SearchRequest.Query, selfUser: ZMUser) -> [ZMConversation] {
-        /// TODO: use the interface with tean param?
+        // swiftlint:disable todo_requires_jira_link
+        // TODO: use the interface with tean param?
+        // swiftlint:enable todo_requires_jira_link
         let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: query.string, selfUser: selfUser))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: ZMNormalizedUserDefinedNameKey, ascending: true)]
 

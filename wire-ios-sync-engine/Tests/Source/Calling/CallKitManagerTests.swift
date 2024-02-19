@@ -168,7 +168,7 @@ class MockProvider: CXProvider {
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
 
     var mockConversations: [WireSyncEngine.CallHandle: ZMConversation] = [:]
-    func lookupConversation(by handle: WireSyncEngine.CallHandle, completionHandler: @escaping (Result<ZMConversation>) -> Void) {
+    func lookupConversation(by handle: WireSyncEngine.CallHandle, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
         if let conversation = mockConversations[handle] {
             completionHandler(.success(conversation))
         } else {
@@ -179,7 +179,7 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
     var lookupConversationAndProcessPendingCallEventsCalls = 0
     func lookupConversationAndProcessPendingCallEvents(
         by handle: WireSyncEngine.CallHandle,
-        completionHandler: @escaping (WireUtilities.Result<ZMConversation>
+        completionHandler: @escaping (Result<ZMConversation, Error>
     ) -> Void) {
         lookupConversationAndProcessPendingCallEventsCalls += 1
         lookupConversation(by: handle, completionHandler: completionHandler)
@@ -210,13 +210,13 @@ class CallKitManagerTest: DatabaseTest {
     }
 
     func createOneOnOneConversation(user: ZMUser) {
-        let oneToOne = ZMConversation.insertNewObject(in: self.uiMOC)
+        let oneToOne = ZMConversation.insertNewObject(in: uiMOC)
         oneToOne.conversationType = .oneOnOne
         oneToOne.remoteIdentifier = UUID()
+        oneToOne.oneOnOneUser = user
 
-        let connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
         connection.status = .accepted
-        connection.conversation = oneToOne
         connection.to = user
     }
 

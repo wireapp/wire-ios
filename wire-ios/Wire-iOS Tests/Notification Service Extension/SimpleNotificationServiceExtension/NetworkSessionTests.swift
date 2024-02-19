@@ -19,7 +19,7 @@
 import XCTest
 import WireTransport
 
-class NetworkSessionTests: XCTestCase {
+final class NetworkSessionTests: XCTestCase {
 
     var mockURLSession: URLSessionMock!
     var mockNetworkRequest: NetworkRequest!
@@ -181,7 +181,7 @@ class NetworkSessionTests: XCTestCase {
 
 }
 
-class MockCookieStorage: CookieProvider {
+final class MockCookieStorage: CookieProvider {
 
     var isAuthenticated: Bool = true
 
@@ -191,7 +191,7 @@ class MockCookieStorage: CookieProvider {
 
 }
 
-class URLSessionMock: URLRequestable {
+final class URLSessionMock: URLRequestable {
 
     var mockedResponse = (Data(), URLResponse())
 

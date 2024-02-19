@@ -20,7 +20,7 @@ import Foundation
 import WireUtilities
 import UIKit
 
-class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
+final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
 
     let backButton: BackButtonDescription?
     var mainView: ViewDescriptor & ValueSubmission {
@@ -79,7 +79,7 @@ extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
 
 // MARK: - CTAFooterDescription
 
-private class CTAFooterDescription: ViewDescriptor, AuthenticationSecondaryViewDescription {
+private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondaryViewDescription {
     var views: [ViewDescriptor] {
         [self]
     }

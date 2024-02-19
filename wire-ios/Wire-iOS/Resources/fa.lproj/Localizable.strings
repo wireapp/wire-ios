@@ -322,7 +322,7 @@
 "conversation.create.receipts.title" = "رسید های خواندن";
 "conversation.create.receipts.subtitle" = "وقتی این روشن باشد، مردم می‌توانند ببینند که پیامشان در این گفتگو کی خوانده می شوند.";
 "conversation.create.mls.title" = "Protocol";
-"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "انصراف";
 "conversation.create.non_federating_domains_error.title" = "Group can't be created";
@@ -456,6 +456,19 @@
 // Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
 "content.system.missing_messages.users_added_and_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ have been removed.";
 
+// MLS Migration
+"content.system.mls_migration.started.description" = "The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS).";
+"content.system.mls_migration.started.update_latest_version" = "Ensure you use the latest version of Wire to be ready for MLS and continue communicating seamlessly.";
+"content.system.mls_migration.started.update_with_date" = "Update Wire until %@ to be ready for MLS and continue communicating seamlessly.";
+
+"content.system.mls_migration.finalized.done" = "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.";
+"content.system.mls_migration.join_afterwards" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
+"content.system.mls_migration.ongoing_call" = "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.";
+"content.system.mls_migration.learn_more" = "Learn more about MLS";
+"content.system.mls_migration.potentialGap" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
+"content.system.mls_migration.mls_not_supported_by_otherUser" = "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.";
+"content.system.mls_migration.mls_not_supported_by_you" = "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "YouTube video preview";
@@ -517,7 +530,6 @@
 "content.system.ephemeral_time_remaining" = "%@ left";
 
 "content.system.self_user_new_client" = "You started using [a new device](%@)";
-"content.system.self_user_new_self_client" = "You started using [this device](%@)";
 
 "content.system.you_started" = "شما";
 
@@ -568,8 +580,6 @@
 "content.system.message_legal_hold.learn_more" = "بیشتر بدانید";
 
 //
-
-"content.system.reactivated_device" = "You started using [this device](%@) again. Messages sent in the meantime will not appear here.";
 
 "content.system.is_verified" = "اثر‌انگشت همه تایید شده";
 
@@ -982,7 +992,7 @@
 "group_details.receipt_options_cell.title" = "رسید های خواندن";
 "group_details.receipt_options_cell.description" = "وقتی این روشن باشد، مردم می‌توانند ببینند که پیامشان در این گفتگو کی خوانده می شوند.";
 
-"group_details.message_protocol.section_tile" = "Protocol details (beta)";
+"group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
@@ -1575,6 +1585,14 @@
 
 "registration.signin.alert.password_needed.title" = "Password needed";
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
+
+"registration.signin.username.title" = "Your username";
+"registration.signin.username.message" = "Enter your username. It helps others to find you in Wire and connect with you.";
+"registration.signin.username.placeholder" = "username";
+"registration.signin.username.unknown_error.title" = "Couldn't update username";
+"registration.signin.username.unknown_error.message" = "لطفا بعدا دوباره تلاش کنید.";
+"registration.signin.username.already_taken_error.title" = "Username is already taken";
+"registration.signin.username.already_taken_error.message" = "The username is already taken, please try another one";
 
 "registration.devices.title" = "دستگاه‌ها";
 "registration.devices.active_list_header" = "فعال";

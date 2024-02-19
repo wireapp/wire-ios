@@ -20,13 +20,15 @@ import Foundation
 import WireDataModelSupport
 import WireSyncEngine
 
-class ZMUserSessionTests: ZMUserSessionTestsBase {
+final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // given
         XCTAssertNotNil(self.sut.syncManagedObjectContext)
         // when & then
-        XCTAssertEqual(self.sut.syncManagedObjectContext, self.sut.syncManagedObjectContext.zm_sync)
+        coreDataStack.syncContext.performAndWait {
+            XCTAssertEqual(self.sut.syncManagedObjectContext, self.sut.syncManagedObjectContext.zm_sync)
+        }
     }
 
     func testThatUIContextReturnsSelfForLinkedUIContext() {
@@ -40,7 +42,9 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         // given
         XCTAssertNotNil(self.sut.syncManagedObjectContext)
         // when & then
-        XCTAssertEqual(self.sut.syncManagedObjectContext.zm_userInterface, self.sut.managedObjectContext)
+        coreDataStack.syncContext.performAndWait {
+            XCTAssertEqual(self.sut.syncManagedObjectContext.zm_userInterface, self.sut.managedObjectContext)
+        }
     }
 
     func testThatUIContextReturnsLinkedSyncContext() {
@@ -56,17 +60,21 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         var mocUI: NSManagedObjectContext? = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
 
         mocUI?.zm_sync = mocSync
-        mocSync?.zm_userInterface = mocUI
-
+        mocSync?.performAndWait {
+            mocSync?.zm_userInterface = mocUI
+        }
         XCTAssertNotNil(mocUI?.zm_sync)
-        XCTAssertNotNil(mocSync?.zm_userInterface)
-
+        mocSync?.performAndWait {
+            XCTAssertNotNil(mocSync?.zm_userInterface)
+        }
         // when
         mocUI = nil
 
         // then
         XCTAssertNotNil(mocSync)
-        XCTAssertNil(mocSync?.zm_userInterface)
+        mocSync?.performAndWait {
+            XCTAssertNil(mocSync?.zm_userInterface)
+        }
     }
 
     func testThatLinkedSyncContextIsNotStrongReferenced() {
@@ -75,11 +83,14 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         let mocUI: NSManagedObjectContext? = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
 
         mocUI?.zm_sync = mocSync
-        mocSync?.zm_userInterface = mocUI
+        mocSync?.performAndWait {
+            mocSync?.zm_userInterface = mocUI
+        }
 
         XCTAssertNotNil(mocUI?.zm_sync)
-        XCTAssertNotNil(mocSync?.zm_userInterface)
-
+        mocSync?.performAndWait {
+            XCTAssertNotNil(mocSync?.zm_userInterface)
+        }
         // when
         mocSync = nil
 
@@ -90,14 +101,21 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatItNotfiesTheTransportSessionWhenSelfUserClientIsRegistered() {
         // given
-        let userClient = createSelfClient()
+        let userClient = syncMOC.performAndWait {
+            self.createSelfClient()
+        }
 
         // when
-        sut.didRegisterSelfUserClient(userClient)
+        syncMOC.performGroupedBlock { [self] in
+            sut.didRegisterSelfUserClient(userClient)
+        }
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockPushChannel.clientID, userClient.remoteIdentifier)
+        syncMOC.performAndWait {
+            XCTAssertEqual(mockPushChannel.clientID, userClient.remoteIdentifier)
+        }
     }
 
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
@@ -272,7 +290,9 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(thirdPartyServices.uploadCount, 0)
 
         // when
-        sut.didFinishQuickSync()
+        syncMOC.performAndWait {
+            sut.didFinishQuickSync()
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -284,9 +304,11 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(thirdPartyServices.uploadCount, 0)
 
         // when
-        sut.didFinishQuickSync()
-        sut.didStartQuickSync()
-        sut.didFinishQuickSync()
+        syncMOC.performAndWait {
+            sut.didFinishQuickSync()
+            sut.didStartQuickSync()
+            sut.didFinishQuickSync()
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -323,7 +345,9 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(thirdPartyServices.uploadCount, 0)
 
         // when
-        sut.didFinishQuickSync()
+        syncMOC.performAndWait {
+            sut.didFinishQuickSync()
+        }
         sut.applicationDidEnterBackground(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -331,8 +355,10 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(thirdPartyServices.uploadCount, 1)
 
         sut.applicationWillEnterForeground(nil)
-        sut.didStartQuickSync()
-        sut.didFinishQuickSync()
+        syncMOC.performAndWait {
+            sut.didStartQuickSync()
+            sut.didFinishQuickSync()
+        }
         sut.applicationDidEnterBackground(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -343,7 +369,9 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
     func testThatWeDoNotSetUserSessionToSyncDoneWhenSyncIsDoneIfWeWereNotSynchronizing() {
         // when
         sut.didGoOffline()
-        sut.didFinishQuickSync()
+        syncMOC.performAndWait {
+            sut.didFinishQuickSync()
+        }
 
         // then
         XCTAssertTrue(waitForOfflineStatus())
@@ -351,7 +379,9 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
         // when
-        sut.didStartQuickSync()
+        syncMOC.performAndWait {
+            sut.didStartQuickSync()
+        }
 
         // then
         XCTAssertTrue(waitForOnlineSynchronizingStatus())
@@ -485,7 +515,7 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
     func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
         // given
         mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.commitPendingProposals_MockMethod = {}
+        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
@@ -495,16 +525,16 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
             selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
             selfUserClient.needsToUploadMLSPublicKeys = false
             syncMOC.saveOrRollback()
+
+            // when
+            sut.didFinishQuickSync()
         }
-
-        // when
-        sut.didFinishQuickSync()
-
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
         XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
         XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
     }
 }

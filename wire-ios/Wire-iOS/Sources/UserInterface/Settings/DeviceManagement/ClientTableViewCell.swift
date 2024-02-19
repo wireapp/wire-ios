@@ -22,25 +22,18 @@ import Contacts
 import WireDataModel
 import WireCommonComponents
 
-class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
+final class ClientTableViewCell: UITableViewCell {
 
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Properties
-    let nameLabel = DynamicFontLabel(fontSpec: .normalSemiboldFont,
+    let nameLabel = DynamicFontLabel(style: .headline,
                                      color: LabelColors.textDefault)
-    let labelLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
-                                      color: LabelColors.textDefault)
     let mlsThumbprintLabel = DynamicFontLabel(style: .caption1,
                                         color: LabelColors.textCellSubtitle)
     let proteusIdLabel = DynamicFontLabel(style: .caption1,
                                             color: LabelColors.textCellSubtitle)
     let statusStackView = UIStackView()
-    var showLabel: Bool = false {
-        didSet {
-            updateLabel()
-        }
-    }
 
     var viewModel: ClientTableViewCellModel? {
         didSet {
@@ -54,7 +47,6 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             if viewModel?.isProteusVerified ?? false {
                 statusStackView.addArrangedSubview(UIImageView(image: verifiedImage))
             }
-            updateLabel()
         }
     }
 
@@ -88,12 +80,10 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
     // MARK: - Methods
     func setupStyle() {
         nameLabel.accessibilityIdentifier = "device name"
-        labelLabel.accessibilityIdentifier = "device label"
         proteusIdLabel.accessibilityIdentifier = "device proteus ID"
         mlsThumbprintLabel.accessibilityIdentifier = "device mls thumbprint"
         mlsThumbprintLabel.numberOfLines = 1
         proteusIdLabel.numberOfLines = 1
-
         backgroundColor = SemanticColors.View.backgroundUserCell
 
         addBorder(for: .bottom)
@@ -102,7 +92,6 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
     private func createConstraints() {
         [
             nameLabel,
-            labelLabel,
             proteusIdLabel,
             mlsThumbprintLabel,
             statusStackView
@@ -116,15 +105,11 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
             nameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             nameLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
 
-            labelLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
-            labelLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-            labelLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
-
             statusStackView.topAnchor.constraint(equalTo: nameLabel.topAnchor, constant: 2),
             statusStackView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: 4),
             statusStackView.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
 
-            mlsThumbprintLabel.topAnchor.constraint(equalTo: labelLabel.bottomAnchor, constant: 4),
+            mlsThumbprintLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
             mlsThumbprintLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             mlsThumbprintLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
 
@@ -137,18 +122,6 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
         statusStackView.spacing = 4
     }
 
-    private func updateLabel() {
-        if let userClientLabel = viewModel?.label, showLabel {
-            labelLabel.text = userClientLabel
-        } else {
-            labelLabel.text = ""
-        }
-    }
-
-    func redrawFont() {
-        updateLabel()
-    }
-
     override func prepareForReuse() {
         viewModel = nil
         super.prepareForReuse()
@@ -159,18 +132,23 @@ extension ClientTableViewCellModel {
 
     private typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
 
-    static func from(userClient: UserClient) -> ClientTableViewCellModel {
-        let title = userClient.isLegalHoldDevice ?  L10n.Localizable.Device.Class.legalhold : (userClient.model ?? "")
-
+    static func from(userClient: UserClientType, shouldSetType: Bool = true) -> ClientTableViewCellModel {
+        var title = ""
+        if shouldSetType {
+            title = userClient.deviceClass == .legalHold ?
+            L10n.Localizable.Device.Class.legalhold :
+            (userClient.deviceClass?.localizedDescription.capitalized ?? userClient.type.localizedDescription.capitalized)
+        } else {
+            title = userClient.model ?? ""
+        }
         let proteusId = userClient.displayIdentifier.fingerprintStringWithSpaces.uppercased()
         let proteusIdLabelText = DeviceDetailsSection.Proteus.value(proteusId)
         let isProteusVerified = userClient.verified
 
-        let mlsThumbPrint = userClient.mlsPublicKeys.ed25519?.fingerprintStringWithSpaces ?? ""
+        let mlsThumbPrint = userClient.mlsThumbPrint?.fingerprintStringWithSpaces ?? ""
         let mlsThumbprintLabelText = mlsThumbPrint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
 
         return .init(title: title,
-                     label: userClient.label ?? "",
                      proteusLabelText: proteusIdLabelText,
                      mlsThumbprintLabelText: mlsThumbprintLabelText,
                      isProteusVerified: isProteusVerified,

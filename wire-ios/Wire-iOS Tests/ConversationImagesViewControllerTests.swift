@@ -85,13 +85,13 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     // MARK: - Snapshot Tests
 
     func testForWrappedInNavigationController() {
-        verify(view: navigatorController.view)
+        verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Normal() {
         sut.setBoundsSizeAsIPhone4_7Inch()
 
-        verify(view: navigatorController.view)
+        verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Ephemeral() {
@@ -105,7 +105,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         // Calls viewWillAppear
         sut.beginAppearanceTransition(true, animated: false)
 
-        verify(view: navigatorController.view)
+        verify(matching: navigatorController.view)
     }
 
     // MARK: - Unit Tests

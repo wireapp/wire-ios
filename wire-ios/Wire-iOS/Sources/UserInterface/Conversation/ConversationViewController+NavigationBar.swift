@@ -141,7 +141,7 @@ extension ConversationViewController {
         switch self.conversation.conversationType {
         case .group: return true
         case .oneOnOne:
-            if let connection = conversation.connection,
+            if let connection = conversation.oneOnOneUser?.connection,
                connection.status != .pending && connection.status != .sent {
                 return true
             } else {

@@ -112,6 +112,7 @@ extension XCTestCase {
     func verifyInWidths(matching value: UIView,
                         widths: Set<CGFloat>,
                         snapshotBackgroundColor: UIColor,
+                        configuration: ((UIView) -> Swift.Void)? = nil,
                         named name: String? = nil,
                         file: StaticString = #file,
                         testName: String = #function,
@@ -122,6 +123,8 @@ extension XCTestCase {
 
         for width in widths {
             widthConstraint.constant = width
+
+            configuration?(container)
 
             verifyWithWidthInName(matching: container,
                                   width: width,
@@ -152,17 +155,27 @@ extension XCTestCase {
                line: line)
     }
 
-    func verifyInAllPhoneWidths(matching value: UIViewController,
-                                snapshotBackgroundColor: UIColor? = nil,
-                                named name: String? = nil,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-        verifyInAllPhoneWidths(matching: value.view, snapshotBackgroundColor: snapshotBackgroundColor, named: name, file: file, testName: testName, line: line)
+    func verifyInAllPhoneWidths(
+        matching value: UIViewController,
+        snapshotBackgroundColor: UIColor? = nil,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        verifyInAllPhoneWidths(
+            matching: value.view,
+            snapshotBackgroundColor: snapshotBackgroundColor,
+            named: name,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
     func verifyInAllPhoneWidths(matching value: UIView,
                                 snapshotBackgroundColor: UIColor? = nil,
+                                configuration: ((UIView) -> Swift.Void)? = nil,
                                 named name: String? = nil,
                                 file: StaticString = #file,
                                 testName: String = #function,
@@ -170,6 +183,7 @@ extension XCTestCase {
         verifyInWidths(matching: value,
                        widths: phoneWidths(),
                        snapshotBackgroundColor: snapshotBackgroundColor ?? (ColorScheme.default.variant == .light ? .white : .black),
+                       configuration: configuration,
                        named: name,
                        file: file,
                        testName: testName,

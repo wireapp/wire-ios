@@ -238,13 +238,15 @@ extension CompanyLoginController {
     func startAutomaticSSOFlow(promptOnError: Bool = true) {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.activeUnauthenticatedSession.fetchSSOSettings { [weak self] result in
-            guard let `self` = self else { return }
-            self.delegate?.controller(self, showLoadingView: false)
-            guard let ssoCode = result.value?.ssoCode else {
+            guard let self else { return }
+            delegate?.controller(self, showLoadingView: false)
+
+            guard case .success(let settings) = result, let ssoCode = settings.ssoCode else {
                 guard promptOnError else { return }
-                return self.displayCompanyLoginPrompt(ssoOnly: true)
+                displayCompanyLoginPrompt(ssoOnly: true)
+                return
             }
-            self.attemptLoginWithSSOCode(ssoCode)
+            attemptLoginWithSSOCode(ssoCode)
         }
     }
 }
@@ -257,12 +259,15 @@ extension CompanyLoginController {
     private func lookup(domain: String) {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.activeUnauthenticatedSession.lookup(domain: domain) { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.delegate?.controller(self, showLoadingView: false)
-            guard let domainInfo = result.value else {
-                return self.presentCompanyLoginAlert(error: .domainNotRegistered)
+
+            switch result {
+            case .success(let domainInfo):
+                self.delegate?.controllerDidStartBackendSwitch(self, toURL: domainInfo.configurationURL)
+            case .failure:
+                self.presentCompanyLoginAlert(error: .domainNotRegistered)
             }
-            self.delegate?.controllerDidStartBackendSwitch(self, toURL: domainInfo.configurationURL)
         }
     }
 
@@ -272,18 +277,20 @@ extension CompanyLoginController {
     func updateBackendEnvironment(with url: URL) {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.switchBackend(configuration: url) { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.delegate?.controller(self, showLoadingView: false)
-            guard let backendEnvironment = result.value else {
-                if case SessionManager.SwitchBackendError.loggedInAccounts? = result.error {
+
+            switch result {
+            case .success(let backendEnvironment):
+                BackendEnvironment.shared = backendEnvironment
+                self.startAutomaticSSOFlow(promptOnError: false)
+            case .failure(let error):
+                if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
                     self.presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
                 } else {
                     self.presentCompanyLoginAlert(error: .domainNotRegistered)
                 }
-                return
             }
-            BackendEnvironment.shared = backendEnvironment
-            self.startAutomaticSSOFlow(promptOnError: false)
         }
     }
 }

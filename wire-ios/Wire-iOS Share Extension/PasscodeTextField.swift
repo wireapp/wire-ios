@@ -54,7 +54,7 @@ class PasscodeTextField: AccessoryTextField {
             }
         }
         iconButton.accessibilityIdentifier = "passcode_text_field.button.reveal"
-        iconButton.accessibilityLabel = "share_extension.unlock.reveal_passcode".localized
+        iconButton.accessibilityLabel = L10n.ShareExtension.Unlock.revealPasscode
         iconButton.isEnabled = true
         return iconButton
     }()

@@ -32,7 +32,7 @@ public enum LocalNotificationType {
     case calling(CallState)
     case message(LocalNotificationContentType)
     case failedMessage
-    case availabilityBehaviourChangeAlert(AvailabilityKind)
+    case availabilityBehaviourChangeAlert(Availability)
     case bundledMessages
 }
 

@@ -16,6 +16,7 @@
 //
 
 import XCTest
+import WireDataModelSupport
 @testable import WireRequestStrategy
 
 class ConnectionRequestStrategyTests: MessagingTestBase {
@@ -23,6 +24,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
     var sut: ConnectionRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
+    var mockOneOnOneResolver: MockOneOnOneResolverInterface!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -36,10 +38,12 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockSyncProgress = MockSyncProgress()
+        mockOneOnOneResolver = MockOneOnOneResolverInterface()
 
         sut = ConnectionRequestStrategy(withManagedObjectContext: syncMOC,
                                         applicationStatus: mockApplicationStatus,
-                                        syncProgress: mockSyncProgress)
+                                        syncProgress: mockSyncProgress,
+                                        oneOneOneResolver: mockOneOnOneResolver)
 
         apiVersion = .v0
     }
@@ -49,7 +53,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         mockSyncProgress = nil
         mockApplicationStatus = nil
         apiVersion = nil
-
+        mockOneOnOneResolver = nil
         super.tearDown()
     }
 
@@ -176,70 +180,56 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatConnectionResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors_Federated() {
         // given
         self.apiVersion = .v1
-        var connection: ZMConnection!
-        self.syncMOC.performGroupedBlockAndWait {
-            connection = self.oneToOneConversation.connection!
-        }
 
         // when
-        fetchConnection(connection, response: responseFailure(code: 403, label: .unknown, apiVersion: self.apiVersion))
+        fetchConnection(self.oneToOneConnection, response: responseFailure(code: 403, label: .unknown, apiVersion: self.apiVersion))
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertFalse(connection.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(self.oneToOneConnection.needsToBeUpdatedFromBackend)
         }
     }
 
     func testThatConnectionResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors_NonFederated() {
-        // given
-        var connection: ZMConnection!
-        self.syncMOC.performGroupedBlockAndWait {
-            connection = self.oneToOneConversation.connection!
-        }
-
         // when
-        fetchConnection(connection, response: responseFailure(code: 403, label: .unknown, apiVersion: self.apiVersion))
+        fetchConnection(self.oneToOneConnection, response: responseFailure(code: 403, label: .unknown, apiVersion: self.apiVersion))
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertFalse(connection.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(self.oneToOneConnection.needsToBeUpdatedFromBackend)
         }
     }
 
     func testThatConnectionPayloadIsProcessed_OnSuccessfulResponse_Federated() {
         // given
         self.apiVersion = .v1
-        var connection: ZMConnection!
         var payload: Payload.Connection!
         self.syncMOC.performGroupedBlockAndWait {
-            connection = self.oneToOneConversation.connection!
-            payload = self.createConnectionPayload(connection, status: .cancelled)
+            payload = self.createConnectionPayload(self.oneToOneConnection, status: .cancelled)
         }
 
         // when
-        fetchConnection(connection, response: successfulResponse(connection: payload))
+        fetchConnection(self.oneToOneConnection, response: successfulResponse(connection: payload))
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(connection.status, .cancelled)
+            XCTAssertEqual(self.oneToOneConnection.status, .cancelled)
         }
     }
 
     func testThatConnectionPayloadIsProcessed_OnSuccessfulResponse_NonFederated() {
         // given
-        var connection: ZMConnection!
         var payload: Payload.Connection!
         self.syncMOC.performGroupedBlockAndWait {
-            connection = self.oneToOneConversation.connection!
-            payload = self.createConnectionPayload(connection, status: .cancelled)
+            payload = self.createConnectionPayload(self.oneToOneConnection, status: .cancelled)
         }
 
         // when
-        fetchConnection(connection, response: successfulResponse(connection: payload))
+        fetchConnection(self.oneToOneConnection, response: successfulResponse(connection: payload))
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(connection.status, .cancelled)
+            XCTAssertEqual(self.oneToOneConnection.status, .cancelled)
         }
     }
 
@@ -248,7 +238,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatItProcessConnectionEvents() {
         syncMOC.performAndWait {
             // given
-            let connection = createConnectionPayload(oneToOneConversation.connection!, status: .blocked)
+            let connection = createConnectionPayload(self.oneToOneConnection, status: .blocked)
             let eventType = ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType)!
             let eventPayload = Payload.UserConnectionEvent(connection: connection, type: eventType)
             let event = updateEvent(from: eventPayload.payloadData()!)
@@ -257,8 +247,43 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
             // then
-            XCTAssertEqual(self.oneToOneConversation.connection?.status, .blocked)
+            XCTAssertEqual(self.oneToOneConnection.status, .blocked)
         }
+    }
+
+    func testOneOnOneResolverInvocationTiming() throws {
+        // GIVEN
+        let expectation1 = XCTestExpectation(description: "OneOnOneResolver should not be invoked within the specified timeout")
+        let expectation2 = XCTestExpectation(description: "OneOnOneResolver should be invoked within the specified timeout")
+        expectation1.isInverted = true // We expect this expectation to not be fulfilled within the timeout
+
+        try syncMOC.performAndWait {
+            let connection = createConnectionPayload(self.oneToOneConnection, status: .accepted)
+            let eventType = try XCTUnwrap(ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType), "eventType is nil")
+            let eventPayload = Payload.UserConnectionEvent(connection: connection, type: eventType)
+            let payloadData = try XCTUnwrap(eventPayload.payloadData(), "payloadData is nil")
+            let event = updateEvent(from: payloadData)
+
+            mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
+                expectation1.fulfill() // Attempt to fulfill the first expectation
+                expectation2.fulfill() // Fulfill the second expectation
+                return OneOnOneConversationResolution.noAction
+            }
+
+            sut.oneOnOneResolutionDelay = 1
+
+            // WHEN
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+        }
+
+        // THEN
+        // Wait for the first expectation with a timeout of 0.5 seconds, expecting it to fail (not to be fulfilled)
+        wait(for: [expectation1], timeout: 0.5)
+        XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 0, "Expected no invocation due to the first timeout.")
+
+        // Wait for the second expectation with a timeout of 1 second, expecting it to succeed (to be fulfilled)
+        wait(for: [expectation2], timeout: 1)
+        XCTAssertEqual(mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1, "Expected one invocation after the second timeout.")
     }
 
     // MARK: Helpers
@@ -306,8 +331,8 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
                             connections: [Payload.Connection]) -> ZMTransportResponse {
 
         let payload = Payload.PaginatedConnectionList(connections: connections,
-                                        pagingState: "",
-                                        hasMore: false)
+                                                      pagingState: "",
+                                                      hasMore: false)
 
         let payloadData = payload.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!

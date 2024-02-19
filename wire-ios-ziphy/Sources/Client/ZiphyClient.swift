@@ -31,7 +31,7 @@ public typealias ZiphyImageDataCallback = (ZiphyResult<Data>) -> Void
  * An object that provides access to the Giphy API.
  */
 
-public class ZiphyClient {
+public final class ZiphyClient {
 
     let host: String
     let requester: ZiphyURLRequester

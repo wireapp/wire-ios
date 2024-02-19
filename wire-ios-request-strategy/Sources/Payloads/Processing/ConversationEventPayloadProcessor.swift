@@ -19,6 +19,10 @@
 import Foundation
 import WireDataModel
 
+enum ConversationEventPayloadProcessorError: Error {
+    case noBackendConversationId
+}
+
 struct ConversationEventPayloadProcessor {
 
     enum Source {
@@ -219,7 +223,7 @@ struct ConversationEventPayloadProcessor {
             }
 
             conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
+        } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }) {
             // NOTE: legacy code path for backwards compatibility with servers without role support
 
             let users = Set(users)
@@ -288,7 +292,7 @@ struct ConversationEventPayloadProcessor {
             }
         }
 
-        if let role = payload.data.conversationRole.map({conversation.fetchOrCreateRoleForConversation(name: $0) }) {
+        if let role = payload.data.conversationRole.map({ conversation.fetchOrCreateRoleForConversation(name: $0) }) {
             conversation.addParticipantAndUpdateConversationState(user: targetUser, role: role)
         }
     }
@@ -416,6 +420,7 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
+        Flow.createGroup.checkpoint(description: "create ZMConversation of type \(conversationType))")
         switch conversationType {
         case .group:
             return await updateOrCreateGroupConversation(
@@ -470,6 +475,7 @@ struct ConversationEventPayloadProcessor {
         source: Source
     ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
+            Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
             Logging.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
             return nil
         }
@@ -492,10 +498,18 @@ struct ConversationEventPayloadProcessor {
             self.updateMembers(from: payload, for: conversation, context: context)
             self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             self.updateConversationStatus(from: payload, for: conversation)
-            self.updateMessageProtocol(from: payload, for: conversation, in: context)
+
+            if created {
+                self.assignMessageProtocol(from: payload, for: conversation, in: context)
+            } else {
+                self.updateMessageProtocol(from: payload, for: conversation, in: context)
+            }
+
+            Flow.createGroup.checkpoint(description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
 
             return conversation
         }
+
         await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
         await context.perform {
 
@@ -510,10 +524,26 @@ struct ConversationEventPayloadProcessor {
                     // Slow synced conversations should be considered read from the start
                     conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
                 }
+                Flow.createGroup.checkpoint(description: "new system message for conversation inserted")
             }
+
+            // If we discover this group is actually a fake one on one,
+            // then we should link the one on one user.
+            linkOneOnOneUserIfNeeded(for: conversation)
         }
 
         return conversation
+    }
+
+    private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
+        guard
+            conversation.conversationType == .oneOnOne,
+            let otherUser = conversation.localParticipantsExcludingSelf.first
+        else {
+            return
+        }
+
+        conversation.oneOnOneUser = otherUser
     }
 
     @discardableResult
@@ -563,12 +593,16 @@ struct ConversationEventPayloadProcessor {
         guard let context = conversation.managedObjectContext else {
             return WireLogger.mls.warn("conversation.managedObjectContext is nil")
         }
-        let (groupID, mlsService) = await context.perform {
-            (conversation.mlsGroupID, conversation.managedObjectContext?.mlsService)
+        let (groupID, mlsService, hasRegisteredMLSClient) = await context.perform {
+            (
+                conversation.mlsGroupID,
+                context.mlsService,
+                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true
+            )
         }
 
-        guard let groupID, let mlsService else {
-            WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
+        guard let groupID, let mlsService, hasRegisteredMLSClient else {
+            WireLogger.mls.warn("no mlsService or not registered mls client to createOrJoinSelfConversation")
             return
         }
 
@@ -751,6 +785,24 @@ struct ConversationEventPayloadProcessor {
         }
     }
 
+    private func assignMessageProtocol(
+        from payload: Payload.Conversation,
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) {
+        guard let messageProtocolString = payload.messageProtocol else {
+            Logging.eventProcessing.warn("message protocol is missing")
+            return
+        }
+
+        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
+            Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            return
+        }
+
+        conversation.messageProtocol = newMessageProtocol
+    }
+
     private func updateMessageProtocol(
         from payload: Payload.Conversation,
         for conversation: ZMConversation,
@@ -843,7 +895,7 @@ struct ConversationEventPayloadProcessor {
 
         // The backend can't distinguish between one-to-one and connection conversation
         // types across federated enviroments so check locally if it's a connection.
-        if conversation.connection?.status == .sent {
+        if conversation.oneOnOneUser?.connection?.status == .sent {
             return .connection
         } else {
             return type

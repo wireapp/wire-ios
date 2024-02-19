@@ -91,7 +91,7 @@ enum SearchResultsViewControllerSection: Int {
 }
 
 extension UIViewController {
-    class ControllerHierarchyIterator: IteratorProtocol {
+    final class ControllerHierarchyIterator: IteratorProtocol {
         private var current: UIViewController
 
         init(controller: UIViewController) {

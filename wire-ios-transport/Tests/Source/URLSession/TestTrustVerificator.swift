@@ -19,7 +19,7 @@
 import Foundation
 import WireTransport
 
-class TestTrustVerificator: NSObject, URLSessionDelegate {
+final class TestTrustVerificator: NSObject, URLSessionDelegate {
 
     var session: URLSession!
     var trustProvider: BackendTrustProvider!

@@ -28,7 +28,7 @@ fileprivate extension UserDefaults {
 
     /// The identifier of the currently selected `Account` or `nil` if there is none.
     var selectedAccountIdentifier: UUID? {
-        get { return string(forKey: UserDefaults.selectedAccountKey).flatMap(UUID.init) }
+        get { return string(forKey: UserDefaults.selectedAccountKey).flatMap(UUID.init(transportString:)) }
         set { set(newValue?.uuidString, forKey: UserDefaults.selectedAccountKey) }
     }
 

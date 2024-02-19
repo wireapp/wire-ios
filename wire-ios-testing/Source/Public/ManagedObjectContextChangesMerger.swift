@@ -18,7 +18,7 @@
 
 import Foundation
 
-final public class ManagedObjectContextChangesMerger: NSObject {
+public final class ManagedObjectContextChangesMerger: NSObject {
     public let managedObjectContexts: Set<NSManagedObjectContext>
 
     public init(managedObjectContexts: Set<NSManagedObjectContext>) {

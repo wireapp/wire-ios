@@ -18,7 +18,7 @@
 
 import UIKit
 
-class SketchToolbar: UIView {
+final class SketchToolbar: UIView {
 
     let containerView = UIView()
     let leftButton: UIButton!

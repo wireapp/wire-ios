@@ -203,8 +203,8 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         }
         XCTAssertNil(conversation.team)
         XCTAssertEqual(conversationRoles.count, conversation.nonTeamRoles!.count)
-        let admin = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.admin})
-        XCTAssertEqual((admin?["actions"] as? [String]).map({Set($0)}), Set([
+        let admin = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.admin })
+        XCTAssertEqual((admin?["actions"] as? [String]).map({ Set($0) }), Set([
             "add_conversation_member",
             "remove_conversation_member",
             "modify_conversation_name",
@@ -215,7 +215,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "leave_conversation", "delete_conversation"
             ]))
 
-        let member = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.member})
+        let member = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.member })
         XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
     }
 
@@ -248,8 +248,8 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         }
         XCTAssertNotNil(conversation.team)
         XCTAssertEqual(conversationRoles.count, team.roles.count)
-        let admin = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.admin})
-        XCTAssertEqual((admin?["actions"] as? [String]).map({Set($0)}), Set([
+        let admin = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.admin })
+        XCTAssertEqual((admin?["actions"] as? [String]).map({ Set($0) }), Set([
             "add_conversation_member",
             "remove_conversation_member",
             "modify_conversation_name",
@@ -260,7 +260,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "leave_conversation", "delete_conversation"
             ]))
 
-        let member = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.member})
+        let member = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.member })
         XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
     }
 

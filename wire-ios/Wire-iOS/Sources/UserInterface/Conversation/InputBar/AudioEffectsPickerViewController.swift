@@ -341,7 +341,7 @@ private protocol AudioPlayerControllerDelegate: AnyObject {
 
 }
 
-private class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
+private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
 
     let player: AVAudioPlayer
     weak var delegate: AudioPlayerControllerDelegate?

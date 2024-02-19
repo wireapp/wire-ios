@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
+final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
 
     // MARK: - Properties
 

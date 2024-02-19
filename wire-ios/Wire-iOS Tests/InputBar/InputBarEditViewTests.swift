@@ -18,7 +18,7 @@
 
 @testable import Wire
 
-class InputBarEditViewTests: BaseSnapshotTestCase {
+final class InputBarEditViewTests: BaseSnapshotTestCase {
 
     var sut: InputBarEditView!
 

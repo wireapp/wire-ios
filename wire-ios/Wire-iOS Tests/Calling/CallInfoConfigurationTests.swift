@@ -88,7 +88,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneIncomingAudioRinging() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: [otherUser])
 
@@ -104,7 +104,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneOutgoingAudioRinging() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -120,7 +120,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneProteusConversationIncomingAudioDegraded() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: [otherUser])
 
@@ -143,7 +143,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneProteusConversationOutgoingAudioDegraded() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
 
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!,
@@ -169,7 +169,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneMlsConversationOutgoingAudioDegraded() {
         // given
-        let mockConversation = createOneToOneConversation(messageProtocol: .mls)
+        let mockConversation = createOneOnOneConversation(messageProtocol: .mls)
 
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!,
@@ -194,7 +194,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneAudioConnecting() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: [otherUser])
 
@@ -210,7 +210,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneAudioEstablishedUpgradedToVideo() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -229,7 +229,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneAudioEstablished() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -247,7 +247,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneAudioEstablishedCBR() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -266,7 +266,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneAudioEstablishedVBR() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -287,7 +287,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneIncomingVideoRinging() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -305,7 +305,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneIncomingVideoRingingVideoTurnedOff() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: [otherUser])
 
@@ -323,7 +323,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneOutgoingVideoRinging() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -341,7 +341,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneVideoConnecting() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -359,7 +359,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneVideoEstablished() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -383,7 +383,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneVideoEstablishedWithScreenSharing() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -407,7 +407,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneVideoEstablishedDowngradedToAudio() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -561,7 +561,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneIncomingVideoRingingWithVideoPermissionsDeniedForever() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -579,7 +579,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     func testOneToOneIncomingVideoRingingWithUndeterminedVideoPermissions() {
         // given
-        let mockConversation = createOneToOneConversation()
+        let mockConversation = createOneOnOneConversation()
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: mockConversation.connectedUser!, selfUser: selfUser, mockUsers: mockUsers)
 
@@ -730,20 +730,18 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     // MARK: - Mock ZMConversation
 
-    private func createOneToOneConversation(messageProtocol: MessageProtocol = .proteus) -> ZMConversation {
+    private func createOneOnOneConversation(messageProtocol: MessageProtocol = .proteus) -> ZMConversation {
 
         let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
         mockConversation.messageProtocol = messageProtocol
         mockConversation.add(participants: selfUser)
-
         mockConversation.conversationType = .oneOnOne
         mockConversation.remoteIdentifier = UUID.create()
+        mockConversation.oneOnOneUser = otherUser
+
         let connection = ZMConnection.insertNewObject(in: uiMOC)
         connection.to = otherUser
         connection.status = .accepted
-        connection.conversation = mockConversation
-
-        connection.add(user: otherUser)
 
         return mockConversation
     }

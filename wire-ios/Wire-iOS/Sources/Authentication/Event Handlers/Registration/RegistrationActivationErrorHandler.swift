@@ -22,7 +22,7 @@ import Foundation
  * Handles errors during registration activation.
  */
 
-class RegistrationActivationErrorHandler: AuthenticationEventHandler {
+final class RegistrationActivationErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

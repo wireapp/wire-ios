@@ -20,7 +20,7 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-class IncomingRequestFooterTests: BaseSnapshotTestCase {
+final class IncomingRequestFooterTests: BaseSnapshotTestCase {
 
     // MARK: - Snapshot Tests
 

@@ -18,8 +18,10 @@
 
 import Foundation
 import LocalAuthentication
-@testable import Wire
 import WireSyncEngineSupport
+import WireDataModelSupport
+
+@testable import Wire
 
 final class UserSessionMock: UserSession {
     var isE2eIdentityEnabled  = false
@@ -147,11 +149,11 @@ final class UserSessionMock: UserSession {
         fatalError("not implemented")
     }
 
-    func addUserObserver(_ observer: ZMUserObserver, for user: UserType) -> NSObjectProtocol? {
+    func addUserObserver(_ observer: UserObserving, for user: UserType) -> NSObjectProtocol? {
         return nil
     }
 
-    func addUserObserver(_ observer: ZMUserObserver) -> NSObjectProtocol {
+    func addUserObserver(_ observer: UserObserving) -> NSObjectProtocol {
         return NSObject()
     }
 
@@ -215,7 +217,7 @@ final class UserSessionMock: UserSession {
 
     func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool>
+            Result<Bool, Error>
         ) -> Void
     ) {
 
@@ -223,7 +225,7 @@ final class UserSessionMock: UserSession {
 
     func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
     ) {
 
     }
@@ -251,6 +253,9 @@ final class UserSessionMock: UserSession {
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         mockGetUserClientFingerprintUseCaseProtocol
     }
+
+    lazy var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol = MockIsSelfUserProteusVerifiedUseCaseProtocol()
+    lazy var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol = MockIsSelfUserE2EICertifiedUseCaseProtocol()
 
     var selfUserClient: UserClient? {
         return nil

@@ -259,7 +259,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = "foo"
         let groupID = MLSGroupID.random()
         let subconversationType = SubgroupType.conference
-        let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
+        let mockResult = MLSDecryptResult.message(.random(), .randomAlphanumerical(length: 3))
 
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
@@ -287,7 +287,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
         let subconversationType = SubgroupType.conference
 
-        let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
+        let mockResult = MLSDecryptResult.message(.random(), .randomAlphanumerical(length: 3))
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
         // When
@@ -421,16 +421,18 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             removal: .init(ed25519: removalKey)
         )
 
-        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            return []
-        }
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in [] }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in [] }
 
-        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            return []
-        }
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { (_, _, _, _) in
-            return users.map {
-                KeyPackage(client: .random(length: 4), domain: $0.domain, keyPackage: .random(length: 3), keyPackageRef: .random(length: 6), userID: $0.id)
+            users.map {
+                KeyPackage(
+                    client: .randomAlphanumerical(length: 4),
+                    domain: $0.domain,
+                    keyPackage: .randomAlphanumerical(length: 3),
+                    keyPackageRef: .randomAlphanumerical(length: 6),
+                    userID: $0.id
+                )
             }
         }
         var mockAddMembersCalled = false
@@ -1109,7 +1111,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return conversation
         }
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Mock properly
+        // swiftlint:enable todo_requires_jira_link
         let mockUpdateEvents = [ZMUpdateEvent]()
 
         // expectation
@@ -1159,19 +1163,16 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func test_PerformPendingJoins_Retries() async throws {
-        try await test_PerformPendingJoinsRecovery(.retry)
+        try await test_PerformPendingJoinsRecovery(.retry, cause: .mlsStaleMessage)
     }
 
     func test_PerformPendingJoins_GivesUp() async throws {
-        do {
-            try await test_PerformPendingJoinsRecovery(.giveUp)
-        } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp) {
-            // expected
-        }
+        try await test_PerformPendingJoinsRecovery(.giveUp, cause: .mlsCommitMissingReferences)
     }
 
     private func test_PerformPendingJoinsRecovery(
         _ recovery: ExternalCommitError.RecoveryStrategy,
+        cause: SendCommitBundleAction.Failure,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws {
@@ -1204,7 +1205,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             joinGroupCount += 1
 
             if joinGroupCount == 1 {
-                throw ExternalCommitError.failedToSendCommit(recovery: recovery)
+                throw ExternalCommitError.failedToSendCommit(
+                    recovery: recovery,
+                    cause: cause
+                )
             }
 
             return []
@@ -1840,7 +1844,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
             default:
                 return []
             }
@@ -1880,7 +1884,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0..<3:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
             default:
                 return []
             }
@@ -1915,7 +1919,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockCommitPendingProposalsCount += 1 }
             switch mockCommitPendingProposalsCount {
             case 0..<2:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
             default:
                 return []
             }
@@ -1927,7 +1931,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0..<3:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
             default:
                 return []
             }
@@ -1978,7 +1982,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var mockUpdateKeyMaterialCount = 0
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             defer { mockUpdateKeyMaterialCount += 1 }
-            throw CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync)
+            throw CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync, cause: .mlsStaleMessage)
         }
 
         // Mock quick sync.
@@ -2016,7 +2020,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var mockUpdateKeyMaterialCount = 0
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             defer { mockUpdateKeyMaterialCount += 1 }
-            throw CommitError.failedToSendCommit(recovery: .giveUp)
+            throw CommitError.failedToSendCommit(recovery: .giveUp, cause: .mlsProtocolError)
         }
 
         // Mock quick sync.
@@ -2026,7 +2030,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then
-        await assertItThrows(error: CommitError.failedToSendCommit(recovery: .giveUp)) {
+        await assertItThrows(error: SendCommitBundleAction.Failure.mlsProtocolError) {
             // When
             try await sut.updateKeyMaterial(for: groupID)
         }

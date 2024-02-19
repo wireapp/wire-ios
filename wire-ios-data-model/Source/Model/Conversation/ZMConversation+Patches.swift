@@ -72,7 +72,7 @@ extension ZMConversation {
 
             if isSelfAnActiveMember {
                 var participantRoleForSelfUser: ParticipantRole
-                let adminRole = conversation.getRoles().first(where: {$0.name == defaultAdminRoleName})
+                let adminRole = conversation.getRoles().first(where: { $0.name == defaultAdminRoleName })
 
                 if let conversationTeam = conversation.team, conversationTeam == selfUser.team, selfUser.isTeamMember {
                     participantRoleForSelfUser = getAParticipantRole(in: moc, adminRole: adminRole, user: selfUser, conversation: conversation, team: conversationTeam)
@@ -99,11 +99,17 @@ extension ZMConversation {
     // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity.
     // After creating a new connection, we should add user to the participants roles, because we do not get it from the backend.
     static func addUserFromTheConnectionToTheParticipantRoles(in moc: NSManagedObjectContext) {
-        guard let allConnections = ZMConnection.connections(inManagedObjectContext: moc) as? [ZMConnection] else { return }
+        guard let allConnections = ZMConnection.connections(inManagedObjectContext: moc) as? [ZMConnection] else {
+            return
+        }
 
         for connection in allConnections {
-            guard let conversation = connection.conversation,
-                  let user = connection.to else { continue }
+            guard
+                let user = connection.to,
+                let conversation = user.oneOnOneConversation
+            else {
+                continue
+            }
 
             conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         }

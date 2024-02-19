@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-class ConversationCreateErrorCell: UICollectionViewCell {
+final class ConversationCreateErrorCell: UICollectionViewCell {
 
     let label = UILabel()
 

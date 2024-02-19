@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,11 @@ final class DirectorySectionController: SearchSectionController {
         let user = suggestions[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
         if let selfUser = ZMUser.selfUser() {
-            cell.configure(with: user, selfUser: selfUser)
+            cell.configure(
+                user: user,
+                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+                isSelfUserPartOfATeam: selfUser.hasTeam
+            )
         } else {
             assertionFailure("ZMUser.selfUser() is nil")
         }
@@ -109,7 +113,7 @@ final class DirectorySectionController: SearchSectionController {
 
 }
 
-extension DirectorySectionController: ZMUserObserver {
+extension DirectorySectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged else { return }

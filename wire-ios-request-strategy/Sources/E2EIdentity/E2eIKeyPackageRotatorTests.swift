@@ -67,8 +67,7 @@ class E2eIKeyPackageRotatorTests: MessagingTestBase {
         // then we can resolve this.
         // Until then we're unable to test anything that has a dependency on `E2eiEnrollment`
         //
-        // TODO: Investigate solutions to mock core crypto types
-        // https://wearezeta.atlassian.net/browse/WPB-6035
+        // TODO: [WPB-6035] Investigate solutions to mock core crypto types
     }
 
 }

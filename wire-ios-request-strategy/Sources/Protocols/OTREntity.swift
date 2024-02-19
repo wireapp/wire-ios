@@ -94,9 +94,9 @@ extension OTREntity {
         }
 
         if (conversation.conversationType == .oneOnOne || conversation.conversationType == .connection)
-            && conversation.connection?.needsToBeUpdatedFromBackend == true {
+            && conversation.oneOnOneUser?.connection?.needsToBeUpdatedFromBackend == true {
             zmLog.debug("connection needs to be update from backend")
-            return conversation.connection
+            return conversation.oneOnOneUser?.connection
         }
 
         return dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: conversation.localParticipants)

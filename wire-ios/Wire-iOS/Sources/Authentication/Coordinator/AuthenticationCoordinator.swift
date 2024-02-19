@@ -46,7 +46,7 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
  * or delegate call from one of the abstracted components.
  */
 
-class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
+final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
 
     /// The handle to the OS log for authentication events.
     let log = ZMSLog(tag: "Authentication")
@@ -203,7 +203,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             var viewControllers = presenter.viewControllers
             let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
             if let rewindedController = rewindedController {
-                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0)}, [rewindedController], [stepViewController]].flatMap { $0 }
+                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0) }, [rewindedController], [stepViewController]].flatMap { $0 }
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
                 presenter.setViewControllers([stepViewController], animated: true)
@@ -871,26 +871,10 @@ extension AuthenticationCoordinator {
             return
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
-        let selfUser = ZMUser.selfUser(inUserSession: session)
-        let isUpgradingMLSClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
-
-        guard
-            let userName = selfUser.name,
-            let handle = selfUser.handle,
-            let teamID = selfUser.teamIdentifier,
-            let e2eiClientId = E2eIClientID(user: selfUser)
-        else {
-            return
-        }
 
         Task {
             do {
                 _ = try await e2eiCertificateUseCase?.invoke(
-                    e2eiClientId: e2eiClientId,
-                    userName: userName,
-                    userHandle: handle,
-                    team: teamID,
-                    isUpgradingMLSClient: isUpgradingMLSClient,
                     authenticate: oauthUseCase.invoke
                 )
                 session.reportEndToEndIdentityEnrollmentSuccess()

@@ -129,15 +129,21 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     func openOneToOneConversation() {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
 
         if let conversation = user.oneToOneConversation {
             transition(to: conversation)
         } else {
-            user.createTeamOneToOneConversation(in: userSession.viewContext) { result in
-                guard case .success(let conversation) = result else { return }
+            userSession.createTeamOneOnOne(with: user) { [weak self] in
+                switch $0 {
+                case .success(let conversation):
+                    self?.transition(to: conversation)
 
-                self.transition(to: conversation)
+                case .failure(let error):
+                    WireLogger.conversation.error("failed to create team one on one from profile view: \(error)")
+                }
             }
         }
     }
@@ -217,7 +223,9 @@ final class ProfileViewControllerViewModel: NSObject {
     // MARK: - Factories
 
     func makeUserNameDetailViewModel() -> UserNameDetailViewModel {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: add addressBookEntry to ZMUser
+        // swiftlint:enable todo_requires_jira_link
         return UserNameDetailViewModel(user: user, fallbackName: user.name ?? "", addressBookName: (user as? ZMUser)?.addressBookEntry?.cachedName)
     }
 
@@ -259,7 +267,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
 }
 
-extension ProfileViewControllerViewModel: ZMUserObserver {
+extension ProfileViewControllerViewModel: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
         if note.trustLevelChanged {
             viewModelDelegate?.updateShowVerifiedShield()

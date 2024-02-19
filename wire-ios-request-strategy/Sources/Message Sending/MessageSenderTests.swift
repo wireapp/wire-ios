@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModelSupport
 import XCTest
+
+@testable import WireDataModelSupport
+@testable import WireRequestStrategySupport
 
 final class MessageSenderTests: MessagingTestBase {
 
@@ -595,7 +597,7 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withMessageDependencyResolverReturning(result: Swift.Result<Void, MessageDependencyResolverError>) -> Arrangement {
+        func withMessageDependencyResolverReturning(result: Result<Void, MessageDependencyResolverError>) -> Arrangement {
             messageDependencyResolver.waitForDependenciesToResolveFor_MockMethod = { _ in
                 if case .failure(let error) = result {
                     throw error
@@ -633,7 +635,7 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withEstablishSessions(returning result: Swift.Result<Void, SessionEstablisherError>) -> Arrangement {
+        func withEstablishSessions(returning result: Result<Void, SessionEstablisherError>) -> Arrangement {
             switch result {
             case .success:
                 sessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in }
@@ -643,7 +645,7 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withBroadcastProteusMessage(returning result: Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
+        func withBroadcastProteusMessage(returning result: Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
 
             switch result {
             case .success(let value):
@@ -654,7 +656,7 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withSendProteusMessage(returning result: Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
+        func withSendProteusMessage(returning result: Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
 
             switch result {
             case .success(let value):
@@ -665,7 +667,7 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withSendMlsMessage(returning result: Swift.Result<(Payload.MLSMessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
+        func withSendMlsMessage(returning result: Result<(Payload.MLSMessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
 
             switch result {
             case .success(let value):

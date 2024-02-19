@@ -351,7 +351,9 @@ final class ConversationListViewModel: NSObject {
         return items[indexPath.item]
     }
 
-    /// TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
+    // swiftlint:enable todo_requires_jira_link
     func indexPath(for item: ConversationListItem?) -> IndexPath? {
         guard let item = item else { return nil }
 
@@ -701,7 +703,7 @@ final class ConversationListViewModel: NSObject {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
 private let log = ZMSLog(tag: "ConversationListViewModel")
 
@@ -715,10 +717,12 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             // so we prefer to do the simple reload instead.
             update()
         } else {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: When 2 sections are visible and a conversation belongs to both, the lower section's update
             // animation is missing since it started after the top section update animation started. To fix this
             // we should calculate the change set in one batch.
             // TODO: wait for SE update for returning multiple items in changeInfo.updatedLists
+            // swiftlint:enable todo_requires_jira_link
             for updatedList in changeInfo.updatedLists {
                 if let kind = self.kind(of: updatedList) {
                     update(for: kind)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,25 +20,27 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
-extension UIImageView {
-    func setUpIconImageView(accessibilityIdentifier: String? = nil) {
-        translatesAutoresizingMaskIntoConstraints = false
-        contentMode = .center
-        self.accessibilityIdentifier = accessibilityIdentifier
-        isHidden = true
-    }
-}
-
-class UserCell: SeparatorCollectionViewCell, SectionListCellType {
+final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Properties
+
+    // This property should in the long run replace the `user: UserType` property
+    // provided in the `configure` method. Unfortunately, currently there is still code
+    // which depends on the actual `UserType`/`ZMUser` instance, like the `BadgeUserImageView`.
+    var userStatus = UserStatus() {
+        didSet { updateTitleLabel() }
+    }
+
+    private var userIsSelfUser = false
+    private var isSelfUserPartOfATeam = false
+    private var userIsServiceUser = false
 
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
     var hidesSubtitle: Bool = false
     let avatarSpacer = UIView()
-    let avatar = BadgeUserImageView()
+    let avatarImageView = BadgeUserImageView()
     let titleLabel = DynamicFontLabel(fontSpec: .bodyTwoSemibold,
                                       color: LabelColors.textDefault)
     let subtitleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
@@ -46,7 +48,6 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     let connectButton = IconButton()
     let accessoryIconView = UIImageView()
     let userTypeIconView = IconImageView()
-    let verifiedIconView = UIImageView()
     let videoIconView = IconImageView()
 
     lazy var connectingLabel: DynamicFontLabel = {
@@ -68,20 +69,14 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     fileprivate var avatarSpacerWidthConstraint: NSLayoutConstraint?
 
-    weak var user: UserType?
-
     static let boldFont: FontSpec = .smallRegularFont
     static let lightFont: FontSpec = .smallLightFont
     static let defaultAvatarSpacing: CGFloat = 64
 
     /// Specify a custom avatar spacing
     var avatarSpacing: CGFloat? {
-        get {
-            return avatarSpacerWidthConstraint?.constant
-        }
-        set {
-            avatarSpacerWidthConstraint?.constant = newValue ?? UserCell.defaultAvatarSpacing
-        }
+        get { avatarSpacerWidthConstraint?.constant }
+        set { avatarSpacerWidthConstraint?.constant = newValue ?? UserCell.defaultAvatarSpacing }
     }
 
     var sectionName: String?
@@ -109,13 +104,14 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
     }
 
+    // MARK: - Methods
+
     override func prepareForReuse() {
         super.prepareForReuse()
 
         UIView.performWithoutAnimation {
             hidesSubtitle = false
             userTypeIconView.isHidden = true
-            verifiedIconView.isHidden = true
             videoIconView.isHidden = true
             microphoneIconView.isHidden = true
             connectingLabel.isHidden = true
@@ -130,11 +126,13 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        //  Border colors are not dynamically updating for Dark Mode
-        //  When you use adaptive colors with CALayers you’ll notice that these colors,
+
+        // Border colors are not dynamically updating for Dark Mode
+        // When you use adaptive colors with CALayers you’ll notice that these colors,
         // are not updating when switching appearance live in the app.
         // That's why we use the traitCollectionDidChange(_:) method.
         checkmarkIconView.layer.borderColor = IconColors.borderCheckMark.cgColor
+
         updateTitleLabel()
     }
 
@@ -142,20 +140,25 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         super.setUp()
 
         // userTypeIconView
-        userTypeIconView.setUpIconImageView()
+        userTypeIconView.translatesAutoresizingMaskIntoConstraints = false
+        userTypeIconView.contentMode = .center
+        userTypeIconView.accessibilityIdentifier = nil
+        userTypeIconView.isHidden = true
         userTypeIconView.set(size: .tiny, color: iconColor)
 
         // videoIconView
-        videoIconView.setUpIconImageView()
+        videoIconView.translatesAutoresizingMaskIntoConstraints = false
+        videoIconView.contentMode = .center
+        videoIconView.accessibilityIdentifier = nil
+        videoIconView.isHidden = true
         videoIconView.set(size: .tiny, color: iconColor)
 
         // microphoneIconView
-        microphoneIconView.setUpIconImageView()
+        microphoneIconView.translatesAutoresizingMaskIntoConstraints = false
+        microphoneIconView.contentMode = .center
+        microphoneIconView.accessibilityIdentifier = nil
+        microphoneIconView.isHidden = true
         microphoneIconView.set(size: .tiny, color: iconColor)
-
-        // verifiedIconView
-        verifiedIconView.image = WireStyleKit.imageOfShieldverified
-        verifiedIconView.setUpIconImageView(accessibilityIdentifier: "img.shield")
 
         // connectButton
         connectButton.setIcon(.plusCircled, size: .tiny, for: .normal)
@@ -174,26 +177,30 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         connectingLabel.text = L10n.Localizable.Call.Status.connecting
 
         // accessoryIconView
-        accessoryIconView.setUpIconImageView()
+        accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
+        accessoryIconView.contentMode = .center
+        accessoryIconView.accessibilityIdentifier = nil
+        accessoryIconView.isHidden = true
         accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
         accessoryIconView.tintColor = IconColors.foregroundDefault
 
         // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.accessibilityIdentifier = "user_cell.name"
+        titleLabel.lineBreakMode = .byTruncatingMiddle
 
         // subtitleLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         subtitleLabel.accessibilityIdentifier = "user_cell.username"
 
         // avatar
-        avatar.userSession = ZMUserSession.shared()
-        avatar.initialsFont = .avatarInitial
-        avatar.size = .small
-        avatar.translatesAutoresizingMaskIntoConstraints = false
+        avatarImageView.userSession = ZMUserSession.shared()
+        avatarImageView.initialsFont = .avatarInitial
+        avatarImageView.size = .small
+        avatarImageView.translatesAutoresizingMaskIntoConstraints = false
 
         // avatarSpacer
-        avatarSpacer.addSubview(avatar)
+        avatarSpacer.addSubview(avatarImageView)
         avatarSpacer.translatesAutoresizingMaskIntoConstraints = false
 
         // iconStackView
@@ -202,7 +209,6 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
                 videoIconView,
                 microphoneIconView,
                 userTypeIconView,
-                verifiedIconView,
                 connectButton,
                 checkmarkIconView,
                 accessoryIconView,
@@ -249,12 +255,12 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         NSLayoutConstraint.activate([
             checkmarkIconView.widthAnchor.constraint(equalToConstant: 24),
             checkmarkIconView.heightAnchor.constraint(equalToConstant: 24),
-            avatar.widthAnchor.constraint(equalToConstant: 28),
-            avatar.heightAnchor.constraint(equalToConstant: 28),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 28),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 28),
             avatarSpacerWidthConstraint,
-            avatarSpacer.heightAnchor.constraint(equalTo: avatar.heightAnchor),
-            avatarSpacer.centerXAnchor.constraint(equalTo: avatar.centerXAnchor),
-            avatarSpacer.centerYAnchor.constraint(equalTo: avatar.centerYAnchor),
+            avatarSpacer.heightAnchor.constraint(equalTo: avatarImageView.heightAnchor),
+            avatarSpacer.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
+            avatarSpacer.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             contentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -290,7 +296,11 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             content += ", \(userType)"
         }
 
-        if !verifiedIconView.isHidden {
+        if userStatus.isCertified {
+            // TODO [WPB-765]: add accessibility label for shield after merging into `epic/e2ei`
+            // content += ", " + <?>
+        }
+        if userStatus.isVerified {
             content += ", " + ClientsList.DeviceVerified.description
         }
 
@@ -323,7 +333,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         if !checkmarkIconView.isHidden {
             accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser.hint
-        } else if let user = user, user.isServiceUser {
+        } else if userIsServiceUser {
             accessibilityHint = ServicesList.ServiceCell.hint
         } else {
             accessibilityHint = ContactsList.UserCell.hint
@@ -332,26 +342,34 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     // MARK: - Update and configure methods
 
-    private func updateTitleLabel(selfUser: UserType? = nil) {
-        guard let user = user,
-              let selfUser = selfUser else {
-            return
-        }
-        var attributedTitle = user.nameIncludingAvailability(
+    private func updateTitleLabel() {
+        titleLabel.attributedText = userStatus.title(
             color: SemanticColors.Label.textDefault,
-            selfUser: selfUser)
-
-        if user.isSelfUser, let title = attributedTitle {
-            attributedTitle = title + L10n.Localizable.UserCell.Title.youSuffix
-        }
-
-        titleLabel.attributedText = attributedTitle
+            includeAvailability: isSelfUserPartOfATeam,
+            includeVerificationStatus: isSelfUserPartOfATeam,
+            appendYouSuffix: userIsSelfUser
+        )
     }
+}
 
-    func configure(with user: UserType,
-                   selfUser: UserType,
-                   subtitle overrideSubtitle: NSAttributedString? = nil,
-                   conversation: GroupDetailsConversationType? = nil) {
+// MARK: - UserCell + configure
+
+extension UserCell {
+
+    /// Updates the cell with the provided information.
+    /// - parameter userStatus: At the moment only the E2EI and Proteus verification statuses are considered from this value.
+    func configure(
+        userStatus: UserStatus,
+        user: UserType, // ideally no UserType instance would be needed
+        userIsSelfUser: Bool,
+        isSelfUserPartOfATeam: Bool,
+        subtitle overrideSubtitle: NSAttributedString? = nil,
+        conversation: GroupDetailsConversationType? = nil
+    ) {
+        self.userStatus = userStatus
+        self.userIsSelfUser = userIsSelfUser
+        self.isSelfUserPartOfATeam = isSelfUserPartOfATeam
+        self.userIsServiceUser = user.isServiceUser
 
         let subtitle: NSAttributedString?
         if overrideSubtitle == nil {
@@ -360,15 +378,15 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             subtitle = overrideSubtitle
         }
 
-        self.user = user
+        avatarImageView.user = user
+        updateTitleLabel()
 
-        avatar.user = user
-        updateTitleLabel(selfUser: selfUser)
-
-        let style = UserTypeIconStyle(conversation: conversation, user: user, selfUser: selfUser)
+        let style = UserTypeIconStyle(
+            conversation: conversation,
+            user: user,
+            selfUserHasTeam: isSelfUserPartOfATeam
+        )
         userTypeIconView.set(style: style)
-
-        verifiedIconView.isHidden = !user.isVerified
 
         if let subtitle = subtitle, !subtitle.string.isEmpty, !hidesSubtitle {
             subtitleLabel.isHidden = false
@@ -379,6 +397,26 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         setupAccessibility()
     }
 
+    /// Updates the cell with the information in the user instance.
+    func configure(
+        user: UserType,
+        isCertified: Bool,
+        isSelfUserPartOfATeam: Bool,
+        subtitle overrideSubtitle: NSAttributedString? = nil,
+        conversation: GroupDetailsConversationType? = nil
+    ) {
+        configure(
+            userStatus: .init(
+                user: user,
+                isCertified: isCertified
+            ),
+            user: user,
+            userIsSelfUser: user.isSelfUser,
+            isSelfUserPartOfATeam: isSelfUserPartOfATeam,
+            subtitle: overrideSubtitle,
+            conversation: conversation
+        )
+    }
 }
 
 // MARK: - Subtitle
@@ -387,36 +425,16 @@ extension UserCell: UserCellSubtitleProtocol {}
 
 extension UserCell {
 
-    func subtitle(for user: UserType) -> NSAttributedString? {
+    private func subtitle(for user: UserType) -> NSAttributedString? {
         if user.isServiceUser, let service = user as? SearchServiceUser {
-            return subtitle(forServiceUser: service)
+            subtitle(forServiceUser: service)
         } else {
-            return subtitle(forRegularUser: user)
+            subtitle(forRegularUser: user)
         }
     }
 
     private func subtitle(forServiceUser service: SearchServiceUser) -> NSAttributedString? {
         guard let summary = service.summary else { return nil }
-
-        return summary && UserCell.boldFont.font!
+        return .init(string: summary, attributes: [.font: UserCell.boldFont.font].compactMapValues { $0 })
     }
-
-}
-
-// MARK: - Availability
-
-extension UserType {
-
-    func nameIncludingAvailability(color: UIColor, selfUser: UserType) -> NSAttributedString? {
-        if selfUser.isTeamMember {
-            return AvailabilityStringBuilder.string(for: self, with: .list, color: color)
-        } else if let name = name {
-            return name && color
-        } else {
-            let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
-            let fallbackColor = SemanticColors.Label.textCollectionSecondary
-            return fallbackTitle && fallbackColor
-        }
-    }
-
 }

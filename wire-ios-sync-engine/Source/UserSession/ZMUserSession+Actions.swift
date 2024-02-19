@@ -26,7 +26,7 @@ import Foundation
 
         guard let senderID = userInfo.senderID,
               let sender = ZMUser.fetch(with: senderID, in: managedObjectContext),
-              let conversation = sender.connection?.conversation
+              let conversation = sender.oneOnOneConversation
         else { return }
 
         sender.accept(completion: { [weak self] _ in
