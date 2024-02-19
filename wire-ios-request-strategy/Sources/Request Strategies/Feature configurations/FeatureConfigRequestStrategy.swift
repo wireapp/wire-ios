@@ -20,7 +20,7 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "feature configurations")
 
-public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, GetFeatureConfigsActionHandlerDelegate {
+public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
@@ -105,22 +105,6 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, GetFea
         }
 
         return actionSync.nextRequest(for: apiVersion)
-    }
-
-    // MARK: - GetFeatureConfigsActionHandlerDelegate
-
-    func didFinishGetFeatureConfig() {
-        if slowSyncTask == nil { return }
-        WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync did finish fetch feature config!")
-        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
-        self.slowSyncTask = nil
-    }
-
-    func didFailGetFeatureConfig() {
-        if slowSyncTask == nil { return }
-        WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync did fail fetch feature config!")
-        syncStatus.failCurrentSyncPhase(phase: syncPhase)
-        self.slowSyncTask = nil
     }
 }
 

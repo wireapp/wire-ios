@@ -19,16 +19,9 @@
 import Foundation
 import WireDataModel
 
-protocol GetFeatureConfigsActionHandlerDelegate: AnyObject {
-    func didFinishGetFeatureConfig()
-    func didFailGetFeatureConfig()
-}
-
 final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsAction> {
 
     // MARK: - Request
-
-    weak var delegate: GetFeatureConfigsActionHandlerDelegate?
 
     override func request(
         for action: GetFeatureConfigsActionHandler.Action,
@@ -54,7 +47,6 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
                 let data = response.rawData,
                 !data.isEmpty
             else {
-                delegate?.didFailGetFeatureConfig()
                 action.fail(with: .malformedResponse)
                 return
             }
@@ -63,28 +55,22 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
                 let payload = try JSONDecoder.defaultDecoder.decode(ResponsePayload.self, from: data)
                 processPayload(payload)
 
-                delegate?.didFinishGetFeatureConfig()
                 action.succeed()
 
             } catch {
-                delegate?.didFailGetFeatureConfig()
                 action.fail(with: .failedToDecodeResponse(reason: error.localizedDescription))
             }
 
         case (403, "operation-denied"):
-            delegate?.didFailGetFeatureConfig()
             action.fail(with: .insufficientPermissions)
 
         case (403, "no-team-member"):
-            delegate?.didFailGetFeatureConfig()
             action.fail(with: .userIsNotTeamMember)
 
         case (404, "no-team"):
-            delegate?.didFailGetFeatureConfig()
             action.fail(with: .teamNotFound)
 
         case let (status, label):
-            delegate?.didFailGetFeatureConfig()
             action.fail(with: .unknown(status: status, label: label ?? ""))
         }
     }
