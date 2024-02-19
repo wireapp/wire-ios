@@ -207,7 +207,7 @@ final class ClientListViewController: UIViewController,
             userSession: userSession,
             credentials: credentials,
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-            mlsThumbprint: (client.e2eIdentityCertificate?.mlsThumbprint ?? client.mlsPublicKeys.ed25519)?.splitStringIntoLines(charactersPerLine: 16),
+            mlsThumbprint: client.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16),
             getProteusFingerprint: userSession.getUserClientFingerprint
         )
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
@@ -513,7 +513,7 @@ final class ClientListViewController: UIViewController,
                     for client in userClients {
                         let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
                         client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
-                        client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint ?? client.mlsPublicKeys.ed25519
+                        client.mlsThumbPrint = client.resolvedMLSThumbprint
                         if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
                             client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
                         }
@@ -596,6 +596,11 @@ extension ClientListViewController: UserObserving {
 }
 
 private extension UserClient {
+
+    var resolvedMLSThumbprint: String? {
+        e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
+    }
+
     func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
         guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
             return nil

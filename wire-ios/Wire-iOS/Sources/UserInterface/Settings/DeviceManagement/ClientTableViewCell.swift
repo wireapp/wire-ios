@@ -135,7 +135,9 @@ extension ClientTableViewCellModel {
     static func from(userClient: UserClientType, shouldSetType: Bool = true) -> ClientTableViewCellModel {
         var title = ""
         if shouldSetType {
-            title = userClient.deviceClass == .legalHold ?  L10n.Localizable.Device.Class.legalhold : (userClient.deviceClass?.localizedDescription.capitalized ?? userClient.type.localizedDescription.capitalized)
+            title = userClient.deviceClass == .legalHold ?
+            L10n.Localizable.Device.Class.legalhold :
+            (userClient.deviceClass?.localizedDescription.capitalized ?? userClient.type.localizedDescription.capitalized)
         } else {
             title = userClient.model ?? ""
         }
