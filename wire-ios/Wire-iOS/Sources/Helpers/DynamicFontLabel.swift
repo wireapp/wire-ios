@@ -21,7 +21,6 @@ import WireCommonComponents
 
 /// A helper class that provides the label with Dynamic Type Support
 /// by conforming to the DynamicTypeCapable Protocol.
-
 class DynamicFontLabel: UILabel, DynamicTypeCapable {
 
     // MARK: - Properties
@@ -31,7 +30,7 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
     // MARK: - initialization
 
     init(
-        text: String? = nil,
+        text: String = "",
         style: UIFont.FontStyle = .body,
         color: UIColor
     ) {
@@ -68,5 +67,4 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
         guard let newFont = onRedrawFont() else { return }
         self.font = newFont
     }
-
 }

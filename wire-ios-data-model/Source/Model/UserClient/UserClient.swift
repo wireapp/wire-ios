@@ -127,6 +127,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var ignoredByClients: Set<UserClient>
 
     public var e2eIdentityCertificate: E2eIdentityCertificate?
+    public var mlsThumbPrint: String?
 
     public var isLegalHoldDevice: Bool {
         return deviceClass == .legalHold || type == .legalHold
