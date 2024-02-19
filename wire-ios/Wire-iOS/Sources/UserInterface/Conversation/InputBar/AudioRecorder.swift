@@ -75,7 +75,7 @@ protocol AudioRecorderType: AnyObject {
     var recordTimerCallback: ((TimeInterval) -> Void)? { get set }
     var recordLevelCallBack: ((RecordingLevel) -> Void)? { get set }
     var playingStateCallback: ((PlayingState) -> Void)? { get set }
-    var recordEndedCallback: ((Swift.Result<Void, Error>) -> Void)? { get set }
+    var recordEndedCallback: ((Result<Void, Error>) -> Void)? { get set }
 
     func startRecording(_ completion: @escaping (_ success: Bool) -> Void)
     @discardableResult func stopRecording() -> Bool
@@ -104,7 +104,7 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
     public var recordTimerCallback: ((TimeInterval) -> Void)?
     public var recordLevelCallBack: ((RecordingLevel) -> Void)?
     public var playingStateCallback: ((PlayingState) -> Void)?
-    public var recordEndedCallback: ((Swift.Result<Void, Error>) -> Void)?
+    public var recordEndedCallback: ((Result<Void, Error>) -> Void)?
     public var fileURL: URL?
     public var maxFileSize: UInt64?
 

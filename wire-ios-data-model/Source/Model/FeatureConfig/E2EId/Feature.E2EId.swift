@@ -46,13 +46,15 @@ public extension Feature {
 
         public struct Config: Codable, Equatable {
 
-            public let acmeDiscoveryUrl: String
+            public let acmeDiscoveryUrl: String?
             public let verificationExpiration: UInt
 
-            public init(acmeDiscoveryUrl: String = "", verificationExpiration: UInt = 60) {
-                self.acmeDiscoveryUrl = acmeDiscoveryUrl
-                self.verificationExpiration = verificationExpiration
-            }
+            public init(
+                acmeDiscoveryUrl: String? = nil,
+                verificationExpiration: UInt = 86400) {
+                    self.acmeDiscoveryUrl = acmeDiscoveryUrl
+                    self.verificationExpiration = verificationExpiration
+                }
 
         }
 

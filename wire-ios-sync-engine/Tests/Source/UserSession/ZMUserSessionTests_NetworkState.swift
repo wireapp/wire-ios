@@ -23,7 +23,10 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
     func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() {
         // given
-        let selfClient = createSelfClient()
+        let selfClient = syncMOC.performAndWait {
+            self.createSelfClient()
+        }
+
         let userId = NSUUID.create()!
 
         mockPushChannel = MockPushChannel()
@@ -54,8 +57,9 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         // then
         XCTAssertTrue(self.transportSession.didCallSetNetworkStateDelegate)
         XCTAssertEqual(mockPushChannel.keepOpen, true)
-        XCTAssertEqual(mockPushChannel.clientID, selfClient.remoteIdentifier)
-
+        syncMOC.performAndWait {
+            XCTAssertEqual(mockPushChannel.clientID, selfClient.remoteIdentifier)
+        }
         testSession.tearDown()
     }
 }

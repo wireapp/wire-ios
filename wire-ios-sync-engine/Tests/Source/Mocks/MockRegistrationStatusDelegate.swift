@@ -18,7 +18,7 @@
 
 import Foundation
 
-class MockRegistrationStatusDelegate: RegistrationStatusDelegate {
+final class MockRegistrationStatusDelegate: RegistrationStatusDelegate {
 
     var activationCodeSentCalled = 0
     func activationCodeSent() {

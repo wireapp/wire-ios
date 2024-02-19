@@ -37,6 +37,11 @@ import Foundation
     /// True if the self user has verfied the client
     var verified: Bool { get }
 
+    var needsToNotifyUser: Bool { get set }
+
+    var mlsThumbPrint: String? { get set }
+
+    var e2eIdentityCertificate: E2eIdentityCertificate? { get set }
     /// Delete any existing session with client and establish a new one.
     func resetSession()
 

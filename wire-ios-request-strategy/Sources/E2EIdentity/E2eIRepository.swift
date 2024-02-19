@@ -22,23 +22,26 @@ import WireCoreCrypto
 public protocol E2eIRepositoryInterface {
 
     func fetchTrustAnchor() async throws
-
-    func createEnrollment(
-        e2eiClientId: E2eIClientID,
-        userName: String,
-        handle: String,
-        team: UUID,
-        isUpgradingClient: Bool
-    ) async throws -> E2eIEnrollmentInterface
+    func createEnrollment(context: NSManagedObjectContext) async throws -> E2eIEnrollmentInterface
 }
 
 public final class E2eIRepository: E2eIRepositoryInterface {
+
+    // MARK: - Types
+
+    enum Error: Swift.Error {
+        case failedToGetSelfUserInfo
+    }
+
+    // MARK: - Properties
 
     private let acmeApi: AcmeAPIInterface
     private let apiProvider: APIProviderInterface
     private let e2eiSetupService: E2eISetupServiceInterface
     private let keyRotator: E2eIKeyPackageRotating
     private let coreCryptoProvider: CoreCryptoProviderProtocol
+
+    // MARK: - Life cycle
 
     public init(
         acmeApi: AcmeAPIInterface,
@@ -54,24 +57,31 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         self.coreCryptoProvider = coreCryptoProvider
     }
 
+    // MARK: - Interface
+
     public func fetchTrustAnchor() async throws {
         let trustAnchor = try await acmeApi.getTrustAnchor()
         try await e2eiSetupService.registerTrustAnchor(trustAnchor)
     }
 
-    public func createEnrollment(
-        e2eiClientId: E2eIClientID,
-        userName: String,
-        handle: String,
-        team: UUID,
-        isUpgradingClient: Bool
-    ) async throws -> E2eIEnrollmentInterface {
+    public func createEnrollment(context: NSManagedObjectContext) async throws -> E2eIEnrollmentInterface {
+        let (userName, userHandle, teamId, clientID, isUpgradingClient) = try await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            let isUpgradingClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
+            guard let userName = selfUser.name,
+                  let userHandle = selfUser.handle,
+                  let teamId = selfUser.team?.remoteIdentifier,
+                  let clientID = E2eIClientID(user: selfUser) else {
+                throw Error.failedToGetSelfUserInfo
+            }
+            return (userName, userHandle, teamId, clientID, isUpgradingClient)
+        }
 
         let e2eIdentity = try await e2eiSetupService.setupEnrollment(
-            clientID: e2eiClientId,
+            clientID: clientID,
             userName: userName,
-            handle: handle,
-            team: team,
+            handle: userHandle,
+            teamId: teamId,
             isUpgradingClient: isUpgradingClient
         )
 
@@ -86,6 +96,8 @@ public final class E2eIRepository: E2eIRepositoryInterface {
             keyRotator: keyRotator
         )
     }
+
+    // MARK: - Helpers
 
     private func loadACMEDirectory(e2eiService: E2eIService) async throws -> AcmeDirectory {
         let acmeDirectoryData = try await acmeApi.getACMEDirectory()

@@ -117,7 +117,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(receivedEvents, [event])
     }
 
-    func test_SendCommitBundle_ThrowsWithRecoveryStrategy_RetryAfterQuickSync() async {
+    func test_SendCommitBundleMlsClientMismatch_ThrowsWithRecoveryStrategy_RetryAfterQuickSync() async {
         await assertSendCommitBundleThrows(
             withRecovery: .retryAfterQuickSync,
             for: .mlsClientMismatch,
@@ -125,15 +125,15 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         )
     }
 
-    func test_SendCommitBundle_ThrowsWithRecoveryStrategy_CommitPendingProposalsAfterQuickSync() async {
+    func test_SendCommitBundleMlsCommitMissingReferences_ThrowsWithRecoveryStrategy_RetryAfterQuickSync() async {
         await assertSendCommitBundleThrows(
-            withRecovery: .commitPendingProposalsAfterQuickSync,
+            withRecovery: .retryAfterQuickSync,
             for: .mlsCommitMissingReferences,
-            shouldClearPendingCommit: false
+            shouldClearPendingCommit: true
         )
     }
 
-    func test_SendCommitBundle_ThrowsWithRecoveryStrategy_RetryAfterRepairingGroup() async {
+    func test_SendCommitBundleMlsStaleMessage_ThrowsWithRecoveryStrategy_RetryAfterRepairingGroup() async {
         await assertSendCommitBundleThrows(
             withRecovery: .retryAfterRepairingGroup,
             for: .mlsStaleMessage,
@@ -141,7 +141,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         )
     }
 
-    func test_SendCommitBundle_ThrowsWithRecoveryStrategy_GiveUp() async {
+    func test_SendCommitBundleUnknownError_ThrowsWithRecoveryStrategy_GiveUp() async {
         await assertSendCommitBundleThrows(
             withRecovery: .giveUp,
             for: .unknown(status: 400, label: "", message: ""),
@@ -163,7 +163,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         }
 
         // Then
-        await assertItThrows(error: CommitError.failedToSendCommit(recovery: recovery)) {
+        await assertItThrows(error: CommitError.failedToSendCommit(recovery: recovery, cause: error)) {
             // When
             _ = try await sut.sendCommitBundle(commitBundle, for: groupID)
         }
@@ -242,7 +242,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         }
 
         // Then
-        await assertItThrows(error: ExternalCommitError.failedToSendCommit(recovery: recovery)) {
+        await assertItThrows(error: ExternalCommitError.failedToSendCommit(recovery: recovery, cause: error)) {
             // When
             _ = try await sut.sendExternalCommitBundle(commitBundle, for: groupID)
         }
@@ -273,6 +273,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         // Set up expectation
         let expectation = XCTestExpectation(description: "observed epoch change")
         var receivedGroupIDs = [MLSGroupID]()
+
         sut.onEpochChanged().collect(1).sink {
             receivedGroupIDs = $0
             expectation.fulfill()

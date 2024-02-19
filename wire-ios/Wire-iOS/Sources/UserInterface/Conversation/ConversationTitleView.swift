@@ -1,20 +1,20 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import UIKit
 import WireCommonComponents
@@ -40,14 +40,15 @@ final class ConversationTitleView: TitleView {
         titleColor = SemanticColors.Label.textDefault
         titleFont = .normalSemiboldFont
 
-        var attachments: [NSTextAttachment] = []
+        var leadingIcons: [NSTextAttachment] = []
+        var trailingIcons: [NSTextAttachment] = []
 
         if conversation.isUnderLegalHold {
-            attachments.append(.legalHold())
+            leadingIcons.append(.legalHold())
         }
 
         if conversation.isVerified {
-            attachments.append(verifiedShield)
+            trailingIcons.append(verifiedShield)
         }
 
         var subtitle: String?
@@ -57,19 +58,23 @@ final class ConversationTitleView: TitleView {
             subtitle = user.handleDisplayString(withDomain: true)
         }
 
-        super.configure(icons: attachments,
-                        title: conversation.displayNameWithFallback,
-                        subtitle: subtitle,
-                        interactive: self.interactive && conversation.relatedConnectionState != .sent)
+        super.configure(
+            leadingIcons: leadingIcons,
+            title: conversation.displayNameWithFallback,
+            trailingIcons: trailingIcons,
+            subtitle: subtitle,
+            interactive: interactive && conversation.relatedConnectionState != .sent,
+            showInteractiveIcon: true
+        )
 
         setupAccessibility()
     }
 
     private var verifiedShield: NSTextAttachment {
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             return .proteusVerifiedShield()
-        case .mls, .mixed:
+        case .mls:
             return .e2eiVerifiedShield()
         }
     }
@@ -108,25 +113,26 @@ final class ConversationTitleView: TitleView {
 }
 
 extension NSTextAttachment {
-    static func proteusVerifiedShield() -> NSTextAttachment {
+
+    fileprivate static func proteusVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = Asset.Images.verifiedShield.image
         attachment.image = shield
         let ratio = shield.size.width / shield.size.height
         let height: CGFloat = 12
-        attachment.bounds = CGRect(x: 0, y: -2, width: height * ratio, height: height)
+        attachment.bounds = CGRect(x: 0, y: 0, width: height * ratio, height: height)
         return attachment
     }
 
-    static func e2eiVerifiedShield() -> NSTextAttachment {
+    fileprivate static func e2eiVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = Asset.Images.certificateValid.image
         attachment.image = shield
-        attachment.bounds = CGRect(x: 0, y: -4, width: shield.size.width, height: shield.size.height)
+        attachment.bounds = CGRect(x: 0, y: -2, width: shield.size.width, height: shield.size.height)
         return attachment
     }
 
-    static func legalHold() -> NSTextAttachment {
+    fileprivate static func legalHold() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let legalHold = StyleKitIcon.legalholdactive.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultRed)
         attachment.image = legalHold
@@ -140,7 +146,6 @@ extension NSTextAttachment {
 extension ConversationLike {
 
     var displayNameWithFallback: String {
-        return displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
+        displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
     }
-
 }

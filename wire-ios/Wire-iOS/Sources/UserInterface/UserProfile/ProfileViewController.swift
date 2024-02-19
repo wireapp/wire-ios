@@ -206,7 +206,9 @@ final class ProfileViewController: UIViewController {
     }
 
     private func setupProfileDetailsViewController() -> ProfileDetailsViewController {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Pass the whole view Model/stuct/context
+        // swiftlint:enable todo_requires_jira_link
         let profileDetailsViewController = ProfileDetailsViewController(user: viewModel.user,
                                                                         viewer: viewModel.viewer,
                                                                         conversation: viewModel.conversation,
@@ -226,7 +228,9 @@ final class ProfileViewController: UIViewController {
         if viewModel.hasUserClientListTab {
             let userClientListViewController = UserClientListViewController(
                 user: viewModel.user,
-                userSession: viewModel.userSession
+                userSession: viewModel.userSession,
+                contextProvider: viewModel.userSession as? ContextProvider,
+                mlsGroupId: viewModel.conversation?.mlsGroupID
             )
             viewControllers.append(userClientListViewController)
         }
@@ -357,6 +361,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             bringUpCancelConnectionRequestSheet(from: targetView)
         case .openSelfProfile:
             openSelfProfile()
+        case .duplicateUser:
+            duplicateUser()
+        case .duplicateTeam:
+            duplicateTeam()
         }
     }
 
@@ -465,6 +473,56 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         presentAlert(controller, targetView: view)
     }
+
+    private func duplicateUser() {
+        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
+        guard let user = viewModel.user as? ZMUser, let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext else {
+            assertionFailure("couldn't get context to duplicateUser")
+            return
+        }
+
+        context.performAndWait {
+            guard let original = ZMUser.existingObject(for: user.objectID, in: context) else {
+                return
+            }
+            let duplicate = ZMUser.insertNewObject(in: context)
+            duplicate.remoteIdentifier = original.remoteIdentifier
+            duplicate.domain = original.domain
+            duplicate.name = "duplicate user \(original.name ?? "<nil>")"
+            duplicate.connection = original.connection
+            duplicate.participantRoles = original.participantRoles
+            duplicate.createdTeams = original.createdTeams
+            context.saveOrRollback()
+
+            WireLogger.conversation.debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
+        }
+    }
+
+    private func duplicateTeam() {
+        guard let user = viewModel.user as? ZMUser,
+              let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext,
+              let team = user.team else {
+            assertionFailure("couldn't get context or has no team to duplicateTeam")
+            WireLogger.conversation.debug("can't duplicate team")
+            return
+        }
+
+        context.performAndWait {
+            guard let original = Team.existingObject(for: team.objectID, in: context) else { return }
+            let duplicate = Team.insertNewObject(in: context)
+            duplicate.remoteIdentifier = original.remoteIdentifier
+            duplicate.name = "duplicate team \(original.name ?? "<nil>")"
+            duplicate.conversations = original.conversations
+            duplicate.members = original.members
+            duplicate.roles = original.roles
+            duplicate.creator = original.creator
+
+            context.saveOrRollback()
+
+            WireLogger.conversation.debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
+        }
+    }
+
 }
 
 extension ProfileViewController: ProfileViewControllerDelegate {

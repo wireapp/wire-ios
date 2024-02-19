@@ -80,7 +80,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
 
     func test_itForwardsAPIFailuresBasedOnStatusCodeAndLabel() {
         // Given
-        let apiFailures = Failure.APIFailure.allCases
+        let apiFailures = UpdateConversationProtocolAction.Failure.APIFailure.allCases
 
         // When, Then
         apiFailures.forEach { apiFailure in
@@ -98,7 +98,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
 
     func test_itForwardsUnknownErrorIfStatusCodesDontMatch() throws {
         // Given
-        let apiFailure = Failure.APIFailure.invalidOp
+        let apiFailure = UpdateConversationProtocolAction.Failure.APIFailure.invalidOp
         let wrongPayload = [
             "code": apiFailure.statusCode,
             "label": apiFailure.rawValue,

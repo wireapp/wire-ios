@@ -164,7 +164,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
 extension NotificationStreamSync {
     private func updateServerTimeDeltaWith(timestamp: String) {
-        let serverTime = NSDate(transport: timestamp)
+        let serverTime = Date(transportString: timestamp)
         guard let serverTimeDelta = serverTime?.timeIntervalSinceNow else {
             return
         }

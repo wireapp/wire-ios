@@ -24,7 +24,7 @@ public protocol GetUserClientFingerprintUseCaseProtocol {
     func invoke(userClient: UserClient) async -> Data?
 }
 
-public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
+public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
 
     let proteusProvider: ProteusProviding
     let context: NSManagedObjectContext
@@ -32,9 +32,11 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
 
     // MARK: - Initialization
 
-    convenience init(syncContext: NSManagedObjectContext,
-                     transportSession: TransportSessionType,
-                     proteusProvider: ProteusProviding) {
+    init(
+        syncContext: NSManagedObjectContext,
+        transportSession: TransportSessionType,
+        proteusProvider: ProteusProviding
+    ) {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext)
@@ -46,9 +48,11 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         self.init(proteusProvider: proteusProvider, sessionEstablisher: sessionEstablisher, managedObjectContext: syncContext)
     }
 
-    init(proteusProvider: ProteusProviding,
-         sessionEstablisher: SessionEstablisherInterface,
-         managedObjectContext: NSManagedObjectContext) {
+    init(
+        proteusProvider: ProteusProviding,
+        sessionEstablisher: SessionEstablisherInterface,
+        managedObjectContext: NSManagedObjectContext
+    ) {
         self.proteusProvider = proteusProvider
         self.context = managedObjectContext
         self.sessionEstablisher = sessionEstablisher

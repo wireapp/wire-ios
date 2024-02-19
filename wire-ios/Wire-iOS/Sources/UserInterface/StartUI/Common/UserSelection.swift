@@ -29,7 +29,7 @@ protocol UserSelectionObserver: AnyObject {
 
 }
 
-class UserSelection: NSObject {
+final class UserSelection: NSObject {
 
     private(set) var users = UserSet()
     private var observers: [UnownedObject<UserSelectionObserver>] = []
@@ -50,13 +50,13 @@ class UserSelection: NSObject {
     }
 
     func add(observer: UserSelectionObserver) {
-        guard !observers.contains(where: { $0.unbox === observer}) else { return }
+        guard !observers.contains(where: { $0.unbox === observer }) else { return }
 
         observers.append(UnownedObject(observer))
     }
 
     func remove(observer: UserSelectionObserver) {
-        guard let index = observers.firstIndex(where: { $0.unbox === observer}) else { return }
+        guard let index = observers.firstIndex(where: { $0.unbox === observer }) else { return }
 
         observers.remove(at: index)
     }

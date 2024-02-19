@@ -363,7 +363,10 @@ final class SecurityAlertMatcher: ConversationStatusMatcher {
     }
 
     func icon(with status: ConversationStatus, conversation: MatcherConversation) -> ConversationStatusIcon? {
-        return nil // TODO: icon for poll message
+        // swiftlint:disable todo_requires_jira_link
+        // TODO: icon for poll message
+        // swiftlint:enable todo_requires_jira_link
+        return nil
     }
 
     var combinesWith: [ConversationStatusMatcher] = []

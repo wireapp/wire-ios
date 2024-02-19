@@ -96,8 +96,9 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
         if let user = SelfUser.provider?.providedSelfUser {
             cell.configure(
-                with: participant,
-                selfUser: user,
+                user: participant,
+                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+                isSelfUserPartOfATeam: user.hasTeam,
                 conversation: conversation
             )
         } else {
@@ -119,7 +120,7 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
 }
 
-extension LegalHoldParticipantsSectionController: ZMUserObserver {
+extension LegalHoldParticipantsSectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged else { return }

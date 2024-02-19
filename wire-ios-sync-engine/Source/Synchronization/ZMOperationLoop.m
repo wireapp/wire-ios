@@ -109,7 +109,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     [ZMRequestAvailableNotification removeObserver:self];
     
     self.transportSession = nil;
-    ///TODO: 
+    // TODO: 
 //    RequireString([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue],
 //                  "Must call be called on the main queue.");
     __block BOOL didStop = NO;

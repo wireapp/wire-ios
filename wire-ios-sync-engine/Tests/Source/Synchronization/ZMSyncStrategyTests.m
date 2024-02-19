@@ -65,17 +65,19 @@
 {
     [super setUp];
     
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = self.userIdentifier;
-    
-    ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    selfConversation.remoteIdentifier = self.userIdentifier;
-    selfConversation.conversationType = ZMConversationTypeSelf;
+    [self.syncMOC performBlockAndWait:^{
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = self.userIdentifier;
 
-    [self.lastEventIDRepository storeLastEventID:[NSUUID UUID]];
-    
-    [self.syncMOC saveOrRollback];
-        
+        ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        selfConversation.remoteIdentifier = self.userIdentifier;
+        selfConversation.conversationType = ZMConversationTypeSelf;
+
+        [self.lastEventIDRepository storeLastEventID:[NSUUID UUID]];
+
+        [self.syncMOC saveOrRollback];
+    }];
+
     self.syncStateDelegate = [[MockSyncStateDelegate alloc] init];
     self.mockEventConsumer = [[MockEventConsumer alloc]  init];
     self.mockContextChangeTracker = [[MockContextChangeTracker alloc] init];
@@ -136,7 +138,10 @@
     self.mockContextChangeTracker.fetchRequest = self.fetchRequestForTrackedObjects2;
         
     // when
-    (void)[self.sut nextRequestForAPIVersion:APIVersionV0];
+    [self.syncMOC performBlockAndWait:^{
+        (void)[self.sut nextRequestForAPIVersion:APIVersionV0];
+    }];
+
     
     // then
     XCTAssertTrue(self.mockContextChangeTracker.addTrackedObjectsCalled);
@@ -313,9 +318,11 @@
     for (NSNotification *note in didSaveNotificationsA) {
         [[NSNotificationCenter defaultCenter] postNotification:note];
     }
-    for (NSNotification *note in didSaveNotificationsB) {
-        [[NSNotificationCenter defaultCenter] postNotification:note];
-    }
+    [self.syncMOC performGroupedBlock:^{
+        for (NSNotification *note in didSaveNotificationsB) {
+            [[NSNotificationCenter defaultCenter] postNotification:note];
+        }
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
