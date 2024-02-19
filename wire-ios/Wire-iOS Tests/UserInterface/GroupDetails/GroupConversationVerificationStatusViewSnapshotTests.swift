@@ -27,7 +27,7 @@ final class GroupConversationVerificationStatusViewSnapshotTests: BaseSnapshotTe
     override func setUp() {
         super.setUp()
 
-        sut = .init(frame: .init(origin: .zero, size: .init(width: 300, height: 30)))
+        sut = .init(frame: .init(origin: .zero, size: .init(width: 100, height: 15)))
     }
 
     override func tearDown() {
