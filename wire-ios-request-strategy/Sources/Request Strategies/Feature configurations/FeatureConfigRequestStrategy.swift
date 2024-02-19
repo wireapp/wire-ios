@@ -18,8 +18,6 @@
 
 import Foundation
 
-private let zmLog = ZMSLog(tag: "feature configurations")
-
 public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
@@ -62,8 +60,6 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
             .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileInBackground
         ]
-
-        // getFeatureConfigsActionHandler.delegate = self
     }
 
     deinit {
@@ -77,7 +73,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
             slowSyncTask = Task { [weak self, syncStatus, syncPhase] in
                 guard let self, !Task.isCancelled else { return }
 
-                WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync start fetch feature config!")
+                WireLogger.featureConfigs.info("slow sync start fetch feature config!")
 
                 do {
                     // perform action notifies the registered action handler `GetFeatureConfigsActionHandler`.
@@ -87,13 +83,13 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
                     var action = GetFeatureConfigsAction()
                     try await action.perform(in: managedObjectContext.notificationContext)
 
-                    WireLogger.conversation.info("FeatureConfigRequestStrategy: slow sync finished fetch feature config!")
+                    WireLogger.featureConfigs.info("slow sync finished fetch feature config!")
 
                     await managedObjectContext.perform {
                         syncStatus.finishCurrentSyncPhase(phase: syncPhase)
                     }
                 } catch {
-                    WireLogger.conversation.error("FeatureConfigRequestStrategy: slow sync failed fetch feature config!")
+                    WireLogger.featureConfigs.error("slow sync failed fetch feature config!")
 
                     await managedObjectContext.perform {
                         syncStatus.failCurrentSyncPhase(phase: syncPhase)
@@ -131,13 +127,17 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         }
 
         do {
+            WireLogger.featureConfigs.info("Process update event '\(name)'")
+
             let payloadData = try JSONSerialization.data(withJSONObject: data, options: [])
             let repository = FeatureRepository(context: managedObjectContext)
 
             let processor = FeatureConfigsPayloadProcessor()
             try processor.processEventPayload(data: payloadData, featureName: featureName, repository: repository)
+
+            WireLogger.featureConfigs.error("Finished processing update event \(name)")
         } catch {
-            zmLog.error("Failed to process feature config update event: \(error.localizedDescription)")
+            WireLogger.featureConfigs.error("Failed processing update event \(name): \(error.localizedDescription)")
         }
     }
 }
