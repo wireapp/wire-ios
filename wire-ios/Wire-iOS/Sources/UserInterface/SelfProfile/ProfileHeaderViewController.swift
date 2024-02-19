@@ -30,14 +30,21 @@ final class ProfileHeaderViewController: UIViewController {
     /// Associated conversation, if displayed in the context of a conversation
     private let conversation: ZMConversation?
 
-    private var userStatus: UserStatus {
-        didSet { updateNameAndVerificationStatus() }
-    }
-
     /// The user that is displayed.
     private let user: UserType
 
+    private var userStatus: UserStatus {
+        didSet {
+            nameLabel.text = userStatus.name
+            userStatusViewController.userStatus = userStatus
+            e2eiCertifiedImageView.isHidden = !userStatus.isCertified
+            proteusVerifiedImageView.isHidden = !userStatus.isVerified
+        }
+    }
+
     private let userSession: UserSession
+    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
     /// The user who is viewing this view
     private let viewer: UserType
@@ -98,30 +105,40 @@ final class ProfileHeaderViewController: UIViewController {
     private let federatedIndicator = LabelIndicator(context: .federated)
     private let warningView = WarningLabelView()
 
-    private var tokens: [Any?] = []
+    private var userObserver: NSObjectProtocol?
     private var teamObserver: NSObjectProtocol?
 
-    /**
-     * Creates a profile view for the specified user and options.
-     * - parameter user: The user to display the profile of.
-     * - parameter conversation: The conversation.
-     * - parameter options: The options for the appearance and behavior of the view.
-     * - parameter userSession: The user session.
-     * - note: You can change the options later through the `options` property.
-     */
-    init(user: UserType, viewer: UserType, conversation: ZMConversation? = nil, options: Options, userSession: UserSession) {
+    ///
+    /// Creates a profile view for the specified user and options.
+    /// - parameter user: The user to display the profile of.
+    /// - parameter conversation: The conversation.
+    /// - parameter options: The options for the appearance and behavior of the view.
+    /// - parameter userSession: The user session.
+    /// - parameter isSelfUserProteusVerifiedUseCase: Use case for getting the self user's Proteus verification status.
+    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status.
+    /// Note: You can change the options later through the `options` property.
+    init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation?,
+        options: Options,
+        userSession: UserSession,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    ) {
         userStatus = .init(
             user: user,
             isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
         )
-        print("user.isVerified", user.isVerified)
         self.user = user
         self.userSession = userSession
+        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
+        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        userStatusViewController = .init(
+        self.userStatusViewController = .init(
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             settings: .shared
         )
@@ -129,6 +146,10 @@ final class ProfileHeaderViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         userStatusViewController.delegate = self
+        userStatusViewController.userStatus = .init(
+            user: user,
+            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+        )
     }
 
     @available(*, unavailable)
@@ -137,8 +158,6 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        let session = SessionManager.shared?.activeUserSession
-
         imageView.isAccessibilityElement = true
         imageView.accessibilityElementsHidden = false
         imageView.accessibilityIdentifier = "user image"
@@ -146,13 +165,12 @@ final class ProfileHeaderViewController: UIViewController {
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 
-        imageView.initialsFont = UIFont.systemFont(ofSize: 55, weight: .semibold).monospaced()
-        imageView.userSession = session
+        imageView.initialsFont = .systemFont(ofSize: 55, weight: .semibold).monospaced()
+        imageView.userSession = userSession
         imageView.user = user
 
-        if !ProcessInfo.processInfo.isRunningTests,
-           let session = session {
-            tokens.append(UserChangeInfo.add(observer: self, for: user, in: session))
+        if !ProcessInfo.processInfo.isRunningTests, let session = userSession as? ZMUserSession {
+            userObserver = UserChangeInfo.add(observer: self, for: user, in: session)
         }
 
         handleLabel.accessibilityLabel = AccountPageStrings.Handle.description
@@ -174,8 +192,7 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        nameLabel.text = user.name
-        nameLabel.accessibilityValue = nameLabel.text
+        userStatus.name = user.name ?? ""
 
         let remainingTimeString = user.expirationDisplayString
         remainingTimeLabel.text = remainingTimeString
@@ -193,7 +210,6 @@ final class ProfileHeaderViewController: UIViewController {
         updateGroupRoleIndicator()
         updateHandleLabel()
         updateTeamLabel()
-        updateNameAndVerificationStatus()
 
         addChild(userStatusViewController)
 
@@ -231,10 +247,23 @@ final class ProfileHeaderViewController: UIViewController {
 
         userStatusViewController.didMove(toParent: self)
 
-        if let team = (user as? ZMUser)?.team {
+        if let team = user.membership?.team {
             teamObserver = TeamChangeInfo.add(observer: self, for: team)
         }
         view.backgroundColor = UIColor.clear
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        Task {
+            do {
+                userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+                userStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
+            } catch {
+                WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
+            }
+        }
     }
 
     private func configureConstraints() {
@@ -287,12 +316,6 @@ final class ProfileHeaderViewController: UIViewController {
         updateImageButton()
         updateAvailabilityVisibility()
         warningView.update(withUser: user)
-    }
-
-    private func updateNameAndVerificationStatus() {
-        userStatusViewController.userStatus = userStatus
-        e2eiCertifiedImageView.isHidden = !userStatus.isCertified
-        proteusVerifiedImageView.isHidden = !userStatus.isVerified
     }
 
     private func updateHandleLabel() {
@@ -371,29 +394,25 @@ extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
 
 extension ProfileHeaderViewController: UserObserving {
 
-    func userDidChange(_ changes: UserChangeInfo) {
-
-        if changes.nameChanged {
-            userStatus.name = changes.user.name ?? ""
-            nameLabel.text = changes.user.name
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.nameChanged {
+            userStatus.name = changeInfo.user.name ?? ""
         }
-
-        if changes.availabilityChanged {
-            userStatus.availability = changes.user.availability
-            updateAvailabilityVisibility()
-        }
-
-        if changes.handleChanged {
+        if changeInfo.handleChanged {
             updateHandleLabel()
+        }
+        if changeInfo.availabilityChanged {
+            updateAvailabilityVisibility()
         }
     }
 }
 
+// MARK: - TeamObserver
+
 extension ProfileHeaderViewController: TeamObserver {
 
-    func teamDidChange(_ changes: TeamChangeInfo) {
-
-        if changes.nameChanged {
+    func teamDidChange(_ changeInfo: TeamChangeInfo) {
+        if changeInfo.nameChanged {
             updateTeamLabel()
         }
     }

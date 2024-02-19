@@ -34,6 +34,8 @@ final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
 
         // Only handle input during specified steps.
         switch currentStep {
+        case .enrollE2EIdentity:
+            return [.showLoadingView, .enrollE2EI]
         case .noHistory:
             return [.showLoadingView, .configureNotifications, .completeBackupStep]
         case .clientManagement(let clients, let credentials):

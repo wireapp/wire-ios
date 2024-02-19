@@ -2,6 +2,24 @@
   "object": {
     "pins": [
       {
+        "package": "AppAuth",
+        "repositoryURL": "https://github.com/openid/AppAuth-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "71cde449f13d453227e687458144bde372d30fc7",
+          "version": "1.6.2"
+        }
+      },
+      {
+        "package": "ASN1Decoder",
+        "repositoryURL": "https://github.com/wireapp/ASN1Decoder",
+        "state": {
+          "branch": "master",
+          "revision": "d30708c89cbbf8f0f27122a53fbd98d0cda079fd",
+          "version": null
+        }
+      },
+      {
         "package": "DifferenceKit",
         "repositoryURL": "https://github.com/wireapp/DifferenceKit",
         "state": {

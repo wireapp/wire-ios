@@ -65,6 +65,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         subConversationGroupID: MLSGroupID
     ) -> AsyncThrowingStream<MLSConferenceInfo, Error>
 
+    func epochChanges() -> AsyncStream<MLSGroupID>
+
     func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID,
@@ -339,6 +341,17 @@ public final class MLSService: MLSServiceInterface {
 
         return AsyncThrowingStream {
             try await sequence.next()
+        }
+    }
+
+    public func epochChanges() -> AsyncStream<MLSGroupID> {
+        var sequence = onEpochChanged()
+            .buffer(size: Self.epochChangeBufferSize, prefetch: .keepFull, whenFull: .dropOldest)
+            .values
+            .makeAsyncIterator()
+
+        return AsyncStream {
+            await sequence.next()
         }
     }
 

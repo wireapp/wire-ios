@@ -101,6 +101,8 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeSessionReset,
     ZMSystemMessageTypeDecryptionFailedResolved,
     ZMSystemMessageTypeDomainsStoppedFederating,
+    ZMSystemMessageTypeConversationIsVerified,
+    ZMSystemMessageTypeConversationIsDegraded,
     ZMSystemMessageTypeMLSMigrationFinalized,
     ZMSystemMessageTypeMLSMigrationJoinAfterwards,
     ZMSystemMessageTypeMLSMigrationOngoingCall,

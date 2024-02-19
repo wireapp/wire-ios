@@ -37,6 +37,8 @@ public protocol FeatureRepositoryInterface {
     func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature)
     func fetchMLS() -> Feature.MLS
     func storeMLS(_ mls: Feature.MLS)
+    func fetchE2EI() -> Feature.E2EI
+    func storeE2EI(_ e2ei: Feature.E2EI)
     func fetchMLSMigration() -> Feature.MLSMigration
     func storeMLSMigration(_ mlsMigration: Feature.MLSMigration)
 
@@ -307,7 +309,40 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
-    // MARK: - MLS Migration
+    // MARK: - E2EId
+
+    public func fetchE2EI() -> Feature.E2EI {
+        guard
+            let feature = Feature.fetch(name: .e2ei, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        let config = try! JSONDecoder().decode(Feature.E2EI.Config.self, from: featureConfig)
+        return .init(status: feature.status, config: config)
+    }
+
+    public func storeE2EI(_ e2ei: Feature.E2EI) {
+        let config = try! JSONEncoder().encode(e2ei.config)
+
+        Feature.updateOrCreate(havingName: .e2ei, in: context) {
+            $0.status = e2ei.status
+            $0.config = config
+        }
+        guard needsToNotifyUser(for: .e2ei) else { return }
+
+        switch e2ei.status {
+        case .enabled:
+            let gracePeriod = TimeInterval(e2ei.config.verificationExpiration)
+            notifyChange(.e2eIEnabled(gracePeriod: gracePeriod))
+
+        case .disabled:
+            return
+        }
+    }
+
+    // MARK: - MLSMigration
 
     public func fetchMLSMigration() -> Feature.MLSMigration {
         guard
@@ -370,6 +405,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
             case .mls:
                 storeMLS(.init())
 
+            case .e2ei:
+                storeE2EI(.init())
+
             case .mlsMigration:
                 storeMLSMigration(.init())
             }
@@ -416,7 +454,16 @@ extension FeatureRepository {
         case fileSharingDisabled
         case conversationGuestLinksEnabled
         case conversationGuestLinksDisabled
+        case e2eIEnabled(gracePeriod: TimeInterval?)
 
+        public var hasFurtherActions: Bool {
+            switch self {
+            case .e2eIEnabled:
+                return true
+            default:
+                return false
+            }
+        }
     }
 
 }

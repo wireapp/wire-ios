@@ -291,9 +291,14 @@ extension WireCallCenterV3 {
      */
 
     public func isDegraded(conversationId: AVSIdentifier) -> Bool {
-        guard isEnabled else { return  false }
-        let conversation = ZMConversation.fetch(with: conversationId.identifier, domain: conversationId.domain, in: uiMOC!)
-        let isConversationDegraded = conversation?.securityLevel == .secureWithIgnored
+        guard
+            isEnabled,
+            let uiMOC,
+            let conversation = ZMConversation.fetch(with: conversationId.identifier, domain: conversationId.domain, in: uiMOC)
+        else {
+            return  false
+        }
+        let isConversationDegraded = conversation.isDegraded
         let isCallDegraded = callSnapshots[conversationId]?.isDegradedCall ?? false
         return isConversationDegraded || isCallDegraded
     }

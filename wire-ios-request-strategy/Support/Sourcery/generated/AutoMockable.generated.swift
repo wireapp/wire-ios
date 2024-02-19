@@ -31,6 +31,7 @@ import UIKit
 import AppKit
 #endif
 
+import WireCoreCrypto
 
 @testable import WireRequestStrategy
 
@@ -94,6 +95,24 @@ public class MockAPIProviderInterface: APIProviderInterface {
             return mock
         } else {
             fatalError("no mock for `messageAPIApiVersion`")
+        }
+    }
+
+    // MARK: - e2eIAPI
+
+    public var e2eIAPIApiVersion_Invocations: [APIVersion] = []
+    public var e2eIAPIApiVersion_MockMethod: ((APIVersion) -> E2eIAPI?)?
+    public var e2eIAPIApiVersion_MockValue: E2eIAPI??
+
+    public func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI? {
+        e2eIAPIApiVersion_Invocations.append(apiVersion)
+
+        if let mock = e2eIAPIApiVersion_MockMethod {
+            return mock(apiVersion)
+        } else if let mock = e2eIAPIApiVersion_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eIAPIApiVersion`")
         }
     }
 
@@ -211,6 +230,88 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         }
 
         await mock(qualifiedID)
+    }
+
+}
+public class MockE2eIAPI: E2eIAPI {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getWireNonce
+
+    public var getWireNonceClientId_Invocations: [String] = []
+    public var getWireNonceClientId_MockError: Error?
+    public var getWireNonceClientId_MockMethod: ((String) async throws -> String)?
+    public var getWireNonceClientId_MockValue: String?
+
+    public func getWireNonce(clientId: String) async throws -> String {
+        getWireNonceClientId_Invocations.append(clientId)
+
+        if let error = getWireNonceClientId_MockError {
+            throw error
+        }
+
+        if let mock = getWireNonceClientId_MockMethod {
+            return try await mock(clientId)
+        } else if let mock = getWireNonceClientId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getWireNonceClientId`")
+        }
+    }
+
+    // MARK: - getAccessToken
+
+    public var getAccessTokenClientIdDpopToken_Invocations: [(clientId: String, dpopToken: String)] = []
+    public var getAccessTokenClientIdDpopToken_MockError: Error?
+    public var getAccessTokenClientIdDpopToken_MockMethod: ((String, String) async throws -> AccessTokenResponse)?
+    public var getAccessTokenClientIdDpopToken_MockValue: AccessTokenResponse?
+
+    public func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
+        getAccessTokenClientIdDpopToken_Invocations.append((clientId: clientId, dpopToken: dpopToken))
+
+        if let error = getAccessTokenClientIdDpopToken_MockError {
+            throw error
+        }
+
+        if let mock = getAccessTokenClientIdDpopToken_MockMethod {
+            return try await mock(clientId, dpopToken)
+        } else if let mock = getAccessTokenClientIdDpopToken_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getAccessTokenClientIdDpopToken`")
+        }
+    }
+
+}
+public class MockE2eIKeyPackageRotating: E2eIKeyPackageRotating {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - rotateKeysAndMigrateConversations
+
+    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollmentProtocol, certificateChain: String)] = []
+    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError: Error?
+    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod: ((E2eiEnrollmentProtocol, String) async throws -> Void)?
+
+    public func rotateKeysAndMigrateConversations(enrollment: E2eiEnrollmentProtocol, certificateChain: String) async throws {
+        rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
+
+        if let error = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError {
+            throw error
+        }
+
+        guard let mock = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod else {
+            fatalError("no mock for `rotateKeysAndMigrateConversationsEnrollmentCertificateChain`")
+        }
+
+        try await mock(enrollment, certificateChain)
     }
 
 }

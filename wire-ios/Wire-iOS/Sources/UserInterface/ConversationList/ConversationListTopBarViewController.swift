@@ -25,13 +25,15 @@ typealias SelfUserType = UserType & SelfLegalHoldSubject
 
 final class ConversationListTopBarViewController: UIViewController {
 
-    private var availabilityViewController: UserStatusViewController? {
-        didSet { availabilityViewController?.delegate = self }
+    private var userStatusViewController: UserStatusViewController? {
+        didSet { userStatusViewController?.delegate = self }
     }
 
     private var account: Account
     private let selfUser: SelfUserType
     private var userSession: UserSession
+    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
@@ -43,12 +45,18 @@ final class ConversationListTopBarViewController: UIViewController {
     /// - Parameters:
     ///   - account: the Account of the user
     ///   - selfUser: the self user object. Allow to inject a mock self user for testing
-    init(account: Account,
-         selfUser: SelfUserType,
-         userSession: UserSession) {
+    init(
+        account: Account,
+        selfUser: SelfUserType,
+        userSession: UserSession,
+        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
+        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
+        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         super.init(nibName: nil, bundle: nil)
 
         observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
@@ -70,7 +78,7 @@ final class ConversationListTopBarViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
 
-        availabilityViewController?.didMove(toParent: self)
+        userStatusViewController?.didMove(toParent: self)
 
         updateTitleView()
         updateAccountView()
@@ -80,19 +88,22 @@ final class ConversationListTopBarViewController: UIViewController {
     // MARK: - Title View
 
     func updateTitleView() {
-        if let availabilityViewController {
-            removeChild(availabilityViewController)
+        if let userStatusViewController {
+            removeChild(userStatusViewController)
         }
         if selfUser.isTeamMember {
-            let availabilityViewController = UserStatusViewController(options: .header, settings: .shared)
-            availabilityViewController.userStatus = .init(
+            let userStatusViewController = UserStatusViewController(
+                options: .header,
+                settings: .shared
+            )
+            userStatusViewController.userStatus = .init(
                 user: selfUser,
                 isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
             )
-            addChild(availabilityViewController)
-            topBar?.middleView = availabilityViewController.view
-            availabilityViewController.didMove(toParent: self)
-            self.availabilityViewController = availabilityViewController
+            addChild(userStatusViewController)
+            topBar?.middleView = userStatusViewController.view
+            userStatusViewController.didMove(toParent: self)
+            self.userStatusViewController = userStatusViewController
         } else {
             let titleLabel = UILabel()
             titleLabel.text = selfUser.name
@@ -266,11 +277,11 @@ extension ConversationListTopBarViewController: UserObserving {
     func userDidChange(_ changes: UserChangeInfo) {
 
         if changes.nameChanged {
-            availabilityViewController?.userStatus.name = changes.user.name ?? ""
+            userStatusViewController?.userStatus.name = changes.user.name ?? ""
         }
 
         if changes.availabilityChanged {
-            availabilityViewController?.userStatus.availability = changes.user.availability
+            userStatusViewController?.userStatus.availability = changes.user.availability
         }
 
         if changes.nameChanged || changes.teamsChanged {
@@ -289,7 +300,7 @@ extension ConversationListTopBarViewController: UserObserving {
 extension ConversationListTopBarViewController: UserStatusViewControllerDelegate {
 
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
-        guard viewController === availabilityViewController else { return }
+        guard viewController === userStatusViewController else { return }
 
         userSession.perform { [weak self] in
             self?.selfUser.availability = availability

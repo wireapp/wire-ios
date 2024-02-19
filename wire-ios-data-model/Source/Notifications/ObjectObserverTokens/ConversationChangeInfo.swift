@@ -234,7 +234,9 @@ extension ConversationChangeInfo {
 extension ConversationChangeInfo {
 
     @objc public var causedByConversationPrivacyChange: Bool {
-        if securityLevelChanged {
+        if mlsVerificationStatusChanged {
+            return conversation.mlsVerificationStatus == .degraded && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+        } else if securityLevelChanged {
             return conversation.securityLevel == .secureWithIgnored && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
         } else if legalHoldStatusChanged {
             return conversation.legalHoldStatus == .pendingApproval && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty

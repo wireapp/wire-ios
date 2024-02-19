@@ -41,6 +41,8 @@ final class AuthenticatedRouter: NSObject {
     private let activeCallRouter: ActiveCallRouter
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: FeatureRepositoryProvider
+    private let featureChangeActionsHandler: E2eINotificationActions
+    private let gracePeriodRepository: GracePeriodRepository
 
     // MARK: - Public Property
 
@@ -58,7 +60,9 @@ final class AuthenticatedRouter: NSObject {
         userSession: UserSession,
         isComingFromRegistration: Bool,
         needToShowDataUsagePermissionDialog: Bool,
-        featureRepositoryProvider: FeatureRepositoryProvider
+        featureRepositoryProvider: FeatureRepositoryProvider,
+        featureChangeActionsHandler: E2eINotificationActionsHandler,
+        gracePeriodRepository: GracePeriodRepository
     ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
@@ -71,6 +75,8 @@ final class AuthenticatedRouter: NSObject {
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
+        self.featureChangeActionsHandler = featureChangeActionsHandler
+        self.gracePeriodRepository = gracePeriodRepository
 
         super.init()
 
@@ -86,9 +92,19 @@ final class AuthenticatedRouter: NSObject {
     private func notifyFeatureChange(_ note: Notification) {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
-            let alert = UIAlertController.fromFeatureChange(change, acknowledger: featureRepositoryProvider.featureRepository)
+            let alert = change.hasFurtherActions
+                ? UIAlertController.fromFeatureChangeWithActions(change,
+                                                                 acknowledger: featureRepositoryProvider.featureRepository,
+                                                                 actionsHandler: featureChangeActionsHandler)
+                : UIAlertController.fromFeatureChange(change,
+                                                      acknowledger: featureRepositoryProvider.featureRepository)
         else {
             return
+        }
+
+        if case .e2eIEnabled(gracePeriod: let gracePeriod) = change, let gracePeriod {
+            let endOfGracePeriod = Date.now.addingTimeInterval(gracePeriod)
+            gracePeriodRepository.storeEndGracePeriodDate(endOfGracePeriod)
         }
 
         _viewController?.presentAlert(alert)
@@ -140,7 +156,10 @@ struct AuthenticatedWireFrame {
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, userSession: userSession)
+        let viewController = ZClientViewController(
+            account: account,
+            userSession: userSession
+        )
         viewController.isComingFromRegistration = isComingFromRegistration
         viewController.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
         viewController.router = router

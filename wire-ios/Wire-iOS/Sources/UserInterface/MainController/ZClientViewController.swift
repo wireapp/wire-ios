@@ -56,26 +56,23 @@ final class ZClientViewController: UIViewController {
     private var pendingInitialStateRestore = false
 
     /// init method for testing allows injecting an Account object and self user
-    ///
-    /// - Parameters:
-    ///   - account: an Account object
-    ///   - selfUser: a SelfUserType object
     required init(
         account: Account,
         userSession: UserSession
     ) {
         self.userSession = userSession
+
         backgroundViewController = BackgroundViewController(
             user: userSession.selfUser,
             userSession: userSession as? ZMUserSession
         )
-
         conversationListViewController = ConversationListViewController(
             account: account,
             selfUser: userSession.selfLegalHoldSubject,
-            userSession: userSession
+            userSession: userSession,
+            isSelfUserProteusVerifiedUseCase: userSession.isSelfUserProteusVerifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
-
         colorSchemeController = ColorSchemeController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)

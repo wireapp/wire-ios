@@ -213,8 +213,19 @@ public protocol UserSession: AnyObject {
     var networkState: ZMNetworkState { get }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
+    var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol { get }
+    var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
+
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
+
+    var e2eiFeature: Feature.E2EI { get }
+
+    func fetchAllClients()
+
 }
 
 extension ZMUserSession: UserSession {
@@ -489,6 +500,14 @@ extension ZMUserSession: UserSession {
         }
 
         return isClassified ? .classified : .notClassified
+    }
+
+    public var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol {
+        IsSelfUserProteusVerifiedUseCase(context: syncContext, schedule: .immediate)
+    }
+
+    public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
+        IsSelfUserE2EICertifiedUseCase(context: syncContext, schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
     }
 }
 

@@ -808,6 +808,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) {
+
         guard let messageProtocolString = payload.messageProtocol else {
             Logging.eventProcessing.warn("message protocol is missing")
             return
