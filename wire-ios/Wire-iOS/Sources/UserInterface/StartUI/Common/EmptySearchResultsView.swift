@@ -21,6 +21,7 @@ import UIKit
 import WireCommonComponents
 
 private enum EmptySearchResultsViewState {
+    case initialSearch
     case noUsers
     case noServices
     case everyoneAdded
@@ -51,38 +52,67 @@ final class EmptySearchResultsView: UIView {
 
     typealias LabelColors = SemanticColors.Label
 
-    private var state: EmptySearchResultsViewState = .noUsers {
+    private var state: EmptySearchResultsViewState = .initialSearch {
         didSet {
-            iconView.image = icon
-            iconView.tintColor = iconColor
-            statusLabel.text = self.text
-
-            if let action = self.buttonAction {
-                actionButton.isHidden = false
-                actionButton.setup(title: action.title)
-            } else {
-                actionButton.isHidden = true
-            }
+            updateUIForCurrentEmptySearchResultState()
         }
     }
 
-    func updateStatus(searchingForServices: Bool, hasFilter: Bool) {
-        switch (searchingForServices, hasFilter) {
-        case (true, false):
-            self.state = .noServicesEnabled
-        case (true, true):
-            self.state = .noServices
-        case (false, true):
-            self.state = .noUsers
-        case (false, false):
-            self.state = .everyoneAdded
+    private var text: String {
+        typealias Message = L10n.Localizable.Peoplepicker.NoMatchingResults.Message
+
+        switch state {
+        case .everyoneAdded:
+            return Message.usersAllAdded
+        case .noUsers:
+            if isFederationEnabled {
+                return Message.usersAndFederation
+            } else {
+                return Message.users
+            }
+        case .noServices:
+            return Message.services
+        case .noServicesEnabled:
+            if isSelfUserAdmin {
+                return Message.servicesNotEnabledAdmin
+            } else {
+                return Message.servicesNotEnabled
+            }
+        case .initialSearch:
+            return ""
+        }
+    }
+
+    private var icon: UIImage {
+        let icon: StyleKitIcon
+
+        switch state {
+        case .initialSearch:
+            return UIImage()
+        case .noServices, .noServicesEnabled:
+            icon = .bot
+        default:
+            icon = .personalProfile
+        }
+
+        return icon.makeImage(size: .large, color: iconColor)
+    }
+
+    private var buttonAction: EmptySearchResultsViewAction? {
+        switch state {
+        case .noServicesEnabled where isSelfUserAdmin:
+            return .openManageServices
+        case .noUsers:
+            return .openSearchSupportPage
+        default:
+            return nil
         }
     }
 
     private let isSelfUserAdmin: Bool
     private let isFederationEnabled: Bool
 
-    /// Contains the `stackView`.
+    // Contains the `stackView`.
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     private let iconView = UIImageView()
@@ -147,7 +177,7 @@ final class EmptySearchResultsView: UIView {
             self.delegate?.execute(action: action, from: self)
         }
 
-        state = .noUsers
+        updateUIForCurrentEmptySearchResultState()
     }
 
     @available(*, unavailable)
@@ -155,50 +185,29 @@ final class EmptySearchResultsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private var text: String {
-        typealias Message = L10n.Localizable.Peoplepicker.NoMatchingResults.Message
-
-        switch state {
-        case .everyoneAdded:
-            return Message.usersAllAdded
-        case .noUsers:
-            if isFederationEnabled {
-                return Message.usersAndFederation
-            } else {
-                return Message.users
-            }
-        case .noServices:
-            return Message.services
-        case .noServicesEnabled:
-            if isSelfUserAdmin {
-                return Message.servicesNotEnabledAdmin
-            } else {
-                return Message.servicesNotEnabled
-            }
+    func updateStatus(searchingForServices: Bool, hasFilter: Bool) {
+        switch (searchingForServices, hasFilter) {
+        case (true, false):
+            self.state = .noServicesEnabled
+        case (true, true):
+            self.state = .noServices
+        case (false, true):
+            self.state = .noUsers
+        case (false, false):
+            self.state = .initialSearch
         }
     }
 
-    private var icon: UIImage {
-        let icon: StyleKitIcon
+    private func updateUIForCurrentEmptySearchResultState() {
+        iconView.image = icon
+        iconView.tintColor = iconColor
+        statusLabel.text = self.text
 
-        switch state {
-        case .noServices, .noServicesEnabled:
-            icon = .bot
-        default:
-            icon = .personalProfile
-        }
-
-        return icon.makeImage(size: .large, color: iconColor)
-    }
-
-    private var buttonAction: EmptySearchResultsViewAction? {
-        switch state {
-        case .noServicesEnabled where isSelfUserAdmin:
-            return .openManageServices
-        case .noUsers:
-            return .openSearchSupportPage
-        default:
-            return nil
+        if let action = self.buttonAction {
+            actionButton.isHidden = false
+            actionButton.setup(title: action.title)
+        } else {
+            actionButton.isHidden = true
         }
     }
 }
