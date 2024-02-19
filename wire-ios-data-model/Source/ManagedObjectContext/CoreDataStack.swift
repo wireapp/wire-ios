@@ -97,11 +97,6 @@ public extension NSURL {
     }
 
 }
-<<<<<<< HEAD
-
-private let log = ZMSLog(tag: "core-data")
-=======
->>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
 
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
@@ -508,4 +503,3 @@ extension NSPersistentStoreCoordinator {
     }
 
 }
-

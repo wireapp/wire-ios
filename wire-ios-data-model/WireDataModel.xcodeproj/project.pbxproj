@@ -4878,7 +4878,7 @@
 				E6F443102B16294000D2B08A /* zmessaging2.81.0.xcdatamodel */,
 				E6F443182B16294000D2B08A /* zmessaging2.80.0.xcdatamodel */,
 			);
-			currentVersion = EE85C8AB2B55790400D3182D /* zmessaging2.113.0.xcdatamodel */;
+			currentVersion = 6398545E2B346A0700AA10DE /* zmessaging2.112.0.xcdatamodel */;
 			path = zmessaging.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

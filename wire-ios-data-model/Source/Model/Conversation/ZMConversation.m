@@ -355,13 +355,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.commitPendingProposalDateKey,
             ZMConversation.cipherSuiteKey,
             ZMConversation.epochKey,
-<<<<<<< HEAD
             ZMConversation.epochTimestampKey,
-            ZMConversationIsDeletedRemotelyKey
-=======
             ZMConversationIsDeletedRemotelyKey,
             PrimaryKey
->>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];

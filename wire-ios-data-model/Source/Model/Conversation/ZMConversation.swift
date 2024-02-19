@@ -30,13 +30,11 @@ extension ZMConversation {
     @NSManaged
     public var isForcedReadOnly: Bool
 
-<<<<<<< HEAD
     /// The other user of a one on one conversation.
 
     @NSManaged
     public var oneOnOneUser: ZMUser?
 
-=======
     // MARK: - CoreData unique constraint
 
     static let domainKey: String = "domain"
@@ -87,5 +85,4 @@ extension ZMConversation {
         }
         primaryKey = Self.primaryKey(from: remoteIdentifier, domain: domain)
     }
->>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
 }
