@@ -627,7 +627,7 @@ public class ZMUserSession: NSObject {
         // TODO: [jacob] refactor out WPB-6198
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
             guard let mlsClientID = MLSClientID(user: ZMUser.selfUser(in: syncContext)) else {
-                fatalError("Needs to register MLS client but can't retrieve qualified client ID")
+                fatal("Needs to register MLS client but can't retrieve qualified client ID")
             }
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
