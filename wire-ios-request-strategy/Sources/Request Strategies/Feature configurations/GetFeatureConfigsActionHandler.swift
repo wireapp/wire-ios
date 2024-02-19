@@ -52,10 +52,10 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             }
 
             do {
-                let featureRepository = FeatureRepository(context: context)
+                let repository = FeatureRepository(context: context)
 
-                let payloadProcessor = FeatureConfigsPayloadProcessor()
-                try payloadProcessor.processPayloadData(data, featureRepository: featureRepository)
+                let processor = FeatureConfigsPayloadProcessor()
+                try processor.processActionPayload(data: data, repository: repository)
 
                 action.succeed()
 

@@ -17,16 +17,17 @@
 //
 
 import Foundation
+import protocol WireDataModel.FeatureRepositoryInterface
 
 struct FeatureConfigsPayloadProcessor {
 
     private let decoder = JSONDecoder.defaultDecoder
 
-    func processPayloadData(_ data: Data, featureRepository: FeatureRepositoryInterface) throws {
+    func processActionPayload(data: Data, repository: FeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
 
         if let appLock = payload.appLock {
-            featureRepository.storeAppLock(
+            repository.storeAppLock(
                 Feature.AppLock(
                     status: appLock.status,
                     config: appLock.config
@@ -35,7 +36,7 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let classifiedDomains = payload.classifiedDomains {
-            featureRepository.storeClassifiedDomains(
+            repository.storeClassifiedDomains(
                 Feature.ClassifiedDomains(
                     status: classifiedDomains.status,
                     config: classifiedDomains.config
@@ -44,7 +45,7 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let conferenceCalling = payload.conferenceCalling {
-            featureRepository.storeConferenceCalling(
+            repository.storeConferenceCalling(
                 Feature.ConferenceCalling(
                     status: conferenceCalling.status
                 )
@@ -52,7 +53,7 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let conversationGuestLinks = payload.conversationGuestLinks {
-            featureRepository.storeConversationGuestLinks(
+            repository.storeConversationGuestLinks(
                 Feature.ConversationGuestLinks(
                     status: conversationGuestLinks.status
                 )
@@ -60,7 +61,7 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let digitalSignatures = payload.digitalSignatures {
-            featureRepository.storeDigitalSignature(
+            repository.storeDigitalSignature(
                 Feature.DigitalSignature(
                     status: digitalSignatures.status
                 )
@@ -68,7 +69,7 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let fileSharing = payload.fileSharing {
-            featureRepository.storeFileSharing(
+            repository.storeFileSharing(
                 Feature.FileSharing(
                     status: fileSharing.status
                 )
@@ -76,7 +77,7 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let mls = payload.mls {
-            featureRepository.storeMLS(
+            repository.storeMLS(
                 Feature.MLS(
                     status: mls.status,
                     config: mls.config
@@ -85,7 +86,7 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let mlsMigration = payload.mlsMigration {
-            featureRepository.storeMLSMigration(
+            repository.storeMLSMigration(
                 Feature.MLSMigration(
                     status: mlsMigration.status,
                     config: mlsMigration.config
@@ -94,7 +95,7 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let selfDeletingMessages = payload.selfDeletingMessages {
-            featureRepository.storeSelfDeletingMessages(
+            repository.storeSelfDeletingMessages(
                 Feature.SelfDeletingMessages(
                     status: selfDeletingMessages.status,
                     config: selfDeletingMessages.config
@@ -103,7 +104,7 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let mlsMigration = payload.mlsMigration {
-            featureRepository.storeMLSMigration(
+            repository.storeMLSMigration(
                 Feature.MLSMigration(
                     status: mlsMigration.status,
                     config: mlsMigration.config
