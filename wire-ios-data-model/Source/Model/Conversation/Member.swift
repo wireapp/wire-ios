@@ -56,22 +56,25 @@
         }
     }
 
-    @objc(getOrCreateMemberForUser:inTeam:context:)
-    public static func getOrCreateMember(for user: ZMUser, in team: Team, context: NSManagedObjectContext) -> Member {
+    @objc(getOrUpdateMemberForUser:inTeam:context:)
+    public static func getOrUpdateMember(for user: ZMUser, in team: Team, context: NSManagedObjectContext) -> Member {
         precondition(context.zm_isSyncContext)
 
+        var member: Member
         if let existing = user.membership {
-            return existing
+            member = existing
         }
         else if let userId = user.remoteIdentifier, let existing = Member.fetch(with: userId, in: context) {
-            return existing
+            member = existing
+        } else {
+            member = insertNewObject(in: context)
+            member.needsToBeUpdatedFromBackend = true
         }
 
-        let member = insertNewObject(in: context)
         member.team = team
         member.user = user
         member.remoteIdentifier = user.remoteIdentifier
-        member.needsToBeUpdatedFromBackend = true
+
         return member
     }
 
@@ -96,7 +99,7 @@ extension Member {
         let user = ZMUser.fetchOrCreate(with: id, domain: nil, in: context)
         let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(NSDate.init(transport:)) as Date?
         let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init)
-        let member = getOrCreateMember(for: user, in: team, context: context)
+        let member = getOrUpdateMember(for: user, in: team, context: context)
 
         member.updatePermissions(with: payload)
         member.createdAt = createdAt

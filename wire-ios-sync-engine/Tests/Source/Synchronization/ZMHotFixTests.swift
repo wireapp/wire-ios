@@ -135,7 +135,7 @@ class ZMHotFixTests_Integration: MessagingTest {
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = Team.fetchOrCreate(with: UUID(), create: true, in: self.syncMOC, created: nil)!
-            let member = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
             member.needsToBeUpdatedFromBackend = false
 
             // WHEN

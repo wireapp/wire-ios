@@ -83,7 +83,7 @@ class TeamMembersDownloadRequestStrategyTests: MessagingTest {
         selfUser.teamIdentifier = teamID
         let team = Team.insertNewObject(in: syncMOC)
         team.remoteIdentifier = teamID
-        _ = Member.getOrCreateMember(for: selfUser, in: team, context: syncMOC)
+        _ = Member.getOrUpdateMember(for: selfUser, in: team, context: syncMOC)
 
         return team
     }

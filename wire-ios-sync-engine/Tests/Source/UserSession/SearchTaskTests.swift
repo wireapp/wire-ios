@@ -35,7 +35,7 @@ class SearchTaskTests: DatabaseTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.teamIdentifier = self.teamIdentifier
             guard let team = Team.fetchOrCreate(with: self.teamIdentifier, create: true, in: self.uiMOC, created: nil) else { XCTFail(); return }
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.uiMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.uiMOC)
             uiMOC.saveOrRollback()
         }
         BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!

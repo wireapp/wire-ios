@@ -58,10 +58,8 @@ extension TeamPayload {
             return nil
         }
 
-        if created {
-            let selfUser = ZMUser.selfUser(in: managedObjectContext)
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: managedObjectContext)
-        }
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        _ = Member.getOrUpdateMember(for: selfUser, in: team, context: managedObjectContext)
 
         updateTeam(team, in: managedObjectContext)
 
@@ -176,7 +174,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         guard let addedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
         let user = ZMUser.fetchOrCreate(with: addedUserId, domain: nil, in: managedObjectContext)
         user.needsToBeUpdatedFromBackend = true
-        _ = Member.getOrCreateMember(for: user, in: team, context: managedObjectContext)
+        _ = Member.getOrUpdateMember(for: user, in: team, context: managedObjectContext)
     }
 
     private func processRemovedMember(with event: ZMUpdateEvent) {

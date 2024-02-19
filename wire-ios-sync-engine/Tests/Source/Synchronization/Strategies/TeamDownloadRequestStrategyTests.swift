@@ -320,7 +320,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = userId
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             self.syncMOC.saveOrRollback()
 
             let payload: [String: Any] = [
