@@ -117,8 +117,9 @@ final class DeviceInfoViewModel: ObservableObject {
     @MainActor
     func enrollClient() async {
         self.isActionInProgress = true
-        let certificate = await actionsHandler.enrollClient()
-        self.e2eIdentityCertificate = certificate
+        if let certificate = await actionsHandler.enrollClient() {
+            self.e2eIdentityCertificate = certificate
+        }
         self.isActionInProgress = false
     }
 
@@ -176,7 +177,8 @@ extension DeviceInfoViewModel {
         gracePeriod: TimeInterval,
         mlsThumbprint: String?,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
+        contextProvider: ContextProvider
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             certificate: certificate,
@@ -190,7 +192,8 @@ extension DeviceInfoViewModel {
                 userSession: userSession,
                 credentials: credentials,
                 saveFileManager: saveFileManager,
-                getProteusFingerprint: getProteusFingerprint
+                getProteusFingerprint: getProteusFingerprint,
+                contextProvider: contextProvider
             ),
             userClient: userClient,
             isSelfClient: isSelfClient,
