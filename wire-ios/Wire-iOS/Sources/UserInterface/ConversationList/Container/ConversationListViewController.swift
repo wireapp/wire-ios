@@ -31,8 +31,6 @@ final class ConversationListViewController: UIViewController {
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
-    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
-    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
     /// internal View Model
     var state: ConversationListState = .conversationList
@@ -91,36 +89,28 @@ final class ConversationListViewController: UIViewController {
         isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
-        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
-
-        self.init(
-            viewModel: viewModel,
+        let viewModel = ConversationListViewController.ViewModel(
+            account: account,
+            selfUser: selfUser,
+            userSession: userSession,
             isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-
+        self.init(viewModel: viewModel)
         viewModel.viewController = self
-
         delegate = self
-
         onboardingHint.arrowPointToView = tabBar
     }
 
-    required init(
-        viewModel: ViewModel,
-        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
-    ) {
+    required init(viewModel: ViewModel) {
         self.viewModel = viewModel
-        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
-        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            isSelfUserProteusVerifiedUseCase: viewModel.isSelfUserProteusVerifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: viewModel.isSelfUserE2EICertifiedUseCase
         )
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset

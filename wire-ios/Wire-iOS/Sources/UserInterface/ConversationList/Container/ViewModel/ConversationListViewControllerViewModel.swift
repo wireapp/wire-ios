@@ -60,6 +60,9 @@ extension ConversationListViewController {
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
+        // TODO: try making private
+        let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
+        let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
         var selectedConversation: ZMConversation?
 
@@ -70,14 +73,20 @@ extension ConversationListViewController {
 
         var actionsController: ConversationActionController?
 
-        init(account: Account,
-             selfUser: SelfUserType,
-             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
-             userSession: UserSession) {
+        init(
+            account: Account,
+            selfUser: SelfUserType,
+            conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
+            userSession: UserSession,
+            isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
+            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
+            self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
+            self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         }
     }
 }

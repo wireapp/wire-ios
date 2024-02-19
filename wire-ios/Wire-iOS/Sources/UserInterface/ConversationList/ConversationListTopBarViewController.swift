@@ -30,8 +30,10 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     private var account: Account
+    // private var userStatus: UserStatus ?
     private let selfUser: SelfUserType
     private var userSession: UserSession
+    // remove in favor of UserStatus?
     private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
     private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     private var observerToken: NSObjectProtocol?
