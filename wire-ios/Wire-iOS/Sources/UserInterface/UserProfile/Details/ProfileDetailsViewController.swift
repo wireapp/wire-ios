@@ -39,9 +39,7 @@ final class ProfileDetailsViewController: UIViewController {
 
     /// The current group admin status.
     var isAdminRole: Bool {
-        didSet {
-            profileHeaderViewController.isAdminRole = self.isAdminRole
-        }
+        didSet { profileHeaderViewController.isAdminRole = isAdminRole }
     }
 
     /**
