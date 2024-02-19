@@ -146,9 +146,6 @@ class AvatarImageView: UIView {
         switch avatar {
 
         case .text where !allowsInitials:
-            fallthrough
-        case .init():
-            // empty state
             imageView.image = nil
             initialsLabel.text = nil
             imageView.isHidden = true
