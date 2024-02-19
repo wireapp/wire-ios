@@ -74,6 +74,7 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
+    @Published var showEnrollmentCertificateError = false
 
     private var actionsHandler: DeviceDetailsViewActions
 
@@ -119,6 +120,8 @@ final class DeviceInfoViewModel: ObservableObject {
         self.isActionInProgress = true
         if let certificate = await actionsHandler.enrollClient() {
             self.e2eIdentityCertificate = certificate
+        } else {
+            showEnrollmentCertificateError = true
         }
         self.isActionInProgress = false
     }
