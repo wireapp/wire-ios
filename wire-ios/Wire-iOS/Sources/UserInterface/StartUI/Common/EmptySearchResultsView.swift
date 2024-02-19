@@ -144,42 +144,16 @@ final class EmptySearchResultsView: UIView {
 
         super.init(frame: .zero)
 
-        [
-            scrollView,
-            stackView,
-            iconView,
-            statusLabel,
-            actionButton
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         [iconView, statusLabel, actionButton].forEach(stackView.addArrangedSubview)
 
         addSubview(scrollView)
         scrollView.addSubview(stackView)
 
-        NSLayoutConstraint.activate([
+        setupConstraints()
 
-            // scroll view with empty search results view
-            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            scrollView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+        setUpStackView()
 
-            // stack view within scroll view
-            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
-            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
-            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
-            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
-            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
-        ])
-
-        stackView.alignment = .center
-        stackView.spacing = 16
-        stackView.axis = .vertical
-        stackView.alignment = .center
-
-        statusLabel.numberOfLines = 0
-        statusLabel.preferredMaxLayoutWidth = 200
-        statusLabel.textAlignment = .center
+        setupStatusLabel()
 
         actionButton.accessibilityIdentifier = "button.searchui.open-services-no-results"
 
@@ -214,6 +188,44 @@ final class EmptySearchResultsView: UIView {
     }
 
     // MARK: - Private methods
+
+    private func setupConstraints() {
+        [
+            scrollView,
+            stackView,
+            iconView,
+            statusLabel,
+            actionButton
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        NSLayoutConstraint.activate([
+            // scroll view with empty search results view
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+
+            // stack view within scroll view
+            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
+        ])
+    }
+
+    private func setUpStackView() {
+        stackView.alignment = .center
+        stackView.spacing = 16
+        stackView.axis = .vertical
+        stackView.alignment = .center
+    }
+
+    private func setupStatusLabel() {
+        statusLabel.numberOfLines = 0
+        statusLabel.preferredMaxLayoutWidth = 200
+        statusLabel.textAlignment = .center
+    }
 
     private func updateUIForCurrentEmptySearchResultState() {
         iconView.image = icon
