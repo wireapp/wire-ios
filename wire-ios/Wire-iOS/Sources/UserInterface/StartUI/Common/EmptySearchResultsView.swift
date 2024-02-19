@@ -123,7 +123,7 @@ final class EmptySearchResultsView: UIView {
     private let isSelfUserAdmin: Bool
     private let isFederationEnabled: Bool
 
-    // Contains the `stackView`.
+    /// Contains the `stackView`.
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     private let iconView = UIImageView()
