@@ -41,6 +41,11 @@ extension MockConversation {
         }
     }
 
+    @objc
+    var primitiveMlsGroupID: Data? {
+        return nil
+    }
+
     static func oneOnOneConversation(otherUser: UserType = MockUser.mockUsers().first!) -> MockConversation {
         let selfUser = (MockUser.mockSelf() as Any) as! ZMUser
         let mockConversation = MockConversation()
@@ -62,5 +67,15 @@ extension MockConversation {
         mockConversation.isConversationEligibleForVideoCalls = true
 
         return mockConversation
+    }
+
+    @objc (willAccessValueForKey:)
+    func willAccessValue(forKey: String) {
+
+    }
+
+    @objc (didAccessValueForKey:)
+    func didAccessValue(forKey: String) {
+
     }
 }
