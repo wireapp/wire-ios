@@ -52,7 +52,6 @@ final class ProfileViewController: UIViewController {
 
     private let profileFooterView = ProfileFooterView()
     private let incomingRequestFooter = IncomingRequestFooterView()
-    private let usernameDetailsView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
 
@@ -120,12 +119,6 @@ final class ProfileViewController: UIViewController {
 
     // MARK: - Header
     private func setupHeader() {
-        let userNameDetailViewModel = viewModel.makeUserNameDetailViewModel()
-        usernameDetailsView.configure(with: userNameDetailViewModel)
-        view.addSubview(usernameDetailsView)
-
-        updateTitleView()
-
         securityLevelView.configure(with: viewModel.classification)
         view.addSubview(securityLevelView)
     }
@@ -178,7 +171,6 @@ final class ProfileViewController: UIViewController {
         setupTabsController()
         setupConstraints()
         updateFooterViews()
-        updateShowVerifiedShield()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -238,14 +230,10 @@ final class ProfileViewController: UIViewController {
         }
 
         tabsController = TabBarController(viewControllers: viewControllers)
-        tabsController?.delegate = self
-
         if viewModel.context == .deviceList, tabsController?.viewControllers.count > 1 {
             tabsController?.selectIndex(ProfileViewControllerTabBarIndex.devices.rawValue, animated: false)
         }
-
         addToSelf(tabsController!)
-
         tabsController?.isTabBarHidden = viewControllers.count < 2
         tabsController?.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
@@ -257,16 +245,12 @@ final class ProfileViewController: UIViewController {
 
         let securityBannerHeight: CGFloat = securityLevelView.isHidden ? 0 : 24
 
-        [usernameDetailsView, securityLevelView, tabsView, profileFooterView, incomingRequestFooter].forEach {
+        [securityLevelView, tabsView, profileFooterView, incomingRequestFooter].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         let incomingRequestFooterBottomConstraint = incomingRequestFooter.bottomAnchor.constraint(equalTo: view.bottomAnchor).withPriority(.defaultLow)
 
         NSLayoutConstraint.activate([
-            usernameDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            usernameDetailsView.topAnchor.constraint(equalTo: view.topAnchor),
-            usernameDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
             securityLevelView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             securityLevelView.topAnchor.constraint(equalTo: view.topAnchor),
             securityLevelView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -553,22 +537,7 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
 
 }
 
-extension ProfileViewController: TabBarControllerDelegate {
-
-    func tabBarController(_ controller: TabBarController, tabBarDidSelectIndex: Int) {
-        updateShowVerifiedShield()
-    }
-}
-
 extension ProfileViewController: ProfileViewControllerViewModelDelegate {
-
-    func updateTitleView() {
-        // profileTitleView.configure(with: viewModel.user)
-    }
-
-    func updateShowVerifiedShield() {
-        // profileTitleView.showVerifiedShield = viewModel.shouldShowVerifiedShield && tabsController?.selectedIndex != ProfileViewControllerTabBarIndex.devices.rawValue
-    }
 
     func setupNavigationItems() {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil
