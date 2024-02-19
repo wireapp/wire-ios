@@ -129,18 +129,13 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
     ) {
         updateAvailability(for: user, newValue: availability)
 
-        let sut = UserStatusView(
-            options: options,
-            userSession: userSession
-        )
+        let sut = UserStatusView(options: options)
         sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.backgroundColor = .systemBackground
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
         sut.userStatus = .init(
-            name: user.name ?? "",
-            availability: availability,
-            isCertified: false,
-            isVerified: false
+            user: user,
+            isCertified: false
         )
 
         verify(matching: sut, file: file, testName: testName, line: line)

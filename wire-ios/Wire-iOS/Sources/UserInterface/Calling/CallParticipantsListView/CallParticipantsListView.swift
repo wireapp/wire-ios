@@ -109,9 +109,15 @@ extension CallParticipantsListView: UICollectionViewDataSource {
 
 extension UserCell: CallParticipantsListCellConfigurable {
 
-    func configure(with configuration: CallParticipantsListCellConfiguration,
-                   selfUser: UserType) {
-        guard case let .callParticipant(user, callParticipantState, activeSpeakerState) = configuration else { preconditionFailure() }
+    func configure(
+        with configuration: CallParticipantsListCellConfiguration,
+        selfUser: UserType
+    ) {
+        guard case let .callParticipant(hashBoxUser, callParticipantState, activeSpeakerState) = configuration else {
+            preconditionFailure()
+        }
+
+        let user = hashBoxUser.value
         hidesSubtitle = true
         accessoryIconView.isHidden = true
         switch callParticipantState {
@@ -142,8 +148,11 @@ extension UserCell: CallParticipantsListCellConfigurable {
             unconnectedStateOverlay.isHidden = true
 
         }
-        configure(with: user.value, selfUser: selfUser)
+        configure(
+            user: user,
+            isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+            isSelfUserPartOfATeam: selfUser.hasTeam
+        )
         backgroundColor = SemanticColors.View.backgroundDefaultWhite
     }
-
 }
