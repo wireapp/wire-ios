@@ -71,16 +71,6 @@ final class ClientListViewController: UIViewController,
     private let clientFilter: (UserClient) -> Bool
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
-
-    var selfClientClientTableViewCellModel: ClientTableViewCellModel? {
-        guard let selfClient = selfClient else {
-            return nil
-        }
-        return .from(userClient: selfClient)
-    }
-    var clientTableViewCellModels: [ClientTableViewCellModel] {
-        return sortedClients.map { .from(userClient: $0) }
-    }
     var sortedClients: [UserClient] = []
 
     var selfClient: UserClient?
@@ -217,7 +207,7 @@ final class ClientListViewController: UIViewController,
             userSession: userSession,
             credentials: credentials,
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-            mlsThumbprint: client.mlsPublicKeys.ed25519?.splitStringIntoLines(charactersPerLine: 16),
+            mlsThumbprint: client.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16),
             getProteusFingerprint: userSession.getUserClientFingerprint
         )
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
@@ -404,10 +394,12 @@ final class ClientListViewController: UIViewController,
 
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
-                cell.viewModel = selfClientClientTableViewCellModel
-                cell.wr_editable = false
+                if let selfClient = selfClient {
+                    cell.viewModel = ClientTableViewCellModel.from(userClient: selfClient, shouldSetType: false)
+                    cell.wr_editable = false
+                }
             case 1:
-                cell.viewModel = clientTableViewCellModels[indexPath.row]
+                cell.viewModel = ClientTableViewCellModel.from(userClient: sortedClients[indexPath.row], shouldSetType: false)
                 cell.wr_editable = true
             default:
                 cell.viewModel = nil
@@ -499,6 +491,7 @@ final class ClientListViewController: UIViewController,
         navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Registration.Devices.title.capitalized)
     }
 
+    @MainActor
     private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
         let mlsGroupID = await fetchSelfConversation()
         if let mlsGroupID = mlsGroupID, let userSession = userSession {
@@ -511,7 +504,7 @@ final class ClientListViewController: UIViewController,
                     nil
                 }
             })
-            let mlsClienIds = mlsClients.values.map({$0})
+            let mlsClienIds = Array(mlsClients.values)
             do {
                 let isE2eIEnabledForSelfClient = try await userSession.getIsE2eIdentityEnabled.invoke()
                 let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupID,
@@ -519,7 +512,8 @@ final class ClientListViewController: UIViewController,
                 if certificates.isNonEmpty {
                     for client in userClients {
                         let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
-                        client.e2eIdentityCertificate = certificates.first(where: {$0.clientId == mlsClientIdRawValue})
+                        client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
+                        client.mlsThumbPrint = client.resolvedMLSThumbprint
                         if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
                             client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
                         }
@@ -532,13 +526,16 @@ final class ClientListViewController: UIViewController,
                         if certificates.isNonEmpty {
                             selfClient.e2eIdentityCertificate = selfClient.notActivatedE2EIdenityCertificate()
                         }
+                        selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
                     }
                     return updatedUserClients
                 } else if isE2eIEnabledForSelfClient {
                     for client in clients {
-                        let theClient = client
-                        theClient.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
-                        updatedUserClients.append(theClient)
+                        if let mlsThumbprint = client.mlsPublicKeys.ed25519,
+                           !mlsThumbprint.isEmpty {
+                            client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                            updatedUserClients.append(client)
+                        }
                     }
                     return updatedUserClients
                 } else {
@@ -585,12 +582,25 @@ extension ClientListViewController: UserObserving {
             var clients = selfUser.clients
             clients.remove(selfClient)
             self.clients = Array(clients)
+            Task {
+                self.clients = await updateCertificates(for: self.clients)
+                refreshViews()
+            }
         }
     }
 
+    @MainActor
+    func refreshViews() {
+        clientsTableView?.reloadData()
+    }
 }
 
 private extension UserClient {
+
+    var resolvedMLSThumbprint: String? {
+        e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
+    }
+
     func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
         guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
             return nil

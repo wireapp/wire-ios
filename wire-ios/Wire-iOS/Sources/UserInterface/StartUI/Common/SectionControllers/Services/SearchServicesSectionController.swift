@@ -77,7 +77,11 @@ final class SearchServicesSectionController: SearchSectionController {
 
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
             if let selfUser = ZMUser.selfUser() {
-                cell.configure(with: service, selfUser: selfUser)
+                cell.configure(
+                    user: service,
+                    isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+                    isSelfUserPartOfATeam: selfUser.hasTeam
+                )
             } else {
                 assertionFailure("ZMUser.selfUser() is nil")
             }

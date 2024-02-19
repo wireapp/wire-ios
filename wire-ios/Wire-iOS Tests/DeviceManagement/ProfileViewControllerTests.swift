@@ -114,7 +114,6 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
             context: .profileViewer,
             userSession: userSession
         )
-        sut.updateShowVerifiedShield()
         let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
 
@@ -278,7 +277,6 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let selfUser = MockUserType.createSelfUser(name: "Bob", inTeam: UUID())
         mockUser.emailAddress = nil
-
         let conversation = MockConversation.oneOnOneConversation()
         conversation.activeParticipants = [selfUser, mockUser]
 
