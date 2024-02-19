@@ -34,7 +34,12 @@ final class ProfileHeaderViewController: UIViewController {
     private let user: UserType
 
     private var userStatus: UserStatus {
-        didSet { updateNameAndVerificationStatus() }
+        didSet {
+            nameLabel.text = userStatus.name
+            userStatusViewController.userStatus = userStatus
+            e2eiCertifiedImageView.isHidden = !userStatus.isCertified
+            proteusVerifiedImageView.isHidden = !userStatus.isVerified
+        }
     }
 
     private let userSession: UserSession
@@ -205,7 +210,6 @@ final class ProfileHeaderViewController: UIViewController {
         updateGroupRoleIndicator()
         updateHandleLabel()
         updateTeamLabel()
-        updateNameAndVerificationStatus()
 
         addChild(userStatusViewController)
 
@@ -312,12 +316,6 @@ final class ProfileHeaderViewController: UIViewController {
         updateImageButton()
         updateAvailabilityVisibility()
         warningView.update(withUser: user)
-    }
-
-    private func updateNameAndVerificationStatus() {
-        userStatusViewController.userStatus = userStatus
-        e2eiCertifiedImageView.isHidden = !userStatus.isCertified
-        proteusVerifiedImageView.isHidden = !userStatus.isVerified
     }
 
     private func updateHandleLabel() {
