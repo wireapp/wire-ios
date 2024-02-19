@@ -54,7 +54,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var initialisatingMLS = false
     private var hasInitialisedMLS = false
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
-    private var initialiseMlsContinuations: [CheckedContinuation<Void, Error>] = []
 
     public init(selfUserID: UUID,
                 sharedContainerURL: URL,
@@ -78,11 +77,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
         _ = try await coreCrypto().perform { coreCrypto in
             try await coreCrypto.mlsInit(
-                clientId: mlsClientID.clientID.utf8Data!, // TODO: [jacob] don't force unwrap
+                clientId: Data(mlsClientID.clientID.utf8),
                 ciphersuites: [CiphersuiteName.default.rawValue],
                 nbKeyPackage: nil
             )
-            try await generateClientPublicKeysIfNeeded(with: coreCrypto)
+            try await generateClientPublicKeys(with: coreCrypto, credentialType: .basic)
         }
     }
 
@@ -94,15 +93,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 certificateChain: certificateChain,
                 nbKeyPackage: nil
             )
-            try await generateClientPublicKeysIfNeeded(with: coreCrypto)
+            try await generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
         }
-    }
-
-    private func resumeInitialiseMlsContinuations(with result: Result<Void, Error>) {
-        for continuation in initialiseMlsContinuations {
-            continuation.resume(with: result)
-        }
-        coreCryptoContinuations = []
     }
 
     // Create an CoreCrypto instance with guranteees that only one task is performing
@@ -219,17 +211,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    private func generateClientPublicKeysIfNeeded(with coreCrypto: CoreCryptoProtocol) async throws {
-        let mlsPublicKeys = await syncContext.perform {
-            ZMUser.selfUser(in: self.syncContext).selfClient()?.mlsPublicKeys
-        }
-
-        guard mlsPublicKeys?.ed25519 == nil else {
-            return
-        }
-
+    private func generateClientPublicKeys(with coreCrypto: CoreCryptoProtocol, credentialType: MlsCredentialType) async throws {
         WireLogger.mls.info("generating ed25519 public key")
-        let keyBytes = try await coreCrypto.clientPublicKey(ciphersuite: CiphersuiteName.default.rawValue, credentialType: .basic)
+        let keyBytes = try await coreCrypto.clientPublicKey(
+            ciphersuite: CiphersuiteName.default.rawValue,
+            credentialType: credentialType
+        )
         let keyData = Data(keyBytes)
         var keys = UserClient.MLSPublicKeys()
         keys.ed25519 = keyData.base64EncodedString()
