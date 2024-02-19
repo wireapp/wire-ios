@@ -202,7 +202,8 @@ final class ClientListViewController: UIViewController,
 
     func openDetailsOfClient(_ client: UserClient) {
         guard let userSession = userSession,
-              let navigationController = self.navigationController
+              let navigationController = self.navigationController,
+              let contextProvider = contextProvider
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
             return
@@ -218,7 +219,8 @@ final class ClientListViewController: UIViewController,
             credentials: credentials,
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
             mlsThumbprint: client.mlsPublicKeys.ed25519?.splitStringIntoLines(charactersPerLine: 16),
-            getProteusFingerprint: userSession.getUserClientFingerprint
+            getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider
         )
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
