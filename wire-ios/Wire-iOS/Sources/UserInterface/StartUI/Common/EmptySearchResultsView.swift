@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
+
+// MARK: - EmptySearchResultsViewState
 
 private enum EmptySearchResultsViewState {
     case initialSearch
@@ -27,6 +28,8 @@ private enum EmptySearchResultsViewState {
     case everyoneAdded
     case noServicesEnabled
 }
+
+// MARK: - EmptySearchResultsViewAction
 
 enum EmptySearchResultsViewAction {
     case openManageServices
@@ -44,13 +47,19 @@ extension EmptySearchResultsViewAction {
     }
 }
 
+// MARK: - EmptySearchResultsViewDelegate
+
 protocol EmptySearchResultsViewDelegate: AnyObject {
     func execute(action: EmptySearchResultsViewAction, from: EmptySearchResultsView)
 }
 
+// MARK: - EmptySearchResultsView
+
 final class EmptySearchResultsView: UIView {
 
     typealias LabelColors = SemanticColors.Label
+
+    // MARK: - Computed Properties
 
     private var state: EmptySearchResultsViewState = .initialSearch {
         didSet {
@@ -109,6 +118,8 @@ final class EmptySearchResultsView: UIView {
         }
     }
 
+    // MARK: - Properties
+
     private let isSelfUserAdmin: Bool
     private let isFederationEnabled: Bool
 
@@ -121,6 +132,8 @@ final class EmptySearchResultsView: UIView {
     private let iconColor = LabelColors.textSettingsPasswordPlaceholder
 
     weak var delegate: EmptySearchResultsViewDelegate?
+
+    // MARK: View Lifecycle
 
     init(
         isSelfUserAdmin: Bool,
@@ -185,6 +198,8 @@ final class EmptySearchResultsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Public Interface
+
     func updateStatus(searchingForServices: Bool, hasFilter: Bool) {
         switch (searchingForServices, hasFilter) {
         case (true, false):
@@ -197,6 +212,8 @@ final class EmptySearchResultsView: UIView {
             self.state = .initialSearch
         }
     }
+
+    // MARK: - Private methods
 
     private func updateUIForCurrentEmptySearchResultState() {
         iconView.image = icon
