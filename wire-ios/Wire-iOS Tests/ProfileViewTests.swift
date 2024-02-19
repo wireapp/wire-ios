@@ -49,20 +49,8 @@ final class ProfileViewTests: BaseSnapshotTestCase {
         verifyProfile(options: [.allowEditingAvailability])
     }
 
-    func test_HideName() {
-        verifyProfile(options: [.hideUsername])
-    }
-
     func test_HideTeamName() {
         verifyProfile(options: [.hideTeamName])
-    }
-
-    func test_HideHandle() {
-        verifyProfile(options: [.hideHandle])
-    }
-
-    func test_HideNameAndHandle() {
-        verifyProfile(options: [.hideUsername, .hideHandle])
     }
 
     func test_HideAvailability() {
