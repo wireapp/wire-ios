@@ -234,7 +234,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         WireLogger.mls.info("generating ed25519 public key")
-        let keyBytes = try await coreCrypto.perform { try await $0.clientPublicKey(ciphersuite: CiphersuiteName.default.rawValue) }
+        let keyBytes = try await coreCrypto.perform { try await $0.clientPublicKey(ciphersuite: CiphersuiteName.default.rawValue, credentialType: .basic) }
         let keyData = Data(keyBytes)
         var keys = UserClient.MLSPublicKeys()
         keys.ed25519 = keyData.base64EncodedString()
