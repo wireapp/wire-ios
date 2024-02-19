@@ -20,7 +20,7 @@ import XCTest
 import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
-class FeatureConfigRequestStrategyTests: MessagingTestBase {
+final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Properties
 
