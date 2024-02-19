@@ -207,7 +207,7 @@ final class ConversationAvatarView: UIView {
                     $0.user = nil
                     $0.container.isOpaque = false
                     $0.container.backgroundColor = UIColor(white: 0, alpha: 0.24)
-                    $0.avatar = .none
+                    $0.avatar = .init()
                 }
 
                 $0.allowsInitials = mode.showInitials

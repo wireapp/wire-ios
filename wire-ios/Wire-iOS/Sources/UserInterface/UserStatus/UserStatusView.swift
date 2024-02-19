@@ -27,20 +27,15 @@ final class UserStatusView: TitleView {
     // MARK: - Properties
 
     private let options: Options
-    public var userStatus = UserStatus(name: "", availability: .none, isCertified: false, isVerified: false) {
-        didSet {
-            updateConfiguration()
-        }
+    public var userStatus = UserStatus() {
+        didSet { updateConfiguration() }
     }
 
     // MARK: - Initialization
 
     /// Creates a view for the specific user and options.
     /// - parameter options: The options to display the availability.
-    init(
-        options: Options,
-        userSession: UserSession
-    ) {
+    init(options: Options) {
         self.options = options
         super.init()
         updateConfiguration()
@@ -86,17 +81,16 @@ final class UserStatusView: TitleView {
 
         if options.contains(.displayUserName) {
             title = userStatus.name
-            if userStatus.isVerified {
-                let attachment = NSTextAttachment(image: Asset.Images.verifiedShield.image)
-                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
-                trailingIcons.insert(attachment, at: 0)
-            }
+            var accessibilityLabel = title
             if userStatus.isCertified {
-                let attachment = NSTextAttachment(image: Asset.Images.certificateValid.image)
-                attachment.bounds = .init(origin: .init(x: 0, y: -2), size: attachment.image!.size)
-                trailingIcons.insert(attachment, at: 0)
+                trailingIcons += [.e2eiCertifiedShield]
+                // TODO [WPB-765]: add accessibility label for the E2EI verified shield.
             }
-            accessibilityLabel = title
+            if userStatus.isVerified {
+                trailingIcons += [.proteusVerifiedShield]
+                accessibilityLabel += ", " + L10n.Accessibility.ClientsList.DeviceVerified.description
+            }
+            self.accessibilityLabel = accessibilityLabel
         } else if availability == .none && options.contains(.allowSettingStatus) {
             title = L10n.Localizable.Availability.Message.setStatus
             accessibilityLabel = title
@@ -154,5 +148,24 @@ extension UserStatusView {
 
         /// The default options for using the view in a title bar.
         static var header: Options = [.allowSettingStatus, .hideActionHint, .displayUserName, .useLargeFont]
+    }
+}
+
+extension NSTextAttachment {
+
+    fileprivate static var e2eiCertifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .certificateValid)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
+    }
+
+    fileprivate static var proteusVerifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .verifiedShield)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
     }
 }

@@ -189,5 +189,4 @@ extension ProfileDetailsViewController: ProfileDetailsContentControllerDelegate 
     func profileDetailsContentDidChange() {
         tableView.reloadData()
     }
-
 }

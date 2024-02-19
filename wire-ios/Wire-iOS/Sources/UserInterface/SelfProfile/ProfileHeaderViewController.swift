@@ -121,20 +121,23 @@ final class ProfileHeaderViewController: UIViewController {
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        self.userStatusViewController = UserStatusViewController(
-            user: user,
+        self.userStatusViewController = .init(
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
-            userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            settings: .shared
         )
 
         super.init(nibName: nil, bundle: nil)
+
+        userStatusViewController.delegate = self
+        userStatusViewController.userStatus = .init(
+            user: user,
+            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+        )
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
@@ -346,6 +349,46 @@ final class ProfileHeaderViewController: UIViewController {
             imageView.isUserInteractionEnabled = false
         }
     }
+
+    // MARK: -
+
+    /// The options to customize the appearance and behavior of the view.
+    struct Options: OptionSet {
+
+        let rawValue: Int
+
+        /// Whether to hide the username of the user.
+        static let hideUsername = Options(rawValue: 1 << 0)
+
+        /// Whether to hide the handle of the user.
+        static let hideHandle = Options(rawValue: 1 << 1)
+
+        /// Whether to hide the availability status of the user.
+        static let hideAvailability = Options(rawValue: 1 << 2)
+
+        /// Whether to hide the team name of the user.
+        static let hideTeamName = Options(rawValue: 1 << 3)
+
+        /// Whether to allow the user to change their availability.
+        static let allowEditingAvailability = Options(rawValue: 1 << 4)
+
+        /// Whether to allow the user to change their availability.
+        static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
+
+    }
+}
+
+// MARK: - UserStatusViewControllerDelegate
+
+extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
+
+    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
+        guard viewController === userStatusViewController else { return }
+
+        userSession.perform { [weak self] in
+            self?.user.availability = availability
+        }
+    }
 }
 
 // MARK: - ZMUserObserving
@@ -374,34 +417,5 @@ extension ProfileHeaderViewController: TeamObserver {
         if changeInfo.nameChanged {
             updateTeamLabel()
         }
-    }
-}
-
-// MARK: - ProfileHeaderViewController + Options
-
-extension ProfileHeaderViewController {
-
-    /// The options to customize the appearance and behavior of the view.
-    struct Options: OptionSet {
-
-        let rawValue: Int
-
-        /// Whether to hide the username of the user.
-        static let hideUsername = Options(rawValue: 1 << 0)
-
-        /// Whether to hide the handle of the user.
-        static let hideHandle = Options(rawValue: 1 << 1)
-
-        /// Whether to hide the availability status of the user.
-        static let hideAvailability = Options(rawValue: 1 << 2)
-
-        /// Whether to hide the team name of the user.
-        static let hideTeamName = Options(rawValue: 1 << 3)
-
-        /// Whether to allow the user to change their availability.
-        static let allowEditingAvailability = Options(rawValue: 1 << 4)
-
-        /// Whether to allow the user to change their availability.
-        static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
     }
 }

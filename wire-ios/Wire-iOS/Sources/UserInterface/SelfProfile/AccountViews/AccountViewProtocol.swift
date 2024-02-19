@@ -16,28 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import WireDataModel
 
-/// The status of the user, consisting of its name and availability.
-public struct UserStatus {
+protocol AccountView: BaseAccountView {
 
-    /// The name of the users.
-    var name = ""
+    var collapsed: Bool { get set }
+    var hasUnreadMessages: Bool { get }
+    var account: Account { get }
+    var onTap: (Account?) -> Void { get set }
 
-    var availability = Availability.none
-
-    /// `true` if the user has a valid certificate (MLS), `false` otherwise.
-    var isCertified = false
-
-    /// `true` if the user has been verified (Proteus), `false` otherwise.
-    var isVerified = false
-
-    public init(name: String, availability: Availability, isCertified: Bool, isVerified: Bool) {
-        self.name = name
-        self.availability = availability
-        self.isCertified = isCertified
-        self.isVerified = isVerified
-    }
-
-    public init() {}
+    func createDotConstraints() -> [NSLayoutConstraint]
+    func update()
 }
