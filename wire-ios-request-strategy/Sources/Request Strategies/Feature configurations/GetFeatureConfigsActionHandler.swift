@@ -52,8 +52,10 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             }
 
             do {
-                let payload = try JSONDecoder.defaultDecoder.decode(FeatureConfigsPayload.self, from: data)
-                processPayload(payload)
+                let featureRepository = FeatureRepository(context: context)
+
+                let payloadProcessor = FeatureConfigsPayloadProcessor()
+                try payloadProcessor.processPayloadData(data, featureRepository: featureRepository)
 
                 action.succeed()
 
@@ -72,96 +74,6 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
 
         case let (status, label):
             action.fail(with: .unknown(status: status, label: label ?? ""))
-        }
-    }
-
-    private func processPayload(_ payload: FeatureConfigsPayload) {
-        let featureRepository = FeatureRepository(context: context)
-
-        if let appLock = payload.appLock {
-            featureRepository.storeAppLock(
-                Feature.AppLock(
-                    status: appLock.status,
-                    config: appLock.config
-                )
-            )
-        }
-
-        if let classifiedDomains = payload.classifiedDomains {
-            featureRepository.storeClassifiedDomains(
-                Feature.ClassifiedDomains(
-                    status: classifiedDomains.status,
-                    config: classifiedDomains.config
-                )
-            )
-        }
-
-        if let conferenceCalling = payload.conferenceCalling {
-            featureRepository.storeConferenceCalling(
-                Feature.ConferenceCalling(
-                    status: conferenceCalling.status
-                )
-            )
-        }
-
-        if let conversationGuestLinks = payload.conversationGuestLinks {
-            featureRepository.storeConversationGuestLinks(
-                Feature.ConversationGuestLinks(
-                    status: conversationGuestLinks.status
-                )
-            )
-        }
-
-        if let digitalSignatures = payload.digitalSignatures {
-            featureRepository.storeDigitalSignature(
-                Feature.DigitalSignature(
-                    status: digitalSignatures.status
-                )
-            )
-        }
-
-        if let fileSharing = payload.fileSharing {
-            featureRepository.storeFileSharing(
-                Feature.FileSharing(
-                    status: fileSharing.status
-                )
-            )
-        }
-
-        if let mls = payload.mls {
-            featureRepository.storeMLS(
-                Feature.MLS(
-                    status: mls.status,
-                    config: mls.config
-                )
-            )
-        }
-
-        if let mlsMigration = payload.mlsMigration {
-            featureRepository.storeMLSMigration(
-                Feature.MLSMigration(
-                    status: mlsMigration.status,
-                    config: mlsMigration.config
-                )
-            )
-        }
-
-        if let selfDeletingMessages = payload.selfDeletingMessages {
-            featureRepository.storeSelfDeletingMessages(
-                Feature.SelfDeletingMessages(
-                    status: selfDeletingMessages.status,
-                    config: selfDeletingMessages.config
-                )
-            )
-        }
-
-        if let mlsMigration = payload.mlsMigration {
-            featureRepository.storeMLSMigration(
-                Feature.MLSMigration(
-                    status: mlsMigration.status,
-                    config: mlsMigration.config
-                )
-            )
         }
     }
 }
