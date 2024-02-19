@@ -58,7 +58,9 @@ final class ProfileTitleView: UIView {
     }
 
     private func createConstraints() {
-        [titleLabel, verifiedImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        verifiedImageView.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
           titleLabel.topAnchor.constraint(equalTo: topAnchor),
           titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -76,9 +78,16 @@ final class ProfileTitleView: UIView {
             return
         }
 
-        let attributedTitle = user.nameIncludingAvailability(color: LabelColors.textDefault,
-                                                             selfUser: selfUser)
-        titleLabel.attributedText = attributedTitle
+        let userStatus = UserStatus(
+            user: user,
+            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+        )
+        titleLabel.attributedText = userStatus.title(
+            color: LabelColors.textDefault,
+            includeAvailability: selfUser.isTeamMember,
+            includeVerificationStatus: false,
+            appendYouSuffix: false
+        )
         setupAccessibility()
     }
 
@@ -96,5 +105,4 @@ final class ProfileTitleView: UIView {
         accessibilityTraits = .header
         accessibilityLabel = titleLabel.text
     }
-
 }
