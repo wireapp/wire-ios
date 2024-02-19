@@ -133,7 +133,7 @@ final class EmptySearchResultsView: UIView {
 
     weak var delegate: EmptySearchResultsViewDelegate?
 
-    // MARK: View Lifecycle
+    // MARK: Init
 
     init(
         isSelfUserAdmin: Bool,
