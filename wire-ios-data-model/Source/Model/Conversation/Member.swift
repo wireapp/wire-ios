@@ -61,11 +61,9 @@
         precondition(context.zm_isSyncContext)
 
         if let existing = user.membership {
-            existing.team = team
             return existing
         }
         else if let userId = user.remoteIdentifier, let existing = Member.fetch(with: userId, in: context) {
-            existing.team = team
             return existing
         }
 
