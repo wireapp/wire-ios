@@ -125,19 +125,6 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
         return result
     }
 
-    enum ProteusToMLSMigrationState: String, CustomStringConvertible {
-
-        case disabled
-        case notStarted
-        case ongoing
-        case finalised
-
-        var description: String {
-            return rawValue
-        }
-
-    }
-
     private func currentMigrationState() -> ProteusToMLSMigrationState {
         let mlsMigration = featureRepository.fetchMLSMigration()
 
