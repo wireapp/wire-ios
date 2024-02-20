@@ -484,6 +484,9 @@ class MockE2eIService: E2eIServiceInterface {
         return Data()
     }
 
+    func createNewClient(certificateChain: String) async throws {
+    }
+
     var mockE2eIdentity: MockE2eiEnrollment?
     var e2eIdentity: E2eiEnrollmentProtocol {
         guard let mock = mockE2eIdentity else {
