@@ -16,47 +16,62 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
-@testable import WireSyncEngine
 import WireDataModelSupport
+@testable import WireSyncEngine
 
-final class SupportedProtocolsServiceTests: MessagingTest {
+final class SupportedProtocolsServiceTests: XCTestCase {
 
-    var featureRepository: MockFeatureRepositoryInterface!
-    var userRepository: MockUserRepositoryInterface!
-    var sut: SupportedProtocolsService!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var mockCoreDataStack: CoreDataStack!
+
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockUserRepository: MockUserRepositoryInterface!
+
+    private var sut: SupportedProtocolsService!
+
+    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
     // MARK: - Life cycle
 
-    override func setUp() {
-        super.setUp()
-        featureRepository = MockFeatureRepositoryInterface()
-        userRepository = MockUserRepositoryInterface()
+    override func setUp() async throws {
+        try await super.setUp()
+
+        coreDataStackHelper = CoreDataStackHelper()
+        mockCoreDataStack = try await coreDataStackHelper.createStack()
+
+        mockFeatureRepository = MockFeatureRepositoryInterface()
+        mockUserRepository = MockUserRepositoryInterface()
+
         sut = SupportedProtocolsService(
-            featureRepository: featureRepository,
-            userRepository: userRepository
+            featureRepository: mockFeatureRepository,
+            userRepository: mockUserRepository
         )
     }
 
-    override func tearDown() {
-        featureRepository = nil
-        userRepository = nil
+    override func tearDown() async throws {
         sut = nil
-        super.tearDown()
+        mockFeatureRepository = nil
+        mockUserRepository = nil
+        mockCoreDataStack = nil
+
+        try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
+
+        try await super.tearDown()
     }
 
     // MARK: - Mock
 
     private func mock(allActiveMLSClients: Bool) throws {
-        let selfUser = createSelfUser()
-        userRepository.selfUser_MockValue = selfUser
+        let selfUser = createSelfUser(in: syncContext)
+        mockUserRepository.selfUser_MockValue = selfUser
 
-        let selfClient = createSelfClient()
+        let selfClient = createSelfClient(in: syncContext)
         selfClient.lastActiveDate = Date(timeIntervalSinceNow: -.oneDay)
         selfClient.mlsPublicKeys = randomMLSPublicKeys()
 
-        let otherClient = createClient(for: selfUser)
+        let otherClient = createClient(for: selfUser, in: syncContext)
         let validLastActiveDate = Date(timeIntervalSinceNow: -.oneHour)
         let invalidLastActiveDate = Date(timeIntervalSinceNow: -.fourWeeks - .oneHour)
         let validMLSPublicKeys = randomMLSPublicKeys()
@@ -82,31 +97,22 @@ final class SupportedProtocolsServiceTests: MessagingTest {
     }
 
     private func mock(remoteSupportedProtocols: Set<Feature.MLS.Config.MessageProtocol>) {
-        featureRepository.fetchMLS_MockValue = .init(
+        mockFeatureRepository.fetchMLS_MockValue = .init(
             status: .enabled,
             config: Feature.MLS.Config(supportedProtocols: remoteSupportedProtocols)
         )
     }
 
-    enum MigrationState {
-
-        case disabled
-        case notStarted
-        case ongoing
-        case finalised
-
-    }
-
     private func mock(migrationState: MigrationState) {
         switch migrationState {
         case .disabled:
-            featureRepository.fetchMLSMigration_MockValue = .init(
+            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
                 status: .disabled,
                 config: .init()
             )
 
         case .notStarted:
-            featureRepository.fetchMLSMigration_MockValue = .init(
+            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
                 status: .enabled,
                 config: .init(
                     startTime: Date(timeIntervalSinceNow: .oneDay),
@@ -115,7 +121,7 @@ final class SupportedProtocolsServiceTests: MessagingTest {
             )
 
         case .ongoing:
-            featureRepository.fetchMLSMigration_MockValue = .init(
+            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
                 status: .enabled,
                 config: .init(
                     startTime: Date(timeIntervalSinceNow: -.oneDay),
@@ -124,7 +130,7 @@ final class SupportedProtocolsServiceTests: MessagingTest {
             )
 
         case .finalised:
-            featureRepository.fetchMLSMigration_MockValue = .init(
+            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
                 status: .enabled,
                 config: .init(
                     startTime: Date(timeIntervalSinceNow: -.fourWeeks),
@@ -134,10 +140,34 @@ final class SupportedProtocolsServiceTests: MessagingTest {
         }
     }
 
+    private func createSelfUser(in context: NSManagedObjectContext) -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = UUID()
+
+        return selfUser
+    }
+
+    private func createClient(for user: ZMUser, in context: NSManagedObjectContext) -> UserClient {
+        let client = UserClient.insertNewObject(in: context)
+        client.user = user
+        client.remoteIdentifier = UUID().uuidString
+
+        return client
+    }
+
+    private func createSelfClient(in context: NSManagedObjectContext) -> UserClient {
+        let selfUser = createSelfUser(in: context)
+        let client = createClient(for: selfUser, in: context)
+
+        context.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
+
+        return client
+    }
+
     // MARK: - Tests
 
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteus() throws {
-        try syncMOC.performAndWait {
+        try syncContext.performAndWait {
             // Given
             try mock(allActiveMLSClients: true)
             mock(remoteSupportedProtocols: [.proteus])
@@ -158,7 +188,7 @@ final class SupportedProtocolsServiceTests: MessagingTest {
     }
 
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteusAndMLS() throws {
-        try syncMOC.performAndWait {
+        try syncContext.performAndWait {
             // Given
             try mock(allActiveMLSClients: true)
             mock(remoteSupportedProtocols: [.proteus, .mls])
@@ -179,7 +209,7 @@ final class SupportedProtocolsServiceTests: MessagingTest {
     }
 
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteMLS() throws {
-        try syncMOC.performAndWait {
+        try syncContext.performAndWait {
             // Given
             try mock(allActiveMLSClients: true)
             mock(remoteSupportedProtocols: [.mls])
@@ -200,7 +230,7 @@ final class SupportedProtocolsServiceTests: MessagingTest {
     }
 
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteProteus() throws {
-        try syncMOC.performAndWait {
+        try syncContext.performAndWait {
             // Given
             try mock(allActiveMLSClients: false)
             mock(remoteSupportedProtocols: [.proteus])
@@ -221,7 +251,7 @@ final class SupportedProtocolsServiceTests: MessagingTest {
     }
 
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteProteusAndMLS() throws {
-        try syncMOC.performAndWait {
+        try syncContext.performAndWait {
             // Given
             try mock(allActiveMLSClients: false)
             mock(remoteSupportedProtocols: [.proteus, .mls])
@@ -242,7 +272,7 @@ final class SupportedProtocolsServiceTests: MessagingTest {
     }
 
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteMLS() throws {
-        try syncMOC.performAndWait {
+        try syncContext.performAndWait {
             // Given
             try mock(allActiveMLSClients: false)
             mock(remoteSupportedProtocols: [.mls])
@@ -261,5 +291,15 @@ final class SupportedProtocolsServiceTests: MessagingTest {
             XCTAssertEqual(sut.calculateSupportedProtocols(), [.mls])
         }
     }
+}
+
+// MARK: - MigrationState
+
+private enum MigrationState {
+
+    case disabled
+    case notStarted
+    case ongoing
+    case finalised
 
 }
