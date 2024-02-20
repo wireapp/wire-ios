@@ -915,7 +915,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let context = userSession.syncContext
         context.perform {
             if context.readAndResetSlowSyncFlag() {
-                userSession.syncStatus?.forceSlowSync()
+                userSession.syncStatus.forceSlowSync()
             }
         }
     }
