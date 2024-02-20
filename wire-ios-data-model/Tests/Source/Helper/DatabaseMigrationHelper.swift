@@ -65,8 +65,6 @@ struct DatabaseMigrationHelper {
 
     // MARK: - Migration
 
-    typealias MigrationAction = (NSManagedObjectContext) throws -> Void
-
     func migrateStore(
         sourceVersion: String,
         destinationVersion: String,
@@ -222,7 +220,7 @@ struct DatabaseMigrationHelper {
         if let stack {
             try postMigrationAction(stack.syncContext)
         }
-        
+
         // remove complete stack before removing files
         stack = nil
         try? FileManager.default.removeItem(at: applicationContainer)
