@@ -23,6 +23,8 @@ public protocol E2eISetupServiceInterface {
 
     func registerTrustAnchor(_ trustAnchor: String) async throws
 
+    func registerFederationCertificate(_ certificate: String) async throws
+
     func setupEnrollment(
         clientID: E2eIClientID,
         userName: String,
@@ -56,6 +58,12 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     public func registerTrustAnchor(_ trustAnchor: String) async throws {
         try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
             try await coreCrypto.e2eiRegisterAcmeCa(trustAnchorPem: trustAnchor)
+        }
+    }
+
+    public func registerFederationCertificate(_ certificate: String) async throws {
+        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
+            _ = try await coreCrypto.e2eiRegisterIntermediateCa(certPem: certificate)
         }
     }
 
