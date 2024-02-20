@@ -40,7 +40,7 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
 
     func testThatItPerformsMigrationFrom110Version_ToCurrentModelVersion() throws {
         let initialVersion = "2.110.0"
-        
+
         try helper.migrateStoreToCurrentVersion(
             sourceVersion: initialVersion,
             preMigrationAction: { context in
@@ -99,4 +99,3 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
     }
 
 }
-
