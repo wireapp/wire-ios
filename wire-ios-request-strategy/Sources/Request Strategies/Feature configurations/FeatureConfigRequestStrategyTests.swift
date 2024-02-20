@@ -20,7 +20,7 @@ import XCTest
 import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
-class FeatureConfigRequestStrategyTests: MessagingTestBase {
+final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Properties
 
@@ -37,7 +37,8 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
         sut = FeatureConfigRequestStrategy(
             withManagedObjectContext: syncMOC,
-            applicationStatus: mockApplicationStatus
+            applicationStatus: mockApplicationStatus,
+            syncProgress: MockSyncProgress()
         )
 
         featureRepository = .init(context: syncMOC)

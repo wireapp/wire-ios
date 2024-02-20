@@ -69,19 +69,8 @@ final class SyncStatusTests: MessagingTest {
 
     func testThatItGoesThroughTheStatesInSpecificOrder() {
         // given
-        let syncPhases: [SyncPhase] = [
-            .fetchingLastUpdateEventID,
-            .fetchingTeams,
-            .fetchingTeamRoles,
-            .fetchingConnections,
-            .fetchingConversations,
-            .fetchingUsers,
-            .fetchingSelfUser,
-            .fetchingLegalHoldStatus,
-            .fetchingLabels,
-            .evaluate1on1ConversationsForMLS,
-            .fetchingMissedEvents
-        ]
+        var syncPhases = SyncPhase.allCases
+        syncPhases.removeLast() // last phase is '.done' and can not be finished
 
         sut.determineInitialSyncPhase()
 
@@ -140,6 +129,8 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
         // when
         sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
 
@@ -226,6 +217,8 @@ final class SyncStatusTests: MessagingTest {
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
         // when
+        sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
         sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
@@ -287,10 +280,7 @@ final class SyncStatusTests: MessagingTest {
 
     }
 
-}
-
-// MARK: QuickSync
-extension SyncStatusTests {
+    // MARK: - QuickSync
 
     func testThatItStartsQuickSyncWhenPushChannelOpens_PreviousPhaseDone() {
         // given
@@ -492,6 +482,9 @@ extension SyncStatusTests {
         // when
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLabels)
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingFeatureConfig)
+        sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
         // when
         XCTAssertEqual(sut.currentSyncPhase, .evaluate1on1ConversationsForMLS)
         sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
