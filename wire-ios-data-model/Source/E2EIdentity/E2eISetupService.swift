@@ -25,6 +25,14 @@ public protocol E2eISetupServiceInterface {
 
     func registerFederationCertificate(_ certificate: String) async throws
 
+    /// Setup enrollment for a client
+    ///
+    /// - parameter clientID: qualifed client ID.
+    /// - parameter userName: fullname of the user owning the client.
+    /// - parameter handle: handle of the user owning the client.
+    /// - parameter teamId: team ID of the team the user belongs to.
+    /// - parameter isUpgradingClient: `true` if we are upgrading an already existing MLS client, `false` is we are registering a new MLS client.
+
     func setupEnrollment(
         clientID: E2eIClientID,
         userName: String,
