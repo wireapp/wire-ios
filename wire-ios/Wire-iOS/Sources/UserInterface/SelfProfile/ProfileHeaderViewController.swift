@@ -108,7 +108,6 @@ final class ProfileHeaderViewController: UIViewController {
     private var userObserver: NSObjectProtocol?
     private var teamObserver: NSObjectProtocol?
 
-    ///
     /// Creates a profile view for the specified user and options.
     /// - parameter user: The user to display the profile of.
     /// - parameter conversation: The conversation.
@@ -126,10 +125,7 @@ final class ProfileHeaderViewController: UIViewController {
         isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
-        userStatus = .init(
-            user: user,
-            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-        )
+        userStatus = .init(user: user, isCertified: false)
         self.user = user
         self.userSession = userSession
         self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
@@ -138,7 +134,7 @@ final class ProfileHeaderViewController: UIViewController {
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        self.userStatusViewController = .init(
+        userStatusViewController = .init(
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             settings: .shared
         )

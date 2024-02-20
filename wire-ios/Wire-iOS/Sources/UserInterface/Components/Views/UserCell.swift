@@ -398,18 +398,16 @@ extension UserCell {
     }
 
     /// Updates the cell with the information in the user instance.
+    @available(*, deprecated, message: "Use `configure(userStatus:userIsSelfUser:isSelfUserPartOfATeam:subtitle:conversation:) instead!")
     func configure(
         user: UserType,
-        isCertified: Bool,
+        isCertified: Bool = false, // Just use `false` when the verification status is not needed
         isSelfUserPartOfATeam: Bool,
         subtitle overrideSubtitle: NSAttributedString? = nil,
         conversation: GroupDetailsConversationType? = nil
     ) {
         configure(
-            userStatus: .init(
-                user: user,
-                isCertified: isCertified
-            ),
+            userStatus: .init(user: user, isCertified: isCertified),
             user: user,
             userIsSelfUser: user.isSelfUser,
             isSelfUserPartOfATeam: isSelfUserPartOfATeam,

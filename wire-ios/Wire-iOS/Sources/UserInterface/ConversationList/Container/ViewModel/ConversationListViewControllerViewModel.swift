@@ -26,6 +26,11 @@ typealias ResultHandler = (_ succeeded: Bool) -> Void
 
 protocol ConversationListContainerViewModelDelegate: AnyObject {
 
+    func conversationListViewControllerViewModel(
+        _ viewModel: ConversationListViewController.ViewModel,
+        didUpdate selfUserStatus: UserStatus
+    )
+
     func scrollViewDidScroll(scrollView: UIScrollView!)
 
     func setState(_ state: ConversationListState,
@@ -42,8 +47,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
 }
 
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {}
-
 extension ConversationListViewController {
     final class ViewModel: NSObject {
         weak var viewController: ConversationListContainerViewModelDelegate? {
@@ -57,6 +60,11 @@ extension ConversationListViewController {
         }
 
         let account: Account
+
+        private(set) var selfUserStatus: UserStatus {
+            didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
+        }
+
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
@@ -67,9 +75,10 @@ extension ConversationListViewController {
         var selectedConversation: ZMConversation?
 
         private var initialSyncObserverToken: Any?
+        private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
-        var allConversationsObserverToken: Any?
-        var connectionRequestsObserverToken: Any?
+        var allConversationsObserverToken: NSObjectProtocol?
+        var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
 
@@ -85,6 +94,9 @@ extension ConversationListViewController {
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
+
+            selfUserStatus = .init(user: selfUser, isCertified: false)
+            // TODO [WPB-765]: use usecase to get verification info
             self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         }
@@ -92,9 +104,12 @@ extension ConversationListViewController {
 }
 
 extension ConversationListViewController.ViewModel {
+
     func setupObservers() {
+
         if let userSession = ZMUserSession.shared() {
             initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
+            userObservationToken = userSession.addUserObserver(self, for: selfUser)
         }
 
         updateObserverTokensForActiveTeam()
@@ -183,7 +198,22 @@ extension ConversationListViewController.ViewModel {
 
 }
 
+extension ConversationListViewController.ViewModel: UserObserving {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+
+        if changeInfo.nameChanged {
+            selfUserStatus.name = changeInfo.user.name ?? ""
+        }
+
+        if changeInfo.availabilityChanged {
+            selfUserStatus.availability = changeInfo.user.availability
+        }
+    }
+}
+
 extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObserver {
+
     func initialSyncCompleted() {
         requestMarketingConsentIfNeeded()
     }

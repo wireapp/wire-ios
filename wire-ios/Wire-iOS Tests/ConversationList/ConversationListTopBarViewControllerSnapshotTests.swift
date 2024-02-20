@@ -47,16 +47,10 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
     }
 
     func setupSut() {
-        let isSelfUserProteusVerifiedUseCase = MockIsSelfUserProteusVerifiedUseCaseProtocol()
-        isSelfUserProteusVerifiedUseCase.invoke_MockValue = false
-        let isSelfUserE2EICertifiedUseCase = MockIsSelfUserE2EICertifiedUseCaseProtocol()
-        isSelfUserE2EICertifiedUseCase.invoke_MockValue = false
         sut = ConversationListTopBarViewController(
             account: mockAccount,
             selfUser: mockSelfUser,
-            userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            userSession: userSession
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
         sut.view.backgroundColor = .black
