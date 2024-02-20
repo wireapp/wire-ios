@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
 extension NSTextAttachment {
-    static func textAttachment(for icon: StyleKitIcon,
-                               with color: UIColor,
-                               iconSize: StyleKitIcon.Size = 10,
-                               verticalCorrection: CGFloat = 0,
-                               insets: UIEdgeInsets? = nil) -> NSTextAttachment {
+
+    convenience init(imageResource: ImageResource) {
+        self.init(image: .init(resource: imageResource))
+    }
+
+    static func textAttachment(
+        for icon: StyleKitIcon,
+        with color: UIColor,
+        iconSize: StyleKitIcon.Size = 10,
+        verticalCorrection: CGFloat = 0,
+        insets: UIEdgeInsets? = nil
+    ) -> NSTextAttachment {
+
         let image: UIImage
         if let insets = insets {
             image = icon.makeImage(size: iconSize, color: color).with(insets: insets, backgroundColor: .clear)!

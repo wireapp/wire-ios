@@ -23,7 +23,8 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
     case notActivated, revoked, expired, invalid, valid
 }
 
-public struct E2eIdentityCertificate: Equatable {
+@objc public class E2eIdentityCertificate: NSObject {
+
     public var clientId: String
     public var details: String
     public var mlsThumbprint: String
@@ -59,4 +60,5 @@ public struct E2eIdentityCertificate: Equatable {
             self.now = now
         }
     }
+
 }

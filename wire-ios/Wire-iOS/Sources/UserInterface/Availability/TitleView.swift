@@ -106,7 +106,9 @@ class TitleView: UIView, DynamicTypeCapable {
 }
 
 // MARK: NSTextAttachment Extension
+
 extension NSTextAttachment {
+
     static func downArrow(color: UIColor, size: StyleKitIcon.Size = .nano) -> NSTextAttachment {
         let attachment = NSTextAttachment()
         attachment.image = StyleKitIcon.downArrow.makeImage(
