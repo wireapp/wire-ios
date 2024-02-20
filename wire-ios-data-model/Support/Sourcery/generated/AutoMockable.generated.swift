@@ -284,24 +284,24 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - clientPublicKey
 
-    public var clientPublicKeyCiphersuite_Invocations: [WireCoreCrypto.Ciphersuite] = []
-    public var clientPublicKeyCiphersuite_MockError: Error?
-    public var clientPublicKeyCiphersuite_MockMethod: ((WireCoreCrypto.Ciphersuite) async throws -> Data)?
-    public var clientPublicKeyCiphersuite_MockValue: Data?
+    public var clientPublicKeyCiphersuiteCredentialType_Invocations: [(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType)] = []
+    public var clientPublicKeyCiphersuiteCredentialType_MockError: Error?
+    public var clientPublicKeyCiphersuiteCredentialType_MockMethod: ((WireCoreCrypto.Ciphersuite, WireCoreCrypto.MlsCredentialType) async throws -> Data)?
+    public var clientPublicKeyCiphersuiteCredentialType_MockValue: Data?
 
-    public func clientPublicKey(ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> Data {
-        clientPublicKeyCiphersuite_Invocations.append(ciphersuite)
+    public func clientPublicKey(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> Data {
+        clientPublicKeyCiphersuiteCredentialType_Invocations.append((ciphersuite: ciphersuite, credentialType: credentialType))
 
-        if let error = clientPublicKeyCiphersuite_MockError {
+        if let error = clientPublicKeyCiphersuiteCredentialType_MockError {
             throw error
         }
 
-        if let mock = clientPublicKeyCiphersuite_MockMethod {
-            return try await mock(ciphersuite)
-        } else if let mock = clientPublicKeyCiphersuite_MockValue {
+        if let mock = clientPublicKeyCiphersuiteCredentialType_MockMethod {
+            return try await mock(ciphersuite, credentialType)
+        } else if let mock = clientPublicKeyCiphersuiteCredentialType_MockValue {
             return mock
         } else {
-            fatalError("no mock for `clientPublicKeyCiphersuite`")
+            fatalError("no mock for `clientPublicKeyCiphersuiteCredentialType`")
         }
     }
 
@@ -863,6 +863,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `getDeviceIdentitiesConversationIdDeviceIds`")
+        }
+    }
+
+    // MARK: - getExternalSender
+
+    public var getExternalSenderConversationId_Invocations: [Data] = []
+    public var getExternalSenderConversationId_MockError: Error?
+    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
+    public var getExternalSenderConversationId_MockValue: Data?
+
+    public func getExternalSender(conversationId: Data) async throws -> Data {
+        getExternalSenderConversationId_Invocations.append(conversationId)
+
+        if let error = getExternalSenderConversationId_MockError {
+            throw error
+        }
+
+        if let mock = getExternalSenderConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = getExternalSenderConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getExternalSenderConversationId`")
         }
     }
 

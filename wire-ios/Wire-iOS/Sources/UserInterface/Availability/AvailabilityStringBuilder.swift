@@ -16,24 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import WireDataModel
 import WireCommonComponents
 
-final class AvailabilityStringBuilder: NSObject {
+enum AvailabilityStringBuilder {
 
-    static func string(for user: UserType, with style: AvailabilityLabelStyle, color: UIColor? = nil) -> NSAttributedString? {
+    static func titleForUser(
+        name: String,
+        availability: Availability,
+        isCertified: Bool,
+        isVerified: Bool,
+        style: AvailabilityLabelStyle,
+        color: UIColor? = nil
+    ) -> NSAttributedString? {
 
         let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
-        var title: String = ""
+        var title: String
         var color = color
         var iconColor = color
-        let availability = user.availability
         var fontSize: FontSize = .small
 
         switch style {
         case .list:
             do {
-                if let name = user.name, !name.isEmpty {
+                if !name.isEmpty {
                     title = name
                 } else {
                     title = fallbackTitle
@@ -49,19 +56,21 @@ final class AvailabilityStringBuilder: NSObject {
             }
         case .participants:
             do {
-                title = (user.name ?? "").localizedUppercase
+                title = name.localizedUppercase
                 color = SemanticColors.Label.textDefault
                 iconColor = self.color(for: availability)
             }
         }
 
-        guard let textColor = color,
-              let iconColor = iconColor else { return nil }
+        guard let textColor = color, let iconColor = iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         let attributedText = IconStringsBuilder.iconString(
             leadingIcons: [icon].compactMap(\.self),
             title: title,
-            trailingIcons: [],
+            trailingIcons: [
+                isCertified ? e2eiCertifiedShield : nil,
+                isVerified ? proteusVerifiedShield : nil
+            ].compactMap { $0 },
             interactive: false,
             color: textColor
         )
@@ -97,5 +106,21 @@ final class AvailabilityStringBuilder: NSObject {
         case .away:
             return IconColors.foregroundAvailabilityAway
         }
+    }
+
+    private static var e2eiCertifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .certificateValid)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
+    }
+
+    private static var proteusVerifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .verifiedShield)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
     }
 }
