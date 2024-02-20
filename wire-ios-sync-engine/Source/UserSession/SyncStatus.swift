@@ -125,7 +125,7 @@ extension Notification.Name {
        // Set the status.
        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
        self.log("resyncResources")
-       syncStateDelegate.didStartSlowSync()
+       syncStateDelegate?.didStartSlowSync()
    }
 
     public func performQuickSync() async {
