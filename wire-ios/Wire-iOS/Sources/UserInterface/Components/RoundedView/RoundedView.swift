@@ -43,5 +43,4 @@ class RoundedView: UIView, RoundedViewProtocol {
     func setRoundedCorners(_ corners: UIRectCorner) {
         roundedCorners = corners
     }
-
 }

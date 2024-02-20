@@ -92,11 +92,11 @@ extension NSDictionary {
     }
 
     @objc public func uuid(forKey key: String) -> UUID? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) {UUID(uuidString: $0)}
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
     }
 
     @objc public func optionalUuid(forKey key: String) -> UUID? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) {UUID(uuidString: $0)}
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
     }
 
     @objc

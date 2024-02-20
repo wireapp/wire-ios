@@ -150,16 +150,16 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(team.roles.count, 2)
-            guard let adminRole = team.roles.first(where: {$0.name == "superuser" }),
-                let memberRole = team.roles.first(where: {$0.name == "weakling"}) else {
+            guard let adminRole = team.roles.first(where: { $0.name == "superuser" }),
+                let memberRole = team.roles.first(where: { $0.name == "weakling" }) else {
                     return XCTFail()
             }
             XCTAssertEqual(
-                Set(adminRole.actions.compactMap { $0.name}),
+                Set(adminRole.actions.compactMap { $0.name }),
                 Set(["leave_conversation", "delete_conversation"])
             )
             XCTAssertEqual(
-                Set(memberRole.actions.compactMap { $0.name}),
+                Set(memberRole.actions.compactMap { $0.name }),
                 Set(["leave_conversation"])
             )
             XCTAssertFalse(team.needsToDownloadRoles)
