@@ -18,7 +18,7 @@
 
 import Foundation
 
-// Up until model version 2.112, a user was related to their one on one
+// Up until model version 2.113, a user was related to their one on one
 // conversation via the `connection` relationship, ie `user.connection.conversation`
 // and inversely `conversation.connection.to`.
 
