@@ -43,7 +43,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
 
     var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
-            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+            try await coreCryptoProvider.coreCrypto()
         }
     }
     // MARK: - Message encryption

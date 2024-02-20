@@ -27,7 +27,6 @@
 #import "ZMSyncStrategy+Internal.h"
 #import "ZMSyncStrategy+ManagedObjectChanges.h"
 #import "WireSyncEngineLogs.h"
-#import "ZMClientRegistrationStatus.h"
 #import "ZMHotFix.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
@@ -42,7 +41,7 @@
 @property (nonatomic) ZMChangeTrackerBootstrap *changeTrackerBootStrap;
 @property (nonatomic) id<StrategyDirectoryProtocol> strategyDirectory;
 
-@property (nonatomic, weak) ApplicationStatusDirectory *applicationStatusDirectory;
+@property (nonatomic) OperationStatus *operationStatus;
 
 @property (atomic) BOOL tornDown;
 @property (nonatomic) BOOL contextMergingDisabled;
@@ -55,9 +54,6 @@
 @interface ZMSyncStrategy (Registration) <ZMClientRegistrationStatusDelegate>
 @end
 
-@interface ZMClientRegistrationStatus (Protocol) <ClientRegistrationDelegate>
-@end
-
 
 @implementation ZMSyncStrategy
 
@@ -66,7 +62,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (instancetype)initWithContextProvider:(id<ContextProvider>)contextProvider
                 notificationsDispatcher:(NotificationDispatcher *)notificationsDispatcher
-             applicationStatusDirectory:(ApplicationStatusDirectory *)applicationStatusDirectory
+                        operationStatus:(OperationStatus *)operationStatus
                             application:(id<ZMApplication>)application
                       strategyDirectory:(id<StrategyDirectoryProtocol>)strategyDirectory
                  eventProcessingTracker:(id<EventProcessingTrackerProtocol>)eventProcessingTracker
@@ -77,7 +73,7 @@ ZM_EMPTY_ASSERTING_INIT()
         self.application = application;
         self.syncMOC = contextProvider.syncContext;
         self.uiMOC = contextProvider.viewContext;
-        self.applicationStatusDirectory = applicationStatusDirectory;
+        self.operationStatus = operationStatus;
         self.strategyDirectory = strategyDirectory;
         self.eventProcessingTracker = eventProcessingTracker;
         self.changeTrackerBootStrap = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.syncMOC changeTrackers:self.strategyDirectory.contextChangeTrackers];
@@ -98,7 +94,7 @@ ZM_EMPTY_ASSERTING_INIT()
     BackgroundActivity *activity = [BackgroundActivityFactory.sharedFactory startBackgroundActivityWithName:@"enter background"];
     [self.notificationDispatcher applicationDidEnterBackground];
     [self.syncMOC performGroupedBlock:^{
-        self.applicationStatusDirectory.operationStatus.isInBackground = YES;
+        self.operationStatus.isInBackground = YES;
         [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
 
         if (activity) {
@@ -113,7 +109,7 @@ ZM_EMPTY_ASSERTING_INIT()
     BackgroundActivity *activity = [BackgroundActivityFactory.sharedFactory startBackgroundActivityWithName:@"enter foreground"];
     [self.notificationDispatcher applicationWillEnterForeground];
     [self.syncMOC performGroupedBlock:^{
-        self.applicationStatusDirectory.operationStatus.isInBackground = NO;
+        self.operationStatus.isInBackground = NO;
         [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
 
         if (activity) {
@@ -137,7 +133,7 @@ ZM_EMPTY_ASSERTING_INIT()
 - (void)tearDown
 {
     self.tornDown = YES;
-    self.applicationStatusDirectory = nil;
+    self.operationStatus = nil;
     self.changeTrackerBootStrap = nil;
     self.strategyDirectory = nil;
     [self appTerminated:nil];

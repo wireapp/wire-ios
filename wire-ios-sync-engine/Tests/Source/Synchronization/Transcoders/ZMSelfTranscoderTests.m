@@ -75,7 +75,6 @@
     
     ZMSelfStrategyPendingValidationRequestInterval = self.originalRequestInterval;
     
-    [self.realClientRegistrationStatus tearDown];
     self.realClientRegistrationStatus = nil;
     [(id)self.upstreamObjectSync stopMocking];
     self.upstreamObjectSync = nil;
