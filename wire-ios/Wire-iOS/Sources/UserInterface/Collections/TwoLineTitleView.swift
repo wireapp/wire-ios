@@ -49,8 +49,8 @@ final class TwoLineTitleView: UIView {
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 4),
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
             subtitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             subtitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
