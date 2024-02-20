@@ -84,16 +84,15 @@ extension ConversationListViewController {
             selfUser: SelfUserType,
             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
             userSession: UserSession
+            // TODO [WPB-765]: inject use case
         ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
 
-            selfUserStatus = .init(
-                user: selfUser,
-                isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-            )
+            selfUserStatus = .init(user: selfUser, isCertified: false)
+            // TODO [WPB-765]: use usecase to get verification info
         }
     }
 }

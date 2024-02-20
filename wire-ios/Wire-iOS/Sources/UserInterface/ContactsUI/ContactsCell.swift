@@ -216,10 +216,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             return
         }
 
-        let userStatus = UserStatus(
-            user: user,
-            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-        )
+        let userStatus = UserStatus(user: user, isCertified: false)
         titleLabel.attributedText = userStatus.title(
             color: LabelColors.textDefault,
             includeAvailability: selfUser.isTeamMember,
