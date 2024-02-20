@@ -132,6 +132,8 @@ final class SyncStatusTests: MessagingTest {
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
         // when
+        sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
+        // when
         sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
 
         // then
@@ -218,6 +220,8 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
         // when
         sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
         // when
@@ -485,6 +489,9 @@ final class SyncStatusTests: MessagingTest {
         // when
         XCTAssertEqual(sut.currentSyncPhase, .fetchingFeatureConfig)
         sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .updateSelfSupportedProtocols)
+        sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
         // when
         XCTAssertEqual(sut.currentSyncPhase, .evaluate1on1ConversationsForMLS)
         sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
