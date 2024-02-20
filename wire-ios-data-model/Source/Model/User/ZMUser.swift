@@ -21,6 +21,7 @@ import WireUtilities
 import WireSystem
 
 extension ZMUser: UserType {
+
     @objc
     public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.

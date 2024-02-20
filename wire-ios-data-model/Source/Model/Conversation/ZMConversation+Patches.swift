@@ -72,7 +72,7 @@ extension ZMConversation {
 
             if isSelfAnActiveMember {
                 var participantRoleForSelfUser: ParticipantRole
-                let adminRole = conversation.getRoles().first(where: {$0.name == defaultAdminRoleName})
+                let adminRole = conversation.getRoles().first(where: { $0.name == defaultAdminRoleName })
 
                 if let conversationTeam = conversation.team, conversationTeam == selfUser.team, selfUser.isTeamMember {
                     participantRoleForSelfUser = getAParticipantRole(in: moc, adminRole: adminRole, user: selfUser, conversation: conversation, team: conversationTeam)
