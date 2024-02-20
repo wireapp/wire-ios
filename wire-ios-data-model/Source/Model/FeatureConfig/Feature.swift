@@ -136,11 +136,9 @@ public class Feature: ZMManagedObject {
         fetchRequest.predicate = NSPredicate(format: "nameValue == %@", name.rawValue)
         fetchRequest.fetchLimit = 2
 
-        return context.performAndWait {
-            let results = context.fetchOrAssert(request: fetchRequest)
-            require(results.count <= 1, "More than instance for feature: \(name.rawValue)")
-            return results.first
-        }
+        let results = context.fetchOrAssert(request: fetchRequest)
+        require(results.count <= 1, "More than instance for feature: \(name.rawValue)")
+        return results.first
     }
 
     /// Update the feature instance with the given name.
