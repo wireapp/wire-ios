@@ -116,6 +116,11 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions 
 }
 
 extension DeviceInfoViewModel {
+
+    var showDebugMenu: Bool {
+        return false
+    }
+
     func onShowMyDeviceTapped() {
         conversationClientDetailsActions.showMyDevice()
     }
