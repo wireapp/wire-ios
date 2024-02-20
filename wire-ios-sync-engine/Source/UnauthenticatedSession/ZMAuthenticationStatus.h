@@ -21,18 +21,23 @@
 @import CoreData;
 
 #import "NSError+ZMUserSession.h"
-#import "ZMClientRegistrationStatus+Internal.h"
 
 @class UserInfo;
 @class ZMCredentials;
 @class ZMEmailCredentials;
 @class ZMPhoneCredentials;
 @class ZMPersistentCookieStorage;
-@class ZMClientRegistrationStatus;
 @class ZMTransportResponse;
 @protocol UserInfoParser;
+@protocol NotificationContext;
 
 FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
+
+@protocol ZMCredentialProvider <NSObject>
+
+- (void)credentialsMayBeCleared;
+- (ZMEmailCredentials *)emailCredentials;
+@end
 
 /// Invoked when the credentials are changed
 @protocol ZMAuthenticationStatusObserver <NSObject>
@@ -111,7 +116,7 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 @end
 
-@interface ZMAuthenticationStatus (CredentialProvider) <ZMCredentialProvider, NotificationContext>
+@interface ZMAuthenticationStatus (CredentialProvider) <ZMCredentialProvider>
 
 - (void)credentialsMayBeCleared;
 

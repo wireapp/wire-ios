@@ -25,7 +25,21 @@ public protocol E2eISetupServiceInterface {
 
     func registerFederationCertificate(_ certificate: String) async throws
 
-    func setupEnrollment(userName: String, handle: String, teamId: UUID) async throws -> E2eiEnrollment
+    /// Setup enrollment for a client
+    ///
+    /// - parameter clientID: qualifed client ID.
+    /// - parameter userName: fullname of the user owning the client.
+    /// - parameter handle: handle of the user owning the client.
+    /// - parameter teamId: team ID of the team the user belongs to.
+    /// - parameter isUpgradingClient: `true` if we are upgrading an already existing MLS client, `false` is we are registering a new MLS client.
+
+    func setupEnrollment(
+        clientID: E2eIClientID,
+        userName: String,
+        handle: String,
+        teamId: UUID,
+        isUpgradingClient: Bool
+    ) async throws -> E2eiEnrollment
 
 }
 
@@ -37,7 +51,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
-            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 
@@ -50,46 +64,71 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     // MARK: - Public interface
 
     public func registerTrustAnchor(_ trustAnchor: String) async throws {
-        try await coreCryptoProvider.coreCrypto(requireMLS: false).perform { coreCrypto in
+        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
             try await coreCrypto.e2eiRegisterAcmeCa(trustAnchorPem: trustAnchor)
         }
     }
 
     public func registerFederationCertificate(_ certificate: String) async throws {
-        try await coreCryptoProvider.coreCrypto(requireMLS: false).perform { coreCrypto in
-            try await coreCrypto.e2eiRegisterIntermediateCa(certPem: certificate)
+        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
+            _ = try await coreCrypto.e2eiRegisterIntermediateCa(certPem: certificate)
         }
     }
 
-    public func setupEnrollment(userName: String, handle: String, teamId: UUID) async throws -> E2eiEnrollment {
+    public func setupEnrollment(
+        clientID: E2eIClientID,
+        userName: String,
+        handle: String,
+        teamId: UUID,
+        isUpgradingClient: Bool
+    ) async throws -> E2eiEnrollment {
         do {
-            return try await setupNewActivationOrRotate(userName: userName, handle: handle, teamId: teamId)
+            return try await setupNewActivationOrRotate(
+                clientID: clientID,
+                userName: userName,
+                handle: handle,
+                teamId: teamId,
+                isUpgradingClient: isUpgradingClient
+            )
         } catch {
             throw Failure.failedToSetupE2eIClient(error)
         }
     }
 
     private func setupNewActivationOrRotate(
+        clientID: E2eIClientID,
         userName: String,
         handle: String,
-        teamId: UUID) async throws -> E2eiEnrollment {
+        teamId: UUID,
+        isUpgradingClient: Bool
+    ) async throws -> E2eiEnrollment {
             let ciphersuite = CiphersuiteName.default.rawValue
             let expirySec = UInt32(TimeInterval.oneDay * 90)
 
             return try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
-                if e2eiIsEnabled {
-                    return try await $0.e2eiNewRotateEnrollment(displayName: userName,
-                                                                handle: handle,
-                                                                team: teamId.uuidString.lowercased(),
-                                                                expirySec: expirySec,
-                                                                ciphersuite: ciphersuite)
-                } else {
-                    return try await $0.e2eiNewActivationEnrollment(displayName: userName,
+                if isUpgradingClient {
+                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
+                    if e2eiIsEnabled {
+                        return try await $0.e2eiNewRotateEnrollment(displayName: userName,
                                                                     handle: handle,
                                                                     team: teamId.uuidString.lowercased(),
                                                                     expirySec: expirySec,
                                                                     ciphersuite: ciphersuite)
+                    } else {
+                        return try await $0.e2eiNewActivationEnrollment(displayName: userName,
+                                                                        handle: handle,
+                                                                        team: teamId.uuidString.lowercased(),
+                                                                        expirySec: expirySec,
+                                                                        ciphersuite: ciphersuite)
+                    }
+                } else {
+                    return try await $0.e2eiNewEnrollment(
+                        clientId: clientID.rawValue,
+                        displayName: userName,
+                        handle: handle,
+                        team: teamId.uuidString.lowercased(),
+                        expirySec: expirySec,
+                        ciphersuite: ciphersuite)
                 }
             }
         }

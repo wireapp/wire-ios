@@ -20,12 +20,309 @@ import Foundation
 import WireSystem
 import WireDataModel
 
-private let zmLog = ZMSLog(tag: "ZMClientRegistrationStatus")
+@objc(ZMClientRegistrationPhase)
+public enum ClientRegistrationPhase: UInt {
+    /// The client is not registered - we send out a request to register the client
+    case unregistered = 0
 
-extension ZMClientRegistrationStatus {
+    /// the user is not logged in yet or has entered the wrong credentials - we don't send out any requests
+    case waitingForLogin
+
+    /// the user is logged in but is waiting to fetch the selfUser - we send out a request to fetch the selfUser
+    case waitingForSelfUser
+
+    /// the user is logged in but is waiting to fetch the fetching config
+    case waitingForFetchConfigs
+
+    // we are for the user to finish the end-to-end identity enrollment
+    case waitingForE2EIEnrollment
+
+    /// the user has too many devices registered - we send a request to fetch all devices
+    case fetchingClients
+
+    /// the user has selected a device to delete - we send a request to delete the device
+    case waitingForDeletion
+
+    /// the user has registered with phone but needs to register an email address and password to register a second device - we wait until we have emailCredentials
+    case waitingForEmailVerfication
+
+    /// the user has not yet selected a handle, which is a requirement for registering a client.
+    case waitingForHandle
+
+    /// waiting for proteus prekeys to be generated
+    case waitingForPrekeys
+
+    /// proteus prekeys are being generated
+    case generatingPrekeys
+
+    /// waiting for the MLS client to be registered
+    case registeringMLSClient
+
+    /// The client is registered
+    case registered
+}
+
+extension ClientRegistrationPhase: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .unregistered:
+            "unregistered"
+        case .waitingForLogin:
+            "waitingForLogin"
+        case .waitingForSelfUser:
+            "waitingForSelfUser"
+        case .waitingForFetchConfigs:
+            "waitingForFetchConfigs"
+        case .waitingForE2EIEnrollment:
+            "waitingForE2EIEnrollment"
+        case .fetchingClients:
+            "fetchingClients"
+        case .waitingForDeletion:
+            "waitingForDeletion"
+        case .waitingForEmailVerfication:
+            "waitingForEmailVerfication"
+        case .waitingForHandle:
+            "waitingForHandle"
+        case .waitingForPrekeys:
+            "waitingForPrekeys"
+        case .generatingPrekeys:
+            "generatingPrekeys"
+        case .registeringMLSClient:
+            "registeringMLSClient"
+        case .registered:
+            "registered"
+        }
+    }
+}
+
+@objc
+public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
+
+    @objc
+    public weak var registrationStatusDelegate: ZMClientRegistrationStatusDelegate?
+    @objc
+    public var emailCredentials: ZMEmailCredentials?
+    var prekeys: [IdPrekeyTuple]?
+    var lastResortPrekey: IdPrekeyTuple?
+
+    private let managedObjectContext: NSManagedObjectContext
+    private let cookieProvider: CookieProvider
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private var needsRefreshSelfUser: Bool = false
+    private var needsToCheckCredentials: Bool = false
+    private var needsToFetchFeatureConfigs: Bool = false
+    private var needsToVerifySelfClient: Bool = false
+    private var isWaitingForE2EIEnrollment: Bool = false
+    private var isWaitingForUserClients: Bool = false
+    private var isWaitingForMLSClientToBeRegistered: Bool = false
+    private var isWaitingForClientsToBeDeleted: Bool = false
+    private var isGeneratingPrekeys: Bool = false
+
+    private var userProfileObserverToken: Any?
+    private var clientUpdateObserverToken: Any?
+
+    public init(
+        context: NSManagedObjectContext,
+        cookieProvider: CookieProvider,
+        coreCryptoProvider: CoreCryptoProviderProtocol
+    ) {
+        self.managedObjectContext = context
+        self.cookieProvider = cookieProvider
+        self.coreCryptoProvider = coreCryptoProvider
+
+        super.init()
+
+        observeClientUpdates()
+        observeProfileUpdates()
+    }
+
+    @objc
+    public var currentPhase: ClientRegistrationPhase {
+        /*
+         The flow is as follows
+         ZMClientRegistrationPhaseWaitingForLogin
+         [We try to login / register with the given credentials]
+                    |
+         ZMClientRegistrationPhaseWaitingForSelfUser
+         [We fetch the selfUser]
+                    |
+         [User has email address,
+          and it's not the SSO user]    --> NO  --> ZMClientRegistrationPhaseWaitingForEmailVerfication
+                                                    [user adds email and password, we fetch user from BE]
+                                                --> ZMClientRegistrationPhaseUnregistered
+                                                    [Client is registered]
+                                                --> ZMClientRegistrationPhaseRegistered
+                                        --> YES --> Proceed
+         ZMClientRegistrationPhaseUnregistered
+         [We try to register the client without the password]
+                    |
+         [Request succeeds ?]           --> YES --> ZMClientRegistrationPhaseRegistered // this is the case for the first device registered
+                    |
+                    NO
+                    |
+         [User has email address?]      --> YES --> ZMClientRegistrationPhaseWaitingForLogin
+                                                    [User enters password]
+                                                --> ZMClientRegistrationPhaseUnregistered
+                                                    [User entered correct password ?] -->  YES --> Continue at [User has too many devices]
+                                                                                      -->  NO  --> ZMClientRegistrationPhaseWaitingForLogin
+
+         [User has too many deviced?]    --> YES --> ZMClientRegistrationPhaseFetchingClients
+                                                    [User selects device to delete]
+                                                --> ZMClientRegistrationPhaseWaitingForDeletion
+                                                    [BE deletes device]
+                                                --> See [NO]
+                                         --> NO --> ZMClientRegistrationPhaseUnregistered
+                                                    [Client is registered]
+                                                --> ZMClientRegistrationPhaseRegistered
+
+         [MLS client is required]        --> YES --> ZMClientRegistrationRegisteringMLSClient
+                                                     [MLS Client is registered]
+                                                 --> See [NO]
+                                                     [Client is registered]
+                                         --> NO  --> ZMClientRegistrationPhaseRegistered
+
+        */
+
+        // we only enter this state when the authentication has succeeded
+        if isWaitingForLogin {
+            return .waitingForLogin
+        }
+
+        // before registering client we need to fetch self user to know whether or not the user has registered an email address
+        if isWaitingForSelfUser || needsRefreshSelfUser {
+            return .waitingForSelfUser
+        }
+
+        // when the registration fails because the password is missing or wrong, we need to stop making requests until we have a new password
+        if needsToCheckCredentials && emailCredentials == nil {
+            return .waitingForLogin
+        }
+
+        if needsToFetchFeatureConfigs {
+            return .waitingForFetchConfigs
+        }
+
+        if isWaitingForE2EIEnrollment {
+            return .waitingForE2EIEnrollment
+        }
+
+        // when the client registration fails because there are too many clients already registered we need to fetch clients from the backend
+        if isWaitingForUserClients {
+            return .fetchingClients
+        }
+
+        // when MLS is enabled we need to register the MLS client to complete client registration
+        if isWaitingForMLSClientToBeRegistered {
+            return .registeringMLSClient
+        }
+
+        // when the user
+        if !needsToRegisterClient {
+            return .registered
+        }
+
+        // a handle is a requirement to complete client registration
+        if isAddingHandleNecessary {
+            return .waitingForHandle
+        }
+
+        // when the user has previously only registered by phone and now wants to register a second device, he needs to register his email address and password first
+        if isAddingEmailNecessary {
+            return .waitingForEmailVerfication
+        }
+
+        // when the user has too many clients registered already and selected one device to delete
+        if isWaitingForClientsToBeDeleted {
+            return .waitingForDeletion
+        }
+
+        if isGeneratingPrekeys {
+            return .generatingPrekeys
+        }
+
+        if prekeys == nil || lastResortPrekey == nil {
+            return .waitingForPrekeys
+        }
+
+        return .unregistered
+    }
+
+    public var clientIsReadyForRequests: Bool {
+        return currentPhase == .registered && !needsToRegisterMLSCLient
+    }
+
+    var isWaitingForLogin: Bool {
+        return !cookieProvider.isAuthenticated
+    }
+
+    var needsToRegisterClient: Bool {
+        return Self.needsToRegisterClient(in: managedObjectContext)
+    }
+
+    var needsToRegisterMLSCLient: Bool {
+        return Self.needsToRegisterMLSClient(in: managedObjectContext)
+    }
+
+    @objc(needsToRegisterClientInContext:)
+    public static func needsToRegisterClient(in context: NSManagedObjectContext) -> Bool {
+        // replace with selfUser.client.remoteIdentifier == nil
+        if let clientID = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String {
+            return clientID.isEmpty
+        } else {
+            return true
+        }
+    }
+
+    var isWaitingForSelfUser: Bool {
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        return selfUser.remoteIdentifier == nil
+    }
+
+    var isWaitingForSelfUserEmail: Bool {
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        return selfUser.emailAddress == nil
+    }
+
+    var isAddingEmailNecessary: Bool {
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        return !managedObjectContext.registeredOnThisDevice && isWaitingForSelfUserEmail && !selfUser.usesCompanyLogin
+    }
+
+    var isAddingHandleNecessary: Bool {
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        return selfUser.handle == nil
+    }
+
+    func determineInitialRegistrationStatus() {
+        needsToVerifySelfClient = !needsToRegisterClient
+        needsToFetchFeatureConfigs = needsToRegisterClient
+        needsRefreshSelfUser = needsToRegisterClient
+    }
+
+    func observeProfileUpdates() {
+        userProfileObserverToken = UserProfileUpdateStatus.add(observer: self, in: managedObjectContext.notificationContext)
+    }
+
+    func observeClientUpdates() {
+        clientUpdateObserverToken = ZMClientUpdateNotification.addObserver(context: managedObjectContext) { [weak self] type, clientIDs, error in
+            self?.managedObjectContext.performGroupedBlock {
+                switch type {
+                case .fetchCompleted:
+                    self?.didFetchClients(clientIDs: clientIDs)
+                case .deletionCompleted:
+                    self?.didDeleteClient()
+                case .deletionFailed:
+                    self?.failedDeletingClient(error: error)
+                case .fetchFailed:
+                    self?.failedFetchingClients(error: error)
+                }
+            }
+        }
+    }
+
     @objc(didFailToRegisterClient:)
     public func didFail(toRegisterClient error: NSError) {
-        zmLog.debug(#function)
+        WireLogger.authentication.debug(#function)
 
         var error: NSError = error
 
@@ -56,7 +353,7 @@ extension ZMClientRegistrationStatus {
     @objc
     public func invalidateCookieAndNotify() {
         emailCredentials = nil
-        cookieStorage.deleteKeychainItems()
+        cookieProvider.deleteKeychainItems()
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         let outError = NSError.userSessionErrorWith(ZMUserSessionErrorCode.clientDeletedRemotely, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
@@ -67,7 +364,7 @@ extension ZMClientRegistrationStatus {
     public func prepareForClientRegistration() {
         WireLogger.userClient.info("preparing for client registration")
 
-        guard needsToRegisterClient() else {
+        guard needsToRegisterClient else {
             WireLogger.userClient.info("no need to register client. aborting client registration")
             return
         }
@@ -141,17 +438,125 @@ extension ZMClientRegistrationStatus {
         }
     }
 
+    @objc(didRegisterProteusClient:)
+    public func didRegisterProteusClient(_ client: UserClient) {
+        WireLogger.authentication.info("Did register proteus client")
+
+        managedObjectContext.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
+        managedObjectContext.saveOrRollback()
+
+        fetchExistingSelfClientsAfterRegisteringClient(client)
+
+        emailCredentials = nil
+        needsToCheckCredentials = false
+        prekeys = nil
+        lastResortPrekey = nil
+
+        if needsToRegisterMLSCLient {
+            if needsToEnrollE2EI {
+                isWaitingForE2EIEnrollment = true
+                notifyE2EIEnrollmentNecessary()
+            } else {
+                guard let mlsClientID = MLSClientID(userClient: client) else {
+                    fatalError("Needs to register MLS client but can't retrieve qualified client ID")
+                }
+
+                WaitingGroupTask(context: managedObjectContext) {
+                    do {
+                        try await self.coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
+                    } catch {
+                        WireLogger.mls.error("Failed to initialise mls client: \(error)")
+                    }
+                }
+                isWaitingForMLSClientToBeRegistered = true
+            }
+        } else {
+            registrationStatusDelegate?.didRegisterSelfUserClient(client)
+        }
+
+        WireLogger.authentication.debug("current phase: \(currentPhase)")
+    }
+
+    private func fetchExistingSelfClientsAfterRegisteringClient(_ selfClient: UserClient) {
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+
+        let otherClients = selfUser.clients.filter { client in
+            client.remoteIdentifier != selfClient.remoteIdentifier
+        }
+
+        if otherClients.isNonEmpty {
+            selfClient.missesClients(otherClients)
+            selfClient.setLocallyModifiedKeys(Set(["missingClients"]))
+        }
+    }
+
+    func didRegisterMLSClient(_ client: UserClient) {
+        isWaitingForMLSClientToBeRegistered = false
+        registrationStatusDelegate?.didRegisterSelfUserClient(client)
+    }
+
+    func didFetchClients(clientIDs: [NSManagedObjectID]) {
+        WireLogger.authentication.debug("didFetchClients(clientIDs:)")
+
+        if needsToVerifySelfClient {
+            emailCredentials = nil
+            needsToVerifySelfClient = false
+        }
+
+        if isWaitingForUserClients {
+            self.isWaitingForUserClients = false
+            self.isWaitingForClientsToBeDeleted = true
+            notifyCanNotRegisterMoreClients(clientIDs: clientIDs)
+        }
+    }
+
+    func failedFetchingClients(error: NSError?) {
+        if error?.domain == ClientUpdateErrorDomain && error?.code == ClientUpdateError.selfClientIsInvalid.rawValue {
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+            let selfClient = selfUser.selfClient()
+
+            if selfClient != nil {
+                // the selfClient was removed by an other user
+                didDetectCurrentClientDeletion()
+            }
+            needsToVerifySelfClient = false
+        }
+    }
+
+    func failedDeletingClient(error: Error?) {
+        // this should not happen since we just added a password or registered -> hmm
+    }
+
+    public func didDetectCurrentClientDeletion() {
+        invalidateSelfClient()
+        managedObjectContext.tearDownCryptoStack()
+        invalidateCookieAndNotify()
+    }
+
+    func invalidateSelfClient() {
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+
+        guard let selfClient = selfUser.selfClient() else {
+            return
+        }
+
+        selfClient.remoteIdentifier = nil
+        selfClient.resetLocallyModifiedKeys(selfClient.keysThatHaveLocalModifications)
+        managedObjectContext.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
+        managedObjectContext.saveOrRollback()
+    }
+
     @objc
     public func didFetchSelfUser() {
         WireLogger.userClient.info("did fetch self user")
         self.needsRefreshSelfUser = false
 
-        if needsToRegisterClient() {
+        if needsToRegisterClient {
             prepareForClientRegistration()
 
-            if isAddingHandleNecessary() {
+            if isAddingHandleNecessary {
                 notifyHandleIsNecessary()
-            } else if isAddingEmailNecessary() {
+            } else if isAddingEmailNecessary {
                 notifyEmailIsNecessary()
             }
         } else if !needsToVerifySelfClient {
@@ -176,7 +581,7 @@ extension ZMClientRegistrationStatus {
             code: Int(ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
         )
 
-        registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
+        registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
     }
 
     @objc
@@ -185,7 +590,7 @@ extension ZMClientRegistrationStatus {
             domain: NSError.ZMUserSessionErrorDomain,
             code: Int(ZMUserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue)
         )
-        registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
+        registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
     }
 
     private func notifyHandleIsNecessary() {
@@ -194,7 +599,17 @@ extension ZMClientRegistrationStatus {
             code: Int(ZMUserSessionErrorCode.needsToHandleToRegisterClient.rawValue)
         )
 
-        registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
+        registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
+    }
+
+    private func notifyCanNotRegisterMoreClients(clientIDs: [NSManagedObjectID]) {
+        let error = NSError(
+            domain: NSError.ZMUserSessionErrorDomain,
+            code: Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue),
+            userInfo: [ZMClientsKey: clientIDs]
+        )
+
+        registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
     }
 
     @objc
@@ -212,33 +627,13 @@ extension ZMClientRegistrationStatus {
         return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
     }
 
-    var idPrekeysTuple: [IdPrekeyTuple]? {
-        prekeys.compactMap {
-            guard
-                let id = $0.keys.first?.uint16Value,
-                let prekey = $0.values.first
-            else {
-                return nil
-            }
-
-            return IdPrekeyTuple(id: id, prekey: prekey)
-        }
-    }
-
-    var lastResortIdPrekeyTuple: IdPrekeyTuple? {
-        guard let lastResortPrekey = lastResortPrekey else {
-            return nil
-        }
-        return IdPrekeyTuple(id: UInt16.max, prekey: lastResortPrekey)
-    }
-
     public func willGeneratePrekeys() {
         isGeneratingPrekeys = true
     }
 
     public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple], lastResortPrekey: IdPrekeyTuple) {
-        self.prekeys = prekeys.map { [NSNumber(value: Int($0.id)): $0.prekey] }
-        self.lastResortPrekey = lastResortPrekey.prekey
+        self.prekeys = prekeys
+        self.lastResortPrekey = lastResortPrekey
         self.isGeneratingPrekeys = false
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
@@ -255,8 +650,8 @@ extension ZMClientRegistrationStatus: UserProfileUpdateObserver {
 
     public func didSetHandle() {
         managedObjectContext.perform { [self] in
-            if needsToRegisterClient() {
-                if isAddingEmailNecessary() {
+            if needsToRegisterClient {
+                if isAddingEmailNecessary {
                     notifyEmailIsNecessary()
                 }
             }

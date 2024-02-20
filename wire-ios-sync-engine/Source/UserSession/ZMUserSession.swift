@@ -398,6 +398,7 @@ public final class ZMUserSession: NSObject {
             requestCancellation: transportSession,
             application: application,
             lastEventIDRepository: lastEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
             analytics: analytics
         )
         self.earService = earService ?? EARService(
@@ -570,7 +571,7 @@ public final class ZMUserSession: NSObject {
     private func createSyncStrategy() -> ZMSyncStrategy {
         return ZMSyncStrategy(contextProvider: coreDataStack,
                               notificationsDispatcher: notificationDispatcher,
-                              applicationStatusDirectory: applicationStatusDirectory,
+                              operationStatus: applicationStatusDirectory.operationStatus,
                               application: application,
                               strategyDirectory: strategyDirectory!,
                               eventProcessingTracker: eventProcessingTracker)
@@ -580,7 +581,10 @@ public final class ZMUserSession: NSObject {
         return ZMOperationLoop(transportSession: transportSession,
                                requestStrategy: syncStrategy,
                                updateEventProcessor: updateEventProcessor!,
-                               applicationStatusDirectory: applicationStatusDirectory,
+                               operationStatus: applicationStatusDirectory.operationStatus,
+                               syncStatus: applicationStatusDirectory.syncStatus,
+                               pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
+                               callEventStatus: applicationStatusDirectory.callEventStatus,
                                uiMOC: managedObjectContext,
                                syncMOC: syncManagedObjectContext)
     }
@@ -641,10 +645,12 @@ public final class ZMUserSession: NSObject {
     func createMLSClientIfNeeded() {
         // TODO: [WPB-6198] refactor out - [jacob]
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
+            guard let mlsClientID = MLSClientID(user: ZMUser.selfUser(in: syncContext)) else {
+                fatal("Needs to register MLS client but can't retrieve qualified client ID")
+            }
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
-                    // Make sure MLS client exists, mls public keys will be generated upon creation
-                    _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+                    _ = try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
                 } catch {
                     WireLogger.mls.error("Failed to create MLS client: \(error)")
                 }
