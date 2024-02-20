@@ -84,15 +84,13 @@ extension ZMUserSession {
     var refreshFederationCertificatesAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
             guard
-                self?.e2eiFeature.isEnabled == true,
-                let e2eiRepository = self?.e2eiRepository
-            else {
-                return
-            }
+                let self,
+                viewContext.performAndWait({ self.e2eiFeature.isEnabled })
+            else { return }
 
             Task {
                 do {
-                    try await e2eiRepository.fetchFederationCertificate()
+                    try await self.e2eiRepository.fetchFederationCertificate()
                 } catch {
                     WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
                 }
