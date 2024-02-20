@@ -149,7 +149,7 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
             predicates.append(
                 NSPredicate(format: "%K == %@", #keyPath(ZMConversation.domain), domain)
             )
-        } 
+        }
 
         if let identifier {
             predicates.append(
@@ -176,4 +176,3 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
     }
 
 }
-

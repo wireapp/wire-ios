@@ -115,14 +115,14 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
                 try context.performGroupedAndWait { [self] context in
                     // verify it deleted duplicates
                     var clients = try fetchUsers(with: userId, domain: domain, in: context)
-                    
+
                     XCTAssertEqual(clients.count, 1)
-                    
+
                     // verify we can't insert duplicates
                     context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
                     insertDuplicateUsers(with: userId, domain: domain, in: context)
                     try context.save()
-                    
+
                     clients = try fetchUsers(with: userId, domain: domain, in: context)
                     XCTAssertEqual(clients.count, 1)
 
@@ -148,7 +148,7 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
             predicates.append(
                 NSPredicate(format: "%K == %@", #keyPath(ZMUser.domain), domain)
             )
-        } 
+        }
 
         if let identifier {
             predicates.append(
@@ -175,4 +175,3 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
     }
 
 }
-
