@@ -17,7 +17,7 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ### 2.113.0
 
-* added `lastActiveDate` attribute of type `Date` on `User`
+* added `lastActiveDate` attribute of type `Date` on `UserClient`
 
 ### 2.112.0
 

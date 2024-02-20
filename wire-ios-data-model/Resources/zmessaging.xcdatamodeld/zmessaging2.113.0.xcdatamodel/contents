@@ -311,7 +311,6 @@
         <attribute name="handle" optional="YES" attributeType="String"/>
         <attribute name="isAccountDeleted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="isPendingMetadataRefresh" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
-        <attribute name="lastActiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="legalHoldRequest" optional="YES" attributeType="Binary"/>
         <attribute name="managedBy" optional="YES" attributeType="String"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
@@ -372,6 +371,7 @@
         <attribute name="deviceClass" optional="YES" attributeType="String"/>
         <attribute name="discoveryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="label" optional="YES" attributeType="String"/>
+        <attribute name="lastActiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="markedToDelete" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="mlsPublicKeys" optional="YES" attributeType="Binary"/>
         <attribute name="model" optional="YES" attributeType="String"/>
