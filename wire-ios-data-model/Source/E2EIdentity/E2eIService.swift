@@ -150,7 +150,7 @@ public final class E2eIService: E2eIServiceInterface {
     }
 
     public func createNewClient(certificateChain: String) async throws {
-        guard let enrollment = e2eIdentity  as? E2eiEnrollment else {
+        guard let enrollment = e2eIdentity as? E2eiEnrollment else {
             throw E2eIServiceFailure.missingEnrollment
         }
         try await coreCryptoProvider.initialiseMLSWithEndToEndIdentity(
