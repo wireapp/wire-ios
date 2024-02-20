@@ -26,6 +26,8 @@ public struct UserStatus {
 
     public var availability = Availability.none
 
+    // consider adding `UserLegalHoldStatus`
+
     /// `true` if the user has a valid certificate (MLS), `false` otherwise.
     public var isCertified = false
 

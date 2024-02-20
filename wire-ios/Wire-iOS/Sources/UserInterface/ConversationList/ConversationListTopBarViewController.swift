@@ -277,16 +277,7 @@ extension ConversationListTopBarViewController: UIViewControllerTransitioningDel
 
 extension ConversationListTopBarViewController: UserObserving {
 
-    // TODO: try to move out and get the info about the `userStatus` property
     func userDidChange(_ changes: UserChangeInfo) {
-
-        if changes.nameChanged {
-            selfUserStatus.name = changes.user.name ?? ""
-        }
-
-        if changes.availabilityChanged {
-            selfUserStatus.availability = changes.user.availability
-        }
 
         if changes.nameChanged || changes.teamsChanged {
             updateAccountView()
