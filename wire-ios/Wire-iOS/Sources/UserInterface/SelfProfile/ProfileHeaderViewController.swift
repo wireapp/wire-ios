@@ -138,14 +138,8 @@ final class ProfileHeaderViewController: UIViewController {
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             settings: .shared
         )
-
         super.init(nibName: nil, bundle: nil)
-
         userStatusViewController.delegate = self
-        userStatusViewController.userStatus = .init(
-            user: user,
-            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-        )
     }
 
     @available(*, unavailable)

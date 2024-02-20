@@ -68,9 +68,8 @@ extension ConversationListViewController {
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
-        // TODO: try making private
-        let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
-        let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
+        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
         var selectedConversation: ZMConversation?
 
@@ -94,11 +93,19 @@ extension ConversationListViewController {
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
-
-            selfUserStatus = .init(user: selfUser, isCertified: false)
-            // TODO [WPB-765]: use usecase to get verification info
             self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+            selfUserStatus = .init(user: selfUser, isCertified: false)
+            super.init()
+
+            Task { @MainActor in
+                do {
+                    selfUserStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+                    selfUserStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
+                } catch {
+                    WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+                }
+            }
         }
     }
 }
