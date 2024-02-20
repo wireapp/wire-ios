@@ -102,10 +102,7 @@ final class ConversationListViewController: UIViewController {
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession
         )
-        topBarViewController.selfUserStatus = .init(
-            user: viewModel.selfUser,
-            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-        )
+        topBarViewController.selfUserStatus = viewModel.selfUserStatus
 
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
         listContentController.collectionView.contentInset = UIEdgeInsets(
@@ -374,6 +371,15 @@ final class ConversationListViewController: UIViewController {
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
         UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
+    }
+}
+
+// MARK: - ViewModel Delegate
+
+extension ConversationListViewController: ConversationListContainerViewModelDelegate {
+
+    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
+        topBarViewController.selfUserStatus = selfUserStatus
     }
 }
 
