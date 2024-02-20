@@ -354,6 +354,10 @@ class MockAcmeApi: AcmeAPIInterface {
         return ""
     }
 
+    func getFederationCertificate() async throws -> String {
+        return ""
+    }
+
     func getACMEDirectory() async throws -> Data {
         let payload = acmeDirectoriesResponse()
 
