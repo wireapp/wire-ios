@@ -70,7 +70,7 @@ public final class E2eIRepository: E2eIRepositoryInterface {
             let isUpgradingClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
             guard let userName = selfUser.name,
                   let userHandle = selfUser.handle,
-                  let teamId = selfUser.team?.remoteIdentifier,
+                  let teamId = selfUser.teamIdentifier,
                   let clientID = E2eIClientID(user: selfUser) else {
                 throw Error.failedToGetSelfUserInfo
             }
