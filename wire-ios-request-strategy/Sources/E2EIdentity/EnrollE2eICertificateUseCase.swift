@@ -87,7 +87,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let selfClientId = await context.perform {
             ZMUser.selfUser(in: self.context).selfClient()?.remoteIdentifier
         }
-        let s = await context.perform {
+        let isUpgradingMLSClient = await context.perform {
             ZMUser.selfUser(in: self.context).selfClient()?.hasRegisteredMLSClient ?? false
         }
         let (idToken, refreshToken) = try await authenticate(identityProvider, clientId, keyauth, acmeAudience)

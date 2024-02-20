@@ -63,7 +63,7 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
             return (mlsGroupID, userID, selfUser.allClients.count)
         }
 
-        let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+        let coreCrypto = try await coreCryptoProvider.coreCrypto()
         let identities = try await coreCrypto.perform { coreCrypto in
             let result = try await coreCrypto.getUserIdentities(
                 conversationId: conversationID.data,
