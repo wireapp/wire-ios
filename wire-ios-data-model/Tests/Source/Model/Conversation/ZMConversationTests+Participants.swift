@@ -173,7 +173,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         let connection = ZMConnection.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .oneOnOne
-        conversation.connection = connection
+        user.connection = connection
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
 
         // when
@@ -181,6 +181,57 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertNotEqual(selfUser.connection, connection)
+    }
+
+    func testThatItCreatesAConnectionIfUserIsNotATeamMember() {
+        // given
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = .create()
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+
+        XCTAssertNil(otherUser.connection)
+        XCTAssertFalse(otherUser.isOnSameTeam(otherUser: selfUser))
+
+        // when
+        conversation.addParticipantAndSystemMessageIfMissing(otherUser, date: Date())
+
+        // then
+        XCTAssertNotNil(otherUser.connection)
+    }
+
+    func testThatItDoesntCreateAConnectionIfUserIsTeamMember() {
+        // given
+        let team = Team.insertNewObject(in: uiMOC)
+        team.remoteIdentifier = .create()
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfUserMembership = Member.insertNewObject(in: uiMOC)
+        selfUserMembership.team = team
+        selfUserMembership.user = selfUser
+
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = .create()
+        let otherUserMembership = Member.insertNewObject(in: uiMOC)
+        otherUserMembership.team = team
+        otherUserMembership.user = otherUser
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+
+        XCTAssertNil(otherUser.connection)
+        XCTAssertTrue(otherUser.isOnSameTeam(otherUser: selfUser))
+
+        // when
+        conversation.addParticipantAndSystemMessageIfMissing(otherUser, date: Date())
+
+        // then
+        XCTAssertNil(otherUser.connection)
     }
 
     func testThatItAddsParticipants() {
@@ -395,7 +446,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         connection.to = user
 
         // when
-        connection.conversation = conversation
+        user.oneOnOneConversation = conversation
 
         // then
         XCTAssertEqual(conversation.connectedUser, user)
@@ -410,7 +461,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         connection.to = user
 
         // when
-        connection.conversation = conversation
+        user.oneOnOneConversation = conversation
 
         // then
         XCTAssertEqual(conversation.connectedUser, user)
@@ -469,7 +520,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role}, [role1, role1])
+        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role }, [role1, role1])
     }
 
     func testThatItAddsParticipantsWithTheGivenRole() {
@@ -494,8 +545,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user2 }?.role, role2)
     }
 
     func testThatItDoesNotAddDeletedParticipants() {
@@ -520,7 +571,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
     }
 
     func testThatItUpdateParticipantWithTheGivenRole() {
@@ -549,8 +600,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user2 }?.role, role2)
     }
 
     func testThatItRefetchesRolesIfNoRoles() {

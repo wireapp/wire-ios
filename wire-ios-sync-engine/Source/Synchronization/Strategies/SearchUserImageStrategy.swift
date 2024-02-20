@@ -209,7 +209,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
                 guard let userProfilePayloads = response.payload as? [[String: Any]] else { return }
 
                 for userProfilePayload in userProfilePayloads {
-                    guard let userId = (userProfilePayload["id"] as? String).flatMap(UUID.init),
+                    guard let userId = (userProfilePayload["id"] as? String).flatMap(UUID.init(transportString:)),
                           let searchUser = self.uiContext.zm_searchUserCache?.object(forKey: userId as NSUUID) else { continue }
 
                     searchUser.update(from: userProfilePayload)
@@ -237,7 +237,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
     }
 
     public static func requestForFetchingFullProfile(for usersWithIDs: Set<UUID>, apiVersion: APIVersion, completionHandler: ZMCompletionHandler) -> ZMTransportRequest {
-        let usersList = usersWithIDs.map {$0.transportString()}.joined(separator: ",")
+        let usersList = usersWithIDs.map { $0.transportString() }.joined(separator: ",")
         let request = ZMTransportRequest(getFromPath: userPath + usersList, apiVersion: apiVersion.rawValue)
         request.add(completionHandler)
         return request

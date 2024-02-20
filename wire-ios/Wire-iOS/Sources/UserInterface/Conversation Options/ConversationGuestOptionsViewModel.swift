@@ -27,10 +27,10 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var isConversationFromSelfTeam: Bool { get }
     var allowGuestsChangedHandler: ((Bool) -> Void)? { get set }
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)? { get set }
-    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Swift.Result<Void, Error>) -> Void)
-    func createConversationLink(completion: @escaping (Result<String>) -> Void)
-    func fetchConversationLink(completion: @escaping (Result<String?>) -> Void)
-    func deleteLink(completion: @escaping (Swift.Result<Void, Error>) -> Void)
+    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+    func createConversationLink(completion: @escaping (Result<String, Error>) -> Void)
+    func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void)
+    func deleteLink(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
@@ -101,7 +101,10 @@ final class ConversationGuestOptionsViewModel {
         state.rows = computeVisibleRows()
     }
 
-    private func computeVisibleRows() -> [CellConfiguration] {/// TODO: copy?
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: copy?
+    // swiftlint:enable todo_requires_jira_link
+    private func computeVisibleRows() -> [CellConfiguration] {
         var rows: [CellConfiguration] = [.allowGuestsToogle(
             get: { [unowned self] in return self.configuration.allowGuests },
             set: { [unowned self] in self.setAllowGuests($0, view: $1) },

@@ -26,7 +26,7 @@ public protocol FederationTerminationManagerInterface {
 
 }
 
-final public class FederationTerminationManager: FederationTerminationManagerInterface {
+public final class FederationTerminationManager: FederationTerminationManagerInterface {
 
     private var context: NSManagedObjectContext
 
@@ -72,7 +72,7 @@ private extension FederationTerminationManager {
         let fetchRequest = ZMUser.sortedFetchRequest(with: connectedUsersPredicate)
         if let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
             users
-                .compactMap(\.connection?.conversation)
+                .compactMap(\.oneOnOneConversation)
                 .filter { !$0.isForcedReadOnly }
                 .forEach { conversation in
                     conversation.appendFederationTerminationSystemMessage(domains: [domain, context.selfDomain])

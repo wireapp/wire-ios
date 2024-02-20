@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public typealias TeamMembership = Member
 @objcMembers public class Member: ZMManagedObject {
 
     @NSManaged public var team: Team?
@@ -90,11 +91,11 @@ extension Member {
 
     @discardableResult
     public static func createOrUpdate(with payload: [String: Any], in team: Team, context: NSManagedObjectContext) -> Member? {
-        guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init) else { return nil }
+        guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return nil }
 
         let user = ZMUser.fetchOrCreate(with: id, domain: nil, in: context)
-        let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(NSDate.init(transport:)) as Date?
-        let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init)
+        let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(Date.init(transportString:)) as Date?
+        let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init(transportString:))
         let member = getOrCreateMember(for: user, in: team, context: context)
 
         member.updatePermissions(with: payload)
@@ -105,7 +106,7 @@ extension Member {
     }
 
     public func updatePermissions(with payload: [String: Any]) {
-        guard let userID = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
+        guard let userID = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
         precondition(remoteIdentifier == userID, "Trying to update member with non-matching payload: \(payload), \(self)")
         guard let permissionsPayload = payload[ResponseKey.permissions.rawValue] as? [String: Any] else { return }
         guard let selfPermissions = permissionsPayload[ResponseKey.Permissions.`self`.rawValue] as? NSNumber else { return }

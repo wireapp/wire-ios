@@ -70,7 +70,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // THEN
-        let buttonState = message.buttonStates?.first(where: {$0.remoteIdentifier == id})
+        let buttonState = message.buttonStates?.first(where: { $0.remoteIdentifier == id })
         XCTAssertNotNil(buttonState)
         XCTAssertEqual(WireDataModel.ButtonState.State.selected, buttonState?.state)
     }
@@ -88,7 +88,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // THEN
-        let buttonState = message.buttonStates?.first(where: {$0.remoteIdentifier == id})
+        let buttonState = message.buttonStates?.first(where: { $0.remoteIdentifier == id })
         XCTAssertEqual(buttonState?.isExpired, true)
         XCTAssertEqual(buttonState?.state, WireDataModel.ButtonState.State.unselected)
         let lastmessage = conversation.hiddenMessages.first as? ZMClientMessage

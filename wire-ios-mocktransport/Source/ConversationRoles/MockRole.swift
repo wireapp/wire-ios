@@ -49,7 +49,7 @@ extension MockRole {
     var payloadValues: [String: Any?] {
         return [
             "conversation_role": name,
-            "actions": actions.map({$0.payload})
+            "actions": actions.map({ $0.payload })
         ]
     }
 

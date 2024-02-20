@@ -100,10 +100,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
         initialisatingMLS = false
         hasInitialisedMLS = true
-        resumeInitialiseMlsContinuations(with: .success())
+        resumeInitialiseMlsContinuations(with: .success(()))
     }
 
-    private func resumeInitialiseMlsContinuations(with result: Swift.Result<Void, Error>) {
+    private func resumeInitialiseMlsContinuations(with result: Result<Void, Error>) {
         for continuation in initialiseMlsContinuations {
             continuation.resume(with: result)
         }
@@ -142,7 +142,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    private func resumeCoreCryptoContinuations(with result: Swift.Result<SafeCoreCrypto, Error>) {
+    private func resumeCoreCryptoContinuations(with result: Result<SafeCoreCrypto, Error>) {
         for continuation in coreCryptoContinuations {
             continuation.resume(with: result)
         }
@@ -234,7 +234,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         WireLogger.mls.info("generating ed25519 public key")
-        let keyBytes = try await coreCrypto.perform { try await $0.clientPublicKey(ciphersuite: CiphersuiteName.default.rawValue) }
+        let keyBytes = try await coreCrypto.perform { try await $0.clientPublicKey(ciphersuite: CiphersuiteName.default.rawValue, credentialType: .basic) }
         let keyData = Data(keyBytes)
         var keys = UserClient.MLSPublicKeys()
         keys.ed25519 = keyData.base64EncodedString()

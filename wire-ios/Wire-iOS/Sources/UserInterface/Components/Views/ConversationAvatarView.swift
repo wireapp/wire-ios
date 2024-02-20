@@ -197,21 +197,21 @@ final class ConversationAvatarView: UIView {
             }
 
             var index: Int = 0
-            self.userImages().forEach {
-                $0.userSession = ZMUserSession.shared()
-                $0.shouldDesaturate = false
-                $0.size = mode == .four ? .tiny : .small
+            self.userImages().forEach { userImage in
+                userImage.userSession = ZMUserSession.shared()
+                userImage.shouldDesaturate = false
+                userImage.size = mode == .four ? .tiny : .small
                 if index < users.count {
-                    $0.user = users[index]
+                    userImage.user = users[index]
                 } else {
-                    $0.user = nil
-                    $0.container.isOpaque = false
-                    $0.container.backgroundColor = UIColor(white: 0, alpha: 0.24)
-                    $0.avatar = .none
+                    userImage.user = nil
+                    userImage.container.isOpaque = false
+                    userImage.container.backgroundColor = UIColor(white: 0, alpha: 0.24)
+                    userImage.avatar = .image(.init())
                 }
 
-                $0.allowsInitials = mode.showInitials
-                $0.shape = mode.shape
+                userImage.allowsInitials = mode.showInitials
+                userImage.shape = mode.shape
                 index += 1
             }
 
@@ -291,8 +291,8 @@ final class ConversationAvatarView: UIView {
         case .none:
             break
         case .one:
-            self.userImages().forEach {
-                $0.frame = clippingView.bounds
+            userImages().forEach { userImage in
+                userImage.frame = clippingView.bounds
             }
         case .four:
             layoutMultipleAvatars(with: CGSize(width: (containerSize.width - interAvatarInset) / 2.0, height: (containerSize.height - interAvatarInset) / 2.0))
@@ -305,8 +305,8 @@ final class ConversationAvatarView: UIView {
         var xPosition: CGFloat = 0
         var yPosition: CGFloat = 0
 
-        self.userImages().forEach {
-            $0.frame = CGRect(x: xPosition, y: yPosition, width: size.width, height: size.height)
+        userImages().forEach { userImage in
+            userImage.frame = CGRect(x: xPosition, y: yPosition, width: size.width, height: size.height)
             if xPosition + size.width >= containerSize.width {
                 xPosition = 0
                 yPosition += size.height + interAvatarInset

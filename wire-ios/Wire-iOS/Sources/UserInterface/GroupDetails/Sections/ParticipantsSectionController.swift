@@ -146,7 +146,12 @@ extension UserCell: ParticipantsCellConfigurable {
             return
         }
 
-        configure(with: user, selfUser: selfUser, conversation: conversation as? ZMConversation)
+        configure(
+            user: user,
+            isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+            isSelfUserPartOfATeam: selfUser.hasTeam,
+            conversation: conversation as? ZMConversation
+        )
         accessoryIconView.isHidden = user.isSelfUser
         accessibilityIdentifier = identifier
         accessibilityHint = L10n.Accessibility.ConversationDetails.ParticipantCell.hint
@@ -273,7 +278,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
 }
 
-extension ParticipantsSectionController: ZMUserObserver {
+extension ParticipantsSectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged || changeInfo.nameChanged else { return }
