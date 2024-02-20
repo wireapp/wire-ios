@@ -163,7 +163,10 @@ extension WireIdentity {
             domain: "D",
             certificate: "E",
             status: status,
-            thumbprint: "F"
+            thumbprint: "F",
+            serialNumber: "G",
+            notBefore: 0,
+            notAfter: 0
         )
     }
 }
