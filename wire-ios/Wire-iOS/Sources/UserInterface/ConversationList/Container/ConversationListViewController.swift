@@ -97,9 +97,15 @@ final class ConversationListViewController: UIViewController {
 
         self.viewModel = viewModel
 
-        topBarViewController = ConversationListTopBarViewController(account: viewModel.account,
-                                                                    selfUser: viewModel.selfUser,
-                                                                    userSession: viewModel.userSession)
+        topBarViewController = ConversationListTopBarViewController(
+            account: viewModel.account,
+            selfUser: viewModel.selfUser,
+            userSession: viewModel.userSession
+        )
+        topBarViewController.selfUserStatus = .init(
+            user: viewModel.selfUser,
+            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+        )
 
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
         listContentController.collectionView.contentInset = UIEdgeInsets(

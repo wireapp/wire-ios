@@ -25,11 +25,13 @@ typealias SelfUserType = UserType & SelfLegalHoldSubject
 
 final class ConversationListTopBarViewController: UIViewController {
 
-    private var availabilityViewController: UserStatusViewController? {
-        didSet { availabilityViewController?.delegate = self }
+    private var account: Account
+
+    /// Name, availability and verification info about the self user.
+    public var selfUserStatus = UserStatus() {
+        didSet { updateTitleView() }
     }
 
-    private var account: Account
     private let selfUser: SelfUserType
     private var userSession: UserSession
     private var observerToken: NSObjectProtocol?
@@ -38,17 +40,23 @@ final class ConversationListTopBarViewController: UIViewController {
         view as? TopBar
     }
 
+    private weak var userStatusViewController: UserStatusViewController?
+    private weak var titleViewLabel: UILabel?
+
     /// init a ConversationListTopBarViewController
     ///
     /// - Parameters:
     ///   - account: the Account of the user
     ///   - selfUser: the self user object. Allow to inject a mock self user for testing
-    init(account: Account,
-         selfUser: SelfUserType,
-         userSession: UserSession) {
+    init(
+        account: Account,
+        selfUser: SelfUserType,
+        userSession: UserSession
+    ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
+
         super.init(nibName: nil, bundle: nil)
 
         observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
@@ -70,8 +78,6 @@ final class ConversationListTopBarViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
 
-        availabilityViewController?.didMove(toParent: self)
-
         updateTitleView()
         updateAccountView()
         updateLegalHoldIndictor()
@@ -80,31 +86,37 @@ final class ConversationListTopBarViewController: UIViewController {
     // MARK: - Title View
 
     func updateTitleView() {
-        if let availabilityViewController {
-            removeChild(availabilityViewController)
-        }
         if selfUser.isTeamMember {
-            let availabilityViewController = UserStatusViewController(options: .header, settings: .shared)
-            availabilityViewController.userStatus = .init(
-                user: selfUser,
-                isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-            )
-            addChild(availabilityViewController)
-            topBar?.middleView = availabilityViewController.view
-            availabilityViewController.didMove(toParent: self)
-            self.availabilityViewController = availabilityViewController
+            defer { userStatusViewController?.userStatus = selfUserStatus }
+            guard userStatusViewController == nil else { return }
+
+            let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
+            addChild(userStatusViewController)
+            topBar?.middleView = userStatusViewController.view
+            userStatusViewController.didMove(toParent: self)
+            userStatusViewController.delegate = self
+            self.userStatusViewController = userStatusViewController
+
         } else {
+            defer {
+                titleViewLabel?.text = selfUserStatus.name
+                titleViewLabel?.accessibilityValue = selfUserStatus.name
+            }
+            guard titleViewLabel == nil else { return }
+            if let userStatusViewController {
+                removeChild(userStatusViewController)
+            }
+
             let titleLabel = UILabel()
-            titleLabel.text = selfUser.name
             titleLabel.font = FontSpec(.normal, .semibold).font
             titleLabel.textColor = SemanticColors.Label.textDefault
             titleLabel.accessibilityTraits = .header
-            titleLabel.accessibilityValue = selfUser.name
             titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
             titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
             titleLabel.setContentHuggingPriority(.required, for: .horizontal)
             titleLabel.setContentHuggingPriority(.required, for: .vertical)
             topBar?.middleView = titleLabel
+            self.titleViewLabel = titleLabel
         }
     }
 
@@ -240,6 +252,8 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
+        // instead of having the dependency for `SelfProfileViewController` we could inject a factory
+        // returning the `UIViewController` subclass and only have the presentation logic at this place
         let selfProfileViewController = SelfProfileViewController(selfUser: selfUser, userSession: userSession)
         return selfProfileViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
@@ -263,18 +277,18 @@ extension ConversationListTopBarViewController: UIViewControllerTransitioningDel
 
 extension ConversationListTopBarViewController: UserObserving {
 
+    // TODO: try to move out and get the info about the `userStatus` property
     func userDidChange(_ changes: UserChangeInfo) {
 
         if changes.nameChanged {
-            availabilityViewController?.userStatus.name = changes.user.name ?? ""
+            selfUserStatus.name = changes.user.name ?? ""
         }
 
         if changes.availabilityChanged {
-            availabilityViewController?.userStatus.availability = changes.user.availability
+            selfUserStatus.availability = changes.user.availability
         }
 
         if changes.nameChanged || changes.teamsChanged {
-            updateTitleView()
             updateAccountView()
         }
 
@@ -289,8 +303,9 @@ extension ConversationListTopBarViewController: UserObserving {
 extension ConversationListTopBarViewController: UserStatusViewControllerDelegate {
 
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
-        guard viewController === availabilityViewController else { return }
+        guard viewController === userStatusViewController else { return }
 
+        // this should be done by some use case instead of accessing the `session` and the `UserType` directly here
         userSession.perform { [weak self] in
             self?.selfUser.availability = availability
         }
@@ -301,17 +316,14 @@ extension UIView {
 
     func wrapInAvatarSizeContainer() -> UIView {
         let container = UIView()
-
         container.addSubview(self)
-
         NSLayoutConstraint.activate([
             container.widthAnchor.constraint(equalToConstant: CGFloat.ConversationAvatarView.iconSize),
             container.heightAnchor.constraint(equalToConstant: CGFloat.ConversationAvatarView.iconSize),
 
             container.centerYAnchor.constraint(equalTo: centerYAnchor),
-            container.centerXAnchor.constraint(equalTo: centerXAnchor)])
-
+            container.centerXAnchor.constraint(equalTo: centerXAnchor)
+        ])
         return container
-
     }
 }
