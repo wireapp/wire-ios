@@ -91,19 +91,23 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
 
 @objcMembers
 class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
-    var mockPhase: ZMClientRegistrationPhase?
+    var mockPhase: ClientRegistrationPhase?
     var mockReadiness: Bool = true
 
     convenience init(managedObjectContext: NSManagedObjectContext) {
-        self.init(managedObjectContext: managedObjectContext, cookieStorage: nil)
+        self.init(context: managedObjectContext, cookieProvider: nil, coreCryptoProvider: nil)
     }
 
-    override init!(managedObjectContext moc: NSManagedObjectContext!, cookieStorage: ZMPersistentCookieStorage!) {
-        super.init(managedObjectContext: moc, cookieStorage: cookieStorage)
+    override init(
+        context moc: NSManagedObjectContext!,
+        cookieProvider: CookieProvider!,
+        coreCryptoProvider: CoreCryptoProviderProtocol!
+    ) {
+        super.init(context: moc, cookieProvider: cookieProvider, coreCryptoProvider: coreCryptoProvider)
         self.emailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
     }
 
-    override var currentPhase: ZMClientRegistrationPhase {
+    override var currentPhase: ClientRegistrationPhase {
         if let phase = mockPhase {
             return phase
         }
@@ -114,7 +118,7 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
         return true
     }
 
-    override func clientIsReadyForRequests() -> Bool {
+    override var clientIsReadyForRequests: Bool {
         return mockReadiness
     }
 
@@ -124,7 +128,7 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     }
 
     var isAddingEmailNecessaryValue: Bool = false
-    override func isAddingEmailNecessary() -> Bool {
+    override var isAddingEmailNecessary: Bool {
         return isAddingEmailNecessaryValue
     }
 }

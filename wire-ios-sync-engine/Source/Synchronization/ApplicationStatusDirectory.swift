@@ -45,6 +45,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
         lastEventIDRepository: LastEventIDRepositoryInterface,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         analytics: AnalyticsType? = nil
     ) {
         self.requestCancellation = requestCancellation
@@ -59,8 +60,9 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         )
         self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext, analytics: analytics)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
-        self.clientRegistrationStatus = ZMClientRegistrationStatus(managedObjectContext: managedObjectContext,
-                                                                   cookieStorage: cookieStorage)
+        self.clientRegistrationStatus = ZMClientRegistrationStatus(context: managedObjectContext,
+                                                                   cookieProvider: cookieStorage,
+                                                                   coreCryptoProvider: coreCryptoProvider)
         self.pushNotificationStatus = PushNotificationStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository
@@ -79,10 +81,6 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         }
     }
 
-    deinit {
-        clientRegistrationStatus.tearDown()
-    }
-
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
         return clientRegistrationStatus
     }
@@ -97,7 +95,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     }
 
     public var synchronizationState: SynchronizationState {
-        if !clientRegistrationStatus.clientIsReadyForRequests() {
+        if !clientRegistrationStatus.clientIsReadyForRequests {
             return .unauthenticated
         } else if syncStatus.isSlowSyncing {
             return .slowSyncing
