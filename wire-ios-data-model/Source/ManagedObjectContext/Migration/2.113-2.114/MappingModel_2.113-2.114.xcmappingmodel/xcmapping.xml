@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" standalone="yes"?>
 <!DOCTYPE database SYSTEM "file:///System/Library/DTDs/CoreData.dtd">
 
 <database>
@@ -835,14 +835,15 @@ dmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEAAAAIAAAACVRyb290gAGvER06
         <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING" idrefs="z500"></relationship>
     </object>
     <object type="XDDEVENTITYMAPPING" id="z271">
+        <attribute name="migrationpolicyclassname" type="string">WireDataModel.OneOnOneConversationMigrationPolicy</attribute>
         <attribute name="sourcename" type="string">User</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">12</attribute>
         <attribute name="destinationname" type="string">User</attribute>
         <attribute name="autogenerateexpression" type="bool">1</attribute>
         <relationship name="mappingmodel" type="1/1" destination="XDDEVMAPPINGMODEL" idrefs="z124"></relationship>
-        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z386 z173 z497 z283 z399 z510 z297 z197 z409 z309 z522 z425 z209 z110 z322 z436 z222 z123 z333 z233 z447 z349 z135 z459 z244 z149 z362 z472 z255 z162 z374 z269 z482"></relationship>
-        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z210 z437 z234 z257 z483 z284 z511 z310 z335 z136 z363 z163 z387 z184 z411"></relationship>
+        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z472 z149 z482 z222 z447 z399 z209 z459 z522 z386 z374 z322 z197 z110 z362 z135 z409 z297 z269 z283 z436 z255 z497 z123 z173 z233 z162 z244 z425 z510 z333 z309 z349"></relationship>
+        <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING" idrefs="z257 z184 z387 z210 z310 z335 z234 z437 z136 z284 z483 z363 z163 z411 z511"></relationship>
     </object>
     <object type="XDDEVRELATIONSHIPMAPPING" id="z272">
         <attribute name="autogenerateexpression" type="bool">1</attribute>
