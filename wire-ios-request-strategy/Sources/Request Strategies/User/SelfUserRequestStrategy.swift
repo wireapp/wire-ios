@@ -75,27 +75,17 @@ private extension SelfUserRequestStrategy {
             apiVersion: APIVersion
         ) -> ZMUpstreamRequest? {
             guard
-                apiVersion >= .v4,
                 keys.contains(ZMUser.supportedProtocolsKey),
                 let user = managedObject as? ZMUser
             else {
                 return nil
             }
 
-            var payload = [AnyHashable: Any]()
-            payload["supported_protocols"] = user.supportedProtocols.map(\.rawValue)
-
-            let request = ZMTransportRequest(
-                path: "/self/supported-protocols",
-                method: .put,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue
+            let transportBuilder = SelfSupportedProtocolsBuilder(
+                apiVersion: apiVersion,
+                supportedProtocols: user.supportedProtocols
             )
-
-            return ZMUpstreamRequest(
-                keys: keys,
-                transportRequest: request
-            )
+            return transportBuilder.buildUpstreamRequest(keys: keys)
         }
 
         func shouldRetryToSyncAfterFailed(

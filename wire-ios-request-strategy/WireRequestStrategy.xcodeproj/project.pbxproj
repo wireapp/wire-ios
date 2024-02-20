@@ -257,6 +257,8 @@
 		E629E3CE2B470B7900D526AD /* Payload+UpdateConversationMLSMessageAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3CD2B470B7900D526AD /* Payload+UpdateConversationMLSMessageAdd.swift */; };
 		E629E3D02B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3CF2B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift */; };
 		E662588F2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662588E2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift */; };
+		E69A02152B84E49C00126FF6 /* SelfSupportedProtocolsRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02142B84E49C00126FF6 /* SelfSupportedProtocolsRequestStrategy.swift */; };
+		E69A02172B84F02800126FF6 /* SelfSupportedProtocolsBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02162B84F02800126FF6 /* SelfSupportedProtocolsBuilder.swift */; };
 		E6E0CE872B70D2C60004ED88 /* SyncPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */; };
 		E6E0CE892B70DDAB0004ED88 /* SynchronizationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */; };
 		E6E0CE8B2B70DE430004ED88 /* OperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE8A2B70DE430004ED88 /* OperationState.swift */; };
@@ -749,6 +751,8 @@
 		E629E3CD2B470B7900D526AD /* Payload+UpdateConversationMLSMessageAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationMLSMessageAdd.swift"; sourceTree = "<group>"; };
 		E629E3CF2B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationMLSWelcome.swift"; sourceTree = "<group>"; };
 		E662588E2B4D644B00C23E79 /* PayloadUpdateConversationProtocolChangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayloadUpdateConversationProtocolChangeTests.swift; sourceTree = "<group>"; };
+		E69A02142B84E49C00126FF6 /* SelfSupportedProtocolsRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfSupportedProtocolsRequestStrategy.swift; sourceTree = "<group>"; };
+		E69A02162B84F02800126FF6 /* SelfSupportedProtocolsBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfSupportedProtocolsBuilder.swift; sourceTree = "<group>"; };
 		E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPhase.swift; sourceTree = "<group>"; };
 		E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizationState.swift; sourceTree = "<group>"; };
 		E6E0CE8A2B70DE430004ED88 /* OperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationState.swift; sourceTree = "<group>"; };
@@ -1606,14 +1610,16 @@
 		F14B7AD5222006A100458624 /* User */ = {
 			isa = PBXGroup;
 			children = (
-				F14B7AE9222009BA00458624 /* UserRichProfileRequestStrategy.swift */,
-				F14B7AEB222009C200458624 /* UserRichProfileRequestStrategyTests.swift */,
-				8792F55621AD944100795027 /* UserPropertyRequestStrategy.swift */,
-				87F7288421AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift */,
-				161E054F26655E4500DADC3D /* UserProfileRequestStrategy.swift */,
-				16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */,
+				E69A02162B84F02800126FF6 /* SelfSupportedProtocolsBuilder.swift */,
+				E69A02142B84E49C00126FF6 /* SelfSupportedProtocolsRequestStrategy.swift */,
 				EEDBD0A82A7B7F0C00F3956F /* SelfUserRequestStrategy.swift */,
 				EEDBD0AA2A7B83B100F3956F /* SelfUserRequestStrategyTests.swift */,
+				161E054F26655E4500DADC3D /* UserProfileRequestStrategy.swift */,
+				16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */,
+				8792F55621AD944100795027 /* UserPropertyRequestStrategy.swift */,
+				87F7288421AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift */,
+				F14B7AE9222009BA00458624 /* UserRichProfileRequestStrategy.swift */,
+				F14B7AEB222009C200458624 /* UserRichProfileRequestStrategyTests.swift */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -2249,6 +2255,7 @@
 				F18401C12073BE0800E9F4CC /* ImageV2DownloadRequestStrategy.swift in Sources */,
 				F18401CD2073BE0800E9F4CC /* LinkPreviewPreprocessor.swift in Sources */,
 				E629E3C62B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift in Sources */,
+				E69A02172B84F02800126FF6 /* SelfSupportedProtocolsBuilder.swift in Sources */,
 				169BA1CB25E9507600374343 /* Payload+Coding.swift in Sources */,
 				6308F8AC2A273E7A0072A177 /* FetchMLSConversationGroupInfoActionHandler.swift in Sources */,
 				166901DB1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m in Sources */,
@@ -2331,6 +2338,7 @@
 				06CDDE9F282E9CC200F9360F /* RemovePushTokenAction.swift in Sources */,
 				5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */,
 				E629E3C22B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift in Sources */,
+				E69A02152B84E49C00126FF6 /* SelfSupportedProtocolsRequestStrategy.swift in Sources */,
 				6360A2132B0B722700A5D5FB /* MLSClientIDsProvider.swift in Sources */,
 				166901E01D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m in Sources */,
 				633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */,
