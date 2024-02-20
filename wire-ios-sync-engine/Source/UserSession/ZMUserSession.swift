@@ -282,10 +282,8 @@ public final class ZMUserSession: NSObject {
         )
     }
 
-    public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
-        guard let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl else {
-            return nil
-        }
+    lazy var e2eiRepository: E2eIRepositoryInterface = {
+        let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl ?? ""
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
@@ -306,14 +304,16 @@ public final class ZMUserSession: NSObject {
             from: keyRotator.onNewCRLsDistributionPoints()
         )
 
-        let e2eiRepository = E2eIRepository(
+        return E2eIRepository(
             acmeApi: acmeApi,
             apiProvider: apiProvider,
             e2eiSetupService: e2eiSetupService,
             keyRotator: keyRotator,
             coreCryptoProvider: coreCryptoProvider
         )
+    }()
 
+    public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
         return EnrollE2eICertificateUseCase(
             e2eiRepository: e2eiRepository,
             context: syncContext)
@@ -618,6 +618,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
+        recurringActionService.registerAction(refreshFederationCertificatesAction)
     }
 
     func startRequestLoopTracker() {
