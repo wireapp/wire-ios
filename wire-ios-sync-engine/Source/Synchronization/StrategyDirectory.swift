@@ -323,6 +323,12 @@ mlsService: mlsService,
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
             ),
+            SelfSupportedProtocolsRequestStrategy(
+                context: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncStatus: applicationStatusDirectory.syncStatus,
+                userRepository: UserRepository(context: syncMOC)
+            ),
             EvaluateOneOnOneConversationsStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
