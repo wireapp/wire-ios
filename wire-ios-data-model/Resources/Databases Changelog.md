@@ -11,8 +11,6 @@ As it is hard to spot changes from version to version of database models (.xcdat
 * added one-to-one relationship (optional nullify) `User.oneOnOneConversation` <-> `Conversation.oneOnOneUser` (optional nullify)
 * removed one-to-one relationship `Connection.conversation` <-> `Conversation.connection`
 
-
-
 #### heavy weight migration MappingModel_2.113-2.114
 
 * add custom policy UserToUser: `WireDataModel.OneOnOneConversationMigrationPolicy`
@@ -36,7 +34,11 @@ As it is hard to spot changes from version to version of database models (.xcdat
 * make `conversation` relationship of `ParticipantRole` optional 
 * make `user` relationship of `ParticipantRole` optional
 
-* heavy weight migration 
+#### heavy weight migration MappingModel_2.113-2.114
+
+* add custom policy TeamToTeam: `WireDataModel.DuplicateTeamsMigrationPolicy`
+* add custom policy ConversationToConversation: `WireDataModel.DuplicateObjectsMigrationPolicy` 
+* add custom policy UserToUser: `WireDataModel.DuplicateObjectsMigrationPolicy`
 
 ### 2.110.0
 
