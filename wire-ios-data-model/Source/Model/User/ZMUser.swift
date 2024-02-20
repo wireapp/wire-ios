@@ -302,7 +302,6 @@ extension ZMUser {
         primaryKey = Self.primaryKey(from: remoteIdentifier, domain: domain)
     }
 
-    
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
         guard let imageData = data else {
