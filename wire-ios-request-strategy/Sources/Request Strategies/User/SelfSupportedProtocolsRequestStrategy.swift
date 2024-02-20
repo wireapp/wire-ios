@@ -53,10 +53,11 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             return nil
         }
 
-        // TODO: update self user protocols
-        let user = userRepository.selfUser()
-        if user.supportedProtocols.isEmpty {
-            user.supportedProtocols = [.proteus]
+        // Update supported protocols on user self.
+        // Unfortunately this method is called often and we only want to update once, so we check the status.
+        if requestSync.status != .inProgress {
+            let service = SupportedProtocolsService(context: managedObjectContext)
+            service.updateSupportedProtocols()
         }
 
         requestSync.readyForNextRequestIfNotBusy()
@@ -66,12 +67,12 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
     // MARK: - ZMSingleRequestTranscoder
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard sync == requestSync else {
+        guard sync == requestSync, isSlowSyncing else {
             return nil
         }
 
         let supportedProtocols = userRepository.selfUser().supportedProtocols
-        assert(supportedProtocols.isEmpty, "expected supported protocols to be set before updating")
+        assert(!supportedProtocols.isEmpty, "expected supported protocols to be set before updating")
 
         let transportBuilder = SelfSupportedProtocolsRequestBuilder(
             apiVersion: apiVersion,
@@ -81,11 +82,21 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        // no-op
-        debugPrint("did receive")
+        guard isSlowSyncing else {
+            // skip result if we are not in the slow sync...
+            assertionFailure("expected response during slow sync phase!")
+            return
+        }
 
-        managedObjectContext.perform {
-            self.syncStatus.finishCurrentSyncPhase(phase: self.syncPhase)
+        switch response.result {
+        case .success:
+            managedObjectContext.perform {
+                self.syncStatus.finishCurrentSyncPhase(phase: self.syncPhase)
+            }
+        default:
+            managedObjectContext.perform {
+                self.syncStatus.failCurrentSyncPhase(phase: self.syncPhase)
+            }
         }
     }
 }
