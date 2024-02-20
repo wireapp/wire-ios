@@ -46,7 +46,7 @@ public protocol E2eISetupServiceInterface {
 /// This class setups e2eIdentity object from CoreCrypto.
 public final class E2eISetupService: E2eISetupServiceInterface {
 
-    // TODO: temporary workaround for a crash WPB-6761
+    // TODO: [WPB-6761] temporary workaround for a crash 
     // The E2eiEnrollment cause a memory corruption when it deinits so we hold on to it forever.
     private static var enrollment: E2eiEnrollment?
 
