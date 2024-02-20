@@ -79,6 +79,7 @@
         <attribute name="messageProtocol" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="mlsGroupID" optional="YES" attributeType="Binary"/>
         <attribute name="mlsStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="mlsVerificationStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <attribute name="mutedStatus" attributeType="Integer 32" defaultValueString="NO" usesScalarValueType="NO" elementID="mutedStatus"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
@@ -91,6 +92,7 @@
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="securityLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="silencedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="supportedProtocols" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <attribute name="syncedMessageDestructionTimeout" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="teamRemoteIdentifier" optional="YES" transient="YES"/>
         <attribute name="teamRemoteIdentifier_data" optional="YES" attributeType="Binary"/>
@@ -102,6 +104,7 @@
         <relationship name="labels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Label" inverseName="conversations" inverseEntity="Label"/>
         <relationship name="lastServerSyncedActiveParticipants" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="User" inverseName="lastServerSyncedActiveConversations" inverseEntity="User"/>
         <relationship name="nonTeamRoles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="conversation" inverseEntity="Role"/>
+        <relationship name="oneOnOneUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="oneOnOneConversation" inverseEntity="User"/>
         <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="conversation" inverseEntity="ParticipantRole"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="conversations" inverseEntity="Team"/>
         <fetchIndex name="byNormalizedUserDefinedNameIndex">
@@ -343,6 +346,7 @@
         <relationship name="lastServerSyncedActiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="lastServerSyncedActiveParticipants" inverseEntity="Conversation"/>
         <relationship name="membership" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Member" inverseName="user" inverseEntity="Member"/>
         <relationship name="messagesFailedToSendRecipient" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="failedToSendRecipients" inverseEntity="Message"/>
+        <relationship name="oneOnOneConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="oneOnOneUser" inverseEntity="Conversation"/>
         <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="user" inverseEntity="ParticipantRole"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Reaction" inverseName="users" inverseEntity="Reaction"/>
         <relationship name="showingUserAdded" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="addedUsers" inverseEntity="SystemMessage"/>

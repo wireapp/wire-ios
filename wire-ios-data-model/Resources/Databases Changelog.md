@@ -6,8 +6,9 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ### 2.114.0
 
-* added `supportedProtocols` attribute on `User`
-* added one-to-one relationship `User.oneOnOneConversation` <-> `Conversation.oneOnOneUser`
+* added `mlsVerificationStatus` attribute of type Integer 16, default value 0
+* added `supportedProtocols` attribute of type `Transformable` with valueTransformerName `ExtendedSecureUnarchiveFromData` on `User`
+* added one-to-one relationship (optional nullify) `User.oneOnOneConversation` <-> `Conversation.oneOnOneUser` (optional nullify)
 * removed one-to-one relationship `Connection.conversation` <-> `Conversation.connection`
 
 * heavy weight migration 
