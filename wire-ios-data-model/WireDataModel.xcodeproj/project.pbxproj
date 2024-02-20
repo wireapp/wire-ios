@@ -876,6 +876,7 @@
 		017962A32B83FF8200D6C7B6 /* DuplicateObjectsMigrationPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DuplicateObjectsMigrationPolicy.swift; sourceTree = "<group>"; };
 		017962A72B85071B00D6C7B6 /* store2-112-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-112-0.wiredatabase"; sourceTree = "<group>"; };
 		017962A92B853BEC00D6C7B6 /* store2-113-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-113-0.wiredatabase"; sourceTree = "<group>"; };
+		017962AB2B853C8600D6C7B6 /* Databases Changelog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Databases Changelog.md"; sourceTree = "<group>"; };
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		018964242A6FE72700BCEE0E /* EARStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARStorage.swift; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
@@ -3321,6 +3322,7 @@
 		F9C9A6771CAD7A790039E10C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				017962AB2B853C8600D6C7B6 /* Databases Changelog.md */,
 				167BCC182609E92300E9D7E3 /* ZMEventModel.xcdatamodeld */,
 				E6F443042B16294000D2B08A /* zmessaging.xcdatamodeld */,
 				F9C9A5DC1CAD76A50039E10C /* Info.plist */,
