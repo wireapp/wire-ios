@@ -73,7 +73,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
         let supportedProtocols = userRepository.selfUser().supportedProtocols
         assert(supportedProtocols.isEmpty, "expected supported protocols to be set before updating")
 
-        let transportBuilder = SelfSupportedProtocolsBuilder(
+        let transportBuilder = SelfSupportedProtocolsRequestBuilder(
             apiVersion: apiVersion,
             supportedProtocols: supportedProtocols
         )

@@ -19,7 +19,7 @@
 import Foundation
 import WireTransport
 
-struct SelfSupportedProtocolsBuilder {
+struct SelfSupportedProtocolsRequestBuilder {
     private enum Constant {
         static let path = "/self/supported-protocols"
     }
@@ -27,14 +27,14 @@ struct SelfSupportedProtocolsBuilder {
     var apiVersion: APIVersion
     var supportedProtocols: Set<MessageProtocol>
 
-    private var supportedAPIVersion: Bool {
+    private var isAPIVersionSupported: Bool {
         apiVersion >= .v4
     }
 
     // MARK: Funcs
 
     func buildTransportRequest() -> ZMTransportRequest? {
-        guard supportedAPIVersion else {
+        guard isAPIVersionSupported else {
             return nil
         }
 

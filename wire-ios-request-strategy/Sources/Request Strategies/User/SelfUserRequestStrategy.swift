@@ -81,7 +81,7 @@ private extension SelfUserRequestStrategy {
                 return nil
             }
 
-            let transportBuilder = SelfSupportedProtocolsBuilder(
+            let transportBuilder = SelfSupportedProtocolsRequestBuilder(
                 apiVersion: apiVersion,
                 supportedProtocols: user.supportedProtocols
             )
