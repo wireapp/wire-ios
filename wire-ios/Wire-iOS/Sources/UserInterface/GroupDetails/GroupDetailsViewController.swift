@@ -31,9 +31,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     let userSession: UserSession
 
     var didCompleteInitialSync = false {
-        didSet {
-            collectionViewController.sections = computeVisibleSections()
-        }
+        didSet { collectionViewController.sections = computeVisibleSections() }
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -93,7 +91,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         footerView.update(for: conversation)
 
         collectionViewController.sections = computeVisibleSections()
-
     }
 
     override func viewDidLoad() {
@@ -386,7 +383,6 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
     }
-
 }
 
 extension ZMConversation {
@@ -396,5 +392,4 @@ extension ZMConversation {
             user.refreshData()
         }
     }
-
 }
