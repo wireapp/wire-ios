@@ -46,11 +46,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 @property (atomic) BOOL shouldStopEnqueueing;
 @property (nonatomic) BOOL tornDown;
 @property (nonatomic) OperationStatus *operationStatus;
-//@property (nonatomic) SyncStatus *syncStatus;
-//@property (nonatomic) PushNotificationStatus *pushNotificationStatus;
-//@property (nonatomic) CallEventStatus *callEventStatus;
-//@property (nonatomic, weak) ApplicationStatusDirectory *applicationStatusDirectory;
-//@property (nonatomic, weak) ApplicationStatusDirectory *applicationStatusDirectory;
 
 @end
 
@@ -199,19 +194,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         [BackgroundActivityFactory.sharedFactory endBackgroundActivity:enqueueActivity];
     }];
 }
-
-//- (PushNotificationStatus *)pushNotificationStatus
-//{
-//    return self.applicationStatusDirectory.pushNotificationStatus;
-//}
-//
-//- (CallEventStatus *)callEventStatus {
-//    return self.applicationStatusDirectory.callEventStatus;
-//}
-//
-//- (SyncStatus *)syncStatus {
-//    return self.applicationStatusDirectory.syncStatus;
-//}
 
 @end
 

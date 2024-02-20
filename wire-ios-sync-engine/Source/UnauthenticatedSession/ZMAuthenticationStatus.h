@@ -21,14 +21,12 @@
 @import CoreData;
 
 #import "NSError+ZMUserSession.h"
-//#import "ZMClientRegistrationStatus+Internal.h"
 
 @class UserInfo;
 @class ZMCredentials;
 @class ZMEmailCredentials;
 @class ZMPhoneCredentials;
 @class ZMPersistentCookieStorage;
-//@class ZMClientRegistrationStatus;
 @class ZMTransportResponse;
 @protocol UserInfoParser;
 @protocol NotificationContext;
