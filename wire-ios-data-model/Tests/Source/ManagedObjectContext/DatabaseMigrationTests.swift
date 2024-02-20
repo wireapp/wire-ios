@@ -75,7 +75,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                     "- Run the test, until you hit the assertion\n" +
                     "- **WHILE THE TEST IS PAUSED** on the assertion, do the following:\n" +
                     "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
-                    "\t cp \"\(currentDatabaseURL.path)\" wire-ios-data-model/Tests/Resources/\(fixtureVersion).wiredatabase\n\n" +
+                    "\t cp \"\(currentDatabaseURL.path)\" wire-ios-data-model/Tests/Resources/store\(fixtureVersion).wiredatabase\n\n" +
                     "- The command will copy a file to  `WireDataModel/Tests/Resources/store\(fixtureVersion).wiredatabase`\n" +
                     "- Add it to WireDataModel project with the other stores\n\n")
             assert(false)

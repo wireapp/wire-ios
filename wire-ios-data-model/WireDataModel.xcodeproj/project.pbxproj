@@ -22,6 +22,7 @@
 		017962A52B83FF8200D6C7B6 /* MappingModel_2.110-2.111.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 017962A22B83FF8200D6C7B6 /* MappingModel_2.110-2.111.xcmappingmodel */; };
 		017962A62B83FF8200D6C7B6 /* DuplicateObjectsMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017962A32B83FF8200D6C7B6 /* DuplicateObjectsMigrationPolicy.swift */; };
 		017962A82B85071B00D6C7B6 /* store2-112-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 017962A72B85071B00D6C7B6 /* store2-112-0.wiredatabase */; };
+		017962AA2B853BEC00D6C7B6 /* store2-113-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 017962A92B853BEC00D6C7B6 /* store2-113-0.wiredatabase */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
 		018964252A6FE72700BCEE0E /* EARStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018964242A6FE72700BCEE0E /* EARStorage.swift */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
@@ -512,7 +513,7 @@
 		EE429390252C466500E70670 /* ChangeInfoConsumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938F252C466500E70670 /* ChangeInfoConsumer.swift */; };
 		EE46B92828A511630063B38D /* ZMClientMessageTests+MLSEncryptedPayloadGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE46B92728A511630063B38D /* ZMClientMessageTests+MLSEncryptedPayloadGenerator.swift */; };
 		EE4CCA95256C558400848212 /* Feature.AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4CCA94256C558400848212 /* Feature.AppLock.swift */; };
-		EE4E92072B5E67DE009F4A97 /* store2-113-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE4E92062B5E67DE009F4A97 /* store2-113-0.wiredatabase */; };
+		EE4E92072B5E67DE009F4A97 /* store2-114-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE4E92062B5E67DE009F4A97 /* store2-114-0.wiredatabase */; };
 		EE5316422A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5316412A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift */; };
 		EE5E2C1526DFC31900C3928A /* MessageDestructionTimeoutType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5E2C1426DFC31900C3928A /* MessageDestructionTimeoutType.swift */; };
 		EE5E2C1926DFC67900C3928A /* MessageDestructionTimeoutValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5E2C1826DFC67900C3928A /* MessageDestructionTimeoutValue.swift */; };
@@ -874,6 +875,7 @@
 		017962A22B83FF8200D6C7B6 /* MappingModel_2.110-2.111.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = "MappingModel_2.110-2.111.xcmappingmodel"; sourceTree = "<group>"; };
 		017962A32B83FF8200D6C7B6 /* DuplicateObjectsMigrationPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DuplicateObjectsMigrationPolicy.swift; sourceTree = "<group>"; };
 		017962A72B85071B00D6C7B6 /* store2-112-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-112-0.wiredatabase"; sourceTree = "<group>"; };
+		017962A92B853BEC00D6C7B6 /* store2-113-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-113-0.wiredatabase"; sourceTree = "<group>"; };
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		018964242A6FE72700BCEE0E /* EARStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARStorage.swift; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
@@ -1400,7 +1402,7 @@
 		EE42938F252C466500E70670 /* ChangeInfoConsumer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeInfoConsumer.swift; sourceTree = "<group>"; };
 		EE46B92728A511630063B38D /* ZMClientMessageTests+MLSEncryptedPayloadGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+MLSEncryptedPayloadGenerator.swift"; sourceTree = "<group>"; };
 		EE4CCA94256C558400848212 /* Feature.AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.AppLock.swift; sourceTree = "<group>"; };
-		EE4E92062B5E67DE009F4A97 /* store2-113-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-113-0.wiredatabase"; sourceTree = "<group>"; };
+		EE4E92062B5E67DE009F4A97 /* store2-114-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-114-0.wiredatabase"; sourceTree = "<group>"; };
 		EE5316412A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastUpdateEventIDRepository.swift; sourceTree = "<group>"; };
 		EE5E2C1426DFC31900C3928A /* MessageDestructionTimeoutType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDestructionTimeoutType.swift; sourceTree = "<group>"; };
 		EE5E2C1826DFC67900C3928A /* MessageDestructionTimeoutValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDestructionTimeoutValue.swift; sourceTree = "<group>"; };
@@ -3414,7 +3416,8 @@
 		F9C9A83D1CAEDBC40039E10C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				EE4E92062B5E67DE009F4A97 /* store2-113-0.wiredatabase */,
+				EE4E92062B5E67DE009F4A97 /* store2-114-0.wiredatabase */,
+				017962A92B853BEC00D6C7B6 /* store2-113-0.wiredatabase */,
 				017962A72B85071B00D6C7B6 /* store2-112-0.wiredatabase */,
 				01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */,
 				E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */,
@@ -3696,7 +3699,7 @@
 				F9A706FC1CAEE32A00C2F5FE /* Lorem Ipsum.txt in Resources */,
 				01B6A8A02B16268300E409A0 /* store2-111-0.wiredatabase in Resources */,
 				06EED73F2525D5B90014FE1E /* store2-87-0.wiredatabase in Resources */,
-				EE4E92072B5E67DE009F4A97 /* store2-113-0.wiredatabase in Resources */,
+				EE4E92072B5E67DE009F4A97 /* store2-114-0.wiredatabase in Resources */,
 				EE9ADC47286F38D1002B2148 /* store2-102-0.wiredatabase in Resources */,
 				16500C0325E3A7F80021B3AE /* store2-90-0.wiredatabase in Resources */,
 				E6BDA1152B1642A400488D92 /* store2-110-0.wiredatabase in Resources */,
@@ -3704,6 +3707,7 @@
 				F9A706F81CAEE32400C2F5FE /* InfoPlist.strings in Resources */,
 				0612D241243DC134008811A7 /* store2-81-0.wiredatabase in Resources */,
 				0630E4C1257FC41400C75BFB /* store2-88-0.wiredatabase in Resources */,
+				017962AA2B853BEC00D6C7B6 /* store2-113-0.wiredatabase in Resources */,
 				E68D9FF12B0F595100EFE04F /* store2-108-0.wiredatabase in Resources */,
 				EE3C07E32698737D00CCB6FD /* store2-93-0.wiredatabase in Resources */,
 				EE6CB3DC24E2A4E500B0EADD /* store2-83-0.wiredatabase in Resources */,
@@ -4913,7 +4917,7 @@
 				E6F443102B16294000D2B08A /* zmessaging2.81.0.xcdatamodel */,
 				E6F443182B16294000D2B08A /* zmessaging2.80.0.xcdatamodel */,
 			);
-			currentVersion = 6398545E2B346A0700AA10DE /* zmessaging2.112.0.xcdatamodel */;
+			currentVersion = EE85C8AB2B55790400D3182D /* zmessaging2.113.0.xcdatamodel */;
 			path = zmessaging.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
