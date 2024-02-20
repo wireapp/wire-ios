@@ -92,7 +92,6 @@
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="securityLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="silencedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="supportedProtocols" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <attribute name="syncedMessageDestructionTimeout" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="teamRemoteIdentifier" optional="YES" transient="YES"/>
         <attribute name="teamRemoteIdentifier_data" optional="YES" attributeType="Binary"/>
@@ -333,6 +332,7 @@
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="richProfile" optional="YES" attributeType="Binary"/>
         <attribute name="serviceIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="supportedProtocols" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <attribute name="teamIdentifier" optional="YES" transient="YES"/>
         <attribute name="teamIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="usesCompanyLogin" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
