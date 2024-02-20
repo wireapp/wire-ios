@@ -49,6 +49,14 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                         textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
                         image: status.image
                     )
+
+                case .invalid:
+                    viewForStatus(
+                        statusText: status.title,
+                        textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
+                        image: status.image
+                    )
+
                 case .valid:
                     viewForStatus(
                         titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,

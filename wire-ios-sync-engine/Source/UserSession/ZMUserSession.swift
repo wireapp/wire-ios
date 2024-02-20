@@ -316,7 +316,10 @@ public final class ZMUserSession: NSObject {
     }()
 
     public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
-        return GetE2eIdentityCertificatesUseCase(coreCryptoProvider: coreCryptoProvider)
+        return GetE2eIdentityCertificatesUseCase(
+            coreCryptoProvider: coreCryptoProvider,
+            syncContext: syncContext
+        )
     }()
 
     lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {

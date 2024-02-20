@@ -20,7 +20,7 @@ import Foundation
 import WireCoreCrypto
 
 public enum E2EIdentityCertificateStatus: CaseIterable {
-    case notActivated, revoked, expired, valid
+    case notActivated, revoked, expired, invalid, valid
 }
 
 public struct E2eIdentityCertificate: Equatable {

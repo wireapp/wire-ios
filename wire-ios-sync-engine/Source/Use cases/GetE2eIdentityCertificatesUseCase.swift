@@ -28,10 +28,15 @@ public protocol GetE2eIdentityCertificatesUseCaseProtocol {
 }
 
 final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol {
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
 
-    public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let syncContext: NSManagedObjectContext
+
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol,
+                syncContext: NSManagedObjectContext) {
+
         self.coreCryptoProvider = coreCryptoProvider
+        self.syncContext = syncContext
     }
 
     public func invoke(mlsGroupId: MLSGroupID,
@@ -39,10 +44,45 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto(requireMLS: true)
         let clientIds = clientIds.compactMap { $0.rawValue.data(using: .utf8) }
-        let wireIdentities = try await getWireIdentity(coreCrypto: coreCrypto,
-                                                       conversationId: mlsGroupId.data,
-                                                       clientIDs: clientIds)
-        return try wireIdentities.compactMap { try $0.toE2eIdenityCertificate() }
+        let identities = try await getWireIdentity(coreCrypto: coreCrypto,
+                                                   conversationId: mlsGroupId.data,
+                                                   clientIDs: clientIds)
+
+        let identitiesAndStatus = await validateUserHandleAndName(for: identities)
+
+        return try identitiesAndStatus.compactMap { identity, status in
+            guard let certificateData = identity.certificate.data(using: .utf8) else {
+                return nil
+            }
+
+            let x509Certificate = try X509Certificate(pem: certificateData)
+            return x509Certificate.toE2eIdenityCertificate(
+                clientId: identity.clientId,
+                certificateDetails: identity.certificate,
+                certificateStatus: status,
+                mlsThumbprint: identity.thumbprint
+            )
+        }
+    }
+
+    // Core Crypto can't validate the user name and handle because it doesn't know the actual
+    // values so we perform additional validation.
+
+    private func validateUserHandleAndName(for identities: [WireIdentity]) async -> [(WireIdentity, E2EIdentityCertificateStatus)] {
+        return await identities.asyncMap { identity in
+            // The identity is valid according to CoreCrypto.
+            guard identity.status == .valid else {
+                return (identity, identity.status.e2eIdentityStatus)
+            }
+
+            let (name, handle) = await syncContext.perform {
+                let client = UserClient.fetchExistingUserClient(with: identity.clientId, in: self.syncContext)
+                return (client?.user?.name, client?.user?.handle)
+            }
+
+            let isValid = identity.displayName == name && identity.handle == handle
+            return (identity, isValid ? .valid : .invalid)
+        }
     }
 
     @MainActor
@@ -53,20 +93,6 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                 conversationId: conversationId,
                 deviceIds: clientIDs)
         }
-    }
-}
-
-extension WireIdentity {
-    func toE2eIdenityCertificate() throws -> E2eIdentityCertificate? {
-        guard let certificateData = certificate.data(using: .utf8) else {
-            return nil
-        }
-        let x509Certificate = try X509Certificate(pem: certificateData)
-        return x509Certificate.toE2eIdenityCertificate(
-            clientId: clientId,
-            certificateDetails: certificate,
-            certificateStatus: status.e2eIdentityStatus,
-            mlsThumbprint: thumbprint)
     }
 }
 

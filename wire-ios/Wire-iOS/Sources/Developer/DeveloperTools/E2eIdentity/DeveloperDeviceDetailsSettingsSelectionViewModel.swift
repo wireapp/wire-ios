@@ -113,7 +113,7 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
         switch selectedStatus {
         case .notActivated:
             return .mockNotActivated
-        case .revoked:
+        case .revoked, .invalid:
             return .mockRevoked
         case .expired:
             return .mockExpired
