@@ -46,6 +46,10 @@ public protocol E2eISetupServiceInterface {
 /// This class setups e2eIdentity object from CoreCrypto.
 public final class E2eISetupService: E2eISetupServiceInterface {
 
+    // TODO: temporary workaround for a crash WPB-6761
+    // The E2eiEnrollment cause a memory corruption when it deinits so we hold on to it forever.
+    private static var enrollment: E2eiEnrollment?
+
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
@@ -83,13 +87,15 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         isUpgradingClient: Bool
     ) async throws -> E2eiEnrollment {
         do {
-            return try await setupNewActivationOrRotate(
+            let enrollment = try await setupNewActivationOrRotate(
                 clientID: clientID,
                 userName: userName,
                 handle: handle,
                 teamId: teamId,
                 isUpgradingClient: isUpgradingClient
             )
+            Self.enrollment = enrollment
+            return enrollment
         } catch {
             throw Failure.failedToSetupE2eIClient(error)
         }
