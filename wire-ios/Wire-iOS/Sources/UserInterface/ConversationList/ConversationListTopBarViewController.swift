@@ -59,6 +59,9 @@ final class ConversationListTopBarViewController: UIViewController {
         self.userSession = userSession
         self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
         self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+
+        userStatus = .init()
+
         super.init(nibName: nil, bundle: nil)
 
         observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
@@ -90,7 +93,7 @@ final class ConversationListTopBarViewController: UIViewController {
     // MARK: - Title View
 
     func updateTitleView() {
-        TODO: weak userStatusViewController and don't create it each time
+        // TODO: weak userStatusViewController and don't create it each time
         if let userStatusViewController {
             removeChild(userStatusViewController)
         }
@@ -99,7 +102,7 @@ final class ConversationListTopBarViewController: UIViewController {
                 options: .header,
                 settings: .shared
             )
-        TODO: use self.userStatus
+        // TODO: use self.userStatus
             userStatusViewController.userStatus = .init(
                 user: selfUser,
                 isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
@@ -314,7 +317,7 @@ extension ConversationListTopBarViewController: UserStatusViewControllerDelegate
 
 extension UIView {
 
-    fileprivate func wrapInAvatarSizeContainer() -> UIView {
+    func wrapInAvatarSizeContainer() -> UIView {
         let container = UIView()
         container.addSubview(self)
         NSLayoutConstraint.activate([
