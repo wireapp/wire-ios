@@ -49,7 +49,6 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
             selfUser: mockSelfUser,
             userSession: userSession
         )
-        // sut.selfUserStatus ?
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
         sut.view.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
