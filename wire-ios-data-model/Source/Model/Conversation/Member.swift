@@ -63,19 +63,12 @@ public typealias TeamMembership = Member
 
         var member: Member
         if let existing = user.membership {
-<<<<<<< HEAD
-            return existing
-        } else if let userId = user.remoteIdentifier, let existing = Member.fetch(with: userId, in: context) {
-            return existing
-=======
             member = existing
-        }
-        else if let userId = user.remoteIdentifier, let existing = Member.fetch(with: userId, in: context) {
+        } else if let userId = user.remoteIdentifier, let existing = Member.fetch(with: userId, in: context) {
             member = existing
         } else {
             member = insertNewObject(in: context)
             member.needsToBeUpdatedFromBackend = true
->>>>>>> 325b3d1b04 (fix: request loop team - WPB-6724 (#991))
         }
 
         member.team = team
@@ -104,15 +97,9 @@ extension Member {
         guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return nil }
 
         let user = ZMUser.fetchOrCreate(with: id, domain: nil, in: context)
-<<<<<<< HEAD
         let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(Date.init(transportString:)) as Date?
         let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init(transportString:))
-        let member = getOrCreateMember(for: user, in: team, context: context)
-=======
-        let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(NSDate.init(transport:)) as Date?
-        let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init)
         let member = getOrUpdateMember(for: user, in: team, context: context)
->>>>>>> 325b3d1b04 (fix: request loop team - WPB-6724 (#991))
 
         member.updatePermissions(with: payload)
         member.createdAt = createdAt

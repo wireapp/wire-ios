@@ -159,25 +159,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         deleteAccount()
     }
 
-<<<<<<< HEAD
-=======
-    private func updateTeam(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let existingTeam = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-
-        TeamUpdateEventPayload(data)?.updateTeam(existingTeam, in: managedObjectContext)
-    }
-
-    private func processAddedMember(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-        guard let addedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
-        let user = ZMUser.fetchOrCreate(with: addedUserId, domain: nil, in: managedObjectContext)
-        user.needsToBeUpdatedFromBackend = true
-        _ = Member.getOrUpdateMember(for: user, in: team, context: managedObjectContext)
-    }
-
->>>>>>> 325b3d1b04 (fix: request loop team - WPB-6724 (#991))
     private func processRemovedMember(with event: ZMUpdateEvent) {
         guard let identifier = event.teamId, let data = event.dataPayload else { return }
         guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
