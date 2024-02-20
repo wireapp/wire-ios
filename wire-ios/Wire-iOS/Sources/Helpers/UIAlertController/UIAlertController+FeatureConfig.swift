@@ -79,12 +79,14 @@ extension UIAlertController {
                                             acknowledger: FeatureChangeAcknowledger,
                                             actionsHandler: E2eINotificationActions) -> UIAlertController? {
         switch change {
-        case .e2eIEnabled(let gracePeriod):
+        case .e2eIEnabled:
             return alertForE2eIChangeWithActions { action in
                 acknowledger.acknowledgeChange(for: .e2ei)
                 switch action {
                 case .getCertificate:
-                    actionsHandler.enrollCertificate()
+                    Task {
+                        await actionsHandler.getCertificate()
+                    }
                 case .remindLater:
                     Task {
                         await actionsHandler.snoozeReminder()

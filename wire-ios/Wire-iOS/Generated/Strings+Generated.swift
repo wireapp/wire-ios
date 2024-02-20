@@ -3085,6 +3085,38 @@ internal enum L10n {
         internal static let unkownError = L10n.tr("Localizable", "error.user.unkown_error", fallback: "Something went wrong, please try again")
       }
     }
+    internal enum FailetToGetCertificate {
+      internal enum Alert {
+        /// Please try again, or reach out to your team admin.
+        internal static let forcedMessage = L10n.tr("Localizable", "failet_to_get_certificate.alert.forced_message", fallback: "Please try again, or reach out to your team admin.")
+        /// You can retry to get the certificate now, or you will get a reminder later.
+        internal static let message = L10n.tr("Localizable", "failet_to_get_certificate.alert.message", fallback: "You can retry to get the certificate now, or you will get a reminder later.")
+        /// Certificate couldn’t be issued.
+        internal static let title = L10n.tr("Localizable", "failet_to_get_certificate.alert.title", fallback: "Certificate couldn’t be issued.")
+      }
+      internal enum Button {
+        /// OK
+        internal static let ok = L10n.tr("Localizable", "failet_to_get_certificate.button.ok", fallback: "OK")
+        /// Retry
+        internal static let retry = L10n.tr("Localizable", "failet_to_get_certificate.button.retry", fallback: "Retry")
+      }
+    }
+    internal enum FailetToUpdateCertificate {
+      internal enum Alert {
+        /// Please try again, or reach out to your team admin.
+        internal static let forcedMessage = L10n.tr("Localizable", "failet_to_update_certificate.alert.forced_message", fallback: "Please try again, or reach out to your team admin.")
+        /// You can retry to update the certificate now, or you will get a reminder later.
+        internal static let message = L10n.tr("Localizable", "failet_to_update_certificate.alert.message", fallback: "You can retry to update the certificate now, or you will get a reminder later.")
+        /// Certificate couldn’t be updated.
+        internal static let title = L10n.tr("Localizable", "failet_to_update_certificate.alert.title", fallback: "Certificate couldn’t be updated.")
+      }
+      internal enum Button {
+        /// OK
+        internal static let ok = L10n.tr("Localizable", "failet_to_update_certificate.button.ok", fallback: "OK")
+        /// Retry
+        internal static let retry = L10n.tr("Localizable", "failet_to_update_certificate.button.retry", fallback: "Retry")
+      }
+    }
     internal enum FeatureConfig {
       internal enum Alert {
         /// Team settings changed
@@ -3101,6 +3133,10 @@ internal enum L10n {
           /// As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.
           /// Enter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.
           internal static let message = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.message", fallback: "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\nEnter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.")
+          /// You can get the certificate in your **Wire Settings** during the next %@. Open **Devices** and select **Get Certificate** for your current device.
+          internal static func remiderMessage(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "feature_config.alert.mls_e2ei.remider_message", String(describing: p1), fallback: "You can get the certificate in your **Wire Settings** during the next %@. Open **Devices** and select **Get Certificate** for your current device.")
+          }
           /// End-to-end identity certificate
           internal static let title = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.title", fallback: "End-to-end identity certificate")
           internal enum Button {
@@ -3108,6 +3144,8 @@ internal enum L10n {
             internal static let getCertificate = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.get_certificate", fallback: "Get Certificate")
             /// Learn More
             internal static let learnMore = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.learn_more", fallback: "Learn More")
+            /// OK
+            internal static let ok = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.ok", fallback: "OK")
             /// Remind Me Later
             internal static let remindMeLater = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.remind_me_later", fallback: "Remind Me Later")
           }
@@ -5855,6 +5893,22 @@ internal enum L10n {
       internal enum Textfield {
         /// Enter your passcode
         internal static let placeholder = L10n.tr("Localizable", "unlock.textfield.placeholder", fallback: "Enter your passcode")
+      }
+    }
+    internal enum UpdateCertificate {
+      internal enum Alert {
+        /// The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.
+        internal static let message = L10n.tr("Localizable", "update_certificate.alert.message", fallback: "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.")
+        /// Update certificate
+        internal static let title = L10n.tr("Localizable", "update_certificate.alert.title", fallback: "Update certificate")
+      }
+      internal enum Button {
+        /// Learn more
+        internal static let learnMore = L10n.tr("Localizable", "update_certificate.button.learn_more", fallback: "Learn more")
+        /// Remind Me Later
+        internal static let remindMeLater = L10n.tr("Localizable", "update_certificate.button.remind_me_later", fallback: "Remind Me Later")
+        /// Update Certificate
+        internal static let updateCertificate = L10n.tr("Localizable", "update_certificate.button.update_certificate", fallback: "Update Certificate")
       }
     }
     internal enum UrlAction {
