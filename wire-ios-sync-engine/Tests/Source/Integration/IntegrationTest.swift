@@ -588,6 +588,12 @@ extension IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
+    func performResyncResources() {
+        userSession?.applicationStatusDirectory?.syncStatus.resyncResources()
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
     func performQuickSync() {
         userSession?.applicationStatusDirectory.syncStatus.forceQuickSync()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)

@@ -107,12 +107,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"HotFix";
                          [ZMHotFixDirectory refetchConnectedUsers:context];
                      }],
 
-                    /// We need to force a slow sync with the introduction of Teams, as users might have missed
+                    /// We need to force a slow sync (resyncResources) with the introduction of Teams, as users might have missed
                     /// update events when being added to teams or team conversations.
                     [ZMHotFixPatch
                      patchWithVersion:@"88.0.0"
                      patchCode:^(__unused NSManagedObjectContext *context) {
-                         [ZMHotFixDirectory restartSlowSync:context];
+                         [ZMHotFixDirectory resyncResources:context];
                      }],
 
                     /// We need to refetch all team conversations to get data about access levels that were
@@ -195,11 +195,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"HotFix";
                          [ZMHotFixDirectory migrateBackendEnvironmentToSharedUserDefaults];
                      }],
                     
-                    /// We need to restart the slow sync after fixing a connection bug in order restore lost connections.
+                    /// We need to restart the slow sync (resyncResources) after fixing a connection bug in order restore lost connections.
                     [ZMHotFixPatch
                      patchWithVersion:@"354.0.1"
                      patchCode:^(NSManagedObjectContext *context) {
-                        [ZMHotFixDirectory restartSlowSync:context];
+                        [ZMHotFixDirectory resyncResources:context];
                     }],
 
                     /// We need to refetch the users after qualified ID was introduced

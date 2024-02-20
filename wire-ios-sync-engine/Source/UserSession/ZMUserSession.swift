@@ -575,8 +575,8 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Network
 
-    public func requestSlowSync() {
-        applicationStatusDirectory.requestSlowSync()
+    public func requestResyncResources() {
+        applicationStatusDirectory?.requestResyncResources()
     }
 
     // MARK: - Access Token
