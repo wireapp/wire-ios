@@ -15,6 +15,7 @@
 		01482E8A2B10ED0800F3B2CB /* MLSSubgroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F0781129F6C59D0031E19D /* MLSSubgroup.swift */; };
 		01482E8B2B10EEB000F3B2CB /* FetchSubgroupAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F0780C29F292770031E19D /* FetchSubgroupAction.swift */; };
 		0153CA882B854576000000CA /* MappingModel_2.113-2.114.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0153CA872B854576000000CA /* MappingModel_2.113-2.114.xcmappingmodel */; };
+		0153CA8A2B8548D2000000CA /* store2-114-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0153CA892B8548D2000000CA /* store2-114-0.wiredatabase */; };
 		017962982B83FC1400D6C7B6 /* DatabaseMigrationTests+UserUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017962952B83FC1400D6C7B6 /* DatabaseMigrationTests+UserUniqueness.swift */; };
 		017962992B83FC1400D6C7B6 /* DatabaseMigrationTests+TeamUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017962962B83FC1400D6C7B6 /* DatabaseMigrationTests+TeamUniqueness.swift */; };
 		0179629A2B83FC1400D6C7B6 /* DatabaseMigrationTests+ConversationUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017962972B83FC1400D6C7B6 /* DatabaseMigrationTests+ConversationUniqueness.swift */; };
@@ -869,6 +870,7 @@
 		014C36B02B27206D00D7E8EA /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		0153CA842B8540F0000000CA /* zmessaging2.114.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.114.0.xcdatamodel; sourceTree = "<group>"; };
 		0153CA872B854576000000CA /* MappingModel_2.113-2.114.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = "MappingModel_2.113-2.114.xcmappingmodel"; sourceTree = "<group>"; };
+		0153CA892B8548D2000000CA /* store2-114-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-114-0.wiredatabase"; sourceTree = "<group>"; };
 		017962952B83FC1400D6C7B6 /* DatabaseMigrationTests+UserUniqueness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+UserUniqueness.swift"; sourceTree = "<group>"; };
 		017962962B83FC1400D6C7B6 /* DatabaseMigrationTests+TeamUniqueness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+TeamUniqueness.swift"; sourceTree = "<group>"; };
 		017962972B83FC1400D6C7B6 /* DatabaseMigrationTests+ConversationUniqueness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+ConversationUniqueness.swift"; sourceTree = "<group>"; };
@@ -3418,6 +3420,7 @@
 		F9C9A83D1CAEDBC40039E10C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0153CA892B8548D2000000CA /* store2-114-0.wiredatabase */,
 				017962A92B853BEC00D6C7B6 /* store2-113-0.wiredatabase */,
 				017962A72B85071B00D6C7B6 /* store2-112-0.wiredatabase */,
 				01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */,
@@ -3679,6 +3682,7 @@
 				F9A706F61CAEE31800C2F5FE /* 1900x1500.jpg in Resources */,
 				F9A706FA1CAEE32A00C2F5FE /* ExternalMessageTextFixture.txt in Resources */,
 				6391A7FF2A6FDB9100832665 /* store2-107-0.wiredatabase in Resources */,
+				0153CA8A2B8548D2000000CA /* store2-114-0.wiredatabase in Resources */,
 				54AA3C9924ED2CE700FE1F94 /* store2-84-0.wiredatabase in Resources */,
 				5495BC431E019F1B004253ED /* audio.m4a in Resources */,
 				4058AAA62AAA017F0013DE71 /* store2-109-0.wiredatabase in Resources */,
