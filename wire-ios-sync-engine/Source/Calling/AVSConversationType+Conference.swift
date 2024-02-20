@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,24 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-extension UINavigationItem {
+extension AVSConversationType {
 
-    @available(*, deprecated, message: "Please use `setDynamicFontLabel(title:)`!")
-    func setupNavigationBarTitle(title: String) {
-        let titleLabel = DynamicFontLabel(
-            text: title,
-            fontSpec: .headerSemiboldFont,
-            color: SemanticColors.Label.textDefault)
-        titleView = titleLabel
-    }
+    var isConference: Bool {
+        switch self {
+        case .conference, .mlsConference:
+            return true
 
-    func setDynamicFontLabel(title: String) {
-        titleView = DynamicFontLabel(
-            text: title,
-            style: .headline,
-            color: SemanticColors.Label.textDefault
-        )
+        default:
+            return false
+        }
     }
 }
