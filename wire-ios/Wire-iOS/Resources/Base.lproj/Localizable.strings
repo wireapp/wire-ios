@@ -1782,6 +1782,28 @@
 "feature_config.alert.mls_e2ei.button.get_certificate" = "Get Certificate";
 "feature_config.alert.mls_e2ei.button.remind_me_later" = "Remind Me Later";
 "feature_config.alert.mls_e2ei.button.learn_more" = "Learn More";
+"feature_config.alert.mls_e2ei.button.ok" = "OK";
+"feature_config.alert.mls_e2ei.remider_message" = "You can get the certificate in your **Wire Settings** during the next %@. Open **Devices** and select **Get Certificate** for your current device.";
+
+"failet_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
+"failet_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
+"failet_to_get_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
+"failet_to_get_certificate.button.retry" = "Retry";
+"failet_to_get_certificate.button.ok" = "OK";
+
+// Update end-to-end identity certificate
+"update_certificate.alert.title" = "Update certificate";
+"update_certificate.alert.message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.";
+"update_certificate.button.update_certificate" = "Update Certificate";
+"update_certificate.button.remind_me_later" = "Remind Me Later";
+"update_certificate.button.learn_more" = "Learn more";
+
+"failet_to_update_certificate.alert.title" = "Certificate couldn’t be updated.";
+"failet_to_update_certificate.alert.message" = "You can retry to update the certificate now, or you will get a reminder later.";
+"failet_to_update_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
+
+"failet_to_update_certificate.button.retry" = "Retry";
+"failet_to_update_certificate.button.ok" = "OK";
 
 // Jailbroken alert
 "jailbrokendevice.alert.title" = "Jailbreak detected";
