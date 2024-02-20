@@ -147,6 +147,26 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+    func testThatTheIncomingCallHandler_WithAMLSGroupResolvesToAConferenceCall() throws {
+        // GIVEN
+        groupConversation.conversationType = .group
+        let avsConversationType: AVSConversationType = .mlsConference
+
+        // WHEN
+        sut.handleIncomingCall(conversationId: groupConversationID,
+                               messageTime: Date(),
+                               client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+                               isVideoCall: true,
+                               shouldRing: false,
+                               conversationType: avsConversationType)
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        // THEN
+        let id = try XCTUnwrap(groupConversation.avsIdentifier)
+        let callSnapshot = try XCTUnwrap(sut.callSnapshots[id])
+        XCTAssertTrue(callSnapshot.isConferenceCall)
+    }
+
     func testThatTheIncomingCallHandlerPostsTheRightNotification_IsVideo() {
         checkThatItPostsNotification(expectedCallState: .incoming(video: true, shouldRing: false, degraded: false), expectedCallerId: otherUserID, expectedConversationId: oneOnOneConversationID) {
             sut.handleIncomingCall(conversationId: oneOnOneConversationID,
