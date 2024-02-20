@@ -18,13 +18,13 @@
 
 import Foundation
 
-protocol SupportedProtocolsServiceInterface {
+public protocol SupportedProtocolsServiceInterface {
 
     func updateSupportedProtocols()
 
 }
 
-final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
+public final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
 
     // MARK: - Properties
 
@@ -51,7 +51,7 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
 
     // MARK: - Methods
 
-    func updateSupportedProtocols() {
+    public func updateSupportedProtocols() {
         let selfUser = userRepository.selfUser()
         selfUser.supportedProtocols = calculateSupportedProtocols()
     }
@@ -156,6 +156,8 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
     }
 
 }
+
+// MARK: -
 
 private extension UserClient {
 
