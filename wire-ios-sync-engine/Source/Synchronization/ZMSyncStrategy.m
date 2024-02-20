@@ -54,9 +54,6 @@
 @interface ZMSyncStrategy (Registration) <ZMClientRegistrationStatusDelegate>
 @end
 
-//@interface ZMClientRegistrationStatus (Protocol) <ClientRegistrationDelegate>
-//@end
-
 
 @implementation ZMSyncStrategy
 
