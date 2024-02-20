@@ -34,7 +34,7 @@ class E2eIVerificationStatusServiceTests: ZMConversationTestsBase {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         sut = E2eIVerificationStatusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
