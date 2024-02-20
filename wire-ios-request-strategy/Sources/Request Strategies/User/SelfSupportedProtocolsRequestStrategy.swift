@@ -53,9 +53,12 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             return nil
         }
 
+        WireLogger.sync.info("start slow sync phase: \(syncPhase.description)")
+
         // Update supported protocols on user self.
         // Unfortunately this method is called often and we only want to update once, so we check the status.
         if requestSync.status != .inProgress {
+            WireLogger.sync.info("slow sync now updates supported protocols")
             let service = SupportedProtocolsService(context: managedObjectContext)
             service.updateSupportedProtocols()
         }
@@ -85,15 +88,18 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
         guard isSlowSyncing else {
             // skip result if we are not in the slow sync...
             assertionFailure("expected response during slow sync phase!")
+            WireLogger.sync.error("received response, but expected during slow sync phase '\(syncPhase.description)'!")
             return
         }
 
         switch response.result {
         case .success:
+            WireLogger.sync.error("finished slow sync phase '\(syncPhase.description)'!")
             managedObjectContext.perform {
                 self.syncStatus.finishCurrentSyncPhase(phase: self.syncPhase)
             }
         default:
+            WireLogger.sync.error("failed slow sync phase '\(syncPhase.description)'!")
             managedObjectContext.perform {
                 self.syncStatus.failCurrentSyncPhase(phase: self.syncPhase)
             }
