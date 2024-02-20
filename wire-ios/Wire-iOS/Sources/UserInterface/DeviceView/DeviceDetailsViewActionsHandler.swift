@@ -21,12 +21,12 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
-    private let logger: LoggerProtocol
-    private var userClient: UserClient
-    private var userSession: UserSession
-    private var clientRemovalObserver: ClientRemovalObserver?
-    private var credentials: ZMEmailCredentials?
-    private let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
+    let logger: LoggerProtocol
+    var userClient: UserClient
+    var userSession: UserSession
+    var clientRemovalObserver: ClientRemovalObserver?
+    var credentials: ZMEmailCredentials?
+    let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
 
     var isProcessing: ((Bool) -> Void)?
 

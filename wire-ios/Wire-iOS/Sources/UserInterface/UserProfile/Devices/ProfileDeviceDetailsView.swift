@@ -23,7 +23,7 @@ struct ProfileDeviceDetailsView: View {
     @Environment(\.dismiss)
     private var dismiss
 
-    @StateObject var viewModel: ProfileDeviceDetailsViewModel
+    @StateObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
     @State var isDebugViewPresented: Bool = false
 
@@ -32,13 +32,13 @@ struct ProfileDeviceDetailsView: View {
     var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
             DeviceDetailsE2EIdentityCertificateView(
-                viewModel: viewModel.deviceDetailsViewModel,
+                viewModel: viewModel,
                 isCertificateViewPreseneted: $isCertificateViewPresented
             )
             .padding(.leading, ViewConstants.Padding.standard)
 
             DeviceDetailsButtonsView(
-                viewModel: viewModel.deviceDetailsViewModel,
+                viewModel: viewModel,
                 isCertificateViewPresented: $isCertificateViewPresented
             )
         }
@@ -50,20 +50,20 @@ struct ProfileDeviceDetailsView: View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title,
                              description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(
-                                viewModel.deviceDetailsViewModel.userClient.user?.name ?? ""
+                                viewModel.userClient.user?.name ?? ""
                              ))
 
-            DeviceDetailsProteusView(viewModel: viewModel.deviceDetailsViewModel,
-                                     isVerfied: viewModel.deviceDetailsViewModel.isProteusVerificationEnabled,
+            DeviceDetailsProteusView(viewModel: viewModel,
+                                     isVerfied: viewModel.isProteusVerificationEnabled,
                                      shouldShowActivatedDate: false)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
-            if viewModel.deviceDetailsViewModel.isSelfClient {
+            if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
                     .font(.footnote)
                     .padding([.leading, .trailing], ViewConstants.Padding.standard)
                     .padding([.top, .bottom], ViewConstants.Padding.medium)
             } else {
-                DeviceDetailsBottomView(viewModel: viewModel.deviceDetailsViewModel, showRemoveDeviceButton: false)
+                DeviceDetailsBottomView(viewModel: viewModel, showRemoveDeviceButton: false)
             }
         }
     }
@@ -71,7 +71,7 @@ struct ProfileDeviceDetailsView: View {
     var mlsView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
-            DeviceMLSView(viewModel: viewModel.deviceDetailsViewModel)
+            DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
     }
@@ -97,9 +97,9 @@ struct ProfileDeviceDetailsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if let thumbprint = viewModel.deviceDetailsViewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
                     mlsView
-                    if viewModel.deviceDetailsViewModel.isE2eIdentityEnabled {
+                    if viewModel.isE2eIdentityEnabled {
                         e2eIdentityCertificateView
                     }
                 }
@@ -111,7 +111,7 @@ struct ProfileDeviceDetailsView: View {
             .listStyle(.plain)
             .overlay(
                 content: {
-                        if viewModel.deviceDetailsViewModel.isActionInProgress {
+                        if viewModel.isActionInProgress {
                             SwiftUI.ProgressView()
                         }
                     }
@@ -131,7 +131,7 @@ struct ProfileDeviceDetailsView: View {
                     )
                 }
                 ToolbarItem(placement: .principal) {
-                    DeviceView(viewModel: viewModel.deviceDetailsViewModel).titleView
+                    DeviceView(viewModel: viewModel).titleView
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     SwiftUI.Button(
@@ -151,24 +151,24 @@ struct ProfileDeviceDetailsView: View {
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            viewModel.deviceDetailsViewModel.onAppear()
+            viewModel.onAppear()
         }
         .onDisappear {
             dismissedView?()
         }
-        .onReceive(viewModel.deviceDetailsViewModel.$isRemoved) { isRemoved in
+        .onReceive(viewModel.$isRemoved) { isRemoved in
             if isRemoved {
                 dismiss()
             }
         }
         .sheet(isPresented: $isCertificateViewPresented) {
-            if let certificate = viewModel.deviceDetailsViewModel.e2eIdentityCertificate {
+            if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
                     certificateDetails: certificate.details,
-                    isDownloadAndCopyEnabled: viewModel.deviceDetailsViewModel.isCopyEnabled,
+                    isDownloadAndCopyEnabled: viewModel.isCopyEnabled,
                     isMenuPresented: false,
-                    performDownload: viewModel.deviceDetailsViewModel.downloadE2EIdentityCertificate,
-                    performCopy: viewModel.deviceDetailsViewModel.copyToClipboard
+                    performDownload: viewModel.downloadE2EIdentityCertificate,
+                    performCopy: viewModel.copyToClipboard
                 )
             }
         }

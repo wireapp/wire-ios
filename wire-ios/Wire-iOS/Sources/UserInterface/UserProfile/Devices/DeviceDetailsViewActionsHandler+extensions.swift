@@ -19,35 +19,21 @@
 import Foundation
 import WireSyncEngine
 
-final class ProfileDeviceDetailsViewModel: ObservableObject {
-    @Published var deviceDetailsViewModel: DeviceInfoViewModel
-    let isFromConversationView: Bool
-    @Published var showDebugMenu = false
-    @Published var showFingerPrint = false
-    var showDebugButton: Bool = false
+protocol ConversationUserClientDetailsDebugActions {
+    func deleteDevice()
+    func corruptSession()
+    func duplicateClient()
+}
 
-    init(deviceDetailsViewModel: DeviceInfoViewModel, isFromConversationView: Bool) {
-        self.deviceDetailsViewModel = deviceDetailsViewModel
-        self.isFromConversationView = isFromConversationView
-    }
+protocol ConversationUserClientDetailsActions {
+    func showMyDevice()
+    func howToDoThat()
+}
 
-    func onShowMyDeviceTapped() {
-        guard let session = ZMUserSession.shared(),
-              let selfUserClient = session.selfUserClient else { return }
-
-        let selfClientController = SettingsClientViewController(userClient: selfUserClient,
-                                                                userSession: session,
-                                                                fromConversation: isFromConversationView)
-
-        let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
-
-        navigationControllerWrapper.modalPresentationStyle = .currentContext
-
-    }
-
-    func onDeleteDeviceTapped() {
-        let clientObjectID = deviceDetailsViewModel.userClient.objectID
-        guard let sync = deviceDetailsViewModel.userClient.managedObjectContext?.zm_sync else {
+extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsDebugActions {
+    func deleteDevice() {
+        let clientObjectID = userClient.objectID
+        guard let sync = userClient.managedObjectContext?.zm_sync else {
             return
         }
         Task {
@@ -62,12 +48,12 @@ final class ProfileDeviceDetailsViewModel: ObservableObject {
         }
     }
 
-    func onCorruptSessionTapped() {
-        guard let sync = deviceDetailsViewModel.userClient.managedObjectContext?.zm_sync,
+    func corruptSession() {
+        guard let sync = userClient.managedObjectContext?.zm_sync,
               let selfClientObjectID = ZMUser.selfUser()?.selfClient()?.objectID else {
             return
         }
-        let userClientObjectID = deviceDetailsViewModel.userClient.objectID
+        let userClientObjectID = userClient.objectID
         Task {
             do {
                 guard let client = try await sync.perform({ try sync.existingObject(with: userClientObjectID) as? UserClient }),
@@ -85,14 +71,14 @@ final class ProfileDeviceDetailsViewModel: ObservableObject {
         }
     }
 
-    func onDuplicateClientTapped() {
-        guard let context = deviceDetailsViewModel.userClient.managedObjectContext?.zm_sync else {
+    func duplicateClient() {
+        guard let context = userClient.managedObjectContext?.zm_sync else {
             return
         }
         context.performAndWait {
             guard
-                let userID = deviceDetailsViewModel.userClient.user?.remoteIdentifier,
-                let domain = deviceDetailsViewModel.userClient.user?.domain ?? BackendInfo.domain
+                let userID = userClient.user?.remoteIdentifier,
+                let domain = userClient.user?.domain ?? BackendInfo.domain
             else {
                 return
             }
@@ -104,14 +90,49 @@ final class ProfileDeviceDetailsViewModel: ObservableObject {
             )
 
             let duplicate = UserClient.insertNewObject(in: context)
-            duplicate.remoteIdentifier = deviceDetailsViewModel.userClient.remoteIdentifier
+            duplicate.remoteIdentifier = userClient.remoteIdentifier
             duplicate.user = user
 
             context.saveOrRollback()
         }
     }
 
-    func onHowToDoThatTapped() {
+}
 
+extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions {
+    func showMyDevice() {
+        guard let selfUserClient = userSession.selfUserClient else { return }
+
+        let selfClientController = SettingsClientViewController(userClient: selfUserClient,
+                                                                userSession: userSession,
+                                                                fromConversation: true)
+        let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
+
+    }
+
+    func howToDoThat() {
+
+    }
+}
+
+extension DeviceInfoViewModel {
+    func onShowMyDeviceTapped() {
+        conversationClientDetailsActions.showMyDevice()
+    }
+
+    func onDeleteDeviceTapped() {
+        debugMenuActionsHandler?.deleteDevice()
+    }
+
+    func onCorruptSessionTapped() {
+        debugMenuActionsHandler?.corruptSession()
+    }
+
+    func onDuplicateClientTapped() {
+        debugMenuActionsHandler?.duplicateClient()
+    }
+
+    func onHowToDoThatTapped() {
+        conversationClientDetailsActions.howToDoThat()
     }
 }

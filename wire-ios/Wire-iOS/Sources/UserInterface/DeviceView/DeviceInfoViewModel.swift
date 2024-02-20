@@ -42,7 +42,7 @@ final class DeviceInfoViewModel: ObservableObject {
     let userClient: UserClient
     let gracePeriod: TimeInterval
     let mlsThumbprint: String?
-
+    let isFromConversation: Bool
     var title: String
     var isSelfClient: Bool
 
@@ -75,8 +75,9 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
 
-    private var actionsHandler: DeviceDetailsViewActions
-
+    var actionsHandler: DeviceDetailsViewActions
+    var conversationClientDetailsActions: ConversationUserClientDetailsActions
+    var debugMenuActionsHandler: ConversationUserClientDetailsDebugActions?
     init(
         certificate: E2eIdentityCertificate?,
         title: String,
@@ -84,10 +85,13 @@ final class DeviceInfoViewModel: ObservableObject {
         proteusID: String,
         mlsThumbprint: String?,
         isProteusVerificationEnabled: Bool,
-        actionsHandler: DeviceDetailsViewActions,
         userClient: UserClient,
         isSelfClient: Bool,
-        gracePeriod: TimeInterval
+        gracePeriod: TimeInterval,
+        isFromConversation: Bool,
+        actionsHandler: DeviceDetailsViewActions,
+        conversationClientDetailsActions: ConversationUserClientDetailsActions,
+        debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil
     ) {
         self.e2eIdentityCertificate = certificate
         self.title = title
@@ -99,6 +103,9 @@ final class DeviceInfoViewModel: ObservableObject {
         self.userClient = userClient
         self.isSelfClient = isSelfClient
         self.gracePeriod = gracePeriod
+        self.isFromConversation = isFromConversation
+        self.conversationClientDetailsActions = conversationClientDetailsActions
+        self.debugMenuActionsHandler = debugMenuActionsHandler
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
@@ -176,8 +183,16 @@ extension DeviceInfoViewModel {
         gracePeriod: TimeInterval,
         mlsThumbprint: String?,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
+        isFromConversation: Bool = false,
         saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
     ) -> DeviceInfoViewModel {
+        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
+            userClient: userClient,
+            userSession: userSession,
+            credentials: credentials,
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: getProteusFingerprint
+        )
         return DeviceInfoViewModel(
             certificate: certificate,
             title: title,
@@ -185,16 +200,13 @@ extension DeviceInfoViewModel {
             proteusID: proteusID ?? "",
             mlsThumbprint: mlsThumbprint,
             isProteusVerificationEnabled: userClient.verified,
-            actionsHandler: DeviceDetailsViewActionsHandler(
-                userClient: userClient,
-                userSession: userSession,
-                credentials: credentials,
-                saveFileManager: saveFileManager,
-                getProteusFingerprint: getProteusFingerprint
-            ),
             userClient: userClient,
             isSelfClient: isSelfClient,
-            gracePeriod: gracePeriod
+            gracePeriod: gracePeriod,
+            isFromConversation: isFromConversation,
+            actionsHandler: deviceActionsHandler,
+            conversationClientDetailsActions: deviceActionsHandler,
+            debugMenuActionsHandler: deviceActionsHandler
         )
     }
 }
