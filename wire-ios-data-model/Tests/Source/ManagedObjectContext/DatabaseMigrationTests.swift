@@ -51,14 +51,9 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
     }
 
     func testThatItPerformsMigrationFrom_Between_2_80_0_and_PreLast_ToCurrentModelVersion() throws {
-        // NOTICE: When a new version of data model is created, please increase the last number of the array.
-<<<<<<< HEAD
-        let allVersions = [80...113]
-=======
-        let allVersions = [80...111]
->>>>>>> 2d06d6a9cf (fix: duplicate users and other unique models - WPB-6209 (#925))
-            .joined()
-            .map { "2-\($0)-0" }
+        // NOTICE: When a new version of data model is created, please add CoreDataMessagingMigrationVersion new case. And make sure your new data model has a new identifierVersion
+        let allVersions = CoreDataMessagingMigrationVersion.allFixtureVersions
+
         let modelVersion = CoreDataStack.loadMessagingModel().version
         let fixtureVersion = String(helper.databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
         let accountIdentifier = UUID()
@@ -70,19 +65,19 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             try helper.createFixtureDatabase(
                 applicationContainer: DatabaseBaseTest.applicationContainer,
                 accountIdentifier: accountIdentifier,
-                versionName: versionsWithoutCurrent.last!
+                versionName: versionsWithoutCurrent.first!
             )
             let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
-            let currentDatabaseURL = directory.syncContext.persistentStoreCoordinator!.persistentStores.last!.url!
+            let currentDatabaseURL = try XCTUnwrap(directory.syncContext.persistentStoreCoordinator?.persistentStores.last?.url)
 
             XCTFail("\nMissing current version database file: `store\(fixtureVersion).wiredatabase`. \n\n" +
                     "**HOW TO FIX THIS** \n" +
                     "- Run the test, until you hit the assertion\n" +
                     "- **WHILE THE TEST IS PAUSED** on the assertion, do the following:\n" +
                     "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
-                    "\t cp \"\(currentDatabaseURL.path)\" ~/Desktop/store\(fixtureVersion).wiredatabase\n\n" +
-                    "- The command will copy a file on your desktop called `store\(fixtureVersion).wiredatabase`\n" +
-                    "- Copy it to test bundle if this project in `WireDataModel/Tests/Resources` with the other stores\n\n")
+                    "\t cp \"\(currentDatabaseURL.path)\" wire-ios-data-model/Tests/Resources/\(fixtureVersion).wiredatabase\n\n" +
+                    "- The command will copy a file to  `WireDataModel/Tests/Resources/store\(fixtureVersion).wiredatabase`\n" +
+                    "- Add it to WireDataModel project with the other stores\n\n")
             assert(false)
         }
 
