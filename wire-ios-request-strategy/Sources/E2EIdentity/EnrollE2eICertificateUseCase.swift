@@ -55,6 +55,8 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         self.context = context
     }
 
+    // Detailed enrolment flow:
+    // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/800820113/Use+case+End-to-end+identity+enrollment#Detailed-enrolment-flow
     public func invoke(authenticate: OAuthBlock) async throws {
         do {
             try await e2eiRepository.fetchTrustAnchor()

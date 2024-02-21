@@ -26,9 +26,9 @@ import WireCoreCrypto
 class E2eIEnrollmentTests: ZMTBaseTest {
 
     var sut: E2eIEnrollment!
-    var mockAcmeApi: MockAcmeApi!
+    var mockAcmeApi: MockAcmeAPIInterface!
     var mockApiProvider: MockAPIProviderInterface!
-    var mockE2eiService: MockE2eIService!
+    var mockE2eiService: MockE2eIServiceInterface!
     var mockKeyRotator: MockE2eIKeyPackageRotating!
     var previousApiVersion: APIVersion!
 
@@ -40,9 +40,9 @@ class E2eIEnrollmentTests: ZMTBaseTest {
                                           newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
                                           newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
                                           revokeCert: "")
-        mockAcmeApi = MockAcmeApi()
+        mockAcmeApi = MockAcmeAPIInterface()
         mockApiProvider = MockAPIProviderInterface()
-        mockE2eiService = MockE2eIService()
+        mockE2eiService = MockE2eIServiceInterface()
         mockKeyRotator = MockE2eIKeyPackageRotating()
         sut = E2eIEnrollment(
             acmeApi: mockAcmeApi,
@@ -51,6 +51,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
             acmeDirectory: acmeDirectory,
             keyRotator: mockKeyRotator
         )
+        BackendInfo.storage = .temporary()
     }
 
     override func tearDown() {
@@ -60,6 +61,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         mockE2eiService = nil
         mockKeyRotator = nil
         BackendInfo.apiVersion = previousApiVersion
+        BackendInfo.storage = .standard
 
         super.tearDown()
     }
@@ -69,7 +71,9 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         let expectedNonce = "Nonce"
 
         // given
-        mockAcmeApi.mockNonce = expectedNonce
+        mockAcmeApi.getACMENoncePath_MockMethod = { _ in
+            return expectedNonce
+        }
 
         // when
         let result = try await sut.getACMENonce()
@@ -80,28 +84,51 @@ class E2eIEnrollmentTests: ZMTBaseTest {
 
     func testThatItCreatesNewAccount() async throws {
         // expectation
-        let expectedNewAccount = "NewAccount"
+        let expectedNonce = "Mock nonce"
+        let acmeResponse = ACMEResponse(
+            nonce: expectedNonce,
+            location: "Location",
+            response: Data())
 
         // given
-        mockAcmeApi.mockNonce = expectedNewAccount
+        mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
+            return acmeResponse
+        }
+        mockE2eiService.getNewAccountRequestNonce_MockMethod = { _ in
+            return Data()
+        }
+        mockE2eiService.setAccountResponseAccountData_MockMethod = { _ in }
 
         // when
         let result = try await sut.createNewAccount(prevNonce: "prevNonce")
 
         // then
-        XCTAssertEqual(result, expectedNewAccount)
+        XCTAssertEqual(result, expectedNonce)
     }
 
     func testThatItCreateNewOrder() async throws {
         // expectation
         let expectedNonce = "Nonce"
         let expectedLocation = "Location"
-        let expectedAcmeOrder = NewAcmeOrder(delegate: Data(), authorizations: ["new order"])
+        let expectedAcmeOrder = NewAcmeOrder(
+            delegate: Data(),
+            authorizations: ["new order"])
+
+        let acmeResponse = ACMEResponse(
+            nonce: expectedNonce,
+            location: expectedLocation,
+            response: Data())
 
         // given
-        mockAcmeApi.mockNonce = expectedNonce
-        mockAcmeApi.mockLocation = expectedLocation
-        mockE2eiService.mockAcmeOrder = expectedAcmeOrder
+        mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
+            return acmeResponse
+        }
+        mockE2eiService.getNewOrderRequestNonce_MockMethod = { _ in
+            return Data()
+        }
+        mockE2eiService.setOrderResponseOrder_MockMethod = { _ in
+            return expectedAcmeOrder
+        }
 
         // when
         let result = try await sut.createNewOrder(prevNonce: "prevNonce")
@@ -116,12 +143,34 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         // expectation
         let expectedNonce = "Nonce"
         let expectedLocation = "Location"
-        let wireOidcChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "google")
+        let expectedChallengeType: AuthorizationChallengeType = .OIDC
+
+        let wireOidcChallenge = AcmeChallenge(
+            delegate: Data(),
+            url: "url",
+            target: "google")
+
+        let newAcmeAuthz = NewAcmeAuthz(
+            identifier: "111",
+            keyauth: "keyauth",
+            challenge: wireOidcChallenge)
+
+        let authorizationResponse = ACMEAuthorizationResponse(
+            nonce: expectedNonce,
+            location: expectedLocation,
+            response: Data(),
+            challengeType: expectedChallengeType)
 
         // given
-        mockAcmeApi.mockNonce = expectedNonce
-        mockAcmeApi.mockLocation = expectedLocation
-        mockE2eiService.mockChallenge = wireOidcChallenge
+        mockAcmeApi.sendAuthorizationRequestPathRequestBody_MockMethod = { _, _ in
+            return authorizationResponse
+        }
+        mockE2eiService.getNewAuthzRequestUrlPreviousNonce_MockMethod = { _, _ in
+            return Data()
+        }
+        mockE2eiService.setAuthzResponseAuthz_MockMethod = { _ in
+            return newAcmeAuthz
+        }
 
         // when
         let result = try await sut.createAuthorization(prevNonce: "prevNonce", authzEndpoint: "https://endpoint.com")
@@ -129,7 +178,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         // then
         XCTAssertEqual(result.nonce, expectedNonce)
         XCTAssertEqual(result.location, expectedLocation)
-        XCTAssertEqual(result.challengeType, .OIDC)
+        XCTAssertEqual(result.challengeType, expectedChallengeType)
     }
 
     func testThatItGetsWireNonce() async throws {
@@ -156,7 +205,9 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         let expectedDPoPToken = "Token"
 
         // given
-        mockE2eiService.mockDpopToken = expectedDPoPToken
+        mockE2eiService.createDpopTokenNonce_MockMethod = { _ in
+            return expectedDPoPToken
+        }
 
         // when
         let result = try await sut.getDPoPToken("nonce")
@@ -186,21 +237,32 @@ class E2eIEnrollmentTests: ZMTBaseTest {
 
     func testThatItValidatesDPoPChallenge() async throws {
         // expectation
-        let expectedChallengeResponse = ChallengeResponse(type: "JWD",
-                                                          url: "url",
-                                                          status: "valid",
-                                                          token: "token",
-                                                          target: "target",
-                                                          nonce: "nonce")
+        let expectedChallengeResponse = ChallengeResponse(
+            type: "JWD",
+            url: "url",
+            status: "valid",
+            token: "token",
+            target: "target",
+            nonce: "nonce")
+
         // given
-        mockAcmeApi.mockChallengeResponse = expectedChallengeResponse
+        mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
+            return expectedChallengeResponse
+        }
+        mockE2eiService.getNewDpopChallengeRequestAccessTokenNonce_MockMethod = { _, _ in
+            return Data()
+        }
+        mockE2eiService.setDPoPChallengeResponseChallenge_MockMethod = { _ in }
 
         // when
-        let result = try await sut.validateDPoPChallenge(accessToken: "11",
-                                                         prevNonce: "Nonce",
-                                                         acmeChallenge: AcmeChallenge(delegate: Data(),
-                                                                                      url: "",
-                                                                                      target: ""))
+        let acmeChallenge = AcmeChallenge(
+            delegate: Data(),
+            url: "",
+            target: "")
+        let result = try await sut.validateDPoPChallenge(
+            accessToken: "11",
+            prevNonce: "Nonce",
+            acmeChallenge: acmeChallenge)
 
         // then
         XCTAssertEqual(result, expectedChallengeResponse)
@@ -208,23 +270,34 @@ class E2eIEnrollmentTests: ZMTBaseTest {
 
     func testThatItValidatesOIDCChallenge() async throws {
         // expectation
-        let expectedChallengeResponse = ChallengeResponse(type: "JWD",
-                                                          url: "url",
-                                                          status: "valid",
-                                                          token: "token",
-                                                          target: "target",
-                                                          nonce: "nonce")
+        let expectedChallengeResponse = ChallengeResponse(
+            type: "JWD",
+            url: "url",
+            status: "valid",
+            token: "token",
+            target: "target",
+            nonce: "nonce")
 
         // given
-        mockAcmeApi.mockChallengeResponse = expectedChallengeResponse
+        mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
+            return expectedChallengeResponse
+        }
+        mockE2eiService.getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod = { _, _, _ in
+            return Data()
+        }
+        mockE2eiService.setOIDCChallengeResponseChallenge_MockMethod = { _ in }
 
         // when
-        let result = try await sut.validateOIDCChallenge(idToken: "idToken",
-                                                         refreshToken: "refreshToken",
-                                                         prevNonce: "Nonce",
-                                                         acmeChallenge: AcmeChallenge(delegate: Data(),
-                                                                                      url: "",
-                                                                                      target: ""))
+        let acmeChallenge = AcmeChallenge(
+            delegate: Data(),
+            url: "",
+            target: "")
+
+        let result = try await sut.validateOIDCChallenge(
+            idToken: "idToken",
+            refreshToken: "refreshToken",
+            prevNonce: "Nonce",
+            acmeChallenge: acmeChallenge)
 
         // then
         XCTAssertEqual(result, expectedChallengeResponse)
@@ -232,34 +305,38 @@ class E2eIEnrollmentTests: ZMTBaseTest {
 
     func testThatItSetDPoPChallenge() async throws {
         // given
-        let challengeResponse = ChallengeResponse(type: "JWD",
-                                                  url: "url",
-                                                  status: "valid",
-                                                  token: "token",
-                                                  target: "target",
-                                                  nonce: "nonce")
+        let challengeResponse = ChallengeResponse(
+            type: "JWD",
+            url: "url",
+            status: "valid",
+            token: "token",
+            target: "target",
+            nonce: "nonce")
+        mockE2eiService.setDPoPChallengeResponseChallenge_MockMethod = { _ in }
 
         // when
         try await sut.setDPoPChallengeResponse(challengeResponse: challengeResponse)
 
         // then
-        XCTAssertEqual(mockE2eiService.mockSetChallengeResponse, 1)
+        XCTAssertEqual(mockE2eiService.setDPoPChallengeResponseChallenge_Invocations.count, 1)
     }
 
     func testThatItSetOIDCChallenge() async throws {
         // given
-        let challengeResponse = ChallengeResponse(type: "JWD",
-                                                  url: "url",
-                                                  status: "valid",
-                                                  token: "token",
-                                                  target: "target",
-                                                  nonce: "nonce")
+        let challengeResponse = ChallengeResponse(
+            type: "JWD",
+            url: "url",
+            status: "valid",
+            token: "token",
+            target: "target",
+            nonce: "nonce")
+        mockE2eiService.setOIDCChallengeResponseChallenge_MockMethod = { _ in }
 
         // when
         try await sut.setOIDCChallengeResponse(challengeResponse: challengeResponse)
 
         // then
-        XCTAssertEqual(mockE2eiService.mockSetChallengeResponse, 1)
+        XCTAssertEqual(mockE2eiService.setOIDCChallengeResponseChallenge_Invocations.count, 1)
     }
 
     func testThatItChecksOrderRequest() async throws {
@@ -268,13 +345,21 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         let expectedNonce = "Nonce"
         let expectedLocation = "Location"
         let expectedData = Data()
-        let expectedACMEResponse = ACMEResponse(nonce: expectedNonce, location: expectedLocation, response: expectedData)
+        let expectedACMEResponse = ACMEResponse(
+            nonce: expectedNonce,
+            location: expectedLocation,
+            response: expectedData)
 
         // given
-        mockE2eiService.mockOrderResponse = expectedOrder
-        mockAcmeApi.mockNonce = expectedNonce
-        mockAcmeApi.mockLocation = expectedLocation
-        mockAcmeApi.mockResponseData = expectedData
+        mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
+            return expectedACMEResponse
+        }
+        mockE2eiService.checkOrderRequestOrderUrlNonce_MockMethod = { _, _ in
+            return Data()
+        }
+        mockE2eiService.checkOrderResponseOrder_MockMethod = { _ in
+            return expectedOrder
+        }
 
         // when
         let result = try await sut.checkOrderRequest(location: "location", prevNonce: "nonce")
@@ -290,13 +375,21 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         let expectedNonce = "Nonce"
         let expectedLocation = "Location"
         let expectedData = Data()
-        let expectedACMEResponse = ACMEResponse(nonce: expectedNonce, location: expectedLocation, response: expectedData)
+        let expectedACMEResponse = ACMEResponse(
+            nonce: expectedNonce,
+            location: expectedLocation,
+            response: expectedData)
 
         // given
-        mockE2eiService.mockFinalizeResponse = expected
-        mockAcmeApi.mockNonce = expectedNonce
-        mockAcmeApi.mockLocation = expectedLocation
-        mockAcmeApi.mockResponseData = expectedData
+        mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
+            return expectedACMEResponse
+        }
+        mockE2eiService.finalizeRequestNonce_MockMethod = { _ in
+            return Data()
+        }
+        mockE2eiService.finalizeResponseFinalize_MockMethod = { _ in
+            return expected
+        }
 
         // when
         let result = try await sut.finalize(location: "location", prevNonce: "nonce")
@@ -311,12 +404,18 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         let expectedNonce = "Nonce"
         let expectedLocation = "Location"
         let expectedData = Data()
-        let expectedACMEResponse = ACMEResponse(nonce: expectedNonce, location: expectedLocation, response: expectedData)
+        let expectedACMEResponse = ACMEResponse(
+            nonce: expectedNonce,
+            location: expectedLocation,
+            response: expectedData)
 
         // given
-        mockAcmeApi.mockNonce = expectedNonce
-        mockAcmeApi.mockLocation = expectedLocation
-        mockAcmeApi.mockResponseData = expectedData
+        mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
+            return expectedACMEResponse
+        }
+        mockE2eiService.certificateRequestNonce_MockMethod = { _ in
+            return Data()
+        }
 
         // when
         let result = try await sut.certificateRequest(location: "location", prevNonce: "nonce")
@@ -329,7 +428,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         // Given
         let certificateChain = "123456"
         mockKeyRotator.rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod = { _, _ in }
-        mockE2eiService.mockE2eIdentity = MockE2eiEnrollment()
+        mockE2eiService.underlyingE2eIdentity = MockE2eiEnrollment()
 
         // When
         try await sut.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
@@ -339,164 +438,4 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         XCTAssertEqual(invocations.count, 1)
         XCTAssertEqual(invocations.first?.certificateChain, certificateChain)
     }
-}
-
-class MockAcmeApi: AcmeAPIInterface {
-
-    let domain: String = "example.com"
-    var mockNonce: String?
-    var mockLocation: String?
-    var mockResponseData: Data?
-    var mockChallengeType: AuthorizationChallengeType = .OIDC
-    var mockChallengeResponse: ChallengeResponse?
-
-    func getTrustAnchor() async throws -> String {
-        return ""
-    }
-
-    func getFederationCertificate() async throws -> String {
-        return ""
-    }
-
-    func getACMEDirectory() async throws -> Data {
-        let payload = acmeDirectoriesResponse()
-
-        return try JSONSerialization.data(withJSONObject: payload, options: [])
-    }
-
-    func getACMENonce(path: String) async throws -> String {
-        return mockNonce ?? ""
-    }
-
-    func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
-        return ACMEResponse(nonce: mockNonce ?? "",
-                            location: mockLocation ?? "",
-                            response: mockResponseData ?? Data())
-    }
-
-    func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse {
-        return mockChallengeResponse ?? ChallengeResponse(type: "",
-                                                          url: "",
-                                                          status: "",
-                                                          token: "",
-                                                          target: "",
-                                                          nonce: "")
-    }
-
-    func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse {
-        return ACMEAuthorizationResponse(nonce: mockNonce ?? "",
-                                         location: mockLocation ?? "",
-                                         response: mockResponseData ?? Data(),
-                                         challengeType: mockChallengeType)
-    }
-
-    private func acmeDirectoriesResponse() -> [String: String] {
-        return [
-            "newNonce": "https://\(domain)/acme/defaultteams/new-nonce",
-            "newAccount": "https://\(domain)/acme/defaultteams/new-account",
-            "newOrder": "https://\(domain)/acme/defaultteams/new-order",
-            "revokeCert": "https://\(domain)/acme/defaultteams/revoke-cert",
-            "keyChange": "https://\(domain)/acme/defaultteams/key-change"
-        ]
-    }
-
-}
-
-class MockE2eIService: E2eIServiceInterface {
-    var mockAcmeOrder: NewAcmeOrder?
-    var mockDpopToken: String?
-    var mockSetChallengeResponse: Int = 0
-    var mockOrderResponse: String?
-    var mockFinalizeResponse: String?
-    var mockChallenge: AcmeChallenge?
-
-    func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory {
-        return AcmeDirectory(newNonce: "", newAccount: "", newOrder: "", revokeCert: "")
-    }
-
-    func getNewAccountRequest(nonce: String) async throws -> Data {
-        return Data()
-    }
-
-    func setAccountResponse(accountData: Data) async throws {
-    }
-
-    func getNewOrderRequest(nonce: String) async throws -> Data {
-        return Data()
-    }
-
-    func setOrderResponse(order: Data) async throws -> NewAcmeOrder {
-        return mockAcmeOrder ?? NewAcmeOrder(delegate: Data(), authorizations: [])
-    }
-
-    func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data {
-        return Data()
-    }
-
-    func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz {
-        let wireDpopChallenge = AcmeChallenge(delegate: Data(), url: "url", target: "wire server")
-        return NewAcmeAuthz(identifier: "111",
-                            keyauth: "keyauth",
-                            challenge: mockChallenge ?? wireDpopChallenge)
-    }
-
-    func createDpopToken(nonce: String) async throws -> String {
-        return mockDpopToken ?? ""
-    }
-
-    func getNewDpopChallengeRequest(accessToken: String, nonce: String) async throws -> Data {
-        return Data()
-    }
-
-    func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data {
-        return Data()
-    }
-
-    func getOAuthRefreshToken() async throws -> String {
-        return "RefreshToken"
-    }
-
-    func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
-        return Data()
-    }
-
-    func setDPoPChallengeResponse(challenge: Data) async throws {
-        mockSetChallengeResponse += 1
-    }
-
-    func setOIDCChallengeResponse(challenge: Data) async throws {
-        mockSetChallengeResponse += 1
-    }
-
-    func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data {
-        return Data()
-    }
-
-    func checkOrderResponse(order: Data) async throws -> String {
-        return mockOrderResponse ?? ""
-    }
-
-    func finalizeRequest(nonce: String) async throws -> Data {
-        return Data()
-    }
-
-    func finalizeResponse(finalize: Data) async throws -> String {
-        return mockFinalizeResponse ?? ""
-    }
-
-    func certificateRequest(nonce: String) async throws -> Data {
-        return Data()
-    }
-
-    func createNewClient(certificateChain: String) async throws {
-    }
-
-    var mockE2eIdentity: MockE2eiEnrollment?
-    var e2eIdentity: E2eiEnrollmentProtocol {
-        guard let mock = mockE2eIdentity else {
-            fatalError("no mock for `e2eIdentity`")
-        }
-        return mock
-    }
-
 }

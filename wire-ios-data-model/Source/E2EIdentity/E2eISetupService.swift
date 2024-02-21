@@ -34,7 +34,7 @@ public protocol E2eISetupServiceInterface {
     /// - parameter isUpgradingClient: `true` if we are upgrading an already existing MLS client, `false` is we are registering a new MLS client.
 
     func setupEnrollment(
-        clientID: E2eIClientID,
+        clientID: E2EIClientID,
         userName: String,
         handle: String,
         teamId: UUID,
@@ -80,7 +80,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     }
 
     public func setupEnrollment(
-        clientID: E2eIClientID,
+        clientID: E2EIClientID,
         userName: String,
         handle: String,
         teamId: UUID,
@@ -102,7 +102,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     }
 
     private func setupNewActivationOrRotate(
-        clientID: E2eIClientID,
+        clientID: E2EIClientID,
         userName: String,
         handle: String,
         teamId: UUID,

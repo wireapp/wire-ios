@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
+// sourcery: AutoMockable
 public protocol E2eIServiceInterface {
 
     func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory

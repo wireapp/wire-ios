@@ -1929,6 +1929,449 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
 }
 
+public class MockE2eIServiceInterface: E2eIServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - e2eIdentity
+
+    public var e2eIdentity: E2eiEnrollmentProtocol {
+        get { return underlyingE2eIdentity }
+        set(value) { underlyingE2eIdentity = value }
+    }
+
+    public var underlyingE2eIdentity: E2eiEnrollmentProtocol!
+
+
+    // MARK: - getDirectoryResponse
+
+    public var getDirectoryResponseDirectoryData_Invocations: [Data] = []
+    public var getDirectoryResponseDirectoryData_MockError: Error?
+    public var getDirectoryResponseDirectoryData_MockMethod: ((Data) async throws -> AcmeDirectory)?
+    public var getDirectoryResponseDirectoryData_MockValue: AcmeDirectory?
+
+    public func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory {
+        getDirectoryResponseDirectoryData_Invocations.append(directoryData)
+
+        if let error = getDirectoryResponseDirectoryData_MockError {
+            throw error
+        }
+
+        if let mock = getDirectoryResponseDirectoryData_MockMethod {
+            return try await mock(directoryData)
+        } else if let mock = getDirectoryResponseDirectoryData_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getDirectoryResponseDirectoryData`")
+        }
+    }
+
+    // MARK: - getNewAccountRequest
+
+    public var getNewAccountRequestNonce_Invocations: [String] = []
+    public var getNewAccountRequestNonce_MockError: Error?
+    public var getNewAccountRequestNonce_MockMethod: ((String) async throws -> Data)?
+    public var getNewAccountRequestNonce_MockValue: Data?
+
+    public func getNewAccountRequest(nonce: String) async throws -> Data {
+        getNewAccountRequestNonce_Invocations.append(nonce)
+
+        if let error = getNewAccountRequestNonce_MockError {
+            throw error
+        }
+
+        if let mock = getNewAccountRequestNonce_MockMethod {
+            return try await mock(nonce)
+        } else if let mock = getNewAccountRequestNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getNewAccountRequestNonce`")
+        }
+    }
+
+    // MARK: - setAccountResponse
+
+    public var setAccountResponseAccountData_Invocations: [Data] = []
+    public var setAccountResponseAccountData_MockError: Error?
+    public var setAccountResponseAccountData_MockMethod: ((Data) async throws -> Void)?
+
+    public func setAccountResponse(accountData: Data) async throws {
+        setAccountResponseAccountData_Invocations.append(accountData)
+
+        if let error = setAccountResponseAccountData_MockError {
+            throw error
+        }
+
+        guard let mock = setAccountResponseAccountData_MockMethod else {
+            fatalError("no mock for `setAccountResponseAccountData`")
+        }
+
+        try await mock(accountData)
+    }
+
+    // MARK: - getNewOrderRequest
+
+    public var getNewOrderRequestNonce_Invocations: [String] = []
+    public var getNewOrderRequestNonce_MockError: Error?
+    public var getNewOrderRequestNonce_MockMethod: ((String) async throws -> Data)?
+    public var getNewOrderRequestNonce_MockValue: Data?
+
+    public func getNewOrderRequest(nonce: String) async throws -> Data {
+        getNewOrderRequestNonce_Invocations.append(nonce)
+
+        if let error = getNewOrderRequestNonce_MockError {
+            throw error
+        }
+
+        if let mock = getNewOrderRequestNonce_MockMethod {
+            return try await mock(nonce)
+        } else if let mock = getNewOrderRequestNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getNewOrderRequestNonce`")
+        }
+    }
+
+    // MARK: - setOrderResponse
+
+    public var setOrderResponseOrder_Invocations: [Data] = []
+    public var setOrderResponseOrder_MockError: Error?
+    public var setOrderResponseOrder_MockMethod: ((Data) async throws -> NewAcmeOrder)?
+    public var setOrderResponseOrder_MockValue: NewAcmeOrder?
+
+    public func setOrderResponse(order: Data) async throws -> NewAcmeOrder {
+        setOrderResponseOrder_Invocations.append(order)
+
+        if let error = setOrderResponseOrder_MockError {
+            throw error
+        }
+
+        if let mock = setOrderResponseOrder_MockMethod {
+            return try await mock(order)
+        } else if let mock = setOrderResponseOrder_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `setOrderResponseOrder`")
+        }
+    }
+
+    // MARK: - getNewAuthzRequest
+
+    public var getNewAuthzRequestUrlPreviousNonce_Invocations: [(url: String, previousNonce: String)] = []
+    public var getNewAuthzRequestUrlPreviousNonce_MockError: Error?
+    public var getNewAuthzRequestUrlPreviousNonce_MockMethod: ((String, String) async throws -> Data)?
+    public var getNewAuthzRequestUrlPreviousNonce_MockValue: Data?
+
+    public func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data {
+        getNewAuthzRequestUrlPreviousNonce_Invocations.append((url: url, previousNonce: previousNonce))
+
+        if let error = getNewAuthzRequestUrlPreviousNonce_MockError {
+            throw error
+        }
+
+        if let mock = getNewAuthzRequestUrlPreviousNonce_MockMethod {
+            return try await mock(url, previousNonce)
+        } else if let mock = getNewAuthzRequestUrlPreviousNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getNewAuthzRequestUrlPreviousNonce`")
+        }
+    }
+
+    // MARK: - setAuthzResponse
+
+    public var setAuthzResponseAuthz_Invocations: [Data] = []
+    public var setAuthzResponseAuthz_MockError: Error?
+    public var setAuthzResponseAuthz_MockMethod: ((Data) async throws -> NewAcmeAuthz)?
+    public var setAuthzResponseAuthz_MockValue: NewAcmeAuthz?
+
+    public func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz {
+        setAuthzResponseAuthz_Invocations.append(authz)
+
+        if let error = setAuthzResponseAuthz_MockError {
+            throw error
+        }
+
+        if let mock = setAuthzResponseAuthz_MockMethod {
+            return try await mock(authz)
+        } else if let mock = setAuthzResponseAuthz_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `setAuthzResponseAuthz`")
+        }
+    }
+
+    // MARK: - getOAuthRefreshToken
+
+    public var getOAuthRefreshToken_Invocations: [Void] = []
+    public var getOAuthRefreshToken_MockError: Error?
+    public var getOAuthRefreshToken_MockMethod: (() async throws -> String)?
+    public var getOAuthRefreshToken_MockValue: String?
+
+    public func getOAuthRefreshToken() async throws -> String {
+        getOAuthRefreshToken_Invocations.append(())
+
+        if let error = getOAuthRefreshToken_MockError {
+            throw error
+        }
+
+        if let mock = getOAuthRefreshToken_MockMethod {
+            return try await mock()
+        } else if let mock = getOAuthRefreshToken_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getOAuthRefreshToken`")
+        }
+    }
+
+    // MARK: - createDpopToken
+
+    public var createDpopTokenNonce_Invocations: [String] = []
+    public var createDpopTokenNonce_MockError: Error?
+    public var createDpopTokenNonce_MockMethod: ((String) async throws -> String)?
+    public var createDpopTokenNonce_MockValue: String?
+
+    public func createDpopToken(nonce: String) async throws -> String {
+        createDpopTokenNonce_Invocations.append(nonce)
+
+        if let error = createDpopTokenNonce_MockError {
+            throw error
+        }
+
+        if let mock = createDpopTokenNonce_MockMethod {
+            return try await mock(nonce)
+        } else if let mock = createDpopTokenNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createDpopTokenNonce`")
+        }
+    }
+
+    // MARK: - getNewDpopChallengeRequest
+
+    public var getNewDpopChallengeRequestAccessTokenNonce_Invocations: [(accessToken: String, nonce: String)] = []
+    public var getNewDpopChallengeRequestAccessTokenNonce_MockError: Error?
+    public var getNewDpopChallengeRequestAccessTokenNonce_MockMethod: ((String, String) async throws -> Data)?
+    public var getNewDpopChallengeRequestAccessTokenNonce_MockValue: Data?
+
+    public func getNewDpopChallengeRequest(accessToken: String, nonce: String) async throws -> Data {
+        getNewDpopChallengeRequestAccessTokenNonce_Invocations.append((accessToken: accessToken, nonce: nonce))
+
+        if let error = getNewDpopChallengeRequestAccessTokenNonce_MockError {
+            throw error
+        }
+
+        if let mock = getNewDpopChallengeRequestAccessTokenNonce_MockMethod {
+            return try await mock(accessToken, nonce)
+        } else if let mock = getNewDpopChallengeRequestAccessTokenNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getNewDpopChallengeRequestAccessTokenNonce`")
+        }
+    }
+
+    // MARK: - getNewOidcChallengeRequest
+
+    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_Invocations: [(idToken: String, refreshToken: String, nonce: String)] = []
+    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockError: Error?
+    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod: ((String, String, String) async throws -> Data)?
+    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockValue: Data?
+
+    public func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
+        getNewOidcChallengeRequestIdTokenRefreshTokenNonce_Invocations.append((idToken: idToken, refreshToken: refreshToken, nonce: nonce))
+
+        if let error = getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockError {
+            throw error
+        }
+
+        if let mock = getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod {
+            return try await mock(idToken, refreshToken, nonce)
+        } else if let mock = getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getNewOidcChallengeRequestIdTokenRefreshTokenNonce`")
+        }
+    }
+
+    // MARK: - setDPoPChallengeResponse
+
+    public var setDPoPChallengeResponseChallenge_Invocations: [Data] = []
+    public var setDPoPChallengeResponseChallenge_MockError: Error?
+    public var setDPoPChallengeResponseChallenge_MockMethod: ((Data) async throws -> Void)?
+
+    public func setDPoPChallengeResponse(challenge: Data) async throws {
+        setDPoPChallengeResponseChallenge_Invocations.append(challenge)
+
+        if let error = setDPoPChallengeResponseChallenge_MockError {
+            throw error
+        }
+
+        guard let mock = setDPoPChallengeResponseChallenge_MockMethod else {
+            fatalError("no mock for `setDPoPChallengeResponseChallenge`")
+        }
+
+        try await mock(challenge)
+    }
+
+    // MARK: - setOIDCChallengeResponse
+
+    public var setOIDCChallengeResponseChallenge_Invocations: [Data] = []
+    public var setOIDCChallengeResponseChallenge_MockError: Error?
+    public var setOIDCChallengeResponseChallenge_MockMethod: ((Data) async throws -> Void)?
+
+    public func setOIDCChallengeResponse(challenge: Data) async throws {
+        setOIDCChallengeResponseChallenge_Invocations.append(challenge)
+
+        if let error = setOIDCChallengeResponseChallenge_MockError {
+            throw error
+        }
+
+        guard let mock = setOIDCChallengeResponseChallenge_MockMethod else {
+            fatalError("no mock for `setOIDCChallengeResponseChallenge`")
+        }
+
+        try await mock(challenge)
+    }
+
+    // MARK: - checkOrderRequest
+
+    public var checkOrderRequestOrderUrlNonce_Invocations: [(orderUrl: String, nonce: String)] = []
+    public var checkOrderRequestOrderUrlNonce_MockError: Error?
+    public var checkOrderRequestOrderUrlNonce_MockMethod: ((String, String) async throws -> Data)?
+    public var checkOrderRequestOrderUrlNonce_MockValue: Data?
+
+    public func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data {
+        checkOrderRequestOrderUrlNonce_Invocations.append((orderUrl: orderUrl, nonce: nonce))
+
+        if let error = checkOrderRequestOrderUrlNonce_MockError {
+            throw error
+        }
+
+        if let mock = checkOrderRequestOrderUrlNonce_MockMethod {
+            return try await mock(orderUrl, nonce)
+        } else if let mock = checkOrderRequestOrderUrlNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `checkOrderRequestOrderUrlNonce`")
+        }
+    }
+
+    // MARK: - checkOrderResponse
+
+    public var checkOrderResponseOrder_Invocations: [Data] = []
+    public var checkOrderResponseOrder_MockError: Error?
+    public var checkOrderResponseOrder_MockMethod: ((Data) async throws -> String)?
+    public var checkOrderResponseOrder_MockValue: String?
+
+    public func checkOrderResponse(order: Data) async throws -> String {
+        checkOrderResponseOrder_Invocations.append(order)
+
+        if let error = checkOrderResponseOrder_MockError {
+            throw error
+        }
+
+        if let mock = checkOrderResponseOrder_MockMethod {
+            return try await mock(order)
+        } else if let mock = checkOrderResponseOrder_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `checkOrderResponseOrder`")
+        }
+    }
+
+    // MARK: - finalizeRequest
+
+    public var finalizeRequestNonce_Invocations: [String] = []
+    public var finalizeRequestNonce_MockError: Error?
+    public var finalizeRequestNonce_MockMethod: ((String) async throws -> Data)?
+    public var finalizeRequestNonce_MockValue: Data?
+
+    public func finalizeRequest(nonce: String) async throws -> Data {
+        finalizeRequestNonce_Invocations.append(nonce)
+
+        if let error = finalizeRequestNonce_MockError {
+            throw error
+        }
+
+        if let mock = finalizeRequestNonce_MockMethod {
+            return try await mock(nonce)
+        } else if let mock = finalizeRequestNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `finalizeRequestNonce`")
+        }
+    }
+
+    // MARK: - finalizeResponse
+
+    public var finalizeResponseFinalize_Invocations: [Data] = []
+    public var finalizeResponseFinalize_MockError: Error?
+    public var finalizeResponseFinalize_MockMethod: ((Data) async throws -> String)?
+    public var finalizeResponseFinalize_MockValue: String?
+
+    public func finalizeResponse(finalize: Data) async throws -> String {
+        finalizeResponseFinalize_Invocations.append(finalize)
+
+        if let error = finalizeResponseFinalize_MockError {
+            throw error
+        }
+
+        if let mock = finalizeResponseFinalize_MockMethod {
+            return try await mock(finalize)
+        } else if let mock = finalizeResponseFinalize_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `finalizeResponseFinalize`")
+        }
+    }
+
+    // MARK: - certificateRequest
+
+    public var certificateRequestNonce_Invocations: [String] = []
+    public var certificateRequestNonce_MockError: Error?
+    public var certificateRequestNonce_MockMethod: ((String) async throws -> Data)?
+    public var certificateRequestNonce_MockValue: Data?
+
+    public func certificateRequest(nonce: String) async throws -> Data {
+        certificateRequestNonce_Invocations.append(nonce)
+
+        if let error = certificateRequestNonce_MockError {
+            throw error
+        }
+
+        if let mock = certificateRequestNonce_MockMethod {
+            return try await mock(nonce)
+        } else if let mock = certificateRequestNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `certificateRequestNonce`")
+        }
+    }
+
+    // MARK: - createNewClient
+
+    public var createNewClientCertificateChain_Invocations: [String] = []
+    public var createNewClientCertificateChain_MockError: Error?
+    public var createNewClientCertificateChain_MockMethod: ((String) async throws -> Void)?
+
+    public func createNewClient(certificateChain: String) async throws {
+        createNewClientCertificateChain_Invocations.append(certificateChain)
+
+        if let error = createNewClientCertificateChain_MockError {
+            throw error
+        }
+
+        guard let mock = createNewClientCertificateChain_MockMethod else {
+            fatalError("no mock for `createNewClientCertificateChain`")
+        }
+
+        try await mock(certificateChain)
+    }
+
+}
+
 public class MockE2eIVerificationStatusServiceInterface: E2eIVerificationStatusServiceInterface {
 
     // MARK: - Life cycle

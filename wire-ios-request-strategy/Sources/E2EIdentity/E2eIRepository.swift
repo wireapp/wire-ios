@@ -79,7 +79,7 @@ public final class E2eIRepository: E2eIRepositoryInterface {
             guard let userName = selfUser.name,
                   let userHandle = selfUser.handle,
                   let teamId = selfUser.teamIdentifier,
-                  let clientID = E2eIClientID(user: selfUser) else {
+                  let clientID = E2EIClientID(user: selfUser) else {
                 throw Error.failedToGetSelfUserInfo
             }
             return (userName, userHandle, teamId, clientID, isUpgradingClient)

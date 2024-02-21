@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
+// sourcery: AutoMockable
 public protocol AcmeAPIInterface {
     func getACMEDirectory() async throws -> Data
     func getACMENonce(path: String) async throws -> String

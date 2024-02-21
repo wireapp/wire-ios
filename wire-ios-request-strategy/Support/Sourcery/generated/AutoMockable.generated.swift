@@ -117,6 +117,175 @@ public class MockAPIProviderInterface: APIProviderInterface {
     }
 
 }
+public class MockAcmeAPIInterface: AcmeAPIInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getACMEDirectory
+
+    public var getACMEDirectory_Invocations: [Void] = []
+    public var getACMEDirectory_MockError: Error?
+    public var getACMEDirectory_MockMethod: (() async throws -> Data)?
+    public var getACMEDirectory_MockValue: Data?
+
+    public func getACMEDirectory() async throws -> Data {
+        getACMEDirectory_Invocations.append(())
+
+        if let error = getACMEDirectory_MockError {
+            throw error
+        }
+
+        if let mock = getACMEDirectory_MockMethod {
+            return try await mock()
+        } else if let mock = getACMEDirectory_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getACMEDirectory`")
+        }
+    }
+
+    // MARK: - getACMENonce
+
+    public var getACMENoncePath_Invocations: [String] = []
+    public var getACMENoncePath_MockError: Error?
+    public var getACMENoncePath_MockMethod: ((String) async throws -> String)?
+    public var getACMENoncePath_MockValue: String?
+
+    public func getACMENonce(path: String) async throws -> String {
+        getACMENoncePath_Invocations.append(path)
+
+        if let error = getACMENoncePath_MockError {
+            throw error
+        }
+
+        if let mock = getACMENoncePath_MockMethod {
+            return try await mock(path)
+        } else if let mock = getACMENoncePath_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getACMENoncePath`")
+        }
+    }
+
+    // MARK: - getTrustAnchor
+
+    public var getTrustAnchor_Invocations: [Void] = []
+    public var getTrustAnchor_MockError: Error?
+    public var getTrustAnchor_MockMethod: (() async throws -> String)?
+    public var getTrustAnchor_MockValue: String?
+
+    public func getTrustAnchor() async throws -> String {
+        getTrustAnchor_Invocations.append(())
+
+        if let error = getTrustAnchor_MockError {
+            throw error
+        }
+
+        if let mock = getTrustAnchor_MockMethod {
+            return try await mock()
+        } else if let mock = getTrustAnchor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getTrustAnchor`")
+        }
+    }
+
+    // MARK: - getFederationCertificate
+
+    public var getFederationCertificate_Invocations: [Void] = []
+    public var getFederationCertificate_MockError: Error?
+    public var getFederationCertificate_MockMethod: (() async throws -> String)?
+    public var getFederationCertificate_MockValue: String?
+
+    public func getFederationCertificate() async throws -> String {
+        getFederationCertificate_Invocations.append(())
+
+        if let error = getFederationCertificate_MockError {
+            throw error
+        }
+
+        if let mock = getFederationCertificate_MockMethod {
+            return try await mock()
+        } else if let mock = getFederationCertificate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getFederationCertificate`")
+        }
+    }
+
+    // MARK: - sendACMERequest
+
+    public var sendACMERequestPathRequestBody_Invocations: [(path: String, requestBody: Data)] = []
+    public var sendACMERequestPathRequestBody_MockError: Error?
+    public var sendACMERequestPathRequestBody_MockMethod: ((String, Data) async throws -> ACMEResponse)?
+    public var sendACMERequestPathRequestBody_MockValue: ACMEResponse?
+
+    public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
+        sendACMERequestPathRequestBody_Invocations.append((path: path, requestBody: requestBody))
+
+        if let error = sendACMERequestPathRequestBody_MockError {
+            throw error
+        }
+
+        if let mock = sendACMERequestPathRequestBody_MockMethod {
+            return try await mock(path, requestBody)
+        } else if let mock = sendACMERequestPathRequestBody_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendACMERequestPathRequestBody`")
+        }
+    }
+
+    // MARK: - sendAuthorizationRequest
+
+    public var sendAuthorizationRequestPathRequestBody_Invocations: [(path: String, requestBody: Data)] = []
+    public var sendAuthorizationRequestPathRequestBody_MockError: Error?
+    public var sendAuthorizationRequestPathRequestBody_MockMethod: ((String, Data) async throws -> ACMEAuthorizationResponse)?
+    public var sendAuthorizationRequestPathRequestBody_MockValue: ACMEAuthorizationResponse?
+
+    public func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse {
+        sendAuthorizationRequestPathRequestBody_Invocations.append((path: path, requestBody: requestBody))
+
+        if let error = sendAuthorizationRequestPathRequestBody_MockError {
+            throw error
+        }
+
+        if let mock = sendAuthorizationRequestPathRequestBody_MockMethod {
+            return try await mock(path, requestBody)
+        } else if let mock = sendAuthorizationRequestPathRequestBody_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendAuthorizationRequestPathRequestBody`")
+        }
+    }
+
+    // MARK: - sendChallengeRequest
+
+    public var sendChallengeRequestPathRequestBody_Invocations: [(path: String, requestBody: Data)] = []
+    public var sendChallengeRequestPathRequestBody_MockError: Error?
+    public var sendChallengeRequestPathRequestBody_MockMethod: ((String, Data) async throws -> ChallengeResponse)?
+    public var sendChallengeRequestPathRequestBody_MockValue: ChallengeResponse?
+
+    public func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse {
+        sendChallengeRequestPathRequestBody_Invocations.append((path: path, requestBody: requestBody))
+
+        if let error = sendChallengeRequestPathRequestBody_MockError {
+            throw error
+        }
+
+        if let mock = sendChallengeRequestPathRequestBody_MockMethod {
+            return try await mock(path, requestBody)
+        } else if let mock = sendChallengeRequestPathRequestBody_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendChallengeRequestPathRequestBody`")
+        }
+    }
+
+}
 public class MockConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {
 
     // MARK: - Life cycle
