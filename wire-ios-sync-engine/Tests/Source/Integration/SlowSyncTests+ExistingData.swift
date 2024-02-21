@@ -39,7 +39,7 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         XCTAssertTrue(conversation.isDeletedRemotely)
     }
 
-    func testThatSelfUserLeavesConversation_WhenDiscoveredToBeInaccessibledDuringSlowSync() {
+    func testThatSelfUserLeavesConversation_WhenDiscoveredToBeInaccessibledDuringResyncResources() {
         // GIVEN
         XCTAssertTrue(login())
 
@@ -52,7 +52,7 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         XCTAssertTrue(conversation.isSelfAnActiveMember)
 
         // WHEN
-        performSlowSync()
+        performResyncResources()
 
         // THEN
         XCTAssertFalse(conversation.isSelfAnActiveMember)
