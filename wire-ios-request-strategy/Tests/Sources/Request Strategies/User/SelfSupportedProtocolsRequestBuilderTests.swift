@@ -21,8 +21,8 @@ import XCTest
 
 final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
 
-    // the api version is just required to build and not influence the tests themselves
-    private let defaultAPIVersion: APIVersion = .v4
+    // the api version is required to build and should not influence the tests
+    private let minimumAPIVersion: APIVersion = .v4
 
     // MARK: Transport Request
 
@@ -97,13 +97,13 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
 
     func testBuildTransportRequest_thenAPIVersionIsSet() {
         // given
-        let builder = makeBuilder(apiVersion: defaultAPIVersion)
+        let builder = makeBuilder(apiVersion: minimumAPIVersion)
 
         // when
         let request = builder.buildTransportRequest()
 
         // then
-        XCTAssertEqual(request?.apiVersion, defaultAPIVersion.rawValue)
+        XCTAssertEqual(request?.apiVersion, minimumAPIVersion.rawValue)
     }
 
     // MARK: Upstream Request
@@ -182,7 +182,7 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
         supportedProtocols: Set<MessageProtocol>? = nil
     ) -> SelfSupportedProtocolsRequestBuilder {
         SelfSupportedProtocolsRequestBuilder(
-            apiVersion: apiVersion ?? defaultAPIVersion,
+            apiVersion: apiVersion ?? minimumAPIVersion,
             supportedProtocols: supportedProtocols ?? .init()
         )
     }
