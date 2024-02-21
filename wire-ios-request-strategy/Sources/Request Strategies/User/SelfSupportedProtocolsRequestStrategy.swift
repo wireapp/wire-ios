@@ -22,25 +22,25 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
     // Slow Sync
 
-    private unowned var syncStatus: SyncProgress
+    private unowned var syncProgress: SyncProgress
 
     private let syncPhase: SyncPhase = .updateSelfSupportedProtocols
 
-    private var isSlowSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
+    private var isSlowSyncing: Bool { syncProgress.currentSyncPhase == syncPhase }
 
     // Requests
 
     private lazy var requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
 
-    let userRepository: UserRepositoryInterface
+    private let userRepository: UserRepositoryInterface
 
     required public init(
         context: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncStatus: SyncProgress,
+        syncProgress: SyncProgress,
         userRepository: UserRepositoryInterface
     ) {
-        self.syncStatus = syncStatus
+        self.syncProgress = syncProgress
         self.userRepository = userRepository
 
         super.init(withManagedObjectContext: context, applicationStatus: applicationStatus)
@@ -59,7 +59,10 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
         // Unfortunately this method is called often and we only want to update once, so we check the status.
         if requestSync.status != .inProgress {
             WireLogger.sync.info("slow sync now updates supported protocols")
-            let service = SupportedProtocolsService(context: managedObjectContext)
+            let service = SupportedProtocolsService(
+                featureRepository: FeatureRepository(context: managedObjectContext),
+                userRepository: userRepository
+            )
             service.updateSupportedProtocols()
         }
 
@@ -96,12 +99,12 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
         case .success:
             WireLogger.sync.error("finished slow sync phase '\(syncPhase.description)'!")
             managedObjectContext.perform {
-                self.syncStatus.finishCurrentSyncPhase(phase: self.syncPhase)
+                self.syncProgress.finishCurrentSyncPhase(phase: self.syncPhase)
             }
         default:
             WireLogger.sync.error("failed slow sync phase '\(syncPhase.description)'!")
             managedObjectContext.perform {
-                self.syncStatus.failCurrentSyncPhase(phase: self.syncPhase)
+                self.syncProgress.failCurrentSyncPhase(phase: self.syncPhase)
             }
         }
     }
