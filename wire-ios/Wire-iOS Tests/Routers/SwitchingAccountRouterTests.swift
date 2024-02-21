@@ -43,7 +43,7 @@ final class SwitchingAccountRouterTests: XCTestCase {
     }
 }
 
-class TestableSwitichingAccountRouter: SwitchingAccountRouter {
+final class TestableSwitichingAccountRouter: SwitchingAccountRouter {
     var hasBeenAlertPresented: Bool = false
     override func presentSwitchAccountAlert(completion: @escaping (Bool) -> Void) {
         hasBeenAlertPresented = true

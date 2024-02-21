@@ -21,7 +21,7 @@ import Foundation
 
 extension AppLockModule {
 
-    class MockAuthenticationTypeDetector: AuthenticationTypeProvider {
+    final class MockAuthenticationTypeDetector: AuthenticationTypeProvider {
 
         var current: AuthenticationType = .passcode
 

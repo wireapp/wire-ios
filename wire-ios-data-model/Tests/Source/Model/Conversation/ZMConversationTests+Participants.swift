@@ -520,7 +520,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role}, [role1, role1])
+        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role }, [role1, role1])
     }
 
     func testThatItAddsParticipantsWithTheGivenRole() {
@@ -545,8 +545,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user2 }?.role, role2)
     }
 
     func testThatItDoesNotAddDeletedParticipants() {
@@ -571,7 +571,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
     }
 
     func testThatItUpdateParticipantWithTheGivenRole() {
@@ -600,8 +600,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user2 }?.role, role2)
     }
 
     func testThatItRefetchesRolesIfNoRoles() {

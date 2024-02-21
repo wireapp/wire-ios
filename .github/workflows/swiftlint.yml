@@ -20,4 +20,4 @@ jobs:
         - uses: actions/checkout@v4
         - name: GitHub Action for SwiftLint
           run: |
-            swiftlint --reporter github-actions-logging --strict
+            swiftlint --reporter github-actions-logging --strict --quiet

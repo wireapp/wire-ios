@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class ConversationCreateErrorSectionController: NSObject, CollectionViewSectionController {
+final class ConversationCreateErrorSectionController: NSObject, CollectionViewSectionController {
 
     typealias Cell = ConversationCreateErrorCell
 

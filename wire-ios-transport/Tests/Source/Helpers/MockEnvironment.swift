@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class MockEnvironment: NSObject, BackendEnvironmentProvider {
+public final class MockEnvironment: NSObject, BackendEnvironmentProvider {
 
     var isServerTrusted = true
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {

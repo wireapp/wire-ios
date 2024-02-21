@@ -134,6 +134,213 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
 
 }
 
+public class MockSessionManagerDelegate: SessionManagerDelegate {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - isInAuthenticatedAppState
+
+    public var isInAuthenticatedAppState: Bool {
+        get { return underlyingIsInAuthenticatedAppState }
+        set(value) { underlyingIsInAuthenticatedAppState = value }
+    }
+
+    public var underlyingIsInAuthenticatedAppState: Bool!
+
+    // MARK: - isInUnathenticatedAppState
+
+    public var isInUnathenticatedAppState: Bool {
+        get { return underlyingIsInUnathenticatedAppState }
+        set(value) { underlyingIsInUnathenticatedAppState = value }
+    }
+
+    public var underlyingIsInUnathenticatedAppState: Bool!
+
+
+    // MARK: - sessionManagerDidFailToLogin
+
+    public var sessionManagerDidFailToLoginError_Invocations: [Error?] = []
+    public var sessionManagerDidFailToLoginError_MockMethod: ((Error?) -> Void)?
+
+    public func sessionManagerDidFailToLogin(error: Error?) {
+        sessionManagerDidFailToLoginError_Invocations.append(error)
+
+        guard let mock = sessionManagerDidFailToLoginError_MockMethod else {
+            fatalError("no mock for `sessionManagerDidFailToLoginError`")
+        }
+
+        mock(error)
+    }
+
+    // MARK: - sessionManagerWillLogout
+
+    public var sessionManagerWillLogoutErrorUserSessionCanBeTornDown_Invocations: [(error: Error?, userSessionCanBeTornDown: (() -> Void)?)] = []
+    public var sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod: ((Error?, (() -> Void)?) -> Void)?
+
+    public func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?) {
+        sessionManagerWillLogoutErrorUserSessionCanBeTornDown_Invocations.append((error: error, userSessionCanBeTornDown: userSessionCanBeTornDown))
+
+        guard let mock = sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod else {
+            fatalError("no mock for `sessionManagerWillLogoutErrorUserSessionCanBeTornDown`")
+        }
+
+        mock(error, userSessionCanBeTornDown)
+    }
+
+    // MARK: - sessionManagerWillOpenAccount
+
+    public var sessionManagerWillOpenAccountFromUserSessionCanBeTornDown_Invocations: [(account: Account, selectedAccount: Account?, userSessionCanBeTornDown: () -> Void)] = []
+    public var sessionManagerWillOpenAccountFromUserSessionCanBeTornDown_MockMethod: ((Account, Account?, @escaping () -> Void) -> Void)?
+
+    public func sessionManagerWillOpenAccount(_ account: Account, from selectedAccount: Account?, userSessionCanBeTornDown: @escaping () -> Void) {
+        sessionManagerWillOpenAccountFromUserSessionCanBeTornDown_Invocations.append((account: account, selectedAccount: selectedAccount, userSessionCanBeTornDown: userSessionCanBeTornDown))
+
+        guard let mock = sessionManagerWillOpenAccountFromUserSessionCanBeTornDown_MockMethod else {
+            fatalError("no mock for `sessionManagerWillOpenAccountFromUserSessionCanBeTornDown`")
+        }
+
+        mock(account, selectedAccount, userSessionCanBeTornDown)
+    }
+
+    // MARK: - sessionManagerWillMigrateAccount
+
+    public var sessionManagerWillMigrateAccountUserSessionCanBeTornDown_Invocations: [() -> Void] = []
+    public var sessionManagerWillMigrateAccountUserSessionCanBeTornDown_MockMethod: ((@escaping () -> Void) -> Void)?
+
+    public func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void) {
+        sessionManagerWillMigrateAccountUserSessionCanBeTornDown_Invocations.append(userSessionCanBeTornDown)
+
+        guard let mock = sessionManagerWillMigrateAccountUserSessionCanBeTornDown_MockMethod else {
+            fatalError("no mock for `sessionManagerWillMigrateAccountUserSessionCanBeTornDown`")
+        }
+
+        mock(userSessionCanBeTornDown)
+    }
+
+    // MARK: - sessionManagerDidFailToLoadDatabase
+
+    public var sessionManagerDidFailToLoadDatabaseError_Invocations: [Error] = []
+    public var sessionManagerDidFailToLoadDatabaseError_MockMethod: ((Error) -> Void)?
+
+    public func sessionManagerDidFailToLoadDatabase(error: Error) {
+        sessionManagerDidFailToLoadDatabaseError_Invocations.append(error)
+
+        guard let mock = sessionManagerDidFailToLoadDatabaseError_MockMethod else {
+            fatalError("no mock for `sessionManagerDidFailToLoadDatabaseError`")
+        }
+
+        mock(error)
+    }
+
+    // MARK: - sessionManagerDidBlacklistCurrentVersion
+
+    public var sessionManagerDidBlacklistCurrentVersionReason_Invocations: [BlacklistReason] = []
+    public var sessionManagerDidBlacklistCurrentVersionReason_MockMethod: ((BlacklistReason) -> Void)?
+
+    public func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason) {
+        sessionManagerDidBlacklistCurrentVersionReason_Invocations.append(reason)
+
+        guard let mock = sessionManagerDidBlacklistCurrentVersionReason_MockMethod else {
+            fatalError("no mock for `sessionManagerDidBlacklistCurrentVersionReason`")
+        }
+
+        mock(reason)
+    }
+
+    // MARK: - sessionManagerDidBlacklistJailbrokenDevice
+
+    public var sessionManagerDidBlacklistJailbrokenDevice_Invocations: [Void] = []
+    public var sessionManagerDidBlacklistJailbrokenDevice_MockMethod: (() -> Void)?
+
+    public func sessionManagerDidBlacklistJailbrokenDevice() {
+        sessionManagerDidBlacklistJailbrokenDevice_Invocations.append(())
+
+        guard let mock = sessionManagerDidBlacklistJailbrokenDevice_MockMethod else {
+            fatalError("no mock for `sessionManagerDidBlacklistJailbrokenDevice`")
+        }
+
+        mock()
+    }
+
+    // MARK: - sessionManagerDidPerformFederationMigration
+
+    public var sessionManagerDidPerformFederationMigrationActiveSession_Invocations: [UserSession?] = []
+    public var sessionManagerDidPerformFederationMigrationActiveSession_MockMethod: ((UserSession?) -> Void)?
+
+    public func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
+        sessionManagerDidPerformFederationMigrationActiveSession_Invocations.append(activeSession)
+
+        guard let mock = sessionManagerDidPerformFederationMigrationActiveSession_MockMethod else {
+            fatalError("no mock for `sessionManagerDidPerformFederationMigrationActiveSession`")
+        }
+
+        mock(activeSession)
+    }
+
+    // MARK: - sessionManagerDidPerformAPIMigrations
+
+    public var sessionManagerDidPerformAPIMigrationsActiveSession_Invocations: [UserSession?] = []
+    public var sessionManagerDidPerformAPIMigrationsActiveSession_MockMethod: ((UserSession?) -> Void)?
+
+    public func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
+        sessionManagerDidPerformAPIMigrationsActiveSession_Invocations.append(activeSession)
+
+        guard let mock = sessionManagerDidPerformAPIMigrationsActiveSession_MockMethod else {
+            fatalError("no mock for `sessionManagerDidPerformAPIMigrationsActiveSession`")
+        }
+
+        mock(activeSession)
+    }
+
+    // MARK: - sessionManagerAsksToRetryStart
+
+    public var sessionManagerAsksToRetryStart_Invocations: [Void] = []
+    public var sessionManagerAsksToRetryStart_MockMethod: (() -> Void)?
+
+    public func sessionManagerAsksToRetryStart() {
+        sessionManagerAsksToRetryStart_Invocations.append(())
+
+        guard let mock = sessionManagerAsksToRetryStart_MockMethod else {
+            fatalError("no mock for `sessionManagerAsksToRetryStart`")
+        }
+
+        mock()
+    }
+
+    // MARK: - sessionManagerDidChangeActiveUserSession
+
+    public var sessionManagerDidChangeActiveUserSessionUserSession_Invocations: [ZMUserSession] = []
+    public var sessionManagerDidChangeActiveUserSessionUserSession_MockMethod: ((ZMUserSession) -> Void)?
+
+    public func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
+        sessionManagerDidChangeActiveUserSessionUserSession_Invocations.append(userSession)
+
+        guard let mock = sessionManagerDidChangeActiveUserSessionUserSession_MockMethod else {
+            fatalError("no mock for `sessionManagerDidChangeActiveUserSessionUserSession`")
+        }
+
+        mock(userSession)
+    }
+
+    // MARK: - sessionManagerDidReportLockChange
+
+    public var sessionManagerDidReportLockChangeForSession_Invocations: [UserSession] = []
+    public var sessionManagerDidReportLockChangeForSession_MockMethod: ((UserSession) -> Void)?
+
+    public func sessionManagerDidReportLockChange(forSession session: UserSession) {
+        sessionManagerDidReportLockChangeForSession_Invocations.append(session)
+
+        guard let mock = sessionManagerDidReportLockChangeForSession_MockMethod else {
+            fatalError("no mock for `sessionManagerDidReportLockChangeForSession`")
+        }
+
+        mock(session)
+    }
+
+}
+
 public class MockUserProfile: UserProfile {
 
     // MARK: - Life cycle

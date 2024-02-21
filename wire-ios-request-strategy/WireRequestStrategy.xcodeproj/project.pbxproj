@@ -12,7 +12,6 @@
 		0605DB902511622100443219 /* ZMLocalNotificationTests_UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0605DB8F2511622100443219 /* ZMLocalNotificationTests_UnreadCount.swift */; };
 		060ED6D62499F41000412C4A /* PushNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060ED6D52499F41000412C4A /* PushNotificationStatus.swift */; };
 		062285C8276BB5B000B87C91 /* UpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062285C7276BB5B000B87C91 /* UpdateEventProcessor.swift */; };
-		062DD2D82760CFAA00E27FD9 /* UUID+SafeLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062DD2D72760CFAA00E27FD9 /* UUID+SafeLogging.swift */; };
 		06474D4B24AF6858002C695D /* EventDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474D4A24AF6858002C695D /* EventDecoder.swift */; };
 		06474D4D24AF68AD002C695D /* StoreUpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474D4C24AF68AD002C695D /* StoreUpdateEvent.swift */; };
 		06474D5E24B30C79002C695D /* PushNotificationStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474D5C24B30C75002C695D /* PushNotificationStatusTests.swift */; };
@@ -2306,7 +2305,6 @@
 				0693115024F79E2500D14DF5 /* UserNotificationCenterMock.swift in Sources */,
 				EE47346C29A39E8A00E6C04E /* EventDecoder+Proteus.swift in Sources */,
 				06CDDE9F282E9CC200F9360F /* RemovePushTokenAction.swift in Sources */,
-				062DD2D82760CFAA00E27FD9 /* UUID+SafeLogging.swift in Sources */,
 				5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */,
 				E629E3C22B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift in Sources */,
 				6360A2132B0B722700A5D5FB /* MLSClientIDsProvider.swift in Sources */,

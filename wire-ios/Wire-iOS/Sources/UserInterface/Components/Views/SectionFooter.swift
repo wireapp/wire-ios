@@ -78,7 +78,7 @@ final class SectionFooter: UICollectionReusableView {
     }
 }
 
-class SectionTableFooter: UITableViewHeaderFooterView {
+final class SectionTableFooter: UITableViewHeaderFooterView {
 
     let footerView = SectionFooterView()
 

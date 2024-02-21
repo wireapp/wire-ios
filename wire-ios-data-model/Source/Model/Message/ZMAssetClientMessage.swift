@@ -505,11 +505,11 @@ extension ZMAssetClientMessage: AssetMessage {
     public var processingState: AssetProcessingState {
         let assets = self.assets
 
-        if assets.filter({$0.needsPreprocessing && !$0.hasPreprocessed || !$0.isUploaded && !$0.hasEncrypted}).count > 0 {
+        if assets.filter({ $0.needsPreprocessing && !$0.hasPreprocessed || !$0.isUploaded && !$0.hasEncrypted }).count > 0 {
             return .preprocessing
         }
 
-        if assets.filter({!$0.isUploaded}).count > 0 {
+        if assets.filter({ !$0.isUploaded }).count > 0 {
             return .uploading
         }
 

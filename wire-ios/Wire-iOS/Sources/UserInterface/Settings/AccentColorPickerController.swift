@@ -73,7 +73,7 @@ class ColorPickerController: UIViewController {
         ])
     }
 
-    fileprivate class PickerCell: UITableViewCell {
+    fileprivate final class PickerCell: UITableViewCell {
         fileprivate let checkmarkView = UIImageView()
         fileprivate let colorView = UIView()
         fileprivate let colorNameLabel: UILabel = {

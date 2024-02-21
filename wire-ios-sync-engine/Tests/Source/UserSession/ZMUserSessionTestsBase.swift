@@ -18,7 +18,7 @@
 
 import WireDataModelSupport
 
-class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
+final class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
 
     var uploadCount = 0
 
@@ -95,6 +95,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockUpdateEventProcessor = MockUpdateEventProcessor()
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockMLSService = MockMLSServiceInterface()
+        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
         sut = ZMUserSession(
             userId: coreDataStack.account.userIdentifier,

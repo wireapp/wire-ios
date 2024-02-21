@@ -160,6 +160,12 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             // Received self commit, any pending self commit has now been merged
             case CryptoError.SelfCommitIgnored: return []
 
+            // Received stale commit, this commit is targeting a past epoch and we have already consumed it
+            case CryptoError.StaleCommit: return []
+
+            // Received stale proposal, this proposal is targeting a past epoch and we have already consumed it
+            case CryptoError.StaleProposal: return []
+
             // Message arrive in an unmerged group, it has been buffered and will be consumed later.
             case CryptoError.UnmergedPendingGroup: return []
             default:

@@ -15,11 +15,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
 extension UIImage {
+
     func imageScaled(with scaleFactor: CGFloat) -> UIImage? {
         let size = self.size.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
         let scale: CGFloat = 0 // Automatically use scale factor of main screens
@@ -90,12 +90,12 @@ extension UIImage {
     }
 
     private class func thumbnailOptions(withMaxSize maxSize: CGFloat) -> CFDictionary {
-        return [
+        [
             kCGImageSourceCreateThumbnailWithTransform: kCFBooleanTrue,
             kCGImageSourceCreateThumbnailFromImageIfAbsent: kCFBooleanTrue,
             kCGImageSourceCreateThumbnailFromImageAlways: kCFBooleanTrue,
             kCGImageSourceThumbnailMaxPixelSize: NSNumber(value: Float(maxSize))
-            ] as CFDictionary
+        ] as CFDictionary
     }
 
     private class func size(for source: CGImageSource) -> CGSize {
@@ -153,12 +153,10 @@ extension UIImage {
 }
 
 extension UIImage {
-    func resize(for size: StyleKitIcon.Size) -> UIImage {
-        let targetSize = CGSize(width: size.rawValue, height: size.rawValue)
 
-        let renderer = UIGraphicsImageRenderer(size: targetSize)
-        return renderer.image { _ in
-            self.draw(in: CGRect(origin: .zero, size: targetSize))
+    func resize(for size: StyleKitIcon.Size) -> UIImage {
+        UIGraphicsImageRenderer(size: size.cgSize).image { _ in
+            draw(in: CGRect(origin: .zero, size: size.cgSize))
         }
     }
 }

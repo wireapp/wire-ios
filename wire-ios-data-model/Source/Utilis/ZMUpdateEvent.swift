@@ -44,7 +44,7 @@ extension ZMUpdateEvent {
             let userIds = dataPayload["user_ids"] as? [String] else {
                 return []
         }
-        return userIds.compactMap({ UUID.init(uuidString: $0)})
+        return userIds.compactMap({ UUID.init(uuidString: $0) })
     }
 
     public var qualifiedUserIDs: [QualifiedID]? {

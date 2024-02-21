@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
-class ConversationMessageTimerSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationMessageTimerSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias LabelColors = SemanticColors.Label

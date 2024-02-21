@@ -55,7 +55,7 @@ final class APIVersionResolver {
         sendRequest(completion: completion)
     }
 
-    private func sendRequest(completion: @escaping (Error?) -> Void = {_ in }) {
+    private func sendRequest(completion: @escaping (Error?) -> Void = { _ in }) {
         // This is endpoint isn't versioned, so it always version 0.
         let request = ZMTransportRequest(getFromPath: "/api-version", apiVersion: APIVersion.v0.rawValue)
         let completionHandler = ZMCompletionHandler(on: queue) { [weak self] response in

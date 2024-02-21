@@ -100,7 +100,7 @@ extension NSManagedObjectContext {
 
         guard let entity = NSEntityDescription.entity(forEntityName: entityName, in: self),
               let attribute = entity.attributesByName[keyPath] else {
-            fatal("Cannot preapare the fetch")
+            fatal("Cannot prepare the fetch")
         }
 
         let keyPathExpression = NSExpression(forKeyPath: keyPath)

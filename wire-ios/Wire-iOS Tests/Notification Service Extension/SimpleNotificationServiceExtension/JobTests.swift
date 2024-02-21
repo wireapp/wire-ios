@@ -179,7 +179,7 @@ class JobTests: XCTestCase {
 
 }
 
-class MockNetworkSession: NetworkSessionProtocol {
+final class MockNetworkSession: NetworkSessionProtocol {
 
     var accessToken: AccessToken?
     var isAuthenticated = true
@@ -210,7 +210,7 @@ class MockNetworkSession: NetworkSessionProtocol {
 
 }
 
-class MockAccessAPIClient: AccessAPIClientProtocol {
+final class MockAccessAPIClient: AccessAPIClientProtocol {
 
     var mockFetchAccessToken: (() async throws -> AccessToken)?
 
@@ -224,7 +224,7 @@ class MockAccessAPIClient: AccessAPIClientProtocol {
 
 }
 
-class MockNotificationsAPIClient: NotificationsAPIClientProtocol {
+final class MockNotificationsAPIClient: NotificationsAPIClientProtocol {
 
     var mockFetchEvent: ((UUID) async throws -> ZMUpdateEvent)?
 

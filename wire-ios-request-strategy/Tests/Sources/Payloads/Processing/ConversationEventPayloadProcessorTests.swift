@@ -153,7 +153,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testUpdateOrCreateConversation_Group_AddSystemMessageWhenCreatingGroup() async throws {
+    func testUpdateOrCreateConversation_Group_AddsNewConversationSystemMessageWhenCreatingGroup() async throws {
         // given
         let qualifiedID = await syncMOC.perform {
             QualifiedID(uuid: UUID(), domain: self.owningDomain)
@@ -173,6 +173,32 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         await syncMOC.perform {
             let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC)
             XCTAssertEqual(conversation?.lastMessage?.systemMessageData?.systemMessageType, .newConversation)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Group_DoesntAddMlsMigrationPotentialGapSystemMessageWhenCreatingGroup() async throws {
+        // given
+        let qualifiedID = await syncMOC.perform {
+            QualifiedID(uuid: UUID(), domain: self.owningDomain)
+        }
+        let payload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mls.rawValue
+        )
+
+        // when
+        await sut.updateOrCreateConversation(
+            from: payload,
+            in: syncMOC
+        )
+
+        // then
+        try await syncMOC.perform {
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
+            XCTAssertFalse(conversation.allMessages.contains(where: { message in
+                message.systemMessageData?.systemMessageType == .mlsMigrationPotentialGap
+            }))
         }
     }
 
@@ -1013,12 +1039,40 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     // MARK: - MLS Self Group
 
-    func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() async {
+    func testUpdateOrCreate_withoutRegisteredMLSClient_dontEstablishMLSSelfGroup() async throws {
+        // given
+        let expectation = XCTestExpectation(description: "didCallCreateGroup")
+        expectation.isInverted = true
+        mockMLSService.createSelfGroupFor_MockMethod = { _ in
+            expectation.fulfill()
+        }
+        try await syncMOC.perform {
+            let selfClient = try XCTUnwrap(ZMUser.selfUser(in: self.syncMOC).selfClient())
+            selfClient.mlsPublicKeys = .init(ed25519: "mock_ed25519")
+            selfClient.needsToUploadMLSPublicKeys = true
+        }
+
+        // when
+        await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
+        await fulfillment(of: [expectation], timeout: 0.5)
+
+        // then
+        XCTAssertTrue(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
+    }
+
+    func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() async throws {
+        // given
         let didCallCreateGroup = XCTestExpectation(description: "didCallCreateGroup")
         mockMLSService.createSelfGroupFor_MockMethod = { _ in
             didCallCreateGroup.fulfill()
         }
+        try await syncMOC.perform {
+            let selfClient = try XCTUnwrap(ZMUser.selfUser(in: self.syncMOC).selfClient())
+            selfClient.mlsPublicKeys = .init(ed25519: "mock_ed25519")
+            selfClient.needsToUploadMLSPublicKeys = false
+        }
 
+        // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
         await fulfillment(of: [didCallCreateGroup], timeout: 0.5)
 
@@ -1026,13 +1080,21 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         XCTAssertFalse(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
     }
 
-    func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() async {
+    func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() async throws {
+        // given
         let didJoinGroup = XCTestExpectation(description: "didJoinGroup")
         mockMLSService.joinGroupWith_MockMethod = { _ in
             didJoinGroup.fulfill()
         }
         mockMLSService.conversationExistsGroupID_MockValue = false
 
+        try await syncMOC.perform {
+            let selfClient = try XCTUnwrap(ZMUser.selfUser(in: self.syncMOC).selfClient())
+            selfClient.mlsPublicKeys = .init(ed25519: "mock_ed25519")
+            selfClient.needsToUploadMLSPublicKeys = false
+        }
+
+        // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
         await fulfillment(of: [didJoinGroup], timeout: 0.5)
 

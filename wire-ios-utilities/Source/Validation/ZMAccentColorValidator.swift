@@ -18,7 +18,7 @@
 
 import UIKit
 
-@objc public class ZMAccentColorValidator: NSObject, ZMPropertyValidator {
+@objc public final class ZMAccentColorValidator: NSObject, ZMPropertyValidator {
 
     @objc(validateValue:error:)
     public static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws {

@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     typealias Category = WireSyncEngine.PushNotificationCategory
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction

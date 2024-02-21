@@ -52,9 +52,9 @@ public class MockApplicationStatus: NSObject, ApplicationStatus {
         return mockClientRegistrationStatus.deletionCalls
     }
 
-    public var slowSyncWasRequested = false
-    public func requestSlowSync() {
-        slowSyncWasRequested = true
+    public var resyncResourcesWasRequested = false
+    public func requestResyncResources() {
+        resyncResourcesWasRequested = true
     }
 
 }

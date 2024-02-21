@@ -91,7 +91,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             self.mockApplicationStatus.mockSynchronizationState = .online
 
             // when
-            let objs: [ZMConversation] = self.sut.contextChangeTrackers.compactMap({$0.fetchRequestForTrackedObjects()}).flatMap({self.syncMOC.executeFetchRequestOrAssert($0) as! [ZMConversation] })
+            let objs: [ZMConversation] = self.sut.contextChangeTrackers.compactMap({ $0.fetchRequestForTrackedObjects() }).flatMap({ self.syncMOC.executeFetchRequestOrAssert($0) as! [ZMConversation] })
 
             // then            
             XCTAssertEqual(objs, [convo1])
@@ -135,8 +135,8 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(convo1!.nonTeamRoles.count, 2)
-            guard let admin = convo1!.nonTeamRoles.first(where: {$0.name == "wire_admin"}),
-                let member = convo1!.nonTeamRoles.first(where: {$0.name == "wire_member" }) else {
+            guard let admin = convo1!.nonTeamRoles.first(where: { $0.name == "wire_admin" }),
+                let member = convo1!.nonTeamRoles.first(where: { $0.name == "wire_member" }) else {
                     return XCTFail()
             }
             XCTAssertEqual(Set(admin.actions.map { $0.name }), Set(["leave_conversation", "delete_conversation"]))

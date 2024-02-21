@@ -62,7 +62,7 @@ extension CoreDataStack {
 
     // Calling this method will delete all backups stored inside `backupsDirectory`
     // as well as inside `importsDirectory` if there are any.
-    public static func clearBackupDirectory(dispatchGroup: ZMSDispatchGroup? = nil) {
+    public static func clearBackupDirectory(dispatchGroup: ZMSDispatchGroup) {
         func remove(at url: URL) {
             do {
                 guard fileManager.fileExists(atPath: url.path) else { return }
@@ -91,7 +91,7 @@ extension CoreDataStack {
         accountIdentifier: UUID,
         clientIdentifier: String,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup? = nil,
+        dispatchGroup: ZMSDispatchGroup,
         databaseKey: VolatileData? = nil,
         completion: @escaping (Result<BackupInfo, Error>) -> Void
     ) {
@@ -166,7 +166,7 @@ extension CoreDataStack {
         accountIdentifier: UUID,
         from backupDirectory: URL,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup? = nil,
+        dispatchGroup: ZMSDispatchGroup,
         completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "import backup") else {
@@ -192,7 +192,7 @@ extension CoreDataStack {
         accountIdentifier: UUID,
         from backupDirectory: URL,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup? = nil,
+        dispatchGroup: ZMSDispatchGroup,
         messagingMigrator: CoreDataMessagingMigratorProtocol,
         completion: @escaping ((Result<URL, Error>) -> Void)
     ) {

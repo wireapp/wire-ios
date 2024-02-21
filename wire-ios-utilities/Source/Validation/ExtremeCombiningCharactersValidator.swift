@@ -24,7 +24,8 @@ public enum ExtremeCombiningCharactersValidationError: Error {
     case notAString
 }
 
-@objc public class ExtremeCombiningCharactersValidator: NSObject, ZMPropertyValidator {
+@objc
+public final class ExtremeCombiningCharactersValidator: NSObject, ZMPropertyValidator {
 
     @objc(validateValue:error:)
     public static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws {

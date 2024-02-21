@@ -22,7 +22,7 @@ import Contacts
 import WireDataModel
 import WireCommonComponents
 
-class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
+final class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
 
     // MARK: - Properties
     typealias LabelColors = SemanticColors.Label

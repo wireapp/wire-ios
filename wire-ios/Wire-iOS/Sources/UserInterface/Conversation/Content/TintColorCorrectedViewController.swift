@@ -19,7 +19,7 @@
 import UIKit
 import SafariServices
 
-class TintColorOverrider: NSObject {
+final class TintColorOverrider: NSObject {
     private var windowTintColor: UIColor?
 
     func override() {

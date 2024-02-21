@@ -73,7 +73,7 @@ extension SessionManager {
         result: Result<CoreDataStack.BackupInfo, Error>,
         password: String,
         accountId: UUID,
-        dispatchGroup: ZMSDispatchGroup? = nil,
+        dispatchGroup: ZMSDispatchGroup,
         completion: @escaping (Result<URL, Error>) -> Void,
         handle: String
         ) {
@@ -170,9 +170,11 @@ extension SessionManager {
     // MARK: - Helper
 
     /// Deletes all previously exported and imported backups.
-    public static func clearPreviousBackups(dispatchGroup: ZMSDispatchGroup? = nil) {
+    public func clearPreviousBackups() {
         CoreDataStack.clearBackupDirectory(dispatchGroup: dispatchGroup)
     }
+
+    // MARK: - Static Helpers
 
     private static func unzippedBackupURL(for url: URL) -> URL {
         let filename = url.deletingPathExtension().lastPathComponent

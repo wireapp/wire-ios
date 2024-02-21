@@ -22,7 +22,7 @@ import Foundation
  * Handles the success of credentials verification.
  */
 
-class RegistrationCredentialsVerifiedEventHandler: AuthenticationEventHandler {
+final class RegistrationCredentialsVerifiedEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

@@ -208,7 +208,7 @@ private extension CommitError.RecoveryStrategy {
         case .mlsClientMismatch:
             self = .retryAfterQuickSync
         case .mlsCommitMissingReferences:
-            self = .commitPendingProposalsAfterQuickSync
+            self = .retryAfterQuickSync
         case .mlsStaleMessage:
             self = .retryAfterRepairingGroup
         default:

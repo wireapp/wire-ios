@@ -608,9 +608,13 @@ extension UserClientTests {
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient() {
         // given
         _ = createSelfClient()
-        let newClientPayload: [String: AnyObject] = ["id": UUID().transportString() as AnyObject,
-                                                     "type": "permanent" as AnyObject,
-                                                     "time": Date().transportString() as AnyObject]
+        let newClientPayload: [String: AnyObject] = [
+            "id": UUID().transportString() as AnyObject,
+            "type": "permanent" as AnyObject,
+            "time": Date().transportString() as AnyObject,
+            "mls_public_keys": ["ed25519": "some key"] as AnyObject
+        ]
+
         // when
         var newClient: UserClient!
         self.performPretendingUiMocIsSyncMoc {
@@ -623,6 +627,7 @@ extension UserClientTests {
         XCTAssertNotNil(newClient.user)
         XCTAssertEqual(newClient.user, ZMUser.selfUser(in: uiMOC))
         XCTAssertNotNil(newClient.sessionIdentifier)
+        XCTAssertEqual(newClient.mlsPublicKeys.ed25519, "some key")
     }
 
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient_NoExistingSelfClient() {

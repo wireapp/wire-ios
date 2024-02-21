@@ -28,7 +28,7 @@ extension RemoteLogger {
     }
 }
 
-public class RemoteMonitoring: NSObject {
+public final class RemoteMonitoring: NSObject {
     @objc public enum Level: Int {
         case debug
         case info

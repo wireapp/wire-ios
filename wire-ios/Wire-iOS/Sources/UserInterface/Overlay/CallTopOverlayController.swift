@@ -229,7 +229,7 @@ final class CallTopOverlayController: UIViewController {
 
     // MARK: - TapableAccessibleView
 
-    class TapableAccessibleView: UIView {
+    final class TapableAccessibleView: UIView {
         let onAccessibilityActivate: () -> Void
 
         init(onAccessibilityActivate: @escaping () -> Void) {

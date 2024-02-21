@@ -84,12 +84,7 @@ extension EventDecoder {
                     }
 
                     if let mlsService, updateEvent.source == .webSocket {
-                        do {
-                            try await mlsService.commitPendingProposals()
-                        } catch {
-                            WireLogger.mls.error("failed to commit pending proposals: \(String(describing: error))")
-                        }
-
+                        mlsService.commitPendingProposalsIfNeeded()
                     }
 
                     return nil

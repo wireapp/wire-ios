@@ -139,13 +139,13 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let clientsNeedingToBeUpdated = objects.compactMap({ $0 as? UserClient})
+        let clientsNeedingToBeUpdated = objects.compactMap({ $0 as? UserClient })
 
         fetch(userClients: clientsNeedingToBeUpdated)
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let clientsNeedingToBeUpdated = object.compactMap({ $0 as? UserClient}).filter(\.needsToBeUpdatedFromBackend)
+        let clientsNeedingToBeUpdated = object.compactMap({ $0 as? UserClient }).filter(\.needsToBeUpdatedFromBackend)
 
         fetch(userClients: clientsNeedingToBeUpdated)
     }
