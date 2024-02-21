@@ -30,6 +30,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     private var syncObserver: InitialSyncObserver!
     let userSession: UserSession
     private var userStatuses = [UUID: UserStatus]()
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    private let isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
 
     var didCompleteInitialSync = false {
         didSet { collectionViewController.sections = computeVisibleSections() }
@@ -39,10 +41,17 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         return wr_supportedInterfaceOrientations
     }
 
-    init(conversation: GroupDetailsConversationType, userSession: UserSession) {
+    init(
+        conversation: GroupDetailsConversationType,
+        userSession: UserSession,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
+    ) {
         self.conversation = conversation
-        collectionViewController = SectionCollectionViewController()
         self.userSession = userSession
+        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+        self.isOtherUserE2EICertifiedUseCase = isOtherUserE2EICertifiedUseCase
+        collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
@@ -60,7 +69,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
         }
 
-        updateUserStatuses()
+        updateUserE2EICertificationStatuses()
         collectionViewController.sections = computeVisibleSections()
     }
 
@@ -287,7 +296,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         if changeInfo.participantsChanged, !conversation.isSelfAnActiveMember {
             navigationController?.popToRootViewController(animated: true)
         } else {
-            updateUserStatuses()
+            updateUserE2EICertificationStatuses()
             collectionViewController.sections = computeVisibleSections()
         }
     }
@@ -405,13 +414,20 @@ private extension GroupDetailsViewController {
         return attributedString
     }
 
-    private func updateUserStatuses() {
-        Task {
-            for remoteIdentifier in userStatuses.keys {
+    private func updateUserE2EICertificationStatuses() {
+        Task { @MainActor in
+            let participants = conversation.sortedOtherParticipants
+            for user in participants {
                 do {
-                    // TODO [WPB-765]: call use cases
+                    let isE2EICertified: Bool
+                    if user.isSelfUser {
+                        isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+                    } else {
+                        isE2EICertified = try await isOtherUserE2EICertifiedUseCase.invoke()
+                    }
+                    userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
                 } catch {
-                    fatalError("TODO")
+                    WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
                 }
             }
         }

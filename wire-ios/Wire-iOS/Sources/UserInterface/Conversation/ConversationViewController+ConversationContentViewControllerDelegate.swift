@@ -140,7 +140,12 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
+        let groupDetailsViewController = GroupDetailsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+        )
         let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
         groupDetailsViewController.presentGuestOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
@@ -155,7 +160,12 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
+        let groupDetailsViewController = GroupDetailsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+        )
         let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
         groupDetailsViewController.presentServicesOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)

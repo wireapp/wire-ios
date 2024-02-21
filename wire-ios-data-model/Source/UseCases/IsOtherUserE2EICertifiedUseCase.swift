@@ -19,7 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
-public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
+public struct IsOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
     private let schedule: NSManagedObjectContext.ScheduledTaskType
@@ -48,8 +48,10 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
             let selfUser = ZMUser.selfUser(in: context)
             guard
                 let qualifiedID = selfUser.qualifiedID,
-                let userID = Optional(qualifiedID.uuid.transportString()) // TODO: [WPB-765]: workaround for a bug in core crypto, should be fixed mid february 2024, no JIRA ticket
+                // Eventually the `getUserIdentities` function of Core Crypto will probably require a domain name.
                 // let userID = MLSUserID(userID: qualifiedID.uuid.transportString(), domain: qualifiedID.domain).rawValue
+                // Workaround:
+                let userID = Optional(qualifiedID.uuid.transportString())
             else {
                 throw Error.failedToGetSelfUserID
             }
@@ -73,7 +75,7 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
     }
 }
 
-extension IsSelfUserE2EICertifiedUseCase {
+extension IsOtherUserE2EICertifiedUseCase {
 
     enum Error: Swift.Error {
         case failedToGetSelfUserID

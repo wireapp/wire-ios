@@ -351,7 +351,12 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
-        let controller = GroupDetailsViewController(conversation: conversation, userSession: userSession)
+        let controller = GroupDetailsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+        )
         let navController = controller.wrapInNavigationController(setBackgroundColor: true)
         navController.modalPresentationStyle = .formSheet
 

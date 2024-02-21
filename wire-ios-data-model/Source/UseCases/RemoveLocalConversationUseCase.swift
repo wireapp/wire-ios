@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// TODO [WPB-765]: Probably this use case is not needed, since the status is a stored property on User.
+
 public protocol RemoveLocalConversationUseCaseProtocol {
 
     func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext) async throws
