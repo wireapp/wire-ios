@@ -84,7 +84,7 @@ final class UserSessionMock: UserSession {
     var isAppLockAvailable: Bool = false
     var isAppLockForced: Bool = false
     var appLockTimeout: UInt = 60
-    var requireCustomAppLockPasscode: Bool  = false
+    var requireCustomAppLockPasscode: Bool = false
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
 

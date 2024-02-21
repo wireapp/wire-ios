@@ -3633,7 +3633,7 @@ public class WireStyleKit: NSObject {
         //// Rectangle Drawing
         context.saveGState()
         context.translateBy(x: 33.04, y: 32)
-        context.rotate(by: 12.1 * CGFloat.pi/180)
+        context.rotate(by: 12.1 * CGFloat.pi / 180)
 
         let rectanglePath = UIBezierPath(rect: CGRect(x: -4.25, y: -30.61, width: 8.5, height: 61.21))
         color.setFill()
@@ -6469,7 +6469,7 @@ public class WireStyleKit: NSObject {
         //// Fill-54 Drawing
         context.saveGState()
         context.translateBy(x: 171.32, y: 37.11)
-        context.rotate(by: 45 * CGFloat.pi/180)
+        context.rotate(by: 45 * CGFloat.pi / 180)
 
         let fill54Path = UIBezierPath(roundedRect: CGRect(x: -2.94, y: -6.07, width: 5.88, height: 12.13), cornerRadius: 2.94)
         color.setFill()
@@ -6485,7 +6485,7 @@ public class WireStyleKit: NSObject {
         //// Fill-56 Drawing
         context.saveGState()
         context.translateBy(x: 128.68, y: 36.86)
-        context.rotate(by: 45 * CGFloat.pi/180)
+        context.rotate(by: 45 * CGFloat.pi / 180)
 
         let fill56Path = UIBezierPath(roundedRect: CGRect(x: -6.07, y: -2.94, width: 12.13, height: 5.88), cornerRadius: 2.94)
         color.setFill()
@@ -7608,11 +7608,11 @@ private extension UIColor {
     func highlight(withLevel highlight: CGFloat) -> UIColor {
         var red: CGFloat = 1, green: CGFloat = 1, blue: CGFloat = 1, alpha: CGFloat = 1
         self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        return UIColor(red: red * (1-highlight) + highlight, green: green * (1-highlight) + highlight, blue: blue * (1-highlight) + highlight, alpha: alpha * (1-highlight) + highlight)
+        return UIColor(red: red * (1 - highlight) + highlight, green: green * (1 - highlight) + highlight, blue: blue * (1 - highlight) + highlight, alpha: alpha * (1 - highlight) + highlight)
     }
     func shadow(withLevel shadow: CGFloat) -> UIColor {
         var red: CGFloat = 1, green: CGFloat = 1, blue: CGFloat = 1, alpha: CGFloat = 1
         self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        return UIColor(red: red * (1-shadow), green: green * (1-shadow), blue: blue * (1-shadow), alpha: alpha * (1-shadow) + shadow)
+        return UIColor(red: red * (1 - shadow), green: green * (1 - shadow), blue: blue * (1 - shadow), alpha: alpha * (1 - shadow) + shadow)
     }
 }

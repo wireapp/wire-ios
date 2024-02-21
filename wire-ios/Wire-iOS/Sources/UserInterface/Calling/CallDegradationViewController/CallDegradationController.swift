@@ -53,7 +53,7 @@ final class CallDegradationController: UIViewController {
         switch state {
         case .outgoing(degradedUser: let degradeduser):
             visibleAlertController = UIAlertController.degradedCall(degradedUser: degradeduser?.value, confirmationBlock: { [weak self] (continueDegradedCall) in
-                continueDegradedCall ? self?.delegate?.continueDegradedCall(): self?.delegate?.cancelDegradedCall()
+                continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?.cancelDegradedCall()
             })
         case .none, .incoming:
             return

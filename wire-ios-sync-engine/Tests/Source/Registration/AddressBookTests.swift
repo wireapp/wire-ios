@@ -359,7 +359,7 @@ extension AddressBookTests {
             if let chunk = chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 4)
                 XCTAssertEqual(chunk.includedContacts, UInt(2)..<UInt(4))
-                let expected =  [
+                let expected = [
                     self.addressBook.contacts[2].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
                     self.addressBook.contacts[3].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="]
                     ]

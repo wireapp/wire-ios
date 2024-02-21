@@ -139,7 +139,7 @@ struct ConsentRequestFactory {
     static func setConsentRequest(for consentType: ConsentType, value: Bool, apiVersion: APIVersion) -> ZMTransportRequest {
         let payload: [String: Any] = [
             "type": consentType.rawValue,
-            "value": value ? 1:0,
+            "value": value ? 1 : 0,
             "source": sourceString
         ]
         return .init(path: consentPath,

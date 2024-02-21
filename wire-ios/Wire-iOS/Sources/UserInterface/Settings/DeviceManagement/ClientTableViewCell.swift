@@ -187,7 +187,7 @@ final class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
            let fingerprintLabelTextColor = fingerprintTextColor,
            let userClient = userClient, userClient.remoteIdentifier != nil {
 
-            fingerprintLabel.attributedText =  userClient.attributedRemoteIdentifier(
+            fingerprintLabel.attributedText = userClient.attributedRemoteIdentifier(
                 [.font: fingerprintLabelMonoFont, .foregroundColor: fingerprintLabelTextColor],
                 boldAttributes: [.font: fingerprintLabelBoldMonoFont, .foregroundColor: fingerprintLabelTextColor],
                 uppercase: true

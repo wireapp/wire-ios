@@ -70,7 +70,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         }
         XCTAssertTrue(message.underlyingMessage!.hasAsset)
         XCTAssertTrue(message.underlyingMessage!.ephemeral.hasAsset)
-        XCTAssertEqual(message.underlyingMessage!.ephemeral.expireAfterMillis, Int64(10*1000))
+        XCTAssertEqual(message.underlyingMessage!.ephemeral.expireAfterMillis, Int64(10 * 1000))
     }
 
     func assetWithImage() -> WireProtos.Asset {
@@ -113,7 +113,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             return XCTFail()
         }
         XCTAssertTrue(message.underlyingMessage!.ephemeral.hasAsset)
-        XCTAssertEqual(message.underlyingMessage!.ephemeral.expireAfterMillis, Int64(10*1000))
+        XCTAssertEqual(message.underlyingMessage!.ephemeral.expireAfterMillis, Int64(10 * 1000))
     }
 
     func testThatItStartsTheTimerForMultipartMessagesWhenTheAssetIsUploaded() {

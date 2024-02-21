@@ -55,7 +55,7 @@ extension ZMClientRegistrationStatusTests {
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
 
-            let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
+            let selfClient = UserClient.insertNewObject(in: self.syncMOC)
             selfClient.remoteIdentifier = UUID.create().transportString()
             sut.didRegisterProteusClient(selfClient)
 
@@ -198,7 +198,7 @@ extension ZMClientRegistrationStatusTests {
             sut.didGeneratePrekeys([prekey], lastResortPrekey: prekey)
 
             // when
-            let selfClient =  UserClient.insertNewObject(in: self.syncMOC)
+            let selfClient = UserClient.insertNewObject(in: self.syncMOC)
             selfClient.remoteIdentifier = UUID.create().transportString()
             sut.didRegisterProteusClient(selfClient)
 

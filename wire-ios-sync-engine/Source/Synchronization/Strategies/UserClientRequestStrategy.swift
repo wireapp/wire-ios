@@ -163,7 +163,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
 
         if clientUpdateStatus.currentPhase == .deletingClients {
-            if let request =  deleteSync.nextRequest(for: apiVersion) {
+            if let request = deleteSync.nextRequest(for: apiVersion) {
                 return request
             }
         }
