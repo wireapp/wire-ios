@@ -467,23 +467,15 @@ final class InputBarButtonsView: UIView {
 
     private func setupInsets(forButtons buttons: [UIButton], rowIsFull: Bool) {
         guard !buttons.isEmpty else { return }
-        let startTime = CFAbsoluteTimeGetCurrent()
+
         setupInsets(for: buttons.first!, position: .first)
-        let endTime = CFAbsoluteTimeGetCurrent()
-        print("Execution Time for first: \(endTime - startTime) seconds")
 
         if rowIsFull {
-            let startTime = CFAbsoluteTimeGetCurrent()
             setupInsets(for: buttons.last!, position: .last)
-            let endTime = CFAbsoluteTimeGetCurrent()
-            print("Execution Time for last: \(endTime - startTime) seconds")
         }
-        buttons.dropFirst().dropLast().forEach { button in
-            let startTime = CFAbsoluteTimeGetCurrent()
-            setupInsets(for: button, position: .middle)
-            let endTime = CFAbsoluteTimeGetCurrent()
-            print("Execution Time for middle: \(endTime - startTime) seconds")
 
+        buttons.dropFirst().dropLast().forEach { button in
+            setupInsets(for: button, position: .middle)
         }
     }
 
