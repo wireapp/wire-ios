@@ -17,14 +17,15 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import XCTest
 @testable import WireSyncEngine
-import WireDataModelSupport
 
 final class SupportedProtocolsServiceTests: MessagingTest {
 
     var featureRepository: MockFeatureRepositoryInterface!
     var userRepository: MockUserRepositoryInterface!
+    var oneOnOneResolver: MockOneOnOneResolverInterface!
     var sut: SupportedProtocolsService!
 
     // MARK: - Life cycle
@@ -33,15 +34,18 @@ final class SupportedProtocolsServiceTests: MessagingTest {
         super.setUp()
         featureRepository = MockFeatureRepositoryInterface()
         userRepository = MockUserRepositoryInterface()
+        oneOnOneResolver = MockOneOnOneResolverInterface()
         sut = SupportedProtocolsService(
             featureRepository: featureRepository,
-            userRepository: userRepository
+            userRepository: userRepository,
+            oneOnOneResolver: oneOnOneResolver
         )
     }
 
     override func tearDown() {
         featureRepository = nil
         userRepository = nil
+        oneOnOneResolver = nil
         sut = nil
         super.tearDown()
     }
