@@ -98,14 +98,7 @@ extension ConversationListViewController {
             selfUserStatus = .init(user: selfUser, isCertified: false)
             super.init()
 
-            Task { @MainActor in
-                do {
-                    selfUserStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
-                    selfUserStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
-                } catch {
-                    WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
-                }
-            }
+            updateVerificationStatus()
         }
     }
 }
@@ -203,16 +196,27 @@ extension ConversationListViewController.ViewModel {
         return true
     }
 
+    private func updateVerificationStatus() {
+        Task { @MainActor in
+            do {
+                selfUserStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
+                selfUserStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+            } catch {
+                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+            }
+        }
+    }
 }
 
 extension ConversationListViewController.ViewModel: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         if changeInfo.nameChanged {
             selfUserStatus.name = changeInfo.user.name ?? ""
         }
-
+        if changeInfo.trustLevelChanged {
+            updateVerificationStatus()
+        }
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
         }

@@ -96,7 +96,6 @@ final class ConversationListViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         self.init(viewModel: viewModel)
-        viewModel.viewController = self
         delegate = self
         onboardingHint.arrowPointToView = tabBar
     }
@@ -116,6 +115,8 @@ final class ConversationListViewController: UIViewController {
         listContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
+
+        viewModel.viewController = self
 
         definesPresentationContext = true
 
