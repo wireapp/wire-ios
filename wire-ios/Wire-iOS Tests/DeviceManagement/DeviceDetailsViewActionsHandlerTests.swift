@@ -34,7 +34,6 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
 
     override func setUp() {
         super.setUp()
-        DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled = false
         coreDataFixture = CoreDataFixture()
         client = mockUserClient()
         mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))

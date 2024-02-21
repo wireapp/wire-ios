@@ -55,7 +55,11 @@ final class FederationSectionController: SearchSectionController {
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         let user = users[indexPath.row]
         if let selfUser = ZMUser.selfUser() {
-            cell.configure(with: user, selfUser: selfUser)
+            cell.configure(
+                user: user,
+                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+                isSelfUserPartOfATeam: selfUser.hasTeam
+            )
         } else {
             assertionFailure("ZMUser.selfUser() is nil")
         }

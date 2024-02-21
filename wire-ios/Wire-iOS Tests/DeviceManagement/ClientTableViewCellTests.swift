@@ -146,14 +146,12 @@ extension ClientTableViewCellModel {
     typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
 
     static func mock(title: String = "Lorem ipsum",
-                     label: String =  "Lorem ipsum",
                      isProteusVerified: Bool = false,
                      mlsThumbprint: String = .mockFingerPrint,
                      proteusId: String = .mockProteusId,
                      e2eIdentityCertificateStatus: E2EIdentityCertificateStatus? = nil
     ) -> Self {
         return .init(title: title,
-                     label: label,
                      proteusLabelText: proteusId.isNonEmpty ? DeviceDetailsSection.Proteus.value(proteusId) : "",
                      mlsThumbprintLabelText: mlsThumbprint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbprint) : "",
                      isProteusVerified: isProteusVerified,

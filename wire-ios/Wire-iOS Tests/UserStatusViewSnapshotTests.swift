@@ -129,10 +129,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
         line: UInt = #line,
         testName: String = #function
     ) {
-        let sut = UserStatusView(
-            options: options,
-            userSession: userSession
-        )
+        let sut = UserStatusView(options: options)
         sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.backgroundColor = .systemBackground
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
@@ -142,7 +139,6 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
             isCertified: isMLSCertified,
             isVerified: isProteusVerified
         )
-
         verify(matching: sut, file: file, testName: testName, line: line)
     }
 }

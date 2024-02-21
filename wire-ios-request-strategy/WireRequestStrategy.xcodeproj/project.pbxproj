@@ -13,7 +13,6 @@
 		060ED6D62499F41000412C4A /* PushNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060ED6D52499F41000412C4A /* PushNotificationStatus.swift */; };
 		061389F42B178EBE0053B7B5 /* E2eIAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061389F32B178EBE0053B7B5 /* E2eIAPI.swift */; };
 		062285C8276BB5B000B87C91 /* UpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062285C7276BB5B000B87C91 /* UpdateEventProcessor.swift */; };
-		062DD2D82760CFAA00E27FD9 /* UUID+SafeLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062DD2D72760CFAA00E27FD9 /* UUID+SafeLogging.swift */; };
 		0640BF6F2B0F6B78008866E4 /* E2eIEnrollment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0640BF6E2B0F6B78008866E4 /* E2eIEnrollment.swift */; };
 		06474D4B24AF6858002C695D /* EventDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474D4A24AF6858002C695D /* EventDecoder.swift */; };
 		06474D4D24AF68AD002C695D /* StoreUpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474D4C24AF68AD002C695D /* StoreUpdateEvent.swift */; };
@@ -459,7 +458,6 @@
 		060ED6D52499F41000412C4A /* PushNotificationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationStatus.swift; sourceTree = "<group>"; };
 		061389F32B178EBE0053B7B5 /* E2eIAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIAPI.swift; sourceTree = "<group>"; };
 		062285C7276BB5B000B87C91 /* UpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventProcessor.swift; sourceTree = "<group>"; };
-		062DD2D72760CFAA00E27FD9 /* UUID+SafeLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+SafeLogging.swift"; sourceTree = "<group>"; };
 		0640BF6E2B0F6B78008866E4 /* E2eIEnrollment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIEnrollment.swift; sourceTree = "<group>"; };
 		06474D4A24AF6858002C695D /* EventDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDecoder.swift; sourceTree = "<group>"; };
 		06474D4C24AF68AD002C695D /* StoreUpdateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreUpdateEvent.swift; sourceTree = "<group>"; };
@@ -1966,7 +1964,6 @@
 				F18401992073BE0800E9F4CC /* EncryptionSessionDirectory+UpdateEvents.swift */,
 				0649D14E24F63DCC001DDC78 /* ZMSound.swift */,
 				0649D1A524F673E7001DDC78 /* Logging.swift */,
-				062DD2D72760CFAA00E27FD9 /* UUID+SafeLogging.swift */,
 				F18401952073BE0800E9F4CC /* EventDecoderDecryptionTests.swift */,
 				F18401982073BE0800E9F4CC /* ZMConversation+Notifications.swift */,
 				BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */,
@@ -2364,7 +2361,6 @@
 				EE47346C29A39E8A00E6C04E /* EventDecoder+Proteus.swift in Sources */,
 				06CDDE9F282E9CC200F9360F /* RemovePushTokenAction.swift in Sources */,
 				061389F42B178EBE0053B7B5 /* E2eIAPI.swift in Sources */,
-				062DD2D82760CFAA00E27FD9 /* UUID+SafeLogging.swift in Sources */,
 				5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */,
 				E629E3C22B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift in Sources */,
 				6360A2132B0B722700A5D5FB /* MLSClientIDsProvider.swift in Sources */,

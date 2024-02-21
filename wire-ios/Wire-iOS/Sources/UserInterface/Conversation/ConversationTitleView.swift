@@ -40,11 +40,11 @@ final class ConversationTitleView: TitleView {
         titleColor = SemanticColors.Label.textDefault
         titleFont = .normalSemiboldFont
 
-        var attachments: [NSTextAttachment] = []
+        var leadingIcons: [NSTextAttachment] = []
         var trailingIcons: [NSTextAttachment] = []
 
         if conversation.isUnderLegalHold {
-            attachments.append(.legalHold())
+            leadingIcons.append(.legalHold())
         }
 
         if conversation.isVerified {
@@ -59,7 +59,7 @@ final class ConversationTitleView: TitleView {
         }
 
         super.configure(
-            leadingIcons: attachments,
+            leadingIcons: leadingIcons,
             title: conversation.displayNameWithFallback,
             trailingIcons: trailingIcons,
             subtitle: subtitle,
@@ -113,6 +113,7 @@ final class ConversationTitleView: TitleView {
 }
 
 extension NSTextAttachment {
+
     fileprivate static func proteusVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = Asset.Images.verifiedShield.image
@@ -147,5 +148,4 @@ extension ConversationLike {
     var displayNameWithFallback: String {
         displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
     }
-
 }

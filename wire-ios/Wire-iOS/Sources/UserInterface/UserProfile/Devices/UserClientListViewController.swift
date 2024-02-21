@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireSyncEngine
+import SwiftUI
 
 final class UserClientListViewController: UIViewController,
                                           UICollectionViewDelegateFlowLayout,
@@ -27,27 +28,39 @@ final class UserClientListViewController: UIViewController,
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
     private var clients: [UserClientType]
+
     private var tokens: [Any?] = []
     private var user: UserType
+
     private let userSession: UserSession
+    private let contextProvider: ContextProvider?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
 
-    init(user: UserType, userSession: UserSession) {
+    private let mlsGroupId: MLSGroupID?
+
+    init(user: UserType,
+         userSession: UserSession,
+         contextProvider: ContextProvider?,
+         mlsGroupId: MLSGroupID?) {
         self.user = user
         self.clients = UserClientListViewController.clientsSortedByRelevance(for: user)
         self.headerView = ParticipantDeviceHeaderView(userName: user.name ?? "")
         self.userSession = userSession
-
+        self.contextProvider = contextProvider
+        self.mlsGroupId = mlsGroupId
         super.init(nibName: nil, bundle: nil)
 
         tokens.append(userSession.addUserObserver(self, for: user))
 
         self.headerView.delegate = self
-
         title = L10n.Localizable.Profile.Devices.title
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+            layout.estimatedItemSize = CGSize(width: UIScreen.main.bounds.width, height: 1)
+        }
     }
 
     @available(*, unavailable)
@@ -59,6 +72,7 @@ final class UserClientListViewController: UIViewController,
         super.viewDidLoad()
         setupViews()
         createConstraints()
+        updateCertificatesForUserClients()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -74,7 +88,7 @@ final class UserClientListViewController: UIViewController,
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
-
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         UserClientCell.register(in: collectionView)
         collectionView.register(CollectionViewCellAdapter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier)
 
@@ -93,6 +107,21 @@ final class UserClientListViewController: UIViewController,
 
     private static func clientsSortedByRelevance(for user: UserType) -> [UserClientType] {
         return user.allClients.sortedByRelevance().filter({ !$0.isSelfClient() })
+    }
+
+    private func updateCertificatesForUserClients() {
+        Task {
+            if let mlsGroupId = mlsGroupId {
+                clients = await clients.updateCertificates(
+                    mlsGroupId: mlsGroupId, userSession: userSession)
+            }
+            refreshView()
+        }
+    }
+
+    @MainActor
+    func refreshView() {
+        collectionView.reloadData()
     }
 
     // MARK: - UICollectionViewDelegateFlowLayout & UICollectionViewDataSource
@@ -122,8 +151,7 @@ final class UserClientListViewController: UIViewController,
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserClientCell.self, for: indexPath)
         let client = clients[indexPath.row]
-
-        cell.configure(with: client)
+        cell.viewModel = .from(userClient: client)
 
         return cell
     }
@@ -139,10 +167,6 @@ final class UserClientListViewController: UIViewController,
 
         show(profileClientViewController, sender: nil)
     }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return .init(width: view.bounds.size.width, height: 64)
-    }
 }
 
 extension UserClientListViewController: UserObserving {
@@ -155,7 +179,7 @@ extension UserClientListViewController: UserObserving {
         // swiftlint:enable todo_requires_jira_link
         headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.isEmpty == true
         clients = UserClientListViewController.clientsSortedByRelevance(for: user)
-        collectionView.reloadData()
+        updateCertificatesForUserClients()
     }
 
 }
@@ -164,4 +188,43 @@ extension UserClientListViewController: ParticipantDeviceHeaderViewDelegate {
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView) {
         URL.wr_fingerprintLearnMore.openInApp(above: self)
     }
+}
+
+extension Array where Element: UserClientType {
+
+    @MainActor
+    func updateCertificates(mlsGroupId: MLSGroupID, userSession: UserSession) async -> [UserClientType] {
+        guard let userClients = self as? [UserClient] else {
+            return self
+        }
+        var updatedUserClients = [UserClientType]()
+        let mlsResolver = MLSClientResolver()
+        let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
+            if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+                ($0.clientId.hashValue, mlsClientId)
+            } else {
+                nil
+            }
+        })
+        let mlsClienIds = mlsClients.values.map({ $0 })
+        do {
+            let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
+                                                                                       clientIds: mlsClienIds)
+            if certificates.isNonEmpty {
+                for client in userClients {
+                    let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
+                    client.e2eIdentityCertificate = certificates.first(where: { $0.clientId == mlsClientIdRawValue })
+                    client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
+                    updatedUserClients.append(client)
+                }
+                return updatedUserClients
+            } else {
+                return self
+            }
+        } catch {
+            WireLogger.e2ei.error(error.localizedDescription)
+            return self
+        }
+    }
+
 }

@@ -354,6 +354,10 @@ class MockAcmeApi: AcmeAPIInterface {
         return ""
     }
 
+    func getFederationCertificate() async throws -> String {
+        return ""
+    }
+
     func getACMEDirectory() async throws -> Data {
         let payload = acmeDirectoriesResponse()
 
@@ -482,6 +486,9 @@ class MockE2eIService: E2eIServiceInterface {
 
     func certificateRequest(nonce: String) async throws -> Data {
         return Data()
+    }
+
+    func createNewClient(certificateChain: String) async throws {
     }
 
     var mockE2eIdentity: MockE2eiEnrollment?

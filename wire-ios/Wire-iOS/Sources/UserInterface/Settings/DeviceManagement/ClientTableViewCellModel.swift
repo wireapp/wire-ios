@@ -21,7 +21,6 @@ import WireDataModel
 
 struct ClientTableViewCellModel {
     let title: String
-    let label: String
     let proteusLabelText: String
     let mlsThumbprintLabelText: String
     let isProteusVerified: Bool

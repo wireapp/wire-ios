@@ -228,7 +228,6 @@ final class SettingsClientViewController: UIViewController,
             if let cell = tableView.dequeueReusableCell(withIdentifier: ClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? ClientTableViewCell {
                 cell.selectionStyle = .default
                 cell.wr_editable = false
-                cell.showLabel = true
                 cell.accessibilityTraits = .none
                 cell.accessibilityHint = ""
                 return cell

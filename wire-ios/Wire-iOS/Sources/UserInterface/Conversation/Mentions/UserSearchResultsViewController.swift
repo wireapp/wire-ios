@@ -269,7 +269,11 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         let user = searchResults[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
         if let selfUser = ZMUser.selfUser() {
-            cell.configure(with: user, selfUser: selfUser)
+            cell.configure(
+                user: user,
+                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
+                isSelfUserPartOfATeam: selfUser.hasTeam
+            )
         } else {
             assertionFailure("ZMUser.selfUser() is nil")
         }

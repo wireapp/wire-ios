@@ -134,8 +134,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: proteusProvider,
-                coreCryptoProvider: coreCryptoProvider
+                proteusProvider: proteusProvider
             ),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,

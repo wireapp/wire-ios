@@ -39,6 +39,7 @@ public protocol E2eIServiceInterface {
     func finalizeRequest(nonce: String) async throws -> Data
     func finalizeResponse(finalize: Data) async throws -> String
     func certificateRequest(nonce: String) async throws -> Data
+    func createNewClient(certificateChain: String) async throws
 
     var e2eIdentity: E2eiEnrollmentProtocol { get }
 
@@ -53,7 +54,7 @@ public final class E2eIService: E2eIServiceInterface {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
-            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 
@@ -148,8 +149,19 @@ public final class E2eIService: E2eIServiceInterface {
         return try await e2eIdentity.certificateRequest(previousNonce: nonce)
     }
 
+    public func createNewClient(certificateChain: String) async throws {
+        guard let enrollment = e2eIdentity as? E2eiEnrollment else {
+            throw E2eIServiceFailure.missingEnrollment
+        }
+        try await coreCryptoProvider.initialiseMLSWithEndToEndIdentity(
+            enrollment: enrollment,
+            certificateChain: certificateChain
+        )
+    }
+
     enum E2eIServiceFailure: Error {
         case missingCoreCrypto
+        case missingEnrollment
     }
 
 }
