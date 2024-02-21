@@ -77,7 +77,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
         _ = try await coreCrypto().perform { coreCrypto in
             try await coreCrypto.mlsInit(
-                clientId: Data(mlsClientID.clientID.utf8),
+                clientId: Data(mlsClientID.rawValue.utf8),
                 ciphersuites: [CiphersuiteName.default.rawValue],
                 nbKeyPackage: nil
             )
