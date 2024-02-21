@@ -42,7 +42,7 @@ class SearchResultTests: DatabaseTest {
              "name": "Fabio",
              "accent_id": 4,
              "handle": handle]
-            ]]
+        ]]
 
         // when
         let result = SearchResult(payload: payload, query: .fullTextSearch(""), searchOptions: [.directory], contextProvider: coreDataStack!)
@@ -75,7 +75,7 @@ class SearchResultTests: DatabaseTest {
              "name": "Fabio",
              "accent_id": 4,
              "handle": handle]
-            ]]
+        ]]
 
         // when
         let result = SearchResult(payload: payload, query: .fullTextSearch(""), searchOptions: [.directory], contextProvider: coreDataStack!)
@@ -96,7 +96,7 @@ class SearchResultTests: DatabaseTest {
              "name": "Fabio",
              "accent_id": 4,
              "handle": "aa\(name.lowercased())"]
-            ]]
+        ]]
 
         // when
         let result = SearchResult(payload: payload, query: .fullTextSearch(name), searchOptions: [.directory], contextProvider: coreDataStack!)
@@ -118,7 +118,7 @@ class SearchResultTests: DatabaseTest {
              "name": "Fabio",
              "accent_id": 4,
              "handle": "aa\(name.lowercased())"]
-            ]]
+        ]]
 
         // when
         let result = SearchResult(payload: payload, query: .exactHandle(name), searchOptions: [.directory], contextProvider: coreDataStack!)!
@@ -143,8 +143,8 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": remoteTeamMemberID.transportString(),
              "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A",
-             "accent_id": 4]]]
+             "name": "Member A"
+        ]
 
         // when
         let result = SearchResult(payload: payload,
@@ -172,8 +172,8 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": remoteTeamMemberID.transportString(),
              "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A",
-             "accent_id": 4]]]
+             "name": "Member A"
+        ]
 
         // when
         let result = SearchResult(payload: payload,
@@ -200,8 +200,8 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": remoteTeamMemberID.transportString(),
              "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A",
-             "accent_id": 4]]]
+             "name": "Member A"
+        ]
 
         var result = SearchResult(payload: payload,
                                   query: .fullTextSearch(""),
@@ -238,8 +238,8 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": remoteTeamMemberID.transportString(),
              "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A",
-             "accent_id": 4]]]
+             "name": "Member A"
+        ]
 
         var result = SearchResult(payload: payload,
                                   query: .fullTextSearch(""),
@@ -273,8 +273,8 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": remoteTeamMemberID.transportString(),
              "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A",
-             "accent_id": 4]]]
+             "name": "Member A"
+        ]
 
         var result = SearchResult(payload: payload,
                                   query: .fullTextSearch(""),
@@ -309,8 +309,8 @@ class SearchResultTests: DatabaseTest {
             ["id": remoteTeamMemberID.transportString(),
              "team": team.remoteIdentifier!.transportString(),
              "handle": "aaa",
-             "name": "Member A",
-             "accent_id": 4]]]
+             "name": "Member A"
+        ]
 
         var result = SearchResult(payload: payload,
                                   query: .fullTextSearch(""),
