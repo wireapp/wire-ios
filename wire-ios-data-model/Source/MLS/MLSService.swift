@@ -445,6 +445,11 @@ public final class MLSService: MLSServiceInterface {
         do {
             let externalSenders: [Data]
             if let parentGroupID {
+                // Anyone in the parent conversation can create a subconversation,
+                // even people from different domains. We need to make sure that
+                // the external senders is the same as the parent, otherwise we
+                // won't be able to decrypt external remove proposals from the
+                // owning domain.
                 externalSenders = try await coreCrypto.perform {
                     [try await $0.getExternalSender(conversationId: parentGroupID.data)]
                 }
