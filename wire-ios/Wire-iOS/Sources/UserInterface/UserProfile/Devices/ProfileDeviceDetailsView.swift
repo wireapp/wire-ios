@@ -110,10 +110,11 @@ struct ProfileDeviceDetailsView: View {
             .listStyle(.plain)
             .overlay(
                 content: {
-                    if viewModel.isActionInProgress {
-                        SwiftUI.ProgressView()
-                    }
                     VStack {
+                        if viewModel.isActionInProgress {
+                            Spacer()
+                            SwiftUI.ProgressView()
+                        }
                         Spacer()
                         showDeviceFingerPrintView
                     }
