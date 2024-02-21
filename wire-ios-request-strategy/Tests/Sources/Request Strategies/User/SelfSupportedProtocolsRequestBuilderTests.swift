@@ -172,7 +172,7 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
         let request = builder.buildUpstreamRequest(keys: .init())
 
         // then
-        XCTAssert(request?.userInfo.isEmpty ==  true)
+        XCTAssert(request?.userInfo.isEmpty == true)
     }
 
     // MARK: Helpers
