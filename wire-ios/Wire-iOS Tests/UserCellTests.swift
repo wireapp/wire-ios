@@ -192,16 +192,15 @@ final class UserCellTests: BaseSnapshotTestCase {
 
     func testThatAccessIDIsGenerated() {
         // GIVEN
-        let user = SwiftMockLoader.mockUsers().map(ParticipantsRowType.init)[0]
+        let user = SwiftMockLoader.mockUsers()[0]
         let cell = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         cell.sectionName = "Members"
         cell.cellIdentifier = "participants.section.participants.cell"
 
         // WHEN
-        cell.configure(with: user, conversation: conversation, showSeparator: true)
+        cell.configure(with: .user(user, false), conversation: conversation, showSeparator: true)
 
         // THEN
         XCTAssertEqual(cell.accessibilityIdentifier, "Members - participants.section.participants.cell")
     }
-
 }

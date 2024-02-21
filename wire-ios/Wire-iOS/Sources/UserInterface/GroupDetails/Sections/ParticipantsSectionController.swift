@@ -26,12 +26,9 @@ protocol ParticipantsCellConfigurable: Reusable {
 }
 
 enum ParticipantsRowType {
-    case user(UserType)
-    case showAll(Int)
 
-    init(_ user: UserType) {
-        self = .user(user)
-    }
+    case user(_ user: UserType, _ isE2EICertified: Bool)
+    case showAll(Int)
 
     var cellType: ParticipantsCellConfigurable.Type {
         switch self {
@@ -117,28 +114,36 @@ private struct ParticipantsSectionViewModel {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        participants = users.sorted(by: {
-            $0.name < $1.name
-        })
+        participants = users.sorted { $0.name < $1.name }
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
         self.userSession = userSession
-        rows = clipSection ? ParticipantsSectionViewModel.computeRows(participants,
-                                                                      totalParticipantsCount: totalParticipantsCount,
-                                                                      maxParticipants: maxParticipants,
-                                                                      maxDisplayedParticipants: maxDisplayedParticipants) :
-                             participants.map(ParticipantsRowType.init)
+        rows = clipSection
+        ? ParticipantsSectionViewModel.computeRows(
+            participants,
+            totalParticipantsCount: totalParticipantsCount,
+            maxParticipants: maxParticipants,
+            maxDisplayedParticipants: maxDisplayedParticipants
+        )
+        : participants.map { participant in
+            .user(participant, false)
+        }
     }
 
     static func computeRows(_ participants: [UserType], totalParticipantsCount: Int, maxParticipants: Int, maxDisplayedParticipants: Int) -> [ParticipantsRowType] {
-        guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.init) }
-        return participants[0..<maxDisplayedParticipants].map(ParticipantsRowType.init) + [.showAll(totalParticipantsCount)]
+        guard participants.count > maxParticipants else {
+            return participants.map { participant in
+                .user(participant, false)
+            }
+        }
+        return participants[0..<maxDisplayedParticipants]
+            .map { .user($0, false) } + [.showAll(totalParticipantsCount)]
     }
 }
 
 extension UserCell: ParticipantsCellConfigurable {
     func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool) {
-        guard case let .user(user) = rowType else {
+        guard case let .user(user, isE2EICertified) = rowType else {
             preconditionFailure("expected different 'ParticipantsRowType'!")
         }
         guard let selfUser = SelfUser.provider?.providedSelfUser else {
@@ -147,7 +152,9 @@ extension UserCell: ParticipantsCellConfigurable {
         }
 
         configure(
+            userStatus: .init(user: user, isCertified: isE2EICertified),
             user: user,
+            userIsSelfUser: user.isSelfUser,
             isSelfUserPartOfATeam: selfUser.hasTeam,
             conversation: conversation as? ZMConversation
         )
@@ -259,7 +266,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch viewModel.rows[indexPath.row] {
-        case .user(let user):
+        case .user(let user, _):
             delegate?.presentDetails(for: user)
         case .showAll:
             delegate?.presentFullParticipantsList(for: viewModel.participants, in: conversation)
@@ -268,7 +275,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         switch viewModel.rows[indexPath.row] {
-        case .user(let bareUser):
+        case .user(let bareUser, _):
             return !bareUser.isSelfUser
         default:
             return true
