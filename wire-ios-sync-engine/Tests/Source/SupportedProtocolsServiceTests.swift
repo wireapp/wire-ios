@@ -17,14 +17,15 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import XCTest
 @testable import WireSyncEngine
-import WireDataModelSupport
 
 final class SupportedProtocolsServiceTests: MessagingTest {
 
     var featureRepository: MockFeatureRepositoryInterface!
     var userRepository: MockUserRepositoryInterface!
+    var oneOnOneResolver: MockOneOnOneResolverInterface!
     var sut: SupportedProtocolsService!
 
     // MARK: - Life cycle
@@ -33,15 +34,19 @@ final class SupportedProtocolsServiceTests: MessagingTest {
         super.setUp()
         featureRepository = MockFeatureRepositoryInterface()
         userRepository = MockUserRepositoryInterface()
+        oneOnOneResolver = MockOneOnOneResolverInterface()
         sut = SupportedProtocolsService(
             featureRepository: featureRepository,
-            userRepository: userRepository
+            userRepository: userRepository,
+            oneOnOneResolver: oneOnOneResolver,
+            context: self.syncMOC
         )
     }
 
     override func tearDown() {
         featureRepository = nil
         userRepository = nil
+        oneOnOneResolver = nil
         sut = nil
         super.tearDown()
     }
@@ -260,6 +265,38 @@ final class SupportedProtocolsServiceTests: MessagingTest {
             mock(migrationState: .finalised)
             XCTAssertEqual(sut.calculateSupportedProtocols(), [.mls])
         }
+    }
+
+    func testUpdateSupportedProtocols_WhenProtocolsChange_ResolveAllOneOnOneConversationsCalled() async throws {
+        let expectation = XCTestExpectation(description: "resolveAllOneOnOneConversations was called")
+
+        // GIVEN
+        let selfUser = createSelfUser()
+        userRepository.selfUser_MockValue = selfUser
+        mock(migrationState: .ongoing)
+        mock(remoteSupportedProtocols: [.mls, .proteus])
+
+        // Arrange
+        let initialProtocols: Set<MessageProtocol> = [.proteus]
+        selfUser.supportedProtocols = initialProtocols
+
+        // Mock the oneOnOneResolver to fulfill the expectation when called
+        oneOnOneResolver.resolveAllOneOnOneConversationsIn_MockMethod = { _ in
+            expectation.fulfill()
+        }
+
+        // WHEN
+        syncMOC.performAndWait {
+            sut.updateSupportedProtocols()
+        }
+
+        // THEN
+        let result = XCTWaiter.wait(for: [expectation], timeout: 2)
+        if result != .completed {
+            XCTFail("resolveAllOneOnOneConversations was not called exactly once")
+        }
+
+        XCTAssertEqual(oneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 1)
     }
 
 }
