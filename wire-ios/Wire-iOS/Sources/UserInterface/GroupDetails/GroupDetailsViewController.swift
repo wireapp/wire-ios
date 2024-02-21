@@ -29,6 +29,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     private var renameGroupSectionController: RenameGroupSectionController?
     private var syncObserver: InitialSyncObserver!
     let userSession: UserSession
+    private var userStatuses = [UUID: UserStatus]()
 
     var didCompleteInitialSync = false {
         didSet { collectionViewController.sections = computeVisibleSections() }
@@ -58,6 +59,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 }
             }
         }
+
+        updateUserStatuses()
+        collectionViewController.sections = computeVisibleSections()
     }
 
     @available(*, unavailable)
@@ -141,6 +145,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         self.renameGroupSectionController = renameGroupSectionController
 
         let (participants, serviceUsers) = (conversation.sortedOtherParticipants, conversation.sortedServiceUsers)
+        participants.forEach { user in
+            if !userStatuses.keys.contains(user.remoteIdentifier) {
+                // on the 1st pass populate the set with default values
+                userStatuses[user.remoteIdentifier] = .init(user: user, isCertified: false)
+            }
+        }
 
         if !participants.isEmpty {
 
@@ -276,6 +286,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         if changeInfo.participantsChanged, !conversation.isSelfAnActiveMember {
             navigationController?.popToRootViewController(animated: true)
+        } else {
+            updateUserStatuses()
+            collectionViewController.sections = computeVisibleSections()
         }
     }
 
@@ -392,6 +405,17 @@ private extension GroupDetailsViewController {
         return attributedString
     }
 
+    private func updateUserStatuses() {
+        Task {
+            for remoteIdentifier in userStatuses.keys {
+                do {
+                    // TODO [WPB-765]: call use cases
+                } catch {
+                    fatalError("TODO")
+                }
+            }
+        }
+    }
 }
 
 extension GroupDetailsViewController: ViewControllerDismisser {
@@ -410,14 +434,16 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
 
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
 
-    func presentDetails(for user: UserType) {
+    func presentDetails(for user: UserType, userIsE2EICertified: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
+            isE2EICertified: userIsE2EICertified,
             conversation: conversation,
             profileViewControllerDelegate: self,
-            viewControllerDismisser: self, userSession: userSession
+            viewControllerDismisser: self,
+            userSession: userSession
         )
 
         navigationController?.pushViewController(viewController, animated: true)

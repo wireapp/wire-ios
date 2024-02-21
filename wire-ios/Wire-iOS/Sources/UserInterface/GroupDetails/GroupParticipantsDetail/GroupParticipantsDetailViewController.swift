@@ -176,11 +176,12 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
 extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDelegate {
 
-    func presentDetails(for user: UserType) {
+    func presentDetails(for user: UserType, userIsE2EICertified: Bool) {
         guard let conversation = viewModel.conversation as? ZMConversation else { return }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
+            isE2EICertified: userIsE2EICertified,
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,

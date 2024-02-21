@@ -26,17 +26,33 @@ final class UserDetailViewControllerFactory {
     ///
     /// - Parameters:
     ///   - user: user to show the details
+    ///   - isE2EICertified: `true` if the user has a valid `E2EI` certificate for all devices
     ///   - conversation: conversation currently displaying
     ///   - profileViewControllerDelegate: a ProfileViewControllerDelegate for ProfileViewController
     ///   - viewControllerDismisser: a ViewControllerDismisser for returing UIViewController's dismiss action
     /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a serviceUser, return a ProfileViewController
-    static func createUserDetailViewController(user: UserType,
-                                               conversation: ZMConversation,
-                                               profileViewControllerDelegate: ProfileViewControllerDelegate,
-                                               viewControllerDismisser: ViewControllerDismisser,
-                                               userSession: UserSession) -> UIViewController {
+    static func createUserDetailViewController(
+        user: UserType,
+        isE2EICertified: Bool,
+        conversation: ZMConversation,
+        profileViewControllerDelegate: ProfileViewControllerDelegate,
+        viewControllerDismisser: ViewControllerDismisser,
+        userSession: UserSession
+    ) -> UIViewController {
 
-        guard user.isServiceUser, let serviceUser = user as? ServiceUser else {
+        // TODO [WPB-765]: isE2EICertified
+
+        if user.isServiceUser, let serviceUser = user as? ServiceUser {
+            let serviceDetailViewController = ServiceDetailViewController(
+                serviceUser: serviceUser,
+                actionType: .removeService(conversation),
+                userSession: userSession,
+                completion: nil
+            )
+            serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
+            return serviceDetailViewController
+
+        } else {
             let profileViewController = ProfileViewController(
                 user: user,
                 viewer: userSession.selfUser,
@@ -47,14 +63,5 @@ final class UserDetailViewControllerFactory {
             profileViewController.viewControllerDismisser = viewControllerDismisser
             return profileViewController
         }
-
-        let serviceDetailViewController = ServiceDetailViewController(
-            serviceUser: serviceUser,
-            actionType: .removeService(conversation),
-            userSession: userSession,
-            completion: nil
-        )
-        serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
-        return serviceDetailViewController
     }
 }

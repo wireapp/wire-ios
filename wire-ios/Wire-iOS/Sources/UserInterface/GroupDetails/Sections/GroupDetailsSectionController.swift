@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 
 protocol GroupDetailsUserDetailPresenter: AnyObject {
-    func presentDetails(for user: UserType)
+    func presentDetails(for user: UserType, userIsE2EICertified: Bool)
 }
 
 protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter, AnyObject {

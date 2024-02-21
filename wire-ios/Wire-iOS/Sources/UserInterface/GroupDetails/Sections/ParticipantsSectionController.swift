@@ -142,6 +142,7 @@ private struct ParticipantsSectionViewModel {
 }
 
 extension UserCell: ParticipantsCellConfigurable {
+
     func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool) {
         guard case let .user(user, isE2EICertified) = rowType else {
             preconditionFailure("expected different 'ParticipantsRowType'!")
@@ -187,7 +188,8 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
          maxParticipants: Int = Int.ConversationParticipants.maxNumberWithoutTruncation,
          maxDisplayedParticipants: Int = Int.ConversationParticipants.maxNumberOfDisplayed,
          showSectionCount: Bool = true,
-         userSession: UserSession) {
+         userSession: UserSession
+    ) {
         viewModel = .init(users: participants,
                           conversationRole: conversationRole,
                           totalParticipantsCount: totalParticipantsCount,
@@ -266,8 +268,8 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch viewModel.rows[indexPath.row] {
-        case .user(let user, _):
-            delegate?.presentDetails(for: user)
+        case let .user(user, isE2EICertified):
+            delegate?.presentDetails(for: user, userIsE2EICertified: isE2EICertified)
         case .showAll:
             delegate?.presentFullParticipantsList(for: viewModel.participants, in: conversation)
         }

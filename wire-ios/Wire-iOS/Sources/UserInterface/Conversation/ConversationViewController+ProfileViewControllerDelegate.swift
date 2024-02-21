@@ -19,6 +19,7 @@
 import WireSyncEngine
 
 extension ConversationViewController {
+
     func createUserDetailViewController() -> UIViewController {
         guard let user = (conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser) else {
             fatal("no firstActiveParticipantOtherThanSelf!")
@@ -26,6 +27,7 @@ extension ConversationViewController {
 
         return UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
+            isE2EICertified: false, // TODO [WPB-765]: fix value
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
