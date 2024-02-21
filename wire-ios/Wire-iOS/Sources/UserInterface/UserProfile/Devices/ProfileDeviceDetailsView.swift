@@ -104,17 +104,20 @@ struct ProfileDeviceDetailsView: View {
                     }
                 }
                 proteusView
-                showDeviceFingerPrintView
             }
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
             .listStyle(.plain)
             .overlay(
                 content: {
-                        if viewModel.isActionInProgress {
-                            SwiftUI.ProgressView()
-                        }
+                    if viewModel.isActionInProgress {
+                        SwiftUI.ProgressView()
                     }
+                    VStack {
+                        Spacer()
+                        showDeviceFingerPrintView
+                    }
+                }
             )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
