@@ -353,8 +353,14 @@ public final class ZMUserSession: NSObject {
             userID: userId
         )
 
-        self.supportedProtocolsService = SupportedProtocolsService(context: coreDataStack.syncContext)
-
+        self.supportedProtocolsService = SupportedProtocolsService(context: coreDataStack.syncContext,
+                                                                   oneOnOneResolver: OneOnOneResolver(mlsService: mlsService ?? MLSService(
+                                                                    context: coreDataStack.syncContext,
+                                                                    coreCryptoProvider: coreCryptoProvider,
+                                                                    conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
+                                                                    userDefaults: .standard,
+                                                                    syncStatus: applicationStatusDirectory.syncStatus,
+                                                                    userID: coreDataStack.account.userIdentifier)))
         super.init()
 
         self.supportedProtocolsService?.delegate = self

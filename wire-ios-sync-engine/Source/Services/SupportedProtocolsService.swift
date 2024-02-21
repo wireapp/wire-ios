@@ -26,7 +26,7 @@ protocol SupportedProtocolsServiceInterface {
 
 protocol SupportedProtocolsServiceDelegate: AnyObject {
 
-    func supportedProtocolsServiceDidCalculateNewProtocols(_ service: SupportedProtocolsService)
+    func supportedProtocolsServiceDidCalculateNewProtocols(_ service: SupportedProtocolsService) async throws
 
 }
 
@@ -37,24 +37,28 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
     private let featureRepository: FeatureRepositoryInterface
     private let userRepository: UserRepositoryInterface
     private let logger = WireLogger(tag: "supported-protocols")
+    let oneOneOneResolver: OneOnOneResolverInterface
 
     weak var delegate: SupportedProtocolsServiceDelegate?
 
     // MARK: - Life cycle
 
-    public convenience init(context: NSManagedObjectContext) {
+    public convenience init(context: NSManagedObjectContext, oneOnOneResolver: OneOnOneResolverInterface) {
         self.init(
             featureRepository: FeatureRepository(context: context),
-            userRepository: UserRepository(context: context)
+            userRepository: UserRepository(context: context),
+            oneOnOneResolver: oneOnOneResolver
         )
     }
 
     init(
         featureRepository: FeatureRepositoryInterface,
-        userRepository: UserRepositoryInterface
+        userRepository: UserRepositoryInterface,
+        oneOnOneResolver: OneOnOneResolverInterface
     ) {
         self.featureRepository = featureRepository
         self.userRepository = userRepository
+        self.oneOneOneResolver = oneOnOneResolver
     }
 
     // MARK: - Methods
@@ -66,7 +70,9 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
         selfUser.supportedProtocols = calculateSupportedProtocols()
 
         if previousProtocols != selfUser.supportedProtocols {
-            delegate?.supportedProtocolsServiceDidCalculateNewProtocols(self)
+            Task {
+                try await delegate?.supportedProtocolsServiceDidCalculateNewProtocols(self)
+            }
         }
     }
 

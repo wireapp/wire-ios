@@ -20,9 +20,8 @@ import Foundation
 
 extension ZMUserSession: SupportedProtocolsServiceDelegate {
 
-    func supportedProtocolsServiceDidCalculateNewProtocols(_ service: SupportedProtocolsService) {
-        // TBD as soon as https://github.com/wireapp/wire-ios/pull/974 is merged
-        // we need to call a method here  
+    func supportedProtocolsServiceDidCalculateNewProtocols(_ service: SupportedProtocolsService) async throws {
+        try await supportedProtocolsService?.oneOneOneResolver.resolveAllOneOnOneConversations(in: managedObjectContext)
     }
 
 }
