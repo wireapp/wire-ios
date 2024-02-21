@@ -140,10 +140,13 @@ class SearchResultTests: DatabaseTest {
         let remoteTeamMemberID = UUID()
         uiMOC.saveOrRollback()
 
-        let payload = ["documents": [
-            ["id": remoteTeamMemberID.transportString(),
-             "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A"
+        let payload = [
+            "documents": [[
+                "id": remoteTeamMemberID.transportString(),
+                "team": team.remoteIdentifier!.transportString(),
+                "name": "Member A",
+                "accent_id": 4
+            ]]
         ]
 
         // when
@@ -169,10 +172,13 @@ class SearchResultTests: DatabaseTest {
         let remoteTeamMemberID = UUID()
         uiMOC.saveOrRollback()
 
-        let payload = ["documents": [
-            ["id": remoteTeamMemberID.transportString(),
-             "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A"
+        let payload = [
+            "documents": [[
+                "id": remoteTeamMemberID.transportString(),
+                "team": team.remoteIdentifier!.transportString(),
+                "name": "Member A",
+                "accent_id": 4
+            ]]
         ]
 
         // when
@@ -197,10 +203,13 @@ class SearchResultTests: DatabaseTest {
         let remoteTeamMemberID = UUID()
         uiMOC.saveOrRollback()
 
-        let payload = ["documents": [
-            ["id": remoteTeamMemberID.transportString(),
-             "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A"
+        let payload = [
+            "documents": [[
+                "id": remoteTeamMemberID.transportString(),
+                "team": team.remoteIdentifier!.transportString(),
+                "name": "Member A",
+                "accent_id": 4
+            ]]
         ]
 
         var result = SearchResult(payload: payload,
@@ -235,10 +244,13 @@ class SearchResultTests: DatabaseTest {
         let remoteTeamMemberID = UUID()
         uiMOC.saveOrRollback()
 
-        let payload = ["documents": [
-            ["id": remoteTeamMemberID.transportString(),
-             "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A"
+        let payload = [
+            "documents": [[
+                "id": remoteTeamMemberID.transportString(),
+                "team": team.remoteIdentifier!.transportString(),
+                "name": "Member A",
+                "accent_id": 4
+            ]]
         ]
 
         var result = SearchResult(payload: payload,
@@ -270,10 +282,13 @@ class SearchResultTests: DatabaseTest {
         let remoteTeamMemberID = UUID()
         uiMOC.saveOrRollback()
 
-        let payload = ["documents": [
-            ["id": remoteTeamMemberID.transportString(),
-             "team": team.remoteIdentifier!.transportString(),
-             "name": "Member A"
+        let payload = [
+            "documents": [[
+                "id": remoteTeamMemberID.transportString(),
+                "team": team.remoteIdentifier!.transportString(),
+                "name": "Member A",
+                "accent_id": 4
+            ]]
         ]
 
         var result = SearchResult(payload: payload,
@@ -305,11 +320,14 @@ class SearchResultTests: DatabaseTest {
         let remoteTeamMemberID = UUID()
         uiMOC.saveOrRollback()
 
-        let payload = ["documents": [
-            ["id": remoteTeamMemberID.transportString(),
-             "team": team.remoteIdentifier!.transportString(),
-             "handle": "aaa",
-             "name": "Member A"
+        let payload = [
+            "documents": [[
+                "id": remoteTeamMemberID.transportString(),
+                "team": team.remoteIdentifier!.transportString(),
+                "handle": "aaa",
+                "name": "Member A",
+                "accent_id": 4
+            ]]
         ]
 
         var result = SearchResult(payload: payload,
