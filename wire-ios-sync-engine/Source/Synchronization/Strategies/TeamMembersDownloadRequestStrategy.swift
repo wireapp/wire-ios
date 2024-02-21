@@ -78,6 +78,10 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         completeSyncPhase()
     }
 
+    func failSyncPhase() {
+        syncStatus.failCurrentSyncPhase(phase: .fetchingTeamMembers)
+    }
+
     func completeSyncPhase() {
         syncStatus.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
     }
