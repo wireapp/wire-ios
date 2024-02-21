@@ -30,7 +30,6 @@ class MockSyncStatus: SyncStatusProtocol {
     }
 
     var mockPerformQuickSync: (() async -> Void)?
-
     func performQuickSync() async {
         guard let mock = mockPerformQuickSync else {
             fatalError("no mock for `performQuickSync`")
