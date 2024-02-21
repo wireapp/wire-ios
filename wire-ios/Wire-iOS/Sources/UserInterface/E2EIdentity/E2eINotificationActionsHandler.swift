@@ -98,7 +98,7 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
     private func confirmSuccessfulEnrollment() {
         snoozeCertificateEnrollmentUseCase?.stop()
         let successScreen = SuccessfulCertificateEnrollmentViewController()
-        self.targetVC.present(successScreen, animated: true)
+        targetVC.present(successScreen, animated: true)
     }
 
     private let durationFormatter: DateComponentsFormatter = {
