@@ -144,11 +144,19 @@ public final class ZMUserSession: NSObject {
         let selfClientCertificateProvider = SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
             context: syncContext)
-        return SnoozeCertificateEnrollmentUseCase(e2eiFeature: e2eiFeature,
-                                                  gracePeriodRepository: gracePeriodRepository,
-                                                  recurringActionService: recurringActionService,
-                                                  selfClientCertificateProvider: selfClientCertificateProvider,
-                                                  accountId: account.userIdentifier)
+
+        return SnoozeCertificateEnrollmentUseCase(
+            e2eiFeature: e2eiFeature,
+            gracePeriodRepository: gracePeriodRepository,
+            recurringActionService: recurringActionService,
+            selfClientCertificateProvider: selfClientCertificateProvider,
+            accountId: account.userIdentifier)
+    }()
+
+    public lazy var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol? = {
+        return StopCertificateEnrollmentSnoozerUseCase(
+            recurringActionService: recurringActionService,
+            accountId: account.userIdentifier)
     }()
 
     public var hasCompletedInitialSync: Bool = false
@@ -278,7 +286,7 @@ public final class ZMUserSession: NSObject {
         )
     }
 
-    lazy var e2eiRepository: E2eIRepositoryInterface = {
+    lazy var e2eiRepository: E2EIRepositoryInterface = {
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl ?? ""
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
         let httpClient = HttpClientImpl(
@@ -288,15 +296,15 @@ public final class ZMUserSession: NSObject {
 
         let apiProvider = APIProvider(httpClient: httpClient)
 
-        let e2eiSetupService = E2eISetupService(coreCryptoProvider: coreCryptoProvider)
+        let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider)
 
-        let keyRotator = E2eIKeyPackageRotator(
+        let keyRotator = E2EIKeyPackageRotator(
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
             context: syncContext
         )
 
-        return E2eIRepository(
+        return E2EIRepository(
             acmeApi: acmeApi,
             apiProvider: apiProvider,
             e2eiSetupService: e2eiSetupService,
@@ -305,8 +313,8 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
-    public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
-        return EnrollE2eICertificateUseCase(
+    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseInterface? = {
+        return EnrollE2EICertificateUseCase(
             e2eiRepository: e2eiRepository,
             context: syncContext)
     }()
@@ -320,7 +328,7 @@ public final class ZMUserSession: NSObject {
     }()
 
     lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {
-        let verificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+        let verificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         let verificationStatusProvider = MLSConversationVerificationStatusProvider(
             e2eIVerificationStatusService: verificationStatusService,
             syncContext: syncContext)

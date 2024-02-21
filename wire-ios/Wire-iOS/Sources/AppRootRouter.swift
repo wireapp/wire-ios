@@ -441,9 +441,10 @@ extension AppRootRouter {
             isComingFromRegistration: isComingFromRegistration,
             needToShowDataUsagePermissionDialog: needToShowDialog,
             featureRepositoryProvider: userSession,
-            featureChangeActionsHandler: E2eINotificationActionsHandler(
-                enrollCertificateUseCase: userSession.enrollE2eICertificate,
-                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase),
+            featureChangeActionsHandler: E2EINotificationActionsHandler(
+                enrollCertificateUseCase: userSession.enrollE2EICertificate,
+                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
+                stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase),
             gracePeriodRepository: userSession.gracePeriodRepository
         )
     }

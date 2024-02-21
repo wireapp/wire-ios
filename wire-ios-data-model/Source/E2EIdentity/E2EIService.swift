@@ -20,7 +20,7 @@ import Foundation
 import WireCoreCrypto
 
 // sourcery: AutoMockable
-public protocol E2eIServiceInterface {
+public protocol E2EIServiceInterface {
 
     func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory
     func getNewAccountRequest(nonce: String) async throws -> Data
@@ -47,7 +47,7 @@ public protocol E2eIServiceInterface {
 }
 
 /// This class provides an interface for WireE2eIdentityProtocol (CoreCrypto) methods.
-public final class E2eIService: E2eIServiceInterface {
+public final class E2EIService: E2EIServiceInterface {
 
     // MARK: - Properties
 
@@ -123,7 +123,7 @@ public final class E2eIService: E2eIServiceInterface {
     public func setOIDCChallengeResponse(challenge: Data) async throws {
         try await coreCrypto.perform {
             guard let coreCrypto = $0 as? CoreCrypto else {
-                throw E2eIServiceFailure.missingCoreCrypto
+                throw E2EIServiceFailure.missingCoreCrypto
             }
 
             return try await e2eIdentity.newOidcChallengeResponse(cc: coreCrypto, challenge: challenge)
@@ -152,7 +152,7 @@ public final class E2eIService: E2eIServiceInterface {
 
     public func createNewClient(certificateChain: String) async throws {
         guard let enrollment = e2eIdentity as? E2eiEnrollment else {
-            throw E2eIServiceFailure.missingEnrollment
+            throw E2EIServiceFailure.missingEnrollment
         }
         try await coreCryptoProvider.initialiseMLSWithEndToEndIdentity(
             enrollment: enrollment,
@@ -160,7 +160,7 @@ public final class E2eIService: E2eIServiceInterface {
         )
     }
 
-    enum E2eIServiceFailure: Error {
+    enum E2EIServiceFailure: Error {
         case missingCoreCrypto
         case missingEnrollment
     }

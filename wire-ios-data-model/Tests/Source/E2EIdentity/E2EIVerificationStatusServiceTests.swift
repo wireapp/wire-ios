@@ -21,9 +21,9 @@ import Foundation
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-class E2eIVerificationStatusServiceTests: ZMConversationTestsBase {
+class E2EIVerificationStatusServiceTests: ZMConversationTestsBase {
 
-    var sut: E2eIVerificationStatusService!
+    var sut: E2EIVerificationStatusService!
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
@@ -35,7 +35,7 @@ class E2eIVerificationStatusServiceTests: ZMConversationTestsBase {
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-        sut = E2eIVerificationStatusService(coreCryptoProvider: mockCoreCryptoProvider)
+        sut = E2EIVerificationStatusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {

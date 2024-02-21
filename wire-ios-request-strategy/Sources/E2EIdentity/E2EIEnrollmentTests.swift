@@ -23,13 +23,13 @@ import WireCoreCrypto
 @testable import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
-class E2eIEnrollmentTests: ZMTBaseTest {
+class E2EIEnrollmentTests: ZMTBaseTest {
 
-    var sut: E2eIEnrollment!
+    var sut: E2EIEnrollment!
     var mockAcmeApi: MockAcmeAPIInterface!
     var mockApiProvider: MockAPIProviderInterface!
-    var mockE2eiService: MockE2eIServiceInterface!
-    var mockKeyRotator: MockE2eIKeyPackageRotating!
+    var mockE2eiService: MockE2EIServiceInterface!
+    var mockKeyRotator: MockE2EIKeyPackageRotating!
     var previousApiVersion: APIVersion!
 
     override func setUp() {
@@ -42,9 +42,9 @@ class E2eIEnrollmentTests: ZMTBaseTest {
                                           revokeCert: "")
         mockAcmeApi = MockAcmeAPIInterface()
         mockApiProvider = MockAPIProviderInterface()
-        mockE2eiService = MockE2eIServiceInterface()
-        mockKeyRotator = MockE2eIKeyPackageRotating()
-        sut = E2eIEnrollment(
+        mockE2eiService = MockE2EIServiceInterface()
+        mockKeyRotator = MockE2EIKeyPackageRotating()
+        sut = E2EIEnrollment(
             acmeApi: mockAcmeApi,
             apiProvider: mockApiProvider,
             e2eiService: mockE2eiService,
@@ -428,7 +428,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         // Given
         let certificateChain = "123456"
         mockKeyRotator.rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod = { _, _ in }
-        mockE2eiService.underlyingE2eIdentity = MockE2eiEnrollment()
+        mockE2eiService.underlyingE2eIdentity = MockE2EIEnrollment()
 
         // When
         try await sut.rotateKeysAndMigrateConversations(certificateChain: certificateChain)

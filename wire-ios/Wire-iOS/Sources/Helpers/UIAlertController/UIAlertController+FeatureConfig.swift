@@ -77,7 +77,7 @@ extension UIAlertController {
 
     class func fromFeatureChangeWithActions(_ change: FeatureRepository.FeatureChange,
                                             acknowledger: FeatureChangeAcknowledger,
-                                            actionsHandler: E2eINotificationActions) -> UIAlertController? {
+                                            actionsHandler: E2EINotificationActions) -> UIAlertController? {
         switch change {
         case .e2eIEnabled(let gracePeriod):
             return alertForE2eIChangeWithActions { action in

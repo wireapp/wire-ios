@@ -29,13 +29,13 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
 
     // MARK: - Properties
 
-    private var e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface
+    private var e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
     private var syncContext: NSManagedObjectContext
 
     // MARK: - Life cycle
 
     public init(
-        e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface,
+        e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
         syncContext: NSManagedObjectContext
     ) {
         self.e2eIVerificationStatusService = e2eIVerificationStatusService
@@ -48,7 +48,7 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
         guard let conversation = await syncContext.perform({
             ZMConversation.fetch(with: groupID, in: self.syncContext)
         }) else {
-            throw E2eIVerificationStatusService.E2eIVerificationStatusError.missingConversation
+            throw E2EIVerificationStatusService.E2EIVerificationStatusError.missingConversation
         }
         do {
             let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)

@@ -19,13 +19,13 @@
 import Foundation
 import WireSyncEngine
 
-enum E2eIChangeAction: CaseIterable {
+enum E2EIChangeAction: CaseIterable {
     case getCertificate, remindLater
 }
 
 extension UIAlertController {
 
-    static func alertForE2eIChangeWithActions(handler: @escaping (E2eIChangeAction) -> Void) -> UIAlertController {
+    static func alertForE2eIChangeWithActions(handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
 
         typealias MlsE2eiStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
 

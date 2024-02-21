@@ -402,6 +402,34 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
     }
 
 }
+public class MockE2EIKeyPackageRotating: E2EIKeyPackageRotating {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - rotateKeysAndMigrateConversations
+
+    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollmentProtocol, certificateChain: String)] = []
+    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError: Error?
+    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod: ((E2eiEnrollmentProtocol, String) async throws -> Void)?
+
+    public func rotateKeysAndMigrateConversations(enrollment: E2eiEnrollmentProtocol, certificateChain: String) async throws {
+        rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
+
+        if let error = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError {
+            throw error
+        }
+
+        guard let mock = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod else {
+            fatalError("no mock for `rotateKeysAndMigrateConversationsEnrollmentCertificateChain`")
+        }
+
+        try await mock(enrollment, certificateChain)
+    }
+
+}
 public class MockE2eIAPI: E2eIAPI {
 
     // MARK: - Life cycle
@@ -453,34 +481,6 @@ public class MockE2eIAPI: E2eIAPI {
         } else {
             fatalError("no mock for `getAccessTokenClientIdDpopToken`")
         }
-    }
-
-}
-public class MockE2eIKeyPackageRotating: E2eIKeyPackageRotating {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - rotateKeysAndMigrateConversations
-
-    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollmentProtocol, certificateChain: String)] = []
-    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError: Error?
-    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod: ((E2eiEnrollmentProtocol, String) async throws -> Void)?
-
-    public func rotateKeysAndMigrateConversations(enrollment: E2eiEnrollmentProtocol, certificateChain: String) async throws {
-        rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
-
-        if let error = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError {
-            throw error
-        }
-
-        guard let mock = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod else {
-            fatalError("no mock for `rotateKeysAndMigrateConversationsEnrollmentCertificateChain`")
-        }
-
-        try await mock(enrollment, certificateChain)
     }
 
 }

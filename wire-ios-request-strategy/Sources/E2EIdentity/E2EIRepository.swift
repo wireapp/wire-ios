@@ -19,16 +19,16 @@
 import Foundation
 import WireCoreCrypto
 
-public protocol E2eIRepositoryInterface {
+public protocol E2EIRepositoryInterface {
 
     func fetchTrustAnchor() async throws
 
     func fetchFederationCertificate() async throws
 
-    func createEnrollment(context: NSManagedObjectContext) async throws -> E2eIEnrollmentInterface
+    func createEnrollment(context: NSManagedObjectContext) async throws -> E2EIEnrollmentInterface
 }
 
-public final class E2eIRepository: E2eIRepositoryInterface {
+public final class E2EIRepository: E2EIRepositoryInterface {
 
     // MARK: - Types
 
@@ -40,8 +40,8 @@ public final class E2eIRepository: E2eIRepositoryInterface {
 
     private let acmeApi: AcmeAPIInterface
     private let apiProvider: APIProviderInterface
-    private let e2eiSetupService: E2eISetupServiceInterface
-    private let keyRotator: E2eIKeyPackageRotating
+    private let e2eiSetupService: E2EISetupServiceInterface
+    private let keyRotator: E2EIKeyPackageRotating
     private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     // MARK: - Life cycle
@@ -49,8 +49,8 @@ public final class E2eIRepository: E2eIRepositoryInterface {
     public init(
         acmeApi: AcmeAPIInterface,
         apiProvider: APIProviderInterface,
-        e2eiSetupService: E2eISetupServiceInterface,
-        keyRotator: E2eIKeyPackageRotating,
+        e2eiSetupService: E2EISetupServiceInterface,
+        keyRotator: E2EIKeyPackageRotating,
         coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
         self.acmeApi = acmeApi
@@ -72,7 +72,7 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         try await e2eiSetupService.registerFederationCertificate(federationCertificate)
     }
 
-    public func createEnrollment(context: NSManagedObjectContext) async throws -> E2eIEnrollmentInterface {
+    public func createEnrollment(context: NSManagedObjectContext) async throws -> E2EIEnrollmentInterface {
         let (userName, userHandle, teamId, clientID, isUpgradingClient) = try await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
             let isUpgradingClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
@@ -93,10 +93,10 @@ public final class E2eIRepository: E2eIRepositoryInterface {
             isUpgradingClient: isUpgradingClient
         )
 
-        let e2eiService = E2eIService(e2eIdentity: e2eIdentity, coreCryptoProvider: coreCryptoProvider)
+        let e2eiService = E2EIService(e2eIdentity: e2eIdentity, coreCryptoProvider: coreCryptoProvider)
         let acmeDirectory = try await loadACMEDirectory(e2eiService: e2eiService)
 
-        return E2eIEnrollment(
+        return E2EIEnrollment(
             acmeApi: acmeApi,
             apiProvider: apiProvider,
             e2eiService: e2eiService,
@@ -107,7 +107,7 @@ public final class E2eIRepository: E2eIRepositoryInterface {
 
     // MARK: - Helpers
 
-    private func loadACMEDirectory(e2eiService: E2eIService) async throws -> AcmeDirectory {
+    private func loadACMEDirectory(e2eiService: E2EIService) async throws -> AcmeDirectory {
         let acmeDirectoryData = try await acmeApi.getACMEDirectory()
         return try await e2eiService.getDirectoryResponse(directoryData: acmeDirectoryData)
     }

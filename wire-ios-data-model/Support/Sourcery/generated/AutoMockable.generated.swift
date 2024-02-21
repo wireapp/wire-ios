@@ -1929,7 +1929,7 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
 }
 
-public class MockE2eIServiceInterface: E2eIServiceInterface {
+public class MockE2EIServiceInterface: E2EIServiceInterface {
 
     // MARK: - Life cycle
 
@@ -2372,7 +2372,7 @@ public class MockE2eIServiceInterface: E2eIServiceInterface {
 
 }
 
-public class MockE2eIVerificationStatusServiceInterface: E2eIVerificationStatusServiceInterface {
+public class MockE2EIVerificationStatusServiceInterface: E2EIVerificationStatusServiceInterface {
 
     // MARK: - Life cycle
 
