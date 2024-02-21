@@ -27,10 +27,11 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var mockSession: UserSessionMock!
     var emailCredentials: ZMEmailCredentials!
 
-    let saveFileManager = MockSaveFileManager()
-    let mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUseCaseProtocol()
-    let mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
-    let mockGetProteusFingerprint = MockGetUserClientFingerprintUseCaseProtocol()
+    var saveFileManager: MockSaveFileManager!
+    var mockGetIsE2eIdentityEnabled: MockGetIsE2EIdentityEnabledUseCaseProtocol!
+    var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
+    var mockGetProteusFingerprint: MockGetUserClientFingerprintUseCaseProtocol!
+    var mockContextProvider: MockContextProvider!
 
     override func setUp() {
         super.setUp()
@@ -38,6 +39,24 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         client = mockUserClient()
         mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
+        saveFileManager = MockSaveFileManager()
+        mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUseCaseProtocol()
+        mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
+        mockGetProteusFingerprint = MockGetUserClientFingerprintUseCaseProtocol()
+        mockContextProvider = MockContextProvider()
+    }
+
+    override func tearDown() {
+        coreDataFixture = nil
+        client = nil
+        mockSession = nil
+        emailCredentials = nil
+        saveFileManager = nil
+        mockGetIsE2eIdentityEnabled = nil
+        mockGetE2eIdentityCertificates = nil
+        mockGetProteusFingerprint = nil
+        mockContextProvider = nil
+        super.tearDown()
     }
 
     func testGivenCertificateWhenDownladActionIsInvokedThenSaveFileManagerSaveFileIsCalled() {
@@ -50,7 +69,8 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userSession: mockSession,
             credentials: emailCredentials,
             saveFileManager: saveFileManager,
-            getProteusFingerprint: mockGetProteusFingerprint
+            getProteusFingerprint: mockGetProteusFingerprint,
+            contextProvider: mockContextProvider
         )
         deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
         wait(for: [expectation], timeout: 0.5)
@@ -62,7 +82,8 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             userSession: mockSession,
             credentials: emailCredentials,
             saveFileManager: MockSaveFileManager(),
-            getProteusFingerprint: mockGetProteusFingerprint
+            getProteusFingerprint: mockGetProteusFingerprint,
+            contextProvider: mockContextProvider
         )
         let testFingerPrint = String.randomAlphanumerical(length: 16)
         mockGetProteusFingerprint.invokeUserClient_MockMethod = { _ in

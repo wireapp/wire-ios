@@ -25,6 +25,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     var coreDataFixture: CoreDataFixture!
     var sut: UIHostingController<DeviceDetailsView>!
     var client: UserClient!
+    var mockContextProvider: ContextProvider!
 
     override func setUp() {
         super.setUp()
@@ -35,12 +36,14 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             "en_US", "otherYearFormatter.locale.identifier is \(otherYearFormatter.locale.identifier)"
         )
         client = mockUserClient()
+        mockContextProvider = MockContextProvider()
     }
 
     override func tearDown() {
         sut = nil
         client = nil
         coreDataFixture = nil
+        mockContextProvider = nil
         super.tearDown()
     }
 
@@ -78,7 +81,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             credentials: emailCredentials,
             gracePeriod: 3,
             mlsThumbprint: mlsThumbprint,
-            getProteusFingerprint: mockSession.mockGetUserClientFingerprintUseCaseProtocol
+            getProteusFingerprint: mockSession.mockGetUserClientFingerprintUseCaseProtocol,
+            contextProvider: mockContextProvider
         )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isSelfClient = isSelfClient
