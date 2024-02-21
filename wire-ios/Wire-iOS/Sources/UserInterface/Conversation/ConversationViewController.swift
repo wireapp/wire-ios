@@ -290,6 +290,7 @@ final class ConversationViewController: UIViewController {
     }
 
     // MARK: - Application Events & Notifications
+
     override func accessibilityPerformEscape() -> Bool {
         openConversationList()
         return true

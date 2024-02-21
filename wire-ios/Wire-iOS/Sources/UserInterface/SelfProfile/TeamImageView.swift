@@ -24,6 +24,7 @@ final class TeamImageView: UIImageView {
         case big
     }
 
+    // TODO [WPB-6770]: Maybe this type could eventually be merged with `AvatarImageView.Avatar`
     enum Content {
         case teamImage(Data)
         case teamName(String)
@@ -40,20 +41,16 @@ final class TeamImageView: UIImageView {
     }
 
     var content: Content {
-        didSet {
-            updateImage()
-        }
+        didSet { updateImage() }
     }
 
     private var lastLayoutBounds: CGRect = .zero
     let initialLabel = UILabel()
     var style: TeamImageViewStyle = .small {
-        didSet {
-            applyStyle(style: style)
-        }
+        didSet { applyStyle(style: style) }
     }
 
-    func applyStyle(style: TeamImageViewStyle ) {
+    func applyStyle(style: TeamImageViewStyle) {
         switch style {
         case .small:
             initialLabel.font = .smallSemiboldFont

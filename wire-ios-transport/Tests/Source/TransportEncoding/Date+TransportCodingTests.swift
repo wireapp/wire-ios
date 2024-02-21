@@ -59,6 +59,9 @@ final class Date_TransportCodingTests: XCTestCase {
         XCTAssertEqual(components.nanosecond.map { (Float($0) / 1_000_000).rounded() }, 780)
     }
 
+    // Parsing timestamps without fractional digets should not be required anymore
+    // after bug [WPB-6529](https://wearezeta.atlassian.net/browse/WPB-6529) is fixed.
+
     func testThatTransportDatesCanBeParsed_withoutFractionalSeconds_0() throws {
         let date = try XCTUnwrap(Date(transportString: "2024-01-04T12:34:56+02:00"))
         let components = Calendar.current.dateComponents(in: cet, from: date)

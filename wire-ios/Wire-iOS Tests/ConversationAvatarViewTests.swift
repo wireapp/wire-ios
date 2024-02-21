@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ConversationAvatarViewTests: XCTestCase {
+final class ConversationAvatarViewTests: BaseSnapshotTestCase {
 
     var sut: ConversationAvatarView!
 
@@ -172,5 +172,4 @@ fileprivate extension UIView {
 
         return container
     }
-
 }
