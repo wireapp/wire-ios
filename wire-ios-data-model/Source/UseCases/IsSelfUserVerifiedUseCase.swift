@@ -40,9 +40,7 @@ public struct IsSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCase
 
     public func invoke() async -> Bool {
         await context.perform(schedule: schedule) {
-            ZMUser.selfUser(in: context)
-                .allClients
-                .allSatisfy(\.verified)
+            ZMUser.selfUser(in: context).isVerified
         }
     }
 }

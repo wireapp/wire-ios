@@ -87,6 +87,9 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let selfClientId = await context.perform {
             ZMUser.selfUser(in: self.context).selfClient()?.remoteIdentifier
         }
+        let isUpgradingMLSClient = await context.perform {
+            ZMUser.selfUser(in: self.context).selfClient()?.hasRegisteredMLSClient ?? false
+        }
         let (idToken, refreshToken) = try await authenticate(identityProvider, clientId, keyauth, acmeAudience)
         let wireNonce = try await enrollment.getWireNonce(clientId: selfClientId ?? "")
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
@@ -113,7 +116,12 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
             guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
                 throw Failure.failedToDecodeCertificate
             }
-            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+
+            if isUpgradingMLSClient {
+                try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+            } else {
+                try await enrollment.createMLSClient(certificateChain: certificateChain)
+            }
         } catch {
             throw Failure.failedToEnrollCertificate(error)
         }

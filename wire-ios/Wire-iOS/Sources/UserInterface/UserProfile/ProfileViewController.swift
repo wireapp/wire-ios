@@ -50,13 +50,10 @@ final class ProfileViewController: UIViewController {
     let viewModel: ProfileViewControllerViewModel
     weak var viewControllerDismisser: ViewControllerDismisser?
 
-    private let profileFooterView: ProfileFooterView = ProfileFooterView()
-    private let incomingRequestFooter: IncomingRequestFooterView = IncomingRequestFooterView()
-    private let usernameDetailsView: UserNameDetailView = UserNameDetailView()
+    private let profileFooterView = ProfileFooterView()
+    private let incomingRequestFooter = IncomingRequestFooterView()
     private let securityLevelView = SecurityLevelView()
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
-
-    private let profileTitleView: ProfileTitleView = ProfileTitleView()
 
     private var tabsController: TabBarController?
 
@@ -71,13 +68,15 @@ final class ProfileViewController: UIViewController {
 
     // MARK: - init
 
-    convenience init(user: UserType,
-                     viewer: UserType,
-                     conversation: ZMConversation? = nil,
-                     context: ProfileViewControllerContext? = nil,
-                     classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
-                     viewControllerDismisser: ViewControllerDismisser? = nil,
-                     userSession: UserSession) {
+    convenience init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation? = nil,
+        context: ProfileViewControllerContext? = nil,
+        classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
+        viewControllerDismisser: ViewControllerDismisser? = nil,
+        userSession: UserSession
+    ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context = context {
             profileViewControllerContext = context
@@ -85,12 +84,14 @@ final class ProfileViewController: UIViewController {
             profileViewControllerContext = conversation?.conversationType.profileViewControllerContext ?? .oneToOneConversation
         }
 
-        let viewModel = ProfileViewControllerViewModel(user: user,
-                                                       conversation: conversation,
-                                                       viewer: viewer,
-                                                       context: profileViewControllerContext,
-                                                       classificationProvider: classificationProvider,
-                                                       userSession: userSession)
+        let viewModel = ProfileViewControllerViewModel(
+            user: user,
+            conversation: conversation,
+            viewer: viewer,
+            context: profileViewControllerContext,
+            classificationProvider: classificationProvider,
+            userSession: userSession
+        )
 
         self.init(viewModel: viewModel)
 
@@ -118,15 +119,6 @@ final class ProfileViewController: UIViewController {
 
     // MARK: - Header
     private func setupHeader() {
-        let userNameDetailViewModel = viewModel.makeUserNameDetailViewModel()
-        usernameDetailsView.configure(with: userNameDetailViewModel)
-        view.addSubview(usernameDetailsView)
-
-        updateTitleView()
-
-        profileTitleView.translatesAutoresizingMaskIntoConstraints = false
-        navigationItem.titleView = profileTitleView
-
         securityLevelView.configure(with: viewModel.classification)
         view.addSubview(securityLevelView)
     }
@@ -168,6 +160,8 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Profile.Details.title)
+
         view.addSubview(profileFooterView)
         view.addSubview(incomingRequestFooter)
 
@@ -177,7 +171,6 @@ final class ProfileViewController: UIViewController {
         setupTabsController()
         setupConstraints()
         updateFooterViews()
-        updateShowVerifiedShield()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -189,11 +182,12 @@ final class ProfileViewController: UIViewController {
     // MARK: - Keyboard frame observer
 
     private func setupKeyboardFrameNotification() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameDidChange(notification:)),
-                                               name: UIResponder.keyboardDidChangeFrameNotification,
-                                               object: nil)
-
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameDidChange(notification:)),
+            name: UIResponder.keyboardDidChangeFrameNotification,
+            object: nil
+        )
     }
 
     @objc
@@ -209,11 +203,13 @@ final class ProfileViewController: UIViewController {
         // swiftlint:disable todo_requires_jira_link
         // TODO: Pass the whole view Model/stuct/context
         // swiftlint:enable todo_requires_jira_link
-        let profileDetailsViewController = ProfileDetailsViewController(user: viewModel.user,
-                                                                        viewer: viewModel.viewer,
-                                                                        conversation: viewModel.conversation,
-                                                                        context: viewModel.context,
-                                                                        userSession: viewModel.userSession)
+        let profileDetailsViewController = ProfileDetailsViewController(
+            user: viewModel.user,
+            viewer: viewModel.viewer,
+            conversation: viewModel.conversation,
+            context: viewModel.context,
+            userSession: viewModel.userSession
+        )
         profileDetailsViewController.title = L10n.Localizable.Profile.Details.title
 
         return profileDetailsViewController
@@ -236,14 +232,10 @@ final class ProfileViewController: UIViewController {
         }
 
         tabsController = TabBarController(viewControllers: viewControllers)
-        tabsController?.delegate = self
-
         if viewModel.context == .deviceList, tabsController?.viewControllers.count > 1 {
             tabsController?.selectIndex(ProfileViewControllerTabBarIndex.devices.rawValue, animated: false)
         }
-
         addToSelf(tabsController!)
-
         tabsController?.isTabBarHidden = viewControllers.count < 2
         tabsController?.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
@@ -255,18 +247,14 @@ final class ProfileViewController: UIViewController {
 
         let securityBannerHeight: CGFloat = securityLevelView.isHidden ? 0 : 24
 
-        [usernameDetailsView, securityLevelView, tabsView, profileFooterView, incomingRequestFooter].forEach {
+        [securityLevelView, tabsView, profileFooterView, incomingRequestFooter].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         let incomingRequestFooterBottomConstraint = incomingRequestFooter.bottomAnchor.constraint(equalTo: view.bottomAnchor).withPriority(.defaultLow)
 
         NSLayoutConstraint.activate([
-            usernameDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            usernameDetailsView.topAnchor.constraint(equalTo: view.topAnchor),
-            usernameDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
             securityLevelView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            securityLevelView.topAnchor.constraint(equalTo: usernameDetailsView.bottomAnchor),
+            securityLevelView.topAnchor.constraint(equalTo: view.topAnchor),
             securityLevelView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             securityLevelView.heightAnchor.constraint(equalToConstant: securityBannerHeight),
 
@@ -551,20 +539,7 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
 
 }
 
-extension ProfileViewController: TabBarControllerDelegate {
-    func tabBarController(_ controller: TabBarController, tabBarDidSelectIndex: Int) {
-        updateShowVerifiedShield()
-    }
-}
-
 extension ProfileViewController: ProfileViewControllerViewModelDelegate {
-    func updateTitleView() {
-        profileTitleView.configure(with: viewModel.user)
-    }
-
-    func updateShowVerifiedShield() {
-        profileTitleView.showVerifiedShield = viewModel.shouldShowVerifiedShield && tabsController?.selectedIndex != ProfileViewControllerTabBarIndex.devices.rawValue
-    }
 
     func setupNavigationItems() {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil

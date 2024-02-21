@@ -114,7 +114,6 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
             context: .profileViewer,
             userSession: userSession
         )
-        sut.updateShowVerifiedShield()
         let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
 
