@@ -196,7 +196,7 @@
 		16F7341224F9567000AB93B1 /* ZMConversationTests+DraftMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F7341024F9556600AB93B1 /* ZMConversationTests+DraftMessage.swift */; };
 		16F7341424F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F7341324F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift */; };
 		16F7341624F95F9D00AB93B1 /* store2-85-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */; };
-		25644D942B289EFA007DA01F /* String+mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25644D922B289E30007DA01F /* String+mocks.swift */; };
+		255139792B8501E00009BBD6 /* String+mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25644D922B289E30007DA01F /* String+mocks.swift */; };
 		256C1B792B1654BB0015C89D /* E2eIdentityCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256C1B782B1654BB0015C89D /* E2eIdentityCertificate.swift */; };
 		2BB20770292B787000FB6468 /* PatchApplicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2076F292B787000FB6468 /* PatchApplicator.swift */; };
 		2BB20771292B791400FB6468 /* PatchApplicatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2076D292B781E00FB6468 /* PatchApplicatorTests.swift */; };
@@ -4037,7 +4037,6 @@
 				16827AEA2732A3C20079405D /* InvalidDomainRemoval.swift in Sources */,
 				54E3EE451F61A53C00A261E3 /* ZMAssetClientMessage+Ephemeral.swift in Sources */,
 				5EDDC7A62088CE3B00B24850 /* ZMConversation+Invalid.swift in Sources */,
-				25644D942B289EFA007DA01F /* String+mocks.swift in Sources */,
 				F9A706B01CAEE01D00C2F5FE /* MessageChangeInfo.swift in Sources */,
 				F9A706A71CAEE01D00C2F5FE /* AnyClassTuple.swift in Sources */,
 				5451DE351F5FFF8B00C82E75 /* NotificationInContext.swift in Sources */,
@@ -4541,6 +4540,7 @@
 				BF103FA11F0138390047FDE5 /* ManagedObjectContextChangeObserverTests.swift in Sources */,
 				5E9EA4D62242942900D401B2 /* ZMClientMessageTests+LinkAttachments.swift in Sources */,
 				EEDB51DB255410D000F35A29 /* GenericMessageHelperTests.swift in Sources */,
+				255139792B8501E00009BBD6 /* String+mocks.swift in Sources */,
 				F1B58928202DCF0C002BB59B /* ZMConversationTests+CreationSystemMessages.swift in Sources */,
 				F9DBA5251E28EE1500BE23C0 /* ConversationObserverTests.swift in Sources */,
 				167BCB4E2600C62100E9D7E3 /* CoreDataStackTests+Migration.swift in Sources */,
