@@ -46,14 +46,17 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         return sync.nextRequest(for: apiVersion)
     }
 
-// MARK: - ZMSingleRequestTranscoder
+    // MARK: - ZMSingleRequestTranscoder
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
             completeSyncPhase() // Skip sync phase if user doesn't belong to a team
             return nil
         }
-        return ZMTransportRequest(getFromPath: "/teams/\(teamID.transportString())/members", apiVersion: apiVersion.rawValue)
+
+        let maxResults = 2000
+        let request = ZMTransportRequest(getFromPath: "/teams/\(teamID.transportString())/members?maxResults=\(maxResults)", apiVersion: apiVersion.rawValue)
+        return request
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
@@ -66,8 +69,7 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
             return
         }
 
-        // as per WPB-6485 we ignore the hasMore and download only the first page
-        // hence the ZMSingleRequestSync
+        // as per WPB-6485 we ignore the hasMore
         payload.members.forEach { (membershipPayload) in
             membershipPayload.createOrUpdateMember(team: team, in: managedObjectContext)
         }
