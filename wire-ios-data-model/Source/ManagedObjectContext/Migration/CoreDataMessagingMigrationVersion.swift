@@ -69,16 +69,17 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
         switch self {
         case .version2_114:
             return nil
-        case .version2_113:
+        case .version2_113: // custom migration required
             return .version2_114
-        case .version2_112: // custom migration required
+        case .version2_111,
+                .version2_112:
             return .version2_113
+        case .version2_110: // custom migration required
+            return .version2_111
         case .version2_107,
                 .version2_108,
-                .version2_109,
-                .version2_110,
-                .version2_111:
-            return .version2_112
+                .version2_109:
+            return .version2_110
         case .version2_106: // custom migration required
             return .version2_107
         case .version2_80,
