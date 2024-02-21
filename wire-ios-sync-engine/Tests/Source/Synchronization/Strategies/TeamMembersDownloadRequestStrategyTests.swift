@@ -124,7 +124,6 @@ class TeamMembersDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItFinishSyncStep_OnSuccessfulResponse() {
-//        var team: Team!
 
         syncMOC.performGroupedBlockAndWait {
             // given
