@@ -2948,6 +2948,16 @@ internal enum L10n {
         internal static let tooshort = L10n.tr("Localizable", "email.guidance.tooshort", fallback: "Email is too short")
       }
     }
+    internal enum EnrollE2eiCertificate {
+      /// Certificate Details
+      internal static let certificateDetailsButton = L10n.tr("Localizable", "enroll_e2ei_certificate.certificate_details_button", fallback: "Certificate Details")
+      /// OK
+      internal static let okButton = L10n.tr("Localizable", "enroll_e2ei_certificate.ok_button", fallback: "OK")
+      /// The certificate is active and your device is verified.
+      internal static let subtitle = L10n.tr("Localizable", "enroll_e2ei_certificate.subtitle", fallback: "The certificate is active and your device is verified.")
+      /// Certificate issued
+      internal static let title = L10n.tr("Localizable", "enroll_e2ei_certificate.title", fallback: "Certificate issued")
+    }
     internal enum Error {
       /// Please enter a valid email address
       internal static let email = L10n.tr("Localizable", "error.email", fallback: "Please enter a valid email address")

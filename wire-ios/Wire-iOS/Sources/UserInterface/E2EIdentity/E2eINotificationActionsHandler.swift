@@ -38,21 +38,22 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
 
     // MARK: - Life cycle
 
-    init(enrollCertificateUseCase: EnrollE2eICertificateUseCaseInterface?,
-         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol?,
-         gracePeriodRepository: GracePeriodRepository,
-         targetVC: UIViewController) {
-        self.enrollCertificateUseCase = enrollCertificateUseCase
-        self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
-        self.gracePeriodRepository = gracePeriodRepository
-        self.targetVC = targetVC
-    }
+    init(
+        enrollCertificateUseCase: EnrollE2eICertificateUseCaseInterface?,
+        snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol?,
+        gracePeriodRepository: GracePeriodRepository,
+        targetVC: UIViewController) {
+            self.enrollCertificateUseCase = enrollCertificateUseCase
+            self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
+            self.gracePeriodRepository = gracePeriodRepository
+            self.targetVC = targetVC
+        }
 
     public func getCertificate() async {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         do {
             try await enrollCertificateUseCase?.invoke(authenticate: oauthUseCase.invoke)
-            confirmSuccessfulEnrollment()
+            await confirmSuccessfulEnrollment()
         } catch {
             guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
                 return
@@ -77,6 +78,7 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
                 await self.snoozeCertificateEnrollmentUseCase?.start()
             }
         }
+        await targetVC.present(alert, animated: true)
     }
 
     // MARK: - Helpers
@@ -87,14 +89,16 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
             Task {
                 try await self.enrollCertificateUseCase?.invoke(authenticate: oauthUseCase.invoke)
             }
-            self.confirmSuccessfulEnrollment()
+           // self.confirmSuccessfulEnrollment()
         }
         await targetVC.present(alert, animated: true)
     }
 
+    @MainActor
     private func confirmSuccessfulEnrollment() {
         snoozeCertificateEnrollmentUseCase?.stop()
-        // to show success screen
+        let test = SuccessfulCertificateEnrollmentViewController()
+        self.targetVC.present(test, animated: true)
     }
 
     private let durationFormatter: DateComponentsFormatter = {
@@ -108,85 +112,79 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
 
 private extension UIAlertController {
 
-    static func getCertificateFailed(canCancel: Bool, completion: @escaping () -> Void) -> UIAlertController {
-        typealias Alert = L10n.Localizable.FailetToGetCertificate.Alert
-        typealias Button = L10n.Localizable.FailetToGetCertificate.Button
+    static func getCertificateFailed(
+        canCancel: Bool,
+        completion: @escaping () -> Void) -> UIAlertController {
+            typealias Alert = L10n.Localizable.FailetToGetCertificate.Alert
+            typealias Button = L10n.Localizable.FailetToGetCertificate.Button
 
-        let title = Alert.title
-        let message = canCancel ? Alert.message : Alert.forcedMessage
-        let controller = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
+            let title = Alert.title
+            let message = canCancel ? Alert.message : Alert.forcedMessage
+            let controller = UIAlertController(
+                title: title,
+                message: message,
+                preferredStyle: .alert
+            )
 
-        let tryAgainAction = UIAlertAction(
-            title: Button.retry,
-            style: .default,
-            handler: { _ in completion() }
-        )
+            let tryAgainAction = UIAlertAction(
+                title: Button.retry,
+                style: .default,
+                handler: { _ in completion() }
+            )
 
-        controller.addAction(tryAgainAction)
-        if canCancel {
-            controller.addAction(.cancel())
+            controller.addAction(tryAgainAction)
+            if canCancel {
+                controller.addAction(.cancel())
+            }
+            return controller
         }
-        return controller
-    }
 
-    static func updateCertificateFailed(canCancel: Bool, completion: @escaping () -> Void) -> UIAlertController {
-        typealias Alert = L10n.Localizable.FailetToUpdateCertificate.Alert
-        typealias Button = L10n.Localizable.FailetToUpdateCertificate.Button
+    static func updateCertificateFailed(
+        canCancel: Bool,
+        completion: @escaping () -> Void) -> UIAlertController {
+            typealias Alert = L10n.Localizable.FailetToUpdateCertificate.Alert
+            typealias Button = L10n.Localizable.FailetToUpdateCertificate.Button
 
-        let title = Alert.title
-        let message = canCancel ? Alert.message : Alert.forcedMessage
-        let controller = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
+            let title = Alert.title
+            let message = canCancel ? Alert.message : Alert.forcedMessage
+            let controller = UIAlertController(
+                title: title,
+                message: message,
+                preferredStyle: .alert
+            )
 
-        let tryAgainAction = UIAlertAction(
-            title: Button.retry,
-            style: .default,
-            handler: { _ in completion() }
-        )
+            let tryAgainAction = UIAlertAction(
+                title: Button.retry,
+                style: .default,
+                handler: { _ in completion() }
+            )
 
-        controller.addAction(tryAgainAction)
-        if canCancel {
-            controller.addAction(.cancel())
+            controller.addAction(tryAgainAction)
+            if canCancel {
+                controller.addAction(.cancel())
+            }
+            return controller
         }
-        return controller
-    }
 
-    static func reminderGetCertificate(timeLeft: String, completion: @escaping () -> Void) -> UIAlertController {
-        typealias Alert = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
+    static func reminderGetCertificate(
+        timeLeft: String,
+        completion: @escaping () -> Void) -> UIAlertController {
+            typealias Alert = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
 
-        let message = Alert.message
-        let controller = UIAlertController(
-            title: nil,
-            message: Alert.remiderMessage(timeLeft),
-            preferredStyle: .alert
-        )
+            let controller = UIAlertController(
+                title: nil,
+                message: Alert.remiderMessage(timeLeft),
+                preferredStyle: .alert
+            )
 
-        let okAction = UIAlertAction(
-            title: Alert.Button.ok,
-            style: .default,
-            handler: { _ in completion() }
-        )
+            let okAction = UIAlertAction(
+                title: Alert.Button.ok,
+                style: .default,
+                handler: { _ in completion() }
+            )
 
-        controller.addAction(okAction)
-        return controller
-    }
-
-}
-
-final class SuccessfulCertificateEnrollmentViewController: UIViewController {
-
-    override func viewDidLoad() {
-        setupViews()
-    }
-
-    func setupViews() {
-    }
+            controller.addAction(okAction)
+            return controller
+        }
 
 }
