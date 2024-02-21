@@ -88,8 +88,8 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
             let oauthUseCase = OAuthUseCase(rootViewController: self.targetVC)
             Task {
                 try await self.enrollCertificateUseCase?.invoke(authenticate: oauthUseCase.invoke)
+                await self.confirmSuccessfulEnrollment()
             }
-           // self.confirmSuccessfulEnrollment()
         }
         await targetVC.present(alert, animated: true)
     }
@@ -97,8 +97,8 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
     @MainActor
     private func confirmSuccessfulEnrollment() {
         snoozeCertificateEnrollmentUseCase?.stop()
-        let test = SuccessfulCertificateEnrollmentViewController()
-        self.targetVC.present(test, animated: true)
+        let successScreen = SuccessfulCertificateEnrollmentViewController()
+        self.targetVC.present(successScreen, animated: true)
     }
 
     private let durationFormatter: DateComponentsFormatter = {
