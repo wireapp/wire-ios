@@ -415,6 +415,10 @@ private extension GroupDetailsViewController {
     }
 
     private func updateUserE2EICertificationStatuses() {
+        guard let conversation = conversation as? MLSConversation else {
+            return WireLogger.e2ei.debug("conversation does not conform to `MLSConversation`")
+        }
+
         Task { @MainActor in
             let participants = conversation.sortedOtherParticipants
             for user in participants {
@@ -423,7 +427,10 @@ private extension GroupDetailsViewController {
                     if user.isSelfUser {
                         isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
                     } else {
-                        isE2EICertified = try await isOtherUserE2EICertifiedUseCase.invoke()
+                        isE2EICertified = try await isOtherUserE2EICertifiedUseCase.invoke(
+                            conversation: conversation,
+                            user: user
+                        )
                     }
                     userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
                 } catch {

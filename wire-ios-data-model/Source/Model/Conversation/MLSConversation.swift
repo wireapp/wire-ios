@@ -16,13 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Determines if some user (not the self user) has a valid E2EI certificate on all clients.
-public protocol IsOtherUserE2EICertifiedUseCaseProtocol {
-
-    /// Returns `true` if all clients of the provided conversation's user have valid E2EI certificates.
-    func invoke(
-        conversation: MLSConversation,
-        user: UserType
-    ) async throws -> Bool
+public protocol MLSConversation: Conversation {
+    var mlsGroupID: MLSGroupID? { get }
 }

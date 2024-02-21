@@ -19,6 +19,8 @@
 import Foundation
 import WireCoreCrypto
 
+// TODO [WPB-765]: Ensure that these use cases are only applied to mls conversations
+
 public struct IsOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
@@ -35,27 +37,18 @@ public struct IsOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCasePr
         self.coreCryptoProvider = coreCryptoProvider
     }
 
-    public func invoke() async throws -> Bool {
+    public func invoke(
+        conversation: MLSConversation,
+        user: UserType
+    ) async throws -> Bool {
         let (conversationID, userID, clientCount) = try await context.perform(schedule: schedule) {
             // conversationID
-            guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context) else {
-                throw Error.couldNotFetchMLSSelfConversation
-            }
-            guard let mlsGroupID = selfConversation.mlsGroupID else {
-                throw Error.failedToGetMLSGroupID(selfConversation)
+            guard let mlsGroupID = conversation.mlsGroupID else {
+                throw Error.failedToGetMLSGroupID(conversation)
             }
             // userID
-            let selfUser = ZMUser.selfUser(in: context)
-            guard
-                let qualifiedID = selfUser.qualifiedID,
-                // Eventually the `getUserIdentities` function of Core Crypto will probably require a domain name.
-                // let userID = MLSUserID(userID: qualifiedID.uuid.transportString(), domain: qualifiedID.domain).rawValue
-                // Workaround:
-                let userID = Optional(qualifiedID.uuid.transportString())
-            else {
-                throw Error.failedToGetSelfUserID
-            }
-            return (mlsGroupID, userID, selfUser.allClients.count)
+            let userID = user.remoteIdentifier.transportString()
+            return (mlsGroupID, userID, user.allClients.count)
         }
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
@@ -78,8 +71,6 @@ public struct IsOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCasePr
 extension IsOtherUserE2EICertifiedUseCase {
 
     enum Error: Swift.Error {
-        case failedToGetSelfUserID
-        case couldNotFetchMLSSelfConversation
         case failedToGetMLSGroupID(_ conversation: Conversation)
         /// The list of identities cannot be retrieved from the result.
         case failedToGetIdentitiesFromCoreCryptoResult(_ result: [String: [WireIdentity]], _ userID: String)

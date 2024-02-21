@@ -2769,24 +2769,24 @@ public class MockIsOtherUserE2EICertifiedUseCaseProtocol: IsOtherUserE2EICertifi
 
     // MARK: - invoke
 
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockError: Error?
-    public var invoke_MockMethod: (() async throws -> Bool)?
-    public var invoke_MockValue: Bool?
+    public var invokeConversationUser_Invocations: [(conversation: MLSConversation, user: UserType)] = []
+    public var invokeConversationUser_MockError: Error?
+    public var invokeConversationUser_MockMethod: ((MLSConversation, UserType) async throws -> Bool)?
+    public var invokeConversationUser_MockValue: Bool?
 
-    public func invoke() async throws -> Bool {
-        invoke_Invocations.append(())
+    public func invoke(conversation: MLSConversation, user: UserType) async throws -> Bool {
+        invokeConversationUser_Invocations.append((conversation: conversation, user: user))
 
-        if let error = invoke_MockError {
+        if let error = invokeConversationUser_MockError {
             throw error
         }
 
-        if let mock = invoke_MockMethod {
-            return try await mock()
-        } else if let mock = invoke_MockValue {
+        if let mock = invokeConversationUser_MockMethod {
+            return try await mock(conversation, user)
+        } else if let mock = invokeConversationUser_MockValue {
             return mock
         } else {
-            fatalError("no mock for `invoke`")
+            fatalError("no mock for `invokeConversationUser`")
         }
     }
 
