@@ -38,7 +38,8 @@ final class SupportedProtocolsServiceTests: MessagingTest {
         sut = SupportedProtocolsService(
             featureRepository: featureRepository,
             userRepository: userRepository,
-            oneOnOneResolver: oneOnOneResolver, context: self.syncMOC
+            oneOnOneResolver: oneOnOneResolver,
+            context: self.syncMOC
         )
     }
 
