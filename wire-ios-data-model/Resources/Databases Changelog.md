@@ -34,7 +34,7 @@ As it is hard to spot changes from version to version of database models (.xcdat
 * make `conversation` relationship of `ParticipantRole` optional 
 * make `user` relationship of `ParticipantRole` optional
 
-#### heavy weight migration MappingModel_2.113-2.114
+#### heavy weight migration MappingModel_2.110-2.111
 
 * add custom policy TeamToTeam: `WireDataModel.DuplicateTeamsMigrationPolicy`
 * add custom policy ConversationToConversation: `WireDataModel.DuplicateObjectsMigrationPolicy` 
