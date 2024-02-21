@@ -262,6 +262,7 @@
 		E69A02222B85096000126FF6 /* ProteusToMLSMigrationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02202B85095F00126FF6 /* ProteusToMLSMigrationState.swift */; };
 		E69A02232B85096000126FF6 /* SupportedProtocolsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02212B85095F00126FF6 /* SupportedProtocolsService.swift */; };
 		E69A02262B85097F00126FF6 /* SupportedProtocolsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02252B85097F00126FF6 /* SupportedProtocolsServiceTests.swift */; };
+		E69A022A2B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02292B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift */; };
 		E6E0CE872B70D2C60004ED88 /* SyncPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */; };
 		E6E0CE892B70DDAB0004ED88 /* SynchronizationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */; };
 		E6E0CE8B2B70DE430004ED88 /* OperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE8A2B70DE430004ED88 /* OperationState.swift */; };
@@ -758,6 +759,7 @@
 		E69A02202B85095F00126FF6 /* ProteusToMLSMigrationState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusToMLSMigrationState.swift; sourceTree = "<group>"; };
 		E69A02212B85095F00126FF6 /* SupportedProtocolsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportedProtocolsService.swift; sourceTree = "<group>"; };
 		E69A02252B85097F00126FF6 /* SupportedProtocolsServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportedProtocolsServiceTests.swift; sourceTree = "<group>"; };
+		E69A02292B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfSupportedProtocolsRequestBuilderTests.swift; sourceTree = "<group>"; };
 		E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPhase.swift; sourceTree = "<group>"; };
 		E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizationState.swift; sourceTree = "<group>"; };
 		E6E0CE8A2B70DE430004ED88 /* OperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationState.swift; sourceTree = "<group>"; };
@@ -988,6 +990,7 @@
 				06ADF692264B4666002E0C7A /* Mocks */,
 				0693113B24F798EF00D14DF5 /* Notifications */,
 				E629E39B2B47002400D526AD /* Payloads */,
+				E69A02272B85EDAD00126FF6 /* Request Strategies */,
 				E69A02242B85097F00126FF6 /* Services */,
 				E6E59B062B56D04500E90D36 /* Stubs */,
 				E629E3972B46A19600D526AD /* Synchronization */,
@@ -1559,6 +1562,22 @@
 				E69A02252B85097F00126FF6 /* SupportedProtocolsServiceTests.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		E69A02272B85EDAD00126FF6 /* Request Strategies */ = {
+			isa = PBXGroup;
+			children = (
+				E69A02282B85EDB600126FF6 /* User */,
+			);
+			path = "Request Strategies";
+			sourceTree = "<group>";
+		};
+		E69A02282B85EDB600126FF6 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				E69A02292B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift */,
+			);
+			path = User;
 			sourceTree = "<group>";
 		};
 		E6E59B062B56D04500E90D36 /* Stubs */ = {
@@ -2513,6 +2532,7 @@
 				F18401DB2073C25300E9F4CC /* EventDecoderDecryptionTests.swift in Sources */,
 				E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */,
 				EEB930B92ABD6FCB00FB35B2 /* FetchSupportedProtocolsActionHandlerTests.swift in Sources */,
+				E69A022A2B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift in Sources */,
 				D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */,
 				638941F02AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift in Sources */,
 				1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */,
