@@ -84,8 +84,8 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
     // MARK: - Helpers
 
     private func showGetCertificateErrorAlert(canCancel: Bool) async {
+        let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel) {
-            let oauthUseCase = OAuthUseCase(rootViewController: self.targetVC)
             Task {
                 try await self.enrollCertificateUseCase?.invoke(authenticate: oauthUseCase.invoke)
                 await self.confirmSuccessfulEnrollment()
