@@ -25,7 +25,7 @@ typealias SelfUserType = UserType & SelfLegalHoldSubject
 
 final class ConversationListTopBarViewController: UIViewController {
 
-    private var account: Account
+    private let account: Account
 
     /// Name, availability and verification info about the self user.
     public var selfUserStatus = UserStatus() {

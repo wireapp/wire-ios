@@ -24,7 +24,7 @@ final class TeamImageView: UIImageView {
         case big
     }
 
-    // Maybe this type could eventually be merged with `AvatarImageView.Avatar`
+    // TODO [WPB-6770]: Maybe this type could eventually be merged with `AvatarImageView.Avatar`
     enum Content {
         case teamImage(Data)
         case teamName(String)
