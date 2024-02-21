@@ -370,9 +370,12 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         // no op
     }
 
-    public func updateUpdatedObject(_ managedObject: ZMManagedObject,
-                                    requestUserInfo: [AnyHashable: Any]? = nil,
-                                    response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
+    public func updateUpdatedObject(
+        _ managedObject: ZMManagedObject,
+        requestUserInfo: [AnyHashable: Any]? = nil,
+        response: ZMTransportResponse,
+        keysToParse: Set<String>
+    ) -> Bool {
 
         guard
             keysToParse.contains(ZMConversationUserDefinedNameKey),

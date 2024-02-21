@@ -1,5 +1,6 @@
 opt_in_rules:
   - closure_spacing
+  - multiline_parameters
 
 disabled_rules:
   - function_body_length
