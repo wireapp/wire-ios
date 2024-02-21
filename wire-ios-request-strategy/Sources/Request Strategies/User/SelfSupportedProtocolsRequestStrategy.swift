@@ -103,7 +103,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
         switch response.result {
         case .success:
-            WireLogger.sync.error("finished slow sync phase '\(syncPhase.description)'!")
+            WireLogger.sync.info("finished slow sync phase '\(syncPhase.description)'!")
             managedObjectContext.perform {
                 self.syncProgress.finishCurrentSyncPhase(phase: self.syncPhase)
             }
