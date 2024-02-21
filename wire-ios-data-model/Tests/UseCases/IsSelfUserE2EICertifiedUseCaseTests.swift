@@ -37,7 +37,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         sut = .init(context: context, schedule: .immediate, coreCryptoProvider: mockCoreCryptoProvider)
     }
 
@@ -163,7 +163,10 @@ extension WireIdentity {
             domain: "D",
             certificate: "E",
             status: status,
-            thumbprint: "F"
+            thumbprint: "F",
+            serialNumber: "G",
+            notBefore: 0,
+            notAfter: 0
         )
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,5 @@
 //
 
 import Foundation
-import WireTransport
 
-protocol CookieProvider {
-    var isAuthenticated: Bool { get }
-    func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest)
-}
-
-extension ZMPersistentCookieStorage: CookieProvider {}
+extension ZMAuthenticationStatus: NotificationContext {}

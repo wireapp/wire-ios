@@ -79,7 +79,6 @@ final class SearchServicesSectionController: SearchSectionController {
             if let selfUser = ZMUser.selfUser() {
                 cell.configure(
                     user: service,
-                    isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
                     isSelfUserPartOfATeam: selfUser.hasTeam
                 )
             } else {
