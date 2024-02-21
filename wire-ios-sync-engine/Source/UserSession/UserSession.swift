@@ -228,8 +228,6 @@ public protocol UserSession: AnyObject {
 
     func fetchAllClients()
 
-    func reportEndToEndIdentityEnrollmentSuccess()
-
 }
 
 extension ZMUserSession: UserSession {

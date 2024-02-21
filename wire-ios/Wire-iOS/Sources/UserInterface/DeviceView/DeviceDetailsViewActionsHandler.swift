@@ -149,7 +149,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         try await e2eiCertificateUseCase?.invoke(
             authenticate: oauthUseCase.invoke
         )
-        userSession.reportEndToEndIdentityEnrollmentSuccess()
     }
 
     private func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate? {
