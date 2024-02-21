@@ -108,7 +108,6 @@ final class ProfileHeaderViewController: UIViewController {
     private var userObserver: NSObjectProtocol?
     private var teamObserver: NSObjectProtocol?
 
-    ///
     /// Creates a profile view for the specified user and options.
     /// - parameter user: The user to display the profile of.
     /// - parameter conversation: The conversation.
