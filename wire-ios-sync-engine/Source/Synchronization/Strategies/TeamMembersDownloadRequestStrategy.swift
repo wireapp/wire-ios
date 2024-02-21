@@ -66,10 +66,10 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
             return
         }
 
-        if !payload.hasMore {
-            payload.members.forEach { (membershipPayload) in
-                membershipPayload.createOrUpdateMember(team: team, in: managedObjectContext)
-            }
+        // as per WPB-6485 we ignore the hasMore and download only the first page
+        // hence the ZMSingleRequestSync
+        payload.members.forEach { (membershipPayload) in
+            membershipPayload.createOrUpdateMember(team: team, in: managedObjectContext)
         }
 
         completeSyncPhase()
