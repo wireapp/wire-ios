@@ -32,12 +32,7 @@ final class ProfileHeaderViewController: UIViewController {
     private let user: UserType
 
     private var userStatus: UserStatus {
-        didSet {
-            nameLabel.text = userStatus.name
-            userStatusViewController.userStatus = userStatus
-            e2eiCertifiedImageView.isHidden = !userStatus.isCertified
-            proteusVerifiedImageView.isHidden = !userStatus.isVerified
-        }
+        didSet { applyUserStatus() }
     }
 
     private let userSession: UserSession
@@ -198,7 +193,6 @@ final class ProfileHeaderViewController: UIViewController {
         updateTeamLabel()
 
         addChild(userStatusViewController)
-        userStatusViewController.userStatus = userStatus
 
         stackView = CustomSpacingStackView(
             customSpacedArrangedSubviews: [
@@ -230,6 +224,7 @@ final class ProfileHeaderViewController: UIViewController {
         view.backgroundColor = UIColor.clear
 
         configureConstraints()
+        applyUserStatus()
         applyOptions()
 
         userStatusViewController.didMove(toParent: self)
@@ -237,20 +232,12 @@ final class ProfileHeaderViewController: UIViewController {
         if let team = user.membership?.team {
             teamObserver = TeamChangeInfo.add(observer: self, for: team)
         }
-        view.backgroundColor = UIColor.clear
+        view.backgroundColor = .clear
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        Task {
-            do {
-                userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
-                userStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
-            } catch {
-                WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
-            }
-        }
+        updateVerificationStatus()
     }
 
     private func configureConstraints() {
@@ -267,6 +254,13 @@ final class ProfileHeaderViewController: UIViewController {
             // stackView
             widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint
         ])
+    }
+
+    private func applyUserStatus() {
+        nameLabel.text = userStatus.name
+        userStatusViewController.userStatus = userStatus
+        e2eiCertifiedImageView.isHidden = !userStatus.isCertified
+        proteusVerifiedImageView.isHidden = !userStatus.isVerified
     }
 
     private func updateGuestIndicator() {
@@ -342,6 +336,17 @@ final class ProfileHeaderViewController: UIViewController {
         }
     }
 
+    private func updateVerificationStatus() {
+        Task {
+            do {
+                userStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
+                userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+            } catch {
+                WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
+            }
+        }
+    }
+
     // MARK: -
 
     /// The options to customize the appearance and behavior of the view.
@@ -390,6 +395,9 @@ extension ProfileHeaderViewController: UserObserving {
         }
         if changeInfo.availabilityChanged {
             updateAvailabilityVisibility()
+        }
+        if changeInfo.trustLevelChanged {
+            updateVerificationStatus()
         }
     }
 }

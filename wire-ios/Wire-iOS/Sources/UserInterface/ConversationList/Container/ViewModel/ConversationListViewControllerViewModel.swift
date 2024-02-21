@@ -100,8 +100,8 @@ extension ConversationListViewController {
 
             Task { @MainActor in
                 do {
-                    selfUserStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
                     selfUserStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
+                    selfUserStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
                 } catch {
                     WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
                 }
