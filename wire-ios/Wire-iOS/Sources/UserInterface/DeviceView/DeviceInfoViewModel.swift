@@ -77,6 +77,8 @@ final class DeviceInfoViewModel: ObservableObject {
     var actionsHandler: DeviceDetailsViewActions
     var conversationClientDetailsActions: ConversationUserClientDetailsActions
     var debugMenuActionsHandler: ConversationUserClientDetailsDebugActions?
+    let showDebugMenu: Bool
+
     init(
         certificate: E2eIdentityCertificate?,
         title: String,
@@ -90,7 +92,8 @@ final class DeviceInfoViewModel: ObservableObject {
         isFromConversation: Bool,
         actionsHandler: DeviceDetailsViewActions,
         conversationClientDetailsActions: ConversationUserClientDetailsActions,
-        debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil
+        debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil,
+        showDebugMenu: Bool
     ) {
         self.e2eIdentityCertificate = certificate
         self.title = title
@@ -105,6 +108,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.isFromConversation = isFromConversation
         self.conversationClientDetailsActions = conversationClientDetailsActions
         self.debugMenuActionsHandler = debugMenuActionsHandler
+        self.showDebugMenu = showDebugMenu
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
@@ -179,7 +183,8 @@ extension DeviceInfoViewModel {
         mlsThumbprint: String?,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
         isFromConversation: Bool = false,
-        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
+        showDebugMenu: Bool = Bundle.developerModeEnabled
     ) -> DeviceInfoViewModel {
         let deviceActionsHandler = DeviceDetailsViewActionsHandler(
             userClient: userClient,
@@ -201,7 +206,8 @@ extension DeviceInfoViewModel {
             isFromConversation: isFromConversation,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler
+            debugMenuActionsHandler: deviceActionsHandler,
+            showDebugMenu: showDebugMenu
         )
     }
 }
