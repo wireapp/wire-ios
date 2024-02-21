@@ -27,8 +27,8 @@ final class OneOnOneResolverTests: XCTestCase {
     private var sut: OneOnOneResolver!
 
     private var mockCoreDataStack: CoreDataStack!
-    private var mockProtocolSelector: MockOneOnOneProtocolSelectorInterface!
-    private var mockMigrator: MockOneOnOneMigratorInterface!
+    private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
+    private var mockMigrator: MockActorOneOnOneMigrator!
 
     private var viewContext: NSManagedObjectContext { mockCoreDataStack.viewContext }
 
@@ -38,8 +38,8 @@ final class OneOnOneResolverTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
 
         mockCoreDataStack = try await coreDataStackHelper.createStack()
-        mockProtocolSelector = MockOneOnOneProtocolSelectorInterface()
-        mockMigrator = MockOneOnOneMigratorInterface()
+        mockProtocolSelector = MockActorOneOnOneProtocolSelector()
+        mockMigrator = MockActorOneOnOneMigrator()
         sut = OneOnOneResolver(protocolSelector: mockProtocolSelector, migrator: mockMigrator)
     }
 
@@ -64,14 +64,17 @@ final class OneOnOneResolverTests: XCTestCase {
         try await sut.resolveAllOneOnOneConversations(in: viewContext)
 
         // Then
-        XCTAssertTrue(mockProtocolSelector.getProtocolForUserWithIn_Invocations.isEmpty)
-        XCTAssertTrue(mockMigrator.migrateToMLSUserIDIn_Invocations.isEmpty)
+        let selectorInvocationsIsEmpty = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.isEmpty
+        XCTAssertTrue(selectorInvocationsIsEmpty)
+
+        let migratorInvocationsIsEmpty = await mockMigrator.migrateToMLSUserIDIn_Invocations.isEmpty
+        XCTAssertTrue(migratorInvocationsIsEmpty)
     }
 
     func test_resolveAllOneOnOneConversations_givenMultipleUsers_thenMigrateAll() async throws {
         // Given
-        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
-        mockMigrator.migrateToMLSUserIDIn_MockValue = .random()
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
 
         await viewContext.perform { [self] in
             let userA = createUser(in: viewContext)
@@ -85,14 +88,17 @@ final class OneOnOneResolverTests: XCTestCase {
         try await sut.resolveAllOneOnOneConversations(in: viewContext)
 
         // Then
-        XCTAssertEqual(mockProtocolSelector.getProtocolForUserWithIn_Invocations.count, 2)
-        XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 2)
+        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
+        XCTAssertEqual(selectorInvocationsCount, 2)
+
+        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
+        XCTAssertEqual(migratorInvocationsCount, 2)
     }
 
     func test_resolveAllOneOnOneConversations_givenUserWithoutConnection_thenSkipOneMigration() async throws {
         // Given
-        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
-        mockMigrator.migrateToMLSUserIDIn_MockValue = .random()
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
 
         await viewContext.perform { [self] in
             _ = createUser(in: viewContext)
@@ -105,14 +111,17 @@ final class OneOnOneResolverTests: XCTestCase {
         try await sut.resolveAllOneOnOneConversations(in: viewContext)
 
         // Then
-        XCTAssertEqual(mockProtocolSelector.getProtocolForUserWithIn_Invocations.count, 1)
-        XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 1)
+        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
+        XCTAssertEqual(selectorInvocationsCount, 1)
+
+        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
+        XCTAssertEqual(migratorInvocationsCount, 1)
     }
 
     func test_resolveAllOneOnOneConversations_givenUserWithoutDomain_thenSkipOneMigration() async throws {
         // Given
-        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
-        mockMigrator.migrateToMLSUserIDIn_MockValue = .random()
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
 
         await viewContext.perform { [self] in
             let userA = createUser(in: viewContext)
@@ -127,14 +136,17 @@ final class OneOnOneResolverTests: XCTestCase {
         try await sut.resolveAllOneOnOneConversations(in: viewContext)
 
         // Then
-        XCTAssertEqual(mockProtocolSelector.getProtocolForUserWithIn_Invocations.count, 1)
-        XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 1)
+        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
+        XCTAssertEqual(selectorInvocationsCount, 1)
+
+        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
+        XCTAssertEqual(migratorInvocationsCount, 1)
     }
 
     func test_resolveAllOneOnOneConversations_givenMigrationFailure() async throws {
         // Given
-        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
-        mockMigrator.migrateToMLSUserIDIn_MockError = MockOneOnOneResolverError.failed
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockError(MockOneOnOneResolverError.failed)
 
         await viewContext.perform { [self] in
             let userA = createUser(in: viewContext)
@@ -148,8 +160,11 @@ final class OneOnOneResolverTests: XCTestCase {
         try await sut.resolveAllOneOnOneConversations(in: viewContext)
 
         // Then
-        XCTAssertEqual(mockProtocolSelector.getProtocolForUserWithIn_Invocations.count, 2)
-        XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 2)
+        let selectorCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
+        XCTAssertEqual(selectorCount, 2)
+
+        let migratorCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
+        XCTAssertEqual(migratorCount, 2)
     }
 
     func test_ResolveOneOnOneConversation_MLSSupported() async throws {
@@ -157,16 +172,16 @@ final class OneOnOneResolverTests: XCTestCase {
         let userID: QualifiedID = .random()
 
         // Mock
-        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
-        mockMigrator.migrateToMLSUserIDIn_MockValue = .random()
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
 
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: viewContext)
 
         // Then
-        XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 1)
-        let invocation = try XCTUnwrap(mockMigrator.migrateToMLSUserIDIn_Invocations.first)
-        XCTAssertEqual(invocation.userID, userID)
+        let invocations = await mockMigrator.migrateToMLSUserIDIn_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        XCTAssertEqual(invocations.first?.userID, userID)
     }
 
     func test_ResolveOneOnOneConversation_ProteusSupported() async throws {
@@ -174,13 +189,14 @@ final class OneOnOneResolverTests: XCTestCase {
         let userID: QualifiedID = .random()
 
         // Mock
-        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .proteus
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.proteus)
 
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: viewContext)
 
         // Then
-        XCTAssertEqual(mockMigrator.migrateToMLSUserIDIn_Invocations.count, 0)
+        let count = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
+        XCTAssertEqual(count, 0)
     }
 
     func test_ResolveOneOnOneConversation_NoCommonProtocols() async throws {
@@ -205,7 +221,7 @@ final class OneOnOneResolverTests: XCTestCase {
         }
 
         // Mock
-        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .some(nil)
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.some(nil))
 
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: viewContext)
