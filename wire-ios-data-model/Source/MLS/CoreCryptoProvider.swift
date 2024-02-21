@@ -153,9 +153,34 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         updateKeychainItemAccess()
         await migrateCryptoboxSessionsIfNeeded(with: coreCrypto)
 
-        try await coreCrypto.perform { try await $0.proteusInit() }
+        try await configureProteusClient(coreCrypto: coreCrypto)
+        try await configureMLSClient(coreCrypto: coreCrypto)
 
         return coreCrypto
+    }
+
+    private func configureProteusClient(coreCrypto: SafeCoreCrypto) async throws {
+        try await coreCrypto.perform { try await $0.proteusInit() }
+    }
+
+    private func configureMLSClient(coreCrypto: SafeCoreCrypto) async throws {
+        let mlsClientID: MLSClientID? = await syncContext.perform {
+            guard
+                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient(),
+                selfClient.hasRegisteredMLSClient
+            else {
+                return nil
+            }
+            return MLSClientID(userClient: selfClient)
+        }
+
+        // Initialise MLS if we have previously registered an MLS client
+        if let mlsClientID = mlsClientID {
+            try await coreCrypto.perform { try await $0.mlsInit(
+                clientId: Data(mlsClientID.rawValue.utf8),
+                ciphersuites: [CiphersuiteName.default.rawValue],
+                nbKeyPackage: nil) }
+        }
     }
 
     // WORKAROUND:
