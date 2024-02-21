@@ -54,7 +54,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         cancellables = .init()
 
         sut = CommitSender(

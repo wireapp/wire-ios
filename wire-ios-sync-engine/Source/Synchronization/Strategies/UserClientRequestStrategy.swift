@@ -46,7 +46,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     fileprivate var didRetryRegisteringSignalingKeys: Bool = false
     fileprivate var didRetryUpdatingCapabilities: Bool = false
     let prekeyGenerator: PrekeyGenerator
-    let coreCryptoProvider: CoreCryptoProviderProtocol
 
     public var requestsFactory: UserClientRequestFactory
     public var minNumberOfRemainingKeys: UInt = 20
@@ -62,14 +61,12 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         clientRegistrationStatus: ZMClientRegistrationStatus,
         clientUpdateStatus: ClientUpdateStatus,
         context: NSManagedObjectContext,
-        proteusProvider: ProteusProviding,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        proteusProvider: ProteusProviding
     ) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
         self.requestsFactory = UserClientRequestFactory()
         self.prekeyGenerator = PrekeyGenerator(proteusProvider: proteusProvider)
-        self.coreCryptoProvider = coreCryptoProvider
 
         super.init(managedObjectContext: context)
 
@@ -190,17 +187,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             }
         }
 
-        if clientRegistrationStatus.currentPhase == .registeringMLSClient {
-            WaitingGroupTask(context: managedObjectContext) { [self] in
-                do {
-                    // Make sure MLS client exists, mls public keys will be generated upon creation
-                    _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
-                } catch {
-                    WireLogger.mls.error("Failed to create MLS client: \(error)")
-                }
-            }
-        }
-
         if clientRegistrationStatus.currentPhase == .unregistered {
             if let request = insertSync.nextRequest(for: apiVersion) {
                 return request
@@ -311,10 +297,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         guard let client = managedObject as? UserClient else { fatal("Called requestForInsertingObject() on \(managedObject.safeForLoggingDescription)") }
-        guard let prekeys = clientRegistrationStatus?.idPrekeysTuple else {
+        guard let prekeys = clientRegistrationStatus?.prekeys else {
             fatal("Asked to insert client when there's no prekeys available")
         }
-        guard let lastResortPrekey = clientRegistrationStatus?.lastResortIdPrekeyTuple else {
+        guard let lastResortPrekey = clientRegistrationStatus?.lastResortPrekey else {
             fatal("Asked to insert client when there's no last resort prekey available")
         }
 
