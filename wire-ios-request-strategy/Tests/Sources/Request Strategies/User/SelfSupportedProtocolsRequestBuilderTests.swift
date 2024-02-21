@@ -24,6 +24,8 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
     // the api version is just required to build and not influence the tests themselves
     private let defaultAPIVersion: APIVersion = .v4
 
+    // MARK: Transport Request
+
     func testBuildTransportRequest_givenAPIVersion0_thenDontBuildRequest() {
         // given
         let builder = makeBuilder(apiVersion: .v0)
@@ -102,6 +104,75 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
 
         // then
         XCTAssertEqual(request?.apiVersion, defaultAPIVersion.rawValue)
+    }
+
+    // MARK: Upstream Request
+
+    func testBuildUpstreamRequest_givenAPIVersion0_thenDontBuildRequest() {
+        // given
+        let builder = makeBuilder(apiVersion: .v0)
+
+        // when
+        let request = builder.buildUpstreamRequest(keys: .init())
+
+        // then
+        XCTAssertNil(request)
+    }
+
+    func testBuildUpstreamRequest_givenAPIVersion4_thenBuildRequest() {
+        // given
+        let builder = makeBuilder(apiVersion: .v4)
+
+        // when
+        let request = builder.buildUpstreamRequest(keys: .init())
+
+        // then
+        XCTAssertNotNil(request)
+    }
+
+    func testBuildUpstreamRequest_givenAPIVersion5_thenBuildRequest() {
+        // given
+        let builder = makeBuilder(apiVersion: .v5)
+
+        // when
+        let request = builder.buildUpstreamRequest(keys: .init())
+
+        // then
+        XCTAssertNotNil(request)
+    }
+
+    func testBuildUpstreamRequest_thenTransportRequestPathIsSet() {
+        // given
+        let builder = makeBuilder(apiVersion: .v4)
+
+        // when
+        let request = builder.buildUpstreamRequest(keys: .init())
+
+        // then
+        XCTAssertEqual(request?.transportRequest.path, "/v4/self/supported-protocols")
+    }
+
+    func testBuildUpstreamRequest_thenKeysAreSet() {
+        // given
+        let key = "supportedProtocols"
+        let builder = makeBuilder()
+
+        // when
+        let request = builder.buildUpstreamRequest(keys: [key])
+
+        // then
+        XCTAssertEqual(request?.keys, [key])
+    }
+
+    func testBuildUpstreamRequest_thenUserInfo() throws {
+        // given
+        let builder = makeBuilder(supportedProtocols: [.proteus, .mls])
+
+        // when
+        let request = builder.buildUpstreamRequest(keys: .init())
+
+        // then
+        XCTAssert(request?.userInfo.isEmpty ==  true)
     }
 
     // MARK: Helpers
