@@ -54,7 +54,6 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         // WHEN
         performResyncResources()
 
-
         // THEN
         XCTAssertFalse(conversation.isSelfAnActiveMember)
     }
