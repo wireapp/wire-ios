@@ -216,7 +216,13 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             return
         }
 
-        titleLabel.attributedText = user.nameIncludingAvailability(color: LabelColors.textDefault, selfUser: selfUser)
+        let userStatus = UserStatus(user: user, isCertified: false)
+        titleLabel.attributedText = userStatus.title(
+            color: LabelColors.textDefault,
+            includeAvailability: selfUser.isTeamMember,
+            includeVerificationStatus: false,
+            appendYouSuffix: false
+        )
     }
 
     @objc func actionButtonPressed(sender: Any?) {
