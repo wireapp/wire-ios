@@ -172,11 +172,12 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
                 let apiResponse = try await acmeApi.sendAuthorizationRequest(path: authzEndpoint, requestBody: authzRequest)
                 let challenge = try await e2eiService.setAuthzResponse(authz: apiResponse.response)
 
-                return AcmeAuthorization(nonce: apiResponse.nonce,
-                                         location: apiResponse.location,
-                                         response: apiResponse.response,
-                                         challengeType: apiResponse.challengeType,
-                                         newAcmeAuthz: challenge)
+                return AcmeAuthorization(
+                    nonce: apiResponse.nonce,
+                    location: apiResponse.location,
+                    response: apiResponse.response,
+                    challengeType: apiResponse.challengeType,
+                    newAcmeAuthz: challenge)
             } catch {
                 logger.error("failed to create authz: \(error.localizedDescription)")
 
@@ -283,11 +284,16 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
             logger.info("validate OIDC challenge")
 
             do {
-                let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(idToken: idToken,
-                                                                                        refreshToken: refreshToken,
-                                                                                        nonce: prevNonce)
-                let apiResponse = try await acmeApi.sendChallengeRequest(path: acmeChallenge.url, requestBody: challengeRequest)
+                let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(
+                    idToken: idToken,
+                    refreshToken: refreshToken,
+                    nonce: prevNonce)
+                let apiResponse = try await acmeApi.sendChallengeRequest(
+                    path: acmeChallenge.url,
+                    requestBody: challengeRequest)
+
                 try await setOIDCChallengeResponse(challengeResponse: apiResponse)
+
                 return apiResponse
             } catch {
                 logger.error("failed to validate OIDC challenge: \(error.localizedDescription)")
