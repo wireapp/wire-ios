@@ -23,9 +23,7 @@ import WireCommonComponents
 final class ProfileHeaderViewController: UIViewController {
 
     /// The options to customize the appearance and behavior of the view.
-    var options: Options {
-        didSet { applyOptions() }
-    }
+    private let options: Options
 
     /// Associated conversation, if displayed in the context of a conversation
     private let conversation: ZMConversation?
@@ -182,8 +180,6 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        userStatus.name = user.name ?? ""
-
         let remainingTimeString = user.expirationDisplayString
         remainingTimeLabel.text = remainingTimeString
         remainingTimeLabel.isHidden = remainingTimeString == nil
@@ -202,6 +198,7 @@ final class ProfileHeaderViewController: UIViewController {
         updateTeamLabel()
 
         addChild(userStatusViewController)
+        userStatusViewController.userStatus = userStatus
 
         stackView = CustomSpacingStackView(
             customSpacedArrangedSubviews: [

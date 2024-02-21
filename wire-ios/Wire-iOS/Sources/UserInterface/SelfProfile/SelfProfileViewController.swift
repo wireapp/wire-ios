@@ -52,10 +52,6 @@ final class SelfProfileViewController: UIViewController {
         return [.portrait]
     }
 
-    private var userCanSetProfilePicture: Bool {
-        return userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture)
-    }
-
     // MARK: - Initialization
 
     /**
@@ -84,11 +80,16 @@ final class SelfProfileViewController: UIViewController {
 
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
+        var options: ProfileHeaderViewController.Options
+        options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
+        if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
+            options.insert(.allowEditingProfilePicture)
+        }
         profileHeaderViewController = ProfileHeaderViewController(
             user: selfUser,
             viewer: selfUser,
             conversation: .none,
-            options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability],
+            options: options,
             userSession: userSession,
             isSelfUserProteusVerifiedUseCase: userSession.isSelfUserProteusVerifiedUseCase,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
@@ -125,10 +126,6 @@ final class SelfProfileViewController: UIViewController {
         profileContainerView.addSubview(profileHeaderViewController.view)
         view.addSubview(profileContainerView)
         profileHeaderViewController.didMove(toParent: self)
-
-        if userCanSetProfilePicture {
-            profileHeaderViewController.options.insert(.allowEditingProfilePicture)
-        }
 
         addChild(settingsController)
         view.addSubview(settingsController.view)
@@ -199,7 +196,7 @@ final class SelfProfileViewController: UIViewController {
     // MARK: - Events
 
     @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
-        guard userCanSetProfilePicture else { return }
+        guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
         let alertViewController = profileImagePicker.selectProfileImage()
         alertViewController.configPopover(pointToView: profileHeaderViewController.imageView)
