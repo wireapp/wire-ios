@@ -85,4 +85,8 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     func showPermissionDeniedViewController() {
         // no-op
     }
+
+    func conversationListViewControllerViewModel(_ viewModel: ConversationListViewController.ViewModel, didUpdate selfUserStatus: UserStatus) {
+        // no-op
+    }
 }
