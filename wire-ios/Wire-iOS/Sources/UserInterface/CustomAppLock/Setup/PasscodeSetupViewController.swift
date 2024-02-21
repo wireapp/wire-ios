@@ -100,14 +100,11 @@ final class PasscodeSetupViewController: UIViewController {
     }()
 
     private let validationLabels: [PasscodeError: UILabel] = {
-
-        let myDictionary = PasscodeError.allCases.reduce([PasscodeError: UILabel]()) { (dict, errorReason) -> [PasscodeError: UILabel] in
-            var dict = dict
-            dict[errorReason] = UILabel()
-            return dict
-        }
-
-        return myDictionary
+        PasscodeError
+            .allCases
+            .reduce(into: [:]) { partialResult, errorReason in
+                partialResult[errorReason] = UILabel()
+            }
     }()
 
     private var callback: ResultHandler?
