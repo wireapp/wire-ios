@@ -38,7 +38,7 @@ final class SupportedProtocolsServiceTests: MessagingTest {
         sut = SupportedProtocolsService(
             featureRepository: featureRepository,
             userRepository: userRepository,
-            oneOnOneResolver: oneOnOneResolver
+            oneOnOneResolver: oneOnOneResolver, context: self.syncMOC
         )
     }
 
@@ -264,6 +264,38 @@ final class SupportedProtocolsServiceTests: MessagingTest {
             mock(migrationState: .finalised)
             XCTAssertEqual(sut.calculateSupportedProtocols(), [.mls])
         }
+    }
+
+    func testUpdateSupportedProtocols_WhenProtocolsChange_ResolveAllOneOnOneConversationsCalled() async throws {
+        let expectation = XCTestExpectation(description: "resolveAllOneOnOneConversations was called")
+
+        // GIVEN
+        let selfUser = createSelfUser()
+        userRepository.selfUser_MockValue = selfUser
+        mock(migrationState: .ongoing)
+        mock(remoteSupportedProtocols: [.mls, .proteus])
+
+        // Arrange
+        let initialProtocols: Set<MessageProtocol> = [.proteus]
+        selfUser.supportedProtocols = initialProtocols
+
+        // Mock the oneOnOneResolver to fulfill the expectation when called
+        oneOnOneResolver.resolveAllOneOnOneConversationsIn_MockMethod = { _ in
+            expectation.fulfill()
+        }
+
+        // WHEN
+        syncMOC.performAndWait {
+            sut.updateSupportedProtocols()
+        }
+
+        // THEN
+        let result = XCTWaiter.wait(for: [expectation], timeout: 2)
+        if result != .completed {
+            XCTFail("resolveAllOneOnOneConversations was not called exactly once")
+        }
+
+        XCTAssertEqual(oneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 1)
     }
 
 }
