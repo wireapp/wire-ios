@@ -20,6 +20,8 @@ import Foundation
 
 public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
 
+    // MARK: - Properties
+
     // Slow Sync
 
     private unowned var syncProgress: SyncProgress
@@ -34,6 +36,8 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
     private let userRepository: UserRepositoryInterface
 
+    // MARK: - Initializers
+
     required public init(
         context: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
@@ -47,6 +51,8 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
         configuration = [.allowsRequestsDuringSlowSync]
     }
+
+    // MARK: - Functions
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard isSlowSyncing else {
