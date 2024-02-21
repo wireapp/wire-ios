@@ -19,6 +19,7 @@
 import XCTest
 @testable import Wire
 import WireSyncEngineSupport
+import WireDataModelSupport
 
 final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTestHelper {
 
@@ -32,6 +33,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
     var mockGetProteusFingerprint: MockGetUserClientFingerprintUseCaseProtocol!
     var mockContextProvider: MockContextProvider!
+    var mockEnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInterface!
 
     override func setUp() {
         super.setUp()
@@ -44,6 +46,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
         mockGetProteusFingerprint = MockGetUserClientFingerprintUseCaseProtocol()
         mockContextProvider = MockContextProvider()
+        mockEnrollE2eICertificateUseCase = MockEnrolE2eICertificateUseCase()
     }
 
     override func tearDown() {
@@ -56,6 +59,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         mockGetE2eIdentityCertificates = nil
         mockGetProteusFingerprint = nil
         mockContextProvider = nil
+        mockEnrollE2eICertificateUseCase = nil
         super.tearDown()
     }
 
@@ -70,7 +74,8 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             credentials: emailCredentials,
             saveFileManager: saveFileManager,
             getProteusFingerprint: mockGetProteusFingerprint,
-            contextProvider: mockContextProvider
+            contextProvider: mockContextProvider,
+            e2eiCertificateEnrollment: mockEnrollE2eICertificateUseCase
         )
         deviceActionHandler.downloadE2EIdentityCertificate(certificate: .mock())
         wait(for: [expectation], timeout: 0.5)
@@ -83,7 +88,8 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
             credentials: emailCredentials,
             saveFileManager: MockSaveFileManager(),
             getProteusFingerprint: mockGetProteusFingerprint,
-            contextProvider: mockContextProvider
+            contextProvider: mockContextProvider,
+            e2eiCertificateEnrollment: mockEnrollE2eICertificateUseCase
         )
         let testFingerPrint = String.randomAlphanumerical(length: 16)
         mockGetProteusFingerprint.invokeUserClient_MockMethod = { _ in

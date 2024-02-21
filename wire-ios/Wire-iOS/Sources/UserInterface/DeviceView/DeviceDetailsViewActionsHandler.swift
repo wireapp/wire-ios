@@ -28,6 +28,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     private var credentials: ZMEmailCredentials?
     private let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     private let contextProvider: ContextProvider
+    private let e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?
 
     var isProcessing: ((Bool) -> Void)?
 
@@ -44,7 +45,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         saveFileManager: SaveFileActions,
         logger: LoggerProtocol = WireLogger.e2ei,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        contextProvider: ContextProvider
+        contextProvider: ContextProvider,
+        e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?
     ) {
         self.userClient = userClient
         self.credentials = credentials
@@ -53,6 +55,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.logger = logger
         self.getProteusFingerprint = getProteusFingerprint
         self.contextProvider = contextProvider
+        self.e2eiCertificateEnrollment = e2eiCertificateEnrollment
     }
 
     func updateCertificate() async -> E2eIdentityCertificate? {
@@ -60,13 +63,13 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         return nil
     }
 
-    func enrollClient() async -> E2eIdentityCertificate? {
+    func enrollClient() async throws -> E2eIdentityCertificate? {
         do {
             try await startE2EIdentityEnrollment()
             return try await fetchE2eIdentityCertificate()
         } catch {
             logger.error(error.localizedDescription, attributes: nil)
-            return nil
+            throw error
         }
     }
 
@@ -141,12 +144,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     private func startE2EIdentityEnrollment() async throws {
         typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
-        let e2eiCertificateUseCase = userSession.enrollE2eICertificate
         guard let rootViewController = await AppDelegate.shared.window?.rootViewController else {
             return
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
-        try await e2eiCertificateUseCase?.invoke(
+        try await e2eiCertificateEnrollment?.invoke(
             authenticate: oauthUseCase.invoke
         )
     }

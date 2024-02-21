@@ -210,7 +210,8 @@ final class ClientListViewController: UIViewController,
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
             mlsThumbprint: client.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16),
             getProteusFingerprint: userSession.getUserClientFingerprint,
-            contextProvider: contextProvider
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2eICertificate
         )
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)

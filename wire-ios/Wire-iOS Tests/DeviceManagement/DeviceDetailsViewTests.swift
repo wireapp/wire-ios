@@ -82,7 +82,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             gracePeriod: 3,
             mlsThumbprint: mlsThumbprint,
             getProteusFingerprint: mockSession.mockGetUserClientFingerprintUseCaseProtocol,
-            contextProvider: mockContextProvider
+            contextProvider: mockContextProvider,
+            e2eiCertificateEnrollment: MockEnrolE2eICertificateUseCase()
         )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isSelfClient = isSelfClient

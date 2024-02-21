@@ -26,7 +26,7 @@ protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
-    func enrollClient() async -> E2eIdentityCertificate?
+    func enrollClient() async throws -> E2eIdentityCertificate?
     func updateCertificate() async -> E2eIdentityCertificate?
     func removeDevice() async -> Bool
     func resetSession()
@@ -42,7 +42,6 @@ final class DeviceInfoViewModel: ObservableObject {
     let userClient: UserClient
     let gracePeriod: TimeInterval
     let mlsThumbprint: String?
-
     var title: String
     var isSelfClient: Bool
 
@@ -118,9 +117,9 @@ final class DeviceInfoViewModel: ObservableObject {
     @MainActor
     func enrollClient() async {
         self.isActionInProgress = true
-        if let certificate = await actionsHandler.enrollClient() {
-            self.e2eIdentityCertificate = certificate
-        } else {
+        do {
+            self.e2eIdentityCertificate = try await actionsHandler.enrollClient()
+        } catch {
             showEnrollmentCertificateError = true
         }
         self.isActionInProgress = false
@@ -181,7 +180,8 @@ extension DeviceInfoViewModel {
         mlsThumbprint: String?,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
         saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
-        contextProvider: ContextProvider
+        contextProvider: ContextProvider,
+        e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             certificate: certificate,
@@ -196,7 +196,8 @@ extension DeviceInfoViewModel {
                 credentials: credentials,
                 saveFileManager: saveFileManager,
                 getProteusFingerprint: getProteusFingerprint,
-                contextProvider: contextProvider
+                contextProvider: contextProvider,
+                e2eiCertificateEnrollment: e2eiCertificateEnrollment
             ),
             userClient: userClient,
             isSelfClient: isSelfClient,
