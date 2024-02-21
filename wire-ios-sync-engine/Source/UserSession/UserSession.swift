@@ -512,7 +512,8 @@ extension ZMUserSession: UserSession {
     }
 
     public var isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol {
-        IsOtherUserE2EICertifiedUseCase(context: syncContext, schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
+        // using the `viewContext` here because to the `invoke` method we pass entities from the view context
+        IsOtherUserE2EICertifiedUseCase(context: viewContext, schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
     }
 }
 
