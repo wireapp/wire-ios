@@ -34,7 +34,6 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 @interface ZMUser (Internal)
 
-@property (null_unspecified, nonatomic) NSUUID *remoteIdentifier;
 @property (nullable, nonatomic) ZMConnection *connection;
 
 @property (nullable, nonatomic) NSUUID *teamIdentifier;

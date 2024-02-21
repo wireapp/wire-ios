@@ -36,9 +36,9 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testMigratingToMessagingStore_2_113_UpdatesRelationships() throws {
+    func testMigratingToMessagingStore_2_114_UpdatesRelationships() throws {
         let mappingModelURL = bundle.url(
-            forResource: "MappingModel_2.112-2.113",
+            forResource: "MappingModel_2.113-2.114",
             withExtension: "cdm"
         )
 
@@ -57,8 +57,8 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         let teamConversation2ID = UUID.create()
 
         try helper.migrateStore(
-            sourceVersion: "2.112.0",
-            destinationVersion: "2.113.0",
+            sourceVersion: "2.113.0",
+            destinationVersion: "2.114.0",
             mappingModel: mappingModel,
             storeDirectory: tmpStoreURL,
             preMigrationAction: { context in
