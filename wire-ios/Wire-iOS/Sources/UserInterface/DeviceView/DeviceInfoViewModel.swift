@@ -68,9 +68,8 @@ final class DeviceInfoViewModel: ObservableObject {
             .replacingOccurrences(of: " ", with: ":")
     }
 
-    @Published
-    var e2eIdentityCertificate: E2eIdentityCertificate?
-    @Published var isRemoved: Bool = false
+    @Published var e2eIdentityCertificate: E2eIdentityCertificate?
+    @Published var shouldDismiss: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
@@ -131,19 +130,16 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func removeDevice() async {
-        let isRemoved = await actionsHandler.removeDevice()
-        self.isRemoved = isRemoved
+        self.shouldDismiss = await actionsHandler.removeDevice()
     }
 
     func resetSession() {
         actionsHandler.resetSession()
     }
 
+    @MainActor
     func updateVerifiedStatus(_ value: Bool) async {
-        let isVerified = await actionsHandler.updateVerified(value)
-        await MainActor.run {
-            isProteusVerificationEnabled = isVerified
-        }
+        isProteusVerificationEnabled = await actionsHandler.updateVerified(value)
     }
 
     func copyToClipboard(_ value: String) {
@@ -159,8 +155,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func getProteusFingerPrint() async {
-        let result = await actionsHandler.getProteusFingerPrint()
-        self.proteusKeyFingerprint = result
+        self.proteusKeyFingerprint = await actionsHandler.getProteusFingerPrint()
     }
 
     func onAppear() {

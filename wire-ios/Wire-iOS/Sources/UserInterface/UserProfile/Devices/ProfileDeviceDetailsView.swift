@@ -156,8 +156,8 @@ struct ProfileDeviceDetailsView: View {
         .onDisappear {
             dismissedView?()
         }
-        .onReceive(viewModel.$isRemoved) { isRemoved in
-            if isRemoved {
+        .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
+            if shouldDismiss {
                 dismiss()
             }
         }
@@ -205,13 +205,14 @@ struct ProfileDeviceDetailsView: View {
                     .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
                     .frame(height: ViewConstants.View.Height.small)
                     .padding([.leading, .top], ViewConstants.Padding.standard)
-                Link(destination: .wr_fingerprintHowToVerify) {
-                    Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
-                        .underline()
-                        .font(UIFont.font(for: .subheadline).swiftUIFont.bold())
-                        .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                        .padding(.leading)
-                }
+                Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
+                    .underline()
+                    .font(UIFont.font(for: .subheadline).swiftUIFont.bold())
+                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .padding(.leading)
+                    .onTapGesture {
+                        viewModel.onHowToDoThatTapped()
+                    }
             }
         }
     }

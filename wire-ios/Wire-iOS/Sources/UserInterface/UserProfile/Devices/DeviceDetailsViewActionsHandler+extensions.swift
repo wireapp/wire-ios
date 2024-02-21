@@ -20,8 +20,8 @@ import Foundation
 import WireSyncEngine
 
 protocol ConversationUserClientDetailsDebugActions {
-    func deleteDevice()
-    func corruptSession()
+    func deleteDevice() async
+    func corruptSession() async
     func duplicateClient()
 }
 
@@ -31,46 +31,47 @@ protocol ConversationUserClientDetailsActions {
 }
 
 extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsDebugActions {
-    func deleteDevice() {
+
+    @MainActor
+    func deleteDevice() async {
         let clientObjectID = userClient.objectID
         guard let sync = userClient.managedObjectContext?.zm_sync else {
             return
         }
-        Task {
+        do {
             guard let client = try await sync.perform({ try sync.existingObject(with: clientObjectID) as? UserClient }) else {
                 return
             }
             await client.deleteClientAndEndSession()
             _ = await sync.perform { sync.saveOrRollback() }
-            await MainActor.run {
-
-            }
+        } catch {
+            logger.error(error.localizedDescription, attributes: nil)
         }
     }
 
-    func corruptSession() {
+    @MainActor
+    func corruptSession() async {
         guard let sync = userClient.managedObjectContext?.zm_sync,
               let selfClientObjectID = ZMUser.selfUser()?.selfClient()?.objectID else {
             return
         }
         let userClientObjectID = userClient.objectID
-        Task {
-            do {
-                guard let client = try await sync.perform({ try sync.existingObject(with: userClientObjectID) as? UserClient }),
-                      let selfClient = try await sync.perform({ try sync.existingObject(with: selfClientObjectID) as? UserClient }) else {
-                    return
-                }
-                _ = await selfClient.establishSessionWithClient(client, usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY=")
-                _ = await sync.perform { sync.saveOrRollback() }
-                await MainActor.run {
-
-                }
-            } catch {
-                WireLogger.e2ei.debug(error.localizedDescription)
+        do {
+            guard let client = try await sync.perform({ try sync.existingObject(with: userClientObjectID) as? UserClient }),
+                  let selfClient = try await sync.perform({ try sync.existingObject(with: selfClientObjectID) as? UserClient }) else {
+                return
             }
+            _ = await selfClient.establishSessionWithClient(client, usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY=")
+            _ = await sync.perform { sync.saveOrRollback() }
+            await MainActor.run {
+
+            }
+        } catch {
+            WireLogger.e2ei.debug(error.localizedDescription)
         }
     }
 
+    @MainActor
     func duplicateClient() {
         guard let context = userClient.managedObjectContext?.zm_sync else {
             return
@@ -107,18 +108,21 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions 
                                                                 userSession: userSession,
                                                                 fromConversation: true)
         let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
-
+        navigationControllerWrapper.presentTopmost()
     }
 
     func howToDoThat() {
-
+        guard let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+        URL.wr_fingerprintHowToVerify.openInApp(above: topMostViewController)
     }
 }
 
 extension DeviceInfoViewModel {
 
     var showDebugMenu: Bool {
-        return false
+        return Bundle.developerModeEnabled
     }
 
     func onShowMyDeviceTapped() {
@@ -126,11 +130,21 @@ extension DeviceInfoViewModel {
     }
 
     func onDeleteDeviceTapped() {
-        debugMenuActionsHandler?.deleteDevice()
+        Task {
+            await debugMenuActionsHandler?.deleteDevice()
+            await MainActor.run {
+                shouldDismiss = true
+            }
+        }
     }
 
     func onCorruptSessionTapped() {
-        debugMenuActionsHandler?.corruptSession()
+        Task {
+           await debugMenuActionsHandler?.corruptSession()
+            await MainActor.run {
+                shouldDismiss = true
+            }
+        }
     }
 
     func onDuplicateClientTapped() {
