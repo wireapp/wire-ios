@@ -1355,7 +1355,10 @@ public final class MLSService: MLSServiceInterface {
                 await withTaskGroup(of: Void.self) { group in
                     group.addTask { [self] in
                         do {
-                            try await Task.sleep(nanoseconds: timestamp.timeIntervalSinceNow.nanoseconds)
+                            let timeIntervalSinceNow = timestamp.timeIntervalSinceNow
+                            if timeIntervalSinceNow > 0 {
+                                try await Task.sleep(nanoseconds: timeIntervalSinceNow.nanoseconds)
+                            }
                             logger.info("scheduled commit is ready, committing...")
                             try await commitPendingProposals(in: groupID)
                         } catch {
