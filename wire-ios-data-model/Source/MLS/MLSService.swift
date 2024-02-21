@@ -479,9 +479,10 @@ public final class MLSService: MLSServiceInterface {
             )
 
             try await coreCrypto.perform {
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.default.rawValue)
                 try await $0.createConversation(
                     conversationId: groupID.data,
-                    creatorCredentialType: .basic,
+                    creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
                     config: config
                 )
             }
@@ -745,7 +746,13 @@ public final class MLSService: MLSServiceInterface {
         var keyPackages = [Data]()
 
         do {
-            keyPackages = try await coreCrypto.perform { try await $0.clientKeypackages(ciphersuite: CiphersuiteName.default.rawValue, credentialType: .basic, amountRequested: amountRequested) }
+            keyPackages = try await coreCrypto.perform {
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.default.rawValue)
+                return try await $0.clientKeypackages(
+                    ciphersuite: CiphersuiteName.default.rawValue,
+                    credentialType: e2eiIsEnabled ? .x509 : .basic,
+                    amountRequested: amountRequested
+                ) }
 
         } catch let error {
             logger.warn("failed to generate new key packages: \(String(describing: error))")

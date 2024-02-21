@@ -253,10 +253,11 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
             case .joinGroup(let groupInfo):
                 let conversationInitBundle = try await coreCrypto.perform {
-                    try await $0.joinByExternalCommit(
+                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.default.rawValue)
+                    return try await $0.joinByExternalCommit(
                         groupInfo: groupInfo,
                         customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),
-                        credentialType: .basic
+                        credentialType: e2eiIsEnabled ? .x509 : .basic
                     )
                 }
 
