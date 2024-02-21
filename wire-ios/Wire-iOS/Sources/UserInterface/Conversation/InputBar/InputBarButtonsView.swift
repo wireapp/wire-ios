@@ -420,54 +420,73 @@ final class InputBarButtonsView: UIView {
         return constraints
     }
 
-    private func setupInsets(forButtons buttons: [UIButton], rowIsFull: Bool) {
-        setupInsetsForFirstButton(buttons.first!)
-        if rowIsFull {
-            setupInsetsForLastButton(buttons.last!)
-        }
-        setupInsetsForMiddleButtons(buttons.dropFirst().dropLast())
+    private enum ButtonPosition {
+        case first
+        case middle
+        case last
     }
 
-    private func setupInsetsForFirstButton(_ button: UIButton) {
+    private func setupInsets(for button: UIButton, position: ButtonPosition) {
         let labelSize = button.titleLabel!.intrinsicContentSize
-        let titleMargin = (conversationHorizontalMargins.left / 2) - InputBarRowConstants.iconSize - (labelSize.width / 2)
-        button.contentHorizontalAlignment = .center
-        button.imageView?.contentMode = .center
-        button.titleEdgeInsets = UIEdgeInsets(
-            top: InputBarRowConstants.iconSize + labelSize.height + InputBarRowConstants.titleTopMargin,
-            left: titleMargin,
-            bottom: 0,
-            right: 0
-        )
-    }
+        let iconSize = InputBarRowConstants.iconSize
+        let topMargin = InputBarRowConstants.titleTopMargin
+        let titleMargin = (conversationHorizontalMargins.left / 2) - iconSize - (labelSize.width / 2)
 
-    private func setupInsetsForLastButton(_ button: UIButton) {
-        let labelSize = button.titleLabel!.intrinsicContentSize
-        let titleMargin = conversationHorizontalMargins.left / 2.0 - labelSize.width / 2.0
-        button.contentHorizontalAlignment = .center
-        button.imageView?.contentMode = .center
-        button.titleEdgeInsets = UIEdgeInsets(
-            top: InputBarRowConstants.iconSize + labelSize.height + InputBarRowConstants.titleTopMargin,
-            left: 0,
-            bottom: 0,
-            right: titleMargin - 1
-        )
-        button.titleLabel?.lineBreakMode = .byClipping
-    }
+        switch position {
+        case .first:
+            button.titleEdgeInsets = UIEdgeInsets(
+                top: iconSize + labelSize.height + topMargin,
+                left: titleMargin,
+                bottom: 0,
+                right: 0
+            )
 
-    private func setupInsetsForMiddleButtons(_ buttons: ArraySlice<UIButton>) {
-        for button in buttons {
-            let labelSize = button.titleLabel!.intrinsicContentSize
-            button.contentHorizontalAlignment = .center
+        case .last:
+            let rightMargin = titleMargin - 1 // Adjust as needed for the last button
+            button.titleEdgeInsets = UIEdgeInsets(
+                top: iconSize + labelSize.height + topMargin,
+                left: 0,
+                bottom: 0,
+                right: rightMargin
+            )
+            button.titleLabel?.lineBreakMode = .byClipping
+
+        case .middle:
             button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -labelSize.width)
             button.titleEdgeInsets = UIEdgeInsets(
-                top: InputBarRowConstants.iconSize + labelSize.height + InputBarRowConstants.titleTopMargin,
-                left: -InputBarRowConstants.iconSize,
+                top: iconSize + labelSize.height + topMargin,
+                left: -iconSize,
                 bottom: 0,
                 right: 0
             )
         }
+
+        button.contentHorizontalAlignment = .center
+        button.imageView?.contentMode = .center
     }
+
+    private func setupInsets(forButtons buttons: [UIButton], rowIsFull: Bool) {
+        guard !buttons.isEmpty else { return }
+        let startTime = CFAbsoluteTimeGetCurrent()
+        setupInsets(for: buttons.first!, position: .first)
+        let endTime = CFAbsoluteTimeGetCurrent()
+        print("Execution Time for first: \(endTime - startTime) seconds")
+
+        if rowIsFull {
+            let startTime = CFAbsoluteTimeGetCurrent()
+            setupInsets(for: buttons.last!, position: .last)
+            let endTime = CFAbsoluteTimeGetCurrent()
+            print("Execution Time for last: \(endTime - startTime) seconds")
+        }
+        buttons.dropFirst().dropLast().forEach { button in
+            let startTime = CFAbsoluteTimeGetCurrent()
+            setupInsets(for: button, position: .middle)
+            let endTime = CFAbsoluteTimeGetCurrent()
+            print("Execution Time for middle: \(endTime - startTime) seconds")
+
+        }
+    }
+
 }
 
 extension InputBarButtonsView {
