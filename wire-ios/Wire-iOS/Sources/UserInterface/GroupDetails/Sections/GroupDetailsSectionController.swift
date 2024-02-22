@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 
 protocol GroupDetailsUserDetailPresenter: AnyObject {
-    func presentDetails(for user: UserType, userIsE2EICertified: Bool)
+    func presentDetails(for user: UserType)
 }
 
 protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter, AnyObject {

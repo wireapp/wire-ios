@@ -456,12 +456,11 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
 
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
 
-    func presentDetails(for user: UserType, userIsE2EICertified: Bool) {
+    func presentDetails(for user: UserType) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
-            isE2EICertified: userIsE2EICertified,
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,

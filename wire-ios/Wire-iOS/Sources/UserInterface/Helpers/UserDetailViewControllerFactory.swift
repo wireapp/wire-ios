@@ -26,14 +26,12 @@ final class UserDetailViewControllerFactory {
     ///
     /// - Parameters:
     ///   - user: user to show the details
-    ///   - isE2EICertified: `true` if the user has a valid `E2EI` certificate for all devices
     ///   - conversation: conversation currently displaying
     ///   - profileViewControllerDelegate: a ProfileViewControllerDelegate for ProfileViewController
     ///   - viewControllerDismisser: a ViewControllerDismisser for returing UIViewController's dismiss action
     /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a serviceUser, return a ProfileViewController
     static func createUserDetailViewController(
         user: UserType,
-        isE2EICertified: Bool,
         conversation: ZMConversation,
         profileViewControllerDelegate: ProfileViewControllerDelegate,
         viewControllerDismisser: ViewControllerDismisser,

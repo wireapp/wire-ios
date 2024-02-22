@@ -27,7 +27,6 @@ extension ConversationViewController {
 
         return UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
-            isE2EICertified: false, // TODO [WPB-765]: fix value
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,

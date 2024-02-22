@@ -69,9 +69,6 @@ final class ServicesSectionController: GroupDetailsSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.presentDetails(
-            for: serviceUsers[indexPath.row],
-            userIsE2EICertified: false // services are non-certified
-        )
+        delegate?.presentDetails(for: serviceUsers[indexPath.row])
     }
 }

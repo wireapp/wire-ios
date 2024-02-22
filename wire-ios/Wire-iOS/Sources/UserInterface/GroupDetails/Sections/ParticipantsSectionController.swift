@@ -277,8 +277,8 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch viewModel.rows[indexPath.row] {
-        case let .user(user, isE2EICertified):
-            delegate?.presentDetails(for: user, userIsE2EICertified: isE2EICertified)
+        case let .user(user, _): // TODO [WPB-765]: remove Bool?
+            delegate?.presentDetails(for: user)
         case .showAll:
             delegate?.presentFullParticipantsList(for: viewModel.participants, in: conversation)
         }
@@ -287,9 +287,9 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         switch viewModel.rows[indexPath.row] {
         case .user(let bareUser, _):
-            return !bareUser.isSelfUser
+            !bareUser.isSelfUser
         default:
-            return true
+            true
         }
     }
 
