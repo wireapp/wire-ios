@@ -211,6 +211,6 @@ class TextView: UITextView {
             placeholderLabelLeftConstraint!,
             placeholderLabelRightConstraint!,
             placeholderLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
-            ])
+        ])
     }
 }

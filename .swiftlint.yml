@@ -1,5 +1,6 @@
 opt_in_rules:
   - closure_spacing
+  - literal_expression_end_indentation
 
 disabled_rules:
   - function_body_length

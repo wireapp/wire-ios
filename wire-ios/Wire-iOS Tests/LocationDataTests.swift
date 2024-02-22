@@ -66,7 +66,7 @@ final class LocationDataTests: XCTestCase {
             "LastLocationLatitudeKey": 45.0,
             "LastLocationLongitudeKey": 75.0,
             "LastLocationZoomLevelKey": 5
-            ])
+        ])
 
         // then
         XCTAssertEqual(sut?.latitude, 45)

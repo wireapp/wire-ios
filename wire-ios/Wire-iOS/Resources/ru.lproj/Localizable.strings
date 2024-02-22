@@ -322,7 +322,7 @@
 "conversation.create.receipts.title" = "Отчеты о прочтении";
 "conversation.create.receipts.subtitle" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "conversation.create.mls.title" = "Протокол";
-"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
+"conversation.create.mls.subtitle" = "Выберите MLS для создания группы с использованием протокола Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
 "conversation.create.mls.cancel" = "Отмена";
 "conversation.create.non_federating_domains_error.title" = "Невозможно создать группу";
@@ -940,7 +940,7 @@
 "profile.extended_metadata.header" = "Информация";
 
 // User Details
-"profile.details.title" = "Детали";
+"profile.details.title" = "Подробности";
 "profile.details.guest" = "Гость";
 "profile.details.group_admin" = "Администратор группы";
 "profile.details.partner" = "внешний";
@@ -992,7 +992,7 @@
 "group_details.receipt_options_cell.title" = "Отчеты о прочтении";
 "group_details.receipt_options_cell.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 
-"group_details.message_protocol.section_tile" = "Protocol details";
+"group_details.message_protocol.section_tile" = "Информация о протоколе";
 "group_details.message_protocol.title" = "Протокол";
 "group_details.message_protocol.cipher_suite" = "Набор шифров";
 
@@ -1554,7 +1554,7 @@
 "registration.terms_of_use.accept" = "Принять";
 
 "registration.email_flow.title" = "Регистрация по email";
-"registration.email_flow.email_step.title" = "Изменить детали";
+"registration.email_flow.email_step.title" = "Изменить профиль";
 
 "registration.country_select.title" = "Страна";
 

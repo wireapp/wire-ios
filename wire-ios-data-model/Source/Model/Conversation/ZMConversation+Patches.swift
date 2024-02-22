@@ -158,9 +158,7 @@ extension ZMConversation {
         conversations.forEach { convo in
             let users = (convo.value(forKey: oldKey) as! NSOrderedSet).array as? [ZMUser]
             users?.forEach { user in
-                let participantRole = ParticipantRole.insertNewObject(in: moc)
-                participantRole.conversation = convo
-                participantRole.user = user
+                let participantRole = ParticipantRole.create(managedObjectContext: moc, user: user, conversation: convo)
                 participantRole.role = nil
             }
             convo.setValue(NSOrderedSet(), forKey: oldKey)

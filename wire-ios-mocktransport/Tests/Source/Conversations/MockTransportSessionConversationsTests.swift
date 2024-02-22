@@ -213,7 +213,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "modify_conversation_access",
             "modify_other_conversation_member",
             "leave_conversation", "delete_conversation"
-            ]))
+        ]))
 
         let member = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.member })
         XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
@@ -258,7 +258,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "modify_conversation_access",
             "modify_other_conversation_member",
             "leave_conversation", "delete_conversation"
-            ]))
+        ]))
 
         let member = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.member })
         XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])

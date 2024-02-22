@@ -53,7 +53,7 @@ final class ZiphTests: XCTestCase {
             .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204800),
             .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2048000),
             .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000)
-            ]
+        ]
 
         sut = ZiphHelper.createZiph(id: id, url: url, imagesList: imagesList)
 

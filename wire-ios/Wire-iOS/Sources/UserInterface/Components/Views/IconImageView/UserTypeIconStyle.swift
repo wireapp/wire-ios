@@ -59,9 +59,12 @@ enum UserTypeIconStyle: String, IconImageStyle {
 }
 
 extension UserTypeIconStyle {
-    init(conversation: GroupDetailsConversationType?,
-         user: UserType,
-         selfUser: UserType) {
+
+    init(
+        conversation: GroupDetailsConversationType?,
+        user: UserType,
+        selfUserHasTeam: Bool
+    ) {
         if user.isFederated {
             self = .federated
         } else if user.isExternalPartner {
@@ -69,11 +72,9 @@ extension UserTypeIconStyle {
         } else if let conversation = conversation {
             self = !user.isGuest(in: conversation) || user.isSelfUser ? .member : .guest
         } else {
-            self = !selfUser.isTeamMember
-                || user.isTeamMember
-                || user.isServiceUser
-                ? .member
-                : .guest
+            self = !selfUserHasTeam || user.isTeamMember || user.isServiceUser
+            ? .member
+            : .guest
         }
     }
 }

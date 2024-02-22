@@ -191,7 +191,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         } else {
             NSLayoutConstraint.activate([
             searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
-                ])
+            ])
         }
 
         NSLayoutConstraint.activate([

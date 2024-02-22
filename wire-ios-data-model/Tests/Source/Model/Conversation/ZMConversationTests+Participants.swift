@@ -590,13 +590,13 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
             (user1, role1),
             (user2, role1)
-            ])
+        ])
 
         // when
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
             (user1, role1),
             (user2, role2)
-            ])
+        ])
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)

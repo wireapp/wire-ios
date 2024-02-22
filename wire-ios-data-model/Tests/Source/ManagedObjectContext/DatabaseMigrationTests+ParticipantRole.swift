@@ -179,47 +179,4 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
 
         try? FileManager.default.removeItem(at: applicationContainer)
     }
-
-    private func createStorageStackAndWaitForCompletion(
-        userID: UUID,
-        applicationContainer: URL,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) throws -> CoreDataStack {
-
-        // we use backgroundActivity suring the setup so we need to mock for tests
-        let manager = MockBackgroundActivityManager()
-        BackgroundActivityFactory.shared.activityManager = manager
-
-        let account = Account(
-            userName: "",
-            userIdentifier: userID
-        )
-        let stack = CoreDataStack(
-            account: account,
-            applicationContainer: applicationContainer,
-            inMemoryStore: false
-        )
-
-        let exp = self.expectation(description: "should wait for loadStores to finish")
-        var setupError: Error?
-        stack.setup(onStartMigration: {
-            // do nothing
-        }, onFailure: { error in
-            setupError = error
-            exp.fulfill()
-        }, onCompletion: { _ in
-            exp.fulfill()
-        })
-        waitForExpectations(timeout: 5.0)
-
-        if let setupError {
-            throw setupError
-        }
-
-        BackgroundActivityFactory.shared.activityManager = nil
-        XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
-
-        return stack
-    }
 }

@@ -125,8 +125,8 @@ final class ApplicationStatusDirectory: ApplicationStatus {
         return transportSession
     }
 
-    func requestSlowSync() {
-        // we don't do slow syncing in the share engine
+    func requestResyncResources() {
+        // we don't resync Resources in the share engine
     }
 
 }
