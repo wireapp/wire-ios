@@ -85,13 +85,13 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUser: selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
         self.init(viewModel: viewModel)
         delegate = self

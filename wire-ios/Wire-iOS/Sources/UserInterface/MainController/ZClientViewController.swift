@@ -70,7 +70,7 @@ final class ZClientViewController: UIViewController {
             account: account,
             selfUser: userSession.selfLegalHoldSubject,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         colorSchemeController = ColorSchemeController(userSession: userSession)
 
@@ -353,7 +353,7 @@ final class ZClientViewController: UIViewController {
         let controller = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController(setBackgroundColor: true)

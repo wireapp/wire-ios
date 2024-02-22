@@ -213,8 +213,7 @@ public protocol UserSession: AnyObject {
     var networkState: ZMNetworkState { get }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
-    var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }
-    var isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol { get }
+    var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
 
@@ -503,18 +502,11 @@ extension ZMUserSession: UserSession {
     }
 
     public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
-        IsUserE2EICertifiedUseCase(schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
-    }
-
-    @available(*, deprecated, message: "will be removed")
-    public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
-        IsSelfUserE2EICertifiedUseCase(context: syncContext, schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
-    }
-
-    @available(*, deprecated, message: "will be removed")
-    public var isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol {
-        // using the `viewContext` here because to the `invoke` method we pass entities from the view context
-        IsOtherUserE2EICertifiedUseCase(context: viewContext, schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
+        IsUserE2EICertifiedUseCase(
+            schedule: .immediate,
+            coreCryptoProvider: coreCryptoProvider,
+            featureRepository: FeatureRepository(context: syncContext)
+        )
     }
 }
 

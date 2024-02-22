@@ -36,7 +36,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private let userSession: UserSession
-    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     private let isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
 
     /// The user who is viewing this view
@@ -106,7 +106,7 @@ final class ProfileHeaderViewController: UIViewController {
     /// - parameter conversation: The conversation.
     /// - parameter options: The options for the appearance and behavior of the view.
     /// - parameter userSession: The user session.
-    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status.
+    /// - parameter isUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status.
     /// Note: You can change the options later through the `options` property.
     init(
         user: UserType,
@@ -114,13 +114,13 @@ final class ProfileHeaderViewController: UIViewController {
         conversation: ZMConversation?,
         options: Options,
         userSession: UserSession,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
         isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
     ) {
         userStatus = .init(user: user, isCertified: false)
         self.user = user
         self.userSession = userSession
-        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+        self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.isOtherUserE2EICertifiedUseCase = isOtherUserE2EICertifiedUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
@@ -339,7 +339,7 @@ final class ProfileHeaderViewController: UIViewController {
         Task {
             do {
                 // TODO [WPB-765]: actually we need to know if it's the self user or another user!!
-                userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+                userStatus.isCertified = try await isUserE2EICertifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
             }

@@ -60,7 +60,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     var sut: ConversationListViewController!
     var mockDelegate: MockConversationListDelegate!
     var userSession: UserSessionMock!
-    private var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
 
     // MARK: - setUp
 
@@ -70,8 +70,8 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
         userSession = UserSessionMock()
 
-        isSelfUserE2EICertifiedUseCase = MockIsSelfUserE2EICertifiedUseCaseProtocol()
-        isSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+        isUserE2EICertifiedUseCase = MockIsUserE2EICertifiedUseCaseProtocol()
+        isUserE2EICertifiedUseCase.invoke_MockValue = false
 
         MockConversationList.hasArchivedConversations = false
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
@@ -81,7 +81,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
             selfUser: selfUser,
             conversationListType: MockConversationList.self,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
 
         sut = ConversationListViewController(viewModel: viewModel)
@@ -97,7 +97,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
-        isSelfUserE2EICertifiedUseCase = nil
+        isUserE2EICertifiedUseCase = nil
         mockDelegate = nil
         userSession = nil
 

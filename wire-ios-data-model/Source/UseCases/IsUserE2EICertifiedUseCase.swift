@@ -23,19 +23,26 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
     private let schedule: NSManagedObjectContext.ScheduledTaskType
     private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let featureRepository: FeatureRepositoryInterface
 
     public init(
         schedule: NSManagedObjectContext.ScheduledTaskType,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        featureRepository: FeatureRepositoryInterface
     ) {
         self.schedule = schedule
         self.coreCryptoProvider = coreCryptoProvider
+        self.featureRepository = featureRepository
     }
 
     public func invoke(
         conversation: ZMConversation,
         user: ZMUser
     ) async throws -> Bool {
+        let isE2EIEnabled = await featureRepository.context.perform {
+            featureRepository.fetchE2EI().isEnabled
+        }
+        guard isE2EIEnabled else { return false }
 
         guard let userContext = user.managedObjectContext else {
             throw Error.usersManagedObjectContextNotSet

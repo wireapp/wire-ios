@@ -143,7 +143,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
@@ -163,7 +163,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)

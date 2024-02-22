@@ -30,7 +30,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     private var syncObserver: InitialSyncObserver!
     let userSession: UserSession
     private var userStatuses = [UUID: UserStatus]()
-    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     private let isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
 
     var didCompleteInitialSync = false {
@@ -44,12 +44,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     init(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
         isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
-        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+        self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.isOtherUserE2EICertifiedUseCase = isOtherUserE2EICertifiedUseCase
         collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
@@ -432,7 +432,7 @@ private extension GroupDetailsViewController {
             do {
                 let isE2EICertified: Bool
                 if user.isSelfUser {
-                    isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+                    isE2EICertified = try await isUserE2EICertifiedUseCase.invoke()
                 } else {
                     isE2EICertified = try await isOtherUserE2EICertifiedUseCase.invoke(
                         conversation: conversation,

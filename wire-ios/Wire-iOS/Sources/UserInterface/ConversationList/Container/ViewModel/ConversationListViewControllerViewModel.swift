@@ -68,7 +68,7 @@ extension ConversationListViewController {
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
-        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
 
         var selectedConversation: ZMConversation?
 
@@ -85,13 +85,13 @@ extension ConversationListViewController {
             selfUser: SelfUserType,
             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
             userSession: UserSession,
-            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+            isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
         ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
-            self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+            self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
             selfUserStatus = .init(user: selfUser, isCertified: false)
             super.init()
 
@@ -196,7 +196,7 @@ extension ConversationListViewController.ViewModel {
     private func updateE2EICertifiedStatus() {
         Task { @MainActor in
             do {
-                selfUserStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+                selfUserStatus.isCertified = try await isUserE2EICertifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }

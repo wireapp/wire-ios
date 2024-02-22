@@ -84,7 +84,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
 
@@ -104,7 +104,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
 
@@ -131,7 +131,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
 
@@ -151,7 +151,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
 
@@ -170,7 +170,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
 
@@ -191,7 +191,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
 
@@ -210,7 +210,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
 
@@ -230,7 +230,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
 
@@ -250,7 +250,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )
 
