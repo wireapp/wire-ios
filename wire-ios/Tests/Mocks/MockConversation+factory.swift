@@ -68,4 +68,14 @@ extension MockConversation {
 
         return mockConversation
     }
+
+    @objc (willAccessValueForKey:)
+    func willAccessValue(forKey: String) {
+
+    }
+
+    @objc (didAccessValueForKey:)
+    func didAccessValue(forKey: String) {
+
+    }
 }
