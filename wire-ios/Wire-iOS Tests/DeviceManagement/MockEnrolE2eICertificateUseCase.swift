@@ -20,9 +20,9 @@ import Foundation
 
 final class MockEnrolE2eICertificateUseCase: EnrollE2eICertificateUseCaseInterface {
 
-    var invokCalled: (((URL, String, String, String) async throws -> (String, String)) -> Void)?
+    var invokeCalled: (((URL, String, String, String) async throws -> (String, String)) -> Void)?
 
     func invoke(authenticate: (URL, String, String, String) async throws -> (String, String)) async throws {
-        invokCalled?(authenticate)
+        invokeCalled?(authenticate)
     }
 }
