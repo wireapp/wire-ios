@@ -420,19 +420,16 @@ private extension GroupDetailsViewController {
     }
 
     private func updateUserE2EICertificationStatuses() async {
-        guard let conversation = conversation as? MLSConversation else {
-            return WireLogger.e2ei.debug("conversation does not conform to `MLSConversation`")
-        }
-
         let participants = conversation.sortedOtherParticipants
         for user in participants {
             guard let user = user as? ZMUser else { continue }
             guard let conversation = conversation as? ZMConversation else { continue }
             do {
-                userStatuses[user.remoteIdentifier]?.isCertified = try await isUserE2EICertifiedUseCase.invoke(
+                let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
                     conversation: conversation,
                     user: user
                 )
+                userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
             } catch {
                 WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
             }
