@@ -91,8 +91,7 @@ final class ConversationViewController: UIViewController {
             viewController = GroupDetailsViewController(
                 conversation: conversation,
                 userSession: userSession,
-                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-                isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
             )
         case .`self`, .oneOnOne, .connection:
             viewController = createUserDetailViewController()

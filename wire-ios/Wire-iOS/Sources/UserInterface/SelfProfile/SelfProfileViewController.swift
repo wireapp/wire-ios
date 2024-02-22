@@ -91,8 +91,7 @@ final class SelfProfileViewController: UIViewController {
             conversation: .none,
             options: options,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         self.userRightInterfaceType = userRightInterfaceType

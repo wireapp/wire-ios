@@ -196,7 +196,11 @@ extension ConversationListViewController.ViewModel {
     private func updateE2EICertifiedStatus() {
         Task { @MainActor in
             do {
-                selfUserStatus.isCertified = try await isUserE2EICertifiedUseCase.invoke()
+                // TODO [WPB-765]: finish
+//                selfUserStatus.isCertified = try await isUserE2EICertifiedUseCase.invoke(
+//                    conversation: conversation,
+//                    user: user
+//                )
             } catch {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }

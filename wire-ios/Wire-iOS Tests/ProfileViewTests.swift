@@ -27,14 +27,13 @@ final class ProfileViewTests: BaseSnapshotTestCase {
     var userSession: UserSessionMock!
 
     var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
-    var isOtherUserE2EICertifiedUseCase: MockIsOtherUserE2EICertifiedUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
 
         userSession = UserSessionMock()
         isUserE2EICertifiedUseCase = .init()
-        isUserE2EICertifiedUseCase.invoke_MockValue = false
+        isUserE2EICertifiedUseCase.invokeConversationUser_MockValue = false
     }
 
     override func tearDown() {
@@ -81,8 +80,7 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: [],
             userSession: userSession,
-            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
 
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
@@ -121,8 +119,7 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: options,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault

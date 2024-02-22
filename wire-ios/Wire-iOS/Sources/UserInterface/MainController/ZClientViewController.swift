@@ -353,8 +353,7 @@ final class ZClientViewController: UIViewController {
         let controller = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController(setBackgroundColor: true)
         navController.modalPresentationStyle = .formSheet

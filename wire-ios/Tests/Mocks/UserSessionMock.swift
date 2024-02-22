@@ -257,7 +257,6 @@ final class UserSessionMock: UserSession {
     }
 
     lazy var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol = MockIsUserE2EICertifiedUseCaseProtocol()
-    lazy var isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol = MockIsOtherUserE2EICertifiedUseCaseProtocol()
 
     var selfUserClient: UserClient? {
         return nil

@@ -31,7 +31,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     let userSession: UserSession
     private var userStatuses = [UUID: UserStatus]()
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
-    private let isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
 
     var didCompleteInitialSync = false {
         didSet { collectionViewController.sections = computeVisibleSections() }
@@ -44,13 +43,11 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     init(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
-        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
-        isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
-        self.isOtherUserE2EICertifiedUseCase = isOtherUserE2EICertifiedUseCase
         collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
 
@@ -429,17 +426,13 @@ private extension GroupDetailsViewController {
 
         let participants = conversation.sortedOtherParticipants
         for user in participants {
+            guard let user = user as? ZMUser else { continue }
+            guard let conversation = conversation as? ZMConversation else { continue }
             do {
-                let isE2EICertified: Bool
-                if user.isSelfUser {
-                    isE2EICertified = try await isUserE2EICertifiedUseCase.invoke()
-                } else {
-                    isE2EICertified = try await isOtherUserE2EICertifiedUseCase.invoke(
-                        conversation: conversation,
-                        user: user
-                    )
-                }
-                userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
+                userStatuses[user.remoteIdentifier]?.isCertified = try await isUserE2EICertifiedUseCase.invoke(
+                    conversation: conversation,
+                    user: user
+                )
             } catch {
                 WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
             }

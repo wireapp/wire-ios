@@ -36,7 +36,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         selfUser = .createSelfUser(name: "Bob")
         userSession = UserSessionMock(mockUser: selfUser)
         isUserE2EICertifiedUseCase = MockIsUserE2EICertifiedUseCaseProtocol()
-        isUserE2EICertifiedUseCase.invoke_MockValue = false
+        isUserE2EICertifiedUseCase.invokeConversationUser_MockValue = false
         sut = ConversationListViewController.ViewModel(
             account: account,
             selfUser: selfUser,

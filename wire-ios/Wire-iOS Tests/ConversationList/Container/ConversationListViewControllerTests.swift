@@ -71,7 +71,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         userSession = UserSessionMock()
 
         isUserE2EICertifiedUseCase = MockIsUserE2EICertifiedUseCaseProtocol()
-        isUserE2EICertifiedUseCase.invoke_MockValue = false
+        isUserE2EICertifiedUseCase.invokeConversationUser_MockValue = false
 
         MockConversationList.hasArchivedConversations = false
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())

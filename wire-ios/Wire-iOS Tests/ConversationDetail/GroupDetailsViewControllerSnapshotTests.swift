@@ -84,8 +84,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
@@ -104,8 +103,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
@@ -131,8 +129,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
@@ -151,8 +148,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
@@ -170,8 +166,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
@@ -191,8 +186,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         verify(matching: sut)
@@ -210,8 +204,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
@@ -230,8 +223,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
@@ -250,8 +242,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN

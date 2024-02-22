@@ -37,7 +37,6 @@ final class ProfileHeaderViewController: UIViewController {
 
     private let userSession: UserSession
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
-    private let isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
 
     /// The user who is viewing this view
     private let viewer: UserType
@@ -114,14 +113,12 @@ final class ProfileHeaderViewController: UIViewController {
         conversation: ZMConversation?,
         options: Options,
         userSession: UserSession,
-        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
-        isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         userStatus = .init(user: user, isCertified: false)
         self.user = user
         self.userSession = userSession
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
-        self.isOtherUserE2EICertifiedUseCase = isOtherUserE2EICertifiedUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
@@ -338,8 +335,11 @@ final class ProfileHeaderViewController: UIViewController {
     private func updateE2EICertifiedStatus() {
         Task {
             do {
-                // TODO [WPB-765]: actually we need to know if it's the self user or another user!!
-                userStatus.isCertified = try await isUserE2EICertifiedUseCase.invoke()
+                // TODO [WPB-765]: finish
+//                userStatus.isCertified = try await isUserE2EICertifiedUseCase.invoke(
+//                    conversation: <#ZMConversation#>,
+//                    user: <#ZMUser#>
+//                )
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
             }

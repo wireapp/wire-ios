@@ -39,7 +39,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
         userSession = UserSessionMock()
 
         isUserE2EICertifiedUseCase = MockIsUserE2EICertifiedUseCaseProtocol()
-        isUserE2EICertifiedUseCase.invoke_MockValue = false
+        isUserE2EICertifiedUseCase.invokeConversationUser_MockValue = false
 
         let account = Account.mockAccount(imageData: Data())
         let selfUser = MockUserType.createSelfUser(name: "Bob")
