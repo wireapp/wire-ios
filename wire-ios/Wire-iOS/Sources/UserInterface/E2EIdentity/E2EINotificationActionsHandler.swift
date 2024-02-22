@@ -18,6 +18,7 @@
 
 import Foundation
 import WireSyncEngine
+import WireSystem
 
 public protocol E2EINotificationActions {
 
@@ -46,11 +47,22 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     public func enrollCertificate() {
         // TODO: [WPB-5496] enroll certificate
-        stopCertificateEnrollmentSnoozerUseCase?.invoke()
+        guard let stopCertificateEnrollmentSnoozerUseCase else {
+            WireLogger.e2ei.warn("can't stop enrollment snoozer: stopCertificateEnrollmentSnoozerUseCase is missing")
+
+            return
+        }
+
+        stopCertificateEnrollmentSnoozerUseCase.invoke()
     }
 
     public func snoozeReminder() async {
-        await snoozeCertificateEnrollmentUseCase?.invoke()
+        guard let snoozeCertificateEnrollmentUseCase else {
+            WireLogger.e2ei.warn("can't snooze reminder: snoozeCertificateEnrollmentUseCase is missing")
+
+            return
+        }
+        await snoozeCertificateEnrollmentUseCase.invoke()
     }
 
 }

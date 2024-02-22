@@ -313,7 +313,7 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
-    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseInterface? = {
+    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseInterface = {
         return EnrollE2EICertificateUseCase(
             e2eiRepository: e2eiRepository,
             context: syncContext)
