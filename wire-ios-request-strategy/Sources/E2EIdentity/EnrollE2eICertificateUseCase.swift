@@ -56,13 +56,20 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
     }
 
     public func invoke(authenticate: OAuthBlock) async throws {
+        try await invoke(authenticate: authenticate, expirySec: nil)
+    }
+
+    public func invoke(authenticate: OAuthBlock, expirySec: UInt32?) async throws {
         do {
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
             logger.warn("failed to register trust anchor: \(error.localizedDescription)")
         }
 
-        let enrollment = try await e2eiRepository.createEnrollment(context: context)
+        let enrollment = try await e2eiRepository.createEnrollment(
+            context: context,
+            expirySec: expirySec
+        )
 
         let acmeNonce = try await enrollment.getACMENonce()
         let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)

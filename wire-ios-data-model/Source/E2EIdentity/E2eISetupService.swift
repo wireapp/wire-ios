@@ -26,19 +26,21 @@ public protocol E2eISetupServiceInterface {
     func registerFederationCertificate(_ certificate: String) async throws
 
     /// Setup enrollment for a client
-    ///
+    /// 
     /// - parameter clientID: qualifed client ID.
     /// - parameter userName: fullname of the user owning the client.
     /// - parameter handle: handle of the user owning the client.
     /// - parameter teamId: team ID of the team the user belongs to.
     /// - parameter isUpgradingClient: `true` if we are upgrading an already existing MLS client, `false` is we are registering a new MLS client.
+    /// - parameter expirySec: optional custom expiration time for the enrollment certificate
 
     func setupEnrollment(
         clientID: E2eIClientID,
         userName: String,
         handle: String,
         teamId: UUID,
-        isUpgradingClient: Bool
+        isUpgradingClient: Bool,
+        expirySec: UInt32?
     ) async throws -> E2eiEnrollment
 
 }
@@ -84,7 +86,8 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         userName: String,
         handle: String,
         teamId: UUID,
-        isUpgradingClient: Bool
+        isUpgradingClient: Bool,
+        expirySec: UInt32?
     ) async throws -> E2eiEnrollment {
         do {
             let enrollment = try await setupNewActivationOrRotate(
@@ -92,7 +95,8 @@ public final class E2eISetupService: E2eISetupServiceInterface {
                 userName: userName,
                 handle: handle,
                 teamId: teamId,
-                isUpgradingClient: isUpgradingClient
+                isUpgradingClient: isUpgradingClient,
+                expirySec: expirySec
             )
             Self.enrollment = enrollment
             return enrollment
@@ -106,26 +110,31 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         userName: String,
         handle: String,
         teamId: UUID,
-        isUpgradingClient: Bool
+        isUpgradingClient: Bool,
+        expirySec: UInt32?
     ) async throws -> E2eiEnrollment {
             let ciphersuite = CiphersuiteName.default.rawValue
-            let expirySec = UInt32(TimeInterval.oneDay * 90)
+            let expirySec = expirySec ?? UInt32(TimeInterval.oneDay * 90)
 
             return try await coreCrypto.perform {
                 if isUpgradingClient {
                     let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                     if e2eiIsEnabled {
-                        return try await $0.e2eiNewRotateEnrollment(displayName: userName,
-                                                                    handle: handle,
-                                                                    team: teamId.uuidString.lowercased(),
-                                                                    expirySec: expirySec,
-                                                                    ciphersuite: ciphersuite)
+                        return try await $0.e2eiNewRotateEnrollment(
+                            displayName: userName,
+                            handle: handle,
+                            team: teamId.uuidString.lowercased(),
+                            expirySec: expirySec,
+                            ciphersuite: ciphersuite
+                        )
                     } else {
-                        return try await $0.e2eiNewActivationEnrollment(displayName: userName,
-                                                                        handle: handle,
-                                                                        team: teamId.uuidString.lowercased(),
-                                                                        expirySec: expirySec,
-                                                                        ciphersuite: ciphersuite)
+                        return try await $0.e2eiNewActivationEnrollment(
+                            displayName: userName,
+                            handle: handle,
+                            team: teamId.uuidString.lowercased(),
+                            expirySec: expirySec,
+                            ciphersuite: ciphersuite
+                        )
                     }
                 } else {
                     return try await $0.e2eiNewEnrollment(
@@ -134,7 +143,8 @@ public final class E2eISetupService: E2eISetupServiceInterface {
                         handle: handle,
                         team: teamId.uuidString.lowercased(),
                         expirySec: expirySec,
-                        ciphersuite: ciphersuite)
+                        ciphersuite: ciphersuite
+                    )
                 }
             }
         }
