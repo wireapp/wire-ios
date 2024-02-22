@@ -120,7 +120,7 @@ final class TextSearchInputView: UIView {
             spinner.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor, constant: -6),
             spinner.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor),
             spinner.widthAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue)
-        ])
+            ])
     }
 
     @available(*, unavailable)

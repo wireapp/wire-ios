@@ -98,11 +98,12 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(client,
-                                                     modifier: { otherClient.ignoreClient($0) },
-                                                     expectedChangedFields: [
-                                                        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
-                                                        UserClientChangeInfoKey.TrustedByClientsChanged.rawValue
+        self.checkThatItNotifiesTheObserverOfAChange(
+            client,
+            modifier: { otherClient.ignoreClient($0) },
+            expectedChangedFields: [
+                UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
+                UserClientChangeInfoKey.TrustedByClientsChanged.rawValue
             ]
         )
 

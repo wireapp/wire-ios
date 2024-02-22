@@ -144,7 +144,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             CreateGroupConversationActionHandler(
                 context: managedObjectContext,
                 removeLocalConversationUseCase: removeLocalConversation
-            )
+            ),
+            UpdateConversationProtocolActionHandler(context: managedObjectContext)
         ])
 
         super.init(

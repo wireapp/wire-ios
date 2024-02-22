@@ -58,7 +58,7 @@ class RoundedBadge: UIButton {
             containedView.topAnchor.constraint(equalTo: topAnchor, constant: contentInset.top),
             containedView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -contentInset.bottom)
 
-            ])
+        ])
     }
 
     func updateCollapseConstraints(isCollapsed: Bool) {
