@@ -19,8 +19,6 @@
 import Foundation
 import WireCoreCrypto
 
-// TODO [WPB-765]: Ensure that these use cases are only applied to mls conversations
-
 public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
     private let schedule: NSManagedObjectContext.ScheduledTaskType

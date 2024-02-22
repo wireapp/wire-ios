@@ -35,7 +35,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
 
-        setupUsersClientsAndConversation()
+        setupConversation(in: context)
+        setupUsersAndClients(in: context)
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
@@ -52,6 +53,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
         super.tearDown()
     }
+
+    // MARK: Self User
 
     func testExpiredCertificateForSelfUserResultsInFalse() async throws {
         // Given
@@ -136,19 +139,54 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(isCertified)
     }
 
+    // MARK: Other User
+
+    // MARK: Edge Cases
+
+    func testPassingSelfConversationFromViewContext() async throws {
+        // Given
+        setupConversation(in: uiMOC)
+        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
+            [userIDs[0]: [.withStatus(.valid), .withStatus(.valid)]]
+        }
+
+        // When
+        let isCertified = try await sut.invoke(
+            conversation: mlsSelfConversation,
+            user: selfUser
+        )
+
+        // Then
+        XCTAssertTrue(isCertified)
+    }
+
+    func testPassingSelfUserFromViewContext() async throws {
+        // Given
+        setupUsersAndClients(in: uiMOC)
+        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
+            [userIDs[0]: [.withStatus(.valid), .withStatus(.valid)]]
+        }
+
+        // When
+        let isCertified = try await sut.invoke(
+            conversation: mlsSelfConversation,
+            user: selfUser
+        )
+
+        // Then
+        XCTAssertTrue(isCertified)
+    }
+
     // TODO: test selfUser <> selfConversation check
     // TODO: test for other users
 
     // MARK: - Helpers
 
-    private func setupUsersClientsAndConversation() {
+    private func setupUsersAndClients(
+        in context: NSManagedObjectContext
+    ) {
         context.performAndWait {
             let helper = ModelHelper()
-            mlsSelfConversation = helper.createMLSSelfConversation(
-                id: .init(uuidString: "11AE029E-AFFA-4B81-9095-497797C0C0FA")!,
-                mlsGroupID: .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc="),
-                in: context
-            )
             selfUser = helper.createSelfUser(
                 id: .init(uuidString: "36DFE52F-157D-452B-A9C1-98F7D9C1815D")!,
                 domain: "example.com",
@@ -156,6 +194,19 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             )
             helper.createSelfClient(in: context)
             helper.createClient(for: .selfUser(in: context))
+        }
+    }
+
+    private func setupConversation(
+        in context: NSManagedObjectContext
+    ) {
+        context.performAndWait {
+            let helper = ModelHelper()
+            mlsSelfConversation = helper.createMLSSelfConversation(
+                id: .init(uuidString: "11AE029E-AFFA-4B81-9095-497797C0C0FA")!,
+                mlsGroupID: .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc="),
+                in: context
+            )
         }
     }
 }
