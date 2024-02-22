@@ -27,6 +27,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     private var sut: IsUserE2EICertifiedUseCase!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
     private var selfUser: ZMUser!
     private var otherUser: ZMUser!
     private var mlsSelfConversation: ZMConversation!
@@ -44,13 +45,21 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-        sut = .init(schedule: .immediate, coreCryptoProvider: mockCoreCryptoProvider)
+        mockFeatureRepository = .init()
+        mockFeatureRepository.context = context
+        mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())
+        sut = .init(
+            schedule: .immediate,
+            coreCryptoProvider: mockCoreCryptoProvider,
+            featureRepository: mockFeatureRepository
+        )
     }
 
     override func tearDown() {
         sut = nil
         mockCoreCryptoProvider = nil
         mockSafeCoreCrypto = nil
+        mockFeatureRepository = nil
         selfUser = nil
         otherUser = nil
         mlsSelfConversation = nil
