@@ -21,7 +21,7 @@ import Foundation
 public protocol GracePeriodRepositoryInterface {
 
     func fetchEndGracePeriodDate() -> Date?
-    func storeEndGracePeriodDate(_ date: Date?)
+    func storeEndGracePeriodDate(_ date: Date)
 
 }
 
@@ -59,7 +59,7 @@ public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterfa
         storage.date(forKey: .endGracePeriod)
     }
 
-    public func storeEndGracePeriodDate(_ date: Date?) {
+    public func storeEndGracePeriodDate(_ date: Date) {
         storage.set(date, forKey: .endGracePeriod)
     }
 

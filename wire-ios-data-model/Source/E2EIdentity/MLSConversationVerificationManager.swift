@@ -29,22 +29,23 @@ public final class MLSConversationVerificationManager: MLSConversationVerificati
     // MARK: - Properties
 
     var mlsService: MLSServiceInterface
-    var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface?
+    var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface
 
     // MARK: - Life cycle
 
-    public init(mlsService: MLSServiceInterface,
-                mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface?) {
-        self.mlsService = mlsService
-        self.mlsConversationVerificationStatusProvider = mlsConversationVerificationStatusProvider
-    }
+    public init(
+        mlsService: MLSServiceInterface,
+        mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface) {
+            self.mlsService = mlsService
+            self.mlsConversationVerificationStatusProvider = mlsConversationVerificationStatusProvider
+        }
 
     // MARK: - Methods
 
     public func startObservingMLSConversationVerificationStatus() {
         Task {
             for try await groupID in mlsService.epochChanges() {
-                try await mlsConversationVerificationStatusProvider?.updateStatus(groupID)
+                try await mlsConversationVerificationStatusProvider.updateStatus(groupID)
             }
         }
     }

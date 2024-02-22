@@ -140,7 +140,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
         }
 
     enum Failure: Error {
-        case failedToSetupE2eIClient(_ underlyingError: Error?)
+        case failedToSetupE2eIClient(_ underlyingError: Error)
     }
 
 }
