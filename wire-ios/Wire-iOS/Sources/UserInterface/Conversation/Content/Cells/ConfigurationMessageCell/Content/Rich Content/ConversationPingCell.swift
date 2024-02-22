@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
 
     typealias AnimationBlock = (_ animationBlock: Any, _ reps: Int) -> Void
     var animationBlock: AnimationBlock?
@@ -126,7 +126,7 @@ class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
     }
 }
 
-class ConversationPingCellDescription: ConversationMessageCellDescription {
+final class ConversationPingCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationPingCell
     let configuration: ConversationPingCell.Configuration
 
@@ -154,7 +154,7 @@ class ConversationPingCellDescription: ConversationMessageCellDescription {
         let text = NSAttributedString(string: pingText, attributes: [
             .font: UIFont.mediumFont,
             .foregroundColor: SemanticColors.Label.textDefault
-            ])
+        ])
 
         let pingColor: UIColor = message.isObfuscated ? .accentDimmedFlat : sender.accentColor
         self.configuration = View.Configuration(pingColor: pingColor, pingText: text, message: message)

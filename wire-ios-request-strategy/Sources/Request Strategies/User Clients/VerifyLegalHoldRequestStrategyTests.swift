@@ -101,7 +101,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 expectedPath = "/v\(apiVersion.rawValue)/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
             }
 
@@ -155,7 +155,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 transportData = Payload.MessageSendingStatus(missing: [self.otherUser.domain!: clientListByUserID]).transportData
 
             }
@@ -199,7 +199,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 transportData = Payload.MessageSendingStatus(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             }
 
@@ -240,7 +240,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: ClientListByUser()).transportData
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 transportData = Payload.MessageSendingStatus(missing: UserListByDomain()).transportData
             }
 
@@ -280,7 +280,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 transportData = Payload.MessageSendingStatus(missing: [selfUser.domain!: clientListByUserID]).transportData
             }
 

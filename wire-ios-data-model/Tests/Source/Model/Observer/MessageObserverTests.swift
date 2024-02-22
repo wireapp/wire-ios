@@ -51,7 +51,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         ) {
 
         // given
-        withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) { () -> Void in
+        withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) {
 
             self.uiMOC.saveOrRollback()
 
@@ -193,7 +193,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: {$0.setReactions(["👻"], forUser: ZMUser.selfUser(in: self.uiMOC))},
+            modifier: { $0.setReactions(["👻"], forUser: ZMUser.selfUser(in: self.uiMOC)) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
@@ -226,7 +226,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: {$0.setReactions([], forUser: selfUser)},
+            modifier: { $0.setReactions([], forUser: selfUser) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }

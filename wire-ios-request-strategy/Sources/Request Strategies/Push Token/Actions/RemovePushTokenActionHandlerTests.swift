@@ -57,7 +57,7 @@ class RemovePushTokenActionHandlerTests: MessagingTestBase {
         var action = RemovePushTokenAction(deviceToken: deviceToken)
 
         // Expectation
-        let didSucceed = expectation(description: "didSucceed")
+        let didSucceed = customExpectation(description: "didSucceed")
 
         action.onResult { result in
             guard case .success = result else { return }
@@ -77,7 +77,7 @@ class RemovePushTokenActionHandlerTests: MessagingTestBase {
         var action = RemovePushTokenAction(deviceToken: deviceToken)
 
         // Expectation
-        let didSucceed = expectation(description: "didSucceed")
+        let didSucceed = customExpectation(description: "didSucceed")
 
         action.onResult { result in
             guard case .success = result else { return }
@@ -97,7 +97,7 @@ class RemovePushTokenActionHandlerTests: MessagingTestBase {
         var action = RemovePushTokenAction(deviceToken: deviceToken)
 
         // Expectation
-        let didFail = expectation(description: "didFail")
+        let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
             guard case .failure(.tokenDoesNotExist) = result else { return }
@@ -117,7 +117,7 @@ class RemovePushTokenActionHandlerTests: MessagingTestBase {
         var action = RemovePushTokenAction(deviceToken: deviceToken)
 
         // Expectation
-        let didFail = expectation(description: "didFail")
+        let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
             guard case .failure(.unknown(999)) = result else { return }

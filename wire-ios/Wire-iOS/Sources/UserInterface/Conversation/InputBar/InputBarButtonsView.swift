@@ -90,7 +90,9 @@ final class InputBarButtonsView: UIView {
         let widthConstraint = widthAnchor.constraint(equalToConstant: 600)
         widthConstraint.priority = UILayoutPriority(rawValue: 750)
 
-        [buttonInnerContainer, buttonOuterContainer].prepareForLayout()
+        [buttonInnerContainer, buttonOuterContainer].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
             buttonRowTopInset,
             buttonInnerContainer.leadingAnchor.constraint(equalTo: buttonOuterContainer.leadingAnchor),
@@ -271,7 +273,7 @@ final class InputBarButtonsView: UIView {
             let isLastButton = rowIsFull && current == buttons.last
             let offset = constants.iconSize / 2 + buttonMargin
 
-            [previous, current].prepareForLayout()
+            [previous, current].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
             constraints.append(
                 previous.trailingAnchor.constraint(equalTo: current.leadingAnchor)
@@ -295,7 +297,7 @@ final class InputBarButtonsView: UIView {
         }
 
         if let reference = referenceButton, !rowIsFull {
-            [reference, lastButton].prepareForLayout()
+            [reference, lastButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             constraints.append(
                 lastButton.widthAnchor.constraint(equalTo: reference.widthAnchor)
             )

@@ -282,7 +282,7 @@ public class EARService: EARServiceInterface {
             try delegate.prepareForMigration { context in
                 try disableEAR(context)
             }
-        }  else {
+        } else {
             throw EARServiceFailure.cannotPerformMigration
         }
     }

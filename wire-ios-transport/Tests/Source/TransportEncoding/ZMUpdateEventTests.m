@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 
 @import WireTransport;
@@ -64,7 +64,6 @@
              @"user.client-remove" : @(ZMUpdateEventTypeUserClientRemove),
              @"team.create" : @(ZMUpdateEventTypeTeamCreate),
              @"team.delete" : @(ZMUpdateEventTypeTeamDelete),
-             @"team.update" : @(ZMUpdateEventTypeTeamUpdate),
              @"team.member-leave" : @(ZMUpdateEventTypeTeamMemberLeave),
              @"team.member-update" : @(ZMUpdateEventTypeTeamMemberUpdate),
              @"team.conversation-create" : @(ZMUpdateEventTypeTeamConversationCreate),
@@ -257,7 +256,7 @@
     // then
     XCTAssertEqual(events.count, 1u);
     ZMUpdateEvent *event = events[0];
-    XCTAssertEqualObjects(event.uuid, [data[@"id"] UUID]);
+    XCTAssertEqualObjects(event.uuid, [NSUUID uuidWithTransportString:data[@"id"]]);
 }
 
 
@@ -572,10 +571,9 @@
              };
 }
 
-@end
 
+#pragma mark - Transient
 
-@implementation ZMUpdateEventTests (Transient)
 
 - (void)testThatAnEventIsNotTransientIfNotSpecified_Stream
 {

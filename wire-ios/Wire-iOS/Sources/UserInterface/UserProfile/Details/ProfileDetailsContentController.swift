@@ -40,7 +40,7 @@ protocol ProfileDetailsContentControllerDelegate: AnyObject {
 final class ProfileDetailsContentController: NSObject,
                                              UITableViewDataSource,
                                              UITableViewDelegate,
-                                             ZMUserObserver {
+                                             UserObserving {
 
     /**
      * The type of content that can be displayed in the profile details.
@@ -58,6 +58,9 @@ final class ProfileDetailsContentController: NSObject,
 
         /// Display the reason for the forced user block.
         case blockingReason
+
+        /// Display the message protocol used for a 1:1 conversation
+        case messageProtocol(MessageProtocol)
     }
 
     /// The user to display the details of.
@@ -84,6 +87,7 @@ final class ProfileDetailsContentController: NSObject,
 
     private var observerToken: Any?
     private let userPropertyCellID = "UserPropertyCell"
+    private let messageProtocolCellID = "MessageProtocolCell"
 
     // MARK: - Initialization
 
@@ -185,6 +189,10 @@ final class ProfileDetailsContentController: NSObject,
                 contents = [.readReceiptsStatus(enabled: readReceiptsEnabled)]
             }
 
+            if let conversation, Bundle.developerModeEnabled, !ProcessInfo.processInfo.isRunningTests {
+                contents.append(.messageProtocol(conversation.messageProtocol))
+            }
+
         default:
             contents = []
         }
@@ -213,6 +221,8 @@ final class ProfileDetailsContentController: NSObject,
             return 1
         case .blockingReason:
             return 1
+        case .messageProtocol:
+            return 1
         }
     }
 
@@ -234,6 +244,10 @@ final class ProfileDetailsContentController: NSObject,
                 header.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsDisabledMemo.header.uppercased()
             }
         case .blockingReason:
+            header.titleLabel.text = nil
+            header.accessibilityIdentifier = nil
+
+        case .messageProtocol:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
         }
@@ -268,6 +282,17 @@ final class ProfileDetailsContentController: NSObject,
         case .blockingReason:
             let cell = tableView.dequeueReusableCell(withIdentifier: UserBlockingReasonCell.zm_reuseIdentifier, for: indexPath) as! UserBlockingReasonCell
             return cell
+
+        case .messageProtocol(let messageProtocol):
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: messageProtocolCellID
+            ) as? UserPropertyCell ?? UserPropertyCell(
+                style: .default,
+                reuseIdentifier: messageProtocolCellID
+            )
+            cell.propertyName = "Message protocol"
+            cell.propertyValue = messageProtocol.rawValue
+            return cell
         }
     }
 
@@ -287,6 +312,9 @@ final class ProfileDetailsContentController: NSObject,
             return footer
         case .blockingReason:
            return nil
+
+        case .messageProtocol:
+            return nil
         }
     }
 

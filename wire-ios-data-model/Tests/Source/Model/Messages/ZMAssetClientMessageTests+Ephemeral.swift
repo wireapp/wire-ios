@@ -221,7 +221,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     }
 
     func testThatItStartsAObuscationTimerForImageAssetMessagesIfTheMessageIsAMessageOfTheCurrentUser() throws {
-        try syncMOC.performAndWait { [self] in
+        try syncMOC.performAndWait {
             // given
             syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             syncConversation.lastReadServerTimeStamp = Date()

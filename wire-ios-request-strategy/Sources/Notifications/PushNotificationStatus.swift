@@ -32,7 +32,7 @@ open class PushNotificationStatus: NSObject {
 
     }
 
-    public typealias FetchCompletion = (Swift.Result<Void, FetchError>) -> Void
+    public typealias FetchCompletion = (Result<Void, FetchError>) -> Void
 
     private var eventIdRanking = NSMutableOrderedSet()
     private var completionHandlers: [UUID: FetchCompletion] = [:]
@@ -107,7 +107,7 @@ open class PushNotificationStatus: NSObject {
         highestRankingEventId.apply(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
-        WireLogger.updateEvent.info("finished fetching all available events, last event id: \(lastEventId)")
+        WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.uuidString))
 
         if let lastEventId = lastEventId {
             lastEventIDRepository.storeLastEventID(lastEventId)
@@ -116,7 +116,7 @@ open class PushNotificationStatus: NSObject {
         guard finished else { return }
 
         // We take all events that are older than or equal to lastEventId and add highest ranking event ID
-        for eventId in completionHandlers.keys.filter({  self.lastEventIdIsNewerThan(lastEventId: lastEventId, eventId: $0) || highestRankingEventId == $0 }) {
+        for eventId in completionHandlers.keys.filter({ self.lastEventIdIsNewerThan(lastEventId: lastEventId, eventId: $0) || highestRankingEventId == $0 }) {
             let completionHandler = completionHandlers.removeValue(forKey: eventId)
             completionHandler?(.success(()))
         }

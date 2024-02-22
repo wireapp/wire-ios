@@ -30,7 +30,8 @@ public extension NSNotification.Name {
 
 /// ZMRequestAvailableNotification is used by transport to signal the operation loop that
 /// there are new potential requests available to process.
-@objc(ZMRequestAvailableNotification) public class RequestAvailableNotification: NSObject {
+@objc(ZMRequestAvailableNotification)
+public final class RequestAvailableNotification: NSObject {
 
     @objc public static func notifyNewRequestsAvailable(_ sender: NSObjectProtocol?) {
         NotificationCenter.default.post(name: .requestAvailableNotification, object: nil)

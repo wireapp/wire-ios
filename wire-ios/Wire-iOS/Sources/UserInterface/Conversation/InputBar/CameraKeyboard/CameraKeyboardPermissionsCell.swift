@@ -78,18 +78,19 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     // MARK: - Configure elements
 
     func configure(deniedAuthorization: DeniedAuthorizationType) {
-        var title = ""
+        typealias KeyboardPhotoAccessDeniedLocale = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard
+        var title: String
 
         switch deniedAuthorization {
-        case .camera:           title = "keyboard_photos_access.denied.keyboard.camera"
-        case .photos:           title = "keyboard_photos_access.denied.keyboard.photos"
-        case .cameraAndPhotos:  title = "keyboard_photos_access.denied.keyboard.camera_and_photos"
-        case .ongoingCall:      title = "keyboard_photos_access.denied.keyboard.ongoing_call"
+        case .camera:           title = KeyboardPhotoAccessDeniedLocale.camera
+        case .photos:           title = KeyboardPhotoAccessDeniedLocale.photos
+        case .cameraAndPhotos:  title = KeyboardPhotoAccessDeniedLocale.cameraAndPhotos
+        case .ongoingCall:      title = KeyboardPhotoAccessDeniedLocale.ongoingCall
         }
 
         descriptionLabel.font = UIFont.systemFont(ofSize: (deniedAuthorization == .ongoingCall ? 14.0 : 16.0),
                                                   weight: UIFont.Weight.light)
-        descriptionLabel.text = title.localized
+        descriptionLabel.text = title
 
         if SecurityFlags.cameraRoll.isEnabled {
             createConstraints(deniedAuthorization: deniedAuthorization)
@@ -109,10 +110,12 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
     private func createConstraints(deniedAuthorization: DeniedAuthorizationType) {
 
-        [containerView,
-         descriptionLabel,
-         settingsButton,
-         cameraIcon].prepareForLayout()
+        [
+            containerView,
+            descriptionLabel,
+            settingsButton,
+            cameraIcon
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
             descriptionLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),

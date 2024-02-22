@@ -65,7 +65,7 @@
 {
     // given
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation1.conversationType = ZMConversationTypeOneOnOne;
+    conversation1.conversationType = ZMConversationTypeGroup;
     [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC]; // this is used to make sure it doesn't return all objects
     
     [self.uiMOC processPendingChanges];
@@ -85,15 +85,25 @@
     // given
     ZMConversation *nonPendingConnectionConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     nonPendingConnectionConversation.conversationType = ZMConversationTypeOneOnOne;
+
+    ZMUser *otherUser1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser1.remoteIdentifier = [NSUUID createUUID];
+    otherUser1.oneOnOneConversation = nonPendingConnectionConversation;
+
     ZMConnection *nonPendingConnection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     nonPendingConnection.status = ZMConnectionStatusAccepted;
-    nonPendingConnection.conversation = nonPendingConnectionConversation;
-    
+    nonPendingConnection.to = otherUser1;
+
     ZMConversation *pendingConnectionConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     pendingConnectionConversation.conversationType = ZMConversationTypeConnection;
+
+    ZMUser *otherUser2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser2.remoteIdentifier = [NSUUID createUUID];
+    otherUser2.oneOnOneConversation = pendingConnectionConversation;
+
     ZMConnection *pendingConnection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     pendingConnection.status = ZMConnectionStatusPending;
-    pendingConnection.conversation = pendingConnectionConversation;
+    pendingConnection.to = otherUser2;
 
     [self.uiMOC processPendingChanges];
     
@@ -112,7 +122,7 @@
     // given
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation1.userDefinedName = @"Foo++";
-    conversation1.conversationType = ZMConversationTypeOneOnOne;
+    conversation1.conversationType = ZMConversationTypeGroup;
     ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation2.userDefinedName = @"Bar--";
     conversation2.conversationType = ZMConversationTypeGroup;
@@ -134,7 +144,7 @@
     // given
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation1.userDefinedName = @"Foo++";
-    conversation1.conversationType = ZMConversationTypeOneOnOne;
+    conversation1.conversationType = ZMConversationTypeGroup;
     ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation2.userDefinedName = @"Bar--";
     conversation2.conversationType = ZMConversationTypeGroup;

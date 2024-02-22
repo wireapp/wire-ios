@@ -28,4 +28,5 @@
 
 @interface ZMClientRegistrationStatus ()
 - (BOOL)isAddingEmailNecessary;
+- (BOOL)isAddingHandleNecessary;
 @end

@@ -23,14 +23,10 @@ enum BlockResult {
     case block(isBlocked: Bool), cancel
 
     var title: String {
-        return localizationKey.localized
-    }
-
-    private var localizationKey: String {
         switch self {
-        case .cancel: return "profile.block_dialog.button_cancel"
-        case .block(isBlocked: false): return "profile.block_button_title_action"
-        case .block(isBlocked: true): return "profile.unblock_button_title_action"
+        case .cancel: return L10n.Localizable.Profile.BlockDialog.buttonCancel
+        case .block(isBlocked: false): return L10n.Localizable.Profile.blockButtonTitleAction
+        case .block(isBlocked: true): return L10n.Localizable.Profile.unblockButtonTitleAction
         }
     }
 

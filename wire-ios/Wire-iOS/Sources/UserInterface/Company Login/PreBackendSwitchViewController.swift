@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-protocol PreBackendSwitchViewControllerDelegate {
+protocol PreBackendSwitchViewControllerDelegate: AnyObject {
     func preBackendSwitchViewControllerDidComplete(_ url: URL)
 }
 
@@ -92,9 +92,11 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     }
 
     private func createConstraints() {
-        [wireLogoInfoView,
-         progressView,
-         informationLabel].prepareForLayout()
+        [
+            wireLogoInfoView,
+            progressView,
+            informationLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             wireLogoInfoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

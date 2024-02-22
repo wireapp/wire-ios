@@ -92,11 +92,13 @@ final class MediaBar: UIView {
         let iconSize: CGFloat = 16
         let buttonInsets: CGFloat = traitCollection.horizontalSizeClass == .regular ? 32 : 16
 
-        [contentView,
-         titleLabel,
-         playPauseButton,
-         closeButton,
-         bottomSeparatorLine].prepareForLayout()
+        [
+            contentView,
+            titleLabel,
+            playPauseButton,
+            closeButton,
+            bottomSeparatorLine
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         contentView.fitIn(view: self)
 

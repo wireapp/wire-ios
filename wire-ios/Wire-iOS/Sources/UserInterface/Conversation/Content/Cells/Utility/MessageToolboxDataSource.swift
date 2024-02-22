@@ -59,7 +59,7 @@ extension MessageToolboxContent: Comparable {
 
 typealias ConversationMessage = ZMConversationMessage & SwiftConversationMessage
 
-class MessageToolboxDataSource {
+final class MessageToolboxDataSource {
 
     typealias ContentSystem = L10n.Localizable.Content.System
 

@@ -23,7 +23,7 @@ import WireSyncEngineSupport
 import WireTesting
 @testable import WireSyncEngine
 
-class GetUserClientFingerprintUseCaseTests: MessagingTest {
+final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     var sut: GetUserClientFingerprintUseCase!
 
     var mockProteusService: MockProteusServiceInterface!
@@ -33,7 +33,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
     let fingerprint = "1234"
 
     override func setUp() {
-        DeveloperFlag.storage = .random()!
+        DeveloperFlag.storage = .temporary()
         mockProteusService = MockProteusServiceInterface()
         mockSessionEstablisher = MockSessionEstablisherInterface()
         super.setUp()
@@ -64,12 +64,14 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         // since ProteusProvider is created on the fly when accessed by managedObjectContext
         // when checking the hasSessionWithSelfClient
         DeveloperFlag.proteusViaCoreCrypto.enable(true)
-        syncMOC.proteusService = mockProteusService
+        syncMOC.performAndWait {
+            syncMOC.proteusService = mockProteusService
+        }
         sut = createSut(proteusEnabled: true)
 
         mockProteusService.sessionExistsId_MockValue = sessionEstablished
         var userClient: UserClient!
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             userClient = self.createSelfClient()
             userClient.user?.domain = "example.com"
         }
@@ -94,7 +96,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         sut = createSut(proteusEnabled: false)
 
         var userClient: UserClient!
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             userClient = self.createSelfClient()
         }
 
@@ -110,7 +112,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         sut = createSut(proteusEnabled: true)
 
         var userClient: UserClient!
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             userClient = self.createSelfClient()
         }
 
@@ -129,7 +131,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         // GIVEN
         sut = createSut(proteusEnabled: true)
 
-        syncMOC.performAndWait {
+        await syncMOC.perform {
             _ = self.createSelfClient()
         }
 

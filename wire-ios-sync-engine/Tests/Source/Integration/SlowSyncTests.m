@@ -191,7 +191,7 @@
 }
 
 - (ZMUser *)findUserWithUUID:(NSString *)UUIDString inMoc:(NSManagedObjectContext *)moc {
-    ZMUser *user = [ZMUser fetchWith:[UUIDString UUID] in:moc];
+    ZMUser *user = [ZMUser fetchWith:[NSUUID uuidWithTransportString:UUIDString] in:moc];
     XCTAssertNotNil(user);
     return user;
 }
@@ -244,7 +244,7 @@
     [self.mockTransportSession resetReceivedRequests];
     
     // when
-    XCTestExpectation *expectation = [self expectationWithDescription:@"fetchCompleted"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"fetchCompleted"];
     [self.userSession application:self.application performFetchWithCompletionHandler:^(UIBackgroundFetchResult result) {
         NOT_USED(result);
         ZMTransportRequest *request = self.mockTransportSession.receivedRequests.lastObject;

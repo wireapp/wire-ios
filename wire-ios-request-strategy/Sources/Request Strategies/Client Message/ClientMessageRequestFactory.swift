@@ -51,7 +51,7 @@ public final class ClientMessageRequestFactory: NSObject {
                 nativePush: false,
                 recipients: []
             )
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             guard let domain = domain.nonEmptyValue ?? BackendInfo.domain else {
                 zmLog.error("could not create request: missing domain")
                 return nil
@@ -84,54 +84,6 @@ public final class ClientMessageRequestFactory: NSObject {
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
         )
-    }
-
-    public func upstreamRequestForMessage(_ message: EncryptedPayloadGenerator, in conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest? {
-        switch apiVersion {
-        case .v0:
-            return upstreamRequestForEncryptedMessage(message, in: conversation, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5:
-            return upstreamRequestForQualifiedEncryptedMessage(message, in: conversation, apiVersion: apiVersion)
-        }
-    }
-
-    fileprivate func upstreamRequestForEncryptedMessage(_ message: EncryptedPayloadGenerator, in conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard
-            apiVersion == .v0,
-            let conversationID = conversation.remoteIdentifier?.transportString()
-        else {
-            return nil
-        }
-
-        let originalPath = "/" + ["conversations", conversationID, "otr", "messages"].joined(separator: "/")
-        guard let encryptedPayload = message.encryptForTransport() else { return nil }
-        let path = originalPath.pathWithMissingClientStrategy(strategy: encryptedPayload.strategy)
-        let request = ZMTransportRequest(path: path, method: .post, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
-        request.addContentDebugInformation(message.debugInfo)
-        return request
-    }
-
-    fileprivate func upstreamRequestForQualifiedEncryptedMessage(_ message: EncryptedPayloadGenerator, in conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard
-            apiVersion > .v0,
-            let context = conversation.managedObjectContext,
-            let conversationID = conversation.remoteIdentifier?.transportString(),
-            let domain = conversation.domain ?? ZMUser.selfUser(in: context).domain
-        else {
-            WireLogger.messaging.error("failed to generate request for message: \(message.debugInfo)")
-            return nil
-        }
-
-        let path = "/" + ["conversations", domain, conversationID, "proteus", "messages"].joined(separator: "/")
-
-        guard let encryptedPayload = message.encryptForTransportQualified() else {
-            WireLogger.messaging.error("failed to encrypt message for transport: \(message.debugInfo)")
-            return nil
-        }
-
-        let request = ZMTransportRequest(path: path, method: .post, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
-        request.addContentDebugInformation(message.debugInfo)
-        return request
     }
 
     public func requestToGetAsset(_ assetId: String, inConversation conversationId: UUID, apiVersion: APIVersion) -> ZMTransportRequest {

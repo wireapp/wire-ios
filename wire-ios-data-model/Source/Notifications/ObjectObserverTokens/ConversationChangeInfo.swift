@@ -47,6 +47,7 @@ extension ZMConversation: ObjectInSnapshot {
                     #keyPath(ZMConversation.labels),
                     #keyPath(ZMConversation.localParticipants),
                     ZMConversation.mlsStatusKey,
+                    ZMConversation.mlsVerificationStatusKey,
                     #keyPath(ZMConversation.isDeletedRemotely)
             ])
     }
@@ -129,6 +130,10 @@ extension ZMConversation: ObjectInSnapshot {
 
     public var securityLevelChanged: Bool {
         return changedKeysContain(keys: SecurityLevelKey)
+    }
+
+    public var mlsVerificationStatusChanged: Bool {
+        changedKeysContain(keys: ZMConversation.mlsVerificationStatusKey)
     }
 
     public var allowGuestsChanged: Bool {

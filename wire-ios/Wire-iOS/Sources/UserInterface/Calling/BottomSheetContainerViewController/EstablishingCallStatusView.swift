@@ -50,7 +50,7 @@ extension CallStatusViewState {
     }
 }
 
-class EstablishingCallStatusView: UIView {
+final class EstablishingCallStatusView: UIView {
 
     private let titleLabel = DynamicFontLabel(
         text: "",
@@ -79,7 +79,7 @@ class EstablishingCallStatusView: UIView {
     }
 
     private func setupViews() {
-        [stackView, profileImageView, spaceView].prepareForLayout()
+        [stackView, profileImageView, spaceView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         stackView.alignment = .center
         stackView.spacing = 8
         addSubview(stackView)

@@ -99,7 +99,7 @@ extension UserProfileUpdateRequestStrategyTests {
             "phone": credentials.phoneNumber!,
             "code": credentials.phoneNumberVerificationCode!,
             "dryrun": false
-            ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
+        ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
@@ -119,7 +119,7 @@ extension UserProfileUpdateRequestStrategyTests {
             "phone": credentials.phoneNumber!,
             "code": credentials.phoneNumberVerificationCode!,
             "dryrun": false
-            ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
+        ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
@@ -136,7 +136,7 @@ extension UserProfileUpdateRequestStrategyTests {
         // THEN
         let expected = ZMTransportRequest(path: "/self/password", method: .put, payload: [
             "new_password": credentials.password!
-            ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
+        ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
@@ -193,7 +193,7 @@ extension UserProfileUpdateRequestStrategyTests {
         // THEN
         let expected = ZMTransportRequest(path: "/access/self/email", method: .put, payload: [
             "email": credentials.email!
-            ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
+        ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
 
     }
@@ -663,7 +663,7 @@ extension UserProfileUpdateRequestStrategyTests {
 
         // WHEN
         let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.keyExistsResponse())
+        request?.complete(with: self.handleExistsResponse())
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -759,6 +759,13 @@ extension UserProfileUpdateRequestStrategyTests {
     func badRequestResponse() -> ZMTransportResponse {
         return ZMTransportResponse(payload: ["label": "bad-request"] as NSDictionary,
                                    httpStatus: 400,
+                                   transportSessionError: nil,
+                                   apiVersion: APIVersion.v0.rawValue)
+    }
+
+    func handleExistsResponse() -> ZMTransportResponse {
+        return ZMTransportResponse(payload: ["label": "handle-exists"] as NSDictionary,
+                                   httpStatus: 409,
                                    transportSessionError: nil,
                                    apiVersion: APIVersion.v0.rawValue)
     }

@@ -110,7 +110,7 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
-        // when
+        // then
         sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
@@ -377,7 +377,7 @@ extension SyncStatusTests {
         sut.forceSlowSync()
 
         // then
-        XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
         XCTAssertTrue(sut.isSyncing)
     }
 
@@ -390,7 +390,7 @@ extension SyncStatusTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        NotificationInContext(name: .ForceSlowSync, context: uiMOC.notificationContext).post()
+        NotificationInContext(name: .resyncResources, context: uiMOC.notificationContext).post()
 
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)

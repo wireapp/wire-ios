@@ -62,7 +62,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         case .proteus:
             return 1
 
-        case .mls:
+        case .mls, .mixed:
             return Bundle.developerModeEnabled ? 3 : 2
         }
     }
@@ -137,6 +137,8 @@ private extension MessageProtocol {
 
         case .mls:
             return "MLS"
+        case .mixed:
+            return "Mixed"
         }
     }
 

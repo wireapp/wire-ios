@@ -59,8 +59,8 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(callCount, 1)
 
         var result = ["A", "B", "C", "D", "E"]
-        sut.deletedIndexes.forEach {result.remove(at: $0)}
-        sut.insertedIndexes.forEach {result.insert(endState.array[$0], at: $0)}
+        sut.deletedIndexes.forEach { result.remove(at: $0) }
+        sut.insertedIndexes.forEach { result.insert(endState.array[$0], at: $0) }
         sut.enumerateMovedIndexes { (from, to) in
             let item = startState.array[from]
             result.remove(at: result.firstIndex(of: item)!)
@@ -105,8 +105,8 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(callCount, 3)
 
         var result = ["A", "B", "C", "D", "E"]
-        sut.deletedIndexes.forEach {result.remove(at: $0)}
-        sut.insertedIndexes.forEach {result.insert(endState.array[$0], at: $0)}
+        sut.deletedIndexes.forEach { result.remove(at: $0) }
+        sut.insertedIndexes.forEach { result.insert(endState.array[$0], at: $0) }
         sut.enumerateMovedIndexes { (from, to) in
             let item = startState.array[from]
             result.remove(at: result.firstIndex(of: item)!)
@@ -192,8 +192,8 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(callCount, 1)
 
         var result = ["A", "B", "C", "D", "E"]
-        sut.deletedIndexes.forEach {result.remove(at: $0)}
-        sut.insertedIndexes.forEach {result.insert(endState.array[$0], at: $0)}
+        sut.deletedIndexes.forEach { result.remove(at: $0) }
+        sut.insertedIndexes.forEach { result.insert(endState.array[$0], at: $0) }
         sut.enumerateMovedIndexes { (from, to) in
             let item = result.remove(at: from)
             result.insert(item, at: to)
@@ -237,8 +237,8 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(callCount, 3)
 
         var result = ["A", "B", "C", "D", "E"]
-        sut.deletedIndexes.forEach {result.remove(at: $0)}
-        sut.insertedIndexes.forEach {result.insert(endState.array[$0], at: $0)}
+        sut.deletedIndexes.forEach { result.remove(at: $0) }
+        sut.insertedIndexes.forEach { result.insert(endState.array[$0], at: $0) }
         sut.enumerateMovedIndexes { (from, to) in
             let item = result.remove(at: from)
             result.insert(item, at: to)

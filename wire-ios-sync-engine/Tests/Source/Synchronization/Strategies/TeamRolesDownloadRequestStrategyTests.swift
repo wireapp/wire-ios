@@ -63,7 +63,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
                     "conversation_role": "weakling"
                 ]
             ]
-        ]
+    ]
 
     // MARK: - Helper
     fileprivate func boostrapChangeTrackers(with objects: ZMManagedObject...) {
@@ -75,17 +75,19 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
     func testThatPredicateIsCorrect() {
         // given
-        let team1 = Team.insertNewObject(in: self.syncMOC)
-        team1.remoteIdentifier = .create()
-        team1.needsToDownloadRoles = true
+        syncMOC.performAndWait {
+            let team1 = Team.insertNewObject(in: self.syncMOC)
+            team1.remoteIdentifier = .create()
+            team1.needsToDownloadRoles = true
 
-        let team2 = Team.insertNewObject(in: self.syncMOC)
-        team2.remoteIdentifier = .create()
-        team2.needsToDownloadRoles = false
+            let team2 = Team.insertNewObject(in: self.syncMOC)
+            team2.remoteIdentifier = .create()
+            team2.needsToDownloadRoles = false
 
-        // then
-        XCTAssertTrue(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team1))
-        XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team2))
+            // then
+            XCTAssertTrue(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team1))
+            XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team2))
+        }
     }
 
     func testThatItDoesNotGenerateARequestInitially() {
@@ -148,16 +150,16 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(team.roles.count, 2)
-            guard let adminRole = team.roles.first(where: {$0.name == "superuser" }),
-                let memberRole = team.roles.first(where: {$0.name == "weakling"}) else {
+            guard let adminRole = team.roles.first(where: { $0.name == "superuser" }),
+                let memberRole = team.roles.first(where: { $0.name == "weakling" }) else {
                     return XCTFail()
             }
             XCTAssertEqual(
-                Set(adminRole.actions.compactMap { $0.name}),
+                Set(adminRole.actions.compactMap { $0.name }),
                 Set(["leave_conversation", "delete_conversation"])
             )
             XCTAssertEqual(
-                Set(memberRole.actions.compactMap { $0.name}),
+                Set(memberRole.actions.compactMap { $0.name }),
                 Set(["leave_conversation"])
             )
             XCTAssertFalse(team.needsToDownloadRoles)

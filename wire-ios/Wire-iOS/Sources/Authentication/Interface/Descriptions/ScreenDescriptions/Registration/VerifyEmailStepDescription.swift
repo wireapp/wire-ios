@@ -18,7 +18,7 @@
 
 import Foundation
 
-class VerifyEmailStepSecondaryView: AuthenticationFooterViewDescription {
+final class VerifyEmailStepSecondaryView: AuthenticationFooterViewDescription {
     let views: [ViewDescriptor]
     weak var actioner: AuthenticationActioner?
 

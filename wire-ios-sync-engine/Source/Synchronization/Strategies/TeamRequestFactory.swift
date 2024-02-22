@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final public class TeamDownloadRequestFactory {
+public final class TeamDownloadRequestFactory {
 
     public static var teamPath: String {
         return "/teams"

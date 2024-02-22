@@ -42,13 +42,17 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             FetchMLSConversationGroupInfoActionHandler(context: managedObjectContext),
             FetchSubgroupActionHandler(context: managedObjectContext),
             DeleteSubgroupActionHandler(context: managedObjectContext),
-            LeaveSubconversationActionHandler(context: managedObjectContext)
+            LeaveSubconversationActionHandler(context: managedObjectContext),
+            FetchSupportedProtocolsActionHandler(context: managedObjectContext),
+            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext)
         ])
 
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
         )
+
+        configuration = [.allowsRequestsDuringSlowSync, .allowsRequestsWhileOnline]
     }
 
     // MARK: - Requests

@@ -21,18 +21,17 @@ import Foundation
 class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
     typealias Action = T
-    typealias Result = Swift.Result<Action.Result, Action.Failure>
 
-    var results: [Result]
+    var results: [Result<Action.Result, Action.Failure>]
     var token: Any?
     var performedActions = [Action]()
 
-    init(results: [Result], context: NotificationContext) {
+    init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
         self.results = results
         token = Action.registerHandler(self, context: context)
     }
 
-    convenience init(result: Result, context: NotificationContext) {
+    convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
         self.init(results: [result], context: context)
     }
 

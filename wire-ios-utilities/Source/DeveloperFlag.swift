@@ -28,6 +28,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case nseV2
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
+    case debugDuplicateObjects
 
     public var description: String {
         switch self {
@@ -48,6 +49,8 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .ignoreIncomingEvents:
             return "Turn on to ignore incoming update events"
+        case .debugDuplicateObjects:
+            return "Turn on to have actions to insert duplicate users, conversations, teams"
         }
     }
 
@@ -84,7 +87,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             return "ForceDatabaseLoadingFailure"
-        case .nseV2:
+        case .nseV2, .debugDuplicateObjects:
             return nil
         case .ignoreIncomingEvents:
             return "IgnoreIncomingEventsEnabled"
@@ -103,7 +106,7 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 }
 
-private class DeveloperFlagsDefault {
+private final class DeveloperFlagsDefault {
 
     static func isEnabled(for bundleKey: String) -> Bool {
         return Bundle(for: self).infoForKey(bundleKey) == "1"

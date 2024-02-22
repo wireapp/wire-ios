@@ -300,17 +300,19 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     private func createConstraints() {
         let topMargin = UIScreen.safeArea.top > 0 ? UIScreen.safeArea.top : 26.0
 
-        [contentView,
-         descriptionTextView,
-         separatorLineView,
-         typeLabel,
-         fullIDLabel,
-         verifiedToggle,
-         verifiedToggleLabel,
-         resetButton,
-         backButton,
-         spinner,
-         IDLabel].prepareForLayout()
+        [
+            contentView,
+            descriptionTextView,
+            separatorLineView,
+            typeLabel,
+            fullIDLabel,
+            verifiedToggle,
+            verifiedToggleLabel,
+            resetButton,
+            backButton,
+            spinner,
+            IDLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
@@ -354,7 +356,9 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
         ])
 
         if let debugMenuButton = debugMenuButton {
-            [contentView, descriptionTextView, debugMenuButton].prepareForLayout()
+            [contentView, descriptionTextView, debugMenuButton].forEach {
+                $0.translatesAutoresizingMaskIntoConstraints = false
+            }
             NSLayoutConstraint.activate([
                 debugMenuButton.rightAnchor.constraint(equalTo: contentView.rightAnchor),
                 debugMenuButton.leftAnchor.constraint(equalTo: contentView.leftAnchor),
@@ -512,8 +516,8 @@ extension ProfileClientViewController: UserClientObserver {
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
 
         if changeInfo.sessionHasBeenReset {
-            let alert = UIAlertController(title: "", message: NSLocalizedString("self.settings.device_details.reset_session.success", comment: ""), preferredStyle: .alert)
-            let okAction = UIAlertAction(title: NSLocalizedString("general.ok", comment: ""), style: .destructive, handler: nil)
+            let alert = UIAlertController(title: "", message: L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive, handler: nil)
             alert.addAction(okAction)
             present(alert, animated: true, completion: .none)
             isLoadingViewVisible = false

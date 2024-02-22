@@ -97,7 +97,7 @@ static NSString *foo = @"foo";
     XCTAssertNil([self.sut nextRequestForAPIVersion:APIVersionV0]); // Make sure we've -fetchObjectsFromStore did run
     self.testMOC.userInfo[@"ZMIsUserInterfaceContext"] = @YES;   
     
-    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder stub] andReturnValue:@(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder stub] andReturnValue:@(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY apiVersion:0];
 }
 
 - (NSObject *)transcoderDependentObjectForUpdate:(NSManagedObject *)obj

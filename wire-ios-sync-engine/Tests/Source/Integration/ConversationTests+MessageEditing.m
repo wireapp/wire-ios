@@ -119,7 +119,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Send proteus message"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Send proteus message"];
     NSUUID *originalNonce = message.nonce;
     [self.mockTransportSession resetReceivedRequests];
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request){

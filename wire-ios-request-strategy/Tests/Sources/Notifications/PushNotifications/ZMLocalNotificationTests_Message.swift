@@ -40,7 +40,7 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
         let expiresAfter: TimeInterval = isEphemeral ? 200 : 0
 
-        let mention = mentionedUser.map(papply(Mention.init, NSRange(location: 0, length: 8)))
+        let mention = mentionedUser.map { Mention(range: NSRange(location: 0, length: 8), user: $0) }
         let mentions = mention.map { [$0] } ?? []
 
         var quotedMessage: ZMClientMessage?
@@ -811,7 +811,7 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                sharedUserDefaults: UserDefaults.random()!
+                sharedUserDefaults: UserDefaults.temporary()
             )
             earService.setInitialEARFlagValue(true)
 
@@ -834,7 +834,7 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                sharedUserDefaults: UserDefaults.random()!
+                sharedUserDefaults: UserDefaults.temporary()
             )
             earService.setInitialEARFlagValue(true)
 

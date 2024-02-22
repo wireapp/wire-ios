@@ -24,13 +24,9 @@ enum CancelConnectionRequestResult {
     case cancelRequest, cancel
 
     var title: String {
-        return localizationKey.localized
-    }
-
-    private var localizationKey: String {
         switch self {
-        case .cancel: return "profile.cancel_connection_request_dialog.button_cancel"
-        case .cancelRequest: return "profile.cancel_connection_request_dialog.button_yes"
+        case .cancel: return L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonCancel
+        case .cancelRequest: return L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonYes
         }
     }
 
@@ -44,7 +40,7 @@ enum CancelConnectionRequestResult {
     }
 
     static func message(for user: UserType) -> String {
-         return L10n.Localizable.Profile.CancelConnectionRequestDialog.message(user.name ?? "")
+        return L10n.Localizable.Profile.CancelConnectionRequestDialog.message(user.name ?? "")
     }
 
     static var all: [CancelConnectionRequestResult] {

@@ -39,7 +39,7 @@ protocol AuthenticationFeatureProvider {
  * Reads the authentication features from the build settings.
  */
 
-class BuildSettingAuthenticationFeatureProvider: AuthenticationFeatureProvider {
+final class BuildSettingAuthenticationFeatureProvider: AuthenticationFeatureProvider {
 
     var allowOnlyEmailLogin: Bool {
         #if ALLOW_ONLY_EMAIL_LOGIN

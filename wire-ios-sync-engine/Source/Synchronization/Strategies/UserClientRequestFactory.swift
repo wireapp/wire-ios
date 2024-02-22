@@ -25,8 +25,9 @@ enum UserClientRequestError: Error {
     case noLastPreKey
     case clientNotRegistered
 }
-
+// swiftlint:disable todo_requires_jira_link
 // TODO: when we should update last pre key or signaling keys?
+// swiftlint:enable todo_requires_jira_link
 
 public final class UserClientRequestFactory {
 

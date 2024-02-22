@@ -19,7 +19,7 @@
 import UIKit
 import Foundation
 
-class FolderCreationNameCell: UICollectionViewCell {
+final class FolderCreationNameCell: UICollectionViewCell {
 
     let textField = SimpleTextField()
 

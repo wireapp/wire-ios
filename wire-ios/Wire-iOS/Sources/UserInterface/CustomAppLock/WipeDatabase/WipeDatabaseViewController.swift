@@ -97,16 +97,20 @@ final class WipeDatabaseViewController: UIViewController {
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        [stackView,
-         confirmButton].forEach {
+        [
+            stackView,
+            confirmButton
+        ].forEach {
             view.addSubview($0)
         }
 
         stackView.distribution = .fillProportionally
 
-        [titleLabel,
-         SpacingView(25),
-         infoLabel].forEach {
+        [
+            titleLabel,
+            SpacingView(25),
+            infoLabel
+        ].forEach {
             stackView.addArrangedSubview($0)
         }
 
@@ -115,8 +119,7 @@ final class WipeDatabaseViewController: UIViewController {
 
     private func createConstraints() {
 
-        [stackView,
-         confirmButton].prepareForLayout()
+        [stackView, confirmButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = stackView.widthAnchor.constraint(equalToConstant: CGFloat.iPhone4_7Inch.width)
         widthConstraint.priority = .defaultHigh

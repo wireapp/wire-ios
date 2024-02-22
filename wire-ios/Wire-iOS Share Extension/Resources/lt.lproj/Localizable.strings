@@ -1,0 +1,65 @@
+//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Share Extension
+
+
+
+"general.ok" = "GERAI";
+
+"share_extension.conversation_selection.account" = "Paskyra:";
+"share_extension.conversation_selection.title" = "Pokalbis:";
+"share_extension.send_button.title" = "Siųsti";
+"share_extension.conversation_selection.empty.value" = "Pasirinkti";
+"share_extension.input.placeholder" = "Rašyti žinutę";
+"share_extension.sending_progress.title" = "Siunčiama…";
+"share_extension.preparing.title" = "Ruošiama…";
+"share_extension.no_internet_connection.title" = "Nėra interneto ryšio";
+"share_extension.not_signed_in.title" = "Prieš galėdami ką nors bendrinti, turite prisijungti prie Wire";
+"share_extension.not_signed_in.close_button" = "Užverti";
+
+// Custom app lock - unlock
+"share_extension.unlock.title_label" = "Enter passcode to unlock Wire";
+"share_extension.unlock.submit_button.title" = "unlock";
+"share_extension.unlock.textfield.placeholder" = "Enter your passcode";
+"share_extension.unlock.hint_label" = "„Passcode“";
+"share_extension.unlock.error_label" = "Neteisingas slaptažodis";
+"share_extension.unlock.alert.message" = "Open Wire to create a passcode";
+"share_extension.unlock.reveal_passcode" = "Reveal passcode";
+
+"share_extension.timeout.title" = "Susijungimui skirtas laikas pasibaigė.";
+"share_extension.timeout.message" = "Patikrinkite interneto ryšį ir bandykite dar kartą. Priedai buvo išsaugoti susirašinėjime.";
+
+"content.file.too_big" = "Siunčiamų failų dydis negali viršyti %@";
+"content.file.unsupported_attachment" = "Nepalaikomas priedas";
+"share_extension.error.conversation_does_not_exist.message" = "Pasirinkite susirašinėjimą pasidalinimui";
+
+"share_extension.privacy_security.lock_app.description" = "Atrakinti „Wire“";
+"share_extension.logged_out.title" = "Buvote atjungti nuo šios paskyros.";
+"share_extension.logged_out.message" = "Pasirinkite kitą paskyrą.";
+
+"conversation.displayname.emptygroup" = "Tuščias grupės pokalbis";
+"meta.degraded.degradation_reason_message.singular" = "%@ pradėjo naudotis nauju įrenginiu.";
+"meta.degraded.degradation_reason_message.plural" = "%@ pradėjo naudotis naujais įrenginiais.";
+"meta.degraded.dialog_message" = "Ar vis dar norite išsiųsti savo žinutę?";
+"meta.degraded.cancel_sending_button" = "Nesiųsti";
+"meta.degraded.send_anyway_button" = "Vis tiek siųsti";
+
+//Feature flag - File sharing
+"feature.flag.file_sharing.alert.title" = "File sharing restrictions";
+"feature.flag.file_sharing.alert.message" = "You can not share this file because this feature is disabled.";

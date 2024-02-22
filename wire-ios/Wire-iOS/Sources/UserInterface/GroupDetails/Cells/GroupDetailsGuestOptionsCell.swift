@@ -24,8 +24,8 @@ final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
 
     var isOn = false {
         didSet {
-            let key = "group_details.guest_options_cell.\(isOn ? "enabled" : "disabled")"
-            status = key.localized
+            let key = isOn ? L10n.Localizable.GroupDetails.GuestOptionsCell.enabled : L10n.Localizable.GroupDetails.GuestOptionsCell.disabled
+            status = key
         }
     }
 

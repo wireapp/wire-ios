@@ -30,8 +30,7 @@ public final class StringKeyPath: Hashable {
 
         if let keyPath = KeyPathCache[string] {
             return keyPath
-        }
-        else {
+        } else {
             let instance = StringKeyPath(string)
             KeyPathCache[string] = instance
             return instance

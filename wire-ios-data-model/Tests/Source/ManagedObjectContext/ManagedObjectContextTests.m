@@ -267,7 +267,7 @@
     NSError *error;
     XCTAssert([sut save:&error], @"Failed to save: %@", error);
     NSMutableArray *events = [NSMutableArray array];
-    XCTestExpectation *expectation = [self expectationWithDescription: @"Did save"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Did save"];
     id token = [[NSNotificationCenter defaultCenter] addObserverForName:NSManagedObjectContextDidSaveNotification object:sut queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
         NOT_USED(note);
         [events addObject:@"save"];
@@ -311,7 +311,7 @@
     NSError *error;
     XCTAssert([sut save:&error], @"Failed to save: %@", error);
     NSMutableArray *events = [NSMutableArray array];
-    XCTestExpectation *expectation = [self expectationWithDescription :@"Did save"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Did save"];
     id token = [[NSNotificationCenter defaultCenter] addObserverForName:NSManagedObjectContextDidSaveNotification object:sut queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
         NOT_USED(note);
         [events addObject:@"save"];
@@ -357,7 +357,7 @@
     NSError *error;
     XCTAssert([sut save:&error], @"Failed to save: %@", error);
     
-    XCTestExpectation *expectation = [self expectationWithDescription :@"Did save"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Did save"];
     id token = [[NSNotificationCenter defaultCenter] addObserverForName:NSManagedObjectContextDidSaveNotification object:sut queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
         NOT_USED(note);
         [expectation fulfill];
@@ -388,7 +388,7 @@
 - (void)testThatItDoesNotSaveWhenThereAreNoUserInfoChanges {
     
     // GIVEN
-    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    [self customExpectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
     
     // WHEN
     [self.uiMOC saveOrRollback];
@@ -400,7 +400,7 @@
 - (void)testThatItSaveWhenThereAreUserInfoChanges {
     
     // GIVEN
-    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    [self customExpectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
     self.uiMOC.zm_hasUserInfoChanges = YES;
     
     // WHEN
@@ -413,7 +413,7 @@
 - (void)testThatItResetsUserInfoChangesAfterASave {
     
     // GIVEN
-    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    [self customExpectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
     self.uiMOC.zm_hasUserInfoChanges = YES;
     
     // WHEN

@@ -21,6 +21,7 @@ import WireUtilities
 import WireSystem
 
 extension ZMUser: UserType {
+
     @objc
     public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
@@ -59,7 +60,7 @@ extension ZMUser: UserType {
     }
 
     public var activeConversations: Set<ZMConversation> {
-        return Set(self.participantRoles.compactMap {$0.conversation})
+        return Set(self.participantRoles.compactMap(\.conversation))
     }
 
     public var isVerified: Bool {
@@ -76,6 +77,13 @@ extension ZMUser: UserType {
 
         return selfUser.isFederating(with: self)
     }
+
+    // MARK: - One on one conversation
+
+    /// The one on one conversation with this user.
+
+    @NSManaged
+    public var oneOnOneConversation: ZMConversation?
 
     // MARK: - Conversation Roles
 
@@ -131,6 +139,9 @@ extension ZMUser: UserType {
             let id = remoteIdentifier,
             let context = managedObjectContext
         else {
+            return false
+        }
+        guard (BackendInfo.apiVersion ?? .v0) >= .v5 && DeveloperFlag.enableMLSSupport.isOn  else {
             return false
         }
 
@@ -193,7 +204,7 @@ public struct AssetKey {
 }
 
 extension ProfileImageSize: CustomDebugStringConvertible {
-     public var debugDescription: String {
+    public var debugDescription: String {
         switch self {
         case .preview:
             return "ProfileImageSize.preview"
@@ -243,7 +254,53 @@ extension ZMUser {
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
     @NSManaged public var needsToRefetchLabels: Bool
 
-    @NSManaged public var domain: String?
+    static let domainKey: String = "domain"
+    @NSManaged private var primitiveDomain: String?
+    public var domain: String? {
+        get {
+            willAccessValue(forKey: Self.domainKey)
+            let value = primitiveDomain
+            didAccessValue(forKey: Self.domainKey)
+            return value
+        }
+
+        set {
+            willChangeValue(forKey: Self.domainKey)
+            primitiveDomain = newValue
+            didChangeValue(forKey: Self.domainKey)
+            updatePrimaryKey(remoteIdentifier: remoteIdentifier, domain: newValue)
+        }
+    }
+
+    static let remoteIdentifierKey: String = "remoteIdentifier"
+    @NSManaged private var primitiveRemoteIdentifier: String?
+    // keep the same as objc non_specified for now
+    public var remoteIdentifier: UUID! {
+        get {
+            willAccessValue(forKey: Self.remoteIdentifierKey)
+            let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
+            didAccessValue(forKey: "remoteIdentifier")
+            return value
+        }
+
+        set {
+            willChangeValue(forKey: Self.remoteIdentifierKey)
+            self.setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
+            didChangeValue(forKey: Self.remoteIdentifierKey)
+            updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
+        }
+    }
+
+    /// combination of domain and remoteIdentifier
+    @NSManaged private var primaryKey: String
+
+    private func updatePrimaryKey(remoteIdentifier: UUID?, domain: String?) {
+        guard entity.attributesByName["primaryKey"] != nil else {
+            // trying to access primaryKey property from older model - tests
+            return
+        }
+        primaryKey = Self.primaryKey(from: remoteIdentifier, domain: domain)
+    }
 
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
@@ -352,9 +409,10 @@ extension ZMUser {
     /// Remove user from all group conversations he is a participant of
     fileprivate func removeFromAllConversations(at timestamp: Date) {
         let allGroupConversations: [ZMConversation] = participantRoles.compactMap {
-            guard let convo = $0.conversation,
-                convo.conversationType == .group else { return nil}
-            return convo
+            guard $0.conversation?.conversationType == .group else {
+                return nil
+            }
+            return $0.conversation
         }
 
         allGroupConversations.forEach { conversation in
@@ -373,7 +431,7 @@ extension ZMUser {
 
     @objc
     public var conversations: Set<ZMConversation> {
-        return Set(participantRoles.compactMap { return $0.conversation })
+        Set(participantRoles.compactMap(\.conversation))
     }
 }
 
@@ -406,15 +464,59 @@ extension ZMUser: UserConnections {
         }
     }
 
+    public enum AcceptConnectionError: Error {
+
+        case invalidState
+        case unableToSwitchToMLS
+
+    }
+
     public func accept(completion: @escaping (Error?) -> Void) {
-        connection?.updateStatus(.accepted, completion: { result in
+        accept(
+            oneOnOneResolver: nil,
+            completion: completion
+        )
+    }
+
+    func accept(
+        oneOnOneResolver: OneOnOneResolverInterface?,
+        completion: @escaping (Error?) -> Void
+    ) {
+        guard
+            let context = managedObjectContext,
+            let syncContext = context.zm_sync,
+            let connection,
+            let userID = remoteIdentifier,
+            let domain = domain ?? BackendInfo.domain
+        else {
+            completion(AcceptConnectionError.invalidState)
+            return
+        }
+
+        connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                completion(nil)
+                Task {
+                    do {
+                        let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
+                        try await resolver.resolveOneOnOneConversation(
+                            with: QualifiedID(uuid: userID, domain: domain),
+                            in: context
+                        )
+                        await MainActor.run {
+                            completion(nil)
+                        }
+                    } catch {
+                        await MainActor.run {
+                            completion(error)
+                        }
+                    }
+                }
+
             case .failure(let error):
                 completion(error)
             }
-        })
+        }
     }
 
     public func ignore(completion: @escaping (Error?) -> Void) {

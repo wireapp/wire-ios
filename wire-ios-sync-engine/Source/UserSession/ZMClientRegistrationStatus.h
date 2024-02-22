@@ -44,10 +44,14 @@ typedef NS_ENUM(NSUInteger, ZMClientRegistrationPhase) {
     /// the user has registered with phone but needs to register an email address and password to register a second device - we wait until we have emailCredentials
     ZMClientRegistrationPhaseWaitingForEmailVerfication,
 
+    /// the user has not yet selected a handle, which is a requirement for registering a client.
+    ZMClientRegistrationPhaseWaitingForHandle,
 
     ZMClientRegistrationPhaseWaitingForPrekeys,
 
     ZMClientRegistrationPhaseGeneratingPrekeys,
+
+    ZMClientRegistrationPhaseRegisteringMLSClient,
 
     /// The client is registered
     ZMClientRegistrationPhaseRegistered
@@ -66,7 +70,7 @@ extern NSString *const ZMPersistedClientIdKey;
 - (BOOL)needsToRegisterClient;
 + (BOOL)needsToRegisterClientInContext:(NSManagedObjectContext *)moc;
 
-- (void)didRegisterClient:(UserClient *)client;
+- (void)didRegisterProteusClient:(UserClient *)client;
 - (void)didRegisterMLSClient:(UserClient *)client;
 
 - (void)didDetectCurrentClientDeletion;
@@ -85,10 +89,12 @@ extern NSString *const ZMPersistedClientIdKey;
 @property (nonatomic, weak) id <ZMClientRegistrationStatusDelegate> registrationStatusDelegate;
 @property (nonatomic) BOOL needsToCheckCredentials;
 @property (nonatomic) BOOL needsToVerifySelfClient;
+@property (nonatomic) BOOL needsRefreshSelfUser;
 @property (nonatomic, readonly) BOOL needsToRegisterMLSCLient;
 @property (nonatomic, readonly) BOOL isWaitingForLogin;
 @property (nonatomic) BOOL isWaitingForUserClients;
 @property (nonatomic) BOOL isWaitingForClientsToBeDeleted;
 @property (nonatomic) BOOL isGeneratingPrekeys;
+@property (nonatomic) BOOL isWaitingForMLSClientToBeRegistered;
 
 @end

@@ -25,15 +25,17 @@ extension IntegrationTest {
     @objc
     public func searchAndConnectToUser(withName name: String, searchQuery: String) {
         createSharedSearchDirectory()
+        // swiftlint:disable todo_requires_jira_link
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
+        // swiftlint:enable todo_requires_jira_link
         self.overrideAPIVersion(.v2)
 
-        let searchCompleted = expectation(description: "Search result arrived")
+        let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
 
-        task?.onResult { (result, completed) in
+        task?.addResultHandler { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
@@ -50,7 +52,7 @@ extension IntegrationTest {
         XCTAssertNotNil(searchUser)
         XCTAssertEqual(searchUser?.name, name)
 
-        let didConnect = expectation(description: "did connect to user")
+        let didConnect = customExpectation(description: "did connect to user")
         searchUser?.connect { _ in
             didConnect.fulfill()
         }
@@ -61,14 +63,16 @@ extension IntegrationTest {
     public func searchForDirectoryUser(withName name: String, searchQuery: String) -> ZMSearchUser? {
         createSharedSearchDirectory()
         // this only work for v2 and above
+        // swiftlint:disable todo_requires_jira_link
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
+        // swiftlint:enable todo_requires_jira_link
         setCurrentAPIVersion(.v2)
-        let searchCompleted = expectation(description: "Search result arrived")
+        let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
 
-        task?.onResult { (result, completed) in
+        task?.addResultHandler { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
@@ -87,12 +91,12 @@ extension IntegrationTest {
     public func searchForConnectedUser(withName name: String, searchQuery: String) -> ZMUser? {
         createSharedSearchDirectory()
 
-        let searchCompleted = expectation(description: "Search result arrived")
+        let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.contacts])
         let task = sharedSearchDirectory?.perform(request)
         var searchResult: SearchResult?
 
-        task?.onResult { (result, completed) in
+        task?.addResultHandler { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
@@ -109,7 +113,7 @@ extension IntegrationTest {
 
     @objc
     public func connect(withUser user: UserType) {
-        user.connect(completion: {_ in })
+        user.connect(completion: { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 

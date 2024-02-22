@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
+
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockRegistrationDelegate = MockClientRegistrationDelegate()
@@ -80,7 +81,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // given
         let expectedCallConfig = "{\"config\":true}"
-        let receivedCallConfigExpectation = expectation(description: "Received CallConfig")
+        let receivedCallConfigExpectation = customExpectation(description: "Received CallConfig")
 
         sut.requestCallConfig { (callConfig, httpStatusCode) in
             if callConfig == expectedCallConfig, httpStatusCode == 200 {
@@ -103,7 +104,7 @@ class CallingRequestStrategyTests: MessagingTest {
     func testThatItGeneratesOnlyOneCallConfigRequest() {
 
         // given
-        sut.requestCallConfig { (_, _) in}
+        sut.requestCallConfig { (_, _) in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -118,7 +119,7 @@ class CallingRequestStrategyTests: MessagingTest {
     func testThatItGeneratesCompressedCallConfigRequest() {
 
         // given
-        sut.requestCallConfig { (_, _) in}
+        sut.requestCallConfig { (_, _) in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -131,7 +132,7 @@ class CallingRequestStrategyTests: MessagingTest {
     func testThatItDoesNotForwardUnsuccessfulResponses() {
         // given
         let expectedCallConfig = "{\"config\":true}"
-        let receivedCallConfigExpectation = expectation(description: "Received CallConfig")
+        let receivedCallConfigExpectation = customExpectation(description: "Received CallConfig")
 
         sut.requestCallConfig { (callConfig, httpStatusCode) in
             if callConfig == expectedCallConfig, httpStatusCode == 200 {
@@ -199,7 +200,7 @@ class CallingRequestStrategyTests: MessagingTest {
             """
 
             // Expectation
-            let receivedClientList = expectation(description: "Received client list")
+            let receivedClientList = customExpectation(description: "Received client list")
 
             let avsClient1 = try XCTUnwrap(AVSClient(userClient: client1))
             let avsClient2 = try XCTUnwrap(AVSClient(userClient: client2))
@@ -238,7 +239,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
         // Given
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         BackendInfo.isFederationEnabled = true
         let (conversation, payload) = try syncMOC.performAndWait {
             let selfClient = createSelfClient()
@@ -286,7 +287,7 @@ class CallingRequestStrategyTests: MessagingTest {
             """
 
             // Expectation
-            let receivedClientList = expectation(description: "Received client list")
+            let receivedClientList = customExpectation(description: "Received client list")
 
             let avsClient1 = try XCTUnwrap(AVSClient(userClient: client1))
             let avsClient2 = try XCTUnwrap(AVSClient(userClient: client2))
@@ -325,7 +326,7 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_MLS() throws {
-        try syncMOC.performAndWait {
+        try syncMOC.performAndWait { [self] in
             // Given
             let selfClient = createSelfClient()
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -348,7 +349,7 @@ class CallingRequestStrategyTests: MessagingTest {
             // An mls conversation with both users and self.
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = .create()
-            conversation.mlsGroupID = MLSGroupID([1, 2, 3])
+            conversation.mlsGroupID = MLSGroupID(.init([1, 2, 3]))
             conversation.messageProtocol = .mls
             conversation.addParticipantsAndUpdateConversationState(
                 users: [selfUser, user1, user2],
@@ -359,7 +360,7 @@ class CallingRequestStrategyTests: MessagingTest {
             syncMOC.saveOrRollback()
 
             // Expectations
-            let receivedClientList = expectation(description: "Received client list")
+            let receivedClientList = customExpectation(description: "Received client list")
 
             let avsClient1 = try XCTUnwrap(AVSClient(userClient: client1))
             let avsClient2 = try XCTUnwrap(AVSClient(userClient: client2))
@@ -448,9 +449,9 @@ class CallingRequestStrategyTests: MessagingTest {
 
     // MARK: - Targeted Calling Messages
 
-    func testThatItTargetsCallMessagesIfTargetClientsAreSpecified() {
+    func testThatItTargetsCallMessagesIfTargetClientsAreSpecified() throws {
         var sentMessage: GenericMessageEntity?
-        let (conversation, user1, client1, user2, client2, targets) = syncMOC.performAndWait { [self] in
+        let (conversationAVSID, user1, client1, user2, client2, targets) = try syncMOC.performAndWait { [self] in
             sut = CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: mockApplicationStatus,
@@ -494,12 +495,13 @@ class CallingRequestStrategyTests: MessagingTest {
                 sentMessage = message as? GenericMessageEntity
             }
 
-            return (conversation, user1, client1, user2, client2, targets)
+            let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
+            return (conversationAVSID, user1, client1, user2, client2, targets)
         }
 
         // When we schedule the targeted message
         syncMOC.performGroupedBlock {
-            self.sut.send(data: Data(), conversationId: conversation.avsIdentifier!, targets: targets, overMLSSelfConversation: false) { _ in }
+            self.sut.send(data: Data(), conversationId: conversationAVSID, targets: targets, overMLSSelfConversation: false) { _ in }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -518,7 +520,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
             XCTAssertEqual(targetRecipients.count, 2)
 
-            guard let recipient1 = targetRecipients.first(where: {  $0.key == user1 }) else {
+            guard let recipient1 = targetRecipients.first(where: { $0.key == user1 }) else {
                 return XCTFail("Expected user1 to be recipient")
             }
 
@@ -532,8 +534,8 @@ class CallingRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() {
-        let (user1, user2, client1, client2, client3, client4, conversation) = syncMOC.performAndWait {
+    func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async throws {
+        let (user1, user2, client1, client2, client3, client4, conversationAVSID) = try await syncMOC.perform { [self] in
             // Given
             let selfClient = createSelfClient()
 
@@ -559,7 +561,8 @@ class CallingRequestStrategyTests: MessagingTest {
 
             syncMOC.saveOrRollback()
 
-            return (user1, user2, client1, client2, client3, client4, conversation)
+            let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
+            return (user1, user2, client1, client2, client3, client4, conversationAVSID)
         }
 
         var sentMessage: GenericMessageEntity?
@@ -569,15 +572,25 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // When we schedule the message with no targets
         syncMOC.performGroupedBlock {
-            self.sut.send(data: Data(), conversationId: conversation.avsIdentifier!, targets: nil, overMLSSelfConversation: false) { _ in }
+            self.sut.send(
+                data: Data(),
+                conversationId: conversationAVSID,
+                targets: nil,
+                overMLSSelfConversation: false
+            ) { _ in }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertNotNil(sentMessage)
 
-        syncMOC.performAndWait {
-            guard
-                let data = syncMOC.performAndWait({ sentMessage?.encryptForTransport()?.data }),
+        guard let sentMessage else {
+            XCTFail("missing sentMessage")
+            return
+        }
+
+        let data = await sentMessage.encryptForTransport()?.data
+
+        await syncMOC.perform {
+            guard let data,
                 let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
             else {
                 return XCTFail("Expected OTR message")
@@ -603,10 +616,12 @@ class CallingRequestStrategyTests: MessagingTest {
     @discardableResult
     private func createClient(for user: ZMUser, connectedTo userClient: UserClient) -> UserClient {
         let client = UserClient.insertNewObject(in: syncMOC)
-        client.remoteIdentifier = NSString.createAlphanumerical() as String
+        client.remoteIdentifier = .randomRemoteIdentifier()
         client.user = user
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [John] use flag here
+        // swiftlint:enable todo_requires_jira_link
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { (session) in
             try! session.createClientSession(
                 client.sessionIdentifier!,
@@ -653,7 +668,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
 
-        sut.callCenter?.muted = false
+        sut.callCenter?.isMuted = false
 
         // WHEN
         syncMOC.performAndWait {
@@ -661,12 +676,12 @@ class CallingRequestStrategyTests: MessagingTest {
         }
 
         // THEN
-        XCTAssertTrue(sut.callCenter?.muted ?? false)
+        XCTAssertTrue(sut.callCenter?.isMuted ?? false)
     }
 
-    func test_ThatItHandlesMLSRejectMessage() {
+    func test_ThatItHandlesMLSRejectMessage() throws {
         var sentMessage: GenericMessageEntity?
-        let (user1AVSIdentifier, client1RemoteIdentifier, conversation) = syncMOC.performAndWait { [self] in
+        let (user1AVSIdentifier, client1RemoteIdentifier, conversationAVSID) = try syncMOC.performAndWait { [self] in
             // Given
             createMLSSelfConversation()
             let selfClient = createSelfClient()
@@ -697,19 +712,20 @@ class CallingRequestStrategyTests: MessagingTest {
 
             self.syncMOC.mlsService = mockMLSService
 
-            return (user1.avsIdentifier, client1.remoteIdentifier!, conversation)
+            let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
+            return (user1.avsIdentifier, client1.remoteIdentifier!, conversationAVSID)
         }
 
         // Targeting one client
         let avsClient1 = AVSClient(userId: user1AVSIdentifier, clientId: client1RemoteIdentifier)
         let targets = [avsClient1]
 
-        let expectation = self.expectation(description: "reject message is sent to MLS self conversation")
+        let expectation = self.customExpectation(description: "reject message is sent to MLS self conversation")
         // When we schedule the message
         syncMOC.performGroupedBlock {
             self.sut.send(
                 data: self.callMessage(withType: "REJECT"),
-                conversationId: conversation.avsIdentifier!,
+                conversationId: conversationAVSID,
                 targets: targets,
                 overMLSSelfConversation: true
             ) { _ in

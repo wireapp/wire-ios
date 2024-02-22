@@ -1,20 +1,20 @@
-/*
- * Wire
- * Copyright (C) 2017 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
 
 import Foundation
 import CallKit
@@ -28,12 +28,12 @@ protocol CallKitManagerDelegate: AnyObject {
 
     func lookupConversation(
         by handle: CallHandle,
-        completionHandler: @escaping (Result<ZMConversation>) -> Void
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     )
 
     func lookupConversationAndProcessPendingCallEvents(
         by handle: CallHandle,
-        completionHandler: @escaping (Result<ZMConversation>) -> Void
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     )
 
     /// End all active calls in all user sessions
@@ -230,8 +230,9 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         var contacts: [INPerson]?
         var video = false
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: handle INStartVideoCallIntent for when CallKit video is toggled.
-
+        // swiftlint:enable todo_requires_jira_link
         if let startCallIntent = intent as? INStartCallIntent {
           contacts = startCallIntent.contacts
           video = startCallIntent.callCapability == .videoCall
@@ -314,7 +315,9 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             return
         }
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: do we need to check there doesn't already exist a call?
+        // swiftlint:enable todo_requires_jira_link
         let call = callRegister.registerNewCall(with: handle)
 
         let action = CXStartCallAction(call: call.id, handle: handle.cxHandle)

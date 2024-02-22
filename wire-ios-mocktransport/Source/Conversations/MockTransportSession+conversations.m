@@ -33,7 +33,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 
 @implementation MockTransportSession (Conversations)
 
+// swiftlint:disable todo_requires_jira_link
 //TODO: filter requests using array of NSPredicates
+// swiftlint:enable todo_requires_jira_link
 
 // handles /conversations
 - (ZMTransportResponse *)processConversationsRequest:(ZMTransportRequest *)request;

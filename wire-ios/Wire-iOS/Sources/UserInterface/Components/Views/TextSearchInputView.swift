@@ -93,7 +93,9 @@ final class TextSearchInputView: UIView {
     }
 
     private func createConstraints() {
-        [self, iconView, searchInput, placeholderLabel, clearButton, self, searchInput, clearButton, spinner].prepareForLayout()
+        [self, iconView, searchInput, placeholderLabel, clearButton, spinner].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate(
             searchInput.fitInConstraints(view: self, inset: 8) + [
@@ -118,7 +120,7 @@ final class TextSearchInputView: UIView {
             spinner.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor, constant: -6),
             spinner.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor),
             spinner.widthAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue)
-        ])
+            ])
     }
 
     @available(*, unavailable)

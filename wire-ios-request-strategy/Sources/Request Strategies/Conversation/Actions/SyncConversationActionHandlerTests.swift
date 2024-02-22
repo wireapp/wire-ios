@@ -86,7 +86,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         let sut = SyncConversationActionHandler(context: uiMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
-        let didFail = expectation(description: "did fail")
+        let didFail = customExpectation(description: "did fail")
         let action = SyncConversationAction(qualifiedID: id) { result in
             // Then
             guard case .failure(.invalidResponsePayload) = result else {
@@ -114,7 +114,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         let sut = SyncConversationActionHandler(context: uiMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
-        let didFail = expectation(description: "did fail")
+        let didFail = customExpectation(description: "did fail")
         let action = SyncConversationAction(qualifiedID: id) { result in
             // Then
             guard case .failure(.conversationNotFound) = result else {
@@ -146,7 +146,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         let sut = SyncConversationActionHandler(context: syncMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
-        let didSucceed = self.expectation(description: "did succeed")
+        let didSucceed = self.customExpectation(description: "did succeed")
         let action = SyncConversationAction(qualifiedID: id) { result in
             // Then
             guard case .success = result else {
@@ -192,7 +192,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         let sut = SyncConversationActionHandler(context: uiMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
-        let didFail = expectation(description: "did fail")
+        let didFail = customExpectation(description: "did fail")
         let action = SyncConversationAction(qualifiedID: id) { result in
             // Then
             guard case .failure(.invalidBody) = result else {
@@ -224,7 +224,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         let sut = SyncConversationActionHandler(context: uiMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
-        let didFail = expectation(description: "did fail")
+        let didFail = customExpectation(description: "did fail")
         let action = SyncConversationAction(qualifiedID: id) { result in
             // Then
             guard case .failure(.unknownError(code: 999, label: "foo", message: "bar")) = result else {

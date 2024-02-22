@@ -3,13 +3,21 @@
 
 import PackageDescription
 
+// How to update packages?
+// 
+// 1. Go to GitHub repository, the latest release.
+// 2. Copy url of <*.artifactbundle.zip> and enter here as 'url'.
+// 3. Download <*.artifactbundle.zip>, open terminal, go to the folder like '~/Downloads'.
+// 4. Run 'swift package compute-checksum <*.artifactbundle.zip>', copy the checksum and enter here as 'checksum'.
+// 5. Save this file.
+
 let package = Package(
     name: "Scripts",
     targets: [
         .binaryTarget(
             name: "SwiftLintBinary",
-            url: "https://github.com/realm/SwiftLint/releases/download/0.53.0/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: "03416a4f75f023e10f9a76945806ddfe70ca06129b895455cc773c5c7d86b73e"
+            url: "https://github.com/realm/SwiftLint/releases/download/0.54.0/SwiftLintBinary-macos.artifactbundle.zip",
+            checksum: "963121d6babf2bf5fd66a21ac9297e86d855cbc9d28322790646b88dceca00f1"
         ),
         .binaryTarget(
           name: "swiftgen",
@@ -18,8 +26,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "sourcery",
-            url: "https://github.com/krzysztofzablocki/Sourcery/releases/download/2.1.2/sourcery-2.1.2.artifactbundle.zip",
-            checksum: "550c5a6a63b321bcd2ac595595cf6943efd09ce23d1ebba640b2598a4a1106a3"
+            url: "https://github.com/krzysztofzablocki/Sourcery/releases/download/2.1.7/sourcery-2.1.7.artifactbundle.zip",
+            checksum: "b54ff217c78cada3f70d3c11301da03a199bec87426615b8144fc9abd13ac93b"
         )
     ]
 )

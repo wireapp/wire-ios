@@ -90,7 +90,7 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
         let leadingConstraint = cellNameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
         leadingConstraint.priority = .defaultHigh
 
-        [cellNameLabel, cellLinkLabel].prepareForLayout()
+        [cellNameLabel, cellLinkLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             leadingConstraint,

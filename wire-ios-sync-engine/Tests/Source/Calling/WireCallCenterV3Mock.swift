@@ -23,7 +23,7 @@ import Foundation
 @objcMembers
 public class MockAVSWrapper: AVSWrapperType {
 
-    public var muted: Bool = false
+    public var isMuted: Bool = false
 
     public var startCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, conversationType: AVSConversationType, useCBR: Bool)?
     public var answerCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, useCBR: Bool)?
@@ -90,6 +90,10 @@ public class MockAVSWrapper: AVSWrapperType {
 
     public func requestVideoStreams(_ videoStreams: AVSVideoStreams, conversationId: AVSIdentifier) {
         requestVideoStreamsArguments = (conversationId, videoStreams)
+    }
+
+    public func notify(isProcessingNotifications isProcessing: Bool) {
+        // do nothing
     }
 
     var mockSetMLSConferenceInfo: ((AVSIdentifier, MLSConferenceInfo) -> Void)?

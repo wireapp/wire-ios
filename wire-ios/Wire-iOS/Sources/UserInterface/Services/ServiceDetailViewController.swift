@@ -150,7 +150,7 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [detailView, actionButton].prepareForLayout()
+        [detailView, actionButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             detailView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),

@@ -111,8 +111,10 @@ final class MessageThumbnailPreviewView: UIView {
         imagePreview.layer.cornerRadius = 4
         imagePreview.isAccessibilityElement = true
         imagePreview.accessibilityIdentifier = "ThumbnailImage_ReplyPreview"
-        allViews.prepareForLayout()
-        allViews.forEach(addSubview)
+        allViews.forEach { view in
+            view.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(view)
+        }
     }
 
     private func setupConstraints() {
@@ -127,7 +129,7 @@ final class MessageThumbnailPreviewView: UIView {
             imagePreview.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset),
             imagePreview.widthAnchor.constraint(equalToConstant: MessageThumbnailPreviewView.thumbnailSize),
             imagePreview.heightAnchor.constraint(equalToConstant: MessageThumbnailPreviewView.thumbnailSize)
-            ])
+        ])
 
         if displaySender {
             NSLayoutConstraint.activate([
@@ -137,7 +139,7 @@ final class MessageThumbnailPreviewView: UIView {
                 senderLabel.trailingAnchor.constraint(equalTo: imagePreview.leadingAnchor, constant: inset),
                 contentTextView.topAnchor.constraint(equalTo: senderLabel.bottomAnchor, constant: inset),
                 contentTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset)
-                ])
+            ])
         } else {
             contentTextView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         }
@@ -255,8 +257,10 @@ final class MessagePreviewView: UIView {
             senderLabel.isAccessibilityElement = true
             senderLabel.accessibilityIdentifier = "SenderLabel_ReplyPreview"
         }
-        allViews.prepareForLayout()
-        allViews.forEach(self.addSubview)
+        allViews.forEach { view in
+            view.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(view)
+        }
     }
 
     private func setupConstraints() {
@@ -274,7 +278,7 @@ final class MessagePreviewView: UIView {
                 senderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: inset),
                 senderLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset),
                 contentTextView.topAnchor.constraint(equalTo: senderLabel.bottomAnchor, constant: inset / 2)
-                ])
+            ])
         } else {
             contentTextView.topAnchor.constraint(equalTo: topAnchor, constant: inset).isActive = true
         }

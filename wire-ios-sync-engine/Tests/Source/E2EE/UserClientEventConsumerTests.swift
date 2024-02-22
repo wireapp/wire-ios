@@ -17,7 +17,7 @@
 
 import Foundation
 
-class UserClientEventConsumerTests: RequestStrategyTestBase {
+final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
     var sut: UserClientEventConsumer!
     var clientRegistrationStatus: ZMMockClientRegistrationStatus!
@@ -118,7 +118,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(selfUser.clients.count, 2)
-            guard let newClient = selfUser.clients.filter({ $0 != selfClient}).first else {
+            guard let newClient = selfUser.clients.filter({ $0 != selfClient }).first else {
                 XCTFail()
                 return
             }
@@ -260,7 +260,9 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
             selfUser = ZMUser.selfUser(in: self.syncMOC)
             let existingClient = self.createSelfClient()
 
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
                 fingerprint = sessionsDirectory.localFingerprint
             }

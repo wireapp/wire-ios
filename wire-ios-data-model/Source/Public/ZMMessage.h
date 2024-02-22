@@ -60,15 +60,25 @@
 
 #pragma mark - ZMSystemMessageData
 
+/*
+ * Unfortunatly we can not remove deprecated cases of `ZMSystemMessageType` easily.
+ *
+ * The reason is that the values are persisted and stored and loaded later when the user opens a conversation.
+ * To remove the cases we could have different strategies:
+ * 1. Assign the raw value of `int16_t` to each case, so that loading from store can map the correct values.
+ *    a. Then the mapping must fail gracefully for those values that can not be mapped then anymore.
+ *    b. Alternatively with a database migration all invalid values are deleted from the persisted store.
+ * 2. Keep the deprecated values in code.
+ */
 
-typedef NS_ENUM(int16_t, ZMSystemMessageType) {
+typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeInvalid = 0,
     ZMSystemMessageTypeParticipantsAdded,
     ZMSystemMessageTypeFailedToAddParticipants,
     ZMSystemMessageTypeParticipantsRemoved,
     ZMSystemMessageTypeConversationNameChanged,
-    ZMSystemMessageTypeConnectionRequest,
-    ZMSystemMessageTypeConnectionUpdate,
+    ZMSystemMessageTypeConnectionRequest __deprecated_enum_msg("deprecated"),
+    ZMSystemMessageTypeConnectionUpdate __deprecated_enum_msg("deprecated"),
     ZMSystemMessageTypeMissedCall,
     ZMSystemMessageTypeNewClient,
     ZMSystemMessageTypeIgnoredClient,
@@ -90,7 +100,15 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeLegalHoldDisabled,
     ZMSystemMessageTypeSessionReset,
     ZMSystemMessageTypeDecryptionFailedResolved,
-    ZMSystemMessageTypeDomainsStoppedFederating
+    ZMSystemMessageTypeDomainsStoppedFederating,
+    ZMSystemMessageTypeMLSMigrationFinalized,
+    ZMSystemMessageTypeMLSMigrationJoinAfterwards,
+    ZMSystemMessageTypeMLSMigrationOngoingCall,
+    ZMSystemMessageTypeMLSMigrationStarted,
+    ZMSystemMessageTypeMLSMigrationUpdateVersion,
+    ZMSystemMessageTypeMLSMigrationPotentialGap,
+    ZMSystemMessageTypeMLSNotSupportedSelfUser,
+    ZMSystemMessageTypeMLSNotSupportedOtherUser
 };
 
 typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {

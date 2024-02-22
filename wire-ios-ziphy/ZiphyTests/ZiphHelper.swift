@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ final class ZiphHelper {
             .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204800),
             .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2048000),
             .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000)
-            ]
+        ]
 
         return createZiph(id: id, url: url, imagesList: imagesList)
     }

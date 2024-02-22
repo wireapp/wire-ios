@@ -45,7 +45,7 @@ import UserNotifications
         observers.append(
             NotificationInContext.addObserver(name: ZMConversation.lastReadDidChangeNotificationName,
                                               context: managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.cancelNotificationForLastReadChanged(notification: $0)})
+                                              using: { [weak self] in self?.cancelNotificationForLastReadChanged(notification: $0) })
         )
     }
 

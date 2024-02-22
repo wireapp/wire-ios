@@ -88,7 +88,7 @@ jobs:
           path: ./CHANGELOG.md
 
   build_and_release:
-    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.0.1
+    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.2
     needs: changelog
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -127,10 +127,10 @@ jobs:
         id: cache-carthage
         with:
           path: Carthage
-          key: ${{ runner.os }}-carthage-${{ hashFiles('Cartfile.resolved') }}
+          key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
-        run: carthage bootstrap --platform ios --use-xcframeworks
+        run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
       - name: Restore Bundler Cache
         uses: actions/cache@v3
         id: cache-bundler
@@ -147,6 +147,17 @@ jobs:
           aws-region: eu-west-1
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
+      - name: Archiving Logs
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: build-logs
+          path: |
+            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Logs/DiagnosticReports/**
+            build/**
+
+
       - name: Archiving env variables
         if: always()
         uses: actions/upload-artifact@v2

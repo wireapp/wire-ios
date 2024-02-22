@@ -22,7 +22,7 @@ import Foundation
  * Handles login errors that happens during the phone login flow.
  */
 
-class AuthenticationPhoneLoginErrorHandler: AuthenticationEventHandler {
+final class AuthenticationPhoneLoginErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

@@ -38,7 +38,9 @@ extension MessagingTestBase {
         var cypherText: Data?
         self.encryptionContext(for: sender).perform { (session) in
             if !session.hasSession(for: selfClient.sessionIdentifier!) {
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: [John] use flag here
+                // swiftlint:enable todo_requires_jira_link
                 guard let lastPrekey = try? syncMOC.zm_cryptKeyStore.lastPreKey() else {
                     fatalError("Can't get prekey for self user")
                 }
@@ -82,7 +84,9 @@ extension MessagingTestBase {
             prekey = try! session.generateLastPrekey()
         }
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [John] use flag here
+        // swiftlint:enable todo_requires_jira_link
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { (session) in
             try! session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
         }

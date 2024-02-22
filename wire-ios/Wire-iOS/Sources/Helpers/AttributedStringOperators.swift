@@ -195,12 +195,6 @@ extension String {
         return NSLocalizedString(self, tableName: tableName, bundle: bundle, value: "", comment: "")
     }
 
-    /// Returns the text and uppercases it if needed.
-    func localized(uppercased: Bool) -> String {
-        let text = NSLocalizedString(self, comment: "")
-        return uppercased ? text.localizedUppercase : text
-    }
-
     /// Used to generate localized strings with plural rules from the stringdict
     func localized(uppercased: Bool = false, pov pointOfView: PointOfView = .none, args: CVarArg...) -> String {
         return withVaList(args) {

@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
-protocol FolderPickerViewControllerDelegate {
+protocol FolderPickerViewControllerDelegate: AnyObject {
     func didPickFolder(_ folder: LabelType, for conversation: ZMConversation)
 }
 

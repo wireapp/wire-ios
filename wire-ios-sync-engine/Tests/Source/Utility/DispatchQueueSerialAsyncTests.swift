@@ -19,7 +19,7 @@
 import Foundation
 import XCTest
 
-class DispatchQueueSerialAsyncTests: XCTestCase {
+final class DispatchQueueSerialAsyncTests: XCTestCase {
 
     func testThatItWaitsForOneTaskBeforeAnother() {
         let sut = DispatchQueue(label: "test")

@@ -119,18 +119,20 @@ extension ShareViewController {
                 return
         }
 
-        [view,
-         containerView,
-         shareablePreviewWrapper,
-         shareablePreviewView,
-         tokenField,
-         searchIcon,
-         clearButton,
-         destinationsTableView,
-         bottomSeparatorLine,
-         topSeparatorView,
-         closeButton,
-         sendButton].prepareForLayout()
+        [
+            view,
+            containerView,
+            shareablePreviewWrapper,
+            shareablePreviewView,
+            tokenField,
+            searchIcon,
+            clearButton,
+            destinationsTableView,
+            bottomSeparatorLine,
+            topSeparatorView,
+            closeButton,
+            sendButton
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let shareablePreviewWrapperMargin: CGFloat = 16
         let tokenFieldMargin: CGFloat = 8

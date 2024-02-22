@@ -9,7 +9,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-final class SessionManagerTests_Proxy: IntegrationTest {
+final class SessionManagerProxyTests: IntegrationTest {
     var reachabilityWrapper: ReachabilityWrapper!
     var unauthenticatedSessionFactory: MockUnauthenticatedSessionFactory!
     var authenticatedSessionFactory: MockAuthenticatedSessionFactory!
@@ -56,7 +56,8 @@ final class SessionManagerTests_Proxy: IntegrationTest {
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: false,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            deleteUserLogs: {}
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete
@@ -85,7 +86,7 @@ final class SessionManagerTests_Proxy: IntegrationTest {
         XCTAssertFalse(unauthenticatedSessionFactory.readyForRequests)
 
         // EXPECT
-        expectation(forNotification: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: nil) { (_) -> Bool in
+        customExpectation(forNotification: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: nil) { (_) -> Bool in
             return true
         }
 

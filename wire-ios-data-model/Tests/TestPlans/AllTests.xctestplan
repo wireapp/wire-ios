@@ -9,13 +9,18 @@
     }
   ],
   "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {
       "skippedTests" : [
         "ConversationObserverTests\/testThatItNotifiesOfLegalHoldChanges_Disabled()",
-        "UserObserverTests\/testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed()"
+        "UserChangeInfoObservationTests\/testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed()"
       ],
       "target" : {
         "containerPath" : "container:WireDataModel.xcodeproj",

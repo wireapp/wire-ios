@@ -61,7 +61,7 @@ extension ZMMessage: Sendable {
             return
         }
 
-        WireLogger.messaging.warn("expiring message because of cancel \(nonce?.transportString().readableHash)")
+        WireLogger.messaging.warn("expiring message because of cancel \(String(describing: nonce?.transportString().readableHash))")
         self.expire()
     }
 

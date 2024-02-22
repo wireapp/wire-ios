@@ -108,7 +108,7 @@ extension EnvironmentType {
     }
 }
 
-public class BackendEnvironment: NSObject {
+public final class BackendEnvironment: NSObject {
     public let title: String
     let endpoints: BackendEndpointsProvider
     let proxySettings: ProxySettingsProvider?

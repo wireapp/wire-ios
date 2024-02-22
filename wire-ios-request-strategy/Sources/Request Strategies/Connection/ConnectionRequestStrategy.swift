@@ -35,10 +35,14 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     let connectToUserActionHandler: ConnectToUserActionHandler
     let updateConnectionActionHandler: UpdateConnectionActionHandler
     let actionSync: EntityActionSync
+    let oneOnOneResolver: OneOnOneResolverInterface
+
+    var oneOnOneResolutionDelay: TimeInterval = 3
 
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
-                syncProgress: SyncProgress) {
+                syncProgress: SyncProgress,
+                oneOneOneResolver: OneOnOneResolverInterface? = nil) {
 
         self.syncProgress = syncProgress
         self.localConnectionListSync =
@@ -66,6 +70,8 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
             connectToUserActionHandler,
             updateConnectionActionHandler
         ])
+
+        self.oneOnOneResolver = oneOneOneResolver ?? OneOnOneResolver(syncContext: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -100,7 +106,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
                 }
             }
 
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             connectionListSync.fetch { [weak self] result in
                 switch result {
                 case .success(let connectionList):
@@ -135,12 +141,16 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
     public var requestGenerators: [ZMRequestGenerator] {
         if syncProgress.currentSyncPhase == .fetchingConnections {
-            return [connectionListSync,
-                    localConnectionListSync]
+            return [
+                connectionListSync,
+                localConnectionListSync
+            ]
         } else {
-            return [connectionByIDSync,
-                    connectionByQualifiedIDSync,
-                    actionSync]
+            return [
+                connectionByIDSync,
+                connectionByQualifiedIDSync,
+                actionSync
+            ]
         }
     }
 
@@ -165,7 +175,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
                 connectionByIDSync.sync(identifiers: userIdSet)
             }
 
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             if let qualifiedID = object.to.qualifiedID {
                 let qualifiedIdSet: Set<ConnectionByQualifiedIDTranscoder.T> = [qualifiedID]
                 connectionByQualifiedIDSync.sync(identifiers: qualifiedIdSet)
@@ -199,6 +209,23 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                         conversationEvent,
                         in: managedObjectContext
                     )
+
+                    if conversationEvent.connection.status == .accepted, let conversationID = conversationEvent.connection.qualifiedTo {
+
+                        WaitingGroupTask(context: managedObjectContext) { [self] in
+                            do {
+                                // The client who accepts the connection resolves the conversation immediately.
+                                // Other clients (from self and other user) resolve after a delay to avoid a race condition,
+                                // but also to re-attempt resolution in case of failure.
+                                try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
+                                try await self.oneOnOneResolver.resolveOneOnOneConversation(with: conversationID, in: self.managedObjectContext)
+                            } catch {
+                                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
+                                assertionFailure("Error resolving one-on-one conversation: \(error)")
+                            }
+                        }
+                    }
+
                 }
 
             default:
