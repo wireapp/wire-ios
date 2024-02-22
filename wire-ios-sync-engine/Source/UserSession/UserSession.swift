@@ -503,14 +503,21 @@ extension ZMUserSession: UserSession {
         return isClassified ? .classified : .notClassified
     }
 
+    public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
+        IsUserE2EICertifiedUseCase(schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
+    }
+
+    @available(*, deprecated, message: "will be removed")
     public var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol {
         IsSelfUserProteusVerifiedUseCase(context: syncContext, schedule: .immediate)
     }
 
+    @available(*, deprecated, message: "will be removed")
     public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
         IsSelfUserE2EICertifiedUseCase(context: syncContext, schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
     }
 
+    @available(*, deprecated, message: "will be removed")
     public var isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol {
         // using the `viewContext` here because to the `invoke` method we pass entities from the view context
         IsOtherUserE2EICertifiedUseCase(context: viewContext, schedule: .immediate, coreCryptoProvider: coreCryptoProvider)

@@ -283,6 +283,9 @@
 		59E4121F2B8651C500E63D9A /* IsOtherUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E4121E2B8651C500E63D9A /* IsOtherUserE2EICertifiedUseCaseProtocol.swift */; };
 		59E412212B86520100E63D9A /* IsOtherUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E412202B86520100E63D9A /* IsOtherUserE2EICertifiedUseCase.swift */; };
 		59E412232B865C8800E63D9A /* MLSConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E412222B865C8800E63D9A /* MLSConversation.swift */; };
+		59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */; };
+		59F4B6F42B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4B6F32B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift */; };
+		59F4B6F62B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4B6F52B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift */; };
 		5E0FB215205176B400FD9867 /* Set+ServiceUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */; };
 		5E36B45E21CA5BBA00B7063B /* UnverifiedCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E36B45D21CA5BBA00B7063B /* UnverifiedCredentials.swift */; };
 		5E39FC67225F22BE00C682B8 /* ZMConversation+ExternalParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E39FC66225F22BE00C682B8 /* ZMConversation+ExternalParticipant.swift */; };
@@ -1166,6 +1169,9 @@
 		59E4121E2B8651C500E63D9A /* IsOtherUserE2EICertifiedUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsOtherUserE2EICertifiedUseCaseProtocol.swift; sourceTree = "<group>"; };
 		59E412202B86520100E63D9A /* IsOtherUserE2EICertifiedUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsOtherUserE2EICertifiedUseCase.swift; sourceTree = "<group>"; };
 		59E412222B865C8800E63D9A /* MLSConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSConversation.swift; sourceTree = "<group>"; };
+		59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsUserE2EICertifiedUseCaseProtocol.swift; sourceTree = "<group>"; };
+		59F4B6F32B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsUserE2EICertifiedUseCase.swift; sourceTree = "<group>"; };
+		59F4B6F52B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsUserE2EICertifiedUseCaseTests.swift; sourceTree = "<group>"; };
 		5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Set+ServiceUser.swift"; sourceTree = "<group>"; };
 		5E36B45D21CA5BBA00B7063B /* UnverifiedCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnverifiedCredentials.swift; sourceTree = "<group>"; };
 		5E39FC66225F22BE00C682B8 /* ZMConversation+ExternalParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+ExternalParticipant.swift"; sourceTree = "<group>"; };
@@ -2183,6 +2189,8 @@
 				59C9149D2B7272F100CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift */,
 				59E4121C2B8650D200E63D9A /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */,
 				59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */,
+				59F4B6F32B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift */,
+				59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */,
 				638941ED2AF4FD4B0051ABFD /* RemoveLocalConversationUseCase.swift */,
 			);
 			name = UseCases;
@@ -2194,6 +2202,7 @@
 			children = (
 				59C914A02B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */,
 				59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */,
+				59F4B6F52B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift */,
 				638941F52AF5211D0051ABFD /* RemoveLocalConversationUseCaseTests.swift */,
 			);
 			path = UseCases;
@@ -3932,6 +3941,7 @@
 				63370C6C242A510A0072C37F /* ZMOTRMessage+UpdateEvent.swift in Sources */,
 				167BCC82260CFAD500E9D7E3 /* UserType+Federation.swift in Sources */,
 				0179629F2B83FCB200D6C7B6 /* NSManagedObjectContext+Migration.swift in Sources */,
+				59F4B6F42B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift in Sources */,
 				BF10B5981E64591600E7036E /* NSManagedObjectContext+Analytics.swift in Sources */,
 				E9E2AA5C2B163557008CC2DF /* SyncUsersAction.swift in Sources */,
 				F1C867701FA9CCB5001505E8 /* DuplicateMerging.swift in Sources */,
@@ -4309,6 +4319,7 @@
 				169315EF25AC4C8100709F15 /* MigrateSenderClient.swift in Sources */,
 				167BCC1C2609E92400E9D7E3 /* ZMEventModel.xcdatamodeld in Sources */,
 				BF10B58B1E6432ED00E7036E /* Message.swift in Sources */,
+				59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */,
 				BF491CE81F063EEB0055EE44 /* AccountManager.swift in Sources */,
 				060C06612B73D9D400B484C6 /* GracePeriodRepository.swift in Sources */,
 				63B1335429A503D100009D84 /* ProteusServiceInterface.swift in Sources */,
@@ -4354,6 +4365,7 @@
 				1689FD462194A63E00A656E2 /* ZMClientMessageTests+Editing.swift in Sources */,
 				F9B71F9C1CB2BF18001DB03F /* ZMCallStateTests.swift in Sources */,
 				0630E4BF257FA2BD00C75BFB /* TransferAppLockKeychainTests.swift in Sources */,
+				59F4B6F62B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift in Sources */,
 				BF491CEB1F063F480055EE44 /* AccountManagerTests.swift in Sources */,
 				E6C4B3802B6B87B1008BF384 /* CoreDataStackTestError.swift in Sources */,
 				544E8C0F1E2F69EB00F9B8B8 /* ZMOTRMessage+SecurityDegradationTests.swift in Sources */,

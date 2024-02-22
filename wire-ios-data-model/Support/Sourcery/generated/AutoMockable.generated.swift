@@ -2851,6 +2851,38 @@ public class MockIsSelfUserProteusVerifiedUseCaseProtocol: IsSelfUserProteusVeri
 
 }
 
+public class MockIsUserE2EICertifiedUseCaseProtocol: IsUserE2EICertifiedUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationUser_Invocations: [(conversation: ZMConversation, user: ZMUser)] = []
+    public var invokeConversationUser_MockError: Error?
+    public var invokeConversationUser_MockMethod: ((ZMConversation, ZMUser) async throws -> Bool)?
+    public var invokeConversationUser_MockValue: Bool?
+
+    public func invoke(conversation: ZMConversation, user: ZMUser) async throws -> Bool {
+        invokeConversationUser_Invocations.append((conversation: conversation, user: user))
+
+        if let error = invokeConversationUser_MockError {
+            throw error
+        }
+
+        if let mock = invokeConversationUser_MockMethod {
+            return try await mock(conversation, user)
+        } else if let mock = invokeConversationUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeConversationUser`")
+        }
+    }
+
+}
+
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - Life cycle
