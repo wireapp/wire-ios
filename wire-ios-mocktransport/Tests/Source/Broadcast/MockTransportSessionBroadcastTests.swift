@@ -53,9 +53,11 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
             "recipients": [
-                otherUser.identifier:
-                    [ otherUserClient.identifier!: base64Content,
-                      otherUserRedundantClient.identifier!: base64Content] ]
+                otherUser.identifier: [
+                    otherUserClient.identifier!: base64Content,
+                    otherUserRedundantClient.identifier!: base64Content
+                ]
+            ]
         ]
 
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient, otherUserRedundantClient], plainText: messageData).serializedData()

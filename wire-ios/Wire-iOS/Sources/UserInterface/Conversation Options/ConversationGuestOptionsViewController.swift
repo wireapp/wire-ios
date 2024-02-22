@@ -100,7 +100,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
+        ])
     }
 
     // MARK: – ConversationOptionsViewModelDelegate

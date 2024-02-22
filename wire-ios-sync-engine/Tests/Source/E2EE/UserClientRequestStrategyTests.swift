@@ -696,7 +696,7 @@ extension UserClientRequestStrategyTests {
                 XCTAssertEqual($0.payload as! [String: String], [
                     "email": self.clientUpdateStatus.mockCredentials.email!,
                     "password": self.clientUpdateStatus.mockCredentials.password!
-                    ])
+                ])
                 XCTAssertEqual($0.method, ZMTransportRequestMethod.delete)
             }
         }

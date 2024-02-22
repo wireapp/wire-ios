@@ -49,11 +49,11 @@ public final class PushDispatcherTests: ZMTBaseTest {
     static let payload: [AnyHashable: Any] = ["data": [
         "user": userID,
         "type": "notice"
-        ]]
+    ]]
 
     static let payloadWithoutUser: [AnyHashable: Any] = ["data": [
         "type": "notice"
-        ]]
+    ]]
 
     public override func setUp() {
         super.setUp()
