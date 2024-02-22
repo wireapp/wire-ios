@@ -46,8 +46,10 @@ final class GroupParticipantsDetailViewController: UIViewController {
          userSession: UserSession) {
 
         viewModel = GroupParticipantsDetailViewModel(
-            selectedParticipants: selectedParticipants,
-            conversation: conversation, userSession: userSession)
+            selectedParticipants: selectedParticipants.map { ($0, false) },
+            conversation: conversation,
+            userSession: userSession
+        )
 
         collectionViewController = SectionCollectionViewController()
 

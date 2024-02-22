@@ -38,8 +38,6 @@ final class UserDetailViewControllerFactory {
         userSession: UserSession
     ) -> UIViewController {
 
-        // TODO [WPB-765]: isE2EICertified
-
         if user.isServiceUser, let serviceUser = user as? ServiceUser {
             let serviceDetailViewController = ServiceDetailViewController(
                 serviceUser: serviceUser,
