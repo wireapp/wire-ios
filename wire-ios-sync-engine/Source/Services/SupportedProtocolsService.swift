@@ -31,48 +31,29 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
     private let featureRepository: FeatureRepositoryInterface
     private let userRepository: UserRepositoryInterface
     private let logger = WireLogger(tag: "supported-protocols")
-    private let context: NSManagedObjectContext
-    let oneOnOneResolver: OneOnOneResolverInterface
 
     // MARK: - Life cycle
 
-    public convenience init(
-        context: NSManagedObjectContext,
-        oneOnOneResolver: OneOnOneResolverInterface
-    ) {
+    public convenience init(context: NSManagedObjectContext) {
         self.init(
             featureRepository: FeatureRepository(context: context),
-            userRepository: UserRepository(context: context),
-            oneOnOneResolver: oneOnOneResolver,
-            context: context
+            userRepository: UserRepository(context: context)
         )
     }
 
     init(
         featureRepository: FeatureRepositoryInterface,
-        userRepository: UserRepositoryInterface,
-        oneOnOneResolver: OneOnOneResolverInterface,
-        context: NSManagedObjectContext
+        userRepository: UserRepositoryInterface
     ) {
         self.featureRepository = featureRepository
         self.userRepository = userRepository
-        self.oneOnOneResolver = oneOnOneResolver
-        self.context = context
     }
 
     // MARK: - Methods
 
     func updateSupportedProtocols() {
         let selfUser = userRepository.selfUser()
-        let previousProtocols = selfUser.supportedProtocols
-
         selfUser.supportedProtocols = calculateSupportedProtocols()
-
-        if previousProtocols != selfUser.supportedProtocols {
-            Task {
-                try await oneOnOneResolver.resolveAllOneOnOneConversations(in: context)
-            }
-        }
     }
 
     func calculateSupportedProtocols() -> Set<MessageProtocol> {

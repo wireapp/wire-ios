@@ -49,9 +49,9 @@ public protocol UserSessionLogoutDelegate: NSObjectProtocol {
 }
 
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
-& UserSessionSelfUserClientDelegate
-& UserSessionLogoutDelegate
-& UserSessionAppLockDelegate
+    & UserSessionSelfUserClientDelegate
+    & UserSessionLogoutDelegate
+    & UserSessionAppLockDelegate
 
 @objcMembers
 public final class ZMUserSession: NSObject {
@@ -267,8 +267,6 @@ public final class ZMUserSession: NSObject {
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
-    var supportedProtocolsService: SupportedProtocolsService?
-
     public init(
         userId: UUID,
         transportSession: TransportSessionType,
@@ -353,14 +351,6 @@ public final class ZMUserSession: NSObject {
             userID: userId
         )
 
-        self.supportedProtocolsService = SupportedProtocolsService(context: coreDataStack.syncContext,
-                                                                   oneOnOneResolver: OneOnOneResolver(mlsService: mlsService ?? MLSService(
-                                                                    context: coreDataStack.syncContext,
-                                                                    coreCryptoProvider: coreCryptoProvider,
-                                                                    conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
-                                                                    userDefaults: .standard,
-                                                                    syncStatus: applicationStatusDirectory.syncStatus,
-                                                                    userID: coreDataStack.account.userIdentifier)))
         super.init()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
@@ -423,7 +413,8 @@ public final class ZMUserSession: NSObject {
             guard let context = self?.syncContext else { return }
 
             context.perform {
-                self?.supportedProtocolsService?.updateSupportedProtocols()
+                let service = SupportedProtocolsService(context: context)
+                service.updateSupportedProtocols()
             }
         }
 
@@ -834,7 +825,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 }
 
                 context.perform {
-                    self?.supportedProtocolsService?.updateSupportedProtocols()
+                    let service = SupportedProtocolsService(context: context)
+                    service.updateSupportedProtocols()
                 }
 
             case .failure(let reason):
