@@ -76,7 +76,7 @@ final class LegalHoldHeaderView: UIView {
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-            ])
+        ])
     }
 
     @available(*, unavailable)

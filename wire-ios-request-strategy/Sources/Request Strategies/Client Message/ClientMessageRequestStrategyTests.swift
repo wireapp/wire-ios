@@ -193,7 +193,7 @@ extension ClientMessageRequestStrategyTests {
                 "conversation": self.groupConversation.remoteIdentifier!.transportString(),
                 "time": Date().transportString(),
                 "from": self.otherUser.remoteIdentifier.transportString()
-                ] as NSDictionary
+            ] as NSDictionary
             guard let event = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: eventPayload, uuid: nil, transient: false, source: .webSocket) else {
                 XCTFail("Failed to create event")
                 return
