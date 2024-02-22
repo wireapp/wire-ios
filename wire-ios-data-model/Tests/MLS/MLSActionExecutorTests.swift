@@ -35,9 +35,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
         mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.e2eiIsEnabledCiphersuite_MockValue = false
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         mockCommitSender = MockCommitSending()
 
         sut = MLSActionExecutor(

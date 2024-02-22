@@ -73,20 +73,24 @@ public final class E2eIRepository: E2eIRepositoryInterface {
     }
 
     public func createEnrollment(context: NSManagedObjectContext) async throws -> E2eIEnrollmentInterface {
-        let (userName, userHandle, teamId) = try await context.perform {
+        let (userName, userHandle, teamId, clientID, isUpgradingClient) = try await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
+            let isUpgradingClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
             guard let userName = selfUser.name,
                   let userHandle = selfUser.handle,
-                  let teamId = selfUser.team?.remoteIdentifier else {
+                  let teamId = selfUser.teamIdentifier,
+                  let clientID = E2eIClientID(user: selfUser) else {
                 throw Error.failedToGetSelfUserInfo
             }
-            return (userName, userHandle, teamId)
+            return (userName, userHandle, teamId, clientID, isUpgradingClient)
         }
 
         let e2eIdentity = try await e2eiSetupService.setupEnrollment(
+            clientID: clientID,
             userName: userName,
             handle: userHandle,
-            teamId: teamId
+            teamId: teamId,
+            isUpgradingClient: isUpgradingClient
         )
 
         let e2eiService = E2eIService(e2eIdentity: e2eIdentity, coreCryptoProvider: coreCryptoProvider)

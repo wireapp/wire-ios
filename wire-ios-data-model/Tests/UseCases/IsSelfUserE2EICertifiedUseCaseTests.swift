@@ -37,7 +37,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         sut = .init(context: context, schedule: .immediate, coreCryptoProvider: mockCoreCryptoProvider)
     }
 
@@ -120,36 +120,20 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     private func setupUsersClientsAndConversation() {
         context.performAndWait {
-            setupMLSSelfConversation()
-            setupSelfUser()
-            setupClients()
+            let helper = ModelHelper()
+            helper.createMLSSelfConversation(
+                id: .init(uuidString: "11AE029E-AFFA-4B81-9095-497797C0C0FA")!,
+                mlsGroupID: .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc="),
+                in: context
+            )
+            helper.createSelfUser(
+                id: .init(uuidString: "36DFE52F-157D-452B-A9C1-98F7D9C1815D")!,
+                domain: "example.com",
+                in: context
+            )
+            helper.createSelfClient(in: context)
+            helper.createClient(for: .selfUser(in: context))
         }
-    }
-
-    private func setupMLSSelfConversation() {
-        let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = .init(uuidString: "11AE029E-AFFA-4B81-9095-497797C0C0FA")
-        conversation.mlsGroupID = .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")
-        conversation.messageProtocol = .mls
-        conversation.mlsStatus = .ready
-        conversation.conversationType = .`self`
-    }
-
-    private func setupSelfUser() {
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = .init(uuidString: "36DFE52F-157D-452B-A9C1-98F7D9C1815D")
-        selfUser.domain = "example.com"
-    }
-
-    private func setupClients() {
-        let selfClient = UserClient.insertNewObject(in: context)
-        selfClient.remoteIdentifier = UUID.create().uuidString
-        selfClient.user = .selfUser(in: context)
-        context.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
-
-        let otherClient = UserClient.insertNewObject(in: context)
-        otherClient.remoteIdentifier = UUID.create().uuidString
-        otherClient.user = .selfUser(in: context)
     }
 }
 
@@ -163,7 +147,10 @@ extension WireIdentity {
             domain: "D",
             certificate: "E",
             status: status,
-            thumbprint: "F"
+            thumbprint: "F",
+            serialNumber: "G",
+            notBefore: 0,
+            notAfter: 0
         )
     }
 }

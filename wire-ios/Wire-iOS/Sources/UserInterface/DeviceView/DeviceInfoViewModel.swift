@@ -26,7 +26,7 @@ protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
-    func enrollClient() async -> E2eIdentityCertificate?
+    func enrollClient() async throws -> E2eIdentityCertificate?
     func updateCertificate() async -> E2eIdentityCertificate?
     func removeDevice() async -> Bool
     func resetSession()
@@ -42,7 +42,6 @@ final class DeviceInfoViewModel: ObservableObject {
     let userClient: UserClient
     let gracePeriod: TimeInterval
     let mlsThumbprint: String?
-
     var title: String
     var isSelfClient: Bool
 
@@ -74,6 +73,7 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
+    @Published var showEnrollmentCertificateError = false
 
     private var actionsHandler: DeviceDetailsViewActions
 
@@ -117,8 +117,11 @@ final class DeviceInfoViewModel: ObservableObject {
     @MainActor
     func enrollClient() async {
         self.isActionInProgress = true
-        let certificate = await actionsHandler.enrollClient()
-        self.e2eIdentityCertificate = certificate
+        do {
+            self.e2eIdentityCertificate = try await actionsHandler.enrollClient()
+        } catch {
+            showEnrollmentCertificateError = true
+        }
         self.isActionInProgress = false
     }
 
@@ -176,7 +179,9 @@ extension DeviceInfoViewModel {
         gracePeriod: TimeInterval,
         mlsThumbprint: String?,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
+        contextProvider: ContextProvider,
+        e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             certificate: certificate,
@@ -190,7 +195,9 @@ extension DeviceInfoViewModel {
                 userSession: userSession,
                 credentials: credentials,
                 saveFileManager: saveFileManager,
-                getProteusFingerprint: getProteusFingerprint
+                getProteusFingerprint: getProteusFingerprint,
+                contextProvider: contextProvider,
+                e2eiCertificateEnrollment: e2eiCertificateEnrollment
             ),
             userClient: userClient,
             isSelfClient: isSelfClient,

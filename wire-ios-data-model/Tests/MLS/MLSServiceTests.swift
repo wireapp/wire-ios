@@ -52,7 +52,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         mockEncryptionService = MockMLSEncryptionServiceInterface()
         mockDecryptionService = MockMLSDecryptionServiceInterface()
         mockMLSActionExecutor = MockMLSActionExecutor()
@@ -65,6 +65,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         privateUserDefaults = PrivateUserDefaults(userID: userIdentifier, storage: userDefaultsTestSuite)
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
 
+        mockCoreCrypto.e2eiIsEnabledCiphersuite_MockValue = false
         mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             return 100
         }
@@ -512,7 +513,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 0.5)
         XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
-        XCTAssertEqual(sut.backendPublicKeys, backendPublicKeys)
     }
 
     // MARK: - Adding participants
@@ -2054,6 +2054,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subgroupID = MLSGroupID.random()
         let epoch = 0
         let epochTimestamp = Date()
+        let externalSender = Data.random()
 
         mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
             return MLSSubgroup(
@@ -2066,7 +2067,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
 
-        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, _ in
+        mockCoreCrypto.getExternalSenderConversationId_MockMethod = { groupID in
+            XCTAssertEqual(groupID, parentID.data)
+            return externalSender
+        }
+
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, config in
+            XCTAssertEqual(config.externalSenders, [externalSender])
             XCTAssertEqual(groupID, subgroupID.data)
         }
 
@@ -2120,6 +2127,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subgroupID = MLSGroupID.random()
         let epoch = 1
         let epochTimestamp = Date(timeIntervalSinceNow: -.oneDay)
+        let externalSender = Data.random()
 
         mockActionsProvider.deleteSubgroupConversationIDDomainSubgroupTypeContext_MockMethod = { _, _, _, _ in
             // no-op
@@ -2136,7 +2144,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
 
-        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, _ in
+        mockCoreCrypto.getExternalSenderConversationId_MockMethod = { groupID in
+            XCTAssertEqual(groupID, parentID.data)
+            return externalSender
+        }
+
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, config in
+            XCTAssertEqual(config.externalSenders, [externalSender])
             XCTAssertEqual(groupID, subgroupID.data)
         }
 
