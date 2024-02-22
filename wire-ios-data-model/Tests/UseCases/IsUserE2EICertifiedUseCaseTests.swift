@@ -27,6 +27,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     private var sut: IsUserE2EICertifiedUseCase!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    private var selfUser: ZMUser!
+    private var mlsSelfConversation: ZMConversation!
 
     private var context: NSManagedObjectContext { syncMOC }
 
@@ -45,20 +47,26 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         sut = nil
         mockCoreCryptoProvider = nil
         mockSafeCoreCrypto = nil
+        selfUser = nil
+        mlsSelfConversation = nil
 
         super.tearDown()
     }
 
-    func testExpiredCertificateResultsInFalse() async throws {
+    func testExpiredCertificateForSelfUserResultsInFalse() async throws {
         // Given
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { conversationID, userIDs in
             XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
-            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"]) // TODO [WPB-765]: after CC update it should have the suffix "@example.com"
+            // eventually a userID will have the suffix "@example.com", but it's low prio on the Core Crypto team
+            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"])
             return [userIDs[0]: [.withStatus(.valid), .withStatus(.expired)]]
         }
 
         // When
-        let isCertified = try await sut.invoke()
+        let isCertified = try await sut.invoke(
+            conversation: mlsSelfConversation,
+            user: selfUser
+        )
 
         // Then
         XCTAssertFalse(isCertified)
@@ -71,7 +79,10 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let isCertified = try await sut.invoke()
+        let isCertified = try await sut.invoke(
+            conversation: mlsSelfConversation,
+            user: selfUser
+        )
 
         // Then
         XCTAssertFalse(isCertified)
@@ -84,7 +95,10 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let isCertified = try await sut.invoke()
+        let isCertified = try await sut.invoke(
+            conversation: mlsSelfConversation,
+            user: selfUser
+        )
 
         // Then
         XCTAssertTrue(isCertified)
@@ -97,7 +111,10 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let isCertified = try await sut.invoke()
+        let isCertified = try await sut.invoke(
+            conversation: mlsSelfConversation,
+            user: selfUser
+        )
 
         // Then
         XCTAssertFalse(isCertified)
@@ -110,46 +127,36 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let isCertified = try await sut.invoke()
+        let isCertified = try await sut.invoke(
+            conversation: mlsSelfConversation,
+            user: selfUser
+        )
 
         // Then
         XCTAssertFalse(isCertified)
     }
 
+    // TODO: test selfUser <> selfConversation check
+    // TODO: test for other users
+
     // MARK: - Helpers
 
     private func setupUsersClientsAndConversation() {
         context.performAndWait {
-            setupMLSSelfConversation()
-            setupSelfUser()
-            setupClients()
+            let helper = ModelHelper()
+            mlsSelfConversation = helper.createMLSSelfConversation(
+                id: .init(uuidString: "11AE029E-AFFA-4B81-9095-497797C0C0FA")!,
+                mlsGroupID: .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc="),
+                in: context
+            )
+            selfUser = helper.createSelfUser(
+                id: .init(uuidString: "36DFE52F-157D-452B-A9C1-98F7D9C1815D")!,
+                domain: "example.com",
+                in: context
+            )
+            helper.createSelfClient(in: context)
+            helper.createClient(for: .selfUser(in: context))
         }
-    }
-
-    private func setupMLSSelfConversation() {
-        let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = .init(uuidString: "11AE029E-AFFA-4B81-9095-497797C0C0FA")
-        conversation.mlsGroupID = .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")
-        conversation.messageProtocol = .mls
-        conversation.mlsStatus = .ready
-        conversation.conversationType = .`self`
-    }
-
-    private func setupSelfUser() {
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = .init(uuidString: "36DFE52F-157D-452B-A9C1-98F7D9C1815D")
-        selfUser.domain = "example.com"
-    }
-
-    private func setupClients() {
-        let selfClient = UserClient.insertNewObject(in: context)
-        selfClient.remoteIdentifier = UUID.create().uuidString
-        selfClient.user = .selfUser(in: context)
-        context.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
-
-        let otherClient = UserClient.insertNewObject(in: context)
-        otherClient.remoteIdentifier = UUID.create().uuidString
-        otherClient.user = .selfUser(in: context)
     }
 }
 
