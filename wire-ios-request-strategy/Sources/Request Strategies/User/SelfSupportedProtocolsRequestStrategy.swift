@@ -90,7 +90,15 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             apiVersion: apiVersion,
             supportedProtocols: supportedProtocols
         )
-        return transportBuilder.buildTransportRequest()
+
+        guard let request = transportBuilder.buildTransportRequest() else {
+            // finish sync instead of fail, because we can never execute a request
+            WireLogger.sync.warn("can not create transport request, one reason could be an unsupported api version!")
+            finishSlowSync()
+            return nil
+        }
+
+        return request
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
@@ -103,15 +111,25 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
         switch response.result {
         case .success:
-            WireLogger.sync.info("finished slow sync phase '\(syncPhase.description)'!")
-            managedObjectContext.perform {
-                self.syncProgress.finishCurrentSyncPhase(phase: self.syncPhase)
-            }
+            finishSlowSync()
         default:
-            WireLogger.sync.error("failed slow sync phase '\(syncPhase.description)'!")
-            managedObjectContext.perform {
-                self.syncProgress.failCurrentSyncPhase(phase: self.syncPhase)
-            }
+            failSlowSync()
+        }
+    }
+
+    // MARK: Sync Progress
+
+    private func finishSlowSync() {
+        WireLogger.sync.info("finished slow sync phase '\(syncPhase.description)'!")
+        managedObjectContext.performAndWait {
+            self.syncProgress.finishCurrentSyncPhase(phase: self.syncPhase)
+        }
+    }
+
+    private func failSlowSync() {
+        WireLogger.sync.error("failed slow sync phase '\(syncPhase.description)'!")
+        managedObjectContext.performAndWait {
+            self.syncProgress.failCurrentSyncPhase(phase: self.syncPhase)
         }
     }
 }
