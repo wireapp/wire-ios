@@ -333,15 +333,25 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateE2EICertifiedStatus() {
+        guard let contextProvider = userSession as? ContextProvider else { return }
         Task {
             do {
-                // TODO [WPB-765]: finish
-//                userStatus.isCertified = try await isUserE2EICertifiedUseCase.invoke(
-//                    conversation: <#ZMConversation#>,
-//                    user: <#ZMUser#>
-//                )
+                let context = contextProvider.syncContext
+                let (selfUser, selfConversation) = await context.perform {
+                    let selfUser = ZMUser.selfUser(in: context)
+                    let mlsSelfConversation = ZMConversation.fetchSelfMLSConversation(in: context)
+                    return (selfUser, mlsSelfConversation)
+                }
+                guard let selfConversation else { return }
+                let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
+                    conversation: selfConversation,
+                    user: selfUser
+                )
+                await MainActor.run {
+                    userStatus.isCertified = isE2EICertified
+                }
             } catch {
-                WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
+                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }
         }
     }

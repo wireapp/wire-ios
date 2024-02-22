@@ -46,8 +46,7 @@ final class UserDetailViewControllerFactory {
             let serviceDetailViewController = ServiceDetailViewController(
                 serviceUser: serviceUser,
                 actionType: .removeService(conversation),
-                userSession: userSession,
-                completion: nil
+                userSession: userSession
             )
             serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
             return serviceDetailViewController
