@@ -93,9 +93,12 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     }
 
     public func checkExpiringCRLs() async {
+
+        WireLogger.e2ei.info("checking expiring CRLs")
+
         let distributionPointsOfExpiringCRLs = crlExpirationDatesRepository
             .fetchAllCRLExpirationDates()
-            .filter({ isCRLExpiringSoon(expirationDate: $0.value) })
+            .filter { isCRLExpiringSoon(expirationDate: $0.value) }
             .keys
 
         await checkCertificateRevocationLists(from: Set(distributionPointsOfExpiringCRLs))
