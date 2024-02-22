@@ -44,22 +44,12 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
             throw Error.conversationsManagedObjectContextNotSet
         }
 
-        // if the provided user is the self user ensure that the provided conversation ist the mlsSelfConversation
-        let isSelfUser = await userContext.perform(schedule: schedule) { user.isSelfUser }
-        if isSelfUser {
-            // ensure the conversation is the mls-self-conversation
-            let isSelfConversation = await conversationContext.perform(schedule: schedule) {
-                ZMConversation.fetchSelfMLSConversation(in: conversationContext)?.remoteIdentifier == conversation.remoteIdentifier
-            }
-            guard isSelfConversation else {
-                throw Error.conversationIsNotTheMLSSelfConversation
-            }
-        }
-
         // get the values required for the call to Core Crypto
-        let conversationID = await conversationContext.perform(schedule: schedule) { conversation.mlsGroupID?.data }
-        guard let conversationID else {
-            throw Error.failedToGetMLSGroupID(conversation)
+        let (conversationID, mlsGroupID) = await conversationContext.perform(schedule: schedule) {
+            (conversation.remoteIdentifier!, conversation.mlsGroupID?.data)
+        }
+        guard let mlsGroupID else {
+            throw Error.failedToGetMLSGroupID(conversationID)
         }
         let (userID, clientCount) = await userContext.perform(schedule: schedule) {
             let userID = user.remoteIdentifier.transportString()
@@ -69,7 +59,7 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         // make the call to Core Crypto
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
         let identities = try await coreCrypto.perform { coreCrypto in
-            let result = try await coreCrypto.getUserIdentities(conversationId: conversationID, userIds: [userID])
+            let result = try await coreCrypto.getUserIdentities(conversationId: mlsGroupID, userIds: [userID])
 
             // an empty result means not certified
             guard !result.isEmpty else { return [WireIdentity]() }
@@ -89,8 +79,7 @@ extension IsUserE2EICertifiedUseCase {
     enum Error: Swift.Error {
         case usersManagedObjectContextNotSet
         case conversationsManagedObjectContextNotSet
-        case conversationIsNotTheMLSSelfConversation
-        case failedToGetMLSGroupID(_ conversation: Conversation)
+        case failedToGetMLSGroupID(_ conversationID: UUID)
         /// The list of identities cannot be retrieved from the result.
         case failedToGetIdentitiesFromCoreCryptoResult(_ result: [String: [WireIdentity]], _ userID: String)
     }

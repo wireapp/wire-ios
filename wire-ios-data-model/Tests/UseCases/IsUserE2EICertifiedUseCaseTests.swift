@@ -28,15 +28,18 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockSafeCoreCrypto: MockSafeCoreCrypto!
     private var selfUser: ZMUser!
+    private var otherUser: ZMUser!
     private var mlsSelfConversation: ZMConversation!
+    private var otherConversation: ZMConversation!
 
     private var context: NSManagedObjectContext { syncMOC }
 
     override func setUp() {
         super.setUp()
 
-        setupConversation(in: context)
         setupUsersAndClients(in: context)
+        setupMLSSelfConversations(in: context)
+        setupOneOnOneConversations(in: context)
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
@@ -49,7 +52,9 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         mockCoreCryptoProvider = nil
         mockSafeCoreCrypto = nil
         selfUser = nil
+        otherUser = nil
         mlsSelfConversation = nil
+        otherConversation = nil
 
         super.tearDown()
     }
@@ -75,7 +80,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(isCertified)
     }
 
-    func testRevokedCertificateResultsInFalse() async throws {
+    func testRevokedCertificateForSelfUserResultsInFalse() async throws {
         // Given
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
             [userIDs[0]: [.withStatus(.valid), .withStatus(.revoked)]]
@@ -91,7 +96,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(isCertified)
     }
 
-    func testValidCertificatesResultsInTrue() async throws {
+    func testValidCertificatesForSelfUserResultsInTrue() async throws {
         // Given
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
             [userIDs[0]: [.withStatus(.valid), .withStatus(.valid)]]
@@ -141,11 +146,43 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     // MARK: Other User
 
+    func testRevokedCertificateOfOtherUserResultsInFalse() async throws {
+        // Given
+        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
+            [userIDs[0]: [.withStatus(.valid), .withStatus(.revoked)]]
+        }
+
+        // When
+        let isCertified = try await sut.invoke(
+            conversation: otherConversation,
+            user: otherUser
+        )
+
+        // Then
+        XCTAssertFalse(isCertified)
+    }
+
+    func testValidCertificatesForOtherUserResultsInTrue() async throws {
+        // Given
+        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
+            [userIDs[0]: [.withStatus(.valid), .withStatus(.valid)]]
+        }
+
+        // When
+        let isCertified = try await sut.invoke(
+            conversation: otherConversation,
+            user: otherUser
+        )
+
+        // Then
+        XCTAssertTrue(isCertified)
+    }
+
     // MARK: Edge Cases
 
     func testPassingSelfConversationFromViewContext() async throws {
         // Given
-        setupConversation(in: uiMOC)
+        setupMLSSelfConversations(in: uiMOC)
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
             [userIDs[0]: [.withStatus(.valid), .withStatus(.valid)]]
         }
@@ -177,9 +214,6 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(isCertified)
     }
 
-    // TODO: test selfUser <> selfConversation check
-    // TODO: test for other users
-
     // MARK: - Helpers
 
     private func setupUsersAndClients(
@@ -194,10 +228,14 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             )
             helper.createSelfClient(in: context)
             helper.createClient(for: .selfUser(in: context))
+
+            otherUser = helper.createUser(in: context)
+            helper.createClient(for: otherUser)
+            helper.createClient(for: otherUser)
         }
     }
 
-    private func setupConversation(
+    private func setupMLSSelfConversations(
         in context: NSManagedObjectContext
     ) {
         context.performAndWait {
@@ -207,6 +245,17 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
                 mlsGroupID: .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc="),
                 in: context
             )
+        }
+    }
+
+    private func setupOneOnOneConversations(
+        in context: NSManagedObjectContext
+    ) {
+        context.performAndWait {
+            otherConversation = ModelHelper().createOneOnOne(with: selfUser, in: context)
+            otherConversation.mlsGroupID = .random()
+            otherConversation.messageProtocol = .mls
+            otherConversation.mlsStatus = .ready
         }
     }
 }
