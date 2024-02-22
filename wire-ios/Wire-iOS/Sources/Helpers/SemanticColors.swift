@@ -190,7 +190,7 @@ public enum SemanticColors {
         static let borderSecondaryEnabled = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray80)
         static let borderSecondaryHighlighted = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray60)
         static let backgroundPrimaryEnabled = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
-        static let backgroundPrimaryHighlighted = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue400Light)
+        static let backgroundPrimaryHighlighted = UIColor(light: Asset.Colors.blue600Light, dark: Asset.Colors.blue400Light)
         static let backgroundPrimaryDisabled = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray70)
         static let textPrimaryEnabled = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
         static let textPrimaryDisabled = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.black)
