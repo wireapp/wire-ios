@@ -138,9 +138,15 @@ struct E2EIdentityCertificateDetailsView: View {
     }
 
     var body: some View {
-        titleView.background(SemanticColors.View.backgroundDefault.swiftUIColor)
-        certificateView.background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
-        .safeAreaInset(edge: .bottom, spacing: .zero) {
+
+        titleView
+            .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+
+        certificateView
+            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+
+        .safeAreaInset(edge: .bottom,
+                       spacing: .zero) {
             bottomBarView.background(SemanticColors.View.backgroundUserCell.swiftUIColor)
         }
         .ignoresSafeArea()
