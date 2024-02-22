@@ -30,7 +30,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     private var selfUser: ZMUser!
     private var otherUser: ZMUser!
     private var mlsSelfConversation: ZMConversation!
-    private var otherConversation: ZMConversation!
+    private var oneOnOneConversation: ZMConversation!
 
     private var context: NSManagedObjectContext { syncMOC }
 
@@ -54,7 +54,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         selfUser = nil
         otherUser = nil
         mlsSelfConversation = nil
-        otherConversation = nil
+        oneOnOneConversation = nil
 
         super.tearDown()
     }
@@ -154,7 +154,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
         // When
         let isCertified = try await sut.invoke(
-            conversation: otherConversation,
+            conversation: oneOnOneConversation,
             user: otherUser
         )
 
@@ -170,7 +170,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
         // When
         let isCertified = try await sut.invoke(
-            conversation: otherConversation,
+            conversation: oneOnOneConversation,
             user: otherUser
         )
 
@@ -208,6 +208,40 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         let isCertified = try await sut.invoke(
             conversation: mlsSelfConversation,
             user: selfUser
+        )
+
+        // Then
+        XCTAssertTrue(isCertified)
+    }
+
+    func testPassingOneOnOneConversationFromViewContext() async throws {
+        // Given
+        setupMLSSelfConversations(in: uiMOC)
+        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
+            [userIDs[0]: [.withStatus(.valid), .withStatus(.valid)]]
+        }
+
+        // When
+        let isCertified = try await sut.invoke(
+            conversation: mlsSelfConversation,
+            user: selfUser
+        )
+
+        // Then
+        XCTAssertTrue(isCertified)
+    }
+
+    func testPassingOtherUserFromViewContext() async throws {
+        // Given
+        setupUsersAndClients(in: uiMOC)
+        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
+            [userIDs[0]: [.withStatus(.valid), .withStatus(.valid)]]
+        }
+
+        // When
+        let isCertified = try await sut.invoke(
+            conversation: oneOnOneConversation,
+            user: otherUser
         )
 
         // Then
@@ -252,10 +286,10 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         in context: NSManagedObjectContext
     ) {
         context.performAndWait {
-            otherConversation = ModelHelper().createOneOnOne(with: selfUser, in: context)
-            otherConversation.mlsGroupID = .random()
-            otherConversation.messageProtocol = .mls
-            otherConversation.mlsStatus = .ready
+            oneOnOneConversation = ModelHelper().createOneOnOne(with: selfUser, in: context)
+            oneOnOneConversation.mlsGroupID = .random()
+            oneOnOneConversation.messageProtocol = .mls
+            oneOnOneConversation.mlsStatus = .ready
         }
     }
 }
