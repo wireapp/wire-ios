@@ -112,7 +112,7 @@ extension MockTransportSessionTeamEventsTests {
 
         let updateData = [
             "user": user.identifier
-            ]
+        ]
         check(event: events.first, hasType: .teamMemberLeave, team: team, data: updateData)
     }
 
@@ -174,7 +174,7 @@ extension MockTransportSessionTeamEventsTests {
 
         let updateData = [
             "conv": conversation.identifier
-            ]
+        ]
         check(event: events.first, hasType: .teamConversationCreate, team: team, data: updateData)
     }
 
@@ -208,7 +208,7 @@ extension MockTransportSessionTeamEventsTests {
 
         let updateData = [
             "conv": conversationIdentifier!
-            ]
+        ]
         check(event: events.first, hasType: .teamConversationDelete, team: team, data: updateData)
     }
 
