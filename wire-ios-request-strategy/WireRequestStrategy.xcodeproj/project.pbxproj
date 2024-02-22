@@ -146,6 +146,7 @@
 		168D7CCE26FB303A00789960 /* AddParticipantActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7CCD26FB303A00789960 /* AddParticipantActionHandlerTests.swift */; };
 		168D7CF626FC6D3400789960 /* RemoveParticipantActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7CF526FC6D3300789960 /* RemoveParticipantActionHandlerTests.swift */; };
 		168D7D0C26FC81AD00789960 /* ActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7D0B26FC81AD00789960 /* ActionHandlerTests.swift */; };
+		1695B9D42B87FFF100E9342A /* StubPayloadConversationEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1695B9D32B87FFF100E9342A /* StubPayloadConversationEvent.swift */; };
 		16972DED2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */; };
 		169BA1CB25E9507600374343 /* Payload+Coding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA1CA25E9507600374343 /* Payload+Coding.swift */; };
 		16A4891A2685CECD001F9127 /* ProteusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A489192685CECC001F9127 /* ProteusMessage.swift */; };
@@ -636,6 +637,7 @@
 		168D7CCD26FB303A00789960 /* AddParticipantActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddParticipantActionHandlerTests.swift; sourceTree = "<group>"; };
 		168D7CF526FC6D3300789960 /* RemoveParticipantActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveParticipantActionHandlerTests.swift; sourceTree = "<group>"; };
 		168D7D0B26FC81AD00789960 /* ActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandlerTests.swift; sourceTree = "<group>"; };
+		1695B9D32B87FFF100E9342A /* StubPayloadConversationEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubPayloadConversationEvent.swift; sourceTree = "<group>"; };
 		16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRequestStrategyTests.swift; sourceTree = "<group>"; };
 		169BA1CA25E9507600374343 /* Payload+Coding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Coding.swift"; sourceTree = "<group>"; };
 		16A489192685CECC001F9127 /* ProteusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessage.swift; sourceTree = "<group>"; };
@@ -1514,6 +1516,7 @@
 			isa = PBXGroup;
 			children = (
 				E6E59B072B56D04500E90D36 /* StubPayloadConversation.swift */,
+				1695B9D32B87FFF100E9342A /* StubPayloadConversationEvent.swift */,
 			);
 			path = Stubs;
 			sourceTree = "<group>";
@@ -2464,6 +2467,7 @@
 				630D41BC2B07DA3E00633867 /* ProteusConversationParticipantsServiceTests.swift in Sources */,
 				F18401EB2073C26700E9F4CC /* MockOTREntity.swift in Sources */,
 				06474D5E24B30C79002C695D /* PushNotificationStatusTests.swift in Sources */,
+				1695B9D42B87FFF100E9342A /* StubPayloadConversationEvent.swift in Sources */,
 				F18401E52073C26200E9F4CC /* FetchingClientRequestStrategyTests.swift in Sources */,
 				70C781FD2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift in Sources */,
 				EE0DE5082A24D9C20029746C /* DeleteSubgroupActionHandlerTests.swift in Sources */,
