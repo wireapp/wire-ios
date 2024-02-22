@@ -23,6 +23,7 @@ import Foundation
     // start here for slow sync
     case fetchingLastUpdateEventID
     case fetchingTeams
+    case fetchingTeamMembers
     case fetchingTeamRoles
     case fetchingConnections
     case fetchingConversations
@@ -61,6 +62,8 @@ import Foundation
             return "fetchingConversations"
         case .fetchingTeams:
             return "fetchingTeams"
+        case .fetchingTeamMembers:
+            return "fetchingTeamMembers"
         case .fetchingTeamRoles:
             return "fetchingTeamRoles"
         case .fetchingUsers:

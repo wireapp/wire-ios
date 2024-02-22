@@ -62,7 +62,7 @@ import Foundation
             "time": timestamp.transportString(),
             "type": kind.rawValue,
             "data": data
-            ] as ZMTransportData
+        ] as ZMTransportData
     }
 
     public override var debugDescription: String {

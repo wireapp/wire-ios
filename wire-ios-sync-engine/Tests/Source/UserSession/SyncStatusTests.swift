@@ -100,6 +100,8 @@ final class SyncStatusTests: MessagingTest {
         // then
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
         // then
+        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
+        // then
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingTeamRoles)
@@ -156,6 +158,10 @@ final class SyncStatusTests: MessagingTest {
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingTeamMembers)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
+        // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeamRoles)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingTeamRoles)
@@ -194,6 +200,8 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishQuickSync)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishQuickSync)
         // when
@@ -367,7 +375,7 @@ final class SyncStatusTests: MessagingTest {
         sut.forceSlowSync()
 
         // then
-        XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
         XCTAssertTrue(sut.isSyncing)
     }
 
@@ -380,7 +388,7 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        NotificationInContext(name: .ForceSlowSync, context: uiMOC.notificationContext).post()
+        NotificationInContext(name: .resyncResources, context: uiMOC.notificationContext).post()
 
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
@@ -460,6 +468,8 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertNotEqual(lastEventIDRepository.fetchLastEventID(), newID)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertNotEqual(lastEventIDRepository.fetchLastEventID(), newID)
         // when
