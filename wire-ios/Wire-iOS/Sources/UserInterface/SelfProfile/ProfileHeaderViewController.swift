@@ -101,20 +101,21 @@ final class ProfileHeaderViewController: UIViewController {
     private var tokens: [Any?] = []
     private var teamObserver: NSObjectProtocol?
 
-    /**
-     * Creates a profile view for the specified user and options.
-     * - parameter user: The user to display the profile of.
-     * - parameter conversation: The conversation.
-     * - parameter options: The options for the appearance and behavior of the view.
-     * - parameter userSession: The user session.
-     * - note: You can change the options later through the `options` property.
-     */
-    init(user: UserType, viewer: UserType, conversation: ZMConversation? = nil, options: Options, userSession: UserSession) {
-        userStatus = .init(
-            user: user,
-            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-        )
-        print("user.isVerified", user.isVerified)
+    /// Creates a profile view for the specified user and options.
+    /// - parameter user: The user to display the profile of.
+    /// - parameter conversation: The conversation.
+    /// - parameter options: The options for the appearance and behavior of the view.
+    /// - parameter userSession: The user session.
+    /// - note: You can change the options later through the `options` property.
+    init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation? = nil,
+        options: Options,
+        userSession: UserSession
+        // TODO [WPB-765]: inject use cases
+    ) {
+        userStatus = .init(user: user, isCertified: false)
         self.user = user
         self.userSession = userSession
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false

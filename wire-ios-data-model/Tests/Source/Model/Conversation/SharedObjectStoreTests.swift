@@ -103,11 +103,11 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
         let firstExpected = [
             NSInsertedObjectsKey: [firstURI] as AnyObject,
             NSDeletedObjectsKey: [secondURI] as AnyObject
-            ] as [AnyHashable: AnyObject]
+        ] as [AnyHashable: AnyObject]
 
         let secondExpected = [
             NSUpdatedObjectsKey: [secondURI] as AnyObject
-            ] as [AnyHashable: AnyObject]
+        ] as [AnyHashable: AnyObject]
 
         guard sut.storedNotifications.count == 2 else { return XCTFail("Wrong amount of notifications") }
 

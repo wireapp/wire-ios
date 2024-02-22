@@ -119,6 +119,12 @@ extension SettingsCellDescriptorFactory {
         )
 
         developerCellDescriptors.append(
+            Button(title: "Trigger resyncResources",
+                   isDestructive: false,
+                   selectAction: DebugActions.triggerResyncResources)
+        )
+
+        developerCellDescriptors.append(
             Button(title: "What's my analytics id?",
                    isDestructive: false,
                    selectAction: DebugActions.showAnalyticsIdentifier)

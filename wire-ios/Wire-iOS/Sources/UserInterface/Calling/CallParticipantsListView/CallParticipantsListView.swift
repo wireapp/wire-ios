@@ -150,7 +150,6 @@ extension UserCell: CallParticipantsListCellConfigurable {
         }
         configure(
             user: user,
-            isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
             isSelfUserPartOfATeam: selfUser.hasTeam
         )
         backgroundColor = SemanticColors.View.backgroundDefaultWhite
