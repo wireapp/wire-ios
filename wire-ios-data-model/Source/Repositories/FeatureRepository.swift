@@ -327,12 +327,17 @@ public class FeatureRepository: FeatureRepositoryInterface {
     }
 
     public func storeE2EI(_ e2ei: Feature.E2EI) {
-        let config = try! JSONEncoder().encode(e2ei.config)
+        do {
+            let config = try encoder.encode(e2ei.config)
 
-        Feature.updateOrCreate(havingName: .e2ei, in: context) {
-            $0.status = e2ei.status
-            $0.config = config
+            Feature.updateOrCreate(havingName: .e2ei, in: context) {
+                $0.status = e2ei.status
+                $0.config = config
+            }
+        } catch {
+            logger.error("failed to encode Feature.E2EI.Config: \(error)")
         }
+
         guard needsToNotifyUser(for: .e2ei) else { return }
 
         switch e2ei.status {
