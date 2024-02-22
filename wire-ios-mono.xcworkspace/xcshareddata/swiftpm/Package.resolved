@@ -12,11 +12,11 @@
       },
       {
         "package": "PINCache",
-        "repositoryURL": "https://github.com/pinterest/PINCache",
+        "repositoryURL": "https://github.com/wireapp/PINCache",
         "state": {
-          "branch": null,
-          "revision": "875c654984fb52b47ca65ae70d24852b0003ccd9",
-          "version": "3.0.3"
+          "branch": "wire_xcode15_2",
+          "revision": "e5bbe515c326e7bd03beb842ab0f7e1a3b1e4eb1",
+          "version": null
         }
       },
       {
