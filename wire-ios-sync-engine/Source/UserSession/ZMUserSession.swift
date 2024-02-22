@@ -363,6 +363,8 @@ public final class ZMUserSession: NSObject {
                                                                     userID: coreDataStack.account.userIdentifier)))
         super.init()
 
+        self.supportedProtocolsService?.delegate = self
+
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
         self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
         self.earService.delegate = self

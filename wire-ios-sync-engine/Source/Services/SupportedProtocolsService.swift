@@ -24,6 +24,12 @@ protocol SupportedProtocolsServiceInterface {
 
 }
 
+protocol SupportedProtocolsServiceDelegate: AnyObject {
+
+    func supportedProtocolsServiceDidCalculateNewProtocols(_ service: SupportedProtocolsService) async throws
+
+}
+
 final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
 
     // MARK: - Properties
@@ -31,33 +37,28 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
     private let featureRepository: FeatureRepositoryInterface
     private let userRepository: UserRepositoryInterface
     private let logger = WireLogger(tag: "supported-protocols")
-    private let context: NSManagedObjectContext
-    let oneOnOneResolver: OneOnOneResolverInterface
+    let oneOneOneResolver: OneOnOneResolverInterface
+
+    weak var delegate: SupportedProtocolsServiceDelegate?
 
     // MARK: - Life cycle
 
-    public convenience init(
-        context: NSManagedObjectContext,
-        oneOnOneResolver: OneOnOneResolverInterface
-    ) {
+    public convenience init(context: NSManagedObjectContext, oneOnOneResolver: OneOnOneResolverInterface) {
         self.init(
             featureRepository: FeatureRepository(context: context),
             userRepository: UserRepository(context: context),
-            oneOnOneResolver: oneOnOneResolver,
-            context: context
+            oneOnOneResolver: oneOnOneResolver
         )
     }
 
     init(
         featureRepository: FeatureRepositoryInterface,
         userRepository: UserRepositoryInterface,
-        oneOnOneResolver: OneOnOneResolverInterface,
-        context: NSManagedObjectContext
+        oneOnOneResolver: OneOnOneResolverInterface
     ) {
         self.featureRepository = featureRepository
         self.userRepository = userRepository
-        self.oneOnOneResolver = oneOnOneResolver
-        self.context = context
+        self.oneOneOneResolver = oneOnOneResolver
     }
 
     // MARK: - Methods
@@ -70,7 +71,7 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
 
         if previousProtocols != selfUser.supportedProtocols {
             Task {
-                try await oneOnOneResolver.resolveAllOneOnOneConversations(in: context)
+                try await delegate?.supportedProtocolsServiceDidCalculateNewProtocols(self)
             }
         }
     }
