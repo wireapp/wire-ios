@@ -213,7 +213,6 @@ public protocol UserSession: AnyObject {
     var networkState: ZMNetworkState { get }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
-    var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol { get }
     var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }
     var isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol { get }
 
@@ -505,11 +504,6 @@ extension ZMUserSession: UserSession {
 
     public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         IsUserE2EICertifiedUseCase(schedule: .immediate, coreCryptoProvider: coreCryptoProvider)
-    }
-
-    @available(*, deprecated, message: "will be removed")
-    public var isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol {
-        IsSelfUserProteusVerifiedUseCase(context: syncContext, schedule: .immediate)
     }
 
     @available(*, deprecated, message: "will be removed")

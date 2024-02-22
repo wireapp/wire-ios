@@ -36,7 +36,6 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private let userSession: UserSession
-    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
     private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     private let isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
 
@@ -107,7 +106,6 @@ final class ProfileHeaderViewController: UIViewController {
     /// - parameter conversation: The conversation.
     /// - parameter options: The options for the appearance and behavior of the view.
     /// - parameter userSession: The user session.
-    /// - parameter isSelfUserProteusVerifiedUseCase: Use case for getting the self user's Proteus verification status.
     /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status.
     /// Note: You can change the options later through the `options` property.
     init(
@@ -116,14 +114,12 @@ final class ProfileHeaderViewController: UIViewController {
         conversation: ZMConversation?,
         options: Options,
         userSession: UserSession,
-        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
     ) {
         userStatus = .init(user: user, isCertified: false)
         self.user = user
         self.userSession = userSession
-        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
         self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         self.isOtherUserE2EICertifiedUseCase = isOtherUserE2EICertifiedUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
@@ -240,7 +236,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateVerificationStatus()
+        updateE2EICertifiedStatus()
     }
 
     private func configureConstraints() {
@@ -339,11 +335,10 @@ final class ProfileHeaderViewController: UIViewController {
         }
     }
 
-    private func updateVerificationStatus() {
+    private func updateE2EICertifiedStatus() {
         Task {
             do {
                 // TODO [WPB-765]: actually we need to know if it's the self user or another user!!
-                userStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
                 userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
@@ -401,7 +396,8 @@ extension ProfileHeaderViewController: UserObserving {
             updateAvailabilityVisibility()
         }
         if changeInfo.trustLevelChanged {
-            updateVerificationStatus()
+            userStatus.isVerified = changeInfo.user.isVerified
+            updateE2EICertifiedStatus()
         }
     }
 }

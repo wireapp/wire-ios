@@ -269,8 +269,6 @@
 		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
 		597B70C72B03C6A5006C2121 /* UpdateConversationProtocolAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */; };
 		598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */; };
-		59A6971D2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */; };
-		59A6971F2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
 		59C9149F2B72730800CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C9149D2B7272F100CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		59C914A12B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C914A02B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
@@ -1158,8 +1156,6 @@
 		597A3BB62B6418170020E337 /* Availability+WireProtos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Availability+WireProtos.swift"; sourceTree = "<group>"; };
 		597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolAction.swift; sourceTree = "<group>"; };
 		5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+allTypes.swift"; sourceTree = "<group>"; };
-		59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserVerifiedUseCase.swift; sourceTree = "<group>"; };
-		59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserVerifiedUseCaseTests.swift; sourceTree = "<group>"; };
 		59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolTests.swift; sourceTree = "<group>"; };
 		59C9149D2B7272F100CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCase.swift; sourceTree = "<group>"; };
 		59C914A02B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCaseTests.swift; sourceTree = "<group>"; };
@@ -2188,7 +2184,6 @@
 				59E4121E2B8651C500E63D9A /* IsOtherUserE2EICertifiedUseCaseProtocol.swift */,
 				59C9149D2B7272F100CEFFF6 /* IsSelfUserE2EICertifiedUseCase.swift */,
 				59E4121C2B8650D200E63D9A /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */,
-				59A6971C2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift */,
 				59F4B6F32B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift */,
 				59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */,
 				638941ED2AF4FD4B0051ABFD /* RemoveLocalConversationUseCase.swift */,
@@ -2201,7 +2196,6 @@
 			isa = PBXGroup;
 			children = (
 				59C914A02B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */,
-				59A6971E2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift */,
 				59F4B6F52B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift */,
 				638941F52AF5211D0051ABFD /* RemoveLocalConversationUseCaseTests.swift */,
 			);
@@ -4214,7 +4208,6 @@
 				EEAAD75E252C711800E6A44E /* ZMManagedObject+ClassIdentifier.swift in Sources */,
 				064F8E08255E04800040371D /* Feature.swift in Sources */,
 				54FB03A31E41E64A000E13DC /* UserClient+Patches.swift in Sources */,
-				59A6971D2B72850600961E68 /* IsSelfUserVerifiedUseCase.swift in Sources */,
 				F9A706971CAEE01D00C2F5FE /* UserClientTypes.m in Sources */,
 				5E0FB215205176B400FD9867 /* Set+ServiceUser.swift in Sources */,
 				F9A706A81CAEE01D00C2F5FE /* DependentObjectsKeysForObservedObjectKeysCache.swift in Sources */,
@@ -4496,7 +4489,6 @@
 				F920AE3B1E3B844E001BC14F /* SearchUserObserverCenterTests.swift in Sources */,
 				F9B71FA81CB2BF37001DB03F /* ZMConversationTests+Validation.m in Sources */,
 				F9B71FA11CB2BF37001DB03F /* ZMConversation+Testing.m in Sources */,
-				59A6971F2B72887100961E68 /* IsSelfUserVerifiedUseCaseTests.swift in Sources */,
 				59C914A12B72731E00CEFFF6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */,
 				1600D944267BC5A100970F99 /* ZMManagedObjectFetchingTests.swift in Sources */,
 				F9A708531CAEEB7500C2F5FE /* ZMManagedObjectTests.m in Sources */,

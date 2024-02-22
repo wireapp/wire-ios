@@ -2824,33 +2824,6 @@ public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertified
 
 }
 
-public class MockIsSelfUserProteusVerifiedUseCaseProtocol: IsSelfUserProteusVerifiedUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() async -> Bool)?
-    public var invoke_MockValue: Bool?
-
-    public func invoke() async -> Bool {
-        invoke_Invocations.append(())
-
-        if let mock = invoke_MockMethod {
-            return await mock()
-        } else if let mock = invoke_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `invoke`")
-        }
-    }
-
-}
-
 public class MockIsUserE2EICertifiedUseCaseProtocol: IsUserE2EICertifiedUseCaseProtocol {
 
     // MARK: - Life cycle

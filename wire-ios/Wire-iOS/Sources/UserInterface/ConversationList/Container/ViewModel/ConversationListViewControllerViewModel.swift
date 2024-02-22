@@ -68,7 +68,6 @@ extension ConversationListViewController {
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
-        private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
         private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
         var selectedConversation: ZMConversation?
@@ -86,19 +85,17 @@ extension ConversationListViewController {
             selfUser: SelfUserType,
             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
             userSession: UserSession,
-            isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
         ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
-            self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
             selfUserStatus = .init(user: selfUser, isCertified: false)
             super.init()
 
-            updateVerificationStatus()
+            updateE2EICertifiedStatus()
         }
     }
 }
@@ -196,10 +193,9 @@ extension ConversationListViewController.ViewModel {
         return true
     }
 
-    private func updateVerificationStatus() {
+    private func updateE2EICertifiedStatus() {
         Task { @MainActor in
             do {
-                selfUserStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
                 selfUserStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
@@ -215,7 +211,8 @@ extension ConversationListViewController.ViewModel: UserObserving {
             selfUserStatus.name = changeInfo.user.name ?? ""
         }
         if changeInfo.trustLevelChanged {
-            updateVerificationStatus()
+            selfUserStatus.isVerified = changeInfo.user.isVerified
+            updateE2EICertifiedStatus()
         }
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability

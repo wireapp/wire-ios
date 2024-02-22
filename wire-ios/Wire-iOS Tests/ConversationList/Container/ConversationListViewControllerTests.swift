@@ -60,7 +60,6 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     var sut: ConversationListViewController!
     var mockDelegate: MockConversationListDelegate!
     var userSession: UserSessionMock!
-    private var isSelfUserProteusVerifiedUseCase: MockIsSelfUserProteusVerifiedUseCaseProtocol!
     private var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     // MARK: - setUp
@@ -71,8 +70,6 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
         userSession = UserSessionMock()
 
-        isSelfUserProteusVerifiedUseCase = MockIsSelfUserProteusVerifiedUseCaseProtocol()
-        isSelfUserProteusVerifiedUseCase.invoke_MockValue = false
         isSelfUserE2EICertifiedUseCase = MockIsSelfUserE2EICertifiedUseCaseProtocol()
         isSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
@@ -84,7 +81,6 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
             selfUser: selfUser,
             conversationListType: MockConversationList.self,
             userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
 
@@ -101,7 +97,6 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
-        isSelfUserProteusVerifiedUseCase = nil
         isSelfUserE2EICertifiedUseCase = nil
         mockDelegate = nil
         userSession = nil

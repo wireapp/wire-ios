@@ -87,7 +87,6 @@ final class ProfileDetailsViewController: UIViewController {
             conversation: conversation,
             options: profileHeaderOptions,
             userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: userSession.isSelfUserProteusVerifiedUseCase,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: userSession.isOtherUserE2EICertifiedUseCase
         )

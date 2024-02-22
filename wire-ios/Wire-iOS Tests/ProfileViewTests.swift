@@ -26,7 +26,6 @@ final class ProfileViewTests: BaseSnapshotTestCase {
 
     var userSession: UserSessionMock!
 
-    var isSelfUserProteusVerifiedUseCase: MockIsSelfUserProteusVerifiedUseCaseProtocol!
     var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     var isOtherUserE2EICertifiedUseCase: MockIsOtherUserE2EICertifiedUseCaseProtocol!
 
@@ -34,14 +33,11 @@ final class ProfileViewTests: BaseSnapshotTestCase {
         super.setUp()
 
         userSession = UserSessionMock()
-        isSelfUserProteusVerifiedUseCase = .init()
-        isSelfUserProteusVerifiedUseCase.invoke_MockValue = false
         isSelfUserE2EICertifiedUseCase = .init()
         isSelfUserE2EICertifiedUseCase.invoke_MockValue = false
     }
 
     override func tearDown() {
-        isSelfUserProteusVerifiedUseCase = nil
         isSelfUserE2EICertifiedUseCase = nil
         userSession = nil
 
@@ -85,7 +81,6 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: [],
             userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: isOtherUserE2EICertifiedUseCase
         )
@@ -126,7 +121,6 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: options,
             userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
             isOtherUserE2EICertifiedUseCase: isOtherUserE2EICertifiedUseCase
         )

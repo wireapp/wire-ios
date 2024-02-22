@@ -85,14 +85,12 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUser: selfUser,
             userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         self.init(viewModel: viewModel)
