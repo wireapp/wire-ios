@@ -238,15 +238,21 @@ static NSInteger const DefaultMaximumRequests = 6;
                                                                           group:group
                                                                         backoff:nil
                                                              initialAccessToken:initialAccessToken];
+
+        self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel:LevelInfo];
+
         ZM_WEAK(self);
         self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {
             ZM_STRONG(self);
+
+            [self.remoteMonitoring log:[NSString stringWithFormat:@"Request loop detected for %@", path]
+                                 error:nil];
             if(self.requestLoopDetectionCallback != nil) {
                 self.requestLoopDetectionCallback(path);
             }
         }];
 
-        self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel: LevelInfo];
+
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(renewReachabilityObserverToken)

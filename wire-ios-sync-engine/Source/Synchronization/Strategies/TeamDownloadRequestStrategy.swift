@@ -58,10 +58,8 @@ extension TeamPayload {
             return nil
         }
 
-        if created {
-            let selfUser = ZMUser.selfUser(in: managedObjectContext)
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: managedObjectContext)
-        }
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        _ = Member.getOrUpdateMember(for: selfUser, in: team, context: managedObjectContext)
 
         updateTeam(team, in: managedObjectContext)
 
