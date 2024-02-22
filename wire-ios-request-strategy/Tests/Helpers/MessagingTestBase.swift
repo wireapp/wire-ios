@@ -166,7 +166,7 @@ extension MessagingTestBase {
                 "sender": otherClient.remoteIdentifier!,
                 "id": UUID.create().transportString(),
                 "key": cyphertext.base64String()
-            ]
+             ]
         }
         return try await decryptedUpdateEventFromOtherClient(
             innerPayload: innerPayload,
@@ -255,11 +255,11 @@ extension MessagingTestBase {
             "data": innerPayload,
             "conversation": (conversation ?? groupConversation).remoteIdentifier!.transportString(),
             "time": Date().transportString()
-            ] as [String: Any]
+        ] as [String: Any]
         let wrapper = [
             "id": UUID.create().transportString(),
             "payload": [payload]
-            ] as [String: Any]
+        ] as [String: Any]
 
         return ZMUpdateEvent.eventsArray(from: wrapper as NSDictionary, source: source)!.first!
     }
