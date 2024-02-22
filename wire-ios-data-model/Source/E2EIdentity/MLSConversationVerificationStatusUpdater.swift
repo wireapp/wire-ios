@@ -76,18 +76,18 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
     // MARK: - Helpers
 
     private func updateStatus(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
-        do {
-            let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
-            await syncContext.perform {
-                self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
-            }
-        } catch {
-            throw error
+        let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
+        await syncContext.perform {
+            self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
         }
     }
 
-    private func updateStatusAndNotifyUserIfNeeded(newStatusFromCC: MLSVerificationStatus,
-                                                   conversation: ZMConversation) {
+    // MARK: - Helpers
+
+    private func updateStatusAndNotifyUserIfNeeded(
+        newStatusFromCC: MLSVerificationStatus,
+        conversation: ZMConversation
+    ) {
         guard let currentStatus = conversation.mlsVerificationStatus else {
             return conversation.mlsVerificationStatus = newStatusFromCC
         }
@@ -100,8 +100,10 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
         notifyUserAboutStateChangesIfNeeded(newStatus, in: conversation)
     }
 
-    private func resolveNewStatus(newStatusFromCC: MLSVerificationStatus,
-                                  currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
+    private func resolveNewStatus(
+        newStatusFromCC: MLSVerificationStatus,
+        currentStatus: MLSVerificationStatus
+    ) -> MLSVerificationStatus {
         switch (newStatusFromCC, currentStatus) {
         case (.notVerified, .verified):
             return .degraded

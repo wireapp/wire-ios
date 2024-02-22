@@ -113,7 +113,7 @@ class MemberTests: ZMConversationTestsBase {
 
         self.performPretendingUiMocIsSyncMoc {
             // when
-            member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
+            member = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }
 
         // then
@@ -128,7 +128,7 @@ class MemberTests: ZMConversationTestsBase {
 
         self.performPretendingUiMocIsSyncMoc {
             // when
-            member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
+            member = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }
 
         // then
@@ -146,7 +146,7 @@ class MemberTests: ZMConversationTestsBase {
 
         self.performPretendingUiMocIsSyncMoc {
             // when
-            member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
+            member = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }
 
         // then
@@ -166,7 +166,7 @@ extension MemberTests {
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = .create()
             let team = Team.insertNewObject(in: self.syncMOC)
-            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             let createdAt = Date(timeIntervalSince1970: 0)
             let createdByUUID = UUID()
 

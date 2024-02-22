@@ -22,7 +22,7 @@ public enum NetworkError: Error, Equatable {
 
     case errorEncodingRequest
     case errorDecodingResponse(ZMTransportResponse)
-    case errorDecodingResponseNew(URLResponse)
+    case errorDecodingURLResponse(URLResponse)
     case endpointNotAvailable
     case missingClients(Payload.MessageSendingStatus, ZMTransportResponse)
     case invalidRequestError(Payload.ResponseFailure, ZMTransportResponse)
@@ -48,7 +48,7 @@ public enum NetworkError: Error, Equatable {
             nil
         case .endpointNotAvailable:
             nil
-        case .errorDecodingResponseNew:
+        case .errorDecodingURLResponse:
             nil
         case .errorDecodingResponse(let response):
             response

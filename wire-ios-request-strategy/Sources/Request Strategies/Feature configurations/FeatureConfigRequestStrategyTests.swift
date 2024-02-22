@@ -66,7 +66,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
                 "config": [
                     "enforceAppLock": true,
                     "inactivityTimeoutSecs": 60
-                  ]
+                ]
             ]
             let payload: NSDictionary = [
                 "type": "feature-config.update",
