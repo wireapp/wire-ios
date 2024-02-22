@@ -51,22 +51,17 @@ class E2eIVerificationStatusServiceTests: ZMConversationTestsBase {
     // MARK: - Get conversation verification status
 
     func test_GetConversationStatus_IsSuccessful() async throws {
-        do {
-            // Given
-            let groupID = MLSGroupID.random()
-            mockCoreCrypto.e2eiConversationStateConversationId_MockMethod = { _ in
-                return .verified
-            }
-
-            // When
-            let conversationStatus = try await sut.getConversationStatus(groupID: groupID)
-
-            // Then
-            XCTAssertEqual(conversationStatus, .verified)
-
-        } catch {
-            XCTFail("Unexpected error: \(String(describing: error))")
+        // Given
+        let groupID = MLSGroupID.random()
+        mockCoreCrypto.e2eiConversationStateConversationId_MockMethod = { _ in
+            return .verified
         }
+
+        // When
+        let conversationStatus = try await sut.getConversationStatus(groupID: groupID)
+
+        // Then
+        XCTAssertEqual(conversationStatus, .verified)
     }
 
 }

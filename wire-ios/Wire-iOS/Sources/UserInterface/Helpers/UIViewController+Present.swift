@@ -32,7 +32,7 @@ extension UIViewController {
             .present(self, animated: flag, completion: completion)
     }
 
-    static func presentTopmost(
+    static func presentTopMost(
         viewController: UIViewController,
         animated flag: Bool = true,
         completion: (() -> Void)? = nil

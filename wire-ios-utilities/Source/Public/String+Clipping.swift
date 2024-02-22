@@ -20,12 +20,12 @@ import Foundation
 
 public extension String {
 
-    func clippedValue(offsetValue: Int = 25) -> String {
-        if self.count > offsetValue {
+    func truncated(afterCharacterCount count: Int = 25) -> String {
+        if self.count > count {
             return String(
                 self[...self.index(
                     self.startIndex,
-                    offsetBy: offsetValue
+                    offsetBy: count
                 )]
             ) + "..."
         } else {
