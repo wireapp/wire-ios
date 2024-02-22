@@ -50,43 +50,42 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
         }) else {
             throw E2eIVerificationStatusService.E2eIVerificationStatusError.missingConversation
         }
-        do {
-            let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
-            await syncContext.perform {
-                self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
-            }
-        } catch {
-            throw error
+
+        let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
+        await syncContext.perform {
+            self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
         }
     }
 
     // MARK: - Helpers
 
-    private func updateStatusAndNotifyUserIfNeeded(newStatusFromCC: MLSVerificationStatus,
-                                                   conversation: ZMConversation) {
-        guard let currentStatus = conversation.mlsVerificationStatus else {
-            return conversation.mlsVerificationStatus = newStatusFromCC
+    private func updateStatusAndNotifyUserIfNeeded(
+        newStatusFromCC: MLSVerificationStatus,
+        conversation: ZMConversation) {
+            guard let currentStatus = conversation.mlsVerificationStatus else {
+                return conversation.mlsVerificationStatus = newStatusFromCC
+            }
+
+            let newStatus = resolveNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
+            guard newStatus != currentStatus else {
+                return
+            }
+            conversation.mlsVerificationStatus = newStatus
+            notifyUserAboutStateChangesIfNeeded(newStatus, in: conversation)
         }
 
-        let newStatus = resolveNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
-        guard newStatus != currentStatus else {
-            return
+    private func resolveNewStatus(
+        newStatusFromCC: MLSVerificationStatus,
+        currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
+            switch (newStatusFromCC, currentStatus) {
+            case (.notVerified, .verified):
+                return .degraded
+            case(.notVerified, .degraded):
+                return .degraded
+            default:
+                return newStatusFromCC
+            }
         }
-        conversation.mlsVerificationStatus = newStatus
-        notifyUserAboutStateChangesIfNeeded(newStatus, in: conversation)
-    }
-
-    private func resolveNewStatus(newStatusFromCC: MLSVerificationStatus,
-                                  currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
-        switch (newStatusFromCC, currentStatus) {
-        case (.notVerified, .verified):
-            return .degraded
-        case(.notVerified, .degraded):
-            return .degraded
-        default:
-            return newStatusFromCC
-        }
-    }
 
     private func notifyUserAboutStateChangesIfNeeded(_ newStatus: MLSVerificationStatus, in conversation: ZMConversation) {
         switch newStatus {
