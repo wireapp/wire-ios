@@ -19,9 +19,11 @@
 import Foundation
 import WireSyncEngine
 
-final class SuccessfulCertificateEnrollmentViewController: UIViewController {
+final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
 
     // MARK: - Properties
+
+    public var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
 
     private let titleLabel: UILabel = {
         let label = DynamicFontLabel(
@@ -175,7 +177,15 @@ final class SuccessfulCertificateEnrollmentViewController: UIViewController {
 
     @objc
     private func okTapped() {
-        dismiss(animated: true)
+        onOkTapped?(self)
     }
+
+    // MARK: - AuthenticationStepViewController
+
+    weak var authenticationCoordinator: AuthenticationCoordinator?
+
+    func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) { }
+
+    func displayError(_ error: Error) { }
 
 }
