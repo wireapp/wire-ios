@@ -31,6 +31,7 @@ import Foundation
     case fetchingLegalHoldStatus
     case fetchingLabels
     case fetchingFeatureConfig
+    case updateSelfSupportedProtocols
     case evaluate1on1ConversationsForMLS
     // following is quick sync only
     case fetchingMissedEvents
@@ -72,6 +73,8 @@ import Foundation
             return "fetchingLabels"
         case .fetchingFeatureConfig:
             return "fetchingFeatureConfig"
+        case .updateSelfSupportedProtocols:
+            return "updateSelfSupportedProtocols"
         case .evaluate1on1ConversationsForMLS:
             return "evaluate1on1ConversationsForMLS"
         case .fetchingMissedEvents:
