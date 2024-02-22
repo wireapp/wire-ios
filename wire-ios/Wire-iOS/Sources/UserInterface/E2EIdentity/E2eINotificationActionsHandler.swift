@@ -173,7 +173,7 @@ private extension UIAlertController {
 
             let controller = UIAlertController(
                 title: nil,
-                message: Alert.remiderMessage(timeLeft),
+                message: Alert.reminderMessage(timeLeft),
                 preferredStyle: .alert
             )
 
