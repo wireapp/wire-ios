@@ -130,60 +130,6 @@ public class MockCommitSending: CommitSending {
 
 }
 
-public class MockContextProvider: ContextProvider {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-    // MARK: - account
-
-    public var account: Account {
-        get { return underlyingAccount }
-        set(value) { underlyingAccount = value }
-    }
-
-    public var underlyingAccount: Account!
-
-    // MARK: - viewContext
-
-    public var viewContext: NSManagedObjectContext {
-        get { return underlyingViewContext }
-        set(value) { underlyingViewContext = value }
-    }
-
-    public var underlyingViewContext: NSManagedObjectContext!
-
-    // MARK: - syncContext
-
-    public var syncContext: NSManagedObjectContext {
-        get { return underlyingSyncContext }
-        set(value) { underlyingSyncContext = value }
-    }
-
-    public var underlyingSyncContext: NSManagedObjectContext!
-
-    // MARK: - searchContext
-
-    public var searchContext: NSManagedObjectContext {
-        get { return underlyingSearchContext }
-        set(value) { underlyingSearchContext = value }
-    }
-
-    public var underlyingSearchContext: NSManagedObjectContext!
-
-    // MARK: - eventContext
-
-    public var eventContext: NSManagedObjectContext {
-        get { return underlyingEventContext }
-        set(value) { underlyingEventContext = value }
-    }
-
-    public var underlyingEventContext: NSManagedObjectContext!
-
-
-}
-
 public class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
 
     // MARK: - Life cycle

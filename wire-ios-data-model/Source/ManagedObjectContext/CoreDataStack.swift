@@ -36,7 +36,6 @@ extension CoreDataStackError: LocalizedError {
     }
 }
 
-// sourcery: AutoMockable
 @objc
 public protocol ContextProvider {
 
