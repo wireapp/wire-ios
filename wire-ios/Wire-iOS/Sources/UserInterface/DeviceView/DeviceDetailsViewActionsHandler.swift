@@ -138,7 +138,7 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         viewControllerToPresent: UIViewController
     ) {
         if !(UIApplication.shared.topmostViewController()?.presentedViewController is UIAlertController) {
-                    UIViewController.presentTopmost(viewController: viewControllerToPresent)
+                    UIViewController.presentTopMost(viewController: viewControllerToPresent)
         }
     }
 

@@ -24,7 +24,7 @@ struct DeviceView: View {
 
     var titleView: some View {
         HStack {
-            Text(viewModel.title.clippedValue())
+            Text(viewModel.title.truncated())
                 .font(FontSpec.headerSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
             if viewModel.isE2eIdentityEnabled,
