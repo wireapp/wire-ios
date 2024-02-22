@@ -194,13 +194,23 @@ extension ConversationListViewController.ViewModel {
     }
 
     private func updateE2EICertifiedStatus() {
-        Task { @MainActor in
+        guard let contextProvider = userSession as? ContextProvider else { return }
+        Task {
             do {
-                // TODO [WPB-765]: finish
-//                selfUserStatus.isCertified = try await isUserE2EICertifiedUseCase.invoke(
-//                    conversation: conversation,
-//                    user: user
-//                )
+                let context = contextProvider.syncContext
+                let (selfUser, selfConversation) = await context.perform {
+                    let selfUser = ZMUser.selfUser(in: context)
+                    let mlsSelfConversation = ZMConversation.fetchSelfMLSConversation(in: context)
+                    return (selfUser, mlsSelfConversation)
+                }
+                guard let selfConversation else { return }
+                let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
+                    conversation: selfConversation,
+                    user: selfUser
+                )
+                await MainActor.run {
+                    selfUserStatus.isCertified = isE2EICertified
+                }
             } catch {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }
