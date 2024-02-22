@@ -48,9 +48,9 @@ final class UserClientCell: SeparatorCollectionViewCell {
 
     var viewModel: ClientTableViewCellModel? {
         didSet {
-            nameLabel.text = viewModel?.title.clippedValue(offsetValue: 35)
-            proteusIdLabel.text = viewModel?.proteusLabelText.clippedValue(offsetValue: 35)
-            mlsThumbprintLabel.text = viewModel?.mlsThumbprintLabelText.clippedValue(offsetValue: 50)
+            nameLabel.text = viewModel?.title.truncated(afterCharacterCount: 35)
+            proteusIdLabel.text = viewModel?.proteusLabelText.truncated(afterCharacterCount: 35)
+            mlsThumbprintLabel.text = viewModel?.mlsThumbprintLabelText.truncated(afterCharacterCount: 50)
             statusStackView.removeArrangedSubviews()
             if let e2eIdentityStatusImage = viewModel?.e2eIdentityStatus?.uiImage {
                 statusStackView.addArrangedSubview(UIImageView(image: e2eIdentityStatusImage))

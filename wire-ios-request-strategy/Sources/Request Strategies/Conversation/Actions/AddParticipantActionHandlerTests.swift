@@ -205,8 +205,8 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             nonTeamUser.remoteIdentifier = UUID()
             nonTeamUser.needsToBeUpdatedFromBackend = false
 
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
-            _ = Member.getOrCreateMember(for: teamUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: teamUser, in: team, context: self.syncMOC)
 
             let action = AddParticipantAction(users: [teamUser, nonTeamUser], conversation: conversation)
             let response = ZMTransportResponse(payload: nil,

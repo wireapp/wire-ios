@@ -524,11 +524,11 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
                                               in: self.syncMOC,
                                               created: nil)!
 
-            _ = Member.getOrCreateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
 
             // WHEN
             let user = self.insertUser(conversation: conversation, userIsTrusted: true, moc: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: mainTeam, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: mainTeam, context: self.syncMOC)
 
             // THEN
             XCTAssertTrue(conversation.allUsersTrusted)
@@ -548,7 +548,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
                                               in: self.syncMOC,
                                               created: nil)!
 
-            _ = Member.getOrCreateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
 
             // WHEN
             _ = self.insertUser(conversation: conversation, userIsTrusted: true, moc: self.syncMOC)

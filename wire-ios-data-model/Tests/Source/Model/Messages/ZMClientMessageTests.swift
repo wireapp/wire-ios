@@ -45,7 +45,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let data = [
                 "content": name,
                 "nonce": nonce.transportString()
-            ]
+        ]
 
         let payload = payloadForMessage(in: conversation, type: EventConversationAdd, data: data)
 
@@ -394,7 +394,7 @@ extension ClientMessageTests {
 
         let data: NSDictionary = [
             "nonce": nonce.transportString()
-               ]
+        ]
         let payload = payloadForMessage(in: conversation, type: EventConversationKnock, data: data)
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)

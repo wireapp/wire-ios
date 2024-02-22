@@ -982,7 +982,7 @@ extension ZMAssetClientMessageTests {
         let dataPayload = [
             "info": genericMessageData!.base64String(),
             "id": thumbnailId
-            ] as [String: Any]
+        ] as [String: Any]
 
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -1020,7 +1020,7 @@ extension ZMAssetClientMessageTests {
         let dataPayload = [
             "info": genericMessageData!.base64String(),
             "id": thumbnailId
-            ] as [String: Any]
+        ] as [String: Any]
 
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!

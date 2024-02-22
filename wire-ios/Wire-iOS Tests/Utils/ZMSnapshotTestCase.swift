@@ -44,7 +44,7 @@ extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
 
         NSLayoutConstraint.activate([
             tableView.heightAnchor.constraint(equalToConstant: size.height)
-            ])
+        ])
 
         self.layoutSubviews()
         return tableView
@@ -296,7 +296,7 @@ extension ZMSnapshotTestCase {
         NSLayoutConstraint.activate([
             view.heightAnchor.constraint(equalToConstant: size.height),
             view.widthAnchor.constraint(equalToConstant: size.width)
-            ])
+        ])
 
         view.layoutIfNeeded()
 

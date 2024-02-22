@@ -46,7 +46,7 @@ final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHa
             .accessTokenExpired,
             .needsAuthenticationAfterReboot,
             .needsPasswordToRegisterClient
-         ]
+        ]
 
         guard supportedErrors.contains(error.userSessionErrorCode) else {
             return nil

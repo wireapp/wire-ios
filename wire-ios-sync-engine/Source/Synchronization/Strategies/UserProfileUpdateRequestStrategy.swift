@@ -162,7 +162,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             let payload = [
                     "handles": handlesToCheck,
                     "return": 1
-                ] as NSDictionary
+            ] as NSDictionary
             return ZMTransportRequest(path: "/users/handles", method: .post, payload: payload, apiVersion: apiVersion.rawValue)
 
         default:

@@ -63,7 +63,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
                     "conversation_role": "weakling"
                 ]
             ]
-        ]
+    ]
 
     // MARK: - Helper
     fileprivate func boostrapChangeTrackers(with objects: ZMManagedObject...) {

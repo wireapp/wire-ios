@@ -144,7 +144,7 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
             AVFormatIDKey: self.format.audioFormat(),
             AVSampleRateKey: 32000,
             AVNumberOfChannelsKey: 1
-            ]
+        ]
 
         let audioRecorder = try? AVAudioRecorder(url: fileURL!, settings: settings)
 

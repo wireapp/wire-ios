@@ -79,7 +79,7 @@ class TeamMembersDownloadRequestStrategyTests: MessagingTest {
         selfUser.teamIdentifier = teamID
         let team = Team.insertNewObject(in: syncMOC)
         team.remoteIdentifier = teamID
-        _ = Member.getOrCreateMember(for: selfUser, in: team, context: syncMOC)
+        _ = Member.getOrUpdateMember(for: selfUser, in: team, context: syncMOC)
 
         return team
     }
@@ -103,7 +103,7 @@ class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
             // then
             XCTAssertNotNil(request)
-            XCTAssertEqual(request?.path, "/teams/\(teamID.transportString())/members")
+            XCTAssertEqual(request?.path, "/teams/\(teamID.transportString())/members?maxResults=2000")
         }
     }
 
@@ -124,7 +124,6 @@ class TeamMembersDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItFinishSyncStep_OnSuccessfulResponse() {
-//        var team: Team!
 
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -172,14 +171,15 @@ class TeamMembersDownloadRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItDoesNotCreateTeamMembers_WhenHasMoreIsTrue() {
+    func testThatItCreatesTeamMembers_WhenHasMoreIsTrue() {
         var team: Team!
-
+        var initialTeamMembersCount = 0
         syncMOC.performGroupedBlockAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
             self.mockSyncStatus.mockPhase = .fetchingTeamMembers
             team = self.createTeam()
+            initialTeamMembersCount = team.members.count
 
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
 
@@ -192,7 +192,7 @@ class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
         syncMOC.performGroupedBlockAndWait {
             // then
-            XCTAssertEqual(team.members.count, 1)
+            XCTAssertEqual(team.members.count, initialTeamMembersCount + 1)
         }
     }
 

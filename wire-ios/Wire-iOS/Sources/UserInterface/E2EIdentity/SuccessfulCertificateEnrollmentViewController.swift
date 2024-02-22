@@ -122,9 +122,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     // MARK: - Helpers
 
     private func setupViews() {
-        [titleLabel,
-         shieldImageView,
-         stackView,
+        [stackView,
          certificateDetailsButton
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false

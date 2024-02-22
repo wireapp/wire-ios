@@ -35,7 +35,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
     struct RequestPayload: Codable, Equatable {
 
-        let qualified_users: [QualifiedID]
+        let qualified_ids: [QualifiedID]
 
     }
 
@@ -62,7 +62,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
         case .v4, .v5, .v6:
             guard
-                let payloadData = RequestPayload(qualified_users: action.qualifiedIDs).payloadString()
+                let payloadData = RequestPayload(qualified_ids: action.qualifiedIDs).payloadString()
             else {
                 action.fail(with: .failedToEncodeRequestPayload)
                 return nil

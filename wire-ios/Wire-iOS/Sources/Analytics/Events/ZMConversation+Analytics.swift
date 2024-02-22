@@ -86,7 +86,8 @@ extension ZMConversation {
             }).count.logRound(),
             "conversation_guests_pro": participants.filter({
                 $0.isGuest(in: self) && $0.hasTeam
-            }).count.logRound()]
+            }).count.logRound()
+        ]
 
         return attributes.updated(other: guestAttributes)
     }
