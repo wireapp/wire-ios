@@ -523,7 +523,6 @@
 		E666EDEC2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */; };
 		E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */; };
 		E666EDF22B74ED2F00C03E2B /* MockSessionManagerObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */; };
-		E6E1FF1D2B87955600014769 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = E6E1FF1C2B87955600014769 /* PINCache */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
 		EE01E0391F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */; };
 		EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
@@ -1509,7 +1508,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE67F6CC296F0622001D7C88 /* avs.xcframework in Frameworks */,
-				E6E1FF1D2B87955600014769 /* PINCache in Frameworks */,
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
 				EE67F6C8296F0622001D7C88 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EE67F6CA296F0622001D7C88 /* ZipArchive.xcframework in Frameworks */,
@@ -2947,7 +2945,6 @@
 			);
 			name = "WireSyncEngine-ios";
 			packageProductDependencies = (
-				E6E1FF1C2B87955600014769 /* PINCache */,
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -3026,7 +3023,6 @@
 			);
 			mainGroup = 540029AA1918CA8500578793;
 			packageReferences = (
-				E6E1FF1B2B87955600014769 /* XCRemoteSwiftPackageReference "PINCache" */,
 			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
 			projectDirPath = "";
@@ -4311,25 +4307,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		E6E1FF1B2B87955600014769 /* XCRemoteSwiftPackageReference "PINCache" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pinterest/PINCache";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.3;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		E6E1FF1C2B87955600014769 /* PINCache */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E6E1FF1B2B87955600014769 /* XCRemoteSwiftPackageReference "PINCache" */;
-			productName = PINCache;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 540029AB1918CA8500578793 /* Project object */;
 }
