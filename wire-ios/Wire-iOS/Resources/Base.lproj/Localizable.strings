@@ -1793,7 +1793,7 @@
 "feature_config.alert.mls_e2ei.button.remind_me_later" = "Remind Me Later";
 "feature_config.alert.mls_e2ei.button.learn_more" = "Learn More";
 "feature_config.alert.mls_e2ei.button.ok" = "OK";
-"feature_config.alert.mls_e2ei.remider_message" = "You can get the certificate in your **Wire Settings** during the next %@. Open **Devices** and select **Get Certificate** for your current device.";
+"feature_config.alert.mls_e2ei.reminder_message" = "You can get the certificate in your **Wire Settings** during the next %@. Open **Devices** and select **Get Certificate** for your current device.";
 
 "failet_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
 "failet_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
