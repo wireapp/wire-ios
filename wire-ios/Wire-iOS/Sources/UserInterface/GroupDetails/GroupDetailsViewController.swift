@@ -69,8 +69,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
         }
 
-        updateUserE2EICertificationStatuses()
-        collectionViewController.sections = computeVisibleSections()
+        Task { @MainActor in
+            await updateUserE2EICertificationStatuses()
+            collectionViewController.sections = computeVisibleSections()
+        }
     }
 
     @available(*, unavailable)
@@ -154,9 +156,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         self.renameGroupSectionController = renameGroupSectionController
 
         let (participants, serviceUsers) = (conversation.sortedOtherParticipants, conversation.sortedServiceUsers)
+        // 1st pass for certification status: populate the set with default values
         participants.forEach { user in
             if !userStatuses.keys.contains(user.remoteIdentifier) {
-                // on the 1st pass populate the set with default values
                 userStatuses[user.remoteIdentifier] = .init(user: user, isCertified: false)
             }
         }
@@ -296,8 +298,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         if changeInfo.participantsChanged, !conversation.isSelfAnActiveMember {
             navigationController?.popToRootViewController(animated: true)
         } else {
-            updateUserE2EICertificationStatuses()
-            collectionViewController.sections = computeVisibleSections()
+            Task { @MainActor in
+                await updateUserE2EICertificationStatuses()
+                collectionViewController.sections = computeVisibleSections()
+            }
         }
     }
 
@@ -414,28 +418,26 @@ private extension GroupDetailsViewController {
         return attributedString
     }
 
-    private func updateUserE2EICertificationStatuses() {
+    private func updateUserE2EICertificationStatuses() async {
         guard let conversation = conversation as? MLSConversation else {
             return WireLogger.e2ei.debug("conversation does not conform to `MLSConversation`")
         }
 
-        Task { @MainActor in
-            let participants = conversation.sortedOtherParticipants
-            for user in participants {
-                do {
-                    let isE2EICertified: Bool
-                    if user.isSelfUser {
-                        isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
-                    } else {
-                        isE2EICertified = try await isOtherUserE2EICertifiedUseCase.invoke(
-                            conversation: conversation,
-                            user: user
-                        )
-                    }
-                    userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
-                } catch {
-                    WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+        let participants = conversation.sortedOtherParticipants
+        for user in participants {
+            do {
+                let isE2EICertified: Bool
+                if user.isSelfUser {
+                    isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+                } else {
+                    isE2EICertified = try await isOtherUserE2EICertifiedUseCase.invoke(
+                        conversation: conversation,
+                        user: user
+                    )
                 }
+                userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
+            } catch {
+                WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
             }
         }
     }
