@@ -19,7 +19,7 @@
 import Foundation
 import WireUtilities
 
-extension ZMConversation: MLSConversation {
+extension ZMConversation {
 
     // MARK: Keys
 
