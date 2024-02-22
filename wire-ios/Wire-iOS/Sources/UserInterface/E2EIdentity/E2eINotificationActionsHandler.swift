@@ -98,6 +98,10 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
     private func confirmSuccessfulEnrollment() {
         snoozeCertificateEnrollmentUseCase?.stop()
         let successScreen = SuccessfulCertificateEnrollmentViewController()
+        successScreen.onOkTapped = { viewController in
+            viewController.dismiss(animated: true)
+        }
+
         targetVC.present(successScreen, animated: true)
     }
 

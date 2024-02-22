@@ -19,9 +19,11 @@
 import Foundation
 import WireSyncEngine
 
-final class SuccessfulCertificateEnrollmentViewController: UIViewController {
+final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
 
     // MARK: - Properties
+
+    public var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
 
     private let titleLabel: UILabel = {
         let label = DynamicFontLabel(
@@ -52,6 +54,7 @@ final class SuccessfulCertificateEnrollmentViewController: UIViewController {
         let imageView = UIImageView(image: Asset.Images.certificateValid.image)
         imageView.accessibilityIdentifier = "shieldImageView"
         imageView.isAccessibilityElement = false
+        imageView.contentMode = .scaleAspectFit
 
         return imageView
     }()
@@ -119,16 +122,16 @@ final class SuccessfulCertificateEnrollmentViewController: UIViewController {
     // MARK: - Helpers
 
     private func setupViews() {
-        [titleLabel,
-         shieldImageView,
-         stackView,
+        [stackView,
          certificateDetailsButton
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
 
-        [detailsLabel,
+        [titleLabel,
+         shieldImageView,
+         detailsLabel,
          confirmationButton
         ].forEach {
             stackView.addArrangedSubview($0)
@@ -140,15 +143,13 @@ final class SuccessfulCertificateEnrollmentViewController: UIViewController {
     private func createConstraints() {
         NSLayoutConstraint.activate([
             // title Label
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 40),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 70),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -70),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
 
             // shield image view
             shieldImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             shieldImageView.heightAnchor.constraint(equalToConstant: 64),
             shieldImageView.widthAnchor.constraint(equalToConstant: 64),
-            shieldImageView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -30),
 
             // confirmation button
             confirmationButton.heightAnchor.constraint(equalToConstant: 56),
@@ -175,7 +176,15 @@ final class SuccessfulCertificateEnrollmentViewController: UIViewController {
 
     @objc
     private func okTapped() {
-        dismiss(animated: true)
+        onOkTapped?(self)
     }
+
+    // MARK: - AuthenticationStepViewController
+
+    weak var authenticationCoordinator: AuthenticationCoordinator?
+
+    func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) { }
+
+    func displayError(_ error: Error) { }
 
 }

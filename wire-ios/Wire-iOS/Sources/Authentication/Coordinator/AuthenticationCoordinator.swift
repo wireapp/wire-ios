@@ -414,8 +414,11 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     }
                 }
 
-            case .enrollE2EI:
+            case .startE2EIEnrollment:
                 startE2EIdentityEnrollment()
+
+            case .completeE2EIEnrollment:
+                completeE2EIdentityEnrollment()
             }
         }
     }
@@ -877,7 +880,12 @@ extension AuthenticationCoordinator {
                 _ = try await e2eiCertificateUseCase?.invoke(
                     authenticate: oauthUseCase.invoke
                 )
-                session.reportEndToEndIdentityEnrollmentSuccess()
+                await MainActor.run {
+                    executeActions([
+                        .hideLoadingView,
+                        .transition(.enrollE2EIdentitySuccess, mode: .reset)
+                    ])
+                }
             } catch {
                 await MainActor.run {
                     executeActions([
@@ -890,6 +898,11 @@ extension AuthenticationCoordinator {
                 }
             }
         }
+    }
+
+    private func completeE2EIdentityEnrollment() {
+        guard let session = statusProvider.sharedUserSession else { return }
+        session.reportEndToEndIdentityEnrollmentSuccess()
     }
 
     private func showAlertWithNoInternetConnectionError() {
