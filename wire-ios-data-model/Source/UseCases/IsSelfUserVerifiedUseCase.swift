@@ -20,7 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 /// Determines if the self user has is Proteus verified.
-public protocol IsSelfUserProteusVerifiedUseCaseProtocol {
+public protocol IsSelfUserProteusVerifiedUseCaseProtocol { // TODO [WPB-765]: remove
     /// Returns `true` if the self user is verified, `false` otherwise.
     func invoke() async -> Bool
 }

@@ -38,6 +38,7 @@ final class ProfileHeaderViewController: UIViewController {
     private let userSession: UserSession
     private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
     private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    private let isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
 
     /// The user who is viewing this view
     private let viewer: UserType
@@ -116,13 +117,15 @@ final class ProfileHeaderViewController: UIViewController {
         options: Options,
         userSession: UserSession,
         isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        isOtherUserE2EICertifiedUseCase: IsOtherUserE2EICertifiedUseCaseProtocol
     ) {
         userStatus = .init(user: user, isCertified: false)
         self.user = user
         self.userSession = userSession
         self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
         self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+        self.isOtherUserE2EICertifiedUseCase = isOtherUserE2EICertifiedUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
@@ -339,6 +342,7 @@ final class ProfileHeaderViewController: UIViewController {
     private func updateVerificationStatus() {
         Task {
             do {
+                // TODO [WPB-765]: actually we need to know if it's the self user or another user!!
                 userStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
                 userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
             } catch {
