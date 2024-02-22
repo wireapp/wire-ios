@@ -289,10 +289,10 @@ extension SyncStatus {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(data: data, encoding: .utf8)
             let message = "SYNC_STATUS: \(jsonString ?? self.description)"
-            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .debug)
+            WireLogger.sync.info(message)
         } catch {
             let message = "SYNC_STATUS: \(self.description)"
-            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .error)
+            WireLogger.sync.error(message)
         }
     }
 }
