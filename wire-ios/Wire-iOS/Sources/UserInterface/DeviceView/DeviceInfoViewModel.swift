@@ -181,7 +181,7 @@ extension DeviceInfoViewModel {
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
         saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
         contextProvider: ContextProvider,
-        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseInterface?
+        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             certificate: certificate,

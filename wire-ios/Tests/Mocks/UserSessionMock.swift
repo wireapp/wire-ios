@@ -23,9 +23,7 @@ import WireDataModelSupport
 
 @testable import Wire
 
-final class UserSessionMock: UserSession {    
-    var enrollE2EICertificate: WireRequestStrategy.EnrollE2EICertificateUseCaseInterface?
-
+final class UserSessionMock: UserSession {
     var isE2eIdentityEnabled  = false
     var certificate = E2eIdentityCertificate.mockNotActivated
     typealias Preference = AppLockPasscodePreference
@@ -261,6 +259,10 @@ final class UserSessionMock: UserSession {
 
     var selfUserClient: UserClient? {
         return nil
+    }
+
+    var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol {
+        MockEnrolE2eICertificateUseCase()
     }
 
     var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol {

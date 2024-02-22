@@ -443,7 +443,7 @@ extension AppRootRouter {
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,
-                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase, 
+                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
                 gracePeriodRepository: userSession.gracePeriodRepository,
                 targetVC: rootViewController),

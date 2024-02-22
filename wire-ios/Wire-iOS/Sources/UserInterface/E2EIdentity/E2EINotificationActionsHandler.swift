@@ -32,7 +32,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     // MARK: - Properties
 
-    private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseInterface?
+    private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
     private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
     private let gracePeriodRepository: GracePeriodRepository
@@ -41,7 +41,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     // MARK: - Life cycle
 
     init(
-        enrollCertificateUseCase: EnrollE2EICertificateUseCaseInterface?,
+        enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
         stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
         gracePeriodRepository: GracePeriodRepository,
@@ -56,7 +56,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     public func getCertificate() async {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         do {
-            try await enrollCertificateUseCase?.invoke(authenticate: oauthUseCase.invoke)
+            try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
             await confirmSuccessfulEnrollment()
         } catch {
             guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
@@ -91,7 +91,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel) {
             Task {
-                try await self.enrollCertificateUseCase?.invoke(authenticate: oauthUseCase.invoke)
+                try await self.enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
                 await self.confirmSuccessfulEnrollment()
             }
         }

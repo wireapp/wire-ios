@@ -87,6 +87,7 @@
 		06E89AFE25C82C51008E3846 /* UnlockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E89AFD25C82C50008E3846 /* UnlockViewController.swift */; };
 		06E89B0025C82CA9008E3846 /* PasscodeTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E89AFF25C82CA9008E3846 /* PasscodeTextField.swift */; };
 		06F2664223881A0D006BD21F /* LabelIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F2664123881A0D006BD21F /* LabelIndicator.swift */; };
+		06F80A0B2B8807930020C899 /* MockEnrolE2eICertificateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2545AEBF2B866202007B5721 /* MockEnrolE2eICertificateUseCase.swift */; };
 		06F9864125CBD9C7005572C5 /* AttributedStringOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870534001DD6265100A7F822 /* AttributedStringOperators.swift */; };
 		06F9864225CBEEE6005572C5 /* StyleKitIcon+Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CBBEB924CED5C9006543D4 /* StyleKitIcon+Const.swift */; };
 		06F9864425CBFA6E005572C5 /* UIButton+SetIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F9864325CBFA6E005572C5 /* UIButton+SetIcon.swift */; };
@@ -10697,6 +10698,7 @@
 				E6579E462AFF9FFB004E7FD8 /* MockUserType+CodingKeys.swift in Sources */,
 				E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */,
 				E6579E6A2AFFA024004E7FD8 /* MockConverationDirectory.swift in Sources */,
+				06F80A0B2B8807930020C899 /* MockEnrolE2eICertificateUseCase.swift in Sources */,
 				E6579E4F2AFFA024004E7FD8 /* MockUser+SelfUserFromSession.swift in Sources */,
 				E6579E7D2AFFA97F004E7FD8 /* OrientationDeltaTests.swift in Sources */,
 				E6579E482AFFA001004E7FD8 /* MockUserType+SelfLegalHoldSubject.swift in Sources */,

@@ -484,6 +484,34 @@ public class MockE2eIAPI: E2eIAPI {
     }
 
 }
+public class MockEnrollE2EICertificateUseCaseProtocol: EnrollE2EICertificateUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeAuthenticate_Invocations: [OAuthBlock] = []
+    public var invokeAuthenticate_MockError: Error?
+    public var invokeAuthenticate_MockMethod: ((@escaping OAuthBlock) async throws -> Void)?
+
+    public func invoke(authenticate: @escaping OAuthBlock) async throws {
+        invokeAuthenticate_Invocations.append(authenticate)
+
+        if let error = invokeAuthenticate_MockError {
+            throw error
+        }
+
+        guard let mock = invokeAuthenticate_MockMethod else {
+            fatalError("no mock for `invokeAuthenticate`")
+        }
+
+        try await mock(authenticate)
+    }
+
+}
 class MockMLSClientIDsProviding: MLSClientIDsProviding {
 
     // MARK: - Life cycle

@@ -43,14 +43,15 @@ public struct OAuthResponse {
 
 public typealias OAuthBlock = (OAuthParameters) async throws -> OAuthResponse
 
-public protocol EnrollE2EICertificateUseCaseInterface {
+// sourcery: AutoMockable
+public protocol EnrollE2EICertificateUseCaseProtocol {
 
-    func invoke(authenticate: OAuthBlock) async throws
+    func invoke(authenticate: @escaping OAuthBlock) async throws
 
 }
 
 /// This class provides an interface to issue an E2EI certificate.
-public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCaseInterface {
+public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCaseProtocol {
 
     // MARK: - Types
 
@@ -69,15 +70,16 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCaseInt
 
     // MARK: - Life cycle
 
-    public init(e2eiRepository: E2EIRepositoryInterface,
-                context: NSManagedObjectContext) {
-        self.e2eiRepository = e2eiRepository
-        self.context = context
-    }
+    public init(
+        e2eiRepository: E2EIRepositoryInterface,
+        context: NSManagedObjectContext) {
+            self.e2eiRepository = e2eiRepository
+            self.context = context
+        }
 
     // Detailed enrolment flow:
     // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/800820113/Use+case+End-to-end+identity+enrollment#Detailed-enrolment-flow
-    public func invoke(authenticate: OAuthBlock) async throws {
+    public func invoke(authenticate: @escaping OAuthBlock) async throws {
         do {
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
