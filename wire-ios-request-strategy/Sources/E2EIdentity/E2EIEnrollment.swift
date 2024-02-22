@@ -165,7 +165,7 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     public func createAuthorization(
         prevNonce: String,
         authzEndpoint: String) async throws -> AcmeAuthorization {
-            logger.info("create authz at  \(authzEndpoint)")
+            logger.info("create authz at \(authzEndpoint)")
 
             do {
                 let authzRequest = try await e2eiService.getNewAuthzRequest(url: authzEndpoint, previousNonce: prevNonce)
