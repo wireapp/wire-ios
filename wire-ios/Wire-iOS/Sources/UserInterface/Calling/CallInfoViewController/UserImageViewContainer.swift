@@ -75,6 +75,6 @@ final class UserImageViewContainer: UIView {
             userImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
             userImageView.widthAnchor.constraint(lessThanOrEqualToConstant: maxSize),
             userImageView.heightAnchor.constraint(lessThanOrEqualToConstant: maxSize)
-            ])
+        ])
     }
 }

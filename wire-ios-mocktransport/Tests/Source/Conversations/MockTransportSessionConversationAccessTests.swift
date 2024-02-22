@@ -67,7 +67,7 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         // given
         let payload = [
             "access": ["invite"]
-            ] as ZMTransportData
+        ] as ZMTransportData
 
         // when
         let response = self.response(forPayload: payload, path: "/conversations/\(self.conversation.identifier)/access", method: .put, apiVersion: .v0)
@@ -86,7 +86,7 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
             "access_role": role,
             "access_role_v2": accessRoleV2,
             "access": access
-            ] as ZMTransportData
+        ] as ZMTransportData
 
         // when
         let response = self.response(forPayload: payload, path: "/conversations/\(self.conversation.identifier)/access", method: .put, apiVersion: .v0)

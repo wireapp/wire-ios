@@ -75,7 +75,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
         guard let httpResponse = response as? HTTPURLResponse,
               let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce) else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
 
         return replayNonce
@@ -98,7 +98,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         guard
             let certificateChain = String(bytes: data, encoding: .utf8)
         else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
 
         return certificateChain
@@ -120,7 +120,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         guard
             let certificateChain = String(bytes: data, encoding: .utf8)
         else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
 
         return certificateChain
@@ -141,7 +141,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
             let httpResponse = response as? HTTPURLResponse,
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)
         else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
         let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
         return ACMEResponse(nonce: replayNonce, location: location, response: data)
@@ -166,7 +166,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
             let httpResponse = response as? HTTPURLResponse,
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)
         else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
 
         let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
@@ -192,7 +192,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce),
             let challengeResponse = Challenge(data)
         else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
 
         return ChallengeResponse(type: challengeResponse.type,

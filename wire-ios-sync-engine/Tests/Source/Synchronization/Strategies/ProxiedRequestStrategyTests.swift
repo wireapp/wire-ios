@@ -121,7 +121,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         let HTTPResponse = HTTPURLResponse(url: URL(string: "http://www.example.com/")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [
                 "Content-Length": "\(data.count)",
                 "Server": "nginx"
-            ]
+        ]
         )!
 
         let response = ZMTransportResponse(httpurlResponse: HTTPResponse, data: data, error: error, apiVersion: APIVersion.v0.rawValue)

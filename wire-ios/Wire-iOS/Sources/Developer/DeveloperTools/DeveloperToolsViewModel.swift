@@ -252,7 +252,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
         Task {
             do {
-                _ = try await e2eiCertificateUseCase.invoke(
+                _ = try await e2eiCertificateUseCase?.invoke(
                     authenticate: oauthUseCase.invoke)
             } catch {
                 WireLogger.e2ei.error("failed to enroll e2ei: \(error)")

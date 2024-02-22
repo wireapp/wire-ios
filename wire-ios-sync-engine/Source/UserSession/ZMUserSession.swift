@@ -140,7 +140,7 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
-    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol? = {
+    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
         let selfClientCertificateProvider = SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
             context: syncContext)
@@ -153,7 +153,7 @@ public final class ZMUserSession: NSObject {
             accountId: account.userIdentifier)
     }()
 
-    public lazy var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol? = {
+    public lazy var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol = {
         return StopCertificateEnrollmentSnoozerUseCase(
             recurringActionService: recurringActionService,
             accountId: account.userIdentifier)
@@ -313,7 +313,7 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
-    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseInterface = {
+    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseInterface? = {
         return EnrollE2EICertificateUseCase(
             e2eiRepository: e2eiRepository,
             context: syncContext)

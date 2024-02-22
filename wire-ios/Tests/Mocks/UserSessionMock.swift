@@ -23,8 +23,8 @@ import WireDataModelSupport
 
 @testable import Wire
 
-final class UserSessionMock: UserSession {
-    var enrollE2eICertificate: WireRequestStrategy.EnrollE2eICertificateUseCaseInterface?
+final class UserSessionMock: UserSession {    
+    var enrollE2EICertificate: WireRequestStrategy.EnrollE2EICertificateUseCaseInterface?
 
     var isE2eIdentityEnabled  = false
     var certificate = E2eIdentityCertificate.mockNotActivated

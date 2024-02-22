@@ -99,7 +99,7 @@ extension UserProfileUpdateRequestStrategyTests {
             "phone": credentials.phoneNumber!,
             "code": credentials.phoneNumberVerificationCode!,
             "dryrun": false
-            ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
+        ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
@@ -119,7 +119,7 @@ extension UserProfileUpdateRequestStrategyTests {
             "phone": credentials.phoneNumber!,
             "code": credentials.phoneNumberVerificationCode!,
             "dryrun": false
-            ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
+        ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
@@ -136,7 +136,7 @@ extension UserProfileUpdateRequestStrategyTests {
         // THEN
         let expected = ZMTransportRequest(path: "/self/password", method: .put, payload: [
             "new_password": credentials.password!
-            ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
+        ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
@@ -193,7 +193,7 @@ extension UserProfileUpdateRequestStrategyTests {
         // THEN
         let expected = ZMTransportRequest(path: "/access/self/email", method: .put, payload: [
             "email": credentials.email!
-            ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
+        ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
 
     }

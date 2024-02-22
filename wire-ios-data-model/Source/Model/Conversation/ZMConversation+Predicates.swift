@@ -48,7 +48,7 @@ extension ZMConversation {
             selfUserIsMember,
             groupOnly,
             notTeamOneToOne
-            ])
+        ])
     }
 
     private class func predicateForConversationWithUsers(matchingQuery query: String,
@@ -64,7 +64,7 @@ extension ZMConversation {
             argumentArray: [
                 ZMConversationParticipantRolesKey,
                 selfUser
-                ] + roleNameMatchingRegexes
+            ] + roleNameMatchingRegexes
         )
     }
 

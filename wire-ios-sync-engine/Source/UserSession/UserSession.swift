@@ -224,7 +224,7 @@ public protocol UserSession: AnyObject {
 
     var e2eiFeature: Feature.E2EI { get }
 
-    var enrollE2EICertificate: EnrollE2EICertificateUseCaseInterface { get }
+    var enrollE2EICertificate: EnrollE2EICertificateUseCaseInterface? { get }
 
     func fetchAllClients()
 

@@ -874,7 +874,7 @@ extension AuthenticationCoordinator {
 
         Task {
             do {
-                _ = try await e2eiCertificateUseCase.invoke(
+                _ = try await e2eiCertificateUseCase?.invoke(
                     authenticate: oauthUseCase.invoke
                 )
                 session.reportEndToEndIdentityEnrollmentSuccess()

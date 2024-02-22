@@ -28,7 +28,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     private var credentials: ZMEmailCredentials?
     private let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     private let contextProvider: ContextProvider
-    private let e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?
+    private let e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseInterface?
 
     var isProcessing: ((Bool) -> Void)?
 
@@ -46,7 +46,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         logger: LoggerProtocol = WireLogger.e2ei,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
         contextProvider: ContextProvider,
-        e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?
+        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseInterface?
     ) {
         self.userClient = userClient
         self.credentials = credentials
@@ -180,7 +180,7 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         viewControllerToPresent: UIViewController
     ) {
         if !(UIApplication.shared.topmostViewController()?.presentedViewController is UIAlertController) {
-                    UIViewController.presentTopmost(viewController: viewControllerToPresent)
+                    UIViewController.presentTopMost(viewController: viewControllerToPresent)
         }
     }
 
