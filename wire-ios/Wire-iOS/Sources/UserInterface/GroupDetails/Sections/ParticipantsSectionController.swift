@@ -53,7 +53,7 @@ enum ConversationRole {
 
 private struct ParticipantsSectionViewModel {
     let rows: [ParticipantsRowType]
-    let participants: [UserType]
+    let participants: [(user: UserType, isE2EICertified: Bool)]
     let conversationRole: ConversationRole
     let userSession: UserSession
     let showSectionCount: Bool
@@ -105,7 +105,7 @@ private struct ParticipantsSectionViewModel {
     ///   - maxDisplayedParticipants: max number of participants we can display, if there are more than maxParticipants participants
     ///   - showSectionCount: current view model - a search result or not
     init(
-        users: [UserType],
+        users: [(user: UserType, isE2EICertified: Bool)],
         conversationRole: ConversationRole,
         totalParticipantsCount: Int,
         clipSection: Bool = true,
@@ -114,7 +114,7 @@ private struct ParticipantsSectionViewModel {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        participants = users.sorted { $0.name < $1.name }
+        participants = users.sorted { $0.user.name < $1.user.name }
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
         self.userSession = userSession
@@ -125,19 +125,24 @@ private struct ParticipantsSectionViewModel {
             maxParticipants: maxParticipants,
             maxDisplayedParticipants: maxDisplayedParticipants
         )
-        : participants.map { participant in
-            .user(participant, false)
+        : participants.map { participant, isE2EICertified in
+            .user(participant, isE2EICertified)
         }
     }
 
-    static func computeRows(_ participants: [UserType], totalParticipantsCount: Int, maxParticipants: Int, maxDisplayedParticipants: Int) -> [ParticipantsRowType] {
+    static func computeRows(
+        _ participants: [(user: UserType, isE2EICertified: Bool)],
+        totalParticipantsCount: Int,
+        maxParticipants: Int,
+        maxDisplayedParticipants: Int
+    ) -> [ParticipantsRowType] {
         guard participants.count > maxParticipants else {
-            return participants.map { participant in
-                .user(participant, false)
+            return participants.map { participant, isE2EICertified in
+                .user(participant, isE2EICertified)
             }
         }
         return participants[0..<maxDisplayedParticipants]
-            .map { .user($0, false) } + [.showAll(totalParticipantsCount)]
+            .map { .user($0, $1) } + [.showAll(totalParticipantsCount)]
     }
 }
 
@@ -179,24 +184,28 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     private let conversation: GroupDetailsConversationType
     private var token: AnyObject?
 
-    init(participants: [UserType],
-         conversationRole: ConversationRole,
-         conversation: GroupDetailsConversationType,
-         delegate: GroupDetailsSectionControllerDelegate,
-         totalParticipantsCount: Int,
-         clipSection: Bool = true,
-         maxParticipants: Int = Int.ConversationParticipants.maxNumberWithoutTruncation,
-         maxDisplayedParticipants: Int = Int.ConversationParticipants.maxNumberOfDisplayed,
-         showSectionCount: Bool = true,
-         userSession: UserSession
+    init(
+        participants: [(user: UserType, isE2EICertified: Bool)],
+        conversationRole: ConversationRole,
+        conversation: GroupDetailsConversationType,
+        delegate: GroupDetailsSectionControllerDelegate,
+        totalParticipantsCount: Int,
+        clipSection: Bool = true,
+        maxParticipants: Int = Int.ConversationParticipants.maxNumberWithoutTruncation,
+        maxDisplayedParticipants: Int = Int.ConversationParticipants.maxNumberOfDisplayed,
+        showSectionCount: Bool = true,
+        userSession: UserSession
     ) {
-        viewModel = .init(users: participants,
-                          conversationRole: conversationRole,
-                          totalParticipantsCount: totalParticipantsCount,
-                          clipSection: clipSection,
-                          maxParticipants: maxParticipants,
-                          maxDisplayedParticipants: maxDisplayedParticipants,
-                          showSectionCount: showSectionCount, userSession: userSession)
+        viewModel = .init(
+            users: participants,
+            conversationRole: conversationRole,
+            totalParticipantsCount: totalParticipantsCount,
+            clipSection: clipSection,
+            maxParticipants: maxParticipants,
+            maxDisplayedParticipants: maxDisplayedParticipants,
+            showSectionCount: showSectionCount,
+            userSession: userSession
+        )
         self.conversation = conversation
         self.delegate = delegate
         super.init()

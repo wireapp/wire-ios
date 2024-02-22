@@ -165,8 +165,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         if !participants.isEmpty {
 
-            let admins = participants.filter({ $0.isGroupAdmin(in: conversation) })
-            let members = participants.filter({ !$0.isGroupAdmin(in: conversation) })
+            let admins = participants
+                .filter { $0.isGroupAdmin(in: conversation) }
+                .map { ($0, userStatuses[$0.remoteIdentifier]?.isCertified ?? false) }
+            let members = participants
+                .filter { !$0.isGroupAdmin(in: conversation) }
+                .map { ($0, userStatuses[$0.remoteIdentifier]?.isCertified ?? false) }
 
             let maxNumberOfDisplayed = Int.ConversationParticipants.maxNumberOfDisplayed
             let maxNumberWithoutTruncation = Int.ConversationParticipants.maxNumberWithoutTruncation
@@ -474,8 +478,15 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         navigationController?.pushViewController(viewController, animated: true)
     }
 
-    func presentFullParticipantsList(for users: [UserType], in conversation: GroupDetailsConversationType) {
-        presentParticipantsDetails(with: users, selectedUsers: [], animated: true)
+    func presentFullParticipantsList(
+        for users: [(user: UserType, isE2EICertified: Bool)],
+        in conversation: GroupDetailsConversationType
+    ) {
+        presentParticipantsDetails(
+            with: users.map(\.user), // TODO [WPB-765]: pass isE2EICertified value
+            selectedUsers: [],
+            animated: true
+        )
     }
 
     func presentGuestOptions(animated: Bool) {

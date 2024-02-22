@@ -24,7 +24,10 @@ protocol GroupDetailsUserDetailPresenter: AnyObject {
 }
 
 protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter, AnyObject {
-    func presentFullParticipantsList(for users: [UserType], in conversation: GroupDetailsConversationType)
+    func presentFullParticipantsList(
+        for users: [(user: UserType, isE2EICertified: Bool)],
+        in conversation: GroupDetailsConversationType
+    )
 }
 
 class GroupDetailsSectionController: NSObject, CollectionViewSectionController {
