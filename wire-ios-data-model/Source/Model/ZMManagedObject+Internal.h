@@ -31,8 +31,8 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedKeysKey;
 
 + (nonnull NSString *)entityName; ///< subclasses must implement this
 + (nullable NSString *)sortKey; ///< subclasses must implement this or @c +defaultSortDescriptors
-+ (nullable NSString *)remoteIdentifierDataKey; ///< subclasses must implement this
-+ (nullable NSString *)domainKey; ///< subclasses must implement this
++ (nonnull NSString *)remoteIdentifierDataKey; 
++ (nonnull NSString *)domainKey;
 
 + (nonnull instancetype)insertNewObjectInManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
 

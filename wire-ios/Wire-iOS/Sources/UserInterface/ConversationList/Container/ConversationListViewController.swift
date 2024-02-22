@@ -122,6 +122,7 @@ final class ConversationListViewController: UIViewController {
             isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
+topBarViewController.selfUserStatus = viewModel.selfUserStatus
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
@@ -386,6 +387,15 @@ final class ConversationListViewController: UIViewController {
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
         UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
+    }
+}
+
+// MARK: - ViewModel Delegate
+
+extension ConversationListViewController: ConversationListContainerViewModelDelegate {
+
+    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
+        topBarViewController.selfUserStatus = selfUserStatus
     }
 }
 
