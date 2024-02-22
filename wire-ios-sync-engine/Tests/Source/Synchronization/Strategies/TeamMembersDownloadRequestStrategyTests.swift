@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-class TeamMembersDownloadRequestStrategyTests: MessagingTest {
+final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
     var sut: TeamMembersDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
