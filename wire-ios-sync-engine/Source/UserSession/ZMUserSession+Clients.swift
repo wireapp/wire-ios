@@ -43,7 +43,7 @@ extension ZMUserSession {
     @objc
     public func fetchAllClients() {
         syncManagedObjectContext.performGroupedBlock {
-            self.applicationStatusDirectory.clientUpdateStatus.needsToFetchClients(andVerifySelfClient: true)
+            self.applicationStatusDirectory.clientUpdateStatus.needsToFetchClients(andVerifySelfClient: false)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }

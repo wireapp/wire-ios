@@ -626,6 +626,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
             // when
             sut.didRegisterProteusClient(selfUserClient)
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
             // then
             XCTAssertEqual(self.sut.currentPhase, .registeringMLSClient)
