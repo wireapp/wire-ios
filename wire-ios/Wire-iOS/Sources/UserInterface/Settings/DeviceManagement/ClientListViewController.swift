@@ -522,10 +522,7 @@ final class ClientListViewController: UIViewController,
                     if let selfClient = selfClient {
                         selfClient.e2eIdentityCertificate = certificates.first(where: {
                             $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
-                        })
-                        if certificates.isNonEmpty {
-                            selfClient.e2eIdentityCertificate = selfClient.notActivatedE2EIdenityCertificate()
-                        }
+                        }) ?? selfClient.notActivatedE2EIdenityCertificate()
                         selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
                     }
                     return updatedUserClients
