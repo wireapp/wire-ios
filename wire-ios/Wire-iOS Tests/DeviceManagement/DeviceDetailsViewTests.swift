@@ -20,6 +20,7 @@ import XCTest
 @testable import Wire
 import SwiftUI
 import WireSyncEngineSupport
+import WireDataModelSupport
 
 final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
