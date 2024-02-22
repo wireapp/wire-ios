@@ -182,14 +182,13 @@ extension ZMConversation {
     }
 
     public func appendMLSMigrationOngoingCallSystemMessage(
-        users: Set<ZMUser>,
         sender: ZMUser,
         at timestamp: Date
     ) {
         appendSystemMessage(
             type: .mlsMigrationOngoingCall,
             sender: sender,
-            users: users,
+            users: nil,
             clients: nil,
             timestamp: timestamp
         )
