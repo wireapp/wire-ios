@@ -30,7 +30,7 @@ public struct E2eIClientID: Equatable, Hashable {
 
     public let rawValue: String
 
-    public init?(
+    public init(
         userID: String,
         clientID: String,
         domain: String

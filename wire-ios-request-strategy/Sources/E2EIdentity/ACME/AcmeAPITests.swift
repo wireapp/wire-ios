@@ -60,12 +60,10 @@ class AcmeAPITests: ZMTBaseTest {
             return XCTFail("Failed to get ACME directory.")
         }
 
-        guard let acmeDirectory = try? JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData) else {
-            return XCTFail("Failed to decode.")
-        }
+        let acmeDirectoryResponse = try? JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData)
 
         // then
-        XCTAssertEqual(acmeDirectory, expectedAcmeDirectory)
+        XCTAssertEqual(acmeDirectoryResponse, expectedAcmeDirectory)
     }
 
     func testThatResponseHeaderContainsNonce() async throws {
