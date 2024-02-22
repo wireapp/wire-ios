@@ -523,7 +523,7 @@
 		E666EDEC2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */; };
 		E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */; };
 		E666EDF22B74ED2F00C03E2B /* MockSessionManagerObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */; };
-		E60E20202B1F78BC00720FE7 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = E60E201F2B1F78BC00720FE7 /* PINCache */; };
+		E6E1FF1D2B87955600014769 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = E6E1FF1C2B87955600014769 /* PINCache */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
 		EE01E0391F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */; };
 		EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
@@ -1262,6 +1262,7 @@
 		D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeletionRequestStrategyTests.swift; sourceTree = "<group>"; };
 		D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Backup.swift"; sourceTree = "<group>"; };
 		D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+AccessMode.swift"; sourceTree = "<group>"; };
+		E65E0C192B87944600427ACF /* PINCache.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PINCache.xcframework; path = "/Users/markus.fassbender/Developer/wire-ios/wire-ios/../Carthage/Build/PINCache.xcframework"; sourceTree = "<absolute>"; };
 		E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerBuilder.swift; sourceTree = "<group>"; };
 		E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AccountDeletion.swift"; sourceTree = "<group>"; };
 		E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AuthenticationFailure.swift"; sourceTree = "<group>"; };
@@ -1508,7 +1509,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE67F6CC296F0622001D7C88 /* avs.xcframework in Frameworks */,
-				E60E20202B1F78BC00720FE7 /* PINCache in Frameworks */,
+				E6E1FF1D2B87955600014769 /* PINCache in Frameworks */,
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
 				EE67F6C8296F0622001D7C88 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EE67F6CA296F0622001D7C88 /* ZipArchive.xcframework in Frameworks */,
@@ -1869,6 +1870,7 @@
 		540029B61918CA8500578793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E65E0C192B87944600427ACF /* PINCache.xcframework */,
 				EE4E6A252B714490007C476D /* WireRequestStrategySupport.framework */,
 				0140A0C62B30F941004D8B40 /* WireDataModelSupport.framework */,
 				59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */,
@@ -2945,7 +2947,7 @@
 			);
 			name = "WireSyncEngine-ios";
 			packageProductDependencies = (
-				E60E201F2B1F78BC00720FE7 /* PINCache */,
+				E6E1FF1C2B87955600014769 /* PINCache */,
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -3024,7 +3026,7 @@
 			);
 			mainGroup = 540029AA1918CA8500578793;
 			packageReferences = (
-				E60E201E2B1F78BC00720FE7 /* XCRemoteSwiftPackageReference "PINCache" */,
+				E6E1FF1B2B87955600014769 /* XCRemoteSwiftPackageReference "PINCache" */,
 			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
 			projectDirPath = "";
@@ -4311,7 +4313,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E60E201E2B1F78BC00720FE7 /* XCRemoteSwiftPackageReference "PINCache" */ = {
+		E6E1FF1B2B87955600014769 /* XCRemoteSwiftPackageReference "PINCache" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pinterest/PINCache";
 			requirement = {
@@ -4322,9 +4324,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E60E201F2B1F78BC00720FE7 /* PINCache */ = {
+		E6E1FF1C2B87955600014769 /* PINCache */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E60E201E2B1F78BC00720FE7 /* XCRemoteSwiftPackageReference "PINCache" */;
+			package = E6E1FF1B2B87955600014769 /* XCRemoteSwiftPackageReference "PINCache" */;
 			productName = PINCache;
 		};
 /* End XCSwiftPackageProductDependency section */
