@@ -54,6 +54,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         let imageView = UIImageView(image: Asset.Images.certificateValid.image)
         imageView.accessibilityIdentifier = "shieldImageView"
         imageView.isAccessibilityElement = false
+        imageView.contentMode = .scaleAspectFit
 
         return imageView
     }()
@@ -130,7 +131,9 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
             view.addSubview($0)
         }
 
-        [detailsLabel,
+        [titleLabel,
+         shieldImageView,
+         detailsLabel,
          confirmationButton
         ].forEach {
             stackView.addArrangedSubview($0)
@@ -142,15 +145,13 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     private func createConstraints() {
         NSLayoutConstraint.activate([
             // title Label
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 40),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 70),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -70),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
 
             // shield image view
             shieldImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             shieldImageView.heightAnchor.constraint(equalToConstant: 64),
             shieldImageView.widthAnchor.constraint(equalToConstant: 64),
-            shieldImageView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -30),
 
             // confirmation button
             confirmationButton.heightAnchor.constraint(equalToConstant: 56),
