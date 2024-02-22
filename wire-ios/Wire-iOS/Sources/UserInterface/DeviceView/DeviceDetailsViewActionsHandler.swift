@@ -27,6 +27,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var clientRemovalObserver: ClientRemovalObserver?
     var credentials: ZMEmailCredentials?
     let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
+    private let contextProvider: ContextProvider
+    private let e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?
 
     var isProcessing: ((Bool) -> Void)?
 
@@ -42,7 +44,9 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         credentials: ZMEmailCredentials?,
         saveFileManager: SaveFileActions,
         logger: LoggerProtocol = WireLogger.e2ei,
-        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
+        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
+        contextProvider: ContextProvider,
+        e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?
     ) {
         self.userClient = userClient
         self.credentials = credentials
@@ -50,16 +54,23 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.saveFileManager = saveFileManager
         self.logger = logger
         self.getProteusFingerprint = getProteusFingerprint
+        self.contextProvider = contextProvider
+        self.e2eiCertificateEnrollment = e2eiCertificateEnrollment
     }
 
     func updateCertificate() async -> E2eIdentityCertificate? {
-        // TODO: [WPB-6439]
+        // TODO: [WPB-3220]
         return nil
     }
 
-    func enrollClient() async -> E2eIdentityCertificate? {
-        // TODO: [WPB-6439]
-        return nil
+    func enrollClient() async throws -> E2eIdentityCertificate? {
+        do {
+            try await startE2EIdentityEnrollment()
+            return try await fetchE2eIdentityCertificate()
+        } catch {
+            logger.error(error.localizedDescription, attributes: nil)
+            throw error
+        }
     }
 
     @MainActor
@@ -129,6 +140,37 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             return ""
         }
         return fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
+    }
+
+    private func startE2EIdentityEnrollment() async throws {
+        typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
+        guard let rootViewController = await AppDelegate.shared.window?.rootViewController else {
+            return
+        }
+        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+        try await e2eiCertificateEnrollment?.invoke(
+            authenticate: oauthUseCase.invoke
+        )
+    }
+
+    private func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate? {
+        let mlsClientResolver = MLSClientResolver()
+        guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient),
+        let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
+            return nil
+        }
+        return try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
+                                                                clientIds: [mlsClientID]).first
+    }
+
+    @MainActor
+    private func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
+        await contextProvider.syncContext.perform { [weak self] in
+            guard let self = self else {
+                return nil
+            }
+            return ZMConversation.fetchSelfMLSConversation(in: self.contextProvider.syncContext)?.mlsGroupID
+        }
     }
 }
 

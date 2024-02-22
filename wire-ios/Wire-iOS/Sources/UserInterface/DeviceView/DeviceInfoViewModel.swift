@@ -26,7 +26,7 @@ protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
-    func enrollClient() async -> E2eIdentityCertificate?
+    func enrollClient() async throws -> E2eIdentityCertificate?
     func updateCertificate() async -> E2eIdentityCertificate?
     func removeDevice() async -> Bool
     func resetSession()
@@ -73,6 +73,7 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
+    @Published var showEnrollmentCertificateError = false
 
     var actionsHandler: DeviceDetailsViewActions
     var conversationClientDetailsActions: ConversationUserClientDetailsActions
@@ -127,8 +128,11 @@ final class DeviceInfoViewModel: ObservableObject {
     @MainActor
     func enrollClient() async {
         self.isActionInProgress = true
-        let certificate = await actionsHandler.enrollClient()
-        self.e2eIdentityCertificate = certificate
+        do {
+            self.e2eIdentityCertificate = try await actionsHandler.enrollClient()
+        } catch {
+            showEnrollmentCertificateError = true
+        }
         self.isActionInProgress = false
     }
 
@@ -182,8 +186,10 @@ extension DeviceInfoViewModel {
         gracePeriod: TimeInterval,
         mlsThumbprint: String?,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        isFromConversation: Bool = false,
         saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
+        contextProvider: ContextProvider,
+        e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?,
+        isFromConversation: Bool = false,
         showDebugMenu: Bool = Bundle.developerModeEnabled
     ) -> DeviceInfoViewModel {
         let deviceActionsHandler = DeviceDetailsViewActionsHandler(
@@ -191,7 +197,9 @@ extension DeviceInfoViewModel {
             userSession: userSession,
             credentials: credentials,
             saveFileManager: saveFileManager,
-            getProteusFingerprint: getProteusFingerprint
+            getProteusFingerprint: getProteusFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: e2eiCertificateEnrollment
         )
         return DeviceInfoViewModel(
             certificate: certificate,

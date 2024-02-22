@@ -128,7 +128,7 @@ final class ClientListViewController: UIViewController,
 
         self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
         self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
-        if let user = ZMUser.selfUser(), let session = ZMUserSession.shared() {
+        if let user = ZMUser.selfUser(), let session = userSession as? ZMUserSession {
             self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
         }
 
@@ -192,6 +192,7 @@ final class ClientListViewController: UIViewController,
 
     func openDetailsOfClient(_ client: UserClient) {
         guard let userSession = userSession,
+              let contextProvider = contextProvider,
               let navigationController = self.navigationController
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
@@ -208,7 +209,9 @@ final class ClientListViewController: UIViewController,
             credentials: credentials,
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
             mlsThumbprint: client.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16),
-            getProteusFingerprint: userSession.getUserClientFingerprint
+            getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2eICertificate
         )
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
@@ -522,10 +525,7 @@ final class ClientListViewController: UIViewController,
                     if let selfClient = selfClient {
                         selfClient.e2eIdentityCertificate = certificates.first(where: {
                             $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
-                        })
-                        if certificates.isNonEmpty {
-                            selfClient.e2eIdentityCertificate = selfClient.notActivatedE2EIdenityCertificate()
-                        }
+                        }) ?? selfClient.notActivatedE2EIdenityCertificate()
                         selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
                     }
                     return updatedUserClients

@@ -21,11 +21,14 @@ import Combine
 import WireCommonComponents
 
 struct DeviceDetailsView: View {
+    typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
+
     @Environment(\.dismiss)
     private var dismiss
 
     @StateObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
+    @State var didEnrollCertificateFail: Bool = false
 
     var dismissedView: (() -> Void)?
 
@@ -125,6 +128,9 @@ struct DeviceDetailsView: View {
                 dismiss()
             }
         }
+        .onReceive(viewModel.$showEnrollmentCertificateError, perform: { _ in
+            didEnrollCertificateFail.toggle()
+        })
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
@@ -134,6 +140,11 @@ struct DeviceDetailsView: View {
                     performDownload: viewModel.downloadE2EIdentityCertificate,
                     performCopy: viewModel.copyToClipboard
                 )
+            }
+        }
+        .alert(E2ei.Error.Alert.title, isPresented: $didEnrollCertificateFail) {
+            SwiftUI.Button(L10n.Localizable.General.ok) {
+                didEnrollCertificateFail.toggle()
             }
         }
     }

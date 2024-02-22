@@ -162,7 +162,8 @@ final class UserClientListViewController: UIViewController,
     }
 
     private func openDetailsOfClient(_ client: UserClient) {
-            guard let navigationController = self.navigationController
+            guard let navigationController = self.navigationController,
+                  let contextProvider = contextProvider
             else {
                 assertionFailure("Unable to display details from conversations as navigation instance is nil")
                 return
@@ -179,6 +180,8 @@ final class UserClientListViewController: UIViewController,
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
             mlsThumbprint: (client.e2eIdentityCertificate?.mlsThumbprint ?? client.mlsPublicKeys.ed25519)?.splitStringIntoLines(charactersPerLine: 16),
             getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2eICertificate,
             isFromConversation: true
         )
             let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) {
