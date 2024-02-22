@@ -33,7 +33,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     private var internalParticipants: [UserType]
     private var filterQuery: String?
 
-    let selectedParticipants: [(user: UserType, isE2EICertified: Bool)]
+    let selectedParticipants: [UserType]
     let conversation: GroupParticipantsDetailConversation
     var participantsDidChange: (() -> Void)?
 
@@ -42,7 +42,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     fileprivate var token: NSObjectProtocol?
 
     var indexPathOfFirstSelectedParticipant: IndexPath? {
-        guard let user = selectedParticipants.first?.user as? ZMUser else { return nil }
+        guard let user = selectedParticipants.first as? ZMUser else { return nil }
         guard let row = (internalParticipants.firstIndex {
             ($0 as? ZMUser)?.remoteIdentifier == user.remoteIdentifier
         }) else { return nil }
@@ -59,12 +59,14 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     var admins = [UserType]()
     var members = [UserType]()
 
-    init(selectedParticipants: [(user: UserType, isE2EICertified: Bool)],
-         conversation: GroupParticipantsDetailConversation,
-         userSession: UserSession) {
+    init(
+        selectedParticipants: [UserType],
+        conversation: GroupParticipantsDetailConversation,
+        userSession: UserSession
+    ) {
         internalParticipants = conversation.sortedOtherParticipants
         self.conversation = conversation
-        self.selectedParticipants = selectedParticipants.sorted { $0.user.name < $1.user.name }
+        self.selectedParticipants = selectedParticipants.sorted { $0.name < $1.name }
         self.userSession = userSession
         super.init()
 

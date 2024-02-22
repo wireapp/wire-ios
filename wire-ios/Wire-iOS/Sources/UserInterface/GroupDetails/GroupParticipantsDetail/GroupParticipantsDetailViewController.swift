@@ -41,12 +41,14 @@ final class GroupParticipantsDetailViewController: UIViewController {
         return wr_supportedInterfaceOrientations
     }
 
-    init(selectedParticipants: [UserType],
-         conversation: GroupParticipantsDetailConversation,
-         userSession: UserSession) {
+    init(
+        selectedParticipants: [UserType],
+        conversation: GroupParticipantsDetailConversation,
+        userSession: UserSession
+    ) {
 
         viewModel = GroupParticipantsDetailViewModel(
-            selectedParticipants: selectedParticipants.map { ($0, false) },
+            selectedParticipants: selectedParticipants,
             conversation: conversation,
             userSession: userSession
         )
@@ -141,7 +143,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
         if !viewModel.admins.isEmpty {
             sections.append(
                 ParticipantsSectionController(
-                    participants: viewModel.admins.map { ($0, false) }, // TODO [WPB-765]: pass isE2EICertified value
+                    participants: viewModel.admins,
                     conversationRole: .admin,
                     conversation: viewModel.conversation,
                     delegate: self,
@@ -156,7 +158,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
         if !viewModel.members.isEmpty {
             sections.append(
                 ParticipantsSectionController(
-                    participants: viewModel.members.map { ($0, false) }, // TODO [WPB-765]: pass isE2EICertified value
+                    participants: viewModel.members,
                     conversationRole: .member,
                     conversation: viewModel.conversation,
                     delegate: self,
@@ -193,15 +195,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
         }
     }
 
-    func presentFullParticipantsList(
-        for users: [(user: UserType, isE2EICertified: Bool)],
-        in conversation: GroupDetailsConversationType
-    ) {
-        presentParticipantsDetails(
-            with: users.map(\.user), // TODO [WPB-765]: pass isE2EICertified value
-            selectedUsers: [],
-            animated: true
-        )
+    func presentFullParticipantsList(for users: [UserType], in conversation: GroupDetailsConversationType) {
+        presentParticipantsDetails(with: users, selectedUsers: [], animated: true)
     }
 
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {

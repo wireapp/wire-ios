@@ -26,8 +26,7 @@ protocol ParticipantsCellConfigurable: Reusable {
 }
 
 enum ParticipantsRowType {
-
-    case user(_ user: UserType, _ isE2EICertified: Bool)
+    case user(UserType)
     case showAll(Int)
 
     var cellType: ParticipantsCellConfigurable.Type {
@@ -53,7 +52,7 @@ enum ConversationRole {
 
 private struct ParticipantsSectionViewModel {
     let rows: [ParticipantsRowType]
-    let participants: [(user: UserType, isE2EICertified: Bool)]
+    let participants: [UserType]
     let conversationRole: ConversationRole
     let userSession: UserSession
     let showSectionCount: Bool
@@ -105,7 +104,7 @@ private struct ParticipantsSectionViewModel {
     ///   - maxDisplayedParticipants: max number of participants we can display, if there are more than maxParticipants participants
     ///   - showSectionCount: current view model - a search result or not
     init(
-        users: [(user: UserType, isE2EICertified: Bool)],
+        users: [UserType],
         conversationRole: ConversationRole,
         totalParticipantsCount: Int,
         clipSection: Bool = true,
@@ -130,26 +129,16 @@ private struct ParticipantsSectionViewModel {
         }
     }
 
-    static func computeRows(
-        _ participants: [(user: UserType, isE2EICertified: Bool)],
-        totalParticipantsCount: Int,
-        maxParticipants: Int,
-        maxDisplayedParticipants: Int
-    ) -> [ParticipantsRowType] {
-        guard participants.count > maxParticipants else {
-            return participants.map { participant, isE2EICertified in
-                .user(participant, isE2EICertified)
-            }
-        }
-        return participants[0..<maxDisplayedParticipants]
-            .map { .user($0, $1) } + [.showAll(totalParticipantsCount)]
+    static func computeRows(_ participants: [UserType], totalParticipantsCount: Int, maxParticipants: Int, maxDisplayedParticipants: Int) -> [ParticipantsRowType] {
+        guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.init) }
+        return participants[0..<maxDisplayedParticipants].map(ParticipantsRowType.init) + [.showAll(totalParticipantsCount)]
     }
 }
 
 extension UserCell: ParticipantsCellConfigurable {
 
     func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool) {
-        guard case let .user(user, isE2EICertified) = rowType else {
+        guard case let .user(user) = rowType else {
             preconditionFailure("expected different 'ParticipantsRowType'!")
         }
         guard let selfUser = SelfUser.provider?.providedSelfUser else {
@@ -184,28 +173,23 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     private let conversation: GroupDetailsConversationType
     private var token: AnyObject?
 
-    init(
-        participants: [(user: UserType, isE2EICertified: Bool)],
-        conversationRole: ConversationRole,
-        conversation: GroupDetailsConversationType,
-        delegate: GroupDetailsSectionControllerDelegate,
-        totalParticipantsCount: Int,
-        clipSection: Bool = true,
-        maxParticipants: Int = Int.ConversationParticipants.maxNumberWithoutTruncation,
-        maxDisplayedParticipants: Int = Int.ConversationParticipants.maxNumberOfDisplayed,
-        showSectionCount: Bool = true,
-        userSession: UserSession
-    ) {
-        viewModel = .init(
-            users: participants,
-            conversationRole: conversationRole,
-            totalParticipantsCount: totalParticipantsCount,
-            clipSection: clipSection,
-            maxParticipants: maxParticipants,
-            maxDisplayedParticipants: maxDisplayedParticipants,
-            showSectionCount: showSectionCount,
-            userSession: userSession
-        )
+    init(participants: [UserType],
+         conversationRole: ConversationRole,
+         conversation: GroupDetailsConversationType,
+         delegate: GroupDetailsSectionControllerDelegate,
+         totalParticipantsCount: Int,
+         clipSection: Bool = true,
+         maxParticipants: Int = Int.ConversationParticipants.maxNumberWithoutTruncation,
+         maxDisplayedParticipants: Int = Int.ConversationParticipants.maxNumberOfDisplayed,
+         showSectionCount: Bool = true,
+         userSession: UserSession) {
+        viewModel = .init(users: participants,
+                          conversationRole: conversationRole,
+                          totalParticipantsCount: totalParticipantsCount,
+                          clipSection: clipSection,
+                          maxParticipants: maxParticipants,
+                          maxDisplayedParticipants: maxDisplayedParticipants,
+                          showSectionCount: showSectionCount, userSession: userSession)
         self.conversation = conversation
         self.delegate = delegate
         super.init()
@@ -277,7 +261,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch viewModel.rows[indexPath.row] {
-        case let .user(user, _): // TODO [WPB-765]: remove Bool?
+        case .user(let user):
             delegate?.presentDetails(for: user)
         case .showAll:
             delegate?.presentFullParticipantsList(for: viewModel.participants, in: conversation)
@@ -286,10 +270,10 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         switch viewModel.rows[indexPath.row] {
-        case .user(let bareUser, _):
-            !bareUser.isSelfUser
+        case .user(let bareUser):
+            return !bareUser.isSelfUser
         default:
-            true
+            return true
         }
     }
 

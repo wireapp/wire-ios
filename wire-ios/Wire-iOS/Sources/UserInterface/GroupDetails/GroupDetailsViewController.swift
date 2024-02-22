@@ -153,7 +153,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         self.renameGroupSectionController = renameGroupSectionController
 
         let (participants, serviceUsers) = (conversation.sortedOtherParticipants, conversation.sortedServiceUsers)
-        // 1st pass for certification status: populate the set with default values
         participants.forEach { user in
             if !userStatuses.keys.contains(user.remoteIdentifier) {
                 userStatuses[user.remoteIdentifier] = .init(user: user, isCertified: false)
@@ -467,15 +466,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         navigationController?.pushViewController(viewController, animated: true)
     }
 
-    func presentFullParticipantsList(
-        for users: [(user: UserType, isE2EICertified: Bool)],
-        in conversation: GroupDetailsConversationType
-    ) {
-        presentParticipantsDetails(
-            with: users.map(\.user), // TODO [WPB-765]: pass isE2EICertified value
-            selectedUsers: [],
-            animated: true
-        )
+    func presentFullParticipantsList(for users: [UserType], in conversation: GroupDetailsConversationType) {
+        presentParticipantsDetails(with: users, selectedUsers: [], animated: true)
     }
 
     func presentGuestOptions(animated: Bool) {
