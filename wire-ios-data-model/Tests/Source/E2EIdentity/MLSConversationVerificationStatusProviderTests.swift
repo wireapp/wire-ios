@@ -24,12 +24,12 @@ import Foundation
 class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
 
     var sut: MLSConversationVerificationStatusUpdater!
-    var e2eIVerificationStatusService: MockE2eIVerificationStatusServiceInterface!
+    var e2eIVerificationStatusService: MockE2EIVerificationStatusServiceInterface!
 
     override func setUp() {
         super.setUp()
 
-        e2eIVerificationStatusService = MockE2eIVerificationStatusServiceInterface()
+        e2eIVerificationStatusService = MockE2EIVerificationStatusServiceInterface()
         sut = MLSConversationVerificationStatusUpdater(e2eIVerificationStatusService: e2eIVerificationStatusService,
                                                         syncContext: syncMOC)
     }
