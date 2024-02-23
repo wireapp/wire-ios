@@ -51,7 +51,7 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
         }
 
         guard let conversation else {
-            throw E2eIVerificationStatusService.E2eIVerificationStatusError.missingConversation
+            throw E2EIVerificationStatusService.E2EIVerificationStatusError.missingConversation
         }
 
         try await updateStatus(for: conversation, groupID: groupID)

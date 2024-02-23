@@ -312,7 +312,7 @@ public final class ZMUserSession: NSObject {
             from: keyRotator.onNewCRLsDistributionPoints()
         )
 
-        return E2eIRepository(
+        return E2EIRepository(
             acmeApi: acmeApi,
             apiProvider: apiProvider,
             e2eiSetupService: e2eiSetupService,
@@ -441,7 +441,7 @@ public final class ZMUserSession: NSObject {
             userID: userId
         )
 
-        let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+        let e2eIVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         self.mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
             e2eIVerificationStatusService: e2eIVerificationStatusService,
             syncContext: coreDataStack.syncContext
