@@ -16,20 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
 
-protocol ParticipantsCellConfigurable: Reusable {
-    func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool)
-}
-
 enum ParticipantsRowType {
     case user(UserType)
-    case showAll(Int)
+    case showAll(_ totalParticipantsCount: Int)
 
-    var cellType: ParticipantsCellConfigurable.Type {
+    var cellType: UICollectionViewCell.Type {
         switch self {
         case .user: return UserCell.self
         case .showAll: return ShowAllParticipantsCell.self
@@ -113,7 +108,7 @@ private struct ParticipantsSectionViewModel {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        participants = users.sorted { $0.user.name < $1.user.name }
+        participants = users.sorted { $0.name < $1.name }
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
         self.userSession = userSession
@@ -124,23 +119,25 @@ private struct ParticipantsSectionViewModel {
             maxParticipants: maxParticipants,
             maxDisplayedParticipants: maxDisplayedParticipants
         )
-        : participants.map { participant, isE2EICertified in
-            .user(participant, isE2EICertified)
+        : participants.map { participant in
+            .user(participant)
         }
     }
 
     static func computeRows(_ participants: [UserType], totalParticipantsCount: Int, maxParticipants: Int, maxDisplayedParticipants: Int) -> [ParticipantsRowType] {
-        guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.init) }
-        return participants[0..<maxDisplayedParticipants].map(ParticipantsRowType.init) + [.showAll(totalParticipantsCount)]
+        guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.user) }
+        return participants[0..<maxDisplayedParticipants].map(ParticipantsRowType.user) + [.showAll(totalParticipantsCount)]
     }
 }
 
-extension UserCell: ParticipantsCellConfigurable {
+extension UserCell {
 
-    func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool) {
-        guard case let .user(user) = rowType else {
-            preconditionFailure("expected different 'ParticipantsRowType'!")
-        }
+    func configure(
+        user: UserType,
+        isE2EICertified: Bool,
+        conversation: GroupDetailsConversationType,
+        showSeparator: Bool
+    ) {
         guard let selfUser = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
@@ -218,11 +215,39 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let configuration = viewModel.rows[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: configuration.cellType.reuseIdentifier, for: indexPath) as! ParticipantsCellConfigurable & UICollectionViewCell
         let showSeparator = (viewModel.rows.count - 1) != indexPath.row
-        (cell as? SectionListCellType)?.sectionName = viewModel.accessibilityTitle
-        (cell as? SectionListCellType)?.cellIdentifier = "participants.section.participants.cell"
-        cell.configure(with: configuration, conversation: conversation, showSeparator: showSeparator)
+
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: configuration.cellType.reuseIdentifier,
+            for: indexPath
+        )
+        if let cell = cell as? SectionListCellType {
+            cell.sectionName = viewModel.accessibilityTitle
+            cell.cellIdentifier = "participants.section.participants.cell"
+        }
+
+        switch configuration {
+        case .user(let user):
+            guard let cell = cell as? UserCell else {
+                fatalError("Unexpected collection view cell type: \(String(describing: cell.self))")
+            }
+            cell.configure(
+                user: user,
+                isE2EICertified: false, // TODO [WPB-765]: provide value
+                conversation: conversation,
+                showSeparator: showSeparator
+            )
+        case .showAll(let totalParticipantsCount):
+            guard let cell = cell as? ShowAllParticipantsCell else {
+                fatalError("Unexpected collection view cell type: \(String(describing: cell.self))")
+            }
+            cell.configure(
+                totalParticipantsCount: totalParticipantsCount,
+                conversation: conversation,
+                showSeparator: showSeparator
+            )
+        }
+
         return cell
     }
 

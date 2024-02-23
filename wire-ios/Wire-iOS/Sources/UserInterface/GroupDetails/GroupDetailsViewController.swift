@@ -161,12 +161,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         if !participants.isEmpty {
 
-            let admins = participants
-                .filter { $0.isGroupAdmin(in: conversation) }
-                .map { ($0, userStatuses[$0.remoteIdentifier]?.isCertified ?? false) }
-            let members = participants
-                .filter { !$0.isGroupAdmin(in: conversation) }
-                .map { ($0, userStatuses[$0.remoteIdentifier]?.isCertified ?? false) }
+            let admins = participants.filter { $0.isGroupAdmin(in: conversation) }
+            let members = participants.filter { !$0.isGroupAdmin(in: conversation) }
 
             let maxNumberOfDisplayed = Int.ConversationParticipants.maxNumberOfDisplayed
             let maxNumberWithoutTruncation = Int.ConversationParticipants.maxNumberWithoutTruncation

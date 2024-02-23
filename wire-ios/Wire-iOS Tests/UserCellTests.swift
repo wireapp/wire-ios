@@ -198,7 +198,12 @@ final class UserCellTests: BaseSnapshotTestCase {
         cell.cellIdentifier = "participants.section.participants.cell"
 
         // WHEN
-        cell.configure(with: .user(user, false), conversation: conversation, showSeparator: true)
+        cell.configure(
+            user: user,
+            isE2EICertified: false, // TODO [WPB-765]: provide value
+            conversation: conversation,
+            showSeparator: true
+        )
 
         // THEN
         XCTAssertEqual(cell.accessibilityIdentifier, "Members - participants.section.participants.cell")
