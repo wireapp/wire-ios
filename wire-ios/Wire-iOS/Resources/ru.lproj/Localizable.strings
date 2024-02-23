@@ -1313,6 +1313,10 @@
 "self.settings.technical_report.privacy_warning" = "Подробные журналы могут содержать личные данные";
 "self.settings.technical_report.no_mail_alert" = "Почтовый клиент не обнаружен. Нажмите \"OK\" и отправьте журналы вручную: ";
 
+"self.settings.technical_report.mail_body.firstline" = "Пожалуйста, заполните следующие поля";
+"self.settings.technical_report.mail_body.section1" = "Дата и время возникновения проблемы:";
+"self.settings.technical_report.mail_body.section2" = "Что случилось:";
+"self.settings.technical_report.mail_body.section3" = "Шаги для воспроизведения (если применимо):";
 // Password reset
 "self.settings.password_reset_menu.title" = "Сбросить пароль";
 
