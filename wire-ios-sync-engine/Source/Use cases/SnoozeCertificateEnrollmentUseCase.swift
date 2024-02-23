@@ -51,7 +51,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Methods
 
     func invoke() async {
-        guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
+        guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate() else {
             return
         }
         let timeProvider = SnoozeTimeProvider()
