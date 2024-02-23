@@ -583,7 +583,7 @@ extension ClientListViewController: UserObserving {
             clients.remove(selfClient)
             self.clients = Array(clients)
             Task {
-                self.clients = await updateCertificates(for: self.clients)
+                self.clients = await updateCertificates(for: self.clients + [selfClient])
                 refreshViews()
             }
         }
