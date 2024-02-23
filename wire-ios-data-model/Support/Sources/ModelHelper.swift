@@ -23,11 +23,21 @@ import WireDataModel
 
 public struct ModelHelper {
 
-    public init() {
-
-    }
+    public init() {}
 
     // MARK: - Users
+
+    @discardableResult
+    public func createSelfUser(
+        id: UUID = .init(),
+        domain: String? = nil,
+        in context: NSManagedObjectContext
+    ) -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = id
+        selfUser.domain = domain
+        return selfUser
+    }
 
     @discardableResult
     public func createUser(
@@ -39,6 +49,32 @@ public struct ModelHelper {
         user.remoteIdentifier = id
         user.domain = domain
         return user
+    }
+
+    // MARK: - Clients
+
+    @discardableResult
+    public func createSelfClient(
+        id: UUID = .init(),
+        in context: NSManagedObjectContext
+    ) -> UserClient {
+        let selfClient = UserClient.insertNewObject(in: context)
+        selfClient.remoteIdentifier = id.transportString()
+        selfClient.user = .selfUser(in: context)
+        context.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
+        return selfClient
+    }
+
+    @discardableResult
+    public func createClient(
+        id: UUID = .init(),
+        for user: ZMUser
+    ) -> UserClient {
+        let context = user.managedObjectContext!
+        let otherClient = UserClient.insertNewObject(in: context)
+        otherClient.remoteIdentifier = id.transportString()
+        otherClient.user = user
+        return otherClient
     }
 
     // MARK: - Teams
@@ -126,4 +162,18 @@ public struct ModelHelper {
         return conversation
     }
 
+    @discardableResult
+    public func createMLSSelfConversation(
+        id: UUID = .init(),
+        mlsGroupID: MLSGroupID? = nil,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = id
+        conversation.mlsGroupID = mlsGroupID
+        conversation.messageProtocol = .mls
+        conversation.mlsStatus = .ready
+        conversation.conversationType = .`self`
+        return conversation
+    }
 }

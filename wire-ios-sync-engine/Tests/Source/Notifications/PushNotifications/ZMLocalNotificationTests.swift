@@ -215,7 +215,7 @@ class ZMLocalNotificationTests: MessagingTest {
         "time": timestamp.transportString(),
         "data": ["message_timer": timer],
         "type": "conversation.message-timer-update"
-        ]
+       ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
 

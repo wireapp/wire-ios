@@ -181,7 +181,7 @@ final class UserClientListViewController: UIViewController,
             mlsThumbprint: (client.e2eIdentityCertificate?.mlsThumbprint ?? client.mlsPublicKeys.ed25519)?.splitStringIntoLines(charactersPerLine: 16),
             getProteusFingerprint: userSession.getUserClientFingerprint,
             contextProvider: contextProvider,
-            e2eiCertificateEnrollment: userSession.enrollE2eICertificate,
+            e2eiCertificateEnrollment: userSession.enrollE2EICertificate,
             isFromConversation: true
         )
             let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) {

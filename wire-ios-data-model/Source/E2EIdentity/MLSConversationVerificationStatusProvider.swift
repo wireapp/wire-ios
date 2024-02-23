@@ -29,13 +29,13 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
 
     // MARK: - Properties
 
-    private var e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface
+    private var e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
     private var syncContext: NSManagedObjectContext
 
     // MARK: - Life cycle
 
     public init(
-        e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface,
+        e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
         syncContext: NSManagedObjectContext
     ) {
         self.e2eIVerificationStatusService = e2eIVerificationStatusService
@@ -48,45 +48,44 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
         guard let conversation = await syncContext.perform({
             ZMConversation.fetch(with: groupID, in: self.syncContext)
         }) else {
-            throw E2eIVerificationStatusService.E2eIVerificationStatusError.missingConversation
+            throw E2EIVerificationStatusService.E2EIVerificationStatusError.missingConversation
         }
-        do {
-            let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
-            await syncContext.perform {
-                self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
-            }
-        } catch {
-            throw error
+
+        let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
+        await syncContext.perform {
+            self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
         }
     }
 
     // MARK: - Helpers
 
-    private func updateStatusAndNotifyUserIfNeeded(newStatusFromCC: MLSVerificationStatus,
-                                                   conversation: ZMConversation) {
-        guard let currentStatus = conversation.mlsVerificationStatus else {
-            return conversation.mlsVerificationStatus = newStatusFromCC
+    private func updateStatusAndNotifyUserIfNeeded(
+        newStatusFromCC: MLSVerificationStatus,
+        conversation: ZMConversation) {
+            guard let currentStatus = conversation.mlsVerificationStatus else {
+                return conversation.mlsVerificationStatus = newStatusFromCC
+            }
+
+            let newStatus = resolveNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
+            guard newStatus != currentStatus else {
+                return
+            }
+            conversation.mlsVerificationStatus = newStatus
+            notifyUserAboutStateChangesIfNeeded(newStatus, in: conversation)
         }
 
-        let newStatus = resolveNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
-        guard newStatus != currentStatus else {
-            return
+    private func resolveNewStatus(
+        newStatusFromCC: MLSVerificationStatus,
+        currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
+            switch (newStatusFromCC, currentStatus) {
+            case (.notVerified, .verified):
+                return .degraded
+            case(.notVerified, .degraded):
+                return .degraded
+            default:
+                return newStatusFromCC
+            }
         }
-        conversation.mlsVerificationStatus = newStatus
-        notifyUserAboutStateChangesIfNeeded(newStatus, in: conversation)
-    }
-
-    private func resolveNewStatus(newStatusFromCC: MLSVerificationStatus,
-                                  currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
-        switch (newStatusFromCC, currentStatus) {
-        case (.notVerified, .verified):
-            return .degraded
-        case(.notVerified, .degraded):
-            return .degraded
-        default:
-            return newStatusFromCC
-        }
-    }
 
     private func notifyUserAboutStateChangesIfNeeded(_ newStatus: MLSVerificationStatus, in conversation: ZMConversation) {
         switch newStatus {

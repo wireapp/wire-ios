@@ -188,7 +188,7 @@ extension DeviceInfoViewModel {
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
         saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
         contextProvider: ContextProvider,
-        e2eiCertificateEnrollment: EnrollE2eICertificateUseCaseInterface?,
+        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol,
         isFromConversation: Bool = false,
         showDebugMenu: Bool = Bundle.developerModeEnabled
     ) -> DeviceInfoViewModel {

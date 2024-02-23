@@ -71,6 +71,7 @@ extension UIFont {
         case bodyTwoSemibold
         case buttonSmallSemibold
         case buttonBigSemibold
+        case bigHeadline
     }
 
     public static func font(for style: FontStyle) -> UIFont {
@@ -108,7 +109,10 @@ extension UIFont {
             return UIFontMetrics.default.scaledFont(for: baseFont.withWeight(.semibold))
 
         case .buttonBigSemibold:
-            return  .preferredFont(forTextStyle: .title3).withWeight(.bold)
+            return .preferredFont(forTextStyle: .title3).withWeight(.bold)
+
+        case .bigHeadline:
+            return UIFont.preferredFont(forTextStyle: .body).withSize(36)
         }
     }
 
