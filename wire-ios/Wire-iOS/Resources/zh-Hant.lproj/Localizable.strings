@@ -1313,6 +1313,10 @@
 "self.settings.technical_report.privacy_warning" = "詳細日誌可能包含個人資料";
 "self.settings.technical_report.no_mail_alert" = "沒有電郵程式。點擊「確定」並手動將日誌發送到：";
 
+"self.settings.technical_report.mail_body.firstline" = "Please fill in the following";
+"self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
+"self.settings.technical_report.mail_body.section2" = "What Happened:";
+"self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
 // Password reset
 "self.settings.password_reset_menu.title" = "重設密碼";
 

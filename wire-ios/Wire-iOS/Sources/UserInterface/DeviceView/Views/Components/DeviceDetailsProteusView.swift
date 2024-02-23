@@ -22,6 +22,7 @@ import WireCommonComponents
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
     @State var isVerfied: Bool
+    var shouldShowActivatedDate: Bool = true
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -32,16 +33,18 @@ struct DeviceDetailsProteusView: View {
                 performCopy: nil
             )
             .padding(.all, ViewConstants.Padding.standard)
-            Divider()
-            Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
-                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-                .font(FontSpec.mediumSemiboldFont.swiftUIFont)
-                .padding([.leading, .top], ViewConstants.Padding.standard)
-                .padding(.bottom, ViewConstants.Padding.small)
-            Text(viewModel.addedDate)
-                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                .padding([.leading, .trailing, .bottom], ViewConstants.Padding.standard)
-                .font(FontSpec.normalRegularFont.swiftUIFont)
+            if shouldShowActivatedDate {
+                Divider()
+                Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
+                    .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                    .font(FontSpec.mediumSemiboldFont.swiftUIFont)
+                    .padding([.leading, .top], ViewConstants.Padding.standard)
+                    .padding(.bottom, ViewConstants.Padding.small)
+                Text(viewModel.addedDate)
+                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .padding([.leading, .trailing, .bottom], ViewConstants.Padding.standard)
+                    .font(FontSpec.normalRegularFont.swiftUIFont)
+            }
             Divider()
             CopyValueView(
                 title: L10n.Localizable.Device.Details.Section.Proteus.keyFingerprint,

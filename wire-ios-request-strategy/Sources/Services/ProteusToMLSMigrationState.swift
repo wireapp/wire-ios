@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,13 @@
 
 import Foundation
 
-public extension String {
+enum ProteusToMLSMigrationState: String, CustomStringConvertible {
 
-    static let mockSerialNumber = String(repeating: "abcdefghijklmno", count: 2)
+    case disabled
+    case notStarted
+    case ongoing
+    case finalised
 
-    static let mockMlsThumbprint = "AB CD EF GH IJ KL MN OP QR ST UV WX QR ST UV WX"
+    var description: String { rawValue }
 
-    static func mockCertificate() -> String {
-        "BEGIN CERTIFICATE\n-----------\n"
-        + String(repeating: "abcdefghijklmno", count: 100)
-        +  "\n-----------\nEND CERTIFICATE"
-    }
 }
