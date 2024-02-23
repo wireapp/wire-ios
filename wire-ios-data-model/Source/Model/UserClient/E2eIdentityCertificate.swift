@@ -33,6 +33,7 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
     public var status: E2EIdentityCertificateStatus
     public var serialNumber: String
     public var comparedDate: Date
+
     public init(
         clientId: String,
         certificateDetails: String,
