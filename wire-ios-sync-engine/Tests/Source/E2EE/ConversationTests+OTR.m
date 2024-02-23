@@ -54,9 +54,12 @@
     XCTAssertEqual(lastEventType, ZMUpdateEventTypeConversationOtrMessageAdd);
     XCTAssertEqual(message.deliveryState, ZMDeliveryStateSent);
     
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext];
-    UserClient *selfClient = selfUser.selfClient;
-    XCTAssertEqual(selfClient.missingClients.count, 0u);
+    [self.userSession.syncManagedObjectContext performBlockAndWait:^{
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext];
+        UserClient *selfClient = selfUser.selfClient;
+        XCTAssertEqual(selfClient.missingClients.count, 0u);
+    }];
+
     XCTAssertFalse([message hasLocalModificationsForKey:@"uploadState"]);
     XCTAssertEqual(message.transferState, AssetTransferStateUploaded);
 }
@@ -111,9 +114,11 @@
     XCTAssertEqual(lastEventType, ZMUpdateEventTypeConversationOtrMessageAdd);
     XCTAssertEqual(message.deliveryState, ZMDeliveryStateSent);
     
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext];
-    UserClient *selfClient = selfUser.selfClient;
-    XCTAssertEqual(selfClient.missingClients.count, 0u);
+    [self.userSession.syncManagedObjectContext performBlockAndWait:^{
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext];
+        UserClient *selfClient = selfUser.selfClient;
+        XCTAssertEqual(selfClient.missingClients.count, 0u);
+    }];
 }
 
 
@@ -284,10 +289,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
-@end
-
-#pragma mark - Trust
-@implementation ConversationTestsOTR (Trust)
+// MARK: - Trust
 
 - (ZMClientMessage *)sendOtrMessageWithInitialSecurityLevel:(ZMConversationSecurityLevel)securityLevel
                                            numberOfMessages:(NSUInteger)numberOfMessages
@@ -901,6 +903,10 @@
     
     ZMUser *user1 = [self userForMockUser:self.user1];
     [self.userSession performChanges:^{
+        if(user1.clients.isEmpty) {
+            XCTFail(@"expected to have clients");
+            return;
+        }
         [selfClient trustClient:user1.clients.anyObject];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1123,6 +1129,10 @@
         for (UserClient *client in selfUser.clients){
             [selfUser.selfClient trustClient:client];
         }
+        if(user1.clients.isEmpty) {
+            XCTFail(@"expected to have clients");
+            return;
+        }
         [selfUser.selfClient trustClient:user1.clients.anyObject];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1158,7 +1168,11 @@
     }];
     ZMUser *user1 = [self userForMockUser:self.user1];
     XCTAssertNotNil(notSelfClient);
-    
+  
+    if(user1 == nil || user1.clients.isEmpty) {
+        XCTFail(@"user1 should exist");
+        return;
+    }
     // when
     [self.userSession performChanges:^{
         [selfUser.selfClient trustClient:user1.clients.anyObject];
@@ -1233,11 +1247,7 @@
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 0u);
 }
 
-@end
-
-#pragma mark - Unable to decrypt message
-@implementation ConversationTestsOTR (UnableToDecrypt)
-
+// MARK: - Unable to decrypt message
 
 - (void)testThatItInsertsASystemMessageWhenItCanNotDecryptAMessage {
     

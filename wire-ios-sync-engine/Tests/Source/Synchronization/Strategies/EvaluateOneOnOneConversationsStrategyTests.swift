@@ -76,7 +76,9 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         let strategy = makeStrategy()
 
         // when
-        XCTAssertNil(strategy.nextRequest(for: apiVersion))
+        await syncContext.perform {
+            XCTAssertNil(strategy.nextRequest(for: self.apiVersion))
+        }
 
         // then
         await fulfillment(of: [expectation], timeout: 0.1)
@@ -97,7 +99,9 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         let strategy = makeStrategy()
 
         // when
-        XCTAssertNil(strategy.nextRequest(for: apiVersion))
+        await syncContext.perform {
+            XCTAssertNil(strategy.nextRequest(for: self.apiVersion))
+        }
 
         // then
         await fulfillment(of: [expectation], timeout: 0.1)
