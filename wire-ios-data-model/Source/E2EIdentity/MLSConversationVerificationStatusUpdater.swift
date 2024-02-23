@@ -30,13 +30,13 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
 
     // MARK: - Properties
 
-    private var e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface
+    private var e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
     private var syncContext: NSManagedObjectContext
 
     // MARK: - Life cycle
 
     public init(
-        e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface,
+        e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
         syncContext: NSManagedObjectContext
     ) {
         self.e2eIVerificationStatusService = e2eIVerificationStatusService

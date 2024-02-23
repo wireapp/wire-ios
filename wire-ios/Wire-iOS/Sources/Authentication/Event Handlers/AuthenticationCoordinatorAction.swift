@@ -59,7 +59,8 @@ enum AuthenticationCoordinatorAction {
     case signOut(warn: Bool)
     case addEmailAndPassword(ZMEmailCredentials)
     case configureDevicePermissions
-    case enrollE2EI
+    case startE2EIEnrollment
+    case completeE2EIEnrollment
 
     var retainsModal: Bool {
         switch self {

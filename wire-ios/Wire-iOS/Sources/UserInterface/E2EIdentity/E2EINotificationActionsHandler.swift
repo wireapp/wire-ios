@@ -18,8 +18,9 @@
 
 import Foundation
 import WireSyncEngine
+import WireSystem
 
-public protocol E2eINotificationActions {
+public protocol E2EINotificationActions {
 
     func getCertificate() async
     func updateCertificate() async
@@ -27,24 +28,27 @@ public protocol E2eINotificationActions {
 
 }
 
-final class E2eINotificationActionsHandler: E2eINotificationActions {
+final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     // MARK: - Properties
 
-    private var enrollCertificateUseCase: EnrollE2eICertificateUseCaseInterface?
-    private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol?
+    private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
+    private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
+    private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
     private let gracePeriodRepository: GracePeriodRepository
     private let targetVC: UIViewController
 
     // MARK: - Life cycle
 
     init(
-        enrollCertificateUseCase: EnrollE2eICertificateUseCaseInterface?,
-        snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol?,
+        enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
+        snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
+        stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
         gracePeriodRepository: GracePeriodRepository,
         targetVC: UIViewController) {
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
+            self.stopCertificateEnrollmentSnoozerUseCase = stopCertificateEnrollmentSnoozerUseCase
             self.gracePeriodRepository = gracePeriodRepository
             self.targetVC = targetVC
         }
@@ -52,7 +56,7 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
     public func getCertificate() async {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         do {
-            try await enrollCertificateUseCase?.invoke(authenticate: oauthUseCase.invoke)
+            try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
             await confirmSuccessfulEnrollment()
         } catch {
             guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
@@ -75,7 +79,7 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
 
         let alert = await UIAlertController.reminderGetCertificate(timeLeft: formattedDuration) {
             Task {
-                await self.snoozeCertificateEnrollmentUseCase?.start()
+                await self.snoozeCertificateEnrollmentUseCase.invoke()
             }
         }
         await targetVC.present(alert, animated: true)
@@ -87,7 +91,7 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel) {
             Task {
-                try await self.enrollCertificateUseCase?.invoke(authenticate: oauthUseCase.invoke)
+                try await self.enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
                 await self.confirmSuccessfulEnrollment()
             }
         }
@@ -95,9 +99,13 @@ final class E2eINotificationActionsHandler: E2eINotificationActions {
     }
 
     @MainActor
-    private func confirmSuccessfulEnrollment() {
-        snoozeCertificateEnrollmentUseCase?.stop()
+    private func confirmSuccessfulEnrollment() async {
+        await snoozeCertificateEnrollmentUseCase.invoke()
         let successScreen = SuccessfulCertificateEnrollmentViewController()
+        successScreen.onOkTapped = { viewController in
+            viewController.dismiss(animated: true)
+        }
+
         targetVC.present(successScreen, animated: true)
     }
 

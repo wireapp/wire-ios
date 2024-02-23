@@ -128,7 +128,7 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         }
 
         // Given
-        let expectedError = E2eIVerificationStatusService.E2eIVerificationStatusError.missingConversation
+        let expectedError = E2EIVerificationStatusService.E2EIVerificationStatusError.missingConversation
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let mockConversation = await syncMOC.perform { [syncMOC] in
             let conversation =  ZMConversation.insertNewObject(in: syncMOC)
@@ -146,7 +146,7 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
 
     func test_itDoesNotUpdateConversation_failedToFetchVerificationStatus() async throws {
         // Mock
-        let error = E2eIVerificationStatusService.E2eIVerificationStatusError.failedToFetchVerificationStatus
+        let error = E2EIVerificationStatusService.E2EIVerificationStatusError.failedToFetchVerificationStatus
         e2eIVerificationStatusService.getConversationStatusGroupID_MockError = error
 
         // Given

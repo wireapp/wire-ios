@@ -22,7 +22,7 @@ import WireDataModel
 import Combine
 
 // sourcery: AutoMockable
-public protocol E2eIKeyPackageRotating {
+public protocol E2EIKeyPackageRotating {
 
     func rotateKeysAndMigrateConversations(
         enrollment: E2eiEnrollmentProtocol,
@@ -33,7 +33,7 @@ public protocol E2eIKeyPackageRotating {
 
 }
 
-public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
+public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
 
     // MARK: - Types
 
