@@ -161,12 +161,12 @@ final class UserClientListViewController: UIViewController,
     }
 
     private func openDetailsOfClient(_ client: UserClient) {
-            guard let navigationController = self.navigationController,
-                  let contextProvider = contextProvider
-            else {
-                assertionFailure("Unable to display details from conversations as navigation instance is nil")
-                return
-            }
+        guard let navigationController = self.navigationController,
+              let contextProvider = contextProvider
+        else {
+            assertionFailure("Unable to display details from conversations as navigation instance is nil")
+            return
+        }
         let viewModel = DeviceInfoViewModel.map(
             certificate: client.e2eIdentityCertificate,
             userClient: client,
@@ -183,14 +183,14 @@ final class UserClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate,
             isFromConversation: true
         )
-            let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) {
-                self.navigationController?.setNavigationBarHidden(false, animated: false)
-            }
-            let hostingViewController = UIHostingController(rootView: detailsView)
-            hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-            navigationController.pushViewController(hostingViewController, animated: true)
-            navigationController.isNavigationBarHidden = true
+        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) {
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
         }
+        let hostingViewController = UIHostingController(rootView: detailsView)
+        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.pushViewController(hostingViewController, animated: true)
+        navigationController.isNavigationBarHidden = true
+    }
 }
 
 extension UserClientListViewController: UserObserving {
