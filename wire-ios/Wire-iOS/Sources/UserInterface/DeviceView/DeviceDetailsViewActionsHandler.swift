@@ -58,9 +58,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.e2eiCertificateEnrollment = e2eiCertificateEnrollment
     }
 
-    func updateCertificate() async -> E2eIdentityCertificate? {
-        // TODO: [WPB-3220]
-        return nil
+    func updateCertificate() async throws -> E2eIdentityCertificate? {
+        try await enrollClient()
     }
 
     func enrollClient() async throws -> E2eIdentityCertificate? {

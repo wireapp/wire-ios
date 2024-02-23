@@ -27,7 +27,7 @@ protocol DeviceDetailsViewActions {
     var isProcessing: ((Bool) -> Void)? { get set }
 
     func enrollClient() async throws -> E2eIdentityCertificate?
-    func updateCertificate() async -> E2eIdentityCertificate?
+    func updateCertificate() async throws -> E2eIdentityCertificate?
     func removeDevice() async -> Bool
     func resetSession()
     func updateVerified(_ value: Bool) async -> Bool
@@ -120,8 +120,11 @@ final class DeviceInfoViewModel: ObservableObject {
     @MainActor
     func updateCertificate() async {
         self.isActionInProgress = true
-        let certificate = await actionsHandler.updateCertificate()
-        self.e2eIdentityCertificate = certificate
+        do {
+            self.e2eIdentityCertificate = try await actionsHandler.updateCertificate()
+        } catch {
+            showEnrollmentCertificateError = true
+        }
         self.isActionInProgress = false
     }
 

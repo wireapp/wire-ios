@@ -129,7 +129,7 @@ struct DeviceDetailsView: View {
             }
         }
         .onReceive(viewModel.$showEnrollmentCertificateError, perform: { _ in
-            didEnrollCertificateFail.toggle()
+            didEnrollCertificateFail = viewModel.showEnrollmentCertificateError
         })
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
@@ -144,7 +144,7 @@ struct DeviceDetailsView: View {
         }
         .alert(E2ei.Error.Alert.title, isPresented: $didEnrollCertificateFail) {
             SwiftUI.Button(L10n.Localizable.General.ok) {
-                didEnrollCertificateFail.toggle()
+                didEnrollCertificateFail = false
             }
         }
     }
