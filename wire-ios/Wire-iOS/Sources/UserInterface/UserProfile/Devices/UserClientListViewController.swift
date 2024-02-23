@@ -151,8 +151,7 @@ final class UserClientListViewController: UIViewController,
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserClientCell.self, for: indexPath)
         let client = clients[indexPath.row]
-        cell.viewModel = .from(userClient: client)
-
+        cell.viewModel = .init(userClient: client)
         return cell
     }
 

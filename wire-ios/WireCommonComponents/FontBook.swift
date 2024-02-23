@@ -21,10 +21,6 @@ import SwiftUI
 
 extension UIFont {
 
-    public var swiftUIFont: Font {
-        Font(self as CTFont)
-    }
-
 //     Constants for weight values
 //     Those values come directly from the system
 //     DON"T MODIFY THOSE VALUES
@@ -113,6 +109,46 @@ extension UIFont {
 
         case .bigHeadline:
             return UIFont.preferredFont(forTextStyle: .body).withSize(36)
+        }
+    }
+
+    public static func swiftUIFont(for style: UIFont.FontStyle) -> Font {
+        switch style {
+        case .title3:
+            return .title3
+
+        case .headline:
+            return .headline
+
+        case .body:
+            return .body
+
+        case .subheadline:
+            return .subheadline
+
+        case .caption1:
+            return .caption
+
+        case .title3Bold:
+            return .title3.bold()
+
+        case .calloutBold:
+            return .callout.bold()
+
+        case .footnoteSemibold:
+            return .footnote.weight(.semibold)
+
+        case .bodyTwoSemibold:
+            return .system(size: 16, weight: .semibold)
+
+        case .buttonSmallSemibold:
+            return .system(size: 14, weight: .semibold)
+
+        case .buttonBigSemibold:
+                return .title3.bold()
+
+        case .bigHeadline:
+            return .system(size: 36)
         }
     }
 

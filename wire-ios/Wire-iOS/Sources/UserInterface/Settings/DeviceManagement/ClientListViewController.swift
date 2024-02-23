@@ -398,11 +398,11 @@ final class ClientListViewController: UIViewController,
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
                 if let selfClient = selfClient {
-                    cell.viewModel = ClientTableViewCellModel.from(userClient: selfClient, shouldSetType: false)
+                    cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
                     cell.wr_editable = false
                 }
             case 1:
-                cell.viewModel = ClientTableViewCellModel.from(userClient: sortedClients[indexPath.row], shouldSetType: false)
+                cell.viewModel = .init(userClient: sortedClients[indexPath.row], shouldSetType: false)
                 cell.wr_editable = true
             default:
                 cell.viewModel = nil

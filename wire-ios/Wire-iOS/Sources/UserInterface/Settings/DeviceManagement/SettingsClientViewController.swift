@@ -230,7 +230,7 @@ final class SettingsClientViewController: UIViewController,
                 cell.wr_editable = false
                 cell.accessibilityTraits = .none
                 cell.accessibilityHint = ""
-                cell.viewModel = .from(userClient: userClient, shouldSetType: false)
+                cell.viewModel = .init(userClient: userClient, shouldSetType: false)
                 return cell
             }
 
