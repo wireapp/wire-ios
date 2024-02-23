@@ -200,7 +200,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         // WHEN
         cell.configure(
             user: user,
-            isE2EICertified: false, // TODO [WPB-765]: provide value
+            isE2EICertified: false,
             conversation: conversation,
             showSeparator: true
         )

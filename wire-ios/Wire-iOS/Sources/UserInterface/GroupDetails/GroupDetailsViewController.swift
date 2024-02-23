@@ -172,6 +172,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 if admins.count >= maxNumberOfDisplayed && (participants.count > maxNumberWithoutTruncation) {
                     let adminSection = ParticipantsSectionController(
                         participants: admins,
+                        userStatuses: userStatuses,
                         conversationRole: .admin,
                         conversation: conversation,
                         delegate: self,
@@ -185,6 +186,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 } else {
                     let adminSection = ParticipantsSectionController(
                         participants: admins,
+                        userStatuses: userStatuses,
                         conversationRole: .admin,
                         conversation: conversation,
                         delegate: self,
@@ -197,6 +199,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                         if !members.isEmpty {
                             let memberSection = ParticipantsSectionController(
                                 participants: members,
+                                userStatuses: userStatuses,
                                 conversationRole: .member,
                                 conversation: conversation,
                                 delegate: self,
@@ -210,6 +213,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                         let maxParticipants = Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count
                         let memberSection = ParticipantsSectionController(
                             participants: members,
+                            userStatuses: userStatuses,
                             conversationRole: .member,
                             conversation: conversation,
                             delegate: self,
@@ -225,6 +229,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             } else { // Display only one section without the ShowAll button
                 let adminSection = ParticipantsSectionController(
                     participants: admins,
+                    userStatuses: userStatuses,
                     conversationRole: .admin,
                     conversation: conversation,
                     delegate: self,

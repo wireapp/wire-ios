@@ -38,6 +38,9 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     var participantsDidChange: (() -> Void)?
 
     let userSession: UserSession
+    let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+
+    private(set) var userStatuses = [UUID: UserStatus]()
 
     fileprivate var token: NSObjectProtocol?
 
@@ -68,6 +71,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         self.conversation = conversation
         self.selectedParticipants = selectedParticipants.sorted { $0.name < $1.name }
         self.userSession = userSession
+        isUserE2EICertifiedUseCase = userSession.isUserE2EICertifiedUseCase
         super.init()
 
         if let conversation = conversation as? ZMConversation {
@@ -75,6 +79,11 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         }
 
         computeVisibleParticipants()
+
+        Task { @MainActor in
+            await updateUserE2EICertificationStatuses()
+            participantsDidChange?()
+        }
     }
 
     private func computeVisibleParticipants() {
@@ -115,7 +124,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     func searchHeaderViewController(
         _ searchHeaderViewController: SearchHeaderViewController,
         updatedSearchQuery query: String
-        ) {
+    ) {
         filterQuery = query
         computeVisibleParticipants()
     }
@@ -124,4 +133,22 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         // no-op
     }
 
+    // MARK: - UserStatuses
+
+    private func updateUserE2EICertificationStatuses() async {
+        let participants = conversation.sortedOtherParticipants
+        for user in participants {
+            guard let user = user as? ZMUser else { continue }
+            guard let conversation = conversation as? ZMConversation else { continue }
+            do {
+                let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
+                    conversation: conversation,
+                    user: user
+                )
+                userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
+            } catch {
+                WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+            }
+        }
+    }
 }

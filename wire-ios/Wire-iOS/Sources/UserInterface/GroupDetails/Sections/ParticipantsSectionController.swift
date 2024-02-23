@@ -26,8 +26,10 @@ enum ParticipantsRowType {
 
     var cellType: UICollectionViewCell.Type {
         switch self {
-        case .user: return UserCell.self
-        case .showAll: return ShowAllParticipantsCell.self
+        case .user:
+            return UserCell.self
+        case .showAll:
+            return ShowAllParticipantsCell.self
         }
     }
 }
@@ -48,6 +50,7 @@ enum ConversationRole {
 private struct ParticipantsSectionViewModel {
     let rows: [ParticipantsRowType]
     let participants: [UserType]
+    let userStatuses: [UUID: UserStatus]
     let conversationRole: ConversationRole
     let userSession: UserSession
     let showSectionCount: Bool
@@ -92,6 +95,7 @@ private struct ParticipantsSectionViewModel {
     ///
     /// - Parameters:
     ///   - users: list of conversation participants
+    ///   - userStatuses: additional status info like the E2EI certification status.
     ///   - conversationRole: participants' ConversationRole
     ///   - totalParticipantsCount: the number of all participants in the conversation
     ///   - clipSection: enable/disable the display of the “ShowAll” button
@@ -100,6 +104,7 @@ private struct ParticipantsSectionViewModel {
     ///   - showSectionCount: current view model - a search result or not
     init(
         users: [UserType],
+        userStatuses: [UUID: UserStatus],
         conversationRole: ConversationRole,
         totalParticipantsCount: Int,
         clipSection: Bool = true,
@@ -109,6 +114,7 @@ private struct ParticipantsSectionViewModel {
         userSession: UserSession
     ) {
         participants = users.sorted { $0.name < $1.name }
+        self.userStatuses = userStatuses
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
         self.userSession = userSession
@@ -168,25 +174,32 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     private weak var delegate: GroupDetailsSectionControllerDelegate?
     private var viewModel: ParticipantsSectionViewModel
     private let conversation: GroupDetailsConversationType
-    private var token: AnyObject?
+    private var token: NSObjectProtocol?
 
-    init(participants: [UserType],
-         conversationRole: ConversationRole,
-         conversation: GroupDetailsConversationType,
-         delegate: GroupDetailsSectionControllerDelegate,
-         totalParticipantsCount: Int,
-         clipSection: Bool = true,
-         maxParticipants: Int = Int.ConversationParticipants.maxNumberWithoutTruncation,
-         maxDisplayedParticipants: Int = Int.ConversationParticipants.maxNumberOfDisplayed,
-         showSectionCount: Bool = true,
-         userSession: UserSession) {
-        viewModel = .init(users: participants,
-                          conversationRole: conversationRole,
-                          totalParticipantsCount: totalParticipantsCount,
-                          clipSection: clipSection,
-                          maxParticipants: maxParticipants,
-                          maxDisplayedParticipants: maxDisplayedParticipants,
-                          showSectionCount: showSectionCount, userSession: userSession)
+    init(
+        participants: [UserType],
+        userStatuses: [UUID: UserStatus],
+        conversationRole: ConversationRole,
+        conversation: GroupDetailsConversationType,
+        delegate: GroupDetailsSectionControllerDelegate,
+        totalParticipantsCount: Int,
+        clipSection: Bool = true,
+        maxParticipants: Int = .ConversationParticipants.maxNumberWithoutTruncation,
+        maxDisplayedParticipants: Int = .ConversationParticipants.maxNumberOfDisplayed,
+        showSectionCount: Bool = true,
+        userSession: UserSession
+    ) {
+        viewModel = .init(
+            users: participants,
+            userStatuses: userStatuses,
+            conversationRole: conversationRole,
+            totalParticipantsCount: totalParticipantsCount,
+            clipSection: clipSection,
+            maxParticipants: maxParticipants,
+            maxDisplayedParticipants: maxDisplayedParticipants,
+            showSectionCount: showSectionCount,
+            userSession: userSession
+        )
         self.conversation = conversation
         self.delegate = delegate
         super.init()
@@ -231,9 +244,10 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             guard let cell = cell as? UserCell else {
                 fatalError("Unexpected collection view cell type: \(String(describing: cell.self))")
             }
+            let isE2EICertified = if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] { userStatus.isCertified } else { false }
             cell.configure(
                 user: user,
-                isE2EICertified: false, // TODO [WPB-765]: provide value
+                isE2EICertified: isE2EICertified,
                 conversation: conversation,
                 showSeparator: showSeparator
             )
@@ -253,9 +267,11 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     // MARK: - Footer
 
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        referenceSizeForFooterInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
 
         guard
             viewModel.footerVisible,
@@ -270,9 +286,11 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         return footer.bounds.size
     }
 
-    override func collectionView(_ collectionView: UICollectionView,
-                                 viewForSupplementaryElementOfKind kind: String,
-                                 at indexPath: IndexPath) -> UICollectionReusableView {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
 
         guard kind == UICollectionView.elementKindSectionFooter else {
             return super.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
