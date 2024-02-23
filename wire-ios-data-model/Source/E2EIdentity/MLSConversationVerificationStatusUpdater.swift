@@ -19,13 +19,14 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol MLSConversationVerificationStatusProviderInterface {
+public protocol MLSConversationVerificationStatusUpdating {
 
     func updateStatus(_ groupID: MLSGroupID) async throws
+    func updateAllStatuses() async throws
 
 }
 
-public class MLSConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface {
+public class MLSConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating {
 
     // MARK: - Properties
 
@@ -45,12 +46,36 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
     // MARK: - Public interface
 
     public func updateStatus(_ groupID: MLSGroupID) async throws {
-        guard let conversation = await syncContext.perform({
+        let conversation = await syncContext.perform {
             ZMConversation.fetch(with: groupID, in: self.syncContext)
-        }) else {
+        }
+
+        guard let conversation else {
             throw E2EIVerificationStatusService.E2EIVerificationStatusError.missingConversation
         }
 
+        try await updateStatus(for: conversation, groupID: groupID)
+    }
+
+    public func updateAllStatuses() async throws {
+        let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
+            let conversations = ZMConversation.fetchMLSConversations(in: syncContext)
+            return conversations.compactMap {
+                guard let groupID = $0.mlsGroupID else {
+                    return nil
+                }
+                return (groupID, $0)
+            }
+        }
+
+        for (groupID, conversation) in groupIDConversationTuples {
+            try await updateStatus(for: conversation, groupID: groupID)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func updateStatus(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
         let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
         await syncContext.perform {
             self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
@@ -61,31 +86,33 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
 
     private func updateStatusAndNotifyUserIfNeeded(
         newStatusFromCC: MLSVerificationStatus,
-        conversation: ZMConversation) {
-            guard let currentStatus = conversation.mlsVerificationStatus else {
-                return conversation.mlsVerificationStatus = newStatusFromCC
-            }
-
-            let newStatus = resolveNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
-            guard newStatus != currentStatus else {
-                return
-            }
-            conversation.mlsVerificationStatus = newStatus
-            notifyUserAboutStateChangesIfNeeded(newStatus, in: conversation)
+        conversation: ZMConversation
+    ) {
+        guard let currentStatus = conversation.mlsVerificationStatus else {
+            return conversation.mlsVerificationStatus = newStatusFromCC
         }
+
+        let newStatus = resolveNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
+        guard newStatus != currentStatus else {
+            return
+        }
+        conversation.mlsVerificationStatus = newStatus
+        notifyUserAboutStateChangesIfNeeded(newStatus, in: conversation)
+    }
 
     private func resolveNewStatus(
         newStatusFromCC: MLSVerificationStatus,
-        currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
-            switch (newStatusFromCC, currentStatus) {
-            case (.notVerified, .verified):
-                return .degraded
-            case(.notVerified, .degraded):
-                return .degraded
-            default:
-                return newStatusFromCC
-            }
+        currentStatus: MLSVerificationStatus
+    ) -> MLSVerificationStatus {
+        switch (newStatusFromCC, currentStatus) {
+        case (.notVerified, .verified):
+            return .degraded
+        case(.notVerified, .degraded):
+            return .degraded
+        default:
+            return newStatusFromCC
         }
+    }
 
     private func notifyUserAboutStateChangesIfNeeded(_ newStatus: MLSVerificationStatus, in conversation: ZMConversation) {
         switch newStatus {
