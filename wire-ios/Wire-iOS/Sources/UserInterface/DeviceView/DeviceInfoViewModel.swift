@@ -27,7 +27,7 @@ protocol DeviceDetailsViewActions {
     var isProcessing: ((Bool) -> Void)? { get set }
 
     func enrollClient() async throws -> E2eIdentityCertificate?
-    func updateCertificate() async -> E2eIdentityCertificate?
+    func updateCertificate() async throws -> E2eIdentityCertificate?
     func removeDevice() async -> Bool
     func resetSession()
     func updateVerified(_ value: Bool) async -> Bool
@@ -42,6 +42,7 @@ final class DeviceInfoViewModel: ObservableObject {
     let userClient: UserClient
     let gracePeriod: TimeInterval
     let mlsThumbprint: String?
+    let isFromConversation: Bool
     var title: String
     var isSelfClient: Bool
 
@@ -67,15 +68,17 @@ final class DeviceInfoViewModel: ObservableObject {
             .replacingOccurrences(of: " ", with: ":")
     }
 
-    @Published
-    var e2eIdentityCertificate: E2eIdentityCertificate?
-    @Published var isRemoved: Bool = false
+    @Published var e2eIdentityCertificate: E2eIdentityCertificate?
+    @Published var shouldDismiss: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
     @Published var showEnrollmentCertificateError = false
 
-    private var actionsHandler: DeviceDetailsViewActions
+    var actionsHandler: DeviceDetailsViewActions
+    var conversationClientDetailsActions: ConversationUserClientDetailsActions
+    var debugMenuActionsHandler: ConversationUserClientDetailsDebugActions?
+    let showDebugMenu: Bool
 
     init(
         certificate: E2eIdentityCertificate?,
@@ -84,10 +87,14 @@ final class DeviceInfoViewModel: ObservableObject {
         proteusID: String,
         mlsThumbprint: String?,
         isProteusVerificationEnabled: Bool,
-        actionsHandler: DeviceDetailsViewActions,
         userClient: UserClient,
         isSelfClient: Bool,
-        gracePeriod: TimeInterval
+        gracePeriod: TimeInterval,
+        isFromConversation: Bool,
+        actionsHandler: DeviceDetailsViewActions,
+        conversationClientDetailsActions: ConversationUserClientDetailsActions,
+        debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil,
+        showDebugMenu: Bool
     ) {
         self.e2eIdentityCertificate = certificate
         self.title = title
@@ -99,6 +106,10 @@ final class DeviceInfoViewModel: ObservableObject {
         self.userClient = userClient
         self.isSelfClient = isSelfClient
         self.gracePeriod = gracePeriod
+        self.isFromConversation = isFromConversation
+        self.conversationClientDetailsActions = conversationClientDetailsActions
+        self.debugMenuActionsHandler = debugMenuActionsHandler
+        self.showDebugMenu = showDebugMenu
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
@@ -109,8 +120,13 @@ final class DeviceInfoViewModel: ObservableObject {
     @MainActor
     func updateCertificate() async {
         self.isActionInProgress = true
-        let certificate = await actionsHandler.updateCertificate()
-        self.e2eIdentityCertificate = certificate
+        do {
+            if let e2eIdentityCertificate = try await actionsHandler.updateCertificate() {
+                self.e2eIdentityCertificate = e2eIdentityCertificate
+            }
+        } catch {
+            showEnrollmentCertificateError = true
+        }
         self.isActionInProgress = false
     }
 
@@ -118,7 +134,9 @@ final class DeviceInfoViewModel: ObservableObject {
     func enrollClient() async {
         self.isActionInProgress = true
         do {
-            self.e2eIdentityCertificate = try await actionsHandler.enrollClient()
+            if let e2eIdentityCertificate = try await actionsHandler.enrollClient() {
+                self.e2eIdentityCertificate = e2eIdentityCertificate
+            }
         } catch {
             showEnrollmentCertificateError = true
         }
@@ -127,19 +145,16 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func removeDevice() async {
-        let isRemoved = await actionsHandler.removeDevice()
-        self.isRemoved = isRemoved
+        self.shouldDismiss = await actionsHandler.removeDevice()
     }
 
     func resetSession() {
         actionsHandler.resetSession()
     }
 
+    @MainActor
     func updateVerifiedStatus(_ value: Bool) async {
-        let isVerified = await actionsHandler.updateVerified(value)
-        await MainActor.run {
-            isProteusVerificationEnabled = isVerified
-        }
+        isProteusVerificationEnabled = await actionsHandler.updateVerified(value)
     }
 
     func copyToClipboard(_ value: String) {
@@ -155,14 +170,47 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func getProteusFingerPrint() async {
-        let result = await actionsHandler.getProteusFingerPrint()
-        self.proteusKeyFingerprint = result
+        self.proteusKeyFingerprint = await actionsHandler.getProteusFingerPrint()
     }
 
     func onAppear() {
         Task {
             await getProteusFingerPrint()
         }
+    }
+
+    // MARK: ConversationUserClientDetailsActions
+
+    func onShowMyDeviceTapped() {
+        conversationClientDetailsActions.showMyDevice()
+    }
+
+    func onHowToDoThatTapped() {
+        conversationClientDetailsActions.howToDoThat()
+    }
+
+    // MARK: ConversationUserClientDetailsDebugActions
+
+    func onDeleteDeviceTapped() {
+        Task {
+            await debugMenuActionsHandler?.deleteDevice()
+            await MainActor.run {
+                shouldDismiss = true
+            }
+        }
+    }
+
+    func onCorruptSessionTapped() {
+        Task {
+            await debugMenuActionsHandler?.corruptSession()
+            await MainActor.run {
+                shouldDismiss = true
+            }
+        }
+    }
+
+    func onDuplicateClientTapped() {
+        debugMenuActionsHandler?.duplicateClient()
     }
 }
 
@@ -181,8 +229,19 @@ extension DeviceInfoViewModel {
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
         saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
         contextProvider: ContextProvider,
-        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
+        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol,
+        isFromConversation: Bool = false,
+        showDebugMenu: Bool = Bundle.developerModeEnabled
     ) -> DeviceInfoViewModel {
+        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
+            userClient: userClient,
+            userSession: userSession,
+            credentials: credentials,
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: getProteusFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: e2eiCertificateEnrollment
+        )
         return DeviceInfoViewModel(
             certificate: certificate,
             title: title,
@@ -190,18 +249,14 @@ extension DeviceInfoViewModel {
             proteusID: proteusID ?? "",
             mlsThumbprint: mlsThumbprint,
             isProteusVerificationEnabled: userClient.verified,
-            actionsHandler: DeviceDetailsViewActionsHandler(
-                userClient: userClient,
-                userSession: userSession,
-                credentials: credentials,
-                saveFileManager: saveFileManager,
-                getProteusFingerprint: getProteusFingerprint,
-                contextProvider: contextProvider,
-                e2eiCertificateEnrollment: e2eiCertificateEnrollment
-            ),
             userClient: userClient,
             isSelfClient: isSelfClient,
-            gracePeriod: gracePeriod
+            gracePeriod: gracePeriod,
+            isFromConversation: isFromConversation,
+            actionsHandler: deviceActionsHandler,
+            conversationClientDetailsActions: deviceActionsHandler,
+            debugMenuActionsHandler: deviceActionsHandler,
+            showDebugMenu: showDebugMenu
         )
     }
 }

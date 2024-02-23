@@ -175,6 +175,7 @@ final class ClientListViewController: UIViewController,
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        updateAllClients()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -398,11 +399,11 @@ final class ClientListViewController: UIViewController,
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
                 if let selfClient = selfClient {
-                    cell.viewModel = ClientTableViewCellModel.from(userClient: selfClient, shouldSetType: false)
+                    cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
                     cell.wr_editable = false
                 }
             case 1:
-                cell.viewModel = ClientTableViewCellModel.from(userClient: sortedClients[indexPath.row], shouldSetType: false)
+                cell.viewModel = .init(userClient: sortedClients[indexPath.row], shouldSetType: false)
                 cell.wr_editable = true
             default:
                 cell.viewModel = nil
@@ -549,6 +550,23 @@ final class ClientListViewController: UIViewController,
             return userClients
         }
     }
+
+    private func updateAllClients() {
+        guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
+            return
+        }
+        Task {
+            let results = await updateCertificates(for: Array(selfUser.clients))
+            self.clients = results
+            self.selfClient = results.first(where: { $0.isSelfClient() })
+            refreshViews()
+        }
+    }
+
+    @MainActor
+    func refreshViews() {
+        clientsTableView?.reloadData()
+    }
 }
 
 // MARK: - ClientRemovalObserverDelegate
@@ -575,24 +593,10 @@ extension ClientListViewController: UserObserving {
 
     func userDidChange(_ note: UserChangeInfo) {
         if note.clientsChanged || note.trustLevelChanged {
-            guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
-                return
-            }
-
-            var clients = selfUser.clients
-            clients.remove(selfClient)
-            self.clients = Array(clients)
-            Task {
-                self.clients = await updateCertificates(for: self.clients)
-                refreshViews()
-            }
+            updateAllClients()
         }
     }
 
-    @MainActor
-    func refreshViews() {
-        clientsTableView?.reloadData()
-    }
 }
 
 private extension UserClient {

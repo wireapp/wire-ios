@@ -151,21 +151,45 @@ final class UserClientListViewController: UIViewController,
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserClientCell.self, for: indexPath)
         let client = clients[indexPath.row]
-        cell.viewModel = .from(userClient: client)
-
+        cell.viewModel = .init(userClient: client)
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let client = clients[indexPath.row] as? UserClient else { return }
-        let profileClientViewController = ProfileClientViewController(
-            client: client,
-            fromConversation: true,
-            userSession: userSession
-        )
-        profileClientViewController.showBackButton = false
+        openDetailsOfClient(client)
+    }
 
-        show(profileClientViewController, sender: nil)
+    private func openDetailsOfClient(_ client: UserClient) {
+        guard let navigationController = self.navigationController,
+              let contextProvider = contextProvider
+        else {
+            assertionFailure("Unable to display details from conversations as navigation instance is nil")
+            return
+        }
+        let viewModel = DeviceInfoViewModel.map(
+            certificate: client.e2eIdentityCertificate,
+            userClient: client,
+            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.deviceClass?.localizedDescription.capitalized ?? client.type.localizedDescription.capitalized),
+            addedDate: "",
+            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16),
+            isSelfClient: client.isSelfClient(),
+            userSession: userSession,
+            credentials: .none,
+            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsThumbprint: (client.e2eIdentityCertificate?.mlsThumbprint ?? client.mlsPublicKeys.ed25519)?.splitStringIntoLines(charactersPerLine: 16),
+            getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2EICertificate,
+            isFromConversation: true
+        )
+        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) {
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
+        }
+        let hostingViewController = UIHostingController(rootView: detailsView)
+        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.pushViewController(hostingViewController, animated: true)
+        navigationController.isNavigationBarHidden = true
     }
 }
 

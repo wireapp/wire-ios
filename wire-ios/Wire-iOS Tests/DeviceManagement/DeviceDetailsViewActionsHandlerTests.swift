@@ -104,7 +104,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
 extension E2eIdentityCertificate {
 
     static func mock(
-        with certificateDetails: String = .mockCertificate(),
+        with certificateDetails: String = .mockCertificate,
         status: E2EIdentityCertificateStatus = .valid,
         notValidBefore: Date = .now - .oneDay,
         expiryDate: Date = .now,

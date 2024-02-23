@@ -25,4 +25,35 @@ struct ClientTableViewCellModel {
     let mlsThumbprintLabelText: String
     let isProteusVerified: Bool
     let e2eIdentityStatus: E2EIdentityCertificateStatus?
+
+    private typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
+
+    init(title: String,
+         proteusLabelText: String,
+         mlsThumbprintLabelText: String,
+         isProteusVerified: Bool,
+         e2eIdentityStatus: E2EIdentityCertificateStatus?) {
+        self.title = title
+        self.proteusLabelText = proteusLabelText
+        self.mlsThumbprintLabelText = mlsThumbprintLabelText
+        self.isProteusVerified = isProteusVerified
+        self.e2eIdentityStatus = e2eIdentityStatus
+    }
+
+    init(userClient: UserClientType,
+         shouldSetType: Bool = true) {
+        if shouldSetType {
+            title = userClient.deviceClass == .legalHold ?
+            L10n.Localizable.Device.Class.legalhold :
+            (userClient.deviceClass?.localizedDescription.capitalized ?? userClient.type.localizedDescription.capitalized)
+        } else {
+            title = userClient.model ?? ""
+        }
+        let proteusId = userClient.displayIdentifier.fingerprintStringWithSpaces.uppercased()
+        proteusLabelText = DeviceDetailsSection.Proteus.value(proteusId)
+        isProteusVerified = userClient.verified
+        let mlsThumbPrint = userClient.mlsThumbPrint?.fingerprintStringWithSpaces ?? ""
+        mlsThumbprintLabelText = mlsThumbPrint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
+        e2eIdentityStatus = userClient.e2eIdentityCertificate?.status
+    }
 }
