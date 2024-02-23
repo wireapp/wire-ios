@@ -55,6 +55,7 @@ final class UserCellTests: BaseSnapshotTestCase {
     private func verify(
         mockUser: UserType,
         conversation: GroupDetailsConversationType,
+        isE2EICertified: Bool,
         file: StaticString = #file,
         testName: String = #function,
         line: UInt = #line
@@ -67,7 +68,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(
             user: mockUser,
-            isCertified: false,
+            isCertified: isE2EICertified,
             isSelfUserPartOfATeam: user.hasTeam,
             conversation: conversation
         )
@@ -83,7 +84,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.teamRole = .partner
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testServiceUser() {
@@ -91,7 +92,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.mockedIsServiceUser = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testNonTeamUser() {
@@ -100,7 +101,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.isConnected = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testTrustedNonTeamUser() {
@@ -108,7 +109,20 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.isVerified = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
+    }
+
+    func testCertifiedNonTeamUser() {
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
+    }
+
+    func testTrustedAndCertifiedNonTeamUser() {
+        // GIVEN && WHEN
+        mockUser.isVerified = true
+
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
     }
 
     func testFederatedUser() {
@@ -117,7 +131,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.domain = "foo.com"
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testGuestUser() {
@@ -125,7 +139,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.isGuestInConversation = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testGuestUser_Wireless() {
@@ -135,7 +149,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.handle = nil
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testTrustedGuestUser() {
@@ -144,7 +158,24 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.isGuestInConversation = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
+    }
+
+    func testCertifiedGuestUser() {
+        // GIVEN && WHEN
+        mockUser.isGuestInConversation = true
+
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
+    }
+
+    func testTrustedAndCertifiedGuestUser() {
+        // GIVEN && WHEN
+        mockUser.isVerified = true
+        mockUser.isGuestInConversation = true
+
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
     }
 
     func testNonTeamUserWithoutHandle() {
@@ -155,7 +186,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.handle = nil
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testUserInsideOngoingVideoCall() {

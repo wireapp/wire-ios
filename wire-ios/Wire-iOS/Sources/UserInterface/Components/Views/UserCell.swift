@@ -297,7 +297,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
 
         if userStatus.isCertified {
-            // TODO [WPB-765]: add accessibility label for shield after merging into `epic/e2ei`
+            // TODO [WPB-765]: add accessibility label for shield
             // content += ", " + <?>
         }
         if userStatus.isVerified {
@@ -346,7 +346,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         titleLabel.attributedText = userStatus.title(
             color: SemanticColors.Label.textDefault,
             includeAvailability: isSelfUserPartOfATeam,
-            includeVerificationStatus: isSelfUserPartOfATeam,
+            includeVerificationStatus: true,
             appendYouSuffix: userIsSelfUser
         )
     }
