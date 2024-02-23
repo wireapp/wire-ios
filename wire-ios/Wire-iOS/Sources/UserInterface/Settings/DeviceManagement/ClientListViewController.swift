@@ -214,6 +214,11 @@ final class ClientListViewController: UIViewController,
             contextProvider: contextProvider,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
+        viewModel.showCertificateUpdateSuccess = { certificateDetails in
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+            successEnrollmentViewController.certificateDetails = certificateDetails
+            successEnrollmentViewController.presentTopmost()
+        }
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
         }
