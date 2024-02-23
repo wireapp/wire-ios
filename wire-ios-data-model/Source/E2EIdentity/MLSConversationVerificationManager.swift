@@ -33,8 +33,10 @@ public final class MLSConversationVerificationManager: MLSConversationVerificati
 
     // MARK: - Life cycle
 
-    public init(mlsService: MLSServiceInterface,
-                mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating?) {
+    public init(
+        mlsService: MLSServiceInterface,
+        mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating?
+    ) {
         self.mlsService = mlsService
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
     }

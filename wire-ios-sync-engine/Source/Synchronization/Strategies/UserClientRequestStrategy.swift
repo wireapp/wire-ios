@@ -194,9 +194,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
 
         if clientRegistrationStatus.currentPhase == .registered || clientRegistrationStatus.currentPhase == .registeringMLSClient {
-            if let request = modifiedSync.nextRequest(for: apiVersion) {
-                return request
-            }
+            return modifiedSync.nextRequest(for: apiVersion)
         }
 
         return nil
