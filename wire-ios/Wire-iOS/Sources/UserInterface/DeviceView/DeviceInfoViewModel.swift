@@ -121,7 +121,9 @@ final class DeviceInfoViewModel: ObservableObject {
     func updateCertificate() async {
         self.isActionInProgress = true
         do {
-            self.e2eIdentityCertificate = try await actionsHandler.updateCertificate()
+            if let e2eIdentityCertificate = try await actionsHandler.updateCertificate() {
+                self.e2eIdentityCertificate = e2eIdentityCertificate
+            }
         } catch {
             showEnrollmentCertificateError = true
         }
@@ -132,7 +134,9 @@ final class DeviceInfoViewModel: ObservableObject {
     func enrollClient() async {
         self.isActionInProgress = true
         do {
-            self.e2eIdentityCertificate = try await actionsHandler.enrollClient()
+            if let e2eIdentityCertificate = try await actionsHandler.enrollClient() {
+                self.e2eIdentityCertificate = e2eIdentityCertificate
+            }
         } catch {
             showEnrollmentCertificateError = true
         }
