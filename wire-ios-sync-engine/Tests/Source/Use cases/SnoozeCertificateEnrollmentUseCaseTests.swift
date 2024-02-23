@@ -41,7 +41,7 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
         gracePeriodRepository = GracePeriodRepository(
             userID: accountID,
             sharedUserDefaults: sharedUserDefaults)
-        gracePeriodRepository.storeEndGracePeriodDate(Date.now)
+        gracePeriodRepository.storeGracePeriodEndDate(Date.now)
         snoozer = SnoozeCertificateEnrollmentUseCase(
             e2eiFeature: mockFeatureRepository.fetchE2EI(),
             gracePeriodRepository: gracePeriodRepository,

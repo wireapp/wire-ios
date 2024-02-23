@@ -104,7 +104,7 @@ final class AuthenticatedRouter: NSObject {
 
         if case .e2eIEnabled(gracePeriod: let gracePeriod) = change, let gracePeriod {
             let endOfGracePeriod = Date.now.addingTimeInterval(gracePeriod)
-            gracePeriodRepository.storeEndGracePeriodDate(endOfGracePeriod)
+            gracePeriodRepository.storeGracePeriodEndDate(endOfGracePeriod)
         }
 
         _viewController?.presentAlert(alert)
