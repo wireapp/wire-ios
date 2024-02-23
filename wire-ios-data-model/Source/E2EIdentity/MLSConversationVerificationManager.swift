@@ -45,7 +45,11 @@ public final class MLSConversationVerificationManager: MLSConversationVerificati
     public func startObservingMLSConversationVerificationStatus() {
         Task {
             for try await groupID in mlsService.epochChanges() {
-                try await mlsConversationVerificationStatusProvider.updateStatus(groupID)
+                do {
+                    try await mlsConversationVerificationStatusProvider.updateStatus(groupID)
+                } catch {
+                    WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
+                }
             }
         }
     }

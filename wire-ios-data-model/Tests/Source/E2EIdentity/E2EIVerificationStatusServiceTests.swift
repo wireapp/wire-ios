@@ -21,9 +21,9 @@ import Foundation
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-class E2eIVerificationStatusServiceTests: ZMConversationTestsBase {
+class E2EIVerificationStatusServiceTests: ZMConversationTestsBase {
 
-    var sut: E2eIVerificationStatusService!
+    var sut: E2EIVerificationStatusService!
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
@@ -35,7 +35,7 @@ class E2eIVerificationStatusServiceTests: ZMConversationTestsBase {
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-        sut = E2eIVerificationStatusService(coreCryptoProvider: mockCoreCryptoProvider)
+        sut = E2EIVerificationStatusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
@@ -51,22 +51,17 @@ class E2eIVerificationStatusServiceTests: ZMConversationTestsBase {
     // MARK: - Get conversation verification status
 
     func test_GetConversationStatus_IsSuccessful() async throws {
-        do {
-            // Given
-            let groupID = MLSGroupID.random()
-            mockCoreCrypto.e2eiConversationStateConversationId_MockMethod = { _ in
-                return .verified
-            }
-
-            // When
-            let conversationStatus = try await sut.getConversationStatus(groupID: groupID)
-
-            // Then
-            XCTAssertEqual(conversationStatus, .verified)
-
-        } catch {
-            XCTFail("Unexpected error: \(String(describing: error))")
+        // Given
+        let groupID = MLSGroupID.random()
+        mockCoreCrypto.e2eiConversationStateConversationId_MockMethod = { _ in
+            return .verified
         }
+
+        // When
+        let conversationStatus = try await sut.getConversationStatus(groupID: groupID)
+
+        // Then
+        XCTAssertEqual(conversationStatus, .verified)
     }
 
 }

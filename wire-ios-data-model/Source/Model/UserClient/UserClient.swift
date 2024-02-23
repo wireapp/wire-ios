@@ -426,7 +426,7 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
-        if let mlsEd25519 = mlsEd25519 {
+        if let mlsEd25519 {
             client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519)
         }
         let selfUser = ZMUser.selfUser(in: context)

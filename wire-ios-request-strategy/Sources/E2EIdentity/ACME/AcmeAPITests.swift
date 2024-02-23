@@ -108,7 +108,7 @@ class AcmeAPITests: ZMTBaseTest {
         do {
             // when
             let nonce = try await acmeApi?.getACMENonce(path: path)
-        } catch NetworkError.errorDecodingResponseNew {
+        } catch NetworkError.errorDecodingURLResponse {
             // then
             return
         } catch {
@@ -168,7 +168,7 @@ class AcmeAPITests: ZMTBaseTest {
         do {
             // when
             let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
-        } catch NetworkError.errorDecodingResponseNew {
+        } catch NetworkError.errorDecodingURLResponse {
             // then
             return
         } catch {
@@ -197,7 +197,7 @@ class AcmeAPITests: ZMTBaseTest {
         do {
             // when
             let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
-        } catch NetworkError.errorDecodingResponseNew {
+        } catch NetworkError.errorDecodingURLResponse {
             // then
             return
         } catch {
@@ -294,7 +294,7 @@ class MockHttpClient: HttpClientCustom {
     func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         sentRequests.append(request)
         guard let mockResponse = mockResponse else {
-            throw NetworkError.errorDecodingResponseNew(mockResponse!.1)
+            throw NetworkError.errorDecodingURLResponse(mockResponse!.1)
         }
         return mockResponse
     }

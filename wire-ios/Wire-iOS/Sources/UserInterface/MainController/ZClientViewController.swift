@@ -202,10 +202,14 @@ final class ZClientViewController: UIViewController {
 
     // MARK: keyboard shortcut
     override var keyCommands: [UIKeyCommand]? {
-        return [
-            UIKeyCommand(action: #selector(openStartUI(_:)),
-                         input: "n", modifierFlags: [.command],
-                         discoverabilityTitle: L10n.Localizable.Keyboardshortcut.openPeople)]
+        [
+            UIKeyCommand(
+                action: #selector(openStartUI(_:)),
+                input: "n",
+                modifierFlags: [.command],
+                discoverabilityTitle: L10n.Localizable.Keyboardshortcut.openPeople
+            )
+        ]
     }
 
     @objc
