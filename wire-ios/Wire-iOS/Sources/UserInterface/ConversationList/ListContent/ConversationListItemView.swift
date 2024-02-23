@@ -269,6 +269,7 @@ final class ConversationListItemView: UIView {
                 availability: connectedUser.availability,
                 isCertified: false,
                 isVerified: false,
+                appendYouSuffix: false,
                 style: .list
             )
             if connectedUser.availability != .none {

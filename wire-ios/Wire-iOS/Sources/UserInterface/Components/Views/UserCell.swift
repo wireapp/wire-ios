@@ -297,11 +297,18 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
 
         if userStatus.isCertified {
-            // TODO [WPB-765]: add accessibility label for shield
-            // content += ", " + <?>
+            if userIsSelfUser {
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesHaveValidCertificates
+            } else {
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allDevicesHaveValidCertificates
+            }
         }
         if userStatus.isVerified {
-            content += ", " + ClientsList.DeviceVerified.description
+            if userIsSelfUser {
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesProteusVerified
+            } else {
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allDevicesProteusVerified
+            }
         }
 
         if !microphoneIconView.isHidden {

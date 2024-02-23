@@ -27,6 +27,7 @@ enum AvailabilityStringBuilder {
         availability: Availability,
         isCertified: Bool,
         isVerified: Bool,
+        appendYouSuffix: Bool,
         style: AvailabilityLabelStyle,
         color: UIColor? = nil
     ) -> NSAttributedString? {
@@ -62,9 +63,13 @@ enum AvailabilityStringBuilder {
             }
         }
 
+        if appendYouSuffix {
+            title += L10n.Localizable.UserCell.Title.youSuffix
+        }
+
         guard let textColor = color, let iconColor = iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
-        let attributedText = IconStringsBuilder.iconString(
+        var attributedText = IconStringsBuilder.iconString(
             leadingIcons: [icon].compactMap(\.self),
             title: title,
             trailingIcons: [
@@ -74,6 +79,12 @@ enum AvailabilityStringBuilder {
             interactive: false,
             color: textColor
         )
+        if appendYouSuffix, !L10n.Localizable.UserCell.Title.youSuffix.isEmpty {
+            attributedText = attributedText.setAttributes(
+                [.foregroundColor: SemanticColors.Label.youSuffix],
+                toSubstring: L10n.Localizable.UserCell.Title.youSuffix
+            )
+        }
         return attributedText
     }
 

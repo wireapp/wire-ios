@@ -75,6 +75,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
             availability: otherUser.availability,
             isCertified: false,
             isVerified: false,
+            appendYouSuffix: false,
             style: .list,
             color: .black
         )
@@ -83,6 +84,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
             availability: otherUser.availability,
             isCertified: false,
             isVerified: false,
+            appendYouSuffix: false,
             style: .participants,
             color: .black
         )
@@ -109,6 +111,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
             availability: otherUser.availability,
             isCertified: false,
             isVerified: false,
+            appendYouSuffix: false,
             style: .list,
             color: .black
         )
@@ -117,6 +120,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
             availability: otherUser.availability,
             isCertified: false,
             isVerified: false,
+            appendYouSuffix: false,
             style: .participants,
             color: .black
         )
@@ -139,6 +143,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
             availability: selfUser.availability,
             isCertified: false,
             isVerified: false,
+            appendYouSuffix: false,
             style: .list,
             color: .black
         )
@@ -147,6 +152,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
             availability: selfUser.availability,
             isCertified: false,
             isVerified: false,
+            appendYouSuffix: false,
             style: .participants,
             color: .black
         )

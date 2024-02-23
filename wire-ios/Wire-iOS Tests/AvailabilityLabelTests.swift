@@ -32,6 +32,10 @@ final class AvailabilityLabelTests: BaseSnapshotTestCase {
         verify(matching: createLabelForList(.available))
     }
 
+    func testThatItRendersCorrectly_List_AvailableAvailabilitySelfUser() {
+        verify(matching: createLabelForList(.available, appendYouSuffix: true))
+    }
+
     func testThatItRendersCorrectly_List_AwayAvailability() {
         verify(matching: createLabelForList(.away))
     }
@@ -42,7 +46,10 @@ final class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     // MARK: - Helper Method
 
-    func createLabelForList(_ availability: Availability) -> UILabel {
+    func createLabelForList(
+        _ availability: Availability,
+        appendYouSuffix: Bool = false
+    ) -> UILabel {
         guard let user = ZMUser.selfUser() else { return UILabel() }
         user.availability = availability
         let attributedString = AvailabilityStringBuilder.titleForUser(
@@ -50,6 +57,7 @@ final class AvailabilityLabelTests: BaseSnapshotTestCase {
             availability: user.availability,
             isCertified: false,
             isVerified: false,
+            appendYouSuffix: appendYouSuffix,
             style: .list
         )
         let label = UILabel()
@@ -87,6 +95,7 @@ final class AvailabilityLabelTests: BaseSnapshotTestCase {
             availability: user.availability,
             isCertified: false,
             isVerified: false,
+            appendYouSuffix: false,
             style: .participants
         )
         let label = UILabel()
