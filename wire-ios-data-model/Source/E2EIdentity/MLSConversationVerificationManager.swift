@@ -29,16 +29,17 @@ public final class MLSConversationVerificationManager: MLSConversationVerificati
     // MARK: - Properties
 
     var mlsService: MLSServiceInterface
-    var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface
+    var mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating?
 
     // MARK: - Life cycle
 
     public init(
         mlsService: MLSServiceInterface,
-        mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface) {
-            self.mlsService = mlsService
-            self.mlsConversationVerificationStatusProvider = mlsConversationVerificationStatusProvider
-        }
+        mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating?
+    ) {
+        self.mlsService = mlsService
+        self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
+    }
 
     // MARK: - Methods
 
@@ -46,7 +47,7 @@ public final class MLSConversationVerificationManager: MLSConversationVerificati
         Task {
             for try await groupID in mlsService.epochChanges() {
                 do {
-                    try await mlsConversationVerificationStatusProvider.updateStatus(groupID)
+                	try await mlsConversationVerificationStatusUpdater?.updateStatus(groupID)
                 } catch {
                     WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
                 }
