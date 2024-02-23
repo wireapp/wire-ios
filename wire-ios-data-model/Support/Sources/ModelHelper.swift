@@ -23,9 +23,7 @@ import WireDataModel
 
 public struct ModelHelper {
 
-    public init() {
-
-    }
+    public init() { }
 
     // MARK: - Users
 
@@ -38,6 +36,17 @@ public struct ModelHelper {
         let user = ZMUser.insertNewObject(in: context)
         user.remoteIdentifier = id
         user.domain = domain
+        return user
+    }
+
+    @discardableResult
+    public func createUser(
+        qualifiedID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) -> ZMUser {
+        let user = ZMUser.insertNewObject(in: context)
+        user.remoteIdentifier = qualifiedID.uuid
+        user.domain = qualifiedID.domain
         return user
     }
 
