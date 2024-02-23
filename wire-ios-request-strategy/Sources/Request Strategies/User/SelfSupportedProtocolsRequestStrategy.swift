@@ -69,7 +69,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
                 featureRepository: FeatureRepository(context: managedObjectContext),
                 userRepository: userRepository
             )
-            service.updateSupportedProtocols()
+            service.calculateSupportedProtocols()
         }
 
         requestSync.readyForNextRequestIfNotBusy()

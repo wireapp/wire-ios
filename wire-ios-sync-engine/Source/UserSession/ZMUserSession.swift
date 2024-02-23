@@ -412,10 +412,10 @@ public final class ZMUserSession: NSObject {
         ) { [weak self] in
             guard let context = self?.syncContext else { return }
 
-            context.perform {
-                let service = SupportedProtocolsService(context: context)
-                service.updateSupportedProtocols()
-            }
+//            context.perform {
+//                let service = SupportedProtocolsService(context: context)
+//                service.updateSupportedProtocols()
+//            }
         }
 
         recurringActionService.registerAction(recurringAction)
@@ -822,11 +822,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
             case .success:
                 guard let context = self?.syncContext else {
                     return
-                }
-
-                context.perform {
-                    let service = SupportedProtocolsService(context: context)
-                    service.updateSupportedProtocols()
                 }
 
             case .failure(let reason):

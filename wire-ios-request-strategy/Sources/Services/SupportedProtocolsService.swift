@@ -20,7 +20,7 @@ import Foundation
 
 public protocol SupportedProtocolsServiceInterface {
 
-    func updateSupportedProtocols()
+    func calculateSupportedProtocols() -> Set<MessageProtocol>
 
 }
 
@@ -51,12 +51,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 
     // MARK: - Methods
 
-    public func updateSupportedProtocols() {
-        let selfUser = userRepository.selfUser()
-        selfUser.supportedProtocols = calculateSupportedProtocols()
-    }
-
-    func calculateSupportedProtocols() -> Set<MessageProtocol> {
+    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
         logger.debug("calculating supported protocols...")
 
         let remoteProtocols = remotelySupportedProtocols()
