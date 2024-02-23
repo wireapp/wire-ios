@@ -68,6 +68,8 @@ final class DeviceInfoViewModel: ObservableObject {
             .replacingOccurrences(of: " ", with: ":")
     }
 
+    var showCertificateUpdateSuccess: ((String) -> Void)?
+
     @Published var e2eIdentityCertificate: E2eIdentityCertificate?
     @Published var shouldDismiss: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
@@ -123,6 +125,7 @@ final class DeviceInfoViewModel: ObservableObject {
         do {
             if let e2eIdentityCertificate = try await actionsHandler.updateCertificate() {
                 self.e2eIdentityCertificate = e2eIdentityCertificate
+                showCertificateUpdateSuccess?(e2eIdentityCertificate.details)
             }
         } catch {
             showEnrollmentCertificateError = true
@@ -136,6 +139,7 @@ final class DeviceInfoViewModel: ObservableObject {
         do {
             if let e2eIdentityCertificate = try await actionsHandler.enrollClient() {
                 self.e2eIdentityCertificate = e2eIdentityCertificate
+                showCertificateUpdateSuccess?(e2eIdentityCertificate.details)
             }
         } catch {
             showEnrollmentCertificateError = true
