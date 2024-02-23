@@ -172,7 +172,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     @objc
     private func certificateDetailsTapped() {
-        var wrapNavigationController = UINavigationController()
+        let wrapNavigationController = UINavigationController()
         var detailsView = E2EIdentityCertificateDetailsView(certificateDetails: certificateDetails,
                                                             isDownloadAndCopyEnabled: true,
                                                             isMenuPresented: false)
@@ -181,7 +181,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         }
         let hostingViewController = UIHostingController(rootView: detailsView)
         wrapNavigationController.viewControllers = [hostingViewController]
-
+        wrapNavigationController.presentTopmost()
     }
 
     @objc
