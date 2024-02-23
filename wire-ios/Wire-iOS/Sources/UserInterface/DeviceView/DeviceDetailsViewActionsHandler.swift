@@ -146,7 +146,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     @MainActor
     private func startE2EIdentityEnrollment() async throws {
         typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
-        guard let rootViewController = await AppDelegate.shared.window?.rootViewController else {
+        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
             return
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
