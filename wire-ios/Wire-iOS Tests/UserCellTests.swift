@@ -60,7 +60,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         testName: String = #function,
         line: UInt = #line
     ) {
-        guard let user = SelfUser.provider?.providedSelfUser else {
+        guard let selfUser = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
         }
@@ -69,7 +69,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         sut.configure(
             user: mockUser,
             isCertified: isE2EICertified,
-            isSelfUserPartOfATeam: user.hasTeam,
+            isSelfUserPartOfATeam: selfUser.hasTeam,
             conversation: conversation
         )
         sut.accessoryIconView.isHidden = false
@@ -173,6 +173,19 @@ final class UserCellTests: BaseSnapshotTestCase {
         // GIVEN && WHEN
         mockUser.isVerified = true
         mockUser.isGuestInConversation = true
+
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
+    }
+
+    func testSelfUser() throws {
+        // GIVEN && WHEN
+        mockUser = MockUserType.createUser(name: "Tarja Turunen")
+        mockUser.accentColorValue = .vividRed
+        mockUser.isConnected = true
+        mockUser.handle = "tarja_turunen"
+        mockUser.availability = .busy
+        mockUser.isSelfUser = true
 
         // THEN
         verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
