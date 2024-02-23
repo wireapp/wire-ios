@@ -208,6 +208,9 @@ public final class ZMUserSession: NSObject {
         }
     }
 
+    private lazy var supportedProtocolService = SupportedProtocolsService(context: syncContext)
+    private lazy var oneOnOneResolver = OneOnOneResolver(syncContext: syncContext)
+
     weak var delegate: UserSessionDelegate?
 
     // TODO remove this property and move functionality to separate protocols under UserSessionDelegate
@@ -761,7 +764,19 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         mlsService.commitPendingProposalsIfNeeded()
+        // [AGIS]: - to be deleted fetchFeatureConfigs
         fetchFeatureConfigs()
+        WaitingGroupTask(context: syncContext) { [self] in
+            do {
+                try await ResolveOneOnOneConversationsUseCase(
+                    context: syncContext,
+                    supportedProtocolService: supportedProtocolService,
+                    resolver: oneOnOneResolver
+                ).invoke()
+            } catch {
+                WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+            }
+        }
         recurringActionService.performActionsIfNeeded()
 
         managedObjectContext.performGroupedBlock { [weak self] in
