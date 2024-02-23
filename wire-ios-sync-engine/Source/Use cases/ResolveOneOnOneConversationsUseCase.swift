@@ -34,8 +34,9 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
         var getFeatureConfigAction = GetFeatureConfigsAction()
         try await getFeatureConfigAction.perform(in: context.notificationContext)
 
-        let supportedProtocols = supportedProtocolService.calculateSupportedProtocols()
-
+        let supportedProtocols = await context.perform {
+            supportedProtocolService.calculateSupportedProtocols()
+        }
         let shouldPushSupportedProtocols = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
            return selfUser.supportedProtocols != supportedProtocols
