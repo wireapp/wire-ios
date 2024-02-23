@@ -59,15 +59,9 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     }
 
     @MainActor
-    func updateCertificate() async throws -> E2eIdentityCertificate? {
-        try await enrollClient()
-    }
-
-    @MainActor
-    func enrollClient() async throws -> E2eIdentityCertificate? {
+    func enrollClient() async throws -> String? {
         do {
-            try await startE2EIdentityEnrollment()
-            return try await fetchE2eIdentityCertificate()
+            return try await startE2EIdentityEnrollment()
         } catch {
             logger.error(error.localizedDescription, attributes: nil)
             throw error
@@ -144,13 +138,13 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     }
 
     @MainActor
-    private func startE2EIdentityEnrollment() async throws {
+    private func startE2EIdentityEnrollment() async throws -> String? {
         typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
         guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
-            return
+            return nil
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
-        _ = try await e2eiCertificateEnrollment.invoke(
+        return try await e2eiCertificateEnrollment.invoke(
             authenticate: oauthUseCase.invoke
         )
     }

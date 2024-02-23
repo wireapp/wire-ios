@@ -214,9 +214,13 @@ final class ClientListViewController: UIViewController,
             contextProvider: contextProvider,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
-        viewModel.showCertificateUpdateSuccess = { certificateDetails in
+        viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
+            self?.updateAllClients()
             let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
-            successEnrollmentViewController.certificateDetails = certificateDetails
+            successEnrollmentViewController.certificateDetails = certificateChain
+            successEnrollmentViewController.onOkTapped = { viewController in
+                viewController.dismiss(animated: true)
+            }
             successEnrollmentViewController.presentTopmost()
         }
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
