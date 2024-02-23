@@ -60,7 +60,7 @@ class AcmeAPITests: ZMTBaseTest {
             return XCTFail("Failed to get ACME directory.")
         }
 
-        let acmeDirectoryResponse = try? JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData)
+        let acmeDirectoryResponse = try JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData)
 
         // then
         XCTAssertEqual(acmeDirectoryResponse, expectedAcmeDirectory)
