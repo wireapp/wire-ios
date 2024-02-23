@@ -118,6 +118,29 @@ public struct ModelHelper {
         return member
     }
 
+    // MARK: - Connection
+
+    @discardableResult
+    public func createConnection(
+        status: ZMConnectionStatus,
+        to user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> (ZMConnection, ZMConversation) {
+        let connection = ZMConnection.insertNewObject(in: context)
+        connection.to = user
+        connection.status = status
+        connection.message = "Connect to me"
+        connection.lastUpdateDate = .now
+
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .connection
+        conversation.remoteIdentifier = UUID()
+        conversation.domain = "local@domain.com"
+        user.oneOnOneConversation = conversation
+
+        return (connection, conversation)
+    }
+
     // MARK: - Conversations
 
     @discardableResult

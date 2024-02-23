@@ -84,13 +84,13 @@ final class OneOnOneResolverTests: XCTestCase {
                 domain: "local@domain.com",
                 in: viewContext
             )
-            createConnection(status: .accepted, to: userA, in: viewContext)
+            modelHelper.createConnection(status: .accepted, to: userA, in: viewContext)
 
             let userB = modelHelper.createUser(
                 domain: "local@domain.com",
                 in: viewContext
             )
-            createConnection(status: .accepted, to: userB, in: viewContext)
+            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
         }
 
         // When
@@ -119,7 +119,7 @@ final class OneOnOneResolverTests: XCTestCase {
                 domain: "local@domain.com",
                 in: viewContext
             )
-            createConnection(status: .accepted, to: userB, in: viewContext)
+            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
         }
 
         // When
@@ -143,13 +143,13 @@ final class OneOnOneResolverTests: XCTestCase {
                 domain: nil,
                 in: viewContext
             )
-            createConnection(status: .accepted, to: userA, in: viewContext)
+            modelHelper.createConnection(status: .accepted, to: userA, in: viewContext)
 
             let userB = modelHelper.createUser(
                 domain: "local@domain.com",
                 in: viewContext
             )
-            createConnection(status: .accepted, to: userB, in: viewContext)
+            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
         }
 
         // When
@@ -173,13 +173,13 @@ final class OneOnOneResolverTests: XCTestCase {
                 domain: "local@domain.com",
                 in: viewContext
             )
-            createConnection(status: .accepted, to: userA, in: viewContext)
+            modelHelper.createConnection(status: .accepted, to: userA, in: viewContext)
 
             let userB = modelHelper.createUser(
                 domain: "local@domain.com",
                 in: viewContext
             )
-            createConnection(status: .accepted, to: userB, in: viewContext)
+            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
         }
 
         // When
@@ -235,7 +235,7 @@ final class OneOnOneResolverTests: XCTestCase {
                 in: viewContext
             )
 
-            let (_, conversation) = createConnection(
+            let (_, conversation) = modelHelper.createConnection(
                 status: .pending,
                 to: user,
                 in: viewContext
@@ -258,29 +258,6 @@ final class OneOnOneResolverTests: XCTestCase {
             XCTAssertEqual(conversation.messageProtocol, .proteus)
             XCTAssertTrue(conversation.isForcedReadOnly)
         }
-    }
-
-    // MARK: - Helpers
-
-    @discardableResult
-    private func createConnection(
-        status: ZMConnectionStatus,
-        to user: ZMUser,
-        in context: NSManagedObjectContext
-    ) -> (ZMConnection, ZMConversation) {
-        let connection = ZMConnection.insertNewObject(in: context)
-        connection.to = user
-        connection.status = status
-        connection.message = "Connect to me"
-        connection.lastUpdateDate = .now
-
-        let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.conversationType = .connection
-        conversation.remoteIdentifier = UUID()
-        conversation.domain = "local@domain.com"
-        user.oneOnOneConversation = conversation
-
-        return (connection, conversation)
     }
 }
 
