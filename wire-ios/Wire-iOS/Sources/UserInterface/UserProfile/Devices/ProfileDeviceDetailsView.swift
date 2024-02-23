@@ -57,6 +57,7 @@ struct ProfileDeviceDetailsView: View {
                                      isVerfied: viewModel.isProteusVerificationEnabled,
                                      shouldShowActivatedDate: false)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
                     .font(.footnote)
@@ -200,6 +201,7 @@ struct ProfileDeviceDetailsView: View {
             .font(FontSpec.mediumRegularFont.swiftUIFont)
             .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
             .padding([.leading, .top], ViewConstants.Padding.standard)
+
         if let description = description {
             VStack(alignment: .leading) {
                 Text(description)
