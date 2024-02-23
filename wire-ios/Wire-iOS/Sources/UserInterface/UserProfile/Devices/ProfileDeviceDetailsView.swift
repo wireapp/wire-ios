@@ -152,7 +152,6 @@ struct ProfileDeviceDetailsView: View {
                 }
             }
         }
-
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
         .onAppear {
