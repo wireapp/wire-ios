@@ -18,12 +18,31 @@
 
 import Foundation
 
-final class MockEnrolE2eICertificateUseCase: EnrollE2EICertificateUseCaseProtocol {
+// sourcery: AutoMockable
+public protocol StopCertificateEnrollmentSnoozerUseCaseProtocol {
+    func invoke()
+}
 
-    var invokeCalled: ((OAuthBlock) -> Void)?
+final class StopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol {
 
-    func invoke(authenticate: @escaping OAuthBlock) async throws {
-        invokeCalled?(authenticate)
+    // MARK: - Properties
+
+    private let recurringActionService: RecurringActionServiceInterface
+    private let actionId: String
+
+    // MARK: - Life cycle
+
+    init(
+        recurringActionService: RecurringActionServiceInterface,
+        accountId: UUID) {
+            self.recurringActionService = recurringActionService
+            self.actionId = "\(accountId).enrollCertificate"
+        }
+
+    // MARK: - Methods
+
+    func invoke() {
+        recurringActionService.removeAction(id: actionId)
     }
 
 }

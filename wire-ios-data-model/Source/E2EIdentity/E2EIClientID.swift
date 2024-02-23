@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct E2eIClientID: Equatable, Hashable {
+public struct E2EIClientID: Equatable, Hashable {
 
     // MARK: - Properties
 

@@ -19,7 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
-public protocol E2eISetupServiceInterface {
+public protocol E2EISetupServiceInterface {
 
     func registerTrustAnchor(_ trustAnchor: String) async throws
 
@@ -34,7 +34,7 @@ public protocol E2eISetupServiceInterface {
     /// - parameter isUpgradingClient: `true` if we are upgrading an already existing MLS client, `false` is we are registering a new MLS client.
 
     func setupEnrollment(
-        clientID: E2eIClientID,
+        clientID: E2EIClientID,
         userName: String,
         handle: String,
         teamId: UUID,
@@ -44,7 +44,7 @@ public protocol E2eISetupServiceInterface {
 }
 
 /// This class setups e2eIdentity object from CoreCrypto.
-public final class E2eISetupService: E2eISetupServiceInterface {
+public final class E2EISetupService: E2EISetupServiceInterface {
 
     // TODO: [WPB-6761] temporary workaround for a crash 
     // The E2eiEnrollment cause a memory corruption when it deinits so we hold on to it forever.
@@ -80,7 +80,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     }
 
     public func setupEnrollment(
-        clientID: E2eIClientID,
+        clientID: E2EIClientID,
         userName: String,
         handle: String,
         teamId: UUID,
@@ -102,7 +102,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     }
 
     private func setupNewActivationOrRotate(
-        clientID: E2eIClientID,
+        clientID: E2EIClientID,
         userName: String,
         handle: String,
         teamId: UUID,

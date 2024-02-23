@@ -23,13 +23,13 @@ import WireCoreCrypto
 @testable import WireRequestStrategy
 @testable import WireDataModelSupport
 
-class E2eIKeyPackageRotatorTests: MessagingTestBase {
+class E2EIKeyPackageRotatorTests: MessagingTestBase {
 
     private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockCommitSender: MockCommitSending!
     private var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
-    private var sut: E2eIKeyPackageRotator!
+    private var sut: E2EIKeyPackageRotator!
 
     override func setUp() {
         super.setUp()
@@ -40,7 +40,7 @@ class E2eIKeyPackageRotatorTests: MessagingTestBase {
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
 
-        sut = E2eIKeyPackageRotator(
+        sut = E2EIKeyPackageRotator(
             coreCryptoProvider: mockCoreCryptoProvider,
             conversationEventProcessor: mockConversationEventProcessor,
             context: syncMOC,

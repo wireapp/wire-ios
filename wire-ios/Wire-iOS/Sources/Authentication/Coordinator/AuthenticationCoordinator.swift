@@ -869,7 +869,7 @@ extension AuthenticationCoordinator {
         typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 
         guard let session = statusProvider.sharedUserSession else { return }
-        let e2eiCertificateUseCase = session.enrollE2eICertificate
+        let e2eiCertificateUseCase = session.enrollE2EICertificate
         guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
             return
         }
@@ -877,7 +877,7 @@ extension AuthenticationCoordinator {
 
         Task {
             do {
-                _ = try await e2eiCertificateUseCase?.invoke(
+                _ = try await e2eiCertificateUseCase.invoke(
                     authenticate: oauthUseCase.invoke
                 )
                 await MainActor.run {

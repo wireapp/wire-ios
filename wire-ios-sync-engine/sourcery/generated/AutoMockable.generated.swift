@@ -478,31 +478,40 @@ public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEn
     public init() {}
 
 
-    // MARK: - start
+    // MARK: - invoke
 
-    public var start_Invocations: [Void] = []
-    public var start_MockMethod: (() async -> Void)?
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() async -> Void)?
 
-    public func start() async {
-        start_Invocations.append(())
+    public func invoke() async {
+        invoke_Invocations.append(())
 
-        guard let mock = start_MockMethod else {
-            fatalError("no mock for `start`")
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
         }
 
         await mock()
     }
 
-    // MARK: - stop
+}
 
-    public var stop_Invocations: [Void] = []
-    public var stop_MockMethod: (() -> Void)?
+public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificateEnrollmentSnoozerUseCaseProtocol {
 
-    public func stop() {
-        stop_Invocations.append(())
+    // MARK: - Life cycle
 
-        guard let mock = stop_MockMethod else {
-            fatalError("no mock for `stop`")
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() -> Void)?
+
+    public func invoke() {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
         }
 
         mock()

@@ -33,7 +33,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
     var mockGetProteusFingerprint: MockGetUserClientFingerprintUseCaseProtocol!
     var mockContextProvider: MockContextProvider!
-    var mockEnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInterface!
+    var mockEnrollE2eICertificateUseCase: EnrollE2EICertificateUseCaseProtocol!
 
     override func setUp() {
         super.setUp()

@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
+// sourcery: AutoMockable
 public protocol AcmeAPIInterface {
     func getACMEDirectory() async throws -> Data
     func getACMENonce(path: String) async throws -> String
@@ -41,7 +42,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     // MARK: - Life cycle
 
-    /// TODO: it would be nice to use HttpClient
+    // TODO: [WPB-6785] refactor HttpClientE2EI
     public init(acmeDiscoveryPath: String,
                 httpClient: HttpClientCustom = HttpClientE2EI()) {
         self.acmeDiscoveryPath = acmeDiscoveryPath

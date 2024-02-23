@@ -244,7 +244,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func enrollE2EICertificate() {
         guard let session = ZMUserSession.shared() else { return }
-        let e2eiCertificateUseCase = session.enrollE2eICertificate
+        let e2eiCertificateUseCase = session.enrollE2EICertificate
         guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
             return
         }
@@ -252,7 +252,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
         Task {
             do {
-                _ = try await e2eiCertificateUseCase?.invoke(
+                _ = try await e2eiCertificateUseCase.invoke(
                     authenticate: oauthUseCase.invoke)
             } catch {
                 WireLogger.e2ei.error("failed to enroll e2ei: \(error)")

@@ -66,25 +66,10 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
         // When
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 0)
-        await snoozer.start()
+        await snoozer.invoke()
 
         // Then
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 1)
     }
 
-    func testItRemovesRecurringAction() async {
-        // Given
-        selfClientCertificateProvider.underlyingHasCertificate = false
-        mockRecurringActionService.registerAction_MockMethod = { _ in }
-        mockRecurringActionService.removeActionId_MockMethod = { _ in }
-
-        await snoozer.start()
-        XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 1)
-
-        // When
-        snoozer.stop()
-
-        // Then
-        XCTAssertEqual(mockRecurringActionService.removeActionId_Invocations.count, 1)
-    }
 }
