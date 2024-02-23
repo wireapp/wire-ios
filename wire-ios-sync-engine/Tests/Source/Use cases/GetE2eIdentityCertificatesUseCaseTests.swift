@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireCoreCrypto
 import WireDataModelSupport
 @testable import WireRequestStrategy
 
@@ -37,7 +38,11 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         coreCrypto = MockCoreCryptoProtocol()
         safeCoreCrypto = MockSafeCoreCrypto(coreCrypto: coreCrypto)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCryptoRequireMLS_MockValue = safeCoreCrypto
+        coreCryptoProvider.coreCrypto_MockValue = safeCoreCrypto
+        sut = GetE2eIdentityCertificatesUseCase(
+            coreCryptoProvider: coreCryptoProvider,
+            syncContext: stack.syncContext
+        )
     }
 
     override func tearDown() async throws {
@@ -50,41 +55,145 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         try await super.tearDown()
     }
 
-    func testGetCertificates() async throws {
+    func mockIdentity(
+        clientID: String,
+        handle: String,
+        name: String,
+        status: DeviceStatus
+    ) -> WireCoreCrypto.WireIdentity {
+        return .init(
+            clientId: clientID,
+            handle: handle,
+            displayName: name,
+            domain: "local.com",
+            certificate: mockCertificate,
+            status: status,
+            thumbprint: "thumbprint",
+            serialNumber: "serialNumber",
+            notBefore: 0,
+            notAfter: 0
+        )
+    }
+
+    func test_CertificateNameAndHandleIsValidated() async throws {
         // Given
+        let selfUserHandle = "@foo"
+        let selfUserName = "Ms Foo"
+        let clientID1 = MLSClientID.random()
+        let clientID2 = MLSClientID.random()
+        let clientID3 = MLSClientID.random()
+        let clientID4 = MLSClientID.random()
         let groupID = MLSGroupID.random()
-        let clientIDs = [MLSClientID.random(), .random()]
+
+        // Self user with 4 clients
+        try await stack.syncContext.perform {
+            let modelHelper = ModelHelper()
+
+            let selfUser = modelHelper.createSelfUser(in: self.stack.syncContext)
+            selfUser.handle = selfUserHandle
+            selfUser.name = selfUserName
+
+            modelHelper.createSelfClient(id: clientID1.clientID, in: self.stack.syncContext)
+            modelHelper.createClient(id: clientID2.clientID, for: selfUser)
+            modelHelper.createClient(id: clientID3.clientID, for: selfUser)
+            modelHelper.createClient(id: clientID4.clientID, for: selfUser)
+
+            try self.stack.syncContext.save()
+        }
 
         // Mock
+        let validIdentity = mockIdentity(
+            clientID: clientID1.clientID,
+            handle: "@foo",
+            name: "Ms Foo",
+            status: .valid
+        )
+
+        let identityWithInvalidHandle = mockIdentity(
+            clientID: clientID2.clientID,
+            handle: "@bar",
+            name: "Ms Foo",
+            status: .valid
+        )
+
+        let identityWithInvalidName = mockIdentity(
+            clientID: clientID3.clientID,
+            handle: "@foo",
+            name: "Ms Bar",
+            status: .valid
+        )
+
+        let identityWithInvalidStatus = mockIdentity(
+            clientID: clientID4.clientID,
+            handle: "@bar",
+            name: "Ms Bar",
+            status: .revoked
+        )
+
         coreCrypto.getDeviceIdentitiesConversationIdDeviceIds_MockMethod = { _, _ in
             return [
-                .init(
-                    clientId: "client1",
-                    handle: "@foo",
-                    displayName: "Ms Foo ",
-                    domain: "local domain",
-                    certificate: "???",
-                    status: .valid,
-                    thumbprint: "???"
-                )
+                validIdentity,
+                identityWithInvalidHandle,
+                identityWithInvalidName,
+                identityWithInvalidStatus
             ]
         }
 
         // When
         let certificates = try await sut.invoke(
             mlsGroupId: groupID,
-            clientIds: clientIDs
+            clientIds: [clientID1, clientID2, clientID3, clientID4]
         )
 
         // Then
-        
+        XCTAssertEqual(certificates.count, 4)
 
-        // first cert is valid
-        // second cert is not valid
+        let certificate1 = try XCTUnwrap(certificates.first(where: {
+            $0.clientId == clientID1.clientID
+        }))
+
+        // Name and handle matched, so it's valid.
+        XCTAssertEqual(certificate1.status, .valid)
+
+        let certificate2 = try XCTUnwrap(certificates.first(where: {
+            $0.clientId == clientID2.clientID
+        }))
+
+        // Handle didn't match, invalid.
+        XCTAssertEqual(certificate2.status, .invalid)
+
+        let certificate3 = try XCTUnwrap(certificates.first(where: {
+            $0.clientId == clientID3.clientID
+        }))
+
+        // Name didn't match, invalid.
+        XCTAssertEqual(certificate3.status, .invalid)
+
+        let certificate4 = try XCTUnwrap(certificates.first(where: {
+            $0.clientId == clientID4.clientID
+        }))
+
+        // Status is revoked, further validation inrelevant.
+        XCTAssertEqual(certificate4.status, .revoked)
     }
 
-    // test get identities for some clients returns certificates
-
-    // test identites that don't match user name and or handle are invalid.
-
 }
+
+private let mockCertificate =
+    """
+    -----BEGIN CERTIFICATE-----
+    MIICaTCCAg+gAwIBAgIQSe+7TFUrGk5CjvIhcHC4vTAKBggqhkjOPQQDAjAuMSww
+    KgYDVQQDEyNlbG5hLndpcmUubGluayBFMkVJIEludGVybWVkaWF0ZSBDQTAeFw0y
+    NDAyMjIxNjM4NTdaFw0yNDA1MjIxNjM4NTdaMC4xFzAVBgNVBAoTDmVsbmEud2ly
+    ZS5saW5rMRMwEQYDVQQDEwpLYXRlcmluYSBOMCowBQYDK2VwAyEAVCFEGPXHqVTY
+    qNDTQXo9pTzjdWbYOdSihroOAvJQG7+jggE8MIIBODAOBgNVHQ8BAf8EBAMCB4Aw
+    EwYDVR0lBAwwCgYIKwYBBQUHAwIwHQYDVR0OBBYEFLhVOdMwMi/B2X6A9M/5MHxt
+    2FeiMB8GA1UdIwQYMBaAFOW0E419T7NPbLk2HuLc11CoJTfWMHgGA1UdEQRxMG+G
+    KXdpcmVhcHA6Ly8lNDBrYXRlcmluYV93aXJlQGVsbmEud2lyZS5saW5rhkJ3aXJl
+    YXBwOi8vMmVxZWVocGRSdEN0NEJHdGtGU1lTUSUyMTY2YTE4MThmM2QwNjMwMTBA
+    ZWxuYS53aXJlLmxpbmswLwYDVR0fBCgwJjAkoCKgIIYeaHR0cDovL2FjbWUuZWxu
+    YS53aXJlLmxpbmsvY3JsMCYGDCsGAQQBgqRkxihAAQQWMBQCAQYEDWtleWNsb2Fr
+    dGVhbXMEADAKBggqhkjOPQQDAgNIADBFAiAWttChBvdaCyx7OLDVI+R+oSg6fhS3
+    jtHioLFXcH4cFAIhAP8qNs0gS/KSPYEfUR17YcSBl6w/o2PC0B370B7MzGAR
+    -----END CERTIFICATE-----
+    """

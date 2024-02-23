@@ -55,11 +55,11 @@ public struct ModelHelper {
 
     @discardableResult
     public func createSelfClient(
-        id: UUID = .init(),
+        id: String = .randomAlphanumerical(length: 8),
         in context: NSManagedObjectContext
     ) -> UserClient {
         let selfClient = UserClient.insertNewObject(in: context)
-        selfClient.remoteIdentifier = id.transportString()
+        selfClient.remoteIdentifier = id
         selfClient.user = .selfUser(in: context)
         context.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
         return selfClient
@@ -67,12 +67,12 @@ public struct ModelHelper {
 
     @discardableResult
     public func createClient(
-        id: UUID = .init(),
+        id: String = .randomAlphanumerical(length: 8),
         for user: ZMUser
     ) -> UserClient {
         let context = user.managedObjectContext!
         let otherClient = UserClient.insertNewObject(in: context)
-        otherClient.remoteIdentifier = id.transportString()
+        otherClient.remoteIdentifier = id
         otherClient.user = user
         return otherClient
     }
