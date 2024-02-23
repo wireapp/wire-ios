@@ -503,6 +503,11 @@ extension ZMUser: UserConnections {
                             with: QualifiedID(uuid: userID, domain: domain),
                             in: context
                         )
+
+                        await context.perform {
+                            _ = context.saveOrRollback()
+                        }
+
                         await MainActor.run {
                             completion(nil)
                         }

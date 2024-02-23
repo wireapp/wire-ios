@@ -221,7 +221,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus),
+                syncProgress: applicationStatusDirectory.syncStatus,
+                oneOneOneResolver: OneOnOneResolver(mlsService: mlsService)
+            ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -301,7 +303,9 @@ mlsService: mlsService,
                 applicationStatus: applicationStatusDirectory),
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
+            ),
             TerminateFederationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -322,6 +326,17 @@ mlsService: mlsService,
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
+            ),
+            SelfSupportedProtocolsRequestStrategy(
+                context: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus,
+                userRepository: UserRepository(context: syncMOC)
+            ),
+            EvaluateOneOnOneConversationsStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
             )
         ]
 

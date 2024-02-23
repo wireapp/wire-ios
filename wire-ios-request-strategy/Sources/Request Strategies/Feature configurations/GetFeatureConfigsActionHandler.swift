@@ -27,7 +27,10 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         for action: GetFeatureConfigsActionHandler.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-        return ZMTransportRequest(getFromPath: "/feature-configs", apiVersion: apiVersion.rawValue)
+        ZMTransportRequest(
+            getFromPath: "/feature-configs",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     // MARK: - Response
@@ -49,9 +52,13 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             }
 
             do {
-                let payload = try JSONDecoder.defaultDecoder.decode(ResponsePayload.self, from: data)
-                processPayload(payload)
+                let repository = FeatureRepository(context: context)
+
+                let processor = FeatureConfigsPayloadProcessor()
+                try processor.processActionPayload(data: data, repository: repository)
+
                 action.succeed()
+
             } catch {
                 action.fail(with: .failedToDecodeResponse(reason: error.localizedDescription))
             }
@@ -69,115 +76,4 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             action.fail(with: .unknown(status: status, label: label ?? ""))
         }
     }
-
-    private func processPayload(_ payload: ResponsePayload) {
-        let featureRepository = FeatureRepository(context: context)
-
-        if let appLock = payload.appLock {
-            featureRepository.storeAppLock(
-                Feature.AppLock(
-                    status: appLock.status,
-                    config: appLock.config
-                )
-            )
-        }
-
-        if let classifiedDomains = payload.classifiedDomains {
-            featureRepository.storeClassifiedDomains(
-                Feature.ClassifiedDomains(
-                    status: classifiedDomains.status,
-                    config: classifiedDomains.config
-                )
-            )
-        }
-
-        if let conferenceCalling = payload.conferenceCalling {
-            featureRepository.storeConferenceCalling(
-                Feature.ConferenceCalling(
-                    status: conferenceCalling.status
-                )
-            )
-        }
-
-        if let conversationGuestLinks = payload.conversationGuestLinks {
-            featureRepository.storeConversationGuestLinks(
-                Feature.ConversationGuestLinks(
-                    status: conversationGuestLinks.status
-                )
-            )
-        }
-
-        if let digitalSignatures = payload.digitalSignatures {
-            featureRepository.storeDigitalSignature(
-                Feature.DigitalSignature(
-                    status: digitalSignatures.status
-                )
-            )
-        }
-
-        if let fileSharing = payload.fileSharing {
-            featureRepository.storeFileSharing(
-                Feature.FileSharing(
-                    status: fileSharing.status
-                )
-            )
-        }
-
-        if let mls = payload.mls {
-            featureRepository.storeMLS(
-                Feature.MLS(
-                    status: mls.status,
-                    config: mls.config
-                )
-            )
-        }
-
-        if let mlsMigration = payload.mlsMigration {
-            featureRepository.storeMLSMigration(
-                Feature.MLSMigration(
-                    status: mlsMigration.status,
-                    config: mlsMigration.config
-                )
-            )
-        }
-
-        if let selfDeletingMessages = payload.selfDeletingMessages {
-            featureRepository.storeSelfDeletingMessages(
-                Feature.SelfDeletingMessages(
-                    status: selfDeletingMessages.status,
-                    config: selfDeletingMessages.config
-                )
-            )
-        }
-
-        if let mlsMigration = payload.mlsMigration {
-            featureRepository.storeMLSMigration(
-                Feature.MLSMigration(
-                    status: mlsMigration.status,
-                    config: mlsMigration.config
-                )
-            )
-        }
-    }
-
-}
-
-// MARK: - Response Payload
-
-extension GetFeatureConfigsActionHandler {
-
-    struct ResponsePayload: Codable {
-
-        let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
-        let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>?
-        let conferenceCalling: FeatureStatus?
-        let conversationGuestLinks: FeatureStatus?
-        let digitalSignatures: FeatureStatus?
-        let fileSharing: FeatureStatus?
-        let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
-        let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
-        let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
-
-    }
-
 }
