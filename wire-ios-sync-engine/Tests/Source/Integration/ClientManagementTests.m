@@ -158,9 +158,7 @@
     XCTAssertNil(self.observer.deletionError);
 }
 
-@end
-
-@implementation ClientManagementTests (PushNotifications)
+#pragma mark - PushNotifications
 
 - (void)testThatItAddsAUserClientWhenReceivingANotificationForANewClient
 {
