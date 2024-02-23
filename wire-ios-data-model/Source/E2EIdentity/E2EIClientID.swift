@@ -28,9 +28,11 @@ public struct E2EIClientID: Equatable, Hashable {
 
     // The string representation of the id.
 
-    public let rawValue: String
+    public var rawValue: String {
+        return "\(self.userID):\(self.clientID)@\(self.domain)"
+    }
 
-    public init?(
+    public init(
         userID: String,
         clientID: String,
         domain: String
@@ -38,8 +40,6 @@ public struct E2EIClientID: Equatable, Hashable {
         self.userID = userID.lowercased()
         self.clientID = clientID.lowercased()
         self.domain = domain.lowercased()
-
-        self.rawValue = "\(self.userID):\(self.clientID)@\(self.domain)"
     }
 
     public init?(user: ZMUser) {

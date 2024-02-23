@@ -59,7 +59,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
             await confirmSuccessfulEnrollment()
         } catch {
-            guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
+            guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate() else {
                 return
             }
             await showGetCertificateErrorAlert(canCancel: !endOfGracePeriod.isInThePast)
@@ -71,7 +71,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     public func snoozeReminder() async {
-        guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate(),
+        guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate(),
               endOfGracePeriod.timeIntervalSinceNow > 0,
               let formattedDuration = durationFormatter.string(from: endOfGracePeriod.timeIntervalSinceNow) else {
             return
