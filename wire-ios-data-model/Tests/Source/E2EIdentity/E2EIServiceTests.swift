@@ -21,10 +21,10 @@ import WireCoreCrypto
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-class E2eIServiceTests: ZMConversationTestsBase {
+class E2EIServiceTests: ZMConversationTestsBase {
 
-    var sut: E2eIService!
-    var mockE2eIdentity: MockE2eiEnrollment!
+    var sut: E2EIService!
+    var mockE2eIdentity: MockE2EIEnrollment!
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
@@ -32,12 +32,12 @@ class E2eIServiceTests: ZMConversationTestsBase {
     override func setUp() {
         super.setUp()
 
-        mockE2eIdentity = MockE2eiEnrollment()
+        mockE2eIdentity = MockE2EIEnrollment()
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-        sut = E2eIService(e2eIdentity: mockE2eIdentity,
+        sut = E2EIService(e2eIdentity: mockE2eIdentity,
                           coreCryptoProvider: mockCoreCryptoProvider)
     }
 

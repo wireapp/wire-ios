@@ -211,7 +211,7 @@ final class ClientListViewController: UIViewController,
             mlsThumbprint: client.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16),
             getProteusFingerprint: userSession.getUserClientFingerprint,
             contextProvider: contextProvider,
-            e2eiCertificateEnrollment: userSession.enrollE2eICertificate
+            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
