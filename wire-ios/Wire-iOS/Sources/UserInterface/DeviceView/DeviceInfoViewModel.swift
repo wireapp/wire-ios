@@ -171,6 +171,40 @@ final class DeviceInfoViewModel: ObservableObject {
             await getProteusFingerPrint()
         }
     }
+
+    // MARK: ConversationUserClientDetailsActions
+
+    func onShowMyDeviceTapped() {
+        conversationClientDetailsActions.showMyDevice()
+    }
+
+    func onHowToDoThatTapped() {
+        conversationClientDetailsActions.howToDoThat()
+    }
+
+    // MARK: ConversationUserClientDetailsDebugActions
+
+    func onDeleteDeviceTapped() {
+        Task {
+            await debugMenuActionsHandler?.deleteDevice()
+            await MainActor.run {
+                shouldDismiss = true
+            }
+        }
+    }
+
+    func onCorruptSessionTapped() {
+        Task {
+            await debugMenuActionsHandler?.corruptSession()
+            await MainActor.run {
+                shouldDismiss = true
+            }
+        }
+    }
+
+    func onDuplicateClientTapped() {
+        debugMenuActionsHandler?.duplicateClient()
+    }
 }
 
 extension DeviceInfoViewModel {

@@ -17,17 +17,12 @@
 //
 
 import Foundation
-import WireSyncEngine
+import WireDataModel
 
 protocol ConversationUserClientDetailsDebugActions {
     func deleteDevice() async
     func corruptSession() async
     func duplicateClient()
-}
-
-protocol ConversationUserClientDetailsActions {
-    func showMyDevice()
-    func howToDoThat()
 }
 
 extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsDebugActions {
@@ -98,56 +93,4 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsDebugAct
         }
     }
 
-}
-
-extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions {
-    func showMyDevice() {
-        guard let selfUserClient = userSession.selfUserClient else { return }
-
-        let selfClientController = SettingsClientViewController(userClient: selfUserClient,
-                                                                userSession: userSession,
-                                                                fromConversation: true)
-        let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
-        navigationControllerWrapper.presentTopmost()
-    }
-
-    func howToDoThat() {
-        guard let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
-            return
-        }
-        URL.wr_fingerprintHowToVerify.openInApp(above: topMostViewController)
-    }
-}
-
-extension DeviceInfoViewModel {
-
-    func onShowMyDeviceTapped() {
-        conversationClientDetailsActions.showMyDevice()
-    }
-
-    func onDeleteDeviceTapped() {
-        Task {
-            await debugMenuActionsHandler?.deleteDevice()
-            await MainActor.run {
-                shouldDismiss = true
-            }
-        }
-    }
-
-    func onCorruptSessionTapped() {
-        Task {
-           await debugMenuActionsHandler?.corruptSession()
-            await MainActor.run {
-                shouldDismiss = true
-            }
-        }
-    }
-
-    func onDuplicateClientTapped() {
-        debugMenuActionsHandler?.duplicateClient()
-    }
-
-    func onHowToDoThatTapped() {
-        conversationClientDetailsActions.howToDoThat()
-    }
 }
