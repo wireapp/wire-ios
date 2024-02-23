@@ -18,21 +18,6 @@
 
 import Foundation
 
-@objc(ZMSynchronizationState)
-public enum SynchronizationState: UInt {
-    case unauthenticated
-    case slowSyncing
-    case establishingWebsocket
-    case quickSyncing
-    case online
-}
-
-@objc(ZMOperationState)
-public enum OperationState: UInt {
-    case background
-    case foreground
-}
-
 @objc(ZMApplicationStatus)
 public protocol ApplicationStatus: AnyObject {
     var synchronizationState: SynchronizationState { get }

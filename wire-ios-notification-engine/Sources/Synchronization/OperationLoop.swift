@@ -203,7 +203,13 @@ final class RequestGeneratingOperationLoop {
     private let requestGeneratorObserver: RequestGeneratorObserver
     private unowned let transportSession: ZMTransportSession
 
-    init(userContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, callBackQueue: OperationQueue = .main, requestGeneratorStore: RequestGeneratorStore, transportSession: ZMTransportSession) {
+    init(
+        userContext: NSManagedObjectContext,
+        syncContext: NSManagedObjectContext,
+        callBackQueue: OperationQueue = .main,
+        requestGeneratorStore: RequestGeneratorStore,
+        transportSession: ZMTransportSession
+    ) {
         self.callBackQueue = callBackQueue
         self.requestGeneratorStore = requestGeneratorStore
         self.requestGeneratorObserver = RequestGeneratorObserver(context: syncContext)

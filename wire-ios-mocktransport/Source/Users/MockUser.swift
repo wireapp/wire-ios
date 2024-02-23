@@ -229,7 +229,10 @@ extension MockUser {
                 "id": identifier,
                 "handle": handle,
                 "picture": pictureData,
-                "assets": assetData
+                "assets": assetData,
+                "supported_protocols": [
+                    "proteus"
+                ]
             ]
 
             if let providerIdentifier = self.providerIdentifier,
