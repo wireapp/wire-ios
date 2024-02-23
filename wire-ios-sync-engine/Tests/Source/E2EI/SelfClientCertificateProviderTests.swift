@@ -50,7 +50,7 @@ class SelfClientCertificateProviderTests: MessagingTest {
             let  dateFormatter = DateFormatter()
             let mockCertificate = E2eIdentityCertificate(
                 clientId: "sdfsdfsdfs",
-                certificateDetails: .mockCertificate(),
+                certificateDetails: .mockCertificate,
                 mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
                 notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
                 expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
@@ -86,7 +86,7 @@ class SelfClientCertificateProviderTests: MessagingTest {
             let  dateFormatter = DateFormatter()
             let mockCertificate = E2eIdentityCertificate(
                 clientId: "sdfsdfsdfs",
-                certificateDetails: .mockCertificate(),
+                certificateDetails: .mockCertificate,
                 mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
                 notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
                 expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
@@ -139,4 +139,16 @@ class SelfClientCertificateProviderTests: MessagingTest {
         otherClient.user = .selfUser(in: context)
     }
 
+}
+
+private extension String {
+    static let mockSerialNumber = String(repeating: "abcdefghijklmno", count: 2)
+
+    static let mockMlsThumbprint = "AB CD EF GH IJ KL MN OP QR ST UV WX QR ST UV WX"
+
+    static var mockCertificate: String {
+        "BEGIN CERTIFICATE\n-----------\n"
+        + String(repeating: "abcdefghijklmno", count: 100)
+        +  "\n-----------\nEND CERTIFICATE"
+    }
 }
