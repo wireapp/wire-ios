@@ -21,7 +21,7 @@ import Foundation
 public protocol SupportedProtocolsServiceInterface {
 
     func calculateSupportedProtocols() -> Set<MessageProtocol>
-
+  
 }
 
 public final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
