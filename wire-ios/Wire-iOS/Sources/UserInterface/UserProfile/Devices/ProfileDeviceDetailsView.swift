@@ -23,7 +23,7 @@ struct ProfileDeviceDetailsView: View {
     @Environment(\.dismiss)
     private var dismiss
 
-    @StateObject var viewModel: DeviceInfoViewModel
+    @ObservedObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
     @State var isDebugViewPresented: Bool = false
 
