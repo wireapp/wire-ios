@@ -514,20 +514,23 @@ public class MockEnrollE2EICertificateUseCaseProtocol: EnrollE2EICertificateUseC
 
     public var invokeAuthenticate_Invocations: [OAuthBlock] = []
     public var invokeAuthenticate_MockError: Error?
-    public var invokeAuthenticate_MockMethod: ((@escaping OAuthBlock) async throws -> Void)?
+    public var invokeAuthenticate_MockMethod: ((@escaping OAuthBlock) async throws -> String?)?
+    public var invokeAuthenticate_MockValue: String??
 
-    public func invoke(authenticate: @escaping OAuthBlock) async throws {
+    public func invoke(authenticate: @escaping OAuthBlock) async throws -> String? {
         invokeAuthenticate_Invocations.append(authenticate)
 
         if let error = invokeAuthenticate_MockError {
             throw error
         }
 
-        guard let mock = invokeAuthenticate_MockMethod else {
+        if let mock = invokeAuthenticate_MockMethod {
+            return try await mock(authenticate)
+        } else if let mock = invokeAuthenticate_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `invokeAuthenticate`")
         }
-
-        try await mock(authenticate)
     }
 
 }

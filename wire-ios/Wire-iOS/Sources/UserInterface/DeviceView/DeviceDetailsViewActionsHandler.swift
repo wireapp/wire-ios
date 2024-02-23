@@ -150,7 +150,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             return
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
-        try await e2eiCertificateEnrollment.invoke(
+        _ = try await e2eiCertificateEnrollment.invoke(
             authenticate: oauthUseCase.invoke
         )
     }

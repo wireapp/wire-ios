@@ -877,13 +877,13 @@ extension AuthenticationCoordinator {
 
         Task {
             do {
-                _ = try await e2eiCertificateUseCase.invoke(
+                let certificateChain = try await e2eiCertificateUseCase.invoke(
                     authenticate: oauthUseCase.invoke
-                )
+                ) ?? ""
                 await MainActor.run {
                     executeActions([
                         .hideLoadingView,
-                        .transition(.enrollE2EIdentitySuccess, mode: .reset)
+                        .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
                     ])
                 }
             } catch {
