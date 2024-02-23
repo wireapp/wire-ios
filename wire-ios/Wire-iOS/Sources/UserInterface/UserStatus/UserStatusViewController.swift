@@ -20,6 +20,9 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// TODO [WPB-765]: make sure accessibility label is:
+// "(profile name), (status value), double tap to change status, all your devices are verified (Proteus), all your devices have a valid end-to-end identity certificate"
+
 final class UserStatusViewController: UIViewController {
 
     weak var delegate: UserStatusViewControllerDelegate?
