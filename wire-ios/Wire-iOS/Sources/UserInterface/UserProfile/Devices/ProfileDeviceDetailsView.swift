@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,15 @@
 //
 
 import SwiftUI
-import Combine
 import WireCommonComponents
 
-struct DeviceDetailsView: View {
-    typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
-
+struct ProfileDeviceDetailsView: View {
     @Environment(\.dismiss)
     private var dismiss
 
     @ObservedObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
-    @State var didEnrollCertificateFail: Bool = false
+    @State var isDebugViewPresented: Bool = false
 
     var dismissedView: (() -> Void)?
 
@@ -51,16 +48,23 @@ struct DeviceDetailsView: View {
 
     var proteusView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
-            DeviceDetailsProteusView(viewModel: viewModel, isVerfied: viewModel.isProteusVerificationEnabled)
+            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title,
+                             description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(
+                                viewModel.userClient.user?.name ?? ""
+                             ))
+
+            DeviceDetailsProteusView(viewModel: viewModel,
+                                     isVerfied: viewModel.isProteusVerificationEnabled,
+                                     shouldShowActivatedDate: false)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
                     .font(.footnote)
                     .padding([.leading, .trailing], ViewConstants.Padding.standard)
                     .padding([.top, .bottom], ViewConstants.Padding.medium)
             } else {
-                DeviceDetailsBottomView(viewModel: viewModel)
+                DeviceDetailsBottomView(viewModel: viewModel, showRemoveDeviceButton: false)
             }
         }
     }
@@ -71,6 +75,24 @@ struct DeviceDetailsView: View {
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
+    }
+
+    var showDeviceFingerPrintView: some View {
+        HStack {
+            SwiftUI.Button {
+                Task {
+                    viewModel.onShowMyDeviceTapped()
+                }
+            } label: {
+                Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
+                .padding(.all, ViewConstants.Padding.standard)
+                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
+            }
+            Spacer()
+            Asset.Images.chevronRight.swiftUIImage.padding(.trailing, ViewConstants.Padding.standard)
+        }
+        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
     }
 
     var body: some View {
@@ -89,10 +111,15 @@ struct DeviceDetailsView: View {
             .listStyle(.plain)
             .overlay(
                 content: {
+                    VStack {
                         if viewModel.isActionInProgress {
+                            Spacer()
                             SwiftUI.ProgressView()
                         }
+                        Spacer()
+                        showDeviceFingerPrintView
                     }
+                }
             )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -111,10 +138,20 @@ struct DeviceDetailsView: View {
                 ToolbarItem(placement: .principal) {
                     DeviceView(viewModel: viewModel).titleView
                 }
-
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    SwiftUI.Button(
+                        action: {
+                            isDebugViewPresented.toggle()
+                        },
+                        label: {
+                            if viewModel.showDebugMenu {
+                                Text("Debug")
+                            }
+                        }
+                    )
+                }
             }
         }
-
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
         .onAppear {
@@ -128,9 +165,6 @@ struct DeviceDetailsView: View {
                 dismiss()
             }
         }
-        .onReceive(viewModel.$showEnrollmentCertificateError, perform: { _ in
-            didEnrollCertificateFail = viewModel.showEnrollmentCertificateError
-        })
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
@@ -142,19 +176,49 @@ struct DeviceDetailsView: View {
                 )
             }
         }
-        .alert(E2ei.Error.Alert.title, isPresented: $didEnrollCertificateFail) {
-            SwiftUI.Button(L10n.Localizable.General.ok) {
-                didEnrollCertificateFail = false
-            }
-        }
+        .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
+            SwiftUI.Button("Delete Device", action: {
+                  viewModel.onDeleteDeviceTapped()
+              })
+            SwiftUI.Button("Duplicate Session", action: {
+                  viewModel.onDuplicateClientTapped()
+              })
+            SwiftUI.Button("Corrupt Session", action: {
+                viewModel.onCorruptSessionTapped()
+            })
+            SwiftUI.Button("Cancel", role: .cancel, action: {
+                isDebugViewPresented.toggle()
+            })
+            }, message: {
+              Text("Tap to perform an action")
+            })
     }
 
     @ViewBuilder
-    func sectionTitleView(title: String) -> some View {
+    func sectionTitleView(title: String, description: String? = nil) -> some View {
         Text(title)
             .font(FontSpec.mediumRegularFont.swiftUIFont)
             .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-            .frame(height: ViewConstants.View.Height.small)
             .padding([.leading, .top], ViewConstants.Padding.standard)
+
+        if let description = description {
+            VStack(alignment: .leading) {
+                Text(description)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .font(UIFont.swiftUIFont(for: .subheadline))
+                    .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
+                    .frame(height: ViewConstants.View.Height.small)
+                    .padding([.leading, .top], ViewConstants.Padding.standard)
+                Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
+                    .underline()
+                    .font(UIFont.swiftUIFont(for: .subheadline).bold())
+                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .padding(.leading)
+                    .onTapGesture {
+                        viewModel.onHowToDoThatTapped()
+                    }
+            }
+        }
     }
 }

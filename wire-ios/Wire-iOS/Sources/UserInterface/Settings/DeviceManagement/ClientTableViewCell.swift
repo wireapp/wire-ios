@@ -127,31 +127,3 @@ final class ClientTableViewCell: UITableViewCell {
         super.prepareForReuse()
     }
 }
-
-extension ClientTableViewCellModel {
-
-    private typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
-
-    static func from(userClient: UserClientType, shouldSetType: Bool = true) -> ClientTableViewCellModel {
-        var title = ""
-        if shouldSetType {
-            title = userClient.deviceClass == .legalHold ?
-            L10n.Localizable.Device.Class.legalhold :
-            (userClient.deviceClass?.localizedDescription.capitalized ?? userClient.type.localizedDescription.capitalized)
-        } else {
-            title = userClient.model ?? ""
-        }
-        let proteusId = userClient.displayIdentifier.fingerprintStringWithSpaces.uppercased()
-        let proteusIdLabelText = DeviceDetailsSection.Proteus.value(proteusId)
-        let isProteusVerified = userClient.verified
-
-        let mlsThumbPrint = userClient.mlsThumbPrint?.fingerprintStringWithSpaces ?? ""
-        let mlsThumbprintLabelText = mlsThumbPrint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
-
-        return .init(title: title,
-                     proteusLabelText: proteusIdLabelText,
-                     mlsThumbprintLabelText: mlsThumbprintLabelText,
-                     isProteusVerified: isProteusVerified,
-                     e2eIdentityStatus: userClient.e2eIdentityCertificate?.status)
-    }
-}

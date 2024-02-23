@@ -21,12 +21,12 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
-    private let logger: LoggerProtocol
-    private var userClient: UserClient
-    private var userSession: UserSession
-    private var clientRemovalObserver: ClientRemovalObserver?
-    private var credentials: ZMEmailCredentials?
-    private let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
+    let logger: LoggerProtocol
+    var userClient: UserClient
+    var userSession: UserSession
+    var clientRemovalObserver: ClientRemovalObserver?
+    var credentials: ZMEmailCredentials?
+    let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     private let contextProvider: ContextProvider
     private let e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
 
@@ -58,11 +58,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.e2eiCertificateEnrollment = e2eiCertificateEnrollment
     }
 
-    func updateCertificate() async -> E2eIdentityCertificate? {
-        // TODO: [WPB-3220]
-        return nil
+    @MainActor
+    func updateCertificate() async throws -> E2eIdentityCertificate? {
+        try await enrollClient()
     }
 
+    @MainActor
     func enrollClient() async throws -> E2eIdentityCertificate? {
         do {
             try await startE2EIdentityEnrollment()
@@ -142,9 +143,10 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         return fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
     }
 
+    @MainActor
     private func startE2EIdentityEnrollment() async throws {
         typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
-        guard let rootViewController = await AppDelegate.shared.window?.rootViewController else {
+        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
             return
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
@@ -153,6 +155,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         )
     }
 
+    @MainActor
     private func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate? {
         let mlsClientResolver = MLSClientResolver()
         guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient),
