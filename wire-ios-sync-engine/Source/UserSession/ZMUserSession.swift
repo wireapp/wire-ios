@@ -764,8 +764,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         mlsService.commitPendingProposalsIfNeeded()
-        // [AGIS]: - to be deleted fetchFeatureConfigs
-        fetchFeatureConfigs()
         WaitingGroupTask(context: syncContext) { [self] in
             do {
                 try await ResolveOneOnOneConversationsUseCase(
