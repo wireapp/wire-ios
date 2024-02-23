@@ -239,11 +239,16 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             cell.cellIdentifier = "participants.section.participants.cell"
         }
 
+        lazy var unexpectedCellHandler: () -> UICollectionViewCell = {
+            let message = "Unexpected collection view cell type: \(String(describing: cell.self))"
+            WireLogger.conversation.error(message)
+            assertionFailure(message)
+            return cell
+        }
+
         switch configuration {
         case .user(let user):
-            guard let cell = cell as? UserCell else {
-                fatalError("Unexpected collection view cell type: \(String(describing: cell.self))")
-            }
+            guard let cell = cell as? UserCell else { return unexpectedCellHandler() }
             let isE2EICertified = if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] { userStatus.isCertified } else { false }
             cell.configure(
                 user: user,
@@ -251,10 +256,9 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
                 conversation: conversation,
                 showSeparator: showSeparator
             )
+
         case .showAll(let totalParticipantsCount):
-            guard let cell = cell as? ShowAllParticipantsCell else {
-                fatalError("Unexpected collection view cell type: \(String(describing: cell.self))")
-            }
+            guard let cell = cell as? ShowAllParticipantsCell else { return unexpectedCellHandler() }
             cell.configure(
                 totalParticipantsCount: totalParticipantsCount,
                 conversation: conversation,
