@@ -18,9 +18,10 @@
 
 import Foundation
 import WireSyncEngine
+import SwiftUI
 
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
-
+    var certificateDetails: String = ""
     // MARK: - Properties
 
     public var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
@@ -171,6 +172,15 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     @objc
     private func certificateDetailsTapped() {
+        var wrapNavigationController = UINavigationController()
+        var detailsView = E2EIdentityCertificateDetailsView(certificateDetails: certificateDetails,
+                                                            isDownloadAndCopyEnabled: true,
+                                                            isMenuPresented: false)
+        detailsView.didDismiss = {
+            wrapNavigationController.dismiss(animated: true)
+        }
+        let hostingViewController = UIHostingController(rootView: detailsView)
+        wrapNavigationController.viewControllers = [hostingViewController]
 
     }
 
