@@ -24,6 +24,7 @@ public final class PushSupportedProtocolsAction: EntityAction {
 
     public enum Failure: Error, Equatable {
         case unknownError(code: Int, label: String, message: String)
+        case requestEndpointUnavailable
     }
 
     public let supportedProtocols: Set<MessageProtocol>
