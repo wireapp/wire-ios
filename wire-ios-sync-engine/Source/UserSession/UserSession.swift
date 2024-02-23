@@ -226,6 +226,8 @@ public protocol UserSession: AnyObject {
 
     var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol { get }
 
+    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCase { get }
+
     func fetchAllClients()
 
 }

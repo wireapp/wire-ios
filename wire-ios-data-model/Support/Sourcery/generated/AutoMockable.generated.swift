@@ -3551,35 +3551,6 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
 }
 
-public class MockMLSConversationVerificationStatusProviderInterface: MLSConversationVerificationStatusProviderInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - updateStatus
-
-    public var updateStatus_Invocations: [MLSGroupID] = []
-    public var updateStatus_MockError: Error?
-    public var updateStatus_MockMethod: ((MLSGroupID) async throws -> Void)?
-
-    public func updateStatus(_ groupID: MLSGroupID) async throws {
-        updateStatus_Invocations.append(groupID)
-
-        if let error = updateStatus_MockError {
-            throw error
-        }
-
-        guard let mock = updateStatus_MockMethod else {
-            fatalError("no mock for `updateStatus`")
-        }
-
-        try await mock(groupID)
-    }
-
-}
-
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - Life cycle
@@ -4691,6 +4662,35 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
         } else {
             fatalError("no mock for `findSubgroupTypeAndParentIDFor`")
         }
+    }
+
+}
+
+public class MockUpdateMLSGroupVerificationStatusUseCaseProtocol: UpdateMLSGroupVerificationStatusUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeGroupID_Invocations: [MLSGroupID] = []
+    public var invokeGroupID_MockError: Error?
+    public var invokeGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func invoke(groupID: MLSGroupID) async throws {
+        invokeGroupID_Invocations.append(groupID)
+
+        if let error = invokeGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = invokeGroupID_MockMethod else {
+            fatalError("no mock for `invokeGroupID`")
+        }
+
+        try await mock(groupID)
     }
 
 }

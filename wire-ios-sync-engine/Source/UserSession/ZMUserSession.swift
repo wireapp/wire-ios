@@ -327,15 +327,18 @@ public final class ZMUserSession: NSObject {
         return GetE2eIdentityCertificatesUseCase(coreCryptoProvider: coreCryptoProvider)
     }()
 
-    lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {
+    public private(set) lazy var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCase = {
         let verificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
-        let verificationStatusProvider = MLSConversationVerificationStatusProvider(
+
+        return UpdateMLSGroupVerificationStatusUseCase(
             e2eIVerificationStatusService: verificationStatusService,
             syncContext: syncContext)
+    }()
 
-        return MLSConversationVerificationManager(
+    lazy var observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol = {
+        return ObserveMLSGroupVerificationStatusUseCase(
             mlsService: mlsService,
-            mlsConversationVerificationStatusProvider: verificationStatusProvider)
+            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus)
     }()
 
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
@@ -475,7 +478,7 @@ public final class ZMUserSession: NSObject {
             createMLSClientIfNeeded()
 
             if e2eiFeature.isEnabled {
-                mlsConversationVerificationManager.startObservingMLSConversationVerificationStatus()
+                observeMLSGroupVerificationStatus.invoke()
             }
         }
 

@@ -19,13 +19,13 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol MLSConversationVerificationStatusProviderInterface {
+public protocol UpdateMLSGroupVerificationStatusUseCaseProtocol {
 
-    func updateStatus(_ groupID: MLSGroupID) async throws
+    func invoke(groupID: MLSGroupID) async throws
 
 }
 
-public class MLSConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface {
+public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol {
 
     // MARK: - Properties
 
@@ -44,7 +44,12 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
 
     // MARK: - Public interface
 
-    public func updateStatus(_ groupID: MLSGroupID) async throws {
+    public func invoke(groupID: MLSGroupID) async throws {
+        let isE2EIEnabled = await syncContext.perform({
+            return FeatureRepository(context: self.syncContext).fetchE2EI().isEnabled
+        })
+        guard isE2EIEnabled else { return }
+
         guard let conversation = await syncContext.perform({
             ZMConversation.fetch(with: groupID, in: self.syncContext)
         }) else {
