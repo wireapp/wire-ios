@@ -173,12 +173,12 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     @objc
     private func certificateDetailsTapped() {
         let wrapNavigationController = UINavigationController()
-        let savefileManger = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        let saveFileManger = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
         var detailsView = E2EIdentityCertificateDetailsView(
             certificateDetails: certificateDetails,
             isDownloadAndCopyEnabled: Settings.isClipboardEnabled,
             isMenuPresented: false) {
-            savefileManger.save(value: self.certificateDetails, fileName: "certificate-chain", type: "txt")
+            saveFileManger.save(value: self.certificateDetails, fileName: "certificate-chain", type: "txt")
         } performCopy: { value in
             UIPasteboard.general.string = value
         }
@@ -187,6 +187,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         }
         let hostingViewController = UIHostingController(rootView: detailsView)
         wrapNavigationController.viewControllers = [hostingViewController]
+        wrapNavigationController.isNavigationBarHidden = true
         wrapNavigationController.presentTopmost()
     }
 
