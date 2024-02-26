@@ -239,7 +239,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             cell.cellIdentifier = "participants.section.participants.cell"
         }
 
-        lazy var unexpectedCellHandler: () -> UICollectionViewCell = {
+        let unexpectedCellHandler: () -> UICollectionViewCell = {
             let message = "Unexpected collection view cell type: \(String(describing: cell.self))"
             WireLogger.conversation.error(message)
             assertionFailure(message)
