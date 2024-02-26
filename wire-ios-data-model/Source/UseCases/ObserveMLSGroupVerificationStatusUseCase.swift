@@ -32,6 +32,8 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
     private let updateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol
     private let syncContext: NSManagedObjectContext
 
+    private var epochChangesListenerTask: Task<Void, Error>?
+
     // MARK: - Life cycle
 
     public init(
@@ -44,22 +46,32 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
         self.syncContext = syncContext
     }
 
+    deinit {
+        epochChangesListenerTask?.cancel()
+    }
+
     // MARK: - Methods
 
     public func invoke() async {
+        epochChangesListenerTask = listenForEpochChanges()
+        try? await epochChangesListenerTask?.value
+    }
 
-        for try await groupID in mlsService.epochChanges() {
-            do {
-                guard let conversation = await syncContext.perform({
-                    ZMConversation.fetch(with: groupID, in: self.syncContext)
-                }) else {
-                    WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
-                    return
+    private func listenForEpochChanges() -> Task<Void, Error> {
+        return Task.detached {
+            for try await groupID in self.mlsService.epochChanges() {
+                do {
+                    guard let conversation = await self.syncContext.perform({
+                        ZMConversation.fetch(with: groupID, in: self.syncContext)
+                    }) else {
+                        WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
+                        return
+                    }
+
+                    try await self.updateMLSGroupVerificationStatusUseCase.invoke(for: conversation, groupID: groupID)
+                } catch {
+                    WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
                 }
-
-                try await updateMLSGroupVerificationStatusUseCase.invoke(for: conversation, groupID: groupID)
-            } catch {
-                WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
             }
         }
     }
