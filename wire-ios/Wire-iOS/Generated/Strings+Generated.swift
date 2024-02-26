@@ -2835,6 +2835,8 @@ internal enum L10n {
             internal enum Status {
               /// Expired
               internal static let expired = L10n.tr("Localizable", "device.details.section.e2ei.status.expired", fallback: "Expired")
+              /// Invalid
+              internal static let invalid = L10n.tr("Localizable", "device.details.section.e2ei.status.invalid", fallback: "Invalid")
               /// Not activated
               internal static let notActivated = L10n.tr("Localizable", "device.details.section.e2ei.status.not_activated", fallback: "Not activated")
               /// Revoked

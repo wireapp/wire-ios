@@ -29,6 +29,8 @@ extension E2EIdentityCertificateStatus {
             return L10n.Localizable.Device.Details.Section.E2ei.Status.revoked
         case .expired:
             return L10n.Localizable.Device.Details.Section.E2ei.Status.expired
+        case .invalid:
+            return L10n.Localizable.Device.Details.Section.E2ei.Status.invalid
         case .valid:
             return L10n.Localizable.Device.Details.Section.E2ei.Status.valid
         }
@@ -42,6 +44,8 @@ extension E2EIdentityCertificateStatus {
             return Image(.certificateRevoked)
         case .expired:
             return Image(.certificateExpired)
+        case .invalid:
+            return Image(.certificateRevoked)
         case .valid:
             return Image(.certificateValid)
         }
@@ -55,6 +59,8 @@ extension E2EIdentityCertificateStatus {
             return Asset.Images.certificateRevoked.image
         case .expired:
             return Asset.Images.certificateExpired.image
+        case .invalid:
+            return Asset.Images.certificateRevoked.image
         case .valid:
             return Asset.Images.certificateValid.image
         }
