@@ -98,8 +98,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
             let logMessage = "messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
-            zmLog.safePublic(SanitizedString(stringLiteral: logMessage), level: .info)
-            WireLogger.localStorage.info(logMessage)
+            WireLogger.localStorage.info(logMessage, attributes: .safePublic)
 
             let manager = NSMigrationManager(sourceModel: migrationStep.sourceModel, destinationModel: migrationStep.destinationModel)
             let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString)
@@ -134,8 +133,8 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             }
 
             currentURL = destinationURL
-
-            zmLog.safePublic("finish migration step", level: .info)
+            
+            WireLogger.localStorage.info("finish migration step", attributes: .safePublic)
         }
 
         try replaceStore(at: storeURL, withStoreAt: currentURL)
