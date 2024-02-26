@@ -23,7 +23,6 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
     // MARK: - Properties
 
     private let transcoder = Transcoder()
-    private let upstreamSync: ZMUpstreamModifiedObjectSync
     private let actionSync: EntityActionSync
 
     // MARK: - Life cycle
@@ -32,12 +31,6 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        upstreamSync = ZMUpstreamModifiedObjectSync(
-            transcoder: transcoder,
-            entityName: ZMUser.entityName(),
-            keysToSync: [ZMUser.supportedProtocolsKey],
-            managedObjectContext: managedObjectContext
-        )
 
         actionSync = EntityActionSync(actionHandlers: [PushSupportedProtocolActionHandler(context: managedObjectContext)])
 
@@ -50,7 +43,7 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
     // MARK: - Request
 
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        upstreamSync.nextRequest(for: apiVersion) ?? actionSync.nextRequest(for: apiVersion)
+        actionSync.nextRequest(for: apiVersion)
     }
 
 }
@@ -134,14 +127,6 @@ private extension SelfUserRequestStrategy {
             return nil
         }
 
-    }
-
-}
-
-extension SelfUserRequestStrategy: ZMContextChangeTrackerSource {
-
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [upstreamSync]
     }
 
 }
