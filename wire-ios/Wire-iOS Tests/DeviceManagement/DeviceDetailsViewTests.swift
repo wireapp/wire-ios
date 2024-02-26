@@ -67,6 +67,8 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             certificate = .mockExpired
         case .valid:
             certificate = .mockValid
+        case .invalid:
+            certificate = .mockInvalid
         }
         let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
 
@@ -198,6 +200,18 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
                                          isSelfClient: false)
         verify(
             matching: setupWrappedInNavigationController(mode: .light, viewModel: viewModel)
+        )
+    }
+
+    func testWhenE2eidentityViewIsEnabledAndCertificateIsInvalid() {
+        let viewModel = prepareViewModel(mlsThumbprint: .mockFingerPrint,
+                                         status: .invalid,
+                                         isProteusVerificationEnabled: true,
+                                         isE2eIdentityEnabled: true,
+                                         proteusKeyFingerPrint: .mockFingerPrint,
+                                         isSelfClient: false)
+        verify(
+            matching: setupWrappedInNavigationController(viewModel: viewModel)
         )
     }
 
