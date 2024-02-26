@@ -443,7 +443,8 @@ public final class ZMUserSession: NSObject {
         let e2eIVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         self.updateMLSGroupVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
             e2eIVerificationStatusService: e2eIVerificationStatusService,
-            syncContext: coreDataStack.syncContext)
+            context: coreDataStack.syncContext,
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext))
 
         self.mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
             updateMLSGroupVerificationStatus: updateMLSGroupVerificationStatus,

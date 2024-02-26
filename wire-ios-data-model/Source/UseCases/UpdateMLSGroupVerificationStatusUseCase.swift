@@ -30,24 +30,24 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
     // MARK: - Properties
 
     private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
-    private let syncContext: NSManagedObjectContext
+    private let context: NSManagedObjectContext
+    private let isE2EIEnabled: Bool
 
     // MARK: - Life cycle
 
     public init(
         e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
-        syncContext: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        featureRepository: FeatureRepositoryInterface
     ) {
         self.e2eIVerificationStatusService = e2eIVerificationStatusService
-        self.syncContext = syncContext
+        self.context = context
+        self.isE2EIEnabled = featureRepository.fetchE2EI().isEnabled
     }
 
     // MARK: - Public interface
 
     public func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
-        let isE2EIEnabled = await syncContext.perform({
-            return FeatureRepository(context: self.syncContext).fetchE2EI().isEnabled
-        })
         guard isE2EIEnabled else { return }
 
         try await updateStatus(for: conversation, groupID: groupID)
@@ -57,7 +57,7 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     private func updateStatus(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
         let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
-        await syncContext.perform {
+        await context.perform {
             self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
         }
     }

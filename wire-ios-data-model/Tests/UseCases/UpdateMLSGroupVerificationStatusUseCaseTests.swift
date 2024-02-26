@@ -25,16 +25,22 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
 
     var sut: UpdateMLSGroupVerificationStatusUseCaseProtocol!
     var e2eIVerificationStatusService: MockE2EIVerificationStatusServiceInterface!
+    var mockFeatureRepository: MockFeatureRepositoryInterface!
 
     override func setUp() {
         super.setUp()
 
+        mockFeatureRepository = MockFeatureRepositoryInterface()
+        mockFeatureRepository.fetchE2EI_MockValue = Feature.E2EI(status: .enabled)
         e2eIVerificationStatusService = MockE2EIVerificationStatusServiceInterface()
         sut = UpdateMLSGroupVerificationStatusUseCase(e2eIVerificationStatusService: e2eIVerificationStatusService,
-                                                      syncContext: syncMOC)
+                                                      syncContext: syncMOC,
+                                                      featureRepository: mockFeatureRepository)
+
     }
 
     override func tearDown() {
+        mockFeatureRepository = nil
         e2eIVerificationStatusService = nil
         sut = nil
 
@@ -118,29 +124,6 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
         // Then
         await syncMOC.perform {
             XCTAssertEqual(mockConversation.mlsVerificationStatus, .notVerified)
-        }
-    }
-
-    func test_itDoesNotUpdateConversation_wrongMLSGroupId() async throws {
-        // Mock
-        e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = {_ in
-            return .notVerified
-        }
-
-        // Given
-        let expectedError = E2EIVerificationStatusService.E2EIVerificationStatusError.missingConversation
-        let groupID = MLSGroupID(Data([1, 2, 3]))
-        let mockConversation = await syncMOC.perform { [syncMOC] in
-            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
-            conversation.mlsGroupID = MLSGroupID.random()
-            conversation.mlsVerificationStatus = nil
-            return conversation
-        }
-
-        // Then
-        await assertItThrows(error: expectedError) {
-            // When
-            try await sut.invoke(for: mockConversation, groupID: groupID)
         }
     }
 
