@@ -68,7 +68,7 @@ extension ConversationListViewController {
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
-        private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
         var selectedConversation: ZMConversation?
 
@@ -85,13 +85,13 @@ extension ConversationListViewController {
             selfUser: SelfUserType,
             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
             userSession: UserSession,
-            isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
         ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
-            self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
+            self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
             selfUserStatus = .init(user: selfUser, isCertified: false)
             super.init()
 
@@ -194,23 +194,9 @@ extension ConversationListViewController.ViewModel {
     }
 
     private func updateE2EICertifiedStatus() {
-        guard let contextProvider = userSession as? ContextProvider else { return }
-        Task {
+        Task { @MainActor in
             do {
-                let context = contextProvider.syncContext
-                let (selfUser, selfConversation) = await context.perform {
-                    let selfUser = ZMUser.selfUser(in: context)
-                    let mlsSelfConversation = ZMConversation.fetchSelfMLSConversation(in: context)
-                    return (selfUser, mlsSelfConversation)
-                }
-                guard let selfConversation else { return }
-                let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
-                    conversation: selfConversation,
-                    user: selfUser
-                )
-                await MainActor.run {
-                    selfUserStatus.isCertified = isE2EICertified
-                }
+                selfUserStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
             } catch {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }
