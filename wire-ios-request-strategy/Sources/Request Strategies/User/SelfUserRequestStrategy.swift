@@ -22,7 +22,6 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
-    private let transcoder = Transcoder()
     private let actionSync: EntityActionSync
 
     // MARK: - Life cycle
