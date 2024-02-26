@@ -66,10 +66,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
         }
 
-        Task { @MainActor in
-            await updateUserE2EICertificationStatuses()
-            collectionViewController.sections = computeVisibleSections()
-        }
+        updateUserE2EICertificationStatuses()
     }
 
     @available(*, unavailable)
@@ -299,10 +296,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         if changeInfo.participantsChanged, !conversation.isSelfAnActiveMember {
             navigationController?.popToRootViewController(animated: true)
         } else {
-            Task { @MainActor in
-                await updateUserE2EICertificationStatuses()
-                collectionViewController.sections = computeVisibleSections()
-            }
+            updateUserE2EICertificationStatuses()
         }
     }
 
@@ -419,20 +413,19 @@ private extension GroupDetailsViewController {
         return attributedString
     }
 
-    private func updateUserE2EICertificationStatuses() async {
-        let participants = conversation.sortedOtherParticipants
-        for user in participants {
-            guard let user = user as? ZMUser else { continue }
-            guard let conversation = conversation as? ZMConversation else { continue }
-            do {
-                let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
-                    conversation: conversation,
-                    user: user
-                )
-                userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
-            } catch {
-                WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+    private func updateUserE2EICertificationStatuses() {
+        Task { @MainActor in
+            for user in conversation.sortedOtherParticipants {
+                guard let user = user as? ZMUser else { continue }
+                guard let conversation = conversation as? ZMConversation else { continue }
+                do {
+                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
+                } catch {
+                    WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+                }
             }
+            collectionViewController.sections = computeVisibleSections()
         }
     }
 }

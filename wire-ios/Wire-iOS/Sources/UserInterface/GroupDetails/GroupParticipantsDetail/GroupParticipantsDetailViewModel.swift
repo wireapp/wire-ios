@@ -79,11 +79,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         }
 
         computeVisibleParticipants()
-
-        Task { @MainActor in
-            await updateUserE2EICertificationStatuses()
-            participantsDidChange?()
-        }
+        updateUserE2EICertificationStatuses()
     }
 
     private func computeVisibleParticipants() {
@@ -135,20 +131,20 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
 
     // MARK: - UserStatuses
 
-    private func updateUserE2EICertificationStatuses() async {
-        let participants = conversation.sortedOtherParticipants
-        for user in participants {
-            guard let user = user as? ZMUser else { continue }
-            guard let conversation = conversation as? ZMConversation else { continue }
-            do {
-                let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
-                    conversation: conversation,
-                    user: user
-                )
-                userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
-            } catch {
-                WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+    private func updateUserE2EICertificationStatuses() {
+        Task { @MainActor in
+            let participants = conversation.sortedOtherParticipants
+            for user in participants {
+                guard let user = user as? ZMUser else { continue }
+                guard let conversation = conversation as? ZMConversation else { continue }
+                do {
+                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
+                } catch {
+                    WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+                }
             }
+            participantsDidChange?()
         }
     }
 }
