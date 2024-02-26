@@ -46,7 +46,7 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
 
         if keyCache.contains(primaryKey) {
             duplicateOccurrences[primaryKey, default: 0] += 1
-            WireLogger.localStorage.debug("skips the duplicate instance \(duplicateOccurrences)")
+            WireLogger.localStorage.debug("skips the duplicate instance \(duplicateOccurrences)", attributes: .safePublic)
             // skips the duplicate instance
             return
         } else {
@@ -56,12 +56,13 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
             let dInstance = manager.destinationInstances(forEntityMappingName: mapping.name, sourceInstances: [sInstance]).first
             dInstance?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             keyCache.insert(primaryKey)
+            WireLogger.localStorage.debug("insert 1 \(String(describing: manager.currentEntityMapping.name)), count: \(keyCache.count)", attributes: .safePublic)
         }
     }
 
     override func endInstanceCreation(forMapping mapping: NSEntityMapping, manager: NSMigrationManager) throws {
         for (key, count) in duplicateOccurrences {
-            WireLogger.localStorage.info("Dropped \(count) occurrences of type \(mapping.sourceEntityName ?? "<nil>") for id: \(key)")
+            WireLogger.localStorage.info("Dropped \(count) occurrences of type \(mapping.sourceEntityName ?? "<nil>") for id: \(key)", attributes: .safePublic)
         }
 
         if duplicateOccurrences.count > 0 {
@@ -80,7 +81,7 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
         do {
             try manager.destinationContext.setMigrationNeedsSlowSync()
         } catch {
-            WireLogger.localStorage.error("Failed to trigger slow sync on migration \(entityName): \(error.localizedDescription)")
+            WireLogger.localStorage.error("Failed to trigger slow sync on migration \(entityName): \(error.localizedDescription)", attributes: .safePublic)
         }
     }
 }
