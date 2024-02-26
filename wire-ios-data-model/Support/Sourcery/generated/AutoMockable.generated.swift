@@ -2937,15 +2937,6 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
 
     public init() {}
 
-    // MARK: - context
-
-    public var context: NSManagedObjectContext {
-        get { return underlyingContext }
-        set(value) { underlyingContext = value }
-    }
-
-    public var underlyingContext: NSManagedObjectContext!
-
 
     // MARK: - fetchAppLock
 

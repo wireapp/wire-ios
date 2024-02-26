@@ -507,7 +507,8 @@ extension ZMUserSession: UserSession {
         IsUserE2EICertifiedUseCase(
             schedule: .immediate,
             coreCryptoProvider: coreCryptoProvider,
-            featureRepository: FeatureRepository(context: syncContext)
+            featureRepository: FeatureRepository(context: syncContext),
+            featureRepositoryContext: syncContext
         )
     }
 }

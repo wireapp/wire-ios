@@ -24,22 +24,26 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
     private let schedule: NSManagedObjectContext.ScheduledTaskType
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let featureRepository: FeatureRepositoryInterface
+    /// The `featureRepository` uses 
+    private let featureRepositoryContext: NSManagedObjectContext
 
     public init(
         schedule: NSManagedObjectContext.ScheduledTaskType,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        featureRepository: FeatureRepositoryInterface
+        featureRepository: FeatureRepositoryInterface,
+        featureRepositoryContext: NSManagedObjectContext
     ) {
         self.schedule = schedule
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
+        self.featureRepositoryContext = featureRepositoryContext
     }
 
     public func invoke(
         conversation: ZMConversation,
         user: ZMUser
     ) async throws -> Bool {
-        let isE2EIEnabled = await featureRepository.context.perform {
+        let isE2EIEnabled = await featureRepositoryContext.perform {
             featureRepository.fetchE2EI().isEnabled
         }
         guard isE2EIEnabled else { return false }

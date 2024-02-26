@@ -21,8 +21,6 @@ import Foundation
 // sourcery: AutoMockable
 public protocol FeatureRepositoryInterface {
 
-    var context: NSManagedObjectContext { get }
-
     func fetchAppLock() -> Feature.AppLock
     func storeAppLock(_ appLock: Feature.AppLock)
     func fetchConferenceCalling() -> Feature.ConferenceCalling
@@ -60,7 +58,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     // MARK: - Properties
 
-    public let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
 
     private let logger = WireLogger(tag: "FeatureRepository")
     private let decoder = JSONDecoder()
@@ -316,7 +314,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     public func fetchE2EI() -> Feature.E2EI {
         guard
-            let feature = Feature.fetch(name: .e2ei, context: context),
+            let feature = context.performAndWait({ Feature.fetch(name: .e2ei, context: context) }),
             let featureConfig = feature.config
         else {
             return .init()
