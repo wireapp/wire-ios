@@ -3689,26 +3689,6 @@ public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerif
     public init() {}
 
 
-    // MARK: - updateStatus
-
-    public var updateStatus_Invocations: [MLSGroupID] = []
-    public var updateStatus_MockError: Error?
-    public var updateStatus_MockMethod: ((MLSGroupID) async throws -> Void)?
-
-    public func updateStatus(_ groupID: MLSGroupID) async throws {
-        updateStatus_Invocations.append(groupID)
-
-        if let error = updateStatus_MockError {
-            throw error
-        }
-
-        guard let mock = updateStatus_MockMethod else {
-            fatalError("no mock for `updateStatus`")
-        }
-
-        try await mock(groupID)
-    }
-
     // MARK: - updateAllStatuses
 
     public var updateAllStatuses_Invocations: [Void] = []
@@ -4891,22 +4871,22 @@ public class MockUpdateMLSGroupVerificationStatusUseCaseProtocol: UpdateMLSGroup
 
     // MARK: - invoke
 
-    public var invokeGroupID_Invocations: [MLSGroupID] = []
-    public var invokeGroupID_MockError: Error?
-    public var invokeGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
+    public var invokeForGroupID_Invocations: [(conversation: ZMConversation, groupID: MLSGroupID)] = []
+    public var invokeForGroupID_MockError: Error?
+    public var invokeForGroupID_MockMethod: ((ZMConversation, MLSGroupID) async throws -> Void)?
 
-    public func invoke(groupID: MLSGroupID) async throws {
-        invokeGroupID_Invocations.append(groupID)
+    public func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
+        invokeForGroupID_Invocations.append((conversation: conversation, groupID: groupID))
 
-        if let error = invokeGroupID_MockError {
+        if let error = invokeForGroupID_MockError {
             throw error
         }
 
-        guard let mock = invokeGroupID_MockMethod else {
-            fatalError("no mock for `invokeGroupID`")
+        guard let mock = invokeForGroupID_MockMethod else {
+            fatalError("no mock for `invokeForGroupID`")
         }
 
-        try await mock(groupID)
+        try await mock(conversation, groupID)
     }
 
 }

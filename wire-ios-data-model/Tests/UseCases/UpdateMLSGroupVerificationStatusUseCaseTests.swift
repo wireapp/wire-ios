@@ -21,17 +21,17 @@ import Foundation
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
+class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
 
-    var sut: MLSConversationVerificationStatusUpdater!
+    var sut: UpdateMLSGroupVerificationStatusUseCaseProtocol!
     var e2eIVerificationStatusService: MockE2EIVerificationStatusServiceInterface!
 
     override func setUp() {
         super.setUp()
 
         e2eIVerificationStatusService = MockE2EIVerificationStatusServiceInterface()
-        sut = MLSConversationVerificationStatusUpdater(e2eIVerificationStatusService: e2eIVerificationStatusService,
-                                                        syncContext: syncMOC)
+        sut = UpdateMLSGroupVerificationStatusUseCase(e2eIVerificationStatusService: e2eIVerificationStatusService,
+                                                      syncContext: syncMOC)
     }
 
     override func tearDown() {
@@ -57,7 +57,7 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         }
 
         // When
-        try await sut.updateStatus(groupID)
+        try await sut.invoke(for: mockConversation, groupID: groupID)
 
         // Then
         await syncMOC.perform {
@@ -85,7 +85,7 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         }
 
         // When
-        try await sut.updateStatus(groupID)
+        try await sut.invoke(for: mockConversation, groupID: groupID)
 
         // Then
         await syncMOC.perform {
@@ -113,7 +113,7 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         }
 
         // When
-        try await sut.updateStatus(groupID)
+        try await sut.invoke(for: mockConversation, groupID: groupID)
 
         // Then
         await syncMOC.perform {
@@ -140,7 +140,7 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         // Then
         await assertItThrows(error: expectedError) {
             // When
-            try await sut.updateStatus(groupID)
+            try await sut.invoke(for: mockConversation, groupID: groupID)
         }
     }
 
@@ -161,7 +161,7 @@ class MLSConversationVerificationStatusProviderTests: ZMConversationTestsBase {
         // Then
         await assertItThrows(error: error) {
             // When
-            try await sut.updateStatus(groupID)
+            try await sut.invoke(for: mockConversation, groupID: groupID)
         }
     }
 

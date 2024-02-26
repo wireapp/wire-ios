@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol UpdateMLSGroupVerificationStatusUseCaseProtocol {
 
-    func invoke(groupID: MLSGroupID) async throws
+    func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws
 
 }
 
@@ -29,8 +29,8 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     // MARK: - Properties
 
-    private var e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
-    private var syncContext: NSManagedObjectContext
+    private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
+    private let syncContext: NSManagedObjectContext
 
     // MARK: - Life cycle
 
@@ -44,35 +44,13 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     // MARK: - Public interface
 
-    public func invoke(groupID: MLSGroupID) async throws {
+    public func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
         let isE2EIEnabled = await syncContext.perform({
             return FeatureRepository(context: self.syncContext).fetchE2EI().isEnabled
         })
         guard isE2EIEnabled else { return }
 
-        guard let conversation = await syncContext.perform({
-            ZMConversation.fetch(with: groupID, in: self.syncContext)
-        }) else {
-            throw E2EIVerificationStatusService.E2EIVerificationStatusError.missingConversation
-        }
-
         try await updateStatus(for: conversation, groupID: groupID)
-    }
-
-    public func updateAllStatuses() async throws {
-        let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
-            let conversations = ZMConversation.fetchMLSConversations(in: syncContext)
-            return conversations.compactMap {
-                guard let groupID = $0.mlsGroupID else {
-                    return nil
-                }
-                return (groupID, $0)
-            }
-        }
-
-        for (groupID, conversation) in groupIDConversationTuples {
-            try await updateStatus(for: conversation, groupID: groupID)
-        }
     }
 
     // MARK: - Helpers
@@ -83,8 +61,6 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
             self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
         }
     }
-
-    // MARK: - Helpers
 
     private func updateStatusAndNotifyUserIfNeeded(
         newStatusFromCC: MLSVerificationStatus,
@@ -116,7 +92,10 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
         }
     }
 
-    private func notifyUserAboutStateChangesIfNeeded(_ newStatus: MLSVerificationStatus, in conversation: ZMConversation) {
+    private func notifyUserAboutStateChangesIfNeeded(
+        _ newStatus: MLSVerificationStatus,
+        in conversation: ZMConversation
+    ) {
         switch newStatus {
         case .verified:
             conversation.appendConversationVerifiedSystemMessage()

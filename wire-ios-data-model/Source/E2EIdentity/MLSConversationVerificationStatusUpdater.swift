@@ -21,7 +21,6 @@ import Foundation
 // sourcery: AutoMockable
 public protocol MLSConversationVerificationStatusUpdating {
 
-    func updateStatus(_ groupID: MLSGroupID) async throws
     func updateAllStatuses() async throws
 
 }
@@ -30,32 +29,23 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
 
     // MARK: - Properties
 
-    private var e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
-    private var syncContext: NSManagedObjectContext
+    private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
+    private let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
+    private let syncContext: NSManagedObjectContext
 
     // MARK: - Life cycle
 
     public init(
         e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
+        updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol,
         syncContext: NSManagedObjectContext
     ) {
         self.e2eIVerificationStatusService = e2eIVerificationStatusService
+        self.updateMLSGroupVerificationStatus = updateMLSGroupVerificationStatus
         self.syncContext = syncContext
     }
 
     // MARK: - Public interface
-
-    public func updateStatus(_ groupID: MLSGroupID) async throws {
-        let conversation = await syncContext.perform {
-            ZMConversation.fetch(with: groupID, in: self.syncContext)
-        }
-
-        guard let conversation else {
-            throw E2EIVerificationStatusService.E2EIVerificationStatusError.missingConversation
-        }
-
-        try await updateStatus(for: conversation, groupID: groupID)
-    }
 
     public func updateAllStatuses() async throws {
         let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
@@ -69,82 +59,7 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
         }
 
         for (groupID, conversation) in groupIDConversationTuples {
-            try await updateStatus(for: conversation, groupID: groupID)
+            try await updateMLSGroupVerificationStatus.invoke(for: conversation, groupID: groupID)
         }
     }
-
-    // MARK: - Helpers
-
-    private func updateStatus(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
-        let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
-        await syncContext.perform {
-            self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
-        }
-    }
-
-    // MARK: - Helpers
-
-    private func updateStatusAndNotifyUserIfNeeded(
-        newStatusFromCC: MLSVerificationStatus,
-        conversation: ZMConversation
-    ) {
-        guard let currentStatus = conversation.mlsVerificationStatus else {
-            return conversation.mlsVerificationStatus = newStatusFromCC
-        }
-
-        let newStatus = resolveNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
-        guard newStatus != currentStatus else {
-            return
-        }
-        conversation.mlsVerificationStatus = newStatus
-        notifyUserAboutStateChangesIfNeeded(newStatus, in: conversation)
-    }
-
-    private func resolveNewStatus(
-        newStatusFromCC: MLSVerificationStatus,
-        currentStatus: MLSVerificationStatus
-    ) -> MLSVerificationStatus {
-        switch (newStatusFromCC, currentStatus) {
-        case (.notVerified, .verified):
-            return .degraded
-        case(.notVerified, .degraded):
-            return .degraded
-        default:
-            return newStatusFromCC
-        }
-    }
-
-    private func notifyUserAboutStateChangesIfNeeded(_ newStatus: MLSVerificationStatus, in conversation: ZMConversation) {
-        switch newStatus {
-        case .verified:
-            conversation.appendConversationVerifiedSystemMessage()
-        case .degraded:
-            conversation.appendConversationDegradedSystemMessage()
-        case .notVerified:
-            return
-        }
-    }
-
-}
-
-// MARK: - Append system messages
-
-private extension ZMConversation {
-
-    func appendConversationVerifiedSystemMessage() {
-        guard let context = managedObjectContext else {
-            return
-        }
-        let selfUser = ZMUser.selfUser(in: context)
-        appendConversationVerifiedSystemMessage(sender: selfUser, at: Date())
-    }
-
-    func appendConversationDegradedSystemMessage() {
-        guard let context = managedObjectContext else {
-            return
-        }
-        let selfUser = ZMUser.selfUser(in: context)
-        appendConversationDegradedSystemMessage(sender: selfUser, at: Date())
-    }
-
 }

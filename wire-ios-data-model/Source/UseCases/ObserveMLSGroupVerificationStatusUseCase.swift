@@ -30,22 +30,34 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
 
     private let mlsService: MLSServiceInterface
     private let updateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol
+    private let syncContext: NSManagedObjectContext
 
     // MARK: - Life cycle
 
     public init(
         mlsService: MLSServiceInterface,
-        updateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol) {
+        updateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol,
+        syncContext: NSManagedObjectContext
+    ) {
         self.mlsService = mlsService
         self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatusUseCase
+        self.syncContext = syncContext
     }
 
     // MARK: - Methods
 
     public func invoke() async {
+
         for try await groupID in mlsService.epochChanges() {
             do {
-                try await updateMLSGroupVerificationStatusUseCase.invoke(groupID: groupID)
+                guard let conversation = await syncContext.perform({
+                    ZMConversation.fetch(with: groupID, in: self.syncContext)
+                }) else {
+                    WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
+                    return
+                }
+
+                try await updateMLSGroupVerificationStatusUseCase.invoke(for: conversation, groupID: groupID)
             } catch {
                 WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
             }

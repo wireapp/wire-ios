@@ -455,7 +455,9 @@ final class ConversationViewController: UIViewController {
 
         Task {
             do {
-                //try await userSession.updateMLSGroupVerificationStatus.invoke(groupID: mlsGroupID)
+                try await userSession.updateMLSGroupVerificationStatus.invoke(
+                    for: conversation,
+                    groupID: mlsGroupID)
                 setupNavigatiomItem()
             } catch {
                 WireLogger.e2ei.error("failed to update conversation's verification status: \(String(reflecting: error))")
