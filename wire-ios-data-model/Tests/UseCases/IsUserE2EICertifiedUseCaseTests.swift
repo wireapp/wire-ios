@@ -46,12 +46,12 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         mockFeatureRepository = .init()
-        mockFeatureRepository.context = context
         mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())
         sut = .init(
             schedule: .immediate,
             coreCryptoProvider: mockCoreCryptoProvider,
-            featureRepository: mockFeatureRepository
+            featureRepository: mockFeatureRepository,
+            featureRepositoryContext: context
         )
     }
 
@@ -283,7 +283,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     ) {
         context.performAndWait {
             let helper = ModelHelper()
-            mlsSelfConversation = helper.createMLSSelfConversation(
+            mlsSelfConversation = helper.createSelfMLSConversation(
                 id: .init(uuidString: "11AE029E-AFFA-4B81-9095-497797C0C0FA")!,
                 mlsGroupID: .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc="),
                 in: context
