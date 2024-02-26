@@ -34,27 +34,25 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
         var getFeatureConfigAction = GetFeatureConfigsAction()
         try await getFeatureConfigAction.perform(in: context.notificationContext)
 
-        let supportedProtocols = await context.perform {
-            supportedProtocolService.calculateSupportedProtocols()
-        }
-        let shouldPushSupportedProtocols = await context.perform {
+        let (oldProtocols, newProtocols) = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
-           return selfUser.supportedProtocols != supportedProtocols
+            let oldProtocols = selfUser.supportedProtocols
+            let newProtocols = supportedProtocolService.calculateSupportedProtocols()
+            return (oldProtocols, newProtocols)
         }
 
-        if shouldPushSupportedProtocols {
-            var action = PushSupportedProtocolsAction(supportedProtocols: supportedProtocols)
+        if oldProtocols != newProtocols {
+            var action = PushSupportedProtocolsAction(supportedProtocols: newProtocols)
             try await action.perform(in: context.notificationContext)
 
             await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
-                selfUser.supportedProtocols = supportedProtocols
+                selfUser.supportedProtocols = newProtocols
             }
         }
 
-        if supportedProtocols.contains(.mls) {
+        if newProtocols.contains(.mls) {
             try await resolver.resolveAllOneOnOneConversations(in: context)
         }
-
     }
 }
