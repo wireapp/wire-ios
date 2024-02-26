@@ -132,6 +132,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     func getProteusFingerPrint() async -> String {
         guard let data = await getProteusFingerprint.invoke(userClient: userClient),
                 let fingerPrint = String(data: data, encoding: .utf8) else {
+            logger.error("Valid fingerprint data is missing", attributes: nil)
             return ""
         }
         return fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
@@ -139,8 +140,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     private func startE2EIdentityEnrollment() async throws -> String? {
-        typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
         guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+            logger.error("Failed to fetch RootViewController instance", attributes: nil)
             return nil
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
@@ -154,6 +155,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         let mlsClientResolver = MLSClientResolver()
         guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient),
         let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
+            logger.error("MLSGroupID for self was not found", attributes: nil)
             return nil
         }
         return try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
