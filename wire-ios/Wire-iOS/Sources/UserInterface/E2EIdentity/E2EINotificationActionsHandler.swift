@@ -37,6 +37,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
     private let gracePeriodRepository: GracePeriodRepository
     private let targetVC: UIViewController
+    private var certificateDetails: String?
 
     // MARK: - Life cycle
 
@@ -91,7 +92,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel) {
             Task {
-                try await self.enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+                self.certificateDetails = try await self.enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
                 await self.confirmSuccessfulEnrollment()
             }
         }
@@ -102,6 +103,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private func confirmSuccessfulEnrollment() async {
         await snoozeCertificateEnrollmentUseCase.invoke()
         let successScreen = SuccessfulCertificateEnrollmentViewController()
+        successScreen.certificateDetails = certificateDetails ?? ""
         successScreen.onOkTapped = { viewController in
             viewController.dismiss(animated: true)
         }
