@@ -57,6 +57,137 @@ import WireCoreCrypto
 
 
 
+public class MockCRLExpirationDatesRepositoryProtocol: CRLExpirationDatesRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - crlExpirationDateExists
+
+    public var crlExpirationDateExistsFor_Invocations: [URL] = []
+    public var crlExpirationDateExistsFor_MockMethod: ((URL) -> Bool)?
+    public var crlExpirationDateExistsFor_MockValue: Bool?
+
+    public func crlExpirationDateExists(for distributionPoint: URL) -> Bool {
+        crlExpirationDateExistsFor_Invocations.append(distributionPoint)
+
+        if let mock = crlExpirationDateExistsFor_MockMethod {
+            return mock(distributionPoint)
+        } else if let mock = crlExpirationDateExistsFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `crlExpirationDateExistsFor`")
+        }
+    }
+
+    // MARK: - storeCRLExpirationDate
+
+    public var storeCRLExpirationDateFor_Invocations: [(expirationDate: Date, distributionPoint: URL)] = []
+    public var storeCRLExpirationDateFor_MockMethod: ((Date, URL) -> Void)?
+
+    public func storeCRLExpirationDate(_ expirationDate: Date, for distributionPoint: URL) {
+        storeCRLExpirationDateFor_Invocations.append((expirationDate: expirationDate, distributionPoint: distributionPoint))
+
+        guard let mock = storeCRLExpirationDateFor_MockMethod else {
+            fatalError("no mock for `storeCRLExpirationDateFor`")
+        }
+
+        mock(expirationDate, distributionPoint)
+    }
+
+    // MARK: - fetchAllCRLExpirationDates
+
+    public var fetchAllCRLExpirationDates_Invocations: [Void] = []
+    public var fetchAllCRLExpirationDates_MockMethod: (() -> [URL: Date])?
+    public var fetchAllCRLExpirationDates_MockValue: [URL: Date]?
+
+    public func fetchAllCRLExpirationDates() -> [URL: Date] {
+        fetchAllCRLExpirationDates_Invocations.append(())
+
+        if let mock = fetchAllCRLExpirationDates_MockMethod {
+            return mock()
+        } else if let mock = fetchAllCRLExpirationDates_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllCRLExpirationDates`")
+        }
+    }
+
+}
+
+public class MockCertificateRevocationListAPIProtocol: CertificateRevocationListAPIProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getRevocationList
+
+    public var getRevocationListFrom_Invocations: [URL] = []
+    public var getRevocationListFrom_MockError: Error?
+    public var getRevocationListFrom_MockMethod: ((URL) async throws -> Data)?
+    public var getRevocationListFrom_MockValue: Data?
+
+    public func getRevocationList(from distributionPoint: URL) async throws -> Data {
+        getRevocationListFrom_Invocations.append(distributionPoint)
+
+        if let error = getRevocationListFrom_MockError {
+            throw error
+        }
+
+        if let mock = getRevocationListFrom_MockMethod {
+            return try await mock(distributionPoint)
+        } else if let mock = getRevocationListFrom_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getRevocationListFrom`")
+        }
+    }
+
+}
+
+public class MockCertificateRevocationListsChecking: CertificateRevocationListsChecking {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - checkNewCRLs
+
+    public var checkNewCRLsFrom_Invocations: [CRLsDistributionPoints] = []
+    public var checkNewCRLsFrom_MockMethod: ((CRLsDistributionPoints) async -> Void)?
+
+    public func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async {
+        checkNewCRLsFrom_Invocations.append(distributionPoints)
+
+        guard let mock = checkNewCRLsFrom_MockMethod else {
+            fatalError("no mock for `checkNewCRLsFrom`")
+        }
+
+        await mock(distributionPoints)
+    }
+
+    // MARK: - checkExpiringCRLs
+
+    public var checkExpiringCRLs_Invocations: [Void] = []
+    public var checkExpiringCRLs_MockMethod: (() async -> Void)?
+
+    public func checkExpiringCRLs() async {
+        checkExpiringCRLs_Invocations.append(())
+
+        guard let mock = checkExpiringCRLs_MockMethod else {
+            fatalError("no mock for `checkExpiringCRLs`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockCommitSending: CommitSending {
 
     // MARK: - Life cycle
@@ -3551,6 +3682,55 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
 }
 
+public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerificationStatusUpdating {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - updateStatus
+
+    public var updateStatus_Invocations: [MLSGroupID] = []
+    public var updateStatus_MockError: Error?
+    public var updateStatus_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func updateStatus(_ groupID: MLSGroupID) async throws {
+        updateStatus_Invocations.append(groupID)
+
+        if let error = updateStatus_MockError {
+            throw error
+        }
+
+        guard let mock = updateStatus_MockMethod else {
+            fatalError("no mock for `updateStatus`")
+        }
+
+        try await mock(groupID)
+    }
+
+    // MARK: - updateAllStatuses
+
+    public var updateAllStatuses_Invocations: [Void] = []
+    public var updateAllStatuses_MockError: Error?
+    public var updateAllStatuses_MockMethod: (() async throws -> Void)?
+
+    public func updateAllStatuses() async throws {
+        updateAllStatuses_Invocations.append(())
+
+        if let error = updateAllStatuses_MockError {
+            throw error
+        }
+
+        guard let mock = updateAllStatuses_MockMethod else {
+            fatalError("no mock for `updateAllStatuses`")
+        }
+
+        try await mock()
+    }
+
+}
+
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - Life cycle
@@ -3573,6 +3753,24 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
             return mock
         } else {
             fatalError("no mock for `onEpochChanged`")
+        }
+    }
+
+    // MARK: - onNewCRLsDistributionPoints
+
+    public var onNewCRLsDistributionPoints_Invocations: [Void] = []
+    public var onNewCRLsDistributionPoints_MockMethod: (() -> AnyPublisher<CRLsDistributionPoints, Never>)?
+    public var onNewCRLsDistributionPoints_MockValue: AnyPublisher<CRLsDistributionPoints, Never>?
+
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPoints_Invocations.append(())
+
+        if let mock = onNewCRLsDistributionPoints_MockMethod {
+            return mock()
+        } else if let mock = onNewCRLsDistributionPoints_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onNewCRLsDistributionPoints`")
         }
     }
 
@@ -4131,6 +4329,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `onEpochChanged`")
+        }
+    }
+
+    // MARK: - onNewCRLsDistributionPoints
+
+    public var onNewCRLsDistributionPoints_Invocations: [Void] = []
+    public var onNewCRLsDistributionPoints_MockMethod: (() -> AnyPublisher<CRLsDistributionPoints, Never>)?
+    public var onNewCRLsDistributionPoints_MockValue: AnyPublisher<CRLsDistributionPoints, Never>?
+
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPoints_Invocations.append(())
+
+        if let mock = onNewCRLsDistributionPoints_MockMethod {
+            return mock()
+        } else if let mock = onNewCRLsDistributionPoints_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onNewCRLsDistributionPoints`")
         }
     }
 

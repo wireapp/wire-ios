@@ -137,7 +137,9 @@ extension IntegrationTest {
         userSession?.syncManagedObjectContext.performGroupedAndWait {
             $0.zm_teardownMessageObfuscationTimer()
         }
-        userSession?.managedObjectContext.zm_teardownMessageDeletionTimer()
+        userSession?.managedObjectContext.performGroupedAndWait {
+            $0.zm_teardownMessageDeletionTimer()
+        }
     }
 
     @objc
@@ -182,7 +184,9 @@ extension IntegrationTest {
     @objc
     func destroySessionManager() {
         destroyTimers()
-        userSession?.tearDown()
+        userSession?.managedObjectContext.performGroupedAndWait { _ in
+            self.userSession?.tearDown()
+        }
         userSession = nil
         sessionManager = nil
 
@@ -485,7 +489,9 @@ extension IntegrationTest {
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMConversation.sortedFetchRequest(with: predicate)
-        let result = userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMConversation]
+
+        let result = userSession?.managedObjectContext.performAndWait { userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMConversation]
+        }
 
         if let conversation = result?.first {
             return conversation
@@ -503,8 +509,11 @@ extension IntegrationTest {
 
             self.userSession.map { userSession in
                 WaitingGroupTask(context: userSession.syncManagedObjectContext) {
-                    for client in mockUser.clients {
-                        await self.establishSessionFromSelf(toRemote: client as! MockUserClient)
+                    let clients = await self.mockTransportSession.managedObjectContext.perform {
+                        mockUser.clients.map { $0 as! MockUserClient }
+                    }
+                    for client in clients {
+                        await self.establishSessionFromSelf(toRemote: client)
                     }
                 }
             }
@@ -589,19 +598,26 @@ extension IntegrationTest {
     }
 
     func performSlowSync() {
-        userSession?.applicationStatusDirectory.syncStatus.forceSlowSync()
+        userSession?.syncContext.performAndWait {
+            self.userSession?.applicationStatusDirectory.syncStatus.forceSlowSync()
+        }
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func performResyncResources() {
-        userSession?.applicationStatusDirectory.syncStatus.resyncResources()
+        userSession?.syncContext.performAndWait {
+            userSession?.applicationStatusDirectory.syncStatus.resyncResources()
+        }
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func performQuickSync() {
-        userSession?.applicationStatusDirectory.syncStatus.forceQuickSync()
+        // just for safety make sure syncStatus is modified on syncContext (avoid data races)
+        userSession?.syncContext.performAndWait {
+            userSession?.applicationStatusDirectory.syncStatus.forceQuickSync()
+        }
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
