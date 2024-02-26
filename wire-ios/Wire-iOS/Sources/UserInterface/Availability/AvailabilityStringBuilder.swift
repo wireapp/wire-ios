@@ -63,8 +63,9 @@ enum AvailabilityStringBuilder {
             }
         }
 
+        let youSuffix = L10n.Localizable.UserCell.Title.youSuffix
         if appendYouSuffix {
-            title += L10n.Localizable.UserCell.Title.youSuffix
+            title += youSuffix
         }
 
         guard let textColor = color, let iconColor = iconColor else { return nil }
@@ -79,10 +80,10 @@ enum AvailabilityStringBuilder {
             interactive: false,
             color: textColor
         )
-        if appendYouSuffix, !L10n.Localizable.UserCell.Title.youSuffix.isEmpty {
+        if appendYouSuffix {
             attributedText = attributedText.setAttributes(
-                [.foregroundColor: SemanticColors.Label.youSuffix],
-                toSubstring: L10n.Localizable.UserCell.Title.youSuffix
+                [.foregroundColor: SemanticColors.Label.textYouSuffix],
+                toSubstring: youSuffix
             )
         }
         return attributedText

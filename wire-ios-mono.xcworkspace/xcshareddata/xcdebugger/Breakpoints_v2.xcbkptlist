@@ -16,6 +16,16 @@
             symbolName = "-[UIViewController presentViewController:animated:completion:]"
             moduleName = "">
             <Locations>
+               <Location
+                  uuid = "19AA3E78-E6B0-4B09-B06D-EF3DF0CDEF5C - e3f40a65cc9014d3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[UIViewController presentViewController:animated:completion:]"
+                  moduleName = "UIKitCore"
+                  usesParentBreakpointCondition = "Yes"
+                  offsetFromSymbolStart = "0">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>

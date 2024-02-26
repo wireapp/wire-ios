@@ -63,7 +63,7 @@ public enum SemanticColors {
         static let textParticipantDisconnected = UIColor(light: Asset.Colors.red300Light, dark: Asset.Colors.red300Dark)
 
         // UserCell: e.g. "Paul Nagel (You)"
-        static let youSuffix = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
+        static let textYouSuffix = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
         static let textCertificateValid = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let textCertificateInvalid = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let textCertificateVerified = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
