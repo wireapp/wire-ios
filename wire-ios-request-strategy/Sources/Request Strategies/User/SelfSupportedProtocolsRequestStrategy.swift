@@ -69,7 +69,9 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
                 featureRepository: FeatureRepository(context: managedObjectContext),
                 userRepository: userRepository
             )
-            service.calculateSupportedProtocols()
+
+            let selfUser = userRepository.selfUser()
+            selfUser.supportedProtocols = service.calculateSupportedProtocols()
         }
 
         requestSync.readyForNextRequestIfNotBusy()
