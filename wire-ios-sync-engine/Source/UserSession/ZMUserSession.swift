@@ -446,7 +446,6 @@ public final class ZMUserSession: NSObject {
             syncContext: coreDataStack.syncContext)
 
         self.mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
-            e2eIVerificationStatusService: e2eIVerificationStatusService,
             updateMLSGroupVerificationStatus: updateMLSGroupVerificationStatus,
             syncContext: coreDataStack.syncContext
         )

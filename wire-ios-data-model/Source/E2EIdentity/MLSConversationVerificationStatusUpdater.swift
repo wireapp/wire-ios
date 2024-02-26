@@ -29,18 +29,15 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
 
     // MARK: - Properties
 
-    private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
     private let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
     private let syncContext: NSManagedObjectContext
 
     // MARK: - Life cycle
 
     public init(
-        e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
         updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol,
         syncContext: NSManagedObjectContext
     ) {
-        self.e2eIVerificationStatusService = e2eIVerificationStatusService
         self.updateMLSGroupVerificationStatus = updateMLSGroupVerificationStatus
         self.syncContext = syncContext
     }
