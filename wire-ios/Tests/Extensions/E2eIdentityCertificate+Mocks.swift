@@ -49,7 +49,7 @@ extension E2eIdentityCertificate {
     static var mockInvalid: E2eIdentityCertificate {
         E2eIdentityCertificate(
             clientId: "sdfsdfsdfs",
-            certificateDetails: .mockCertificate(),
+            certificateDetails: .mockCertificate,
             mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
             notValidBefore: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
