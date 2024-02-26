@@ -20,9 +20,9 @@ import Foundation
 
 final class MockEnrolE2eICertificateUseCase: EnrollE2EICertificateUseCaseProtocol {
 
-    var invokeCalled: ((OAuthBlock) -> Void)?
+    var invokeCalled: ((OAuthBlock) -> String?)?
 
-    func invoke(authenticate: @escaping OAuthBlock) async throws {
+    func invoke(authenticate: @escaping OAuthBlock) async throws -> String? {
         invokeCalled?(authenticate)
     }
 
