@@ -59,7 +59,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // when
-        sut.logout(credentials: credentials, {_ in })
+        sut.logout(credentials: credentials, { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -76,7 +76,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "")
 
         // when
-        sut.logout(credentials: credentials, {_ in })
+        sut.logout(credentials: credentials, { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -94,7 +94,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // when
-        sut.logout(credentials: credentials, {_ in })
+        sut.logout(credentials: credentials, { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

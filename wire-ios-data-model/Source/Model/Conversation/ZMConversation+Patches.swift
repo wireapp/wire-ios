@@ -72,7 +72,7 @@ extension ZMConversation {
 
             if isSelfAnActiveMember {
                 var participantRoleForSelfUser: ParticipantRole
-                let adminRole = conversation.getRoles().first(where: {$0.name == defaultAdminRoleName})
+                let adminRole = conversation.getRoles().first(where: { $0.name == defaultAdminRoleName })
 
                 if let conversationTeam = conversation.team, conversationTeam == selfUser.team, selfUser.isTeamMember {
                     participantRoleForSelfUser = getAParticipantRole(in: moc, adminRole: adminRole, user: selfUser, conversation: conversation, team: conversationTeam)
@@ -158,9 +158,7 @@ extension ZMConversation {
         conversations.forEach { convo in
             let users = (convo.value(forKey: oldKey) as! NSOrderedSet).array as? [ZMUser]
             users?.forEach { user in
-                let participantRole = ParticipantRole.insertNewObject(in: moc)
-                participantRole.conversation = convo
-                participantRole.user = user
+                let participantRole = ParticipantRole.create(managedObjectContext: moc, user: user, conversation: convo)
                 participantRole.role = nil
             }
             convo.setValue(NSOrderedSet(), forKey: oldKey)

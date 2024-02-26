@@ -252,7 +252,7 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
 extension NativePushChannel: URLSessionDataDelegate {
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        Logging.pushChannel.debug("Websocket open connection task did fail: \(error.map({ String(describing: $0)}) ?? "n/a" )")
+        Logging.pushChannel.debug("Websocket open connection task did fail: \(error.map({ String(describing: $0) }) ?? "n/a" )")
 
         websocketTask = nil
     }

@@ -135,6 +135,8 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
         if let supportedProtocols = payload.supportedProtocols {
             user.supportedProtocols = Set(supportedProtocols.map(\.dataModelMessageProtocol))
+        } else {
+            user.supportedProtocols = [.proteus]
         }
 
         if authoritative {
@@ -159,8 +161,8 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
         }
 
         let validAssets = payload.assets?.filter(\.key.isValidAssetID)
-        let previewAssetKey = validAssets?.first(where: {$0.size == .preview }).map(\.key)
-        let completeAssetKey = validAssets?.first(where: {$0.size == .complete }).map(\.key)
+        let previewAssetKey = validAssets?.first(where: { $0.size == .preview }).map(\.key)
+        let completeAssetKey = validAssets?.first(where: { $0.size == .complete }).map(\.key)
 
         if previewAssetKey != nil || authoritative {
             user.previewProfileAssetIdentifier = previewAssetKey

@@ -310,7 +310,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let conversation = self.conversation(for: mockConversation!)
 
         let blockedUser = self.user(for: self.user1)
-        blockedUser?.block(completion: {_ in })
+        blockedUser?.block(completion: { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         var message: ZMMessage?

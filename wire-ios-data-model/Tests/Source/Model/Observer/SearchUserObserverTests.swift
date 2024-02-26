@@ -115,7 +115,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
 
         // when
-        searchUser.connect(completion: {_ in })
+        searchUser.connect(completion: { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then

@@ -48,7 +48,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
                 "name": "New Name"
             ],
             "type": "conversation.rename"
-            ] as [String: Any]
+        ] as [String: Any]
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
 
         // when

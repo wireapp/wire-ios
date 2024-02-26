@@ -17,9 +17,10 @@
 
 import XCTest
 import WireDataModelSupport
+import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
-class ConnectionRequestStrategyTests: MessagingTestBase {
+final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     var sut: ConnectionRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -37,7 +38,12 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
+
         mockSyncProgress = MockSyncProgress()
+        mockSyncProgress.currentSyncPhase = .done
+        mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
+        mockSyncProgress.failCurrentSyncPhasePhase_MockMethod = { _ in }
+
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
 
         sut = ConnectionRequestStrategy(withManagedObjectContext: syncMOC,
@@ -148,7 +154,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         fetchConnectionsDuringSlowSync(connections: [createConnectionPayload()])
 
         // then
-        XCTAssertEqual(mockSyncProgress.didFinishCurrentSyncPhase, .fetchingConnections)
+        XCTAssertEqual(mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConnections])
     }
 
     func testThatFetchingConnectionsSyncPhaseIsFinished_WhenThereIsNoConnectionsToFetch() {
@@ -160,7 +166,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         fetchConnectionsDuringSlowSync(connections: [])
 
         // then
-        XCTAssertEqual(mockSyncProgress.didFinishCurrentSyncPhase, .fetchingConnections)
+        XCTAssertEqual(mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConnections])
     }
 
     func testThatFetchingConnectionsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
@@ -172,7 +178,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         fetchConnectionsDuringSlowSyncWithPermanentError()
 
         // then
-        XCTAssertEqual(mockSyncProgress.didFailCurrentSyncPhase, .fetchingConnections)
+        XCTAssertEqual(mockSyncProgress.failCurrentSyncPhasePhase_Invocations, [.fetchingConnections])
     }
 
     // MARK: Response processing

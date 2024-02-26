@@ -124,10 +124,10 @@ public class SearchUserSnapshot {
     /// Removes all snapshots for searchUsers that are not contained in this set
     /// This should be called when the searchDirectory changes
     public func searchDirectoryDidUpdate(newSearchUsers: [ZMSearchUser]) {
-        let remoteIDs = newSearchUsers.compactMap {$0.remoteIdentifier}
+        let remoteIDs = newSearchUsers.compactMap { $0.remoteIdentifier }
         let currentRemoteIds = Set(snapshots.keys)
         let toRemove = currentRemoteIds.subtracting(remoteIDs)
-        toRemove.forEach {snapshots.removeValue(forKey: $0)}
+        toRemove.forEach { snapshots.removeValue(forKey: $0) }
     }
 
     /// Removes the snapshots for the specified searchUser
@@ -147,7 +147,7 @@ public class SearchUserSnapshot {
 
     public func objectsDidChange(changes: [ClassIdentifier: [ObjectChangeInfo]]) {
         guard let userChanges = changes[ZMUser.entityName()] as? [UserChangeInfo] else { return }
-        userChanges.forEach {usersDidChange(info: $0)}
+        userChanges.forEach { usersDidChange(info: $0) }
     }
 
     /// Matches the userChangeInfo with the searchUser snapshots and updates those if needed

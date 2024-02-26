@@ -154,7 +154,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
         let text = NSAttributedString(string: pingText, attributes: [
             .font: UIFont.mediumFont,
             .foregroundColor: SemanticColors.Label.textDefault
-            ])
+        ])
 
         let pingColor: UIColor = message.isObfuscated ? .accentDimmedFlat : sender.accentColor
         self.configuration = View.Configuration(pingColor: pingColor, pingText: text, message: message)

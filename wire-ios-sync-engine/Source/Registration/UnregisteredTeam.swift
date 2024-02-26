@@ -57,6 +57,6 @@ public struct UnregisteredTeam: Equatable {
             "name": fullName,
             "password": password,
             "label": label?.uuidString ?? UUID().uuidString
-            ] as ZMTransportData
+        ] as ZMTransportData
     }
 }

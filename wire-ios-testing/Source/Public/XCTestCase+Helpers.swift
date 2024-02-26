@@ -161,7 +161,7 @@ extension XCTestCase {
 
     public func assertSuccess<Value, Failure>(
         result: Result<Value, Failure>,
-        message: (Failure) -> String = { "Expected to be a success but got a failure with \($0) "},
+        message: (Failure) -> String = { "Expected to be a success but got a failure with \($0) " },
         file: StaticString = #filePath,
         line: UInt = #line) {
             switch result {

@@ -94,7 +94,7 @@
     }
 }
 
-- (void)testThatChangeToAConversationNameIsNotResyncedIfNil;
+- (void)testThatChangeToAConversationNameIsNotResyncedIfNil
 {
     ZMConversation *conversation = nil;
 
@@ -117,9 +117,13 @@
 
         // Wait for merge ui->sync to be done
         WaitForAllGroupsToBeEmpty(0.5);
-        ZMConversation *syncConversation = [self.userSession.syncManagedObjectContext objectWithID:conversation.objectID];
 
-        XCTAssertFalse([syncConversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
+        [self.userSession.syncManagedObjectContext performBlockAndWait:^{
+            ZMConversation *syncConversation = [self.userSession.syncManagedObjectContext objectWithID:conversation.objectID];
+
+            XCTAssertFalse([syncConversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
+        }];
+
         XCTAssertFalse([conversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
         XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 0lu);
     }
@@ -301,7 +305,9 @@
         [groupConversation addUsersByUser:self.user1 addedUsers:@[self.selfUser]];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    [self.userSession.syncManagedObjectContext saveOrRollback];
+    [self.userSession.syncManagedObjectContext performBlockAndWait:^{
+        [self.userSession.syncManagedObjectContext saveOrRollback];
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
 
     //By this moment new conversation should be created and self user should be it's member

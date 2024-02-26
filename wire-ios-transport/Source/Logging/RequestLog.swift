@@ -106,7 +106,7 @@ extension URL {
     }
 }
 
-private extension String {
+public extension String {
     var redacted: String {
         return "*".repeat(self.count)
     }

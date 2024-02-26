@@ -198,7 +198,7 @@ public enum ClientUpdateError: NSInteger {
     var selfUserClientsExcludingSelfClient: [UserClient] {
         let selfUser = ZMUser.selfUser(in: self.syncManagedObjectContext)
         let selfClient = selfUser.selfClient()
-        let remainingClients = selfUser.clients.filter {$0 != selfClient && !$0.isZombieObject}
+        let remainingClients = selfUser.clients.filter { $0 != selfClient && !$0.isZombieObject }
         return Array(remainingClients)
     }
 

@@ -649,6 +649,53 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     }
 
 }
+public class MockSyncProgress: SyncProgress {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - currentSyncPhase
+
+    public var currentSyncPhase: SyncPhase {
+        get { return underlyingCurrentSyncPhase }
+        set(value) { underlyingCurrentSyncPhase = value }
+    }
+
+    public var underlyingCurrentSyncPhase: SyncPhase!
+
+
+    // MARK: - finishCurrentSyncPhase
+
+    public var finishCurrentSyncPhasePhase_Invocations: [SyncPhase] = []
+    public var finishCurrentSyncPhasePhase_MockMethod: ((SyncPhase) -> Void)?
+
+    public func finishCurrentSyncPhase(phase: SyncPhase) {
+        finishCurrentSyncPhasePhase_Invocations.append(phase)
+
+        guard let mock = finishCurrentSyncPhasePhase_MockMethod else {
+            fatalError("no mock for `finishCurrentSyncPhasePhase`")
+        }
+
+        mock(phase)
+    }
+
+    // MARK: - failCurrentSyncPhase
+
+    public var failCurrentSyncPhasePhase_Invocations: [SyncPhase] = []
+    public var failCurrentSyncPhasePhase_MockMethod: ((SyncPhase) -> Void)?
+
+    public func failCurrentSyncPhase(phase: SyncPhase) {
+        failCurrentSyncPhasePhase_Invocations.append(phase)
+
+        guard let mock = failCurrentSyncPhasePhase_MockMethod else {
+            fatalError("no mock for `failCurrentSyncPhasePhase`")
+        }
+
+        mock(phase)
+    }
+
+}
 class MockUserProfilePayloadProcessing: UserProfilePayloadProcessing {
 
     // MARK: - Life cycle

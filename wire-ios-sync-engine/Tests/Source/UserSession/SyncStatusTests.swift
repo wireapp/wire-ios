@@ -67,21 +67,11 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
     }
 
-    private var syncPhases: [SyncPhase] {
-        return [.fetchingLastUpdateEventID,
-                .fetchingTeams,
-                .fetchingTeamRoles,
-                .fetchingConnections,
-                .fetchingConversations,
-                .fetchingUsers,
-                .fetchingSelfUser,
-                .fetchingLegalHoldStatus,
-                .fetchingLabels,
-                .fetchingMissedEvents]
-    }
-
     func testThatItGoesThroughTheStatesInSpecificOrder() {
         // given
+        var syncPhases = SyncPhase.allCases
+        syncPhases.removeLast() // last phase is '.done' and can not be finished
+
         sut.determineInitialSyncPhase()
 
         syncPhases.forEach { syncPhase in
@@ -109,6 +99,8 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
+        // then
+        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
         // when
@@ -139,6 +131,12 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
+        // when
+        sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
 
         // then
         XCTAssertNotNil(lastEventIDRepository.fetchLastEventID())
@@ -159,6 +157,10 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
+        // then
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingTeamMembers)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeamRoles)
         // when
@@ -198,6 +200,8 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishQuickSync)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishQuickSync)
         // when
@@ -222,6 +226,12 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingLegalHoldStatus)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
+        // when
+        sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
 
@@ -282,10 +292,7 @@ final class SyncStatusTests: MessagingTest {
 
     }
 
-}
-
-// MARK: QuickSync
-extension SyncStatusTests {
+    // MARK: - QuickSync
 
     func testThatItStartsQuickSyncWhenPushChannelOpens_PreviousPhaseDone() {
         // given
@@ -368,7 +375,7 @@ extension SyncStatusTests {
         sut.forceSlowSync()
 
         // then
-        XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
         XCTAssertTrue(sut.isSyncing)
     }
 
@@ -381,7 +388,7 @@ extension SyncStatusTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        NotificationInContext(name: .ForceSlowSync, context: uiMOC.notificationContext).post()
+        NotificationInContext(name: .resyncResources, context: uiMOC.notificationContext).post()
 
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
@@ -461,6 +468,8 @@ extension SyncStatusTests {
         sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertNotEqual(lastEventIDRepository.fetchLastEventID(), newID)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
         // then
         XCTAssertNotEqual(lastEventIDRepository.fetchLastEventID(), newID)
         // when
@@ -487,6 +496,15 @@ extension SyncStatusTests {
         // when
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLabels)
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingFeatureConfig)
+        sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .updateSelfSupportedProtocols)
+        sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .evaluate1on1ConversationsForMLS)
+        sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
 
         // then
         XCTAssertEqual(lastEventIDRepository.fetchLastEventID(), newID)

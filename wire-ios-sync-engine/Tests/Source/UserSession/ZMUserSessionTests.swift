@@ -515,7 +515,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
         // given
         mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.commitPendingProposals_MockMethod = {}
+        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
@@ -535,5 +535,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
         XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
         XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
     }
 }

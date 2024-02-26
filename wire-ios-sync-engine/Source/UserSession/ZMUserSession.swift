@@ -575,8 +575,8 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Network
 
-    public func requestSlowSync() {
-        applicationStatusDirectory.requestSlowSync()
+    public func requestResyncResources() {
+        applicationStatusDirectory.requestResyncResources()
     }
 
     // MARK: - Access Token
@@ -711,15 +711,15 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     public func didFinishSlowSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
-            self?.hasCompletedInitialSync = true
-            self?.notificationDispatcher.isEnabled = true
+            guard let self else { return }
 
-            if let context = self?.managedObjectContext {
-                ZMUserSession.notifyInitialSyncCompleted(context: context)
-            }
+            self.hasCompletedInitialSync = true
+            self.notificationDispatcher.isEnabled = true
+            ZMUserSession.notifyInitialSyncCompleted(context: managedObjectContext)
         }
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
+
         if selfClient?.hasRegisteredMLSClient == true {
             Task {
                 await mlsService.repairOutOfSyncConversations()
@@ -755,17 +755,12 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 } catch {
                     WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
                 }
-
-                do {
-                    try await mlsService.commitPendingProposals()
-                } catch {
-                    WireLogger.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
-                }
                 await mlsService.uploadKeyPackagesIfNeeded()
                 await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
             }
         }
 
+        mlsService.commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()
         recurringActionService.performActionsIfNeeded()
 
@@ -817,19 +812,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 }
             } catch {
                 WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
-            }
-        }
-    }
-
-    // swiftlint:disable todo_requires_jira_link
-    // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
-    // swiftlint:enable todo_requires_jira_link
-    private func commitPendingProposalsIfNeeded() {
-        Task {
-            do {
-                try await mlsService.commitPendingProposals()
-            } catch {
-                WireLogger.mls.error("Failed to commit pending proposals: \(String(describing: error))")
             }
         }
     }
@@ -908,7 +890,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
 extension ZMUserSession: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        urlActionProcessors?.forEach({ $0.process(urlAction: urlAction, delegate: delegate)})
+        urlActionProcessors?.forEach({ $0.process(urlAction: urlAction, delegate: delegate) })
     }
 }
 

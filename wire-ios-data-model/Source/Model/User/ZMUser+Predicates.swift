@@ -59,7 +59,7 @@ extension ZMUser {
         if !query.isEmpty {
             let namePredicate = NSPredicate(formatDictionary: [#keyPath(ZMUser.normalizedName): "%K MATCHES %@"], matchingSearch: query)
             let handlePredicate = NSPredicate(format: "%K BEGINSWITH %@", #keyPath(ZMUser.handle), query.strippingLeadingAtSign())
-            allPredicates.append([namePredicate, handlePredicate].compactMap {$0})
+            allPredicates.append([namePredicate, handlePredicate].compactMap { $0 })
         }
 
         let orPredicates = allPredicates.map { NSCompoundPredicate(orPredicateWithSubpredicates: $0) }
@@ -80,6 +80,10 @@ extension ZMUser {
         return NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
     }
 
+    static func predicateForUsersWithOneOnOneConversation() -> NSPredicate {
+        NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
+    }
+
     public static func predicateForConnectedUsers(hostedOnDomain domain: String) -> NSPredicate {
         return NSPredicate.isHostedOnDomain(domain)
                           .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue]))
@@ -92,6 +96,8 @@ extension ZMUser {
     }
 
 }
+
+// MARK: - Domain
 
 private extension NSPredicate {
 

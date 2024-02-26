@@ -105,7 +105,6 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, nullable) NSDate *archivedChangedTimestamp;
 @property (nonatomic, nullable) NSDate *silencedChangedTimestamp;
 
-@property (nonatomic, nullable) NSUUID *remoteIdentifier;
 @property (nonatomic, nullable) NSUUID *teamRemoteIdentifier;
 @property (readonly, nonatomic, nonnull) NSMutableSet<ZMMessage *> *mutableMessages;
 @property (readonly, nonatomic, nonnull) NSSet<ZMMessage *> *hiddenMessages;

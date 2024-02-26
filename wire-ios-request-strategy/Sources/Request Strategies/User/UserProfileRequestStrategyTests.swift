@@ -17,6 +17,7 @@
 
 import Foundation
 import XCTest
+import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
 class UserProfileRequestStrategyTests: MessagingTestBase {
@@ -36,11 +37,16 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        mockSyncProgress = MockSyncProgress()
 
-        sut = UserProfileRequestStrategy(managedObjectContext: syncMOC,
-                                         applicationStatus: mockApplicationStatus,
-                                         syncProgress: mockSyncProgress)
+        mockSyncProgress = MockSyncProgress()
+        mockSyncProgress.currentSyncPhase = .done
+        mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
+
+        sut = UserProfileRequestStrategy(
+            managedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncProgress: mockSyncProgress
+        )
 
         apiVersion = .v0
     }
@@ -197,7 +203,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
         syncMOC.performGroupedBlockAndWait {
             // then
-            XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingUsers)
+            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingUsers])
             XCTAssertFalse(self.sut.isFetchingAllConnectedUsers)
         }
     }
@@ -214,7 +220,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             _ = self.sut.nextRequest(for: self.apiVersion)
 
             // then
-            XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingUsers)
+            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingUsers])
             XCTAssertFalse(self.sut.isFetchingAllConnectedUsers)
         }
     }

@@ -20,6 +20,7 @@ import UIKit
 
 extension UINavigationItem {
 
+    @available(*, deprecated, message: "Please use `setDynamicFontLabel(title:)`!")
     func setupNavigationBarTitle(title: String) {
         let titleLabel = DynamicFontLabel(
             text: title,
@@ -28,4 +29,11 @@ extension UINavigationItem {
         titleView = titleLabel
     }
 
+    func setDynamicFontLabel(title: String) {
+        titleView = DynamicFontLabel(
+            text: title,
+            style: .headline,
+            color: SemanticColors.Label.textDefault
+        )
+    }
 }

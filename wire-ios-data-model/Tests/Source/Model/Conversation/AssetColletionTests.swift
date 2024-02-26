@@ -45,7 +45,7 @@ class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
     }
 
     func allMessages(for categoryMatch: CategoryMatch) -> [ZMMessage] {
-        return messagesByFilter.reduce([ZMMessage]()) {$0 + ($1[categoryMatch] ?? [])}
+        return messagesByFilter.reduce([ZMMessage]()) { $0 + ($1[categoryMatch] ?? []) }
     }
 }
 
@@ -227,7 +227,7 @@ class AssetColletionTests: ModelObjectsTests {
 
         // given
         insertAssetMessages(count: 1000)
-        uiMOC.registeredObjects.forEach {uiMOC.refresh($0, mergeChanges: false)}
+        uiMOC.registeredObjects.forEach { uiMOC.refresh($0, mergeChanges: false) }
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
 
@@ -241,7 +241,7 @@ class AssetColletionTests: ModelObjectsTests {
             // then
             self.sut.tearDown()
             self.sut = nil
-            self.uiMOC.registeredObjects.forEach {self.uiMOC.refresh($0, mergeChanges: false)}
+            self.uiMOC.registeredObjects.forEach { self.uiMOC.refresh($0, mergeChanges: false) }
         }
     }
 
@@ -250,7 +250,7 @@ class AssetColletionTests: ModelObjectsTests {
         insertAssetMessages(count: 10)
 
         // when
-        conversation.allMessages.forEach {_ = $0.cachedCategory}
+        conversation.allMessages.forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
         sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
@@ -264,7 +264,7 @@ class AssetColletionTests: ModelObjectsTests {
     func testThatItGetsPreCategorizedMessagesInTheCorrectOrder() {
         // given
         let messages = insertAssetMessages(count: 10)
-        conversation.allMessages.forEach {_ = $0.cachedCategory}
+        conversation.allMessages.forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
         // when
@@ -284,7 +284,7 @@ class AssetColletionTests: ModelObjectsTests {
         _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
 
         // when
-        conversation.allMessages.forEach {_ = $0.cachedCategory}
+        conversation.allMessages.forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
         let excludingGif = CategoryMatch(including: .image, excluding: .GIF)
         sut = AssetCollection(conversation: conversation, matchingCategories: [excludingGif], delegate: delegate)
@@ -370,7 +370,7 @@ class AssetColletionTests: ModelObjectsTests {
     func testThatItFetchesPreAndUncategorizedObjectsAndSavesThemAsUIDObjects() {
         // given
         let messages = insertAssetMessages(count: 20)
-        messages[0..<10].forEach {_ = $0.cachedCategory}
+        messages[0..<10].forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
         // when
