@@ -208,8 +208,9 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    private lazy var supportedProtocolService = SupportedProtocolsService(context: syncContext)
-    private lazy var oneOnOneResolver = OneOnOneResolver(syncContext: syncContext)
+     lazy var supportedProtocolService = SupportedProtocolsService(context: syncContext)
+     lazy var oneOnOneResolver = OneOnOneResolver(syncContext: syncContext)
+     let useCaseFactory: UseCaseFactoryProtocol
 
     weak var delegate: UserSessionDelegate?
 
@@ -288,7 +289,8 @@ public final class ZMUserSession: NSObject {
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        useCaseFactory: UseCaseFactoryProtocol
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -353,6 +355,8 @@ public final class ZMUserSession: NSObject {
             context: coreDataStack.syncContext,
             userID: userId
         )
+
+        self.useCaseFactory = UseCaseFactory(context: syncContext, supportedProtocolService: supportedProtocolService, oneOnOneResolver: oneOnOneResolver)
 
         super.init()
 
@@ -750,15 +754,12 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         WaitingGroupTask(context: syncContext) { [self] in
             do {
-                try await ResolveOneOnOneConversationsUseCase(
-                    context: syncContext,
-                    supportedProtocolService: supportedProtocolService,
-                    resolver: oneOnOneResolver
-                ).invoke()
+                try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
             } catch {
                 WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
             }
         }
+
         recurringActionService.performActionsIfNeeded()
 
         managedObjectContext.performGroupedBlock { [weak self] in
