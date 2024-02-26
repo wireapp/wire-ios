@@ -49,9 +49,9 @@ public protocol UserSessionLogoutDelegate: NSObjectProtocol {
 }
 
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
-    & UserSessionSelfUserClientDelegate
-    & UserSessionLogoutDelegate
-    & UserSessionAppLockDelegate
+& UserSessionSelfUserClientDelegate
+& UserSessionLogoutDelegate
+& UserSessionAppLockDelegate
 
 @objcMembers
 public final class ZMUserSession: NSObject {
@@ -415,10 +415,10 @@ public final class ZMUserSession: NSObject {
         ) { [weak self] in
             guard let context = self?.syncContext else { return }
 
-//            context.perform {
-//                let service = SupportedProtocolsService(context: context)
-//                service.updateSupportedProtocols()
-//            }
+            //            context.perform {
+            //                let service = SupportedProtocolsService(context: context)
+            //                service.updateSupportedProtocols()
+            //            }
         }
 
         recurringActionService.registerAction(recurringAction)
@@ -764,6 +764,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         mlsService.commitPendingProposalsIfNeeded()
+
         WaitingGroupTask(context: syncContext) { [self] in
             do {
                 try await ResolveOneOnOneConversationsUseCase(
@@ -827,22 +828,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
-    }
-
-    private func fetchFeatureConfigs() {
-        let action = GetFeatureConfigsAction { [weak self] result in
-            switch result {
-            case .success:
-                guard let context = self?.syncContext else {
-                    return
-                }
-
-            case .failure(let reason):
-                Logging.network.error("Failed to fetch feature configs: \(String(describing: reason))")
-            }
-        }
-
-        action.send(in: syncContext.notificationContext)
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
