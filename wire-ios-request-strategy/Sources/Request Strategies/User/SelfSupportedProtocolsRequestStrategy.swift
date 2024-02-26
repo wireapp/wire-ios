@@ -78,6 +78,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
         )
 
         let calculatedProtocols = service.calculateSupportedProtocols()
+        assert(!calculatedProtocols.isEmpty, "expected supported protocols to be set before updating")
 
         let transportBuilder = SelfSupportedProtocolsRequestBuilder(
             apiVersion: apiVersion,
