@@ -478,7 +478,9 @@ public final class ZMUserSession: NSObject {
             createMLSClientIfNeeded()
 
             if e2eiFeature.isEnabled {
-                observeMLSGroupVerificationStatus.invoke()
+                Task {
+                   await observeMLSGroupVerificationStatus.invoke()
+                }
             }
         }
 

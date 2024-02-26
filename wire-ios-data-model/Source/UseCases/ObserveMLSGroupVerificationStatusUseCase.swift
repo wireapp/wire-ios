@@ -20,7 +20,7 @@ import Foundation
 
 public protocol ObserveMLSGroupVerificationStatusUseCaseProtocol {
 
-    func invoke()
+    func invoke() async
 
 }
 
@@ -28,28 +28,26 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
 
     // MARK: - Properties
 
-    var mlsService: MLSServiceInterface
-    var updateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol
+    private let mlsService: MLSServiceInterface
+    private let updateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol
 
     // MARK: - Life cycle
 
     public init(
         mlsService: MLSServiceInterface,
         updateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol) {
-            self.mlsService = mlsService
-            self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatusUseCase
-        }
+        self.mlsService = mlsService
+        self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatusUseCase
+    }
 
     // MARK: - Methods
 
-    public func invoke() {
-        Task {
-            for try await groupID in mlsService.epochChanges() {
-                do {
-                    try await updateMLSGroupVerificationStatusUseCase.invoke(groupID: groupID)
-                } catch {
-                    WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
-                }
+    public func invoke() async {
+        for try await groupID in mlsService.epochChanges() {
+            do {
+                try await updateMLSGroupVerificationStatusUseCase.invoke(groupID: groupID)
+            } catch {
+                WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
             }
         }
     }
