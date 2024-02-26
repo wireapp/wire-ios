@@ -290,7 +290,7 @@ public final class ZMUserSession: NSObject {
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
         sharedUserDefaults: UserDefaults,
-        useCaseFactory: UseCaseFactoryProtocol
+        useCaseFactory: UseCaseFactoryProtocol? = nil
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -356,7 +356,9 @@ public final class ZMUserSession: NSObject {
             userID: userId
         )
 
-        self.useCaseFactory = UseCaseFactory(context: syncContext, supportedProtocolService: supportedProtocolService, oneOnOneResolver: oneOnOneResolver)
+        self.useCaseFactory = useCaseFactory ?? UseCaseFactory(context: coreDataStack.syncContext,
+                                             supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
+                                             oneOnOneResolver: OneOnOneResolver(mlsService: self.mlsService))
 
         super.init()
 

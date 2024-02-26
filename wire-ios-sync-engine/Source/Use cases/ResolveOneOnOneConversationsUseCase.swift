@@ -18,7 +18,8 @@
 
 import Foundation
 
-protocol ResolveOneOnOneConversationsUseCaseProtocol {
+// sourcery: AutoMockable
+public protocol ResolveOneOnOneConversationsUseCaseProtocol {
 
     func invoke() async throws
 

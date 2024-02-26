@@ -18,7 +18,8 @@
 
 import Foundation
 
-protocol UseCaseFactoryProtocol {
+// sourcery: AutoMockable
+public protocol UseCaseFactoryProtocol {
 
     func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol
 
@@ -30,7 +31,7 @@ struct UseCaseFactory: UseCaseFactoryProtocol {
     var supportedProtocolService: SupportedProtocolsServiceInterface
     var oneOnOneResolver: OneOnOneResolverInterface
 
-    func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
+    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
         ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: supportedProtocolService,
@@ -39,22 +40,3 @@ struct UseCaseFactory: UseCaseFactoryProtocol {
     }
 
 }
-
-// struct MockUseCaseFactory: UseCaseFactoryProtocol {
-//    func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
-//        return MockResolveOneOnOneConversationsUseCaseProtocol()
-//    }
-// }
-//
-//
-// let mock = MockUseCaseFactory()
-//
-//// insert mock in UserSession
-//// UserSession has a UseCaseFactoryProtocol property
-//
-// mock.createResolveOneOnOneUseCase_block = { MockResolveOneOnOneConversationsUseCaseProtocol() }
-// struct MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneConversationsUseCaseProtocol {
-//    func invoke() async throws {
-//
-//    }
-// }
