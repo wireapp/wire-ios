@@ -33,7 +33,6 @@ class PushSupportedProtocolActionHandler: ActionHandler<PushSupportedProtocolsAc
         }
 
         return transportRequest
-
     }
 
     // MARK: - Response
@@ -51,7 +50,6 @@ class PushSupportedProtocolActionHandler: ActionHandler<PushSupportedProtocolsAc
             let error = response.errorInfo
             action.fail(with: .unknownError(code: error.status, label: error.label, message: error.message))
         }
-
     }
 
 }
