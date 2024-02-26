@@ -27,7 +27,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
     var mockView: UIView!
     private var mockViewController: MockConversationListContainer!
     var userSession: UserSessionMock!
-    private var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
+    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     var coreDataFixture: CoreDataFixture!
 
@@ -38,8 +38,8 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
 
         userSession = UserSessionMock()
 
-        isUserE2EICertifiedUseCase = MockIsUserE2EICertifiedUseCaseProtocol()
-        isUserE2EICertifiedUseCase.invokeConversationUser_MockValue = false
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
         let account = Account.mockAccount(imageData: Data())
         let selfUser = MockUserType.createSelfUser(name: "Bob")
@@ -47,7 +47,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
             account: account,
             selfUser: selfUser,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )
 
         mockViewController = MockConversationListContainer(viewModel: sut)
@@ -61,6 +61,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
         mockViewController = nil
         coreDataFixture = nil
         userSession = nil
+        mockIsSelfUserE2EICertifiedUseCase = nil
 
         super.tearDown()
     }

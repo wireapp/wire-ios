@@ -58,8 +58,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     // MARK: - Properties
 
-    let context: NSManagedObjectContext
-
+    private let context: NSManagedObjectContext
     private let logger = WireLogger(tag: "FeatureRepository")
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
@@ -314,7 +313,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     public func fetchE2EI() -> Feature.E2EI {
         guard
-            let feature = context.performAndWait({ Feature.fetch(name: .e2ei, context: context) }),
+            let feature = Feature.fetch(name: .e2ei, context: context),
             let featureConfig = feature.config
         else {
             return .init()

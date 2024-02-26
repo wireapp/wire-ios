@@ -27,7 +27,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
     private var selfUser: MockUserType!
     private var mockConversation: ZMConversation!
     private var userSession: UserSessionMock!
-    private var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
+    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
@@ -35,13 +35,13 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         let account = Account.mockAccount(imageData: Data())
         selfUser = .createSelfUser(name: "Bob")
         userSession = UserSessionMock(mockUser: selfUser)
-        isUserE2EICertifiedUseCase = MockIsUserE2EICertifiedUseCaseProtocol()
-        isUserE2EICertifiedUseCase.invokeConversationUser_MockValue = false
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
         sut = ConversationListViewController.ViewModel(
             account: account,
             selfUser: selfUser,
             userSession: userSession,
-            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )
         mockViewController = MockConversationListContainer(viewModel: sut)
         sut.viewController = mockViewController
@@ -49,7 +49,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
-        isUserE2EICertifiedUseCase = nil
+        mockIsSelfUserE2EICertifiedUseCase = nil
         mockViewController = nil
         selfUser = nil
         mockConversation = nil
