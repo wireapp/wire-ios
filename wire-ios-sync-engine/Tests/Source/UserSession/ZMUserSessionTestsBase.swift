@@ -17,6 +17,8 @@
 //
 
 import WireDataModelSupport
+import WireSyncEngineSupport
+import WireRequestStrategySupport
 
 final class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
 
@@ -42,6 +44,8 @@ class ZMUserSessionTestsBase: MessagingTest {
     var dataChangeNotificationsCount: UInt = 0
     var thirdPartyServices: ThirdPartyServices!
     var mockSyncStateDelegate: MockSyncStateDelegate!
+    var mockUseCaseFactory: MockUseCaseFactoryProtocol!
+    var mockOneOnOneResolver: MockResolveOneOnOneConversationsUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
@@ -57,7 +61,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.mockSessionManager =  MockSessionManager()
         self.mediaManager = MockMediaManager()
         self.flowManagerMock = FlowManagerMock()
-
         createSut()
 
         self.sut.thirdPartyServicesDelegate = self.thirdPartyServices
@@ -83,6 +86,8 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.transportSession = nil
         self.mediaManager = nil
         self.flowManagerMock = nil
+        self.mockUseCaseFactory = nil
+        self.mockOneOnOneResolver = nil
         let sut = self.sut
         self.sut = nil
         sut?.tearDown()
@@ -95,7 +100,17 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockUpdateEventProcessor = MockUpdateEventProcessor()
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockMLSService = MockMLSServiceInterface()
+        mockUseCaseFactory = MockUseCaseFactoryProtocol()
+        mockOneOnOneResolver = MockResolveOneOnOneConversationsUseCaseProtocol()
+
+        mockUseCaseFactory.createResolveOneOnOneUseCase_MockMethod = {
+            return self.mockOneOnOneResolver
+        }
+
+        mockOneOnOneResolver.invoke_MockMethod = { }
+
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
+
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
         sut = ZMUserSession(
             userId: coreDataStack.account.userIdentifier,
@@ -113,7 +128,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             configuration: .init(),
             mlsService: mockMLSService,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            useCaseFactory: mockUseCaseFactory
         )
     }
 
