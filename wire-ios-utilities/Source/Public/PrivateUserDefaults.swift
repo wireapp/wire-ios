@@ -85,6 +85,10 @@ extension PrivateUserDefaults {
         return storage.object(forKey: scopeKey(key)) as? Date
     }
 
+    public func removeObject(forKey key: Key) {
+        storage.removeObject(forKey: scopeKey(key))
+    }
+
 }
 
 public protocol DefaultsKey {

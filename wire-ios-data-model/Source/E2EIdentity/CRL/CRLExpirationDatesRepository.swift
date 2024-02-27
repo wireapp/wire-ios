@@ -65,8 +65,18 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
 
     public func storeCRLExpirationDate(_ expirationDate: Date, for distributionPoint: URL) {
         let dpString = distributionPoint.absoluteString
+        let expirationDateKey = Key.expirationDate(dp: dpString)
+
         storeDistributionPointIfNeeded(dpString)
-        storage.set(expirationDate, forKey: Key.expirationDate(dp: distributionPoint.absoluteString))
+
+        if DeveloperFlag.forceCRLExpiryAfterThirtyMinutes.isOn {
+            storage.set(
+                Calendar.current.date(byAdding: .minute, value: 30, to: .now)!,
+                forKey: expirationDateKey
+            )
+        } else {
+            storage.set(expirationDate, forKey: expirationDateKey)
+        }
     }
 
     public func fetchAllCRLExpirationDates() -> [URL: Date] {
@@ -90,6 +100,16 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
         }
 
         return expirationDatesByDistributionPoint
+    }
+
+    public func removeAllExpirationDates() {
+        guard let knownDistributionPoints = storage.object(forKey: Key.distributionPoints) as? [String] else {
+            return
+        }
+
+        knownDistributionPoints.forEach {
+            storage.removeObject(forKey: .expirationDate(dp: $0))
+        }
     }
 
     // MARK: - Helpers

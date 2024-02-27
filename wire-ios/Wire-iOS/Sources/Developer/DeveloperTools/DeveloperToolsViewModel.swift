@@ -122,7 +122,9 @@ final class DeveloperToolsViewModel: ObservableObject {
         sections.append(Section(
             header: "Actions",
             items: [
-                .button(ButtonItem(title: "Enroll e2ei certificate", action: enrollE2EICertificate)),
+                .destination(DestinationItem(title: "E2E Identity", makeView: {
+                    AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
+                })),
                 .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
                     AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
                 })),
@@ -241,24 +243,6 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     // MARK: - Actions
-
-    private func enrollE2EICertificate() {
-        guard let session = ZMUserSession.shared() else { return }
-        let e2eiCertificateUseCase = session.enrollE2EICertificate
-        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
-            return
-        }
-        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
-
-        Task {
-            do {
-                _ = try await e2eiCertificateUseCase.invoke(
-                    authenticate: oauthUseCase.invoke)
-            } catch {
-                WireLogger.e2ei.error("failed to enroll e2ei: \(error)")
-            }
-        }
-    }
 
     private func checkRegisteredTokens() {
         guard
