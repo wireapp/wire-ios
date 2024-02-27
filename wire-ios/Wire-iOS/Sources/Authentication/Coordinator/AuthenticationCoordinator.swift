@@ -877,9 +877,7 @@ extension AuthenticationCoordinator {
 
         Task {
             do {
-                let certificateChain = try await e2eiCertificateUseCase.invoke(
-                    authenticate: oauthUseCase.invoke
-                ) ?? ""
+                let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
                 await MainActor.run {
                     executeActions([
                         .hideLoadingView,

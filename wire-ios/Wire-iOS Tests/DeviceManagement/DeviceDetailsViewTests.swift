@@ -20,6 +20,7 @@ import XCTest
 @testable import Wire
 import SwiftUI
 import WireSyncEngineSupport
+import WireRequestStrategySupport
 
 final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
@@ -83,7 +84,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             mlsThumbprint: mlsThumbprint,
             getProteusFingerprint: mockSession.mockGetUserClientFingerprintUseCaseProtocol,
             contextProvider: mockContextProvider,
-            e2eiCertificateEnrollment: MockEnrolE2eICertificateUseCase()
+            e2eiCertificateEnrollment: MockEnrollE2EICertificateUseCaseProtocol()
         )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isSelfClient = isSelfClient
