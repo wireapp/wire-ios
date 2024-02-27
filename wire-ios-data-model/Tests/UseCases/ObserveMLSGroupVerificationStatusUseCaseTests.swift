@@ -31,6 +31,8 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
     private var context: NSManagedObjectContext { syncMOC }
 
     override func setUp() {
+        super.setUp()
+
         setupConversation()
         mockMLSService = .init()
         mockUpdateMLSGroupVerificationStatusUseCase = .init()
@@ -46,11 +48,13 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
         mockUpdateMLSGroupVerificationStatusUseCase = nil
         mockMLSService = nil
         conversation = nil
+
+        super.tearDown()
     }
 
     func testExample() async throws {
         // Given
-        let mlsGroupID = /*try await context.perform {*/ try XCTUnwrap(self.conversation.mlsGroupID) // }
+        let mlsGroupID = try await context.perform { try XCTUnwrap(self.conversation.mlsGroupID) }
 
         mockMLSService.epochChanges_MockValue = .init { continuation in
 
@@ -78,13 +82,12 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
     }
 
     private func setupConversation() {
-        // context.performAndWait {
-            print(context)
+        context.performAndWait {
             let helper = ModelHelper()
             helper.createSelfUser(in: context)
             let otherUser = helper.createUser(in: context)
             conversation = helper.createOneOnOne(with: otherUser, in: context)
             conversation.mlsGroupID = .random()
-        // }
+         }
     }
 }
