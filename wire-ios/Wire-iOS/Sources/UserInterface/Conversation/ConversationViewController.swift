@@ -182,6 +182,7 @@ final class ConversationViewController: UIViewController {
         }
 
         resolveConversationIfOneOnOne()
+        updateVerificationStatusIfNeeded()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -432,6 +433,35 @@ final class ConversationViewController: UIViewController {
     private func hideAndDestroyParticipantsPopover() {
         if (presentedViewController is GroupDetailsViewController) || (presentedViewController is ProfileViewController) {
             dismiss(animated: true)
+        }
+    }
+
+    // MARK: - Update verification status for MLS groups
+
+    private func updateVerificationStatusIfNeeded() {
+        guard
+            conversation.conversationType == .group,
+            conversation.messageProtocol == .mls
+        else {
+            return
+        }
+
+        guard
+            let mlsGroupID = conversation.mlsGroupID
+        else {
+            WireLogger.conversation.warn("missing mlsGroupID to update verification status!")
+            return
+        }
+
+        Task {
+            do {
+                try await userSession.updateMLSGroupVerificationStatus.invoke(
+                    for: conversation,
+                    groupID: mlsGroupID)
+                setupNavigatiomItem()
+            } catch {
+                WireLogger.e2ei.error("failed to update conversation's verification status: \(String(reflecting: error))")
+            }
         }
     }
 }

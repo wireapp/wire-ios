@@ -3145,9 +3145,9 @@ internal enum L10n {
           /// As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.
           /// Enter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.
           internal static let message = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.message", fallback: "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\nEnter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.")
-          /// You can get the certificate in your **Wire Settings** during the next %@. Open **Devices** and select **Get Certificate** for your current device.
+          /// You can get the certificate in your 'Wire Settings' during the next %@. Open 'Devices' and select 'Get Certificate' for your current device.
           internal static func reminderMessage(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "feature_config.alert.mls_e2ei.reminder_message", String(describing: p1), fallback: "You can get the certificate in your **Wire Settings** during the next %@. Open **Devices** and select **Get Certificate** for your current device.")
+            return L10n.tr("Localizable", "feature_config.alert.mls_e2ei.reminder_message", String(describing: p1), fallback: "You can get the certificate in your 'Wire Settings' during the next %@. Open 'Devices' and select 'Get Certificate' for your current device.")
           }
           /// End-to-end identity certificate
           internal static let title = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.title", fallback: "End-to-end identity certificate")

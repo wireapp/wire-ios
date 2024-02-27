@@ -108,6 +108,8 @@ public final class ZMUserSession: NSObject {
     let cRLsChecker: CertificateRevocationListsChecking
     let cRLsDistributionPointsObserver: CRLsDistributionPointsObserving
     let mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating
+    let observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol
+    public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
 
     public var syncStatus: SyncStatusProtocol {
         return applicationStatusDirectory.syncStatus
@@ -338,13 +340,6 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
-    lazy var mlsConversationVerificationManager: MLSConversationVerificationManager = {
-        return MLSConversationVerificationManager(
-            mlsService: mlsService,
-            mlsConversationVerificationStatusUpdater: mlsConversationVerificationStatusUpdater
-        )
-    }()
-
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
@@ -373,6 +368,7 @@ public final class ZMUserSession: NSObject {
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
         cRLsChecker: CertificateRevocationListsChecker? = nil,
         cRLsDistributionPointsObserver: CRLsDistributionPointsObserver? = nil,
+        observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol? = nil,
         sharedUserDefaults: UserDefaults
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
@@ -445,8 +441,13 @@ public final class ZMUserSession: NSObject {
         )
 
         let e2eIVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
-        self.mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
+        self.updateMLSGroupVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
             e2eIVerificationStatusService: e2eIVerificationStatusService,
+            context: coreDataStack.syncContext,
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext))
+
+        self.mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
+            updateMLSGroupVerificationStatus: updateMLSGroupVerificationStatus,
             syncContext: coreDataStack.syncContext
         )
 
@@ -461,6 +462,11 @@ public final class ZMUserSession: NSObject {
         self.cRLsDistributionPointsObserver = cRLsDistributionPointsObserver ?? CRLsDistributionPointsObserver(
             cRLsChecker: self.cRLsChecker
         )
+
+        self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatus ?? ObserveMLSGroupVerificationStatusUseCase(
+            mlsService: self.mlsService,
+            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
+            syncContext: coreDataStack.syncContext)
 
         super.init()
 
@@ -503,7 +509,7 @@ public final class ZMUserSession: NSObject {
             createMLSClientIfNeeded()
 
             if e2eiFeature.isEnabled {
-                mlsConversationVerificationManager.startObservingMLSConversationVerificationStatus()
+                self.observeMLSGroupVerificationStatus.invoke()
                 self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
                     from: self.mlsService.onNewCRLsDistributionPoints()
                 )
