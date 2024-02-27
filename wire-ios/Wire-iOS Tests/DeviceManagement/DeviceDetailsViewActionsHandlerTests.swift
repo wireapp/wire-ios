@@ -20,6 +20,7 @@ import XCTest
 @testable import Wire
 import WireSyncEngineSupport
 import WireDataModelSupport
+import WireRequestStrategySupport
 
 final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTestHelper {
 
@@ -46,7 +47,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
         mockGetProteusFingerprint = MockGetUserClientFingerprintUseCaseProtocol()
         mockContextProvider = MockContextProvider()
-        mockEnrollE2eICertificateUseCase = MockEnrolE2eICertificateUseCase()
+        mockEnrollE2eICertificateUseCase = MockEnrollE2EICertificateUseCaseProtocol()
     }
 
     override func tearDown() {
