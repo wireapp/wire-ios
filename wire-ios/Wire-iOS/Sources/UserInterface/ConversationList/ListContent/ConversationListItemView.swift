@@ -267,8 +267,8 @@ final class ConversationListItemView: UIView {
             title = AvailabilityStringBuilder.titleForUser(
                 name: connectedUser.name ?? "",
                 availability: connectedUser.availability,
-                isCertified: false,
-                isVerified: false,
+                isE2EICertified: false,
+                isProteusVerified: false,
                 appendYouSuffix: false,
                 style: .list
             )

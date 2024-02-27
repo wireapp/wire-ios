@@ -152,7 +152,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         let (participants, serviceUsers) = (conversation.sortedOtherParticipants, conversation.sortedServiceUsers)
         participants.forEach { user in
             if !userStatuses.keys.contains(user.remoteIdentifier) {
-                userStatuses[user.remoteIdentifier] = .init(user: user, isCertified: false)
+                userStatuses[user.remoteIdentifier] = .init(user: user, isE2EICertified: false)
             }
         }
 
@@ -420,7 +420,7 @@ private extension GroupDetailsViewController {
                 guard let conversation = conversation as? ZMConversation else { continue }
                 do {
                     let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
-                    userStatuses[user.remoteIdentifier]?.isCertified = isE2EICertified
+                    userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
                 } catch {
                     WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
                 }

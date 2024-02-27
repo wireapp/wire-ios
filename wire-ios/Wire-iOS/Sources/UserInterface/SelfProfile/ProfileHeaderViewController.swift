@@ -118,7 +118,7 @@ final class ProfileHeaderViewController: UIViewController {
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
-        userStatus = .init(user: user, isCertified: false)
+        userStatus = .init(user: user, isE2EICertified: false)
         self.user = user
         self.userSession = userSession
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
@@ -259,8 +259,8 @@ final class ProfileHeaderViewController: UIViewController {
     private func applyUserStatus() {
         nameLabel.text = userStatus.name
         userStatusViewController.userStatus = userStatus
-        e2eiCertifiedImageView.isHidden = !userStatus.isCertified
-        proteusVerifiedImageView.isHidden = !userStatus.isVerified
+        e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
+        proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
     }
 
     private func updateGuestIndicator() {
@@ -344,7 +344,7 @@ final class ProfileHeaderViewController: UIViewController {
 
         Task { @MainActor [conversation] in
             do {
-                userStatus.isCertified = if let conversation {
+                userStatus.isE2EICertified = if let conversation {
                     try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
                 } else if user.isSelfUser {
                     try await isSelfUserE2EICertifiedUseCase.invoke()
@@ -407,7 +407,7 @@ extension ProfileHeaderViewController: UserObserving {
             updateAvailabilityVisibility()
         }
         if changeInfo.trustLevelChanged {
-            userStatus.isVerified = changeInfo.user.isVerified
+            userStatus.isProteusVerified = changeInfo.user.isVerified
             updateE2EICertifiedStatus()
         }
     }

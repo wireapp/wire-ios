@@ -150,7 +150,7 @@ extension UserCell {
         }
 
         configure(
-            userStatus: .init(user: user, isCertified: isE2EICertified),
+            userStatus: .init(user: user, isE2EICertified: isE2EICertified),
             user: user,
             userIsSelfUser: user.isSelfUser,
             isSelfUserPartOfATeam: selfUser.hasTeam,
@@ -249,7 +249,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         switch configuration {
         case .user(let user):
             guard let cell = cell as? UserCell else { return unexpectedCellHandler() }
-            let isE2EICertified = if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] { userStatus.isCertified } else { false }
+            let isE2EICertified = if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] { userStatus.isE2EICertified } else { false }
             cell.configure(
                 user: user,
                 isE2EICertified: isE2EICertified,

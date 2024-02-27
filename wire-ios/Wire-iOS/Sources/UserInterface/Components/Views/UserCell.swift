@@ -296,14 +296,14 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             content += ", \(userType)"
         }
 
-        if userStatus.isCertified {
+        if userStatus.isE2EICertified {
             if userIsSelfUser {
                 content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesHaveValidCertificates
             } else {
                 content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allDevicesHaveValidCertificates
             }
         }
-        if userStatus.isVerified {
+        if userStatus.isProteusVerified {
             if userIsSelfUser {
                 content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesProteusVerified
             } else {
@@ -408,13 +408,13 @@ extension UserCell {
     @available(*, deprecated, message: "Use `configure(userStatus:userIsSelfUser:isSelfUserPartOfATeam:subtitle:conversation:) instead!")
     func configure(
         user: UserType,
-        isCertified: Bool = false, // Just use `false` when the verification status is not needed
+        isE2EICertified: Bool = false, // Use `false` when the verification status is not needed
         isSelfUserPartOfATeam: Bool,
         subtitle overrideSubtitle: NSAttributedString? = nil,
         conversation: GroupDetailsConversationType? = nil
     ) {
         configure(
-            userStatus: .init(user: user, isCertified: isCertified),
+            userStatus: .init(user: user, isE2EICertified: isE2EICertified),
             user: user,
             userIsSelfUser: user.isSelfUser,
             isSelfUserPartOfATeam: isSelfUserPartOfATeam,

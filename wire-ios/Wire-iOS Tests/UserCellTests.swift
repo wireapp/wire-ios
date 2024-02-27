@@ -67,8 +67,9 @@ final class UserCellTests: BaseSnapshotTestCase {
 
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(
+            userStatus: .init(user: mockUser, isE2EICertified: false),
             user: mockUser,
-            isCertified: isE2EICertified,
+            userIsSelfUser: mockUser.isSelfUser,
             isSelfUserPartOfATeam: selfUser.hasTeam,
             conversation: conversation
         )

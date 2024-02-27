@@ -82,11 +82,11 @@ final class UserStatusView: TitleView {
         if options.contains(.displayUserName) {
             title = userStatus.name
             var accessibilityLabel = title
-            if userStatus.isCertified {
+            if userStatus.isE2EICertified {
                 trailingIcons += [.e2eiCertifiedShield]
                 accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesHaveValidCertificates
             }
-            if userStatus.isVerified {
+            if userStatus.isProteusVerified {
                 trailingIcons += [.proteusVerifiedShield]
                 accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesProteusVerified
             }

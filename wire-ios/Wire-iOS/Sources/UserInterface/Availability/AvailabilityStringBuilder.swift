@@ -25,8 +25,8 @@ enum AvailabilityStringBuilder {
     static func titleForUser(
         name: String,
         availability: Availability,
-        isCertified: Bool,
-        isVerified: Bool,
+        isE2EICertified: Bool,
+        isProteusVerified: Bool,
         appendYouSuffix: Bool,
         style: AvailabilityLabelStyle,
         color: UIColor? = nil
@@ -74,8 +74,8 @@ enum AvailabilityStringBuilder {
             leadingIcons: [icon].compactMap(\.self),
             title: title,
             trailingIcons: [
-                isCertified ? e2eiCertifiedShield : nil,
-                isVerified ? proteusVerifiedShield : nil
+                isE2EICertified ? e2eiCertifiedShield : nil,
+                isProteusVerified ? proteusVerifiedShield : nil
             ].compactMap { $0 },
             interactive: false,
             color: textColor

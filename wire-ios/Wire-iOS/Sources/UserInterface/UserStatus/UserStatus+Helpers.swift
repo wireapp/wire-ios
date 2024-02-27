@@ -31,8 +31,8 @@ extension UserStatus {
             return AvailabilityStringBuilder.titleForUser(
                 name: name,
                 availability: includeAvailability ? availability : .none,
-                isCertified: includeVerificationStatus && isCertified,
-                isVerified: includeVerificationStatus && isVerified,
+                isE2EICertified: includeVerificationStatus && isE2EICertified,
+                isProteusVerified: includeVerificationStatus && isProteusVerified,
                 appendYouSuffix: appendYouSuffix,
                 style: .list,
                 color: color
