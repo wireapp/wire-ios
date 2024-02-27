@@ -41,22 +41,24 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
         in mapping: NSEntityMapping,
         manager: NSMigrationManager
     ) throws {
-        // Get the primary key for sInstance
-        let primaryKey = self.primaryKey(fromSourceInstance: sInstance)
+        try autoreleasepool {
+            // Get the primary key for sInstance
+            let primaryKey = self.primaryKey(fromSourceInstance: sInstance)
 
-        if keyCache.contains(primaryKey) {
-            duplicateOccurrences[primaryKey, default: 0] += 1
-            WireLogger.localStorage.debug("skips the duplicate instance \(duplicateOccurrences)", attributes: .safePublic)
-            // skips the duplicate instance
-            return
-        } else {
-            // create the dInstance
-            try super.createDestinationInstances(forSource: sInstance, in: mapping, manager: manager)
-            // mark it needing update
-            let dInstance = manager.destinationInstances(forEntityMappingName: mapping.name, sourceInstances: [sInstance]).first
-            dInstance?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
-            keyCache.insert(primaryKey)
-            WireLogger.localStorage.debug("insert 1 \(String(describing: manager.currentEntityMapping.name)), count: \(keyCache.count)", attributes: .safePublic)
+            if keyCache.contains(primaryKey) {
+                duplicateOccurrences[primaryKey, default: 0] += 1
+                WireLogger.localStorage.debug("skips the duplicate instance \(duplicateOccurrences)", attributes: .safePublic)
+                // skips the duplicate instance
+                return
+            } else {
+                // create the dInstance
+                try super.createDestinationInstances(forSource: sInstance, in: mapping, manager: manager)
+                // mark it needing update
+                let dInstance = manager.destinationInstances(forEntityMappingName: mapping.name, sourceInstances: [sInstance]).first
+                dInstance?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
+                keyCache.insert(primaryKey)
+                WireLogger.localStorage.debug("insert 1 \(String(describing: manager.currentEntityMapping.name)), count: \(keyCache.count)", attributes: .safePublic)
+            }
         }
     }
 
@@ -69,6 +71,10 @@ class DuplicateObjectsMigrationPolicy: NSEntityMigrationPolicy {
             markNeedsSlowSync(manager: manager,
                               forEntityName: mapping.sourceEntityName ?? "<nil>")
         }
+
+        // clean up
+        keyCache.removeAll()
+        duplicateOccurrences.removeAll()
     }
 
     func primaryKey(fromSourceInstance sInstance: NSManagedObject) -> String {
