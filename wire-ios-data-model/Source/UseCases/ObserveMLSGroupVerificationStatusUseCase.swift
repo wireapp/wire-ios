@@ -57,17 +57,17 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
     }
 
     private func listenForEpochChanges() -> Task<Void, Error> {
-        return Task.detached {
-            for try await groupID in self.mlsService.epochChanges() {
+        return .detached { [mlsService, syncContext, updateMLSGroupVerificationStatusUseCase] in
+            for try await groupID in mlsService.epochChanges() {
                 do {
-                    guard let conversation = await self.syncContext.perform({
-                        ZMConversation.fetch(with: groupID, in: self.syncContext)
+                    guard let conversation = await syncContext.perform({
+                        ZMConversation.fetch(with: groupID, in: syncContext)
                     }) else {
                         WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
                         return
                     }
 
-                    try await self.updateMLSGroupVerificationStatusUseCase.invoke(for: conversation, groupID: groupID)
+                    try await updateMLSGroupVerificationStatusUseCase.invoke(for: conversation, groupID: groupID)
                 } catch {
                     WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
                 }
