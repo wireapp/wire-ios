@@ -85,7 +85,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
                     }
                     optionalContinuation?.resume(returning: error == nil)
                     if let error = error {
-                        WireLogger.e2ei.error(error.localizedDescription)
+                        self.logger.error(error.localizedDescription)
                     }
                 }
             )
