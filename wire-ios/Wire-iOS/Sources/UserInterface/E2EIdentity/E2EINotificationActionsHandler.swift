@@ -37,7 +37,6 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
     private let gracePeriodRepository: GracePeriodRepository
     private let targetVC: UIViewController
-    private var certificateDetails: String?
 
     // MARK: - Life cycle
 
@@ -57,8 +56,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     public func getCertificate() async {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         do {
-            try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
-            await confirmSuccessfulEnrollment()
+            let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+            await confirmSuccessfulEnrollment(certificateDetails)
         } catch {
             guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate() else {
                 return
@@ -92,18 +91,18 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel) {
             Task {
-                self.certificateDetails = try await self.enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
-                await self.confirmSuccessfulEnrollment()
+                let certificateDetails = try await self.enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+                await self.confirmSuccessfulEnrollment(certificateDetails)
             }
         }
         await targetVC.present(alert, animated: true)
     }
 
     @MainActor
-    private func confirmSuccessfulEnrollment() async {
+    private func confirmSuccessfulEnrollment(_ certificateDetails: String) async {
         await snoozeCertificateEnrollmentUseCase.invoke()
         let successScreen = SuccessfulCertificateEnrollmentViewController()
-        successScreen.certificateDetails = certificateDetails ?? ""
+        successScreen.certificateDetails = certificateDetails
         successScreen.onOkTapped = { viewController in
             viewController.dismiss(animated: true)
         }
