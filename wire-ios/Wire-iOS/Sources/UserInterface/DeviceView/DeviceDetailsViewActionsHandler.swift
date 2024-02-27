@@ -130,7 +130,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     func getProteusFingerPrint() async -> String {
         guard let data = await getProteusFingerprint.invoke(userClient: userClient),
                 let fingerPrint = String(data: data, encoding: .utf8) else {
-            logger.error("Valid fingerprint data is missing", attributes: nil)
+            logger.error("Valid fingerprint data is missing")
             return ""
         }
         return fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
