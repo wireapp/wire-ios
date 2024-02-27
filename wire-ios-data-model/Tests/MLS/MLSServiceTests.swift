@@ -1077,14 +1077,18 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subgroupInvocations.first?.type, .conference)
         XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
 
-        // Then we try to commit pending propsoals twice, once for the subgroup, once for the parent
+        // Then we try to commit pending proposals twice, once for the subgroup, once for the parent
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
         let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
-        XCTAssertEqual(id1, subgroupID)
+
+        // there is no guarantee which proposal is finished first
+        XCTAssertTrue([subgroupID, parentGroupdID].contains(id1))
         XCTAssertEqual(commitTime1.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
         let (id2, commitTime2) = try XCTUnwrap(mockCommitPendingProposalArguments.last)
-        XCTAssertEqual(id2, parentGroupdID)
+
+        // there is no guarantee which proposal is finished first
+        XCTAssertTrue([subgroupID, parentGroupdID].contains(id2))
         XCTAssertEqual(commitTime2.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
         await uiMOC.perform {
