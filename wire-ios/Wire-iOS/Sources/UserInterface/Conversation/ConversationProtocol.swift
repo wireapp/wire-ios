@@ -108,6 +108,8 @@ protocol GroupDetailsConversation {
 
     var securityLevel: ZMConversationSecurityLevel { get }
 
+    var isE2EIEnabled: Bool { get }
+
 }
 
 typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation
@@ -124,6 +126,12 @@ extension ZMConversation: GroupDetailsConversation {
         return messageDestructionTimeoutValue(for: .groupConversation).rawValue
     }
 
+    var isE2EIEnabled: Bool {
+        guard let context = managedObjectContext else { return false }
+        let feature = FeatureRepository(context: context).fetchE2EI()
+        return feature.status == .enabled
+    }
+
 }
 
 extension GroupDetailsConversation {
@@ -133,7 +141,7 @@ extension GroupDetailsConversation {
         case .proteus, .mixed:
             return securityLevel == .secure
         case .mls:
-            return mlsVerificationStatus == .verified
+            return isE2EIEnabled && mlsVerificationStatus == .verified
         }
     }
 
