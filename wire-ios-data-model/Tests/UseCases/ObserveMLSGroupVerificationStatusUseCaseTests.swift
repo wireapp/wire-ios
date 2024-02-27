@@ -23,7 +23,6 @@ import XCTest
 
 final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTest {
 
-    private var epochChanges: AsyncStream<MLSGroupID>.Continuation!
     private var conversation: ZMConversation!
     private var mockMLSService: MockMLSServiceInterface!
     private var mockUpdateMLSGroupVerificationStatusUseCase: MockUpdateMLSGroupVerificationStatusUseCaseProtocol!
@@ -32,10 +31,8 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
     private var context: NSManagedObjectContext { syncMOC }
 
     override func setUp() {
+        setupConversation()
         mockMLSService = .init()
-        mockMLSService.epochChanges_MockValue = .init {
-            epochChanges = $0
-        }
         mockUpdateMLSGroupVerificationStatusUseCase = .init()
         sut = .init(
             mlsService: mockMLSService,
@@ -49,16 +46,31 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
         mockUpdateMLSGroupVerificationStatusUseCase = nil
         mockMLSService = nil
         conversation = nil
-        epochChanges = nil
     }
 
     func testExample() async throws {
         // Given
-        setupConversation()
-        sut.invoke()
+        let mlsGroupID = /*try await context.perform {*/ try XCTUnwrap(self.conversation.mlsGroupID) // }
+
+        mockMLSService.epochChanges_MockValue = .init { continuation in
+
+//            continuation.onTermination = { termination in
+//                            switch termination {
+//                            case .finished:
+//                                // continuation.finish() was called
+//                                print("Stream finished.")
+//                            case .cancelled:
+//                                // Task was cancelled
+//                                print("Stream cancelled.")
+//                            }
+//                        }
+
+            continuation.yield(conversation.mlsGroupID!)
+            continuation.finish()
+        }
 
         // When
-        epochChanges.yield(conversation.mlsGroupID!)
+        sut.invoke()
 
         if #available(iOS 16.0, *) {
             try await Task.sleep(for: .seconds(1000))
@@ -66,11 +78,13 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
     }
 
     private func setupConversation() {
-        context.performAndWait {
+        // context.performAndWait {
+            print(context)
             let helper = ModelHelper()
             helper.createSelfUser(in: context)
             let otherUser = helper.createUser(in: context)
-            helper.createOneOnOne(with: otherUser, in: context)
-        }
+            conversation = helper.createOneOnOne(with: otherUser, in: context)
+            conversation.mlsGroupID = .random()
+        // }
     }
 }
