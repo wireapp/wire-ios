@@ -91,8 +91,13 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel) {
             Task {
-                let certificateDetails = try await self.enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
-                await self.confirmSuccessfulEnrollment(certificateDetails)
+                do {
+                    let certificateDetails = try await self.enrollCertificateUseCase.invoke(
+                        authenticate: oauthUseCase.invoke)
+                    await self.confirmSuccessfulEnrollment(certificateDetails)
+                } catch {
+                    WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+                }
             }
         }
         await targetVC.present(alert, animated: true)
