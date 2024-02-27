@@ -21,7 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
-    let logger: LoggerProtocol
+    let logger = WireLogger.e2ei
     var userClient: UserClient
     var userSession: UserSession
     var clientRemovalObserver: ClientRemovalObserver?
@@ -43,7 +43,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         saveFileManager: SaveFileActions,
-        logger: LoggerProtocol = WireLogger.e2ei,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
         contextProvider: ContextProvider,
         e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
@@ -52,14 +51,13 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.credentials = credentials
         self.userSession = userSession
         self.saveFileManager = saveFileManager
-        self.logger = logger
         self.getProteusFingerprint = getProteusFingerprint
         self.contextProvider = contextProvider
         self.e2eiCertificateEnrollment = e2eiCertificateEnrollment
     }
 
     @MainActor
-    func enrollClient() async throws -> String? {
+    func enrollClient() async throws -> String {
         do {
             return try await startE2EIdentityEnrollment()
         } catch {
@@ -139,10 +137,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     }
 
     @MainActor
-    private func startE2EIdentityEnrollment() async throws -> String? {
+    private func startE2EIdentityEnrollment() async throws -> String {
         guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
-            logger.error("Failed to fetch RootViewController instance", attributes: nil)
-            return nil
+            let errorDescription = "Failed to fetch RootViewController instance"
+            logger.error(errorDescription)
+            throw DeviceDetailsActionsError.failedAction(errorDescription)
         }
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
         return try await e2eiCertificateEnrollment.invoke(
@@ -155,7 +154,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         let mlsClientResolver = MLSClientResolver()
         guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient),
         let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
-            logger.error("MLSGroupID for self was not found", attributes: nil)
+            logger.error("MLSGroupID for self was not found")
             return nil
         }
         return try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
@@ -189,4 +188,8 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
     ) {
         isProcessing?(isVisible)
     }
+}
+
+enum DeviceDetailsActionsError: Error {
+    case failedAction(String)
 }
