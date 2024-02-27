@@ -20,7 +20,7 @@ import Foundation
 
 public protocol ObserveMLSGroupVerificationStatusUseCaseProtocol {
 
-    func invoke() async
+    func invoke()
 
 }
 
