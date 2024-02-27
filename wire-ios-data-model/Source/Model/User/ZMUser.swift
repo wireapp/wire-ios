@@ -21,6 +21,7 @@ import WireUtilities
 import WireSystem
 
 extension ZMUser: UserType {
+
     @objc
     public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
@@ -76,6 +77,13 @@ extension ZMUser: UserType {
 
         return selfUser.isFederating(with: self)
     }
+
+    // MARK: - One on one conversation
+
+    /// The one on one conversation with this user.
+
+    @NSManaged
+    public var oneOnOneConversation: ZMConversation?
 
     // MARK: - Conversation Roles
 
@@ -196,7 +204,7 @@ public struct AssetKey {
 }
 
 extension ProfileImageSize: CustomDebugStringConvertible {
-     public var debugDescription: String {
+    public var debugDescription: String {
         switch self {
         case .preview:
             return "ProfileImageSize.preview"
@@ -246,7 +254,53 @@ extension ZMUser {
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
     @NSManaged public var needsToRefetchLabels: Bool
 
-    @NSManaged public var domain: String?
+    static let domainKey: String = "domain"
+    @NSManaged private var primitiveDomain: String?
+    public var domain: String? {
+        get {
+            willAccessValue(forKey: Self.domainKey)
+            let value = primitiveDomain
+            didAccessValue(forKey: Self.domainKey)
+            return value
+        }
+
+        set {
+            willChangeValue(forKey: Self.domainKey)
+            primitiveDomain = newValue
+            didChangeValue(forKey: Self.domainKey)
+            updatePrimaryKey(remoteIdentifier: remoteIdentifier, domain: newValue)
+        }
+    }
+
+    static let remoteIdentifierKey: String = "remoteIdentifier"
+    @NSManaged private var primitiveRemoteIdentifier: String?
+    // keep the same as objc non_specified for now
+    public var remoteIdentifier: UUID! {
+        get {
+            willAccessValue(forKey: Self.remoteIdentifierKey)
+            let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
+            didAccessValue(forKey: "remoteIdentifier")
+            return value
+        }
+
+        set {
+            willChangeValue(forKey: Self.remoteIdentifierKey)
+            self.setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
+            didChangeValue(forKey: Self.remoteIdentifierKey)
+            updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
+        }
+    }
+
+    /// combination of domain and remoteIdentifier
+    @NSManaged private var primaryKey: String
+
+    private func updatePrimaryKey(remoteIdentifier: UUID?, domain: String?) {
+        guard entity.attributesByName["primaryKey"] != nil else {
+            // trying to access primaryKey property from older model - tests
+            return
+        }
+        primaryKey = Self.primaryKey(from: remoteIdentifier, domain: domain)
+    }
 
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
@@ -413,7 +467,6 @@ extension ZMUser: UserConnections {
     public enum AcceptConnectionError: Error {
 
         case invalidState
-        case unableToResolveConversation
         case unableToSwitchToMLS
 
     }
@@ -445,15 +498,16 @@ extension ZMUser: UserConnections {
             case .success:
                 Task {
                     do {
-                        guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
-                            completion(AcceptConnectionError.unableToResolveConversation)
-                            return
-                        }
-
+                        let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
                         try await resolver.resolveOneOnOneConversation(
                             with: QualifiedID(uuid: userID, domain: domain),
                             in: context
                         )
+
+                        await context.perform {
+                            _ = context.saveOrRollback()
+                        }
+
                         await MainActor.run {
                             completion(nil)
                         }
@@ -462,7 +516,6 @@ extension ZMUser: UserConnections {
                             completion(error)
                         }
                     }
-
                 }
 
             case .failure(let error):

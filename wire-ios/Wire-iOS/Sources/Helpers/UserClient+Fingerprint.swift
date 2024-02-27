@@ -20,7 +20,9 @@ import Foundation
 import UIKit
 import WireDataModel
 
+// swiftlint:disable todo_requires_jira_link
 // TODO: merge to UserClientType or stay in UI project? It is depends on localized string resource
+// swiftlint:enable todo_requires_jira_link
 protocol UserClientTypeAttributedString {
     func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool) -> NSAttributedString
 }

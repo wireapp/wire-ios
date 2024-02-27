@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireRequestStrategySupport
 import XCTest
 
 final class SessionEstablisherTests: MessagingTestBase {
@@ -119,7 +120,7 @@ final class SessionEstablisherTests: MessagingTestBase {
             apiProvider.prekeyAPIApiVersion_MockValue = prekeyApi
         }
 
-        func withFetchPrekeyAPI(returning result: Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError>) -> Arrangement {
+        func withFetchPrekeyAPI(returning result: Result<Payload.PrekeyByQualifiedUserID, NetworkError>) -> Arrangement {
             switch result {
             case.success(let payload):
                 prekeyApi.fetchPrekeysFor_MockValue = payload

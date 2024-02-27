@@ -90,7 +90,7 @@ public protocol WireCallCenterTransport: AnyObject {
     ///     - url: The url of the server.
     ///     - completionHandler: A handler when the network request completes with the response payload.
 
-    func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data>) -> Void))
+    func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data, Error>) -> Void))
 
     /// Request the call configuration from the backend.
     ///

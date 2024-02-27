@@ -35,10 +35,16 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     let connectToUserActionHandler: ConnectToUserActionHandler
     let updateConnectionActionHandler: UpdateConnectionActionHandler
     let actionSync: EntityActionSync
+    let oneOnOneResolver: OneOnOneResolverInterface
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                syncProgress: SyncProgress) {
+    var oneOnOneResolutionDelay: TimeInterval = 3
+
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncProgress: SyncProgress,
+        oneOneOneResolver: OneOnOneResolverInterface
+    ) {
 
         self.syncProgress = syncProgress
         self.localConnectionListSync =
@@ -66,6 +72,8 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
             connectToUserActionHandler,
             updateConnectionActionHandler
         ])
+
+        self.oneOnOneResolver = oneOneOneResolver
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -197,13 +205,10 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
 
             switch event.type {
             case .userConnection:
-                if let conversationEvent = Payload.UserConnectionEvent(payloadData) {
-                    let processor = ConnectionPayloadProcessor()
-                    processor.processPayload(
-                        conversationEvent,
-                        in: managedObjectContext
-                    )
+                guard let payload = Payload.UserConnectionEvent(payloadData) else {
+                    return
                 }
+                processUserConnectionEvent(payload)
 
             default:
                 break
@@ -211,6 +216,42 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
         }
     }
 
+    private func processUserConnectionEvent(_ payload: Payload.UserConnectionEvent) {
+        let context = managedObjectContext
+
+        let processor = ConnectionPayloadProcessor()
+        processor.processPayload(
+            payload,
+            in: context
+        )
+
+        guard payload.connection.status == .accepted, let userID = payload.connection.qualifiedTo else {
+            return
+        }
+
+        WaitingGroupTask(context: context) { [self] in
+            do {
+                // The client who accepts the connection resolves the conversation immediately.
+                // Other clients (from self and other user) resolve after a delay to avoid a race condition,
+                // but also to re-attempt resolution in case of failure.
+                if #available(iOS 16, *) {
+                    try await Task.sleep(for: .seconds(oneOnOneResolutionDelay))
+                } else {
+                    try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
+                }
+
+                let resolver = self.oneOnOneResolver
+                try await resolver.resolveOneOnOneConversation(with: userID, in: context)
+
+                await context.perform {
+                    _ = context.saveOrRollback()
+                }
+            } catch {
+                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
+                assertionFailure("Error resolving one-on-one conversation: \(error)")
+            }
+        }
+    }
 }
 
 class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {

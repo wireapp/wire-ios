@@ -40,7 +40,9 @@ public final class FileMetaDataGenerator: NSObject {
                     completion(ZMAudioMetadata(fileURL: url, duration: asset.duration.seconds, normalizedLoudness: loudness ?? []))
                 }
             } else {
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: set the name of the file (currently there's no API, it always gets it from the URL)
+                // swiftlint:enable todo_requires_jira_link
                 completion(ZMFileMetadata(fileURL: url, thumbnail: thumbnail))
             }
         }

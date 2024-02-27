@@ -35,7 +35,7 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func clientKeypackages(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType, amountRequested: UInt32) async throws -> [Data]
 
-    func clientPublicKey(ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> Data
+    func clientPublicKey(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> Data
 
     func clientValidKeypackagesCount(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> UInt64
 
@@ -46,6 +46,8 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
     func conversationEpoch(conversationId: Data) async throws -> UInt64
 
     func conversationExists(conversationId: Data) async -> Bool
+
+    func getExternalSender(conversationId: Data) async throws -> Data
 
     func createConversation(conversationId: Data, creatorCredentialType: WireCoreCrypto.MlsCredentialType, config: WireCoreCrypto.ConversationConfiguration) async throws
 
@@ -61,7 +63,7 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func e2eiIsEnabled(ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> Bool
 
-    func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws
+    func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws -> [String]?
 
     func e2eiNewActivationEnrollment(displayName: String, handle: String, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
 
@@ -73,7 +75,7 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCrypto.CrlRegistration
 
-    func e2eiRegisterIntermediateCa(certPem: String) async throws
+    func e2eiRegisterIntermediateCa(certPem: String) async throws -> [String]?
 
     func e2eiRotateAll(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, newKeyPackagesCount: UInt32) async throws -> WireCoreCrypto.RotateBundle
 
@@ -86,6 +88,8 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
     func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> WireCoreCrypto.E2eiConversationState
 
     func getDeviceIdentities(conversationId: Data, deviceIds: [WireCoreCrypto.ClientId]) async throws -> [WireCoreCrypto.WireIdentity]
+
+    func getExternalSender(conversationId: Data) async throws -> Data
 
     func getUserIdentities(conversationId: Data, userIds: [String]) async throws -> [String: [WireCoreCrypto.WireIdentity]]
 

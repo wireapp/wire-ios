@@ -49,11 +49,13 @@ final class APIVersionResolver {
     // MARK: - Methods
 
     func resolveAPIVersion(completion: @escaping (Error?) -> Void = { _ in }) {
+        // swiftlint:disable todo_requires_jira_link
         // TODO: check if it's been 24hours and proceed or not
+        // swiftlint:enable todo_requires_jira_link
         sendRequest(completion: completion)
     }
 
-    private func sendRequest(completion: @escaping (Error?) -> Void = {_ in }) {
+    private func sendRequest(completion: @escaping (Error?) -> Void = { _ in }) {
         // This is endpoint isn't versioned, so it always version 0.
         let request = ZMTransportRequest(getFromPath: "/api-version", apiVersion: APIVersion.v0.rawValue)
         let completionHandler = ZMCompletionHandler(on: queue) { [weak self] response in

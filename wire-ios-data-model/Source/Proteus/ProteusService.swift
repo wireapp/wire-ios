@@ -99,7 +99,9 @@ public final class ProteusService: ProteusServiceInterface {
         do {
             try await coreCrypto.perform { try await $0.proteusSessionSave(sessionId: id.rawValue) }
         } catch {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: Log error
+            // swiftlint:enable todo_requires_jira_link
             throw SaveSessionError.failedToSaveSession
         }
     }

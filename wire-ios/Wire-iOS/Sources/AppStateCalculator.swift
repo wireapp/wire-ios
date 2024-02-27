@@ -65,7 +65,7 @@ protocol AppStateCalculatorDelegate: AnyObject {
                             completion: @escaping () -> Void)
 }
 
-class AppStateCalculator {
+final class AppStateCalculator {
 
     init() {
         setupApplicationNotifications()

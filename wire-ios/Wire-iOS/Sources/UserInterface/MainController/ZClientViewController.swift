@@ -205,10 +205,14 @@ final class ZClientViewController: UIViewController {
 
     // MARK: keyboard shortcut
     override var keyCommands: [UIKeyCommand]? {
-        return [
-            UIKeyCommand(action: #selector(openStartUI(_:)),
-                         input: "n", modifierFlags: [.command],
-                         discoverabilityTitle: L10n.Localizable.Keyboardshortcut.openPeople)]
+        [
+            UIKeyCommand(
+                action: #selector(openStartUI(_:)),
+                input: "n",
+                modifierFlags: [.command],
+                discoverabilityTitle: L10n.Localizable.Keyboardshortcut.openPeople
+            )
+        ]
     }
 
     @objc
@@ -263,7 +267,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - Singleton
     static var shared: ZClientViewController? {
-        return AppDelegate.shared.appRootRouter?.rootViewController.children.first(where: {$0 is ZClientViewController}) as? ZClientViewController
+        return AppDelegate.shared.appRootRouter?.rootViewController.children.first(where: { $0 is ZClientViewController }) as? ZClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.

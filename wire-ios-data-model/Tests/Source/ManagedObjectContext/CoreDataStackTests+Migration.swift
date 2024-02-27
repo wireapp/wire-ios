@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 import XCTest
+@testable import WireDataModel
 
 class CoreDataStackTests_Migration: DatabaseBaseTest {
 
@@ -31,8 +32,8 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
     }
 
     func performMigration(accountIdentifier: UUID,
-                          migration: @escaping (NSManagedObjectContext) throws -> Void) -> Result<Void>? {
-        var result: Result<Void>?
+                          migration: @escaping (NSManagedObjectContext) throws -> Void) -> Result<Void, Error>? {
+        var result: Result<Void, Error>?
         CoreDataStack.migrateLocalStorage(accountIdentifier: accountIdentifier,
                                           applicationContainer: DatabaseBaseTest.applicationContainer,
                                           dispatchGroup: dispatchGroup,
@@ -73,7 +74,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        var result: Result<Void>?
+        var result: Result<Void, Error>?
         performIgnoringZMLogError {
             result = self.performMigration(accountIdentifier: uuid) { (context) in
                 context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
@@ -95,7 +96,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         let uuid = UUID()
 
         // when
-        var result: Result<Void>?
+        var result: Result<Void, Error>?
         performIgnoringZMLogError {
             result = self.performMigration(accountIdentifier: uuid) { (_) in }
         }
@@ -124,7 +125,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        var result: Result<Void>?
+        var result: Result<Void, Error>?
         performIgnoringZMLogError {
             result = self.performMigration(accountIdentifier: uuid) { (_) in
                 throw TestError.somethingWentWrong
@@ -136,5 +137,4 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
-
 }

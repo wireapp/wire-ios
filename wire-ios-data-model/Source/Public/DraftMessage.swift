@@ -83,7 +83,8 @@ private struct StorableMention: Codable {
     /// Converts the storable mention into a regular `Mention` object.
     /// The passed in `context` is needed to fetch the user object.
     func mention(in context: NSManagedObjectContext) -> Mention? {
-        return ZMUser.fetch(with: userIdentifier, domain: nil, in: context).map(papply(Mention.init, range))
+        ZMUser.fetch(with: userIdentifier, domain: nil, in: context)
+            .map { Mention(range: range, user: $0) }
     }
 
 }

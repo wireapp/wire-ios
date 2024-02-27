@@ -39,7 +39,7 @@ class AssetRequestFactoryTests: MessagingTestBase {
 
             // when
             let selfUser = ZMUser.selfUser(in: moc)
-            let membership = Member.getOrCreateMember(for: selfUser, in: team, context: moc)
+            let membership = Member.getOrUpdateMember(for: selfUser, in: team, context: moc)
             XCTAssertNotNil(membership.team)
             XCTAssertTrue(selfUser.hasTeam)
 

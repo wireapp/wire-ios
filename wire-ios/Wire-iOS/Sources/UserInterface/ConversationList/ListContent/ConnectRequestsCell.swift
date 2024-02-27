@@ -117,7 +117,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         if newCount != currentConnectionRequestsCount {
             let connectionUsers = connectionRequests.map { conversation in
                 if let conversation = conversation as? ZMConversation {
-                    return conversation.connection?.to
+                    return conversation.oneOnOneUser
                 } else {
                     return nil
                 }

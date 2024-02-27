@@ -511,7 +511,7 @@ extension UserClientTests {
         self.createSelfClient()
 
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        otherClient.remoteIdentifier = NSString.createAlphanumerical()
+        otherClient.remoteIdentifier = .randomRemoteIdentifier()
 
         // then
         XCTAssertFalse(otherClient.verified)
@@ -522,7 +522,7 @@ extension UserClientTests {
         let selfClient = self.createSelfClient()
 
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        otherClient.remoteIdentifier = NSString.createAlphanumerical()
+        otherClient.remoteIdentifier = .randomRemoteIdentifier()
 
         // when
         selfClient.trustClient(otherClient)
@@ -536,7 +536,7 @@ extension UserClientTests {
         let selfClient = createSelfClient()
 
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        otherClient.remoteIdentifier = NSString.createAlphanumerical()
+        otherClient.remoteIdentifier = .randomRemoteIdentifier()
 
         // when
         selfClient.ignoreClient(otherClient)
@@ -608,9 +608,13 @@ extension UserClientTests {
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient() {
         // given
         _ = createSelfClient()
-        let newClientPayload: [String: AnyObject] = ["id": UUID().transportString() as AnyObject,
-                                                     "type": "permanent" as AnyObject,
-                                                     "time": Date().transportString() as AnyObject]
+        let newClientPayload: [String: AnyObject] = [
+            "id": UUID().transportString() as AnyObject,
+            "type": "permanent" as AnyObject,
+            "time": Date().transportString() as AnyObject,
+            "mls_public_keys": ["ed25519": "some key"] as AnyObject
+        ]
+
         // when
         var newClient: UserClient!
         self.performPretendingUiMocIsSyncMoc {
@@ -623,6 +627,7 @@ extension UserClientTests {
         XCTAssertNotNil(newClient.user)
         XCTAssertEqual(newClient.user, ZMUser.selfUser(in: uiMOC))
         XCTAssertNotNil(newClient.sessionIdentifier)
+        XCTAssertEqual(newClient.mlsPublicKeys.ed25519, "some key")
     }
 
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient_NoExistingSelfClient() {
@@ -904,7 +909,9 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }
@@ -968,7 +975,9 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }

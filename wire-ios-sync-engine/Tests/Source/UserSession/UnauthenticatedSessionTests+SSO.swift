@@ -55,7 +55,7 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
     func testThatItGeneratesCorrectRequest() {
         // when
-        sut.fetchSSOSettings(completion: {_ in })
+        sut.fetchSSOSettings(completion: { _ in })
 
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)
@@ -108,7 +108,7 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
     // MARK: - Helpers
 
-    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<SSOSettings>, payload: ZMTransportData?) {
+    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<SSOSettings, Error>, payload: ZMTransportData?) {
         let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")
 
         // given

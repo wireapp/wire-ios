@@ -45,16 +45,35 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         _ user: UserType,
         callback onConversationCreated: @escaping ConversationCreatedBlock
     ) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        if let conversation = user.oneToOneConversation {
+            onConversationCreated(.success(conversation))
+        } else {
+            createTeamOneOnOne(
+                user,
+                callback: onConversationCreated
+            )
+        }
+    }
+
+    private func createTeamOneOnOne(
+        _ user: UserType,
+        callback onConversationCreated: @escaping ConversationCreatedBlock
+    ) {
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
 
         viewController?.setState(.conversationList, animated: true) {
-            if let conversation = user.oneToOneConversation {
-                onConversationCreated(.success(conversation))
-            } else {
-                user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
-                    onConversationCreated(conversation)
+            userSession.createTeamOneOnOne(with: user) {
+                switch $0 {
+                case .success(let conversation):
+                    onConversationCreated(.success(conversation))
+
+                case .failure(let error):
+                    onConversationCreated(.failure(error))
                 }
             }
         }
     }
+
 }

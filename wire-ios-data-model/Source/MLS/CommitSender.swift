@@ -100,7 +100,7 @@ public actor CommitSender: CommitSending {
                 try await discardPendingCommit(in: groupID)
             }
 
-            throw CommitError.failedToSendCommit(recovery: recoveryStrategy)
+            throw CommitError.failedToSendCommit(recovery: recoveryStrategy, cause: error)
         }
     }
 
@@ -127,7 +127,7 @@ public actor CommitSender: CommitSending {
                 try await clearPendingGroup(in: groupID)
             }
 
-            throw ExternalCommitError.failedToSendCommit(recovery: recoveryStrategy)
+            throw ExternalCommitError.failedToSendCommit(recovery: recoveryStrategy, cause: error)
         }
     }
 
@@ -150,7 +150,7 @@ public actor CommitSender: CommitSending {
     private func mergeCommit(in groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("merging commit for group (\(groupID.safeForLoggingDescription))")
-            // TODO: handle buffered messages - WPB-5829
+            // TODO: [WPB-5829] handle buffered messages
             let bufferedDecryptedMessages = try await coreCrypto.perform {
                 try await $0.commitAccepted(conversationId: groupID.data)
             }
@@ -176,7 +176,7 @@ public actor CommitSender: CommitSending {
     private func mergePendingGroup(in groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("merging pending group (\(groupID.safeForLoggingDescription))")
-            // TODO: handle buffered messages - WPB-5829
+            // TODO: [WPB-5829] handle buffered messages
             let bufferedDecryptedMessages = try await coreCrypto.perform {
                 try await $0.mergePendingGroupFromExternalCommit(
                     conversationId: groupID.data
@@ -208,7 +208,7 @@ private extension CommitError.RecoveryStrategy {
         case .mlsClientMismatch:
             self = .retryAfterQuickSync
         case .mlsCommitMissingReferences:
-            self = .commitPendingProposalsAfterQuickSync
+            self = .retryAfterQuickSync
         case .mlsStaleMessage:
             self = .retryAfterRepairingGroup
         default:

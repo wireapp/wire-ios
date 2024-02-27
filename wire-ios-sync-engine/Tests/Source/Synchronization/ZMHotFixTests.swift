@@ -139,7 +139,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = Team.fetchOrCreate(with: UUID(), create: true, in: self.syncMOC, created: nil)!
-            let member = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
             member.needsToBeUpdatedFromBackend = false
 
             // WHEN
@@ -246,47 +246,47 @@ final class ZMHotFixTests_Integration: MessagingTest {
     }
 
     func testThatItUpdatesAccessRolesForConversations_432_1_0() {
-        syncMOC.performAndWait {
-            // GIVEN
-            self.syncMOC.setPersistentStoreMetadata("432.0.1", key: "lastSavedVersion")
-            self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
+        // GIVEN
+        let context = syncMOC
+        let expectation = XCTestExpectation(description: "Notified")
 
-            let g1 = ZMConversation.insertNewObject(in: self.syncMOC)
+        context.performAndWait {
+            context.setPersistentStoreMetadata("432.0.1", key: "lastSavedVersion")
+            context.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
+
+            let g1 = ZMConversation.insertNewObject(in: context)
             g1.conversationType = .group
             g1.team = nil
-            g1.updateAccessStatus(accessModes: ConversationAccessMode.teamOnly.stringValue,
-                                  accessRoles: [ConversationAccessRoleV2.teamMember.rawValue])
+            g1.updateAccessStatus(
+                accessModes: ConversationAccessMode.teamOnly.stringValue,
+                accessRoles: [ConversationAccessRoleV2.teamMember.rawValue]
+            )
 
-            self.syncMOC.saveOrRollback()
+            context.saveOrRollback()
             XCTAssertEqual(g1.accessRoles, [ConversationAccessRoleV2.teamMember])
             XCTAssertEqual(g1.accessMode, ConversationAccessMode.teamOnly)
             XCTAssertNil(g1.team)
         }
 
+        let token = NotificationInContext.addObserver(
+            name: UpdateAccessRolesAction.notificationName,
+            context: context.notificationContext
+        ) { note in
+            XCTAssertNotNil(note.userInfo["action"] as? UpdateAccessRolesAction)
+            expectation.fulfill()
+        }
+
         // WHEN
-        let sut = ZMHotFix(syncMOC: self.syncMOC)
+        let sut = ZMHotFix(syncMOC: context)
         self.performIgnoringZMLogError {
-            self.syncMOC.performAndWait {
+            context.performAndWait {
                 sut!.applyPatches(forCurrentVersion: "432.1.0")
             }
         }
 
-        // expect
-        let expectation = customExpectation(description: "Notified")
-        let token = NotificationInContext.addObserver(name: UpdateAccessRolesAction.notificationName,
-                                                      context: self.syncMOC.notificationContext,
-                                                      using: { note in
-            guard note.userInfo["action"] as? WireRequestStrategy.UpdateAccessRolesAction != nil else {
-                XCTFail()
-                return
-
-            }
-            expectation.fulfill()
-        })
-
         // then
         withExtendedLifetime(token) {
-            XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+            wait(for: [expectation], timeout: 0.5)
         }
     }
 

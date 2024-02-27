@@ -131,11 +131,39 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
         case (409, "mls-client-mismatch"):
             action.fail(with: .mlsClientMismatch)
 
+        case (409, _):
+            guard
+                let payload = FederationErrorResponse(response),
+                let nonFederatingDomains = payload.nonFederatingBackends
+            else {
+                let errorInfo = response.errorInfo
+                return action.fail(with: .unknown(
+                    status: response.httpStatus,
+                    label: errorInfo.label,
+                    message: errorInfo.message
+                ))
+            }
+            action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
+
         case (422, "mls-unsupported-proposal"):
             action.fail(with: .mlsUnsupportedProposal)
 
         case (422, "mls-unsupported-message"):
             action.fail(with: .mlsUnsupportedMessage)
+
+        case (533, _):
+            guard
+                let payload = FederationErrorResponse(response),
+                let unreachableBackends = payload.unreachableBackends
+            else {
+                let errorInfo = response.errorInfo
+                return action.fail(with: .unknown(
+                    status: response.httpStatus,
+                    label: errorInfo.label,
+                    message: errorInfo.message
+                ))
+            }
+            action.fail(with: .unreachableDomains(Set(unreachableBackends)))
 
         default:
             let errorInfo = response.errorInfo
@@ -145,5 +173,19 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
                 message: errorInfo.message
             ))
         }
+    }
+
+    // MARK: - Error response
+
+    struct FederationErrorResponse: Codable {
+
+        var unreachableBackends: [String]?
+        var nonFederatingBackends: [String]?
+
+        enum CodingKeys: String, CodingKey {
+            case unreachableBackends = "unreachable_backends"
+            case nonFederatingBackends = "non_federating_backends"
+        }
+
     }
 }

@@ -52,27 +52,6 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         XCTAssertFalse(searchUser.isConnected)
     }
 
-    func testThatOneToOneConversationIsCreated_WhenBelongingToTheSameTeam() {
-        // given
-        let team = createTeam(in: uiMOC)
-        _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
-                                      name: "Foo",
-                                      handle: "foo",
-                                      accentColor: .brightOrange,
-                                      remoteIdentifier: UUID(),
-                                      teamIdentifier: team.remoteIdentifier)
-
-        uiMOC.saveOrRollback()
-
-        let materializedUser = searchUser.materialize(in: uiMOC)!
-        let convo = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [materializedUser, selfUser])
-        convo?.team = team
-
-        // then
-        XCTAssertNotNil(searchUser.oneToOneConversation)
-    }
-
     func testThatOneToOneConversationIsNotCreated_WhenNotBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)

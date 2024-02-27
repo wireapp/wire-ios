@@ -31,16 +31,18 @@
 
 - (NSMutableDictionary *)payloadtoRegisterClient:(NSUInteger)keysCount password:(NSString *)password
 {
+    NSUInteger keyLength = 16;
+
     NSMutableDictionary *payload = [NSMutableDictionary new];
     NSString *type = @"permanent";
     NSString *label = @"testClient";
     NSString *time = [NSDate dateWithTimeIntervalSince1970:1234444444].transportString;
     NSMutableArray *prekeysPayload = [NSMutableArray new];
     for (NSUInteger i = 0; i < keysCount; i++) {
-        [prekeysPayload addObject:@{@"id": @(i), @"key": [NSString createAlphanumericalString]}];
+        [prekeysPayload addObject:@{@"id": @(i), @"key": [NSString randomAlphanumericalWithLength:keyLength]}];
     }
-    NSMutableDictionary *lastPreKeyPayload = [@{@"id": @(0xFFFF), @"key": [NSString createAlphanumericalString]} mutableCopy];
-    NSMutableDictionary *sigkeysPayload = [@{@"enckey": [NSString createAlphanumericalString], @"mackey": [NSString createAlphanumericalString]} mutableCopy];
+    NSMutableDictionary *lastPreKeyPayload = [@{@"id": @(0xFFFF), @"key": [NSString randomAlphanumericalWithLength:keyLength]} mutableCopy];
+    NSMutableDictionary *sigkeysPayload = [@{@"enckey": [NSString randomAlphanumericalWithLength:keyLength], @"mackey": [NSString randomAlphanumericalWithLength:keyLength]} mutableCopy];
     payload[@"type"] = type;
     payload[@"label"] = label;
     payload[@"lastkey"] = lastPreKeyPayload;

@@ -92,6 +92,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Properties
 
+    let router: AppRootRouter?
     var onDismiss: (() -> Void)?
 
     // MARK: - State
@@ -106,7 +107,11 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Life cycle
 
-    init(onDismiss: (() -> Void)? = nil) {
+    init(
+        router: AppRootRouter? = nil,
+        onDismiss: (() -> Void)? = nil
+    ) {
+        self.router = router
         self.onDismiss = onDismiss
         sections = []
 
@@ -117,11 +122,17 @@ final class DeveloperToolsViewModel: ObservableObject {
         sections.append(Section(
             header: "Actions",
             items: [
-                .destination(DestinationItem(title: "Debug actions", makeView: {
-                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self.selfClient)))
+                .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
+                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
+                })),
+                .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
+                    AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
+                        router: self?.router,
+                        onDismiss: self?.onDismiss
+                    )))
                 }))
             ]
         ))
@@ -141,11 +152,15 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Self user",
                 items: [
-                    .text(TextItem(title: "Handle", value: selfUser.handle ?? "None")),
+                    .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
                     .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
                     .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
                     .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
                     .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
+                    .text(TextItem(
+                        title: "Supported protocols",
+                        value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
+                    ),
                     .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.ed25519?.uppercased() ?? "None"))
                 ]
             ))
@@ -167,7 +182,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 header: "Datadog",
                 items: [
                     .text(TextItem(title: "User ID", value: String(describing: dataDogUserId))),
-                    .button(.init(title: "Crash Report Test", action: { fatalError("crash app") }))
+                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
                 ]
             ))
         }

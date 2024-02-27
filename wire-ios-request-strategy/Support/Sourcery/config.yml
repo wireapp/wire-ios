@@ -1,0 +1,10 @@
+sources:
+  - ../../Sources
+templates:
+  - ./AutoMockable.stencil
+output:
+  ./generated
+args:
+  autoMockableTestableImports: ["WireRequestStrategy"]
+  autoMockableImports: []
+ 

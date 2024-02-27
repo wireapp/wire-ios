@@ -22,10 +22,10 @@ import WireDataModel
 
 extension UIAlertController {
 
-    static func availabilityExplanation(_ availability: AvailabilityKind) -> UIAlertController {
+    static func availabilityExplanation(_ availability: Availability) -> UIAlertController {
         typealias AvailabilityReminderLocale = L10n.Localizable.Availability.Reminder
-        var title: String = ""
-        var message: String = ""
+        let title: String
+        let message: String
 
         switch availability {
         case .none:
@@ -53,12 +53,12 @@ extension UIAlertController {
         return alert
     }
 
-    static func availabilityPicker(_ handler: @escaping (_ availability: AvailabilityKind) -> Void) -> UIAlertController {
+    static func availabilityPicker(_ handler: @escaping (_ availability: Availability) -> Void) -> UIAlertController {
         typealias AvailabilityMessageLocale = L10n.Localizable.Availability.Message
 
         let alert = UIAlertController(title: AvailabilityMessageLocale.setStatus, message: nil, preferredStyle: .actionSheet)
 
-        for availability in AvailabilityKind.allCases {
+        for availability in Availability.allCases {
             alert.addAction(UIAlertAction(title: availability.localizedName, style: .default, handler: { _ in
                 handler(availability)
             }))

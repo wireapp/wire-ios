@@ -24,7 +24,7 @@ import WireDataModel
  * An object that coordinates disclosing the legal hold state to the user.
  */
 
-final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
+final class LegalHoldDisclosureController: UserObserving {
 
     enum DisclosureState: Equatable {
         /// No legal hold status is being disclosed.
@@ -83,7 +83,6 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
     init(selfUser: SelfUserType, userSession: UserSession, presenter: @escaping ViewControllerPresenter) {
         self.selfUser = selfUser
         self.presenter = presenter
-        super.init()
 
         configureObservers(userSession: userSession)
     }

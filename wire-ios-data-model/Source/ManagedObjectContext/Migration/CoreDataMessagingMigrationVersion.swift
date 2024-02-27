@@ -29,6 +29,8 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
     // MARK: -
 
     // Note: add new versions here in first position!
+    case version2_114 = "zmessaging2.114.0"
+    case version2_113 = "zmessaging2.113.0"
     case version2_112 = "zmessaging2.112.0"
     case version2_111 = "zmessaging2.111.0"
     case version2_110 = "zmessaging2.110.0"
@@ -65,19 +67,20 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
 
     var nextVersion: Self? {
         switch self {
-        case .version2_112:
+        case .version2_114:
             return nil
-        case .version2_111:
-            return .version2_112
-        case .version2_110:
+        case .version2_113: // custom migration required
+            return .version2_114
+        case .version2_111,
+                .version2_112:
+            return .version2_113
+        case .version2_110: // custom migration required
             return .version2_111
-        case .version2_109:
+        case .version2_107,
+                .version2_108,
+                .version2_109:
             return .version2_110
-        case .version2_108:
-            return .version2_109
-        case .version2_107:
-            return .version2_108
-        case .version2_106:
+        case .version2_106: // custom migration required
             return .version2_107
         case .version2_80,
                 .version2_81,
@@ -131,5 +134,11 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
             withExtension: Constant.resourceExtension,
             subdirectory: Constant.modelDirectory
         )
+    }
+
+    static var allFixtureVersions: [String] {
+        allCases.map {
+            $0.dataModelVersion.replacingOccurrences(of: ".", with: "-")
+        }
     }
 }

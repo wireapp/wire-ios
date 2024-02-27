@@ -400,7 +400,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         }
     }
 
-    public func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data>) -> Void)) {
+    public func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data, Error>) -> Void)) {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -491,7 +491,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                         completionHandler(avsClients)
 
                     } catch {
-                        Logging.mls.error("Failed to fetch client list for MLS conference: \(String(describing: error))")
+                        WireLogger.mls.error("Failed to fetch client list for MLS conference: \(String(describing: error))")
                     }
                 }
             }

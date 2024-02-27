@@ -38,13 +38,13 @@ final class NotSignedInViewController: UIViewController {
 
         self.navigationItem.hidesBackButton = true
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "share_extension.not_signed_in.close_button".localized,
+            title: L10n.ShareExtension.NotSignedIn.closeButton,
             style: .done,
             target: self,
             action: #selector(onCloseTapped)
         )
 
-        messageLabel.text = "share_extension.not_signed_in.title".localized
+        messageLabel.text = L10n.ShareExtension.NotSignedIn.title
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 0
 

@@ -47,7 +47,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         }
 
         try versions.forEach { initialVersion in
-            try migrateStoreToCurrentVersion(
+            try helper.migrateStoreToCurrentVersion(
                 sourceVersion: initialVersion,
                 preMigrationAction: { context in
                     insertDuplicateClients(with: clientID, in: context)
@@ -57,18 +57,21 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
                     XCTAssertEqual(clients.count, 2)
                 },
                 postMigrationAction: { context in
-                    // verify it deleted duplicates
-                    var clients = try fetchClients(with: clientID, in: context)
-                    XCTAssertEqual(clients.count, 1)
+                    try context.performGroupedAndWait { [self] context in
+                        // verify it deleted duplicates
+                        var clients = try fetchClients(with: clientID, in: context)
+                        XCTAssertEqual(clients.count, 1)
 
-                    // verify we can't insert duplicates
-                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                    insertDuplicateClients(with: clientID, in: context)
-                    try context.save()
+                        // verify we can't insert duplicates
+                        context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                        insertDuplicateClients(with: clientID, in: context)
+                        try context.save()
 
-                    clients = try fetchClients(with: clientID, in: context)
-                    XCTAssertEqual(clients.count, 1)
-                }
+                        clients = try fetchClients(with: clientID, in: context)
+                        XCTAssertEqual(clients.count, 1)
+                    }
+                },
+                for: self
             )
 
             // clean after each test
@@ -80,10 +83,11 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         let mappingModelURL = bundle.url(forResource: "MappingModel_2.106-2.107", withExtension: "cdm")
         let mappingModel = try XCTUnwrap(NSMappingModel(contentsOf: mappingModelURL))
 
-        try migrateStore(
+        try helper.migrateStore(
             sourceVersion: "2.106.0",
             destinationVersion: "2.107.0",
             mappingModel: mappingModel,
+            storeDirectory: tmpStoreURL,
             preMigrationAction: { context in
                 // given
                 let duplicate1 = UserClient.insertNewObject(in: context)
@@ -110,10 +114,11 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         let mappingModelURL = bundle.url(forResource: "MappingModel_2.106-2.107", withExtension: "cdm")
         let mappingModel = try XCTUnwrap(NSMappingModel(contentsOf: mappingModelURL))
 
-        try migrateStore(
+        try helper.migrateStore(
             sourceVersion: "2.106.0",
             destinationVersion: "2.107.0",
             mappingModel: mappingModel,
+            storeDirectory: tmpStoreURL,
             preMigrationAction: { context in
                 insertDuplicateClients(with: clientID, in: context)
                 try context.save()
@@ -122,168 +127,20 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
                 XCTAssertEqual(clients.count, 2)
             },
             postMigrationAction: { context in
-                // verify it deleted duplicates
-                var clients = try fetchClients(with: clientID, in: context)
-                XCTAssertEqual(clients.count, 1)
+                try context.performGroupedAndWait { [self] context in                // verify it deleted duplicates
+                    var clients = try fetchClients(with: clientID, in: context)
+                    XCTAssertEqual(clients.count, 1)
 
-                // verify we can't insert duplicates
-                context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                insertDuplicateClients(with: clientID, in: context)
-                try context.save()
+                    // verify we can't insert duplicates
+                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                    insertDuplicateClients(with: clientID, in: context)
+                    try context.save()
 
-                clients = try fetchClients(with: clientID, in: context)
-                XCTAssertEqual(clients.count, 1)
+                    clients = try fetchClients(with: clientID, in: context)
+                    XCTAssertEqual(clients.count, 1)
+                }
             }
         )
-    }
-
-    // MARK: - Migration Helpers
-
-    private func migrateStoreToCurrentVersion(
-        sourceVersion: String,
-        preMigrationAction: MigrationAction,
-        postMigrationAction: MigrationAction
-    ) throws {
-        // GIVEN
-        let accountIdentifier = UUID()
-        let applicationContainer = DatabaseBaseTest.applicationContainer
-
-        // copy given database as source
-        let storeFile = CoreDataStack.accountDataFolder(
-            accountIdentifier: accountIdentifier,
-            applicationContainer: applicationContainer
-        ).appendingPersistentStoreLocation()
-
-        try helper.createFixtureDatabase(
-            storeFile: storeFile,
-            versionName: sourceVersion
-        )
-
-        let sourceModel = try helper.createObjectModel(version: sourceVersion)
-        var sourceContainer: NSPersistentContainer? = try helper.createStore(model: sourceModel, at: storeFile)
-
-        // perform pre-migration action
-        if let sourceContainer {
-            try preMigrationAction(sourceContainer.viewContext)
-        }
-
-        // release store before actual test
-        guard let store = sourceContainer?.persistentStoreCoordinator.persistentStores.first else {
-            XCTFail("missing expected store")
-            return
-        }
-        try sourceContainer?.persistentStoreCoordinator.remove(store)
-        sourceContainer = nil
-
-        // WHEN
-        let stack = createStorageStackAndWaitForCompletion(
-            userID: accountIdentifier,
-            applicationContainer: applicationContainer
-        )
-
-        // THEN
-        // perform post migration action
-        try postMigrationAction(stack.viewContext)
-
-        try? FileManager.default.removeItem(at: applicationContainer)
-    }
-
-    private func migrateStore(
-        sourceVersion: String,
-        destinationVersion: String,
-        mappingModel: NSMappingModel,
-        preMigrationAction: MigrationAction,
-        postMigrationAction: MigrationAction
-    ) throws {
-        // GIVEN
-
-        // create versions models
-        let sourceModel = try helper.createObjectModel(version: sourceVersion)
-        let destinationModel = try helper.createObjectModel(version: destinationVersion)
-
-        let sourceStoreURL = storeURL(version: sourceVersion)
-        let destinationStoreURL = storeURL(version: destinationVersion)
-
-        // create container for initial version
-        let container = try helper.createStore(model: sourceModel, at: sourceStoreURL)
-
-        // perform pre-migration action
-        try preMigrationAction(container.viewContext)
-
-        // create migration manager and mapping model
-        let migrationManager = NSMigrationManager(
-            sourceModel: sourceModel,
-            destinationModel: destinationModel
-        )
-
-        // WHEN
-
-        // perform migration
-        do {
-            try migrationManager.migrateStore(
-                from: sourceStoreURL,
-                sourceType: NSSQLiteStoreType,
-                options: nil,
-                with: mappingModel,
-                toDestinationURL: destinationStoreURL,
-                destinationType: NSSQLiteStoreType,
-                destinationOptions: nil
-            )
-        } catch {
-            XCTFail("Migration failed: \(error)")
-        }
-
-        // THEN
-
-        // create store
-        let migratedContainer = try helper.createStore(model: destinationModel, at: destinationStoreURL)
-
-        // perform post migration action
-        try postMigrationAction(migratedContainer.viewContext)
-    }
-
-    func createStorageStackAndWaitForCompletion(
-        userID: UUID = UUID(),
-        applicationContainer: URL,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) -> CoreDataStack {
-
-        // we use backgroundActivity suring the setup so we need to mock for tests
-        let manager = MockBackgroundActivityManager()
-        BackgroundActivityFactory.shared.activityManager = manager
-
-        let account = Account(
-            userName: "",
-            userIdentifier: userID
-        )
-        let stack = CoreDataStack(
-            account: account,
-            applicationContainer: applicationContainer,
-            inMemoryStore: false
-        )
-
-        let exp = self.expectation(description: "should wait for loadStores to finish")
-        stack.setup(onStartMigration: {
-            // do nothing
-        }, onFailure: { error in
-            XCTAssertNil(error, file: file, line: line)
-            exp.fulfill()
-        }, onCompletion: { _ in
-            exp.fulfill()
-        })
-        waitForExpectations(timeout: 5.0)
-
-        BackgroundActivityFactory.shared.activityManager = nil
-        XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
-
-        return stack
-    }
-
-    // MARK: - URL Helpers
-
-    private func storeURL(version: String) -> URL {
-        return tmpStoreURL.appendingPathComponent("\(version).sqlite")
     }
 
     // MARK: - Fetch / Insert Helpers

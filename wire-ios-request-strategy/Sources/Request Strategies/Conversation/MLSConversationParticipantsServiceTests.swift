@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTesting
-@testable import WireRequestStrategy
 import WireDataModelSupport
+import WireTesting
+import XCTest
+
+@testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
@@ -116,6 +118,42 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
         // THEN
         await assertItThrows(error: MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set([user]))) {
+            // WHEN
+            try await sut.addParticipants([user], to: conversation)
+        }
+    }
+
+    func test_AddParticipants_Throws_UnreachableDomainsError() async {
+        // GIVEN
+        let unreachableDomains = Set(["example.com"])
+        let mlsUser = await syncMOC.perform { [self] in
+            MLSUser(from: user)
+        }
+
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
+            throw SendCommitBundleAction.Failure.unreachableDomains(unreachableDomains)
+        }
+
+        // THEN
+        await assertItThrows(error: FederationError.unreachableDomains(unreachableDomains)) {
+            // WHEN
+            try await sut.addParticipants([user], to: conversation)
+        }
+    }
+
+    func test_AddParticipants_Throws_NonFederatingDomainsError() async {
+        // GIVEN
+        let unreachableDomains = Set(["example"])
+        let mlsUser = await syncMOC.perform { [self] in
+            MLSUser(from: user)
+        }
+
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
+            throw SendCommitBundleAction.Failure.nonFederatingDomains(unreachableDomains)
+        }
+
+        // THEN
+        await assertItThrows(error: FederationError.nonFederatingDomains(unreachableDomains)) {
             // WHEN
             try await sut.addParticipants([user], to: conversation)
         }

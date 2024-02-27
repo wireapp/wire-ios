@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-class ZMUserSessionLegalHoldTests: IntegrationTest {
+final class ZMUserSessionLegalHoldTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()

@@ -144,7 +144,9 @@ extension EncryptionContext {
         self.releaseDirectoryLock()
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // TODO: can this be removed?
+    // swiftlint:enable todo_requires_jira_link
     public func performAsync(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) async -> Void ) async {
         self.acquireDirectoryLock()
         if self.currentSessionsDirectory == nil {

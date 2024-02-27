@@ -89,7 +89,7 @@ class TeamObserverTests: NotificationDispatcherTestBase {
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(team,
-                                                     modifier: { $0.name =  "foo"},
+                                                     modifier: { $0.name =  "foo" },
                                                      expectedChangedFields: [#keyPath(TeamChangeInfo.nameChanged)]
         )
 

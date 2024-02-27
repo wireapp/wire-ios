@@ -25,7 +25,7 @@ class MockTransportPushTokenTests_Swift: MockTransportSessionTests {
             "app": "some.app",
             "token": token,
             "transport": "APNS"
-            ] as NSDictionary
+        ] as NSDictionary
     }
 
     func testThatWeCanDeletePushToken() {

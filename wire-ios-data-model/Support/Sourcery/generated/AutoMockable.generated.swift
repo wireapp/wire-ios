@@ -284,24 +284,24 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - clientPublicKey
 
-    public var clientPublicKeyCiphersuite_Invocations: [WireCoreCrypto.Ciphersuite] = []
-    public var clientPublicKeyCiphersuite_MockError: Error?
-    public var clientPublicKeyCiphersuite_MockMethod: ((WireCoreCrypto.Ciphersuite) async throws -> Data)?
-    public var clientPublicKeyCiphersuite_MockValue: Data?
+    public var clientPublicKeyCiphersuiteCredentialType_Invocations: [(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType)] = []
+    public var clientPublicKeyCiphersuiteCredentialType_MockError: Error?
+    public var clientPublicKeyCiphersuiteCredentialType_MockMethod: ((WireCoreCrypto.Ciphersuite, WireCoreCrypto.MlsCredentialType) async throws -> Data)?
+    public var clientPublicKeyCiphersuiteCredentialType_MockValue: Data?
 
-    public func clientPublicKey(ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> Data {
-        clientPublicKeyCiphersuite_Invocations.append(ciphersuite)
+    public func clientPublicKey(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> Data {
+        clientPublicKeyCiphersuiteCredentialType_Invocations.append((ciphersuite: ciphersuite, credentialType: credentialType))
 
-        if let error = clientPublicKeyCiphersuite_MockError {
+        if let error = clientPublicKeyCiphersuiteCredentialType_MockError {
             throw error
         }
 
-        if let mock = clientPublicKeyCiphersuite_MockMethod {
-            return try await mock(ciphersuite)
-        } else if let mock = clientPublicKeyCiphersuite_MockValue {
+        if let mock = clientPublicKeyCiphersuiteCredentialType_MockMethod {
+            return try await mock(ciphersuite, credentialType)
+        } else if let mock = clientPublicKeyCiphersuiteCredentialType_MockValue {
             return mock
         } else {
-            fatalError("no mock for `clientPublicKeyCiphersuite`")
+            fatalError("no mock for `clientPublicKeyCiphersuiteCredentialType`")
         }
     }
 
@@ -412,6 +412,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `conversationExistsConversationId`")
+        }
+    }
+
+    // MARK: - getExternalSender
+
+    public var getExternalSenderConversationId_Invocations: [Data] = []
+    public var getExternalSenderConversationId_MockError: Error?
+    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
+    public var getExternalSenderConversationId_MockValue: Data?
+
+    public func getExternalSender(conversationId: Data) async throws -> Data {
+        getExternalSenderConversationId_Invocations.append(conversationId)
+
+        if let error = getExternalSenderConversationId_MockError {
+            throw error
+        }
+
+        if let mock = getExternalSenderConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = getExternalSenderConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getExternalSenderConversationId`")
         }
     }
 
@@ -574,20 +597,23 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_Invocations: [(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?)] = []
     public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockError: Error?
-    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod: ((WireCoreCrypto.E2eiEnrollment, String, UInt32?) async throws -> Void)?
+    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod: ((WireCoreCrypto.E2eiEnrollment, String, UInt32?) async throws -> [String]?)?
+    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockValue: [String]??
 
-    public func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws {
+    public func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws -> [String]? {
         e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_Invocations.append((enrollment: enrollment, certificateChain: certificateChain, nbKeyPackage: nbKeyPackage))
 
         if let error = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockError {
             throw error
         }
 
-        guard let mock = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod else {
+        if let mock = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod {
+            return try await mock(enrollment, certificateChain, nbKeyPackage)
+        } else if let mock = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage`")
         }
-
-        try await mock(enrollment, certificateChain, nbKeyPackage)
     }
 
     // MARK: - e2eiNewActivationEnrollment
@@ -706,20 +732,23 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     public var e2eiRegisterIntermediateCaCertPem_Invocations: [String] = []
     public var e2eiRegisterIntermediateCaCertPem_MockError: Error?
-    public var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> Void)?
+    public var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> [String]?)?
+    public var e2eiRegisterIntermediateCaCertPem_MockValue: [String]??
 
-    public func e2eiRegisterIntermediateCa(certPem: String) async throws {
+    public func e2eiRegisterIntermediateCa(certPem: String) async throws -> [String]? {
         e2eiRegisterIntermediateCaCertPem_Invocations.append(certPem)
 
         if let error = e2eiRegisterIntermediateCaCertPem_MockError {
             throw error
         }
 
-        guard let mock = e2eiRegisterIntermediateCaCertPem_MockMethod else {
+        if let mock = e2eiRegisterIntermediateCaCertPem_MockMethod {
+            return try await mock(certPem)
+        } else if let mock = e2eiRegisterIntermediateCaCertPem_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `e2eiRegisterIntermediateCaCertPem`")
         }
-
-        try await mock(certPem)
     }
 
     // MARK: - e2eiRotateAll
@@ -3215,24 +3244,19 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID)
     }
 
-    // MARK: - commitPendingProposals
+    // MARK: - commitPendingProposalsIfNeeded
 
-    public var commitPendingProposals_Invocations: [Void] = []
-    public var commitPendingProposals_MockError: Error?
-    public var commitPendingProposals_MockMethod: (() async throws -> Void)?
+    public var commitPendingProposalsIfNeeded_Invocations: [Void] = []
+    public var commitPendingProposalsIfNeeded_MockMethod: (() -> Void)?
 
-    public func commitPendingProposals() async throws {
-        commitPendingProposals_Invocations.append(())
+    public func commitPendingProposalsIfNeeded() {
+        commitPendingProposalsIfNeeded_Invocations.append(())
 
-        if let error = commitPendingProposals_MockError {
-            throw error
+        guard let mock = commitPendingProposalsIfNeeded_MockMethod else {
+            fatalError("no mock for `commitPendingProposalsIfNeeded`")
         }
 
-        guard let mock = commitPendingProposals_MockMethod else {
-            fatalError("no mock for `commitPendingProposals`")
-        }
-
-        try await mock()
+        mock()
     }
 
     // MARK: - commitPendingProposals
@@ -3547,6 +3571,7 @@ public class MockOneOnOneMigratorInterface: OneOnOneMigratorInterface {
     public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> MLSGroupID)?
     public var migrateToMLSUserIDIn_MockValue: MLSGroupID?
 
+    @discardableResult
     public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
         migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
 
@@ -3598,6 +3623,26 @@ public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
 
     public init() {}
 
+
+    // MARK: - resolveAllOneOnOneConversations
+
+    public var resolveAllOneOnOneConversationsIn_Invocations: [NSManagedObjectContext] = []
+    public var resolveAllOneOnOneConversationsIn_MockError: Error?
+    public var resolveAllOneOnOneConversationsIn_MockMethod: ((NSManagedObjectContext) async throws -> Void)?
+
+    public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
+        resolveAllOneOnOneConversationsIn_Invocations.append(context)
+
+        if let error = resolveAllOneOnOneConversationsIn_MockError {
+            throw error
+        }
+
+        guard let mock = resolveAllOneOnOneConversationsIn_MockMethod else {
+            fatalError("no mock for `resolveAllOneOnOneConversationsIn`")
+        }
+
+        try await mock(context)
+    }
 
     // MARK: - resolveOneOnOneConversation
 

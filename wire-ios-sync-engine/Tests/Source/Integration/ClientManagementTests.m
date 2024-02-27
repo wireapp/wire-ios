@@ -158,15 +158,13 @@
     XCTAssertNil(self.observer.deletionError);
 }
 
-@end
-
-@implementation ClientManagementTests (PushNotifications)
+#pragma mark - PushNotifications
 
 - (void)testThatItAddsAUserClientWhenReceivingANotificationForANewClient
 {
     // given
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    UserChangeObserver *observer = [[UserChangeObserver alloc] initWithUser:selfUser];
+    ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
     __block MockUserClient *mockClient;
@@ -269,7 +267,7 @@
     
     XCTAssertEqual(selfUser.clients.count, 2u);
 
-    UserChangeObserver *observer = [[UserChangeObserver alloc] initWithUser:selfUser];
+    ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
     [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {

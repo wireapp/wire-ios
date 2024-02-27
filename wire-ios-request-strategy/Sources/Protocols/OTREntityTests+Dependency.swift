@@ -71,11 +71,11 @@ class OTREntityTests_Dependency: MessagingTestBase {
 
             // WHEN
             self.selfClient.missesClient(self.otherClient)
-            self.oneToOneConversation.connection?.needsToBeUpdatedFromBackend = true
+            self.oneToOneConnection?.needsToBeUpdatedFromBackend = true
 
             // THEN
             let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
-            XCTAssertEqual(dependency as? ZMConnection, self.oneToOneConversation.connection)
+            XCTAssertEqual(dependency as? ZMConnection, self.oneToOneConnection)
         }
     }
 

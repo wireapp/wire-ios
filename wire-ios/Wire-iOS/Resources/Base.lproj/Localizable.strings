@@ -322,7 +322,7 @@
 "conversation.create.receipts.title" = "Read receipts";
 "conversation.create.receipts.subtitle" = "When this is on, people can see when their messages in this conversation are read.";
 "conversation.create.mls.title" = "Protocol";
-"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Cancel";
 "conversation.create.non_federating_domains_error.title" = "Group can't be created";
@@ -992,7 +992,7 @@
 "group_details.receipt_options_cell.title" = "Read receipts";
 "group_details.receipt_options_cell.description" = "When this is on, people can see when their messages in this conversation are read.";
 
-"group_details.message_protocol.section_tile" = "Protocol details (beta)";
+"group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
@@ -1313,6 +1313,10 @@
 "self.settings.technical_report.privacy_warning" = "Detailed logs could contain personal data";
 "self.settings.technical_report.no_mail_alert" = "No mail client detected. Tap \"OK\" and send logs manually to: ";
 
+"self.settings.technical_report.mail_body.firstline" = "Please fill in the following";
+"self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
+"self.settings.technical_report.mail_body.section2" = "What Happened:";
+"self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
 // Password reset
 "self.settings.password_reset_menu.title" = "Reset Password";
 

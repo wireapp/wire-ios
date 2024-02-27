@@ -56,7 +56,9 @@ final class ProxyCredentialsViewController: UIViewController {
     lazy var usernameInput: ValidatedTextField = {
         let textField = ValidatedTextField(kind: .email, leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
         textField.showConfirmButton = false
-        textField.placeholder = Credentials.Username.placeholder.capitalized // TODO: .uppercased() when new design is implemented
+        // swiftlint:disable todo_requires_jira_link
+        // TODO: .uppercased() when new design is implemented
+        textField.placeholder = Credentials.Username.placeholder.capitalized
         textField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
         textField.delegate = self
         textField.addDoneButtonOnKeyboard()
@@ -65,8 +67,8 @@ final class ProxyCredentialsViewController: UIViewController {
 
     lazy var passwordInput: ValidatedTextField = {
         let textField = ValidatedTextField(kind: .password(isNew: false), leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
-
-        textField.placeholder = Credentials.Password.placeholder.capitalized // TODO: .uppercased() when new design is implemented
+        // TODO: .uppercased() when new design is implemented
+        textField.placeholder = Credentials.Password.placeholder.capitalized
         textField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
         textField.delegate = self
         textField.addDoneButtonOnKeyboard()
@@ -74,7 +76,7 @@ final class ProxyCredentialsViewController: UIViewController {
         textField.addRevealButton(delegate: self)
         return textField
     }()
-
+    // swiftlint:enable todo_requires_jira_link
     override func viewDidLoad() {
         super.viewDidLoad()
         captionLabel.text = Credentials.caption(backendURL.absoluteString)

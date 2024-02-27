@@ -22,7 +22,7 @@ import Foundation
  * Handles button taps in the authentication flow.
  */
 
-class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
+final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

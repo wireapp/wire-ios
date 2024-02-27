@@ -44,7 +44,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
             let payload = [
                 "from": self.sender.remoteIdentifier!.transportString(),
                 "conversation": self.groupConversation.remoteIdentifier!.transportString(),
-                "time": NSDate().transportString(),
+                "time": Date().transportString(),
                 "data": [
                     "name": "New Name"
                 ],

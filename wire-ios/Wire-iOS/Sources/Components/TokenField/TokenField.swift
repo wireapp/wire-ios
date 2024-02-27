@@ -319,7 +319,7 @@ final class TokenField: UIView {
 
     // searches by isEqual:
     func token(forRepresentedObject object: NSObjectProtocol) -> Token<NSObjectProtocol>? {
-        return tokens.first(where: { $0.representedObject == HashBox(value: object)})
+        return tokens.first(where: { $0.representedObject == HashBox(value: object) })
     }
 
     private func scrollToBottomOfInputField() {

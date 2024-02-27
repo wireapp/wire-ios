@@ -1,0 +1,79 @@
+//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Share Extension
+// General
+
+
+
+"general.ok" = "OK";
+
+// Conversation Selection
+"share_extension.conversation_selection.account" = "Conta:";
+"share_extension.conversation_selection.title" = "Conversa:";
+"share_extension.conversation_selection.empty.value" = "Escolha";
+
+"share_extension.send_button.title" = "Enviar";
+"share_extension.input.placeholder" = "Digite uma mensagem";
+"share_extension.sending_progress.title" = "Enviando…";
+"share_extension.preparing.title" = "Preparando…";
+"share_extension.no_internet_connection.title" = "Sem conexão de internet";
+"share_extension.not_signed_in.title" = "É necessário inscrever-se no Wire antes que você possa compartilhar qualquer coisa";
+"share_extension.not_signed_in.close_button" = "Fechar";
+
+// Custom app lock - unlock
+"share_extension.unlock.title_label" = "Insira o código de acesso para desbloquear o Wire";
+"share_extension.unlock.submit_button.title" = "desbloquear";
+"share_extension.unlock.textfield.placeholder" = "Digite seu código de acesso";
+"share_extension.unlock.hint_label" = "Código de Acesso";
+"share_extension.unlock.error_label" = "Código de acesso incorreto";
+"share_extension.unlock.alert.message" = "Abra o Wire para criar um código de acesso";
+"share_extension.unlock.reveal_passcode" = "Revelar código de acesso";
+
+// Timeout
+"share_extension.timeout.title" = "A conexão expirou.";
+"share_extension.timeout.message" = "Verifique sua conexão de Internet e tente novamente. Os anexos foram salvos na conversa.";
+
+// Content
+"share_extension.content.file.too_big" = "Você pode enviar arquivos de até %@";
+"share_extension.content.file.unsupported_attachment" = "Unsupported attachment";
+
+"share_extension.error.conversation_does_not_exist.message" = "Por favor, selecione uma conversa para compartilhar";
+
+"share_extension.privacy_security.lock_app.description" = "Desbloquear Wire";
+"share_extension.logged_out.title" = "Você foi deslogado dessa conta.";
+"share_extension.logged_out.message" = "Por favor, escolha outra conta.";
+
+// Conversation Degraded (security level lowered)
+"share_extension.conversation.displayname.emptygroup" = "Conversa em grupo vazia";
+"share_extension.meta.degraded.degradation_reason_message.singular" = "%@ começou a usar um novo dispositivo.";
+"share_extension.meta.degraded.degradation_reason_message.plural" = "%@ começou a usar novos dispositivos.";
+"share_extension.meta.degraded.dialog_message" = "Ainda quer enviar sua mensagem?";
+"share_extension.meta.degraded.cancel_sending_button" = "Do not send";
+"share_extension.meta.degraded.send_anyway_button" = "Send anyway";
+
+"share_extension.meta.legalhold.send_alert_title" = "A conversa está agora sujeita a proteção jurídica.";
+
+//Feature flag - File sharing
+"share_extension.feature.flag.file_sharing.alert.title" = "File sharing restrictions";
+"share_extension.feature.flag.file_sharing.alert.message" = "You can not share this file because this feature is disabled.";
+
+// Share Extension - Voice Over
+"share_extension.voiceover.conversation_under_legal_hold" = "Sob Proteção Jurídica.";
+"share_extension.voiceover.conversation_secure" = "Todos os clientes foram verificados.";
+"share_extension.voiceover.conversation_secure_with_ignored" = "Nem todos os clientes foram verificados.";

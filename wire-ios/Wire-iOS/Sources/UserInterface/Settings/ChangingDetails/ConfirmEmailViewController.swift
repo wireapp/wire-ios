@@ -153,9 +153,9 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
-extension ConfirmEmailViewController: ZMUserObserver {
+extension ConfirmEmailViewController: UserObserving {
     func userDidChange(_ note: WireDataModel.UserChangeInfo) {
         if note.user.isSelfUser {
             // we need to check if the notification really happened because

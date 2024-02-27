@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public typealias TeamMembership = Member
 @objcMembers public class Member: ZMManagedObject {
 
     @NSManaged public var team: Team?
@@ -56,21 +57,24 @@
         }
     }
 
-    @objc(getOrCreateMemberForUser:inTeam:context:)
-    public static func getOrCreateMember(for user: ZMUser, in team: Team, context: NSManagedObjectContext) -> Member {
+    @objc(getOrUpdateMemberForUser:inTeam:context:)
+    public static func getOrUpdateMember(for user: ZMUser, in team: Team, context: NSManagedObjectContext) -> Member {
         precondition(context.zm_isSyncContext)
 
+        var member: Member
         if let existing = user.membership {
-            return existing
+            member = existing
         } else if let userId = user.remoteIdentifier, let existing = Member.fetch(with: userId, in: context) {
-            return existing
+            member = existing
+        } else {
+            member = insertNewObject(in: context)
+            member.needsToBeUpdatedFromBackend = true
         }
 
-        let member = insertNewObject(in: context)
         member.team = team
         member.user = user
         member.remoteIdentifier = user.remoteIdentifier
-        member.needsToBeUpdatedFromBackend = true
+
         return member
     }
 
@@ -90,12 +94,12 @@ extension Member {
 
     @discardableResult
     public static func createOrUpdate(with payload: [String: Any], in team: Team, context: NSManagedObjectContext) -> Member? {
-        guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init) else { return nil }
+        guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return nil }
 
         let user = ZMUser.fetchOrCreate(with: id, domain: nil, in: context)
-        let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(NSDate.init(transport:)) as Date?
-        let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init)
-        let member = getOrCreateMember(for: user, in: team, context: context)
+        let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(Date.init(transportString:)) as Date?
+        let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init(transportString:))
+        let member = getOrUpdateMember(for: user, in: team, context: context)
 
         member.updatePermissions(with: payload)
         member.createdAt = createdAt
@@ -105,7 +109,7 @@ extension Member {
     }
 
     public func updatePermissions(with payload: [String: Any]) {
-        guard let userID = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
+        guard let userID = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
         precondition(remoteIdentifier == userID, "Trying to update member with non-matching payload: \(payload), \(self)")
         guard let permissionsPayload = payload[ResponseKey.permissions.rawValue] as? [String: Any] else { return }
         guard let selfPermissions = permissionsPayload[ResponseKey.Permissions.`self`.rawValue] as? NSNumber else { return }

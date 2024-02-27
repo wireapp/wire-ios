@@ -140,7 +140,9 @@ extension CountryCodeTableViewController: UISearchBarDelegate {
 
 // MARK: - UISearchResultsUpdating
 
-/// TODO: test
+// swiftlint:disable todo_requires_jira_link
+// TODO: test
+// swiftlint:enable todo_requires_jira_link
 extension CountryCodeTableViewController: UISearchResultsUpdating {
 
     func filter(searchText: String?) -> [Any]? {

@@ -23,7 +23,7 @@ import WireCommonComponents
 
 // MARK: - ShowAllParticipantsCell
 
-class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
+final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 
     // MARK: - Properties
 

@@ -29,7 +29,7 @@ typealias AuthenticationStepViewController = UIViewController & AuthenticationCo
  * An object that builds view controllers for authentication steps.
  */
 
-class AuthenticationInterfaceBuilder {
+final class AuthenticationInterfaceBuilder {
 
     /// The object to use when checking for features.
     let featureProvider: AuthenticationFeatureProvider

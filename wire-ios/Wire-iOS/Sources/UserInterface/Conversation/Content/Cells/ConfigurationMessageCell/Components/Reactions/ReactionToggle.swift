@@ -21,7 +21,7 @@ import WireCommonComponents
 
 // MARK: - ReactionToggle
 
-class ReactionToggle: UIControl {
+final class ReactionToggle: UIControl {
 
     // MARK: - Properties
 

@@ -159,28 +159,35 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     private func createTipLabel() {
         let color = SemanticColors.Label.textDefault
-        let text = "conversation.input_bar.audio_message.keyboard.record_tip".localized(uppercased: true)
-        let attrText = NSMutableAttributedString(string: text)
-        let atRange = (text as NSString).range(of: "%@")
 
-        // insert random effect icon
+        let recordingHintText = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.recordTip("%@")
+
+        let effects = AVSAudioEffectType.displayedEffects.filter { $0 != .none }
+        let randomIndex = Int.random(in: 0..<effects.count)
+        let effect = effects[randomIndex]
+        let image = effect.icon.makeImage(size: 14, color: color)
+
+        let attachment = NSTextAttachment()
+        attachment.image = image
+
+        let imageAttrString = NSAttributedString(attachment: attachment)
+
+        let attrText = NSMutableAttributedString(string: recordingHintText)
+        let atRange = (recordingHintText as NSString).range(of: "%@")
         if atRange.location != NSNotFound {
-            let effects = AVSAudioEffectType.displayedEffects.filter { $0 != .none }
-            let max = UInt32(effects.count)
-            let effect = effects[Int.random(in: 0..<Int(max))]
-            let image = effect.icon.makeImage(size: 14, color: color)
-
-            let attachment = NSTextAttachment()
-            attachment.image = image
-
-            attrText.replaceCharacters(in: atRange, with: NSAttributedString(attachment: attachment))
+            attrText.replaceCharacters(in: atRange, with: imageAttrString)
         }
 
         let style = NSMutableParagraphStyle()
         style.lineSpacing = 8
 
-        attrText.addAttribute(.paragraphStyle, value: style, range: attrText.wholeRange)
-        self.tipLabel.attributedText = NSAttributedString(attributedString: attrText)
+        attrText.addAttribute(
+            .paragraphStyle,
+            value: style,
+            range: NSRange(location: 0, length: attrText.length)
+        )
+
+        self.tipLabel.attributedText = attrText
         self.tipLabel.numberOfLines = 2
         self.tipLabel.font = FontSpec(.small, .light).font!
         self.tipLabel.textColor = color
@@ -416,7 +423,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
                 duration: 0.35,
                 options: [.curveEaseIn],
                 animations: changes,
-                completion: { _ in picker.didMove(toParent: self)}
+                completion: { _ in picker.didMove(toParent: self) }
             )
 
             self.effectPickerViewController = picker

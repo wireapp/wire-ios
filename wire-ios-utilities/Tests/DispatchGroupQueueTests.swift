@@ -19,7 +19,7 @@
 import WireTesting
 @testable import WireUtilities
 
-class DispatchGroupQueueTests: ZMTBaseTest {
+final class DispatchGroupQueueTests: ZMTBaseTest {
 
     var sut: DispatchGroupQueue!
 
@@ -32,7 +32,7 @@ class DispatchGroupQueueTests: ZMTBaseTest {
     func testPerformedGroupedBlockEntersAndLeavesAllGroups() {
         // given
         let groupIsEmpty = customExpectation(description: "group1 is emtpy")
-        let group = ZMSDispatchGroup(label: "group1")!
+        let group = ZMSDispatchGroup(label: "group1")
         sut = DispatchGroupQueue(queue: DispatchQueue.main)
         sut.add(group)
 

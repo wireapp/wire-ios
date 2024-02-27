@@ -50,7 +50,7 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 
             // Mapping from conversation to message count in the last month
             let countByConversation = conversations.mapToDictionary { $0.lastMonthMessageCount() }
-            let sorted = countByConversation.filter { $0.1 > 0 }.sorted {  $0.1 > $1.1 }.prefix(TopConversationsDirectory.topConversationSize)
+            let sorted = countByConversation.filter { $0.1 > 0 }.sorted { $0.1 > $1.1 }.prefix(TopConversationsDirectory.topConversationSize)
             let identifiers = sorted.compactMap { $0.0.objectID }
             self.updateUIList(with: identifiers)
         }
@@ -73,7 +73,7 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 
     /// Top conversations
     public var topConversations: [ZMConversation] {
-        return self.topConversationsCache.filter { !$0.isZombieObject && $0.connection?.status == .accepted }
+        return self.topConversationsCache.filter { !$0.isZombieObject && $0.oneOnOneUser?.connection?.status == .accepted }
     }
 
     /// Persist list of conversations to persistent store
@@ -119,7 +119,7 @@ fileprivate extension ZMConversation {
 
     static var predicateForActiveOneOnOneConversations: NSPredicate {
         let oneOnOnePredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.conversationType), ZMConversationType.oneOnOne.rawValue)
-        let acceptedPredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.connection.status), ZMConnectionStatus.accepted.rawValue)
+        let acceptedPredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.oneOnOneUser.connection.status), ZMConnectionStatus.accepted.rawValue)
         return NSCompoundPredicate(andPredicateWithSubpredicates: [oneOnOnePredicate, acceptedPredicate])
     }
 
