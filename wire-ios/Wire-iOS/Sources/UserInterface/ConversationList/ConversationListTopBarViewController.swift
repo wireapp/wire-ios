@@ -34,8 +34,6 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
-    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
-    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
@@ -53,15 +51,12 @@ final class ConversationListTopBarViewController: UIViewController {
     init(
         account: Account,
         selfUser: SelfUserType,
-        userSession: UserSession,
-        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        userSession: UserSession
     ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
-        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
-        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+
         super.init(nibName: nil, bundle: nil)
 
         observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
@@ -282,13 +277,11 @@ extension ConversationListTopBarViewController: UIViewControllerTransitioningDel
 
 extension ConversationListTopBarViewController: UserObserving {
 
-    func userDidChange(_ changes: UserChangeInfo) {
-
-        if changes.nameChanged || changes.teamsChanged {
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.nameChanged || changeInfo.teamsChanged {
             updateAccountView()
         }
-
-        if changes.legalHoldStatusChanged {
+        if changeInfo.legalHoldStatusChanged {
             updateLegalHoldIndictor()
         }
     }

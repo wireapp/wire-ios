@@ -733,6 +733,20 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "deviceDetails.whyVerifyFingerprint.hint", fallback: "Double tap to learn more about verifications")
       }
     }
+    internal enum GroupDetails {
+      internal enum Conversation {
+        internal enum Participants {
+          /// all devices have a valid end-to-end identity certificate
+          internal static let allDevicesHaveValidCertificates = L10n.tr("Accessibility", "groupDetails.conversation.participants.allDevicesHaveValidCertificates", fallback: "all devices have a valid end-to-end identity certificate")
+          /// all devices are verified (Proteus)
+          internal static let allDevicesProteusVerified = L10n.tr("Accessibility", "groupDetails.conversation.participants.allDevicesProteusVerified", fallback: "all devices are verified (Proteus)")
+          /// all your devices have a valid end-to-end identity certificate
+          internal static let allYourDevicesHaveValidCertificates = L10n.tr("Accessibility", "groupDetails.conversation.participants.allYourDevicesHaveValidCertificates", fallback: "all your devices have a valid end-to-end identity certificate")
+          /// all your devices are verified (Proteus)
+          internal static let allYourDevicesProteusVerified = L10n.tr("Accessibility", "groupDetails.conversation.participants.allYourDevicesProteusVerified", fallback: "all your devices are verified (Proteus)")
+        }
+      }
+    }
     internal enum GuestConversationSettings {
       internal enum CloseButton {
         /// Close guest settings

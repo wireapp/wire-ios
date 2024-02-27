@@ -22,13 +22,13 @@ extension UserStatus {
 
     init(
         user: UserType,
-        isCertified: Bool
+        isE2EICertified: Bool
     ) {
         self.init(
             name: user.name ?? "",
             availability: user.availability,
-            isCertified: isCertified,
-            isVerified: user.isVerified
+            isE2EICertified: isE2EICertified,
+            isProteusVerified: user.isVerified
         )
     }
 }

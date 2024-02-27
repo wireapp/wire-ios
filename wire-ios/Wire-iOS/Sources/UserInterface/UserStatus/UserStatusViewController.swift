@@ -30,7 +30,7 @@ final class UserStatusViewController: UIViewController {
     private let settings: Settings
 
     public var userStatus = UserStatus() {
-        didSet { (view as? UserStatusView)?.userStatus = userStatus }
+        didSet { (viewIfLoaded as? UserStatusView)?.userStatus = userStatus }
     }
 
     init(

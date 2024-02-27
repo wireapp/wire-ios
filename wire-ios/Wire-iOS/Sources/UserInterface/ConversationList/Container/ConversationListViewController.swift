@@ -15,7 +15,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -31,8 +30,6 @@ final class ConversationListViewController: UIViewController {
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
-    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
-    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
     /// internal View Model
     var state: ConversationListState = .conversationList
@@ -88,47 +85,36 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
-        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
-
-        self.init(
-            viewModel: viewModel,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
+        let viewModel = ConversationListViewController.ViewModel(
+            account: account,
+            selfUser: selfUser,
+            userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-
-        viewModel.viewController = self
-
+        self.init(viewModel: viewModel)
         delegate = self
-
         onboardingHint.arrowPointToView = tabBar
     }
 
-    required init(
-        viewModel: ViewModel,
-        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
-    ) {
+    required init(viewModel: ViewModel) {
         self.viewModel = viewModel
-        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
-        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
             selfUser: viewModel.selfUser,
-            userSession: viewModel.userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            userSession: viewModel.userSession
         )
-topBarViewController.selfUserStatus = viewModel.selfUserStatus
+        topBarViewController.selfUserStatus = viewModel.selfUserStatus
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
         listContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
+
+        viewModel.viewController = self
 
         definesPresentationContext = true
 

@@ -27,15 +27,13 @@ extension UserStatus {
         appendYouSuffix: Bool
     ) -> NSAttributedString? {
 
-        // TODO [WPB-765]: actually the "(You)" suffix should be drawn in gray.
-        let name = name + (appendYouSuffix ? L10n.Localizable.UserCell.Title.youSuffix : "")
-
         if includeAvailability || includeVerificationStatus {
             return AvailabilityStringBuilder.titleForUser(
                 name: name,
                 availability: includeAvailability ? availability : .none,
-                isCertified: includeVerificationStatus && isCertified,
-                isVerified: includeVerificationStatus && isVerified,
+                isE2EICertified: includeVerificationStatus && isE2EICertified,
+                isProteusVerified: includeVerificationStatus && isProteusVerified,
+                appendYouSuffix: appendYouSuffix,
                 style: .list,
                 color: color
             )

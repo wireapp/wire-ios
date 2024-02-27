@@ -60,6 +60,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     var sut: ConversationListViewController!
     var mockDelegate: MockConversationListDelegate!
     var userSession: UserSessionMock!
+    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     // MARK: - setUp
 
@@ -68,21 +69,22 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         accentColor = .strongBlue
 
         userSession = UserSessionMock()
+
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+
         MockConversationList.hasArchivedConversations = false
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
-        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, conversationListType: MockConversationList.self, userSession: userSession)
-
-        let isSelfUserProteusVerifiedUseCase = MockIsSelfUserProteusVerifiedUseCaseProtocol()
-        isSelfUserProteusVerifiedUseCase.invoke_MockValue = false
-        let isSelfUserE2EICertifiedUseCase = MockIsSelfUserE2EICertifiedUseCaseProtocol()
-        isSelfUserE2EICertifiedUseCase.invoke_MockValue = false
-
-        sut = ConversationListViewController(
-            viewModel: viewModel,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+        let viewModel = ConversationListViewController.ViewModel(
+            account: account,
+            selfUser: selfUser,
+            conversationListType: MockConversationList.self,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )
+
+        sut = ConversationListViewController(viewModel: viewModel)
         viewModel.viewController = sut
         sut.onboardingHint.arrowPointToView = sut.tabBar
         sut.overrideUserInterfaceStyle = .dark
@@ -95,6 +97,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
+        mockIsSelfUserE2EICertifiedUseCase = nil
         mockDelegate = nil
         userSession = nil
 

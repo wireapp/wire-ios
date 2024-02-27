@@ -16,7 +16,9 @@
 //
 
 import XCTest
+
 @testable import Wire
+@testable import WireDataModelSupport
 
 final class ConversationListViewControllerViewModelTests: XCTestCase {
 
@@ -25,6 +27,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
     private var selfUser: MockUserType!
     private var mockConversation: ZMConversation!
     private var userSession: UserSessionMock!
+    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
@@ -32,13 +35,21 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         let account = Account.mockAccount(imageData: Data())
         selfUser = .createSelfUser(name: "Bob")
         userSession = UserSessionMock(mockUser: selfUser)
-        sut = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+        sut = ConversationListViewController.ViewModel(
+            account: account,
+            selfUser: selfUser,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+        )
         mockViewController = MockConversationListContainer(viewModel: sut)
         sut.viewController = mockViewController
     }
 
     override func tearDown() {
         sut = nil
+        mockIsSelfUserE2EICertifiedUseCase = nil
         mockViewController = nil
         selfUser = nil
         mockConversation = nil

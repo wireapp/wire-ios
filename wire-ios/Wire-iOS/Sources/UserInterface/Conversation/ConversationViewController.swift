@@ -88,8 +88,11 @@ final class ConversationViewController: UIViewController {
 
         switch conversation.conversationType {
         case .group:
-            let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
-            viewController = groupDetailsViewController
+            viewController = GroupDetailsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            )
         case .`self`, .oneOnOne, .connection:
             viewController = createUserDetailViewController()
         case .invalid:

@@ -163,7 +163,7 @@ public struct ModelHelper {
     }
 
     @discardableResult
-    public func createMLSSelfConversation(
+    public func createSelfMLSConversation(
         id: UUID = .init(),
         mlsGroupID: MLSGroupID? = nil,
         in context: NSManagedObjectContext

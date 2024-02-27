@@ -89,9 +89,9 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
 
     var messageProtocol: MessageProtocol = .proteus
 
-    var mlsGroupID: WireDataModel.MLSGroupID?
+    var mlsGroupID: MLSGroupID?
 
-    var mlsVerificationStatus: WireDataModel.MLSVerificationStatus?
+    var mlsVerificationStatus: MLSVerificationStatus?
 
 }
 

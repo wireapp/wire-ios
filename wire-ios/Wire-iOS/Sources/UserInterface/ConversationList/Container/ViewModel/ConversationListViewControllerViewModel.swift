@@ -68,6 +68,7 @@ extension ConversationListViewController {
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
+        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
         var selectedConversation: ZMConversation?
 
@@ -83,16 +84,18 @@ extension ConversationListViewController {
             account: Account,
             selfUser: SelfUserType,
             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
-            userSession: UserSession
-            // TODO [WPB-765]: inject use case
+            userSession: UserSession,
+            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
         ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
+            self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+            selfUserStatus = .init(user: selfUser, isE2EICertified: false)
+            super.init()
 
-            selfUserStatus = .init(user: selfUser, isCertified: false)
-            // TODO [WPB-765]: use usecase to get verification info
+            updateE2EICertifiedStatus()
         }
     }
 }
@@ -190,16 +193,27 @@ extension ConversationListViewController.ViewModel {
         return true
     }
 
+    private func updateE2EICertifiedStatus() {
+        Task { @MainActor in
+            do {
+                selfUserStatus.isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+            } catch {
+                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+            }
+        }
+    }
 }
 
 extension ConversationListViewController.ViewModel: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         if changeInfo.nameChanged {
             selfUserStatus.name = changeInfo.user.name ?? ""
         }
-
+        if changeInfo.trustLevelChanged {
+            selfUserStatus.isProteusVerified = changeInfo.user.isVerified
+            updateE2EICertifiedStatus()
+        }
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
         }

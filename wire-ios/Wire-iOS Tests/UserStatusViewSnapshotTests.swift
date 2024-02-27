@@ -75,11 +75,11 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersCorrectly_Header_AvailableAvailability_Certified_Light() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .available, userInterfaceStyle: .light, isMLSCertified: true)
+        createTest(options: .header, userName: selfUser.name ?? "", availability: .available, userInterfaceStyle: .light, isE2EICertified: true)
     }
 
     func testThatItRendersCorrectly_Header_AvailableAvailability_Certified_Dark() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .available, userInterfaceStyle: .dark, isMLSCertified: true)
+        createTest(options: .header, userName: selfUser.name ?? "", availability: .available, userInterfaceStyle: .dark, isE2EICertified: true)
     }
 
     func testThatItRendersCorrectly_Header_AwayAvailability_Verified_Light() {
@@ -91,11 +91,11 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersCorrectly_Header_BusyAvailability_CertifiedAndVerified_Light() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .busy, userInterfaceStyle: .light, isMLSCertified: true, isProteusVerified: true)
+        createTest(options: .header, userName: selfUser.name ?? "", availability: .busy, userInterfaceStyle: .light, isE2EICertified: true, isProteusVerified: true)
     }
 
     func testThatItRendersCorrectly_Header_BusyAvailability_CertifiedAndVerified_Dark() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .busy, userInterfaceStyle: .dark, isMLSCertified: true, isProteusVerified: true)
+        createTest(options: .header, userName: selfUser.name ?? "", availability: .busy, userInterfaceStyle: .dark, isE2EICertified: true, isProteusVerified: true)
     }
 
     // MARK: - Other profile
@@ -123,7 +123,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
         userName: String,
         availability: Availability,
         userInterfaceStyle: UIUserInterfaceStyle = .dark,
-        isMLSCertified: Bool = false,
+        isE2EICertified: Bool = false,
         isProteusVerified: Bool = false,
         file: StaticString = #file,
         line: UInt = #line,
@@ -136,8 +136,8 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
         sut.userStatus = .init(
             name: userName,
             availability: availability,
-            isCertified: isMLSCertified,
-            isVerified: isProteusVerified
+            isE2EICertified: isE2EICertified,
+            isProteusVerified: isProteusVerified
         )
         verify(matching: sut, file: file, testName: testName, line: line)
     }

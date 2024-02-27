@@ -29,21 +29,21 @@ public struct UserStatus {
     // TODO [WPB-6770]: (tech dept) consider adding `UserLegalHoldStatus`
 
     /// `true` if the user has a valid certificate (MLS), `false` otherwise.
-    public var isCertified = false
+    public var isE2EICertified = false
 
     /// `true` if the user has been verified (Proteus), `false` otherwise.
-    public var isVerified = false
+    public var isProteusVerified = false
 
     public init(
         name: String,
         availability: Availability,
-        isCertified: Bool,
-        isVerified: Bool
+        isE2EICertified: Bool,
+        isProteusVerified: Bool
     ) {
         self.name = name
         self.availability = availability
-        self.isCertified = isCertified
-        self.isVerified = isVerified
+        self.isE2EICertified = isE2EICertified
+        self.isProteusVerified = isProteusVerified
     }
 
     public init() {}

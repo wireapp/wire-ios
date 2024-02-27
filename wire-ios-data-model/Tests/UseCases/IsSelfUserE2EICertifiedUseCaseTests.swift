@@ -24,133 +24,70 @@ import XCTest
 
 final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
+    private var selfUser: ZMUser!
+    private var selfMLSConversation: ZMConversation!
+    private var mockIsUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
     private var sut: IsSelfUserE2EICertifiedUseCase!
-    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockSafeCoreCrypto: MockSafeCoreCrypto!
 
     private var context: NSManagedObjectContext { syncMOC }
 
     override func setUp() {
         super.setUp()
 
-        setupUsersClientsAndConversation()
-        let mockCoreCrypto = MockCoreCryptoProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-        sut = .init(context: context, schedule: .immediate, coreCryptoProvider: mockCoreCryptoProvider)
+        let modelHelper = ModelHelper()
+        selfUser = context.performAndWait {
+            modelHelper.createSelfUser(in: context)
+        }
+        selfMLSConversation = context.performAndWait {
+            modelHelper.createSelfMLSConversation(mlsGroupID: .random(), in: context)
+        }
+        mockIsUserE2EICertifiedUseCase = .init()
+        sut = .init(
+            context: context,
+            isUserE2EICertifiedUseCase: mockIsUserE2EICertifiedUseCase
+        )
     }
 
     override func tearDown() {
         sut = nil
-        mockCoreCryptoProvider = nil
-        mockSafeCoreCrypto = nil
+        mockIsUserE2EICertifiedUseCase = nil
+        selfMLSConversation = nil
+        selfUser = nil
 
         super.tearDown()
     }
 
-    func testExpiredCertificateResultsInFalse() async throws {
+    func testInvokeIsCalled() async throws {
         // Given
-        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { conversationID, userIDs in
-            XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
-            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"]) // TODO [WPB-765]: after CC update it should have the suffix "@example.com"
-            return [userIDs[0]: [.withStatus(.valid), .withStatus(.expired)]]
-        }
+        mockIsUserE2EICertifiedUseCase.invokeConversationUser_MockValue = true
 
         // When
-        let isCertified = try await sut.invoke()
+        let result = try await sut.invoke()
 
         // Then
-        XCTAssertFalse(isCertified)
+        XCTAssertTrue(result)
+        XCTAssertEqual(mockIsUserE2EICertifiedUseCase.invokeConversationUser_Invocations.count, 1)
+        let invocation = try XCTUnwrap(mockIsUserE2EICertifiedUseCase.invokeConversationUser_Invocations.first)
+        XCTAssert(invocation.user === selfUser)
+        XCTAssert(invocation.conversation === selfMLSConversation)
     }
 
-    func testRevokedCertificateResultsInFalse() async throws {
+    func testErrorsAreForwarded() async throws {
         // Given
-        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
-            [userIDs[0]: [.withStatus(.valid), .withStatus(.revoked)]]
-        }
+        mockIsUserE2EICertifiedUseCase.invokeConversationUser_MockError = MockError.some
 
-        // When
-        let isCertified = try await sut.invoke()
-
-        // Then
-        XCTAssertFalse(isCertified)
-    }
-
-    func testValidCertificatesResultsInTrue() async throws {
-        // Given
-        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
-            [userIDs[0]: [.withStatus(.valid), .withStatus(.valid)]]
-        }
-
-        // When
-        let isCertified = try await sut.invoke()
-
-        // Then
-        XCTAssertTrue(isCertified)
-    }
-
-    func testEmptyResultEvaluatesToFalse() async throws {
-        // Given
-        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, _ in
-            [:]
-        }
-
-        // When
-        let isCertified = try await sut.invoke()
-
-        // Then
-        XCTAssertFalse(isCertified)
-    }
-
-    func testEmptyIdentitiesEvaluatesToFalse() async throws {
-        // Given
-        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
-            [userIDs[0]: []]
-        }
-
-        // When
-        let isCertified = try await sut.invoke()
-
-        // Then
-        XCTAssertFalse(isCertified)
-    }
-
-    // MARK: - Helpers
-
-    private func setupUsersClientsAndConversation() {
-        context.performAndWait {
-            let helper = ModelHelper()
-            helper.createMLSSelfConversation(
-                id: .init(uuidString: "11AE029E-AFFA-4B81-9095-497797C0C0FA")!,
-                mlsGroupID: .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc="),
-                in: context
-            )
-            helper.createSelfUser(
-                id: .init(uuidString: "36DFE52F-157D-452B-A9C1-98F7D9C1815D")!,
-                domain: "example.com",
-                in: context
-            )
-            helper.createSelfClient(in: context)
-            helper.createClient(for: .selfUser(in: context))
+        do {
+            // When
+            _ = try await sut.invoke()
+            XCTFail("unexpected success")
+        } catch MockError.some {
+            // okay
         }
     }
 }
 
-extension WireIdentity {
+// MARK: - Mock Error
 
-    fileprivate static func withStatus(_ status: DeviceStatus) -> Self {
-        .init(
-            clientId: "A",
-            handle: "B",
-            displayName: "C",
-            domain: "D",
-            certificate: "E",
-            status: status,
-            thumbprint: "F",
-            serialNumber: "G",
-            notBefore: 0,
-            notAfter: 0
-        )
-    }
+private enum MockError: Error {
+    case some
 }

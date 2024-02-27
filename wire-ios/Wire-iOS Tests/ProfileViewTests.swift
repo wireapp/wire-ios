@@ -26,22 +26,21 @@ final class ProfileViewTests: BaseSnapshotTestCase {
 
     var userSession: UserSessionMock!
 
-    var isSelfUserProteusVerifiedUseCase: MockIsSelfUserProteusVerifiedUseCaseProtocol!
+    var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
     var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
 
         userSession = UserSessionMock()
-        isSelfUserProteusVerifiedUseCase = .init()
-        isSelfUserProteusVerifiedUseCase.invoke_MockValue = false
+        isUserE2EICertifiedUseCase = .init()
+        isUserE2EICertifiedUseCase.invokeConversationUser_MockValue = false
         isSelfUserE2EICertifiedUseCase = .init()
         isSelfUserE2EICertifiedUseCase.invoke_MockValue = false
     }
 
     override func tearDown() {
-        isSelfUserProteusVerifiedUseCase = nil
-        isSelfUserE2EICertifiedUseCase = nil
+        isUserE2EICertifiedUseCase = nil
         userSession = nil
 
         super.tearDown()
@@ -84,7 +83,7 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: [],
             userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
+            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
 
@@ -124,7 +123,7 @@ final class ProfileViewTests: BaseSnapshotTestCase {
             conversation: nil,
             options: options,
             userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: isSelfUserProteusVerifiedUseCase,
+            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
