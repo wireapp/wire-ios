@@ -31,7 +31,7 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
     private let context: NSManagedObjectContext
-    private let isE2EIEnabled: Bool
+    private let featureRepository: FeatureRepositoryInterface
 
     // MARK: - Life cycle
 
@@ -42,12 +42,15 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
     ) {
         self.e2eIVerificationStatusService = e2eIVerificationStatusService
         self.context = context
-        self.isE2EIEnabled = featureRepository.fetchE2EI().isEnabled
+        self.featureRepository = featureRepository
     }
 
     // MARK: - Public interface
 
     public func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
+        let isE2EIEnabled = await context.perform {
+            return self.featureRepository.fetchE2EI().isEnabled
+        }
         guard isE2EIEnabled else { return }
 
         try await updateStatus(for: conversation, groupID: groupID)
