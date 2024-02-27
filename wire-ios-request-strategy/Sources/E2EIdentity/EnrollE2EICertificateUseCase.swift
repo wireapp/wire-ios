@@ -46,7 +46,7 @@ public typealias OAuthBlock = (OAuthParameters) async throws -> OAuthResponse
 // sourcery: AutoMockable
 public protocol EnrollE2EICertificateUseCaseProtocol {
 
-    func invoke(authenticate: @escaping OAuthBlock) async throws
+    func invoke(authenticate: @escaping OAuthBlock) async throws -> String
 
 }
 
@@ -77,13 +77,15 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             self.context = context
         }
 
-    // Detailed enrolment flow:
-    // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/800820113/Use+case+End-to-end+identity+enrollment#Detailed-enrolment-flow
-    public func invoke(authenticate: @escaping OAuthBlock) async throws {
-        try await invoke(authenticate: authenticate, expirySec: nil)
+    /// Invokes enrollment flow
+    /// - Parameter authenticate: Block that performs OAUTH authentication
+    /// - Returns: Chain of certificates for the clients
+    /// - Description: **Visit the link below to understand the entire flow**  https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/800820113/Use+case+End-to-end+identity+enrollment#Detailed-enrolment-flow
+    public func invoke(authenticate: @escaping OAuthBlock) async throws -> String {
+        return try await invoke(authenticate: authenticate, expirySec: nil)
     }
 
-    public func invoke(authenticate: @escaping OAuthBlock, expirySec: UInt32?) async throws {
+    public func invoke(authenticate: @escaping OAuthBlock, expirySec: UInt32?) async throws -> String {
         do {
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
@@ -170,10 +172,11 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
                 isUpgradingMLSClient: isUpgradingMLSClient,
                 enrollment: enrollment,
                 certificateChain: certificateChain)
+
+            return certificateChain
         } catch {
             throw Failure.failedToEnrollCertificate(error)
         }
-
     }
 
     private func rollingOutCertificate(
