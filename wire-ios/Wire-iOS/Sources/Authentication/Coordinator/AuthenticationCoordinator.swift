@@ -877,13 +877,11 @@ extension AuthenticationCoordinator {
 
         Task {
             do {
-                _ = try await e2eiCertificateUseCase.invoke(
-                    authenticate: oauthUseCase.invoke
-                )
+                let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
                 await MainActor.run {
                     executeActions([
                         .hideLoadingView,
-                        .transition(.enrollE2EIdentitySuccess, mode: .reset)
+                        .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
                     ])
                 }
             } catch {
@@ -901,6 +899,7 @@ extension AuthenticationCoordinator {
     }
 
     private func completeE2EIdentityEnrollment() {
+        executeActions([.showLoadingView])
         guard let session = statusProvider.sharedUserSession else { return }
         session.reportEndToEndIdentityEnrollmentSuccess()
     }

@@ -56,8 +56,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     public func getCertificate() async {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         do {
-            try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
-            await confirmSuccessfulEnrollment()
+            let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+            await confirmSuccessfulEnrollment(certificateDetails)
         } catch {
             guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate() else {
                 return
@@ -92,8 +92,9 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel) {
             Task {
                 do {
-                    try await self.enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
-                    await self.confirmSuccessfulEnrollment()
+                    let certificateDetails = try await self.enrollCertificateUseCase.invoke(
+                        authenticate: oauthUseCase.invoke)
+                    await self.confirmSuccessfulEnrollment(certificateDetails)
                 } catch {
                     WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
                 }
@@ -103,9 +104,10 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     @MainActor
-    private func confirmSuccessfulEnrollment() async {
+    private func confirmSuccessfulEnrollment(_ certificateDetails: String) async {
         await snoozeCertificateEnrollmentUseCase.invoke()
         let successScreen = SuccessfulCertificateEnrollmentViewController()
+        successScreen.certificateDetails = certificateDetails
         successScreen.onOkTapped = { viewController in
             viewController.dismiss(animated: true)
         }

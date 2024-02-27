@@ -20,6 +20,7 @@ import Foundation
 import LocalAuthentication
 import WireSyncEngineSupport
 import WireDataModelSupport
+import WireRequestStrategySupport
 
 @testable import Wire
 
@@ -262,7 +263,7 @@ final class UserSessionMock: UserSession {
     }
 
     var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol {
-        MockEnrolE2eICertificateUseCase()
+        MockEnrollE2EICertificateUseCaseProtocol()
     }
 
     var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol {
