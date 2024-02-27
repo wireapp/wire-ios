@@ -7,6 +7,7 @@
         "addressSanitizer" : {
           "enabled" : true
         },
+        "mallocStackLoggingOptions" : null,
         "threadSanitizerEnabled" : false
       }
     },
@@ -14,6 +15,7 @@
       "id" : "09EB119B-627A-473C-8B09-E23268F9B9C1",
       "name" : "Thread Sanitizer",
       "options" : {
+        "mallocStackLoggingOptions" : null,
         "threadSanitizerEnabled" : true
       }
     }
@@ -25,6 +27,10 @@
         "enabled" : false
       },
       {
+        "argument" : "-com.apple.CoreData.SQLDebug 1",
+        "enabled" : false
+      },
+      {
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       },
       {
@@ -33,6 +39,23 @@
       }
     ],
     "environmentVariableEntries" : [
+      {
+        "key" : "SQLITE_ENABLE_THREAD_ASSERTIONS",
+        "value" : "1"
+      },
+      {
+        "key" : "LIBDISPATCH_COOPERATIVE_POOL_STRICT",
+        "value" : "1"
+      },
+      {
+        "enabled" : false,
+        "key" : "SQLITE_AUTO_TRACE",
+        "value" : "1"
+      },
+      {
+        "key" : "SQLITE_ENABLE_FILE_ASSERTIONS",
+        "value" : "1"
+      },
       {
         "enabled" : false,
         "key" : "DEBUG_TESTS",
