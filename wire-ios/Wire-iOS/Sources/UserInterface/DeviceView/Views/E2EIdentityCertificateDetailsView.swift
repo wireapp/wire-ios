@@ -30,6 +30,7 @@ struct E2EIdentityCertificateDetailsView: View {
     var performDownload: (() -> Void)?
 
     var performCopy: ((String) -> Void)?
+    var didDismiss: (() -> Void)?
 
     private var titleView: some View {
         HStack {
@@ -40,6 +41,7 @@ struct E2EIdentityCertificateDetailsView: View {
             SwiftUI.Button(
                 action: {
                     dismiss()
+                    didDismiss?()
                 },
                 label: {
                     Image(.close)
