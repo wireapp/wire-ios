@@ -20,8 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
-    func start() async
-    func stop()
+    func invoke() async
 }
 
 final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol {
@@ -36,32 +35,29 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     // MARK: - Life cycle
 
-    init(e2eiFeature: Feature.E2EI,
-         gracePeriodRepository: GracePeriodRepository,
-         recurringActionService: RecurringActionServiceInterface,
-         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-         accountId: UUID) {
-        self.e2eiFeature = e2eiFeature
-        self.gracePeriodRepository = gracePeriodRepository
-        self.recurringActionService = recurringActionService
-        self.selfClientCertificateProvider = selfClientCertificateProvider
-        self.actionId = "\(accountId).enrollCertificate"
-    }
+    init(
+        e2eiFeature: Feature.E2EI,
+        gracePeriodRepository: GracePeriodRepository,
+        recurringActionService: RecurringActionServiceInterface,
+        selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
+        accountId: UUID) {
+            self.e2eiFeature = e2eiFeature
+            self.gracePeriodRepository = gracePeriodRepository
+            self.recurringActionService = recurringActionService
+            self.selfClientCertificateProvider = selfClientCertificateProvider
+            self.actionId = "\(accountId).enrollCertificate"
+        }
 
     // MARK: - Methods
 
-    func start() async {
-        guard let endOfGracePeriod = gracePeriodRepository.fetchEndGracePeriodDate() else {
+    func invoke() async {
+        guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate() else {
             return
         }
         let timeProvider = SnoozeTimeProvider()
         let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfGracePeriod)
 
         await registerRecurringActionIfNeeded(interval: interval)
-    }
-
-    func stop() {
-        recurringActionService.removeAction(id: actionId)
     }
 
     // MARK: - Helpers
@@ -76,6 +72,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             id: actionId,
             interval: interval
         ) {
+            // We save the end of the grace period once and should not update it.
             let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled(gracePeriod: nil)
             NotificationCenter.default.post(name: .featureDidChangeNotification,
                                             object: notificationObject)

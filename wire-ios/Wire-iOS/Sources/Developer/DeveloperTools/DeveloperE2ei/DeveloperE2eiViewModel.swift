@@ -45,7 +45,7 @@ final class DeveloperE2eiViewModel: ObservableObject {
             let rootViewController = AppDelegate.shared.window?.rootViewController
         else { return }
 
-        let e2eiCertificateUseCase = session.enrollE2eICertificate as? EnrollE2eICertificateUseCase
+        let e2eiCertificateUseCase = session.enrollE2EICertificate as? EnrollE2EICertificateUseCase
         let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
         let crlExpirationDatesRepository = CRLExpirationDatesRepository(userID: session.selfUser.remoteIdentifier)
 

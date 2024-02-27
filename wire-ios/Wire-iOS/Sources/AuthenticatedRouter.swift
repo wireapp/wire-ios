@@ -41,7 +41,7 @@ final class AuthenticatedRouter: NSObject {
     private let activeCallRouter: ActiveCallRouter
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: FeatureRepositoryProvider
-    private let featureChangeActionsHandler: E2eINotificationActions
+    private let featureChangeActionsHandler: E2EINotificationActions
     private let gracePeriodRepository: GracePeriodRepository
 
     // MARK: - Public Property
@@ -61,7 +61,7 @@ final class AuthenticatedRouter: NSObject {
         isComingFromRegistration: Bool,
         needToShowDataUsagePermissionDialog: Bool,
         featureRepositoryProvider: FeatureRepositoryProvider,
-        featureChangeActionsHandler: E2eINotificationActionsHandler,
+        featureChangeActionsHandler: E2EINotificationActionsHandler,
         gracePeriodRepository: GracePeriodRepository
     ) {
         self.rootViewController = rootViewController
@@ -104,7 +104,7 @@ final class AuthenticatedRouter: NSObject {
 
         if case .e2eIEnabled(gracePeriod: let gracePeriod) = change, let gracePeriod {
             let endOfGracePeriod = Date.now.addingTimeInterval(gracePeriod)
-            gracePeriodRepository.storeEndGracePeriodDate(endOfGracePeriod)
+            gracePeriodRepository.storeGracePeriodEndDate(endOfGracePeriod)
         }
 
         _viewController?.presentAlert(alert)

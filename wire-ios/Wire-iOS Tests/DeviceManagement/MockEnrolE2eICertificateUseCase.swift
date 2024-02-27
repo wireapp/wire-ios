@@ -18,11 +18,12 @@
 
 import Foundation
 
-final class MockEnrolE2eICertificateUseCase: EnrollE2eICertificateUseCaseInterface {
+final class MockEnrolE2eICertificateUseCase: EnrollE2EICertificateUseCaseProtocol {
 
-    var invokeCalled: (((URL, String, String, String) async throws -> (String, String)) -> Void)?
+    var invokeCalled: ((OAuthBlock) -> Void)?
 
-    func invoke(authenticate: (URL, String, String, String) async throws -> (String, String)) async throws {
+    func invoke(authenticate: @escaping OAuthBlock) async throws {
         invokeCalled?(authenticate)
     }
+
 }

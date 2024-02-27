@@ -25,7 +25,7 @@ final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
 
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!
     lazy var kCertificate: String  = {
-        return .mockCertificate()
+        return .mockCertificate
     }()
 
     func setupSut(

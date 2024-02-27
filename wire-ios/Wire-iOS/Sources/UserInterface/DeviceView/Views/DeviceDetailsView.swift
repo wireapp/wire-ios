@@ -26,7 +26,7 @@ struct DeviceDetailsView: View {
     @Environment(\.dismiss)
     private var dismiss
 
-    @StateObject var viewModel: DeviceInfoViewModel
+    @ObservedObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
     @State var didEnrollCertificateFail: Bool = false
 
@@ -123,13 +123,13 @@ struct DeviceDetailsView: View {
         .onDisappear {
             dismissedView?()
         }
-        .onReceive(viewModel.$isRemoved) { isRemoved in
-            if isRemoved {
+        .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
+            if shouldDismiss {
                 dismiss()
             }
         }
         .onReceive(viewModel.$showEnrollmentCertificateError, perform: { _ in
-            didEnrollCertificateFail.toggle()
+            didEnrollCertificateFail = viewModel.showEnrollmentCertificateError
         })
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
@@ -144,7 +144,7 @@ struct DeviceDetailsView: View {
         }
         .alert(E2ei.Error.Alert.title, isPresented: $didEnrollCertificateFail) {
             SwiftUI.Button(L10n.Localizable.General.ok) {
-                didEnrollCertificateFail.toggle()
+                didEnrollCertificateFail = false
             }
         }
     }

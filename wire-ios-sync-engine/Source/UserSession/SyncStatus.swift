@@ -162,7 +162,7 @@ extension Notification.Name {
 extension SyncStatus {
 
     public func finishCurrentSyncPhase(phase: SyncPhase) {
-        precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase")
+        precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase '\(currentSyncPhase)'!")
 
         zmLog.debug("finished sync phase: \(phase)")
         log("finished sync phase")
@@ -243,7 +243,7 @@ extension SyncStatus {
     @objc(completedFetchingNotificationStreamFetchBeganAt:)
     public func completedFetchingNotificationStream(fetchBeganAt: Date?) {
         if currentSyncPhase == .fetchingMissedEvents &&
-           pushChannelEstablishedDate < fetchBeganAt {
+            pushChannelEstablishedDate < fetchBeganAt {
 
             // Only complete the .fetchingMissedEvents phase if the push channel was
             // established before we initiated the notification stream fetch.

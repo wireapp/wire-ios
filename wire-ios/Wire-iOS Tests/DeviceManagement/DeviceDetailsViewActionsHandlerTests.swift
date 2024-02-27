@@ -33,7 +33,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
     var mockGetProteusFingerprint: MockGetUserClientFingerprintUseCaseProtocol!
     var mockContextProvider: MockContextProvider!
-    var mockEnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInterface!
+    var mockEnrollE2eICertificateUseCase: EnrollE2EICertificateUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
@@ -104,7 +104,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
 extension E2eIdentityCertificate {
 
     static func mock(
-        with certificateDetails: String = .mockCertificate(),
+        with certificateDetails: String = .mockCertificate,
         status: E2EIdentityCertificateStatus = .valid,
         notValidBefore: Date = .now - .oneDay,
         expiryDate: Date = .now,
