@@ -274,6 +274,10 @@ final class UserSessionMock: UserSession {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
+    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
+        MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
+    }
+
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
     func fetchAllClients() {}

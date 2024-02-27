@@ -63,6 +63,7 @@ class SwiftMockConversation: NSObject, Conversation {
     var accessRoles: Set<ConversationAccessRoleV2> = [.teamMember]
 
     var isUnderLegalHold: Bool = false
+    var isE2EIEnabled: Bool = false
     var securityLevel: ZMConversationSecurityLevel = .notSecure
 
     var mutedMessageTypes: MutedMessageTypes = .none
