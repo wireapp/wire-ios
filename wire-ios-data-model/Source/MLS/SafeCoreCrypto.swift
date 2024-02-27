@@ -104,7 +104,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         do {
             result = try await block(coreCrypto)
         } catch {
-            WireLogger.coreCrypto.error("failed to perform block on core crypto")
+            WireLogger.coreCrypto.error("failed to perform block on core crypto: \(error)")
             throw error
         }
 
@@ -119,7 +119,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         do {
             try await coreCrypto.restoreFromDisk()
         } catch {
-            WireLogger.coreCrypto.error(error.localizedDescription)
+            WireLogger.coreCrypto.error("coreCrypto.restoreFromDisk() failed: \(error)")
         }
     }
 }

@@ -29,6 +29,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     private var renameGroupSectionController: RenameGroupSectionController?
     private var syncObserver: InitialSyncObserver!
     let userSession: UserSession
+    private var userStatuses = [UUID: UserStatus]()
+    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
 
     var didCompleteInitialSync = false {
         didSet { collectionViewController.sections = computeVisibleSections() }
@@ -38,10 +40,15 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         return wr_supportedInterfaceOrientations
     }
 
-    init(conversation: GroupDetailsConversationType, userSession: UserSession) {
+    init(
+        conversation: GroupDetailsConversationType,
+        userSession: UserSession,
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+    ) {
         self.conversation = conversation
-        collectionViewController = SectionCollectionViewController()
         self.userSession = userSession
+        self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
+        collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
@@ -58,6 +65,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 }
             }
         }
+
+        updateUserE2EICertificationStatuses()
     }
 
     @available(*, unavailable)
@@ -141,11 +150,16 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         self.renameGroupSectionController = renameGroupSectionController
 
         let (participants, serviceUsers) = (conversation.sortedOtherParticipants, conversation.sortedServiceUsers)
+        participants.forEach { user in
+            if !userStatuses.keys.contains(user.remoteIdentifier) {
+                userStatuses[user.remoteIdentifier] = .init(user: user, isE2EICertified: false)
+            }
+        }
 
         if !participants.isEmpty {
 
-            let admins = participants.filter({ $0.isGroupAdmin(in: conversation) })
-            let members = participants.filter({ !$0.isGroupAdmin(in: conversation) })
+            let admins = participants.filter { $0.isGroupAdmin(in: conversation) }
+            let members = participants.filter { !$0.isGroupAdmin(in: conversation) }
 
             let maxNumberOfDisplayed = Int.ConversationParticipants.maxNumberOfDisplayed
             let maxNumberWithoutTruncation = Int.ConversationParticipants.maxNumberWithoutTruncation
@@ -155,6 +169,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 if admins.count >= maxNumberOfDisplayed && (participants.count > maxNumberWithoutTruncation) {
                     let adminSection = ParticipantsSectionController(
                         participants: admins,
+                        userStatuses: userStatuses,
                         conversationRole: .admin,
                         conversation: conversation,
                         delegate: self,
@@ -168,6 +183,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 } else {
                     let adminSection = ParticipantsSectionController(
                         participants: admins,
+                        userStatuses: userStatuses,
                         conversationRole: .admin,
                         conversation: conversation,
                         delegate: self,
@@ -180,6 +196,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                         if !members.isEmpty {
                             let memberSection = ParticipantsSectionController(
                                 participants: members,
+                                userStatuses: userStatuses,
                                 conversationRole: .member,
                                 conversation: conversation,
                                 delegate: self,
@@ -193,6 +210,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                         let maxParticipants = Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count
                         let memberSection = ParticipantsSectionController(
                             participants: members,
+                            userStatuses: userStatuses,
                             conversationRole: .member,
                             conversation: conversation,
                             delegate: self,
@@ -208,6 +226,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             } else { // Display only one section without the ShowAll button
                 let adminSection = ParticipantsSectionController(
                     participants: admins,
+                    userStatuses: userStatuses,
                     conversationRole: .admin,
                     conversation: conversation,
                     delegate: self,
@@ -276,6 +295,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         if changeInfo.participantsChanged, !conversation.isSelfAnActiveMember {
             navigationController?.popToRootViewController(animated: true)
+        } else {
+            updateUserE2EICertificationStatuses()
         }
     }
 
@@ -392,6 +413,21 @@ private extension GroupDetailsViewController {
         return attributedString
     }
 
+    private func updateUserE2EICertificationStatuses() {
+        Task { @MainActor in
+            for user in conversation.sortedOtherParticipants {
+                guard let user = user as? ZMUser else { continue }
+                guard let conversation = conversation as? ZMConversation else { continue }
+                do {
+                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
+                } catch {
+                    WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+                }
+            }
+            collectionViewController.sections = computeVisibleSections()
+        }
+    }
 }
 
 extension GroupDetailsViewController: ViewControllerDismisser {
@@ -417,7 +453,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             user: user,
             conversation: conversation,
             profileViewControllerDelegate: self,
-            viewControllerDismisser: self, userSession: userSession
+            viewControllerDismisser: self,
+            userSession: userSession
         )
 
         navigationController?.pushViewController(viewController, animated: true)

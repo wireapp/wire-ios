@@ -19,74 +19,44 @@
 import Foundation
 import WireCoreCrypto
 
-// sourcery: AutoMockable
-/// Determines if the self user has a valid E2EI certificate on all clients.
-public protocol IsSelfUserE2EICertifiedUseCaseProtocol {
-    /// Returns `true` if all clients of the self user have valid E2EI certificates.
-    func invoke() async throws -> Bool
-}
-
+/// A wrapper use case around `IsUserE2EICertifiedUseCaseProtocol` which gets the
+/// self-user and the self-mls-conversation from a managed object context in order to pass it to
+/// the wrapped use case and provide an argument-less `invoke` method.
 public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
-    private let schedule: NSManagedObjectContext.ScheduledTaskType
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
 
+    /// - Parameters:
+    ///   - context: A managed object context to retrieve the self-user and the self-mls-conversation from.
+    ///   - isUserE2EICertifiedUseCase: The use case which contains the actual business logic.
     public init(
         context: NSManagedObjectContext,
-        schedule: NSManagedObjectContext.ScheduledTaskType,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.context = context
-        self.schedule = schedule
-        self.coreCryptoProvider = coreCryptoProvider
+        self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
     }
 
     public func invoke() async throws -> Bool {
-        let (conversationID, userID, clientCount) = try await context.perform(schedule: schedule) {
-            // conversationID
-            guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context) else {
-                throw Error.couldNotFetchMLSSelfConversation
-            }
-            guard let mlsGroupID = selfConversation.mlsGroupID else {
-                throw Error.failedToGetMLSGroupID(selfConversation)
-            }
-            // userID
+
+        let (selfUser, selfMLSConversation) = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
-            guard
-                let qualifiedID = selfUser.qualifiedID,
-                let userID = Optional(qualifiedID.uuid.transportString()) // TODO: [WPB-765]: workaround for a bug in core crypto, should be fixed mid february 2024, no JIRA ticket
-                // let userID = MLSUserID(userID: qualifiedID.uuid.transportString(), domain: qualifiedID.domain).rawValue
-            else {
-                throw Error.failedToGetSelfUserID
-            }
-            return (mlsGroupID, userID, selfUser.allClients.count)
+            let selfMLSConversation = ZMConversation.fetchSelfMLSConversation(in: context)
+            return (selfUser, selfMLSConversation)
         }
+        guard let selfMLSConversation else { throw Error.failedToGetTheSelfMLSConversation }
 
-        let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        let identities = try await coreCrypto.perform { coreCrypto in
-            let result = try await coreCrypto.getUserIdentities(
-                conversationId: conversationID.data,
-                userIds: [userID]
-            )
-            guard !result.isEmpty else { return [WireIdentity]() }
-            guard let identities = result[userID] else {
-                throw Error.failedToGetIdentitiesFromCoreCryptoResult(result, userID)
-            }
-            return identities
-        }
-
-        return !identities.isEmpty && identities.count == clientCount && identities.allSatisfy { $0.status == .valid }
+        return try await isUserE2EICertifiedUseCase.invoke(
+            conversation: selfMLSConversation,
+            user: selfUser
+        )
     }
 }
 
 extension IsSelfUserE2EICertifiedUseCase {
 
     enum Error: Swift.Error {
-        case failedToGetSelfUserID
-        case couldNotFetchMLSSelfConversation
-        case failedToGetMLSGroupID(_ conversation: Conversation)
-        /// The list of identities cannot be retrieved from the result.
-        case failedToGetIdentitiesFromCoreCryptoResult(_ result: [String: [WireIdentity]], _ userID: String)
+        case failedToGetTheSelfMLSConversation
     }
 }

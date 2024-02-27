@@ -3366,7 +3366,7 @@ public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertified
 
 }
 
-public class MockIsSelfUserProteusVerifiedUseCaseProtocol: IsSelfUserProteusVerifiedUseCaseProtocol {
+public class MockIsUserE2EICertifiedUseCaseProtocol: IsUserE2EICertifiedUseCaseProtocol {
 
     // MARK: - Life cycle
 
@@ -3375,19 +3375,24 @@ public class MockIsSelfUserProteusVerifiedUseCaseProtocol: IsSelfUserProteusVeri
 
     // MARK: - invoke
 
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() async -> Bool)?
-    public var invoke_MockValue: Bool?
+    public var invokeConversationUser_Invocations: [(conversation: ZMConversation, user: ZMUser)] = []
+    public var invokeConversationUser_MockError: Error?
+    public var invokeConversationUser_MockMethod: ((ZMConversation, ZMUser) async throws -> Bool)?
+    public var invokeConversationUser_MockValue: Bool?
 
-    public func invoke() async -> Bool {
-        invoke_Invocations.append(())
+    public func invoke(conversation: ZMConversation, user: ZMUser) async throws -> Bool {
+        invokeConversationUser_Invocations.append((conversation: conversation, user: user))
 
-        if let mock = invoke_MockMethod {
-            return await mock()
-        } else if let mock = invoke_MockValue {
+        if let error = invokeConversationUser_MockError {
+            throw error
+        }
+
+        if let mock = invokeConversationUser_MockMethod {
+            return try await mock(conversation, user)
+        } else if let mock = invokeConversationUser_MockValue {
             return mock
         } else {
-            fatalError("no mock for `invoke`")
+            fatalError("no mock for `invokeConversationUser`")
         }
     }
 

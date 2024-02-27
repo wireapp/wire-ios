@@ -60,6 +60,7 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     private func updateStatus(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
         let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
+        let context = conversation.managedObjectContext ?? context
         await context.perform {
             self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
         }
