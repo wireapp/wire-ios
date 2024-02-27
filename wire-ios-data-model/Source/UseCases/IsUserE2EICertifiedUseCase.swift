@@ -24,7 +24,9 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
     private let schedule: NSManagedObjectContext.ScheduledTaskType
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let featureRepository: FeatureRepositoryInterface
-    /// The `featureRepository` uses 
+    /// The `featureRepository` operates on a context, so every operation must be dispatched
+    /// on that context's queue. Since `FeatureRepositoryInterface` doesn't contain any
+    /// `context` property, we inject the context here.
     private let featureRepositoryContext: NSManagedObjectContext
 
     public init(
