@@ -38,7 +38,7 @@ struct DeviceDetailsButtonsView: View {
     var updateCertificateButton: some View {
         SwiftUI.Button {
             Task {
-                await viewModel.updateCertificate()
+                await viewModel.enrollClient()
             }
         } label: {
             VStack(alignment: .leading) {

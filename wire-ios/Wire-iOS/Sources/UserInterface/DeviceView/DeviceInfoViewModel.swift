@@ -26,8 +26,9 @@ protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
-    func enrollClient() async throws -> E2eIdentityCertificate?
-    func updateCertificate() async throws -> E2eIdentityCertificate?
+    /// Method to enroll and update E2E Identity certificates.
+    /// - Returns: Certificate chain of all the clients
+    func enrollClient() async throws -> String
     func removeDevice() async -> Bool
     func resetSession()
     func updateVerified(_ value: Bool) async -> Bool
@@ -67,6 +68,8 @@ final class DeviceInfoViewModel: ObservableObject {
             .splitStringIntoLines(charactersPerLine: 16)
             .replacingOccurrences(of: " ", with: ":")
     }
+
+    var showCertificateUpdateSuccess: ((String) -> Void)?
 
     @Published var e2eIdentityCertificate: E2eIdentityCertificate?
     @Published var shouldDismiss: Bool = false
@@ -118,25 +121,12 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     @MainActor
-    func updateCertificate() async {
-        self.isActionInProgress = true
-        do {
-            if let e2eIdentityCertificate = try await actionsHandler.updateCertificate() {
-                self.e2eIdentityCertificate = e2eIdentityCertificate
-            }
-        } catch {
-            showEnrollmentCertificateError = true
-        }
-        self.isActionInProgress = false
-    }
-
-    @MainActor
     func enrollClient() async {
         self.isActionInProgress = true
         do {
-            if let e2eIdentityCertificate = try await actionsHandler.enrollClient() {
-                self.e2eIdentityCertificate = e2eIdentityCertificate
-            }
+            let certificateChain = try await actionsHandler.enrollClient()
+            showCertificateUpdateSuccess?(certificateChain)
+            e2eIdentityCertificate = userClient.e2eIdentityCertificate
         } catch {
             showEnrollmentCertificateError = true
         }
