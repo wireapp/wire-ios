@@ -1355,26 +1355,28 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("\(groupsWithPendingCommits.count) groups with scheduled pending proposals")
 
-        for (groupID, timestamp) in groupsWithPendingCommits {
-            if timestamp.isInThePast {
-                logger.info("commit scheduled in the past, committing...")
-                try await commitPendingProposals(in: groupID)
-            } else {
-                logger.info("commit scheduled in the future, waiting...")
-                // Committing proposals for each group is independent and should not wait for
-                // each other.
-                await withTaskGroup(of: Void.self) { group in
-                    group.addTask { [self] in
-                        do {
+        // Committing proposals for each group is independent and should not wait for
+        // each other.
+        await withTaskGroup(of: Void.self) { taskGroup in
+            for (groupID, timestamp) in groupsWithPendingCommits {
+                taskGroup.addTask { [self] in
+                    do {
+                        if timestamp.isInThePast {
+                            logger.info("commit scheduled in the past, committing...")
+                            try await commitPendingProposals(in: groupID)
+                        } else {
+                            logger.info("commit scheduled in the future, waiting...")
+
                             let timeIntervalSinceNow = timestamp.timeIntervalSinceNow
                             if timeIntervalSinceNow > 0 {
                                 try await Task.sleep(nanoseconds: timeIntervalSinceNow.nanoseconds)
                             }
                             logger.info("scheduled commit is ready, committing...")
                             try await commitPendingProposals(in: groupID)
-                        } catch {
-                            logger.error("failed to commit pending proposals: \(String(describing: error))")
                         }
+
+                    } catch {
+                        logger.error("failed to commit pending proposals: \(String(describing: error))")
                     }
                 }
             }
