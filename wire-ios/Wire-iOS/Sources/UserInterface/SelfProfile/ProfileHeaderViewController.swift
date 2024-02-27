@@ -37,6 +37,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     private let userSession: UserSession
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
     /// The user who is viewing this view
     private let viewer: UserType
@@ -105,7 +106,8 @@ final class ProfileHeaderViewController: UIViewController {
     /// - parameter conversation: The conversation.
     /// - parameter options: The options for the appearance and behavior of the view.
     /// - parameter userSession: The user session.
-    /// - parameter isUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status.
+    /// - parameter isUserE2EICertifiedUseCase: Use case for getting the user's MLS verification status.
+    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status, if `user.isSelfUser` is `true`.
     /// Note: You can change the options later through the `options` property.
     init(
         user: UserType,
@@ -113,12 +115,14 @@ final class ProfileHeaderViewController: UIViewController {
         conversation: ZMConversation?,
         options: Options,
         userSession: UserSession,
-        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
         userStatus = .init(user: user, isCertified: false)
         self.user = user
         self.userSession = userSession
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
+        self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
@@ -333,22 +337,19 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateE2EICertifiedStatus() {
-        guard let contextProvider = userSession as? ContextProvider else { return }
-        Task {
+        guard
+            let contextProvider = userSession as? ContextProvider,
+            let user = user as? ZMUser
+        else { return }
+
+        Task { @MainActor [conversation] in
             do {
-                let context = contextProvider.syncContext
-                let (selfUser, selfConversation) = await context.perform {
-                    let selfUser = ZMUser.selfUser(in: context)
-                    let mlsSelfConversation = ZMConversation.fetchSelfMLSConversation(in: context)
-                    return (selfUser, mlsSelfConversation)
-                }
-                guard let selfConversation else { return }
-                let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
-                    conversation: selfConversation,
-                    user: selfUser
-                )
-                await MainActor.run {
-                    userStatus.isCertified = isE2EICertified
+                userStatus.isCertified = if let conversation {
+                    try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                } else if user.isSelfUser {
+                    try await isSelfUserE2EICertifiedUseCase.invoke()
+                } else {
+                    false
                 }
             } catch {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
