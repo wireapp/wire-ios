@@ -52,9 +52,8 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
 
     // MARK: - Methods
 
-    public func invoke() async {
+    public func invoke() {
         epochChangesListenerTask = listenForEpochChanges()
-        try? await epochChangesListenerTask?.value
     }
 
     private func listenForEpochChanges() -> Task<Void, Error> {
