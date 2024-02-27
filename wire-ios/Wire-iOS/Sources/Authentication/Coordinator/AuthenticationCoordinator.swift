@@ -899,6 +899,7 @@ extension AuthenticationCoordinator {
     }
 
     private func completeE2EIdentityEnrollment() {
+        executeActions([.showLoadingView])
         guard let session = statusProvider.sharedUserSession else { return }
         session.reportEndToEndIdentityEnrollmentSuccess()
     }
