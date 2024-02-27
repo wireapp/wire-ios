@@ -26,4 +26,8 @@ class DuplicateTeamsMigrationPolicy: DuplicateObjectsMigrationPolicy {
         let remoteIdentifierData = sInstance.value(forKey: ZMManagedObject.remoteIdentifierDataKey()) as? Data
         return remoteIdentifierData.flatMap { UUID(data: $0)?.uuidString } ?? "<nil>"
     }
+
+    override func fillPrimaryKey(_ dInstance: NSManagedObject?, value: String) {
+        // do nothing, primaryKey for Team is remoteIdentifierDataKey
+    }
 }
