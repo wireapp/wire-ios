@@ -144,7 +144,7 @@ final class CallTopOverlayController: UIViewController {
             muteIcon.leadingAnchor.constraint(equalTo: interactiveView.leadingAnchor, constant: 8),
             muteIcon.centerYAnchor.constraint(equalTo: interactiveView.centerYAnchor),
             muteIconWidth!
-            ])
+        ])
 
         interactiveView.addGestureRecognizer(tapGestureRecognizer)
         updateLabel()
@@ -229,7 +229,7 @@ final class CallTopOverlayController: UIViewController {
 
     // MARK: - TapableAccessibleView
 
-    class TapableAccessibleView: UIView {
+    final class TapableAccessibleView: UIView {
         let onAccessibilityActivate: () -> Void
 
         init(onAccessibilityActivate: @escaping () -> Void) {

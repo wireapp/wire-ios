@@ -731,12 +731,8 @@ public struct EncryptionSessionIdentifier: Hashable, Equatable {
         self.domain = String()
     }
 
-    public var hashValue: Int {
-        return self.rawValue.hashValue
-    }
-
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(hashValue)
+        hasher.combine(rawValue)
     }
 }
 

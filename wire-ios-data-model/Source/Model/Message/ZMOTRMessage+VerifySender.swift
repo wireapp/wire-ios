@@ -26,6 +26,6 @@ extension ZMConversation {
     public func verifySender(of updateEvent: ZMUpdateEvent, moc: NSManagedObjectContext) {
         guard let senderUUID = updateEvent.senderUUID else { return }
         let user = ZMUser.fetchOrCreate(with: senderUUID, domain: updateEvent.senderDomain, in: moc)
-        addParticipantAndSystemMessageIfMissing(user, date: updateEvent.timestamp?.addingTimeInterval(-0.01))
+        addParticipantAndSystemMessageIfMissing(user, date: updateEvent.timestamp?.addingTimeInterval(-0.01) ?? .now)
     }
 }

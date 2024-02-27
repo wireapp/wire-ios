@@ -59,7 +59,7 @@ class Conversation_DeletionTests: DatabaseTest {
         let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [])!
         conversation.remoteIdentifier = UUID()
         conversation.conversationType = .group
-        let invalidOperationfailure = expectation(description: "Invalid Operation")
+        let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
         conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { (result) in
@@ -79,7 +79,7 @@ class Conversation_DeletionTests: DatabaseTest {
         let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [])!
         conversation.conversationType = .group
         conversation.teamRemoteIdentifier = UUID()
-        let invalidOperationfailure = expectation(description: "Invalid Operation")
+        let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
         conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { (result) in

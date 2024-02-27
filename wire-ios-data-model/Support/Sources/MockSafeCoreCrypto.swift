@@ -20,34 +20,34 @@ import Foundation
 import WireDataModel
 import WireCoreCrypto
 
-class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
+public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
 
     var coreCrypto: MockCoreCryptoProtocol
 
-    init(coreCrypto: MockCoreCryptoProtocol = .init()) {
+    public init(coreCrypto: MockCoreCryptoProtocol = .init()) {
         self.coreCrypto = coreCrypto
     }
 
     var performCount = 0
-    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
+    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) async rethrows -> T {
         performCount += 1
         return try block(coreCrypto)
     }
 
     var unsafePerformCount = 0
-    func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
+    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
         unsafePerformCount += 1
         return try block(coreCrypto)
     }
 
-    // TODO: Update after update of CC 1.0
-    func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) async throws -> T) async rethrows -> T {
+    var performAsyncCount = 0
+    public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) async throws -> T) async rethrows -> T {
         return try await block(coreCrypto)
     }
 
     var mockMlsInit: ((String) throws -> Void)?
 
-    func mlsInit(clientID: String) throws {
+    public func mlsInit(clientID: String) throws {
         guard let mock = mockMlsInit else {
             fatalError("no mock for `mlsInit`")
         }
@@ -56,7 +56,7 @@ class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
     }
 
     var tearDownCount = 0
-    func tearDown() throws {
+    public func tearDown() throws {
         tearDownCount += 1
     }
 

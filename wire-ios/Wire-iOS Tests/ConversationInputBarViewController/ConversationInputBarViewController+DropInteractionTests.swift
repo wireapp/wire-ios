@@ -63,7 +63,7 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
 
 // MARK: - Helpers
 
-private class MediaShareRestrictionManagerMock: MediaShareRestrictionManager {
+private final class MediaShareRestrictionManagerMock: MediaShareRestrictionManager {
 
     let canFilesBeShared: Bool
 

@@ -21,15 +21,12 @@ import Foundation
 class ConversationTests_Ephemeral: ConversationTestsBase {
 
     var obfuscationTimer: ZMMessageDestructionTimer? {
-        return userSession!.syncManagedObjectContext.zm_messageObfuscationTimer
+        return userSession!.syncManagedObjectContext.performAndWait { userSession!.syncManagedObjectContext.zm_messageObfuscationTimer }
     }
 
     var deletionTimer: ZMMessageDestructionTimer? {
         return userSession!.managedObjectContext.zm_messageDeletionTimer
     }
-}
-
-extension ConversationTests_Ephemeral {
 
     func testThatItCreatesAndSendsAnEphemeralMessage() {
         // given
@@ -83,6 +80,7 @@ extension ConversationTests_Ephemeral {
         XCTAssertEqual(mockTransportSession?.receivedRequests().count, 2)
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
         XCTAssertTrue(message.isEphemeral)
+
         XCTAssertEqual(obfuscationTimer?.runningTimersCount, 1)
         XCTAssertEqual(deletionTimer?.runningTimersCount, 0)
     }

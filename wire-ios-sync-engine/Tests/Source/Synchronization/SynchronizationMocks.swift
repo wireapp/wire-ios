@@ -63,9 +63,9 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
         return true
     }
 
-    public var didRequestSlowSync = false
-    public func requestSlowSync() {
-        didRequestSlowSync = true
+    public var didRequestResyncResources = false
+    public func requestResyncResources() {
+        didRequestResyncResources = true
     }
 
 }

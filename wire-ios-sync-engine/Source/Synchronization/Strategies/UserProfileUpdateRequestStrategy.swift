@@ -162,7 +162,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             let payload = [
                     "handles": handlesToCheck,
                     "return": 1
-                ] as NSDictionary
+            ] as NSDictionary
             return ZMTransportRequest(path: "/users/handles", method: .post, payload: payload, apiVersion: apiVersion.rawValue)
 
         default:
@@ -241,7 +241,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             if response.result == .success {
                 self.userProfileUpdateStatus.didSetHandle()
             } else {
-                if NSError.keyExistsError(with: response) != nil {
+                if NSError.handleExistsError(with: response) != nil {
                     self.userProfileUpdateStatus.didFailToSetAlreadyExistingHandle()
                 } else {
                     self.userProfileUpdateStatus.didFailToSetHandle()

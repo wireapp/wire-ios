@@ -307,7 +307,8 @@ class AuthenticationStepController: AuthenticationStepViewController {
         let button = AuthenticationNavigationBar.makeBackButton()
         button.accessibilityLabel = L10n.Accessibility.Authentication.BackButton.description
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+        navigationItem.backBarButtonItem = UIBarButtonItem(customView: button)
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     @objc private func backButtonTapped() {

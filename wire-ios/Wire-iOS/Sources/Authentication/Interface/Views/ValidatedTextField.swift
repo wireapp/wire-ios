@@ -41,6 +41,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         case password(isNew: Bool)
         case passcode(isNew: Bool)
         case phoneNumber
+        case username
         case unknown
     }
 
@@ -225,6 +226,10 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
             autocapitalizationType = .words
             accessibilityIdentifier = "NameField"
             textContentType = isTeam ? .organizationName : .name
+        case .username:
+            autocapitalizationType = .none
+            accessibilityIdentifier = "UsernameField"
+            textContentType = .username
         case .phoneNumber:
             textContentType = .telephoneNumber
             keyboardType = .numberPad
@@ -339,5 +344,9 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         let error = textFieldValidator.validate(text: text, kind: kind)
         textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
         updateConfirmButton()
+    }
+
+    func validateText(text: String) -> TextFieldValidator.ValidationError? {
+        return textFieldValidator.validate(text: text, kind: kind)
     }
 }

@@ -23,14 +23,10 @@ enum ClearContentResult {
     case delete(leave: Bool), cancel
 
     var title: String {
-        return localizationKey.localized
-    }
-
-    private var localizationKey: String {
         switch self {
-        case .cancel: return "general.cancel"
-        case .delete(leave: true): return "meta.menu.delete_content.button_delete_and_leave"
-        case .delete(leave: false): return "meta.menu.delete_content.button_delete"
+        case .cancel: return L10n.Localizable.General.cancel
+        case .delete(leave: true): return L10n.Localizable.Meta.Menu.DeleteContent.buttonDeleteAndLeave
+        case .delete(leave: false): return L10n.Localizable.Meta.Menu.DeleteContent.buttonDelete
         }
     }
 

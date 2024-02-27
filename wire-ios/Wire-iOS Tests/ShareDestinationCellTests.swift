@@ -70,7 +70,9 @@ final class ShareDestinationCellTests: BaseSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: check what would be the default value after test
+        // swiftlint:enable todo_requires_jira_link
         accentColor = .vividRed
         sut = ShareDestinationCell(style: .default, reuseIdentifier: "reuseIdentifier")
         sut.overrideUserInterfaceStyle = .dark

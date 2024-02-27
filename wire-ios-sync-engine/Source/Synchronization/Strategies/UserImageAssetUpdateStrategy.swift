@@ -181,7 +181,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
-        case .v2, .v3, .v4, .v5:
+        case .v2, .v3, .v4, .v5, .v6:
             guard let domain = user.domain.nonEmptyValue ?? BackendInfo.domain else {
                 return nil
             }

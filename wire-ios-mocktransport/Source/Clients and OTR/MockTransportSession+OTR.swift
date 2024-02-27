@@ -28,7 +28,7 @@ extension MockTransportSession {
         var missedClients: [AnyHashable: Any] = [:]
         for user in users {
             if let onlyForUserId = onlyForUserId,
-               NSUUID(transport: user.identifier) != NSUUID(transport: onlyForUserId) {
+               UUID(transportString: user.identifier) != UUID(transportString: onlyForUserId) {
                 continue
             }
             let recipientClients = (recipients?[user.identifier] as? [String: Any] ?? [:]).keys

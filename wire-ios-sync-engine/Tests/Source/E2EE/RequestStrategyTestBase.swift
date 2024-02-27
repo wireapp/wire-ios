@@ -33,7 +33,7 @@ class RequestStrategyTestBase: MessagingTest {
         var mockUserIdentifier: String!
         var mockClientIdentifier: String!
 
-        self.mockTransportSession.performRemoteChanges { (session) -> Void in
+        self.mockTransportSession.performRemoteChanges { session in
             let mockUser = session.insertUser(withName: "foo")
             let mockClient = session.registerClient(for: mockUser, label: mockUser.name!, type: "permanent", deviceClass: "phone")
             mockClientIdentifier = mockClient.identifier

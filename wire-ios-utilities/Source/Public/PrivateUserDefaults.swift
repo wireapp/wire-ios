@@ -61,6 +61,22 @@ extension PrivateUserDefaults {
         return storage.bool(forKey: scopeKey(key))
     }
 
+    public func set(_ value: Any?, forKey key: Key) {
+        storage.set(value, forKey: scopeKey(key))
+    }
+
+    public func object(forKey key: Key) -> Any? {
+        return storage.object(forKey: scopeKey(key))
+    }
+
+    public func set(_ value: Int, forKey key: Key) {
+        storage.set(value, forKey: scopeKey(key))
+    }
+
+    public func integer(forKey key: Key) -> Int {
+        return storage.integer(forKey: scopeKey(key))
+    }
+
     public func set(_ value: Date, forKey key: Key) {
         storage.set(value, forKey: scopeKey(key))
     }

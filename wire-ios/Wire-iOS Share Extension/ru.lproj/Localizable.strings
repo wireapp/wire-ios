@@ -17,15 +17,18 @@
 //
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Share Extension
+// General
 
 
 
 "general.ok" = "OK";
 
+// Conversation Selection
 "share_extension.conversation_selection.account" = "Аккаунт:";
 "share_extension.conversation_selection.title" = "Беседа:";
-"share_extension.send_button.title" = "Отправить";
 "share_extension.conversation_selection.empty.value" = "Выбрать";
+
+"share_extension.send_button.title" = "Отправить";
 "share_extension.input.placeholder" = "Введите сообщение";
 "share_extension.sending_progress.title" = "Отправка...";
 "share_extension.preparing.title" = "Подготовка…";
@@ -42,24 +45,35 @@
 "share_extension.unlock.alert.message" = "Открыть Wire для создания кода доступа";
 "share_extension.unlock.reveal_passcode" = "Показать код доступа";
 
+// Timeout
 "share_extension.timeout.title" = "Время соединения истекло.";
 "share_extension.timeout.message" = "Проверьте подключение к интернету и повторите попытку. Вложения были сохранены в беседе.";
 
-"content.file.too_big" = "Вы можете отправлять файлы до %@";
-"content.file.unsupported_attachment" = "Неподдерживаемое вложение";
+// Content
+"share_extension.content.file.too_big" = "Вы можете отправлять файлы до %@";
+"share_extension.content.file.unsupported_attachment" = "Неподдерживаемое вложение";
+
 "share_extension.error.conversation_does_not_exist.message" = "Пожалуйста, выберите беседу, чтобы поделиться";
 
 "share_extension.privacy_security.lock_app.description" = "Разблокировать Wire";
 "share_extension.logged_out.title" = "Вы вышли из этой учетной записи.";
 "share_extension.logged_out.message" = "Выберите другую учетную запись.";
 
-"conversation.displayname.emptygroup" = "Пустая групповая беседа";
-"meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
-"meta.degraded.degradation_reason_message.plural" = "%@ начал(-а) использовать новые устройства.";
-"meta.degraded.dialog_message" = "Вы все еще хотите отправить свое сообщение?";
-"meta.degraded.cancel_sending_button" = "Не отправлять";
-"meta.degraded.send_anyway_button" = "Отправить в любом случае";
+// Conversation Degraded (security level lowered)
+"share_extension.conversation.displayname.emptygroup" = "Пустая группа";
+"share_extension.meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
+"share_extension.meta.degraded.degradation_reason_message.plural" = "%@ начал(-а) использовать новые устройства.";
+"share_extension.meta.degraded.dialog_message" = "Вы все еще хотите отправить ваше сообщение?";
+"share_extension.meta.degraded.cancel_sending_button" = "Не отправлять";
+"share_extension.meta.degraded.send_anyway_button" = "Отправить в любом случае";
+
+"share_extension.meta.legalhold.send_alert_title" = "Эта беседа теперь является субъектом юридических ограничений.";
 
 //Feature flag - File sharing
-"feature.flag.file_sharing.alert.title" = "Ограничения на обмен файлами";
-"feature.flag.file_sharing.alert.message" = "Вы не можете поделиться этим файлом, поскольку данная возможность отключена.";
+"share_extension.feature.flag.file_sharing.alert.title" = "Ограничения на обмен файлами";
+"share_extension.feature.flag.file_sharing.alert.message" = "Вы не можете поделиться этим файлом, поскольку данная возможность отключена.";
+
+// Share Extension - Voice Over
+"share_extension.voiceover.conversation_under_legal_hold" = "Под правовой защитой.";
+"share_extension.voiceover.conversation_secure" = "Все клиенты верифицированы.";
+"share_extension.voiceover.conversation_secure_with_ignored" = "Не все клиенты верифицированы.";

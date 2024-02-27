@@ -22,6 +22,7 @@ import WireTesting
 @testable import WireDataModel
 
 public class DiskDatabaseTest: ZMTBaseTest {
+
     var sharedContainerURL: URL!
     var accountId: UUID!
     var moc: NSManagedObjectContext {
@@ -133,7 +134,7 @@ extension DiskDatabaseTest {
     func createConnection(to: ZMUser, conversation: ZMConversation) -> ZMConnection {
         let connection = ZMConnection.insertNewObject(in: self.moc)
         connection.to = to
-        connection.conversation = conversation
+        to.oneOnOneConversation = conversation
         connection.status = .accepted
         return connection
     }

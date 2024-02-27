@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
-        mlsService: MLSServiceInterface
+        mlsService: MLSServiceInterface,
+        coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -66,10 +67,11 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: proteusProvider,
-            mlsService: mlsService
+            mlsService: mlsService,
+            coreCryptoProvider: coreCryptoProvider
         )
 
-        self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
+        self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy })
         self.eventConsumers = strategies.compactMap({ $0 as? ZMEventConsumer })
         self.eventAsyncConsumers = strategies.compactMap({ $0 as? ZMEventAsyncConsumer })
         self.contextChangeTrackers = strategies.flatMap({ (object: Any) -> [ZMContextChangeTracker] in
@@ -103,7 +105,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
-        mlsService: MLSServiceInterface
+        mlsService: MLSServiceInterface,
+        coreCryptoProvider: CoreCryptoProviderProtocol
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -131,7 +134,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: proteusProvider
+                proteusProvider: proteusProvider,
+                coreCryptoProvider: coreCryptoProvider
             ),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,
@@ -217,12 +221,15 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus),
+                syncProgress: applicationStatusDirectory.syncStatus,
+                oneOneOneResolver: OneOnOneResolver(mlsService: mlsService)
+            ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                mlsService: mlsService),
+mlsService: mlsService,
+                removeLocalConversation: RemoveLocalConversationUseCase()),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -237,6 +244,10 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus),
+            SelfUserRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory
+            ),
             CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -292,7 +303,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory),
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
+            ),
             TerminateFederationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -313,6 +326,17 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
+            ),
+            SelfSupportedProtocolsRequestStrategy(
+                context: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus,
+                userRepository: UserRepository(context: syncMOC)
+            ),
+            EvaluateOneOnOneConversationsStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
             )
         ]
 

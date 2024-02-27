@@ -21,7 +21,7 @@
 
 @implementation ZMConnection (Helper)
 
-+ (instancetype)insertNewSentConnectionToUser:(ZMUser *)user existingConversation:(ZMConversation *)conversation
++ (instancetype)insertNewSentConnectionToUser:(ZMUser *)user;
 {
     VerifyReturnValue(user.connection == nil, user.connection);
     RequireString(user != nil, "Can not create a connection to <nil> user.");
@@ -29,25 +29,16 @@
     connection.to = user;
     connection.lastUpdateDate = [NSDate date];
     connection.status = ZMConnectionStatusSent;
-    if (conversation == nil) {
-        connection.conversation = [ZMConversation insertNewObjectInManagedObjectContext:user.managedObjectContext];
 
-        [connection addWithUser:user];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:user.managedObjectContext];
+    conversation.creator = [ZMUser selfUserInContext:user.managedObjectContext];
+    conversation.conversationType = ZMConversationTypeConnection;
+    conversation.lastModifiedDate = connection.lastUpdateDate;
 
-        connection.conversation.creator = [ZMUser selfUserInContext:user.managedObjectContext];
-    }
-    else {
-        connection.conversation = conversation;
-        ///TODO: add user if not exists in participantRoles??
-    }
-    connection.conversation.conversationType = ZMConversationTypeConnection;
-    connection.conversation.lastModifiedDate = connection.lastUpdateDate;
+    user.oneOnOneConversation = conversation;
+    [conversation addParticipantAndUpdateConversationStateWithUser:user role:nil];
+
     return connection;
-}
-
-+ (instancetype)insertNewSentConnectionToUser:(ZMUser *)user;
-{
-    return [self insertNewSentConnectionToUser:user existingConversation:nil];
 }
 
 @end

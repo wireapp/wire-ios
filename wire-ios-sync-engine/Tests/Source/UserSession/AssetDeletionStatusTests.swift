@@ -21,7 +21,7 @@ import WireDataModel
 
 // MARK: - Mocks
 
-@objc class FakeGroupQueue: NSObject, ZMSGroupQueue {
+@objc final class FakeGroupQueue: NSObject, ZMSGroupQueue {
 
     var dispatchGroup: ZMSDispatchGroup! {
         return nil
@@ -33,7 +33,7 @@ import WireDataModel
 
 }
 
-class AssetDeletionStatusTests: MessagingTest {
+final class AssetDeletionStatusTests: MessagingTest {
 
     private var sut: AssetDeletionStatus!
     fileprivate var identifierProvider: DeletableAssetIdentifierProvider!
@@ -105,7 +105,7 @@ class AssetDeletionStatusTests: MessagingTest {
         let identifier = UUID.create().transportString()
 
         // Expect
-        let requestExpectation = expectation(description: "notification should be posted")
+        let requestExpectation = customExpectation(description: "notification should be posted")
         let observer = MockRequestAvailableObserver(requestAvailable: requestExpectation.fulfill)
 
         // When
@@ -152,11 +152,11 @@ class AssetDeletionStatusTests: MessagingTest {
 
 // MARK: - Helper
 
-private class IdentifierProvider: NSObject, DeletableAssetIdentifierProvider {
+private final class IdentifierProvider: NSObject, DeletableAssetIdentifierProvider {
     var assetIdentifiersToBeDeleted = Set<String>()
 }
 
-private class MockRequestAvailableObserver: NSObject, RequestAvailableObserver {
+private final class MockRequestAvailableObserver: NSObject, RequestAvailableObserver {
 
     private let requestAvailable: () -> Void
 

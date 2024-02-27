@@ -12,7 +12,7 @@
     "commandLineArgumentEntries" : [
       {
         "argument" : "-com.apple.CoreData.SQLDebug 1",
-        "enabled" : false
+        "enabled": false
       },
       {
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
@@ -43,7 +43,7 @@
     {
       "skippedTests" : [
         "ConversationObserverTests\/testThatItNotifiesOfLegalHoldChanges_Disabled()",
-        "UserObserverTests\/testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed()"
+        "UserChangeInfoObservationTests\/testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed()"
       ],
       "target" : {
         "containerPath" : "container:WireDataModel.xcodeproj",

@@ -18,7 +18,7 @@
 
 import Foundation
 
-class MockLabel: NSObject, LabelType {
+final class MockLabel: NSObject, LabelType {
 
     init(name: String? = nil, remoteIdentifier: UUID = UUID(), kind: Label.Kind = .folder) {
         self.remoteIdentifier = remoteIdentifier

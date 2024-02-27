@@ -74,7 +74,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"handle": user1.handle
+                                                  @"handle": user1.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   },
                                               
                                               @{
@@ -84,7 +85,8 @@
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"handle": user2.handle
+                                                  @"handle": user2.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   }
                                               ]
                                       };
@@ -144,7 +146,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"handle": user1.handle
+                                                  @"handle": user1.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   },
                                               
                                               @{
@@ -154,7 +157,8 @@
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"handle": user2.handle
+                                                  @"handle": user2.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   },
                                               
                                               
@@ -165,7 +169,8 @@
                                                   @"id": user3.identifier,
                                                   @"level": @1,
                                                   @"name": user3.name,
-                                                  @"handle": user3.handle
+                                                  @"handle": user3.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   }
                                               ]
                                       };
@@ -207,7 +212,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"handle": user1.handle
+                                                  @"handle": user1.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   }
                                               ]
                                       };

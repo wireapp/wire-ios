@@ -44,8 +44,7 @@ public extension ZMUser {
 
         if expiresAt.timeIntervalSinceNow < 0 {
             return 0
-        }
-        else {
+        } else {
             return expiresAt.timeIntervalSinceNow
         }
     }
@@ -67,7 +66,7 @@ public extension ZMUser {
     }
 
     private func createMembership(in team: Team, context: NSManagedObjectContext) {
-        _ = Member.getOrCreateMember(for: self, in: team, context: context)
+        _ = Member.getOrUpdateMember(for: self, in: team, context: context)
     }
 
     private func deleteMembership(in context: NSManagedObjectContext) {

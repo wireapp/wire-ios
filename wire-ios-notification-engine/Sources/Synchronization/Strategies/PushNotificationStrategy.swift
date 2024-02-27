@@ -105,11 +105,12 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
             await managedObjectContext.perform {
                 self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
             }
+
+            if !hasMoreToFetch {
+                delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
+            }
         }
 
-        if !hasMoreToFetch {
-            delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
-        }
     }
 
     func failedFetchingEvents(recoverable: Bool) {

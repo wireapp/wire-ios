@@ -208,7 +208,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         try! uiMOC.obtainPermanentIDs(for: [clientMessage])
 
         // when
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token: Any? = NotificationInContext.addObserver(name: ZMClientMessage.linkPreviewImageDownloadNotification,
                                           context: self.uiMOC.notificationContext,
                                           object: clientMessage.objectID) { _ in
@@ -218,7 +218,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.textMessageData?.requestLinkPreviewImageDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.2), line: line)
         }
     }

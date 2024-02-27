@@ -43,7 +43,7 @@ import Foundation
                 "id": uuid.transportString(),
                 "payload": [ payload ],
                 "transient": isTransient
-            ] as ZMTransportData
+        ] as ZMTransportData
     }
 
     public override var description: String {

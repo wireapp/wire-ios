@@ -272,7 +272,9 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
         NSDictionary *payload = [response.payload asDictionary];
         [selfUser updateWithTransportData:payload authoritative:YES];
         
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Write tests for all cases
+        // swiftlint:enable todo_requires_jira_link
         BOOL selfUserHasEmail = (selfUser.emailAddress != nil);
         BOOL needToNotifyAuthState = (clientPhase == ZMClientRegistrationPhaseWaitingForSelfUser) ||
                                      (clientPhase == ZMClientRegistrationPhaseWaitingForEmailVerfication);

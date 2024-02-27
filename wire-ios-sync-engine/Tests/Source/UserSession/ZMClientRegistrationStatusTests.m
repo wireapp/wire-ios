@@ -89,62 +89,75 @@
     return [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsToRegisterEmailToRegisterClient userInfo:nil];
 }
 
+- (NSError *)needToSetHandleError
+{
+    return [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsToHandleToRegisterClient userInfo:nil];
+}
+
 - (void)testThatItInsertsANewClientIfThereIsNoneWaitingToBeSynced
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = [NSUUID UUID];
-    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
-    client.user = selfUser;
-    client.remoteIdentifier = @"identifier";
-    
-    XCTAssertEqual(selfUser.clients.count, 1u);
-    
-    // when
-    [self.sut prepareForClientRegistration];
-    
-    // then
-    XCTAssertEqual(selfUser.clients.count, 2u);
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.user = selfUser;
+        client.remoteIdentifier = @"identifier";
+
+        XCTAssertEqual(selfUser.clients.count, 1u);
+
+        // when
+        [self.sut prepareForClientRegistration];
+
+        // then
+        XCTAssertEqual(selfUser.clients.count, 2u);
+    }];
 }
 
 
 - (void)testThatItDoesNotInsertANewClientIfThereIsAlreadyOneWaitingToBeSynced
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    selfUser.remoteIdentifier = [NSUUID UUID];
-    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
-    client.user = selfUser;
-    
-    XCTAssertEqual(selfUser.clients.count, 1u);
-    
-    // when
-    [self.sut prepareForClientRegistration];
-    
-    // then
-    XCTAssertEqual(selfUser.clients.count, 1u);
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.user = selfUser;
+
+        XCTAssertEqual(selfUser.clients.count, 1u);
+
+        // when
+        [self.sut prepareForClientRegistration];
+
+        // then
+        XCTAssertEqual(selfUser.clients.count, 1u);
+    }];
 }
 
 - (void)testThatItReturns_WaitingForSelfUser_IFSelfUserDoesNotHaveRemoteID
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    selfUser.remoteIdentifier = nil;
-    
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForSelfUser);
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = nil;
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForSelfUser);
+    }];
 }
 
 
 - (void)testThatItReturns_Registered_IfSelfClientIsSet
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = [NSUUID UUID];
-    [self.syncMOC setPersistentStoreMetadata:@"lala" forKey:ZMPersistedClientIdKey];
-    
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseRegistered);
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        [self.syncMOC setPersistentStoreMetadata:@"lala" forKey:ZMPersistedClientIdKey];
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseRegistered);
+    }];
 }
 
 - (void)testThatItReturns_WaitingForDeletion_AfterUserSelectedClientToDelete
@@ -156,7 +169,8 @@
         ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
         selfUser.remoteIdentifier = NSUUID.createUUID;
         selfUser.emailAddress = @"email@domain.com";
-        
+        selfUser.handle = @"handle";
+
         UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
         client.remoteIdentifier = @"identifier";
         client.user = selfUser;
@@ -164,182 +178,235 @@
         [self.uiMOC setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];
         [self.uiMOC saveOrRollback];
         
+    }];
+
+    [self.syncMOC performGroupedBlockAndWait:^{
         // when
         [self.sut didDetectCurrentClientDeletion];
     }];
+
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+    __block ZMClientRegistrationPhase phase;
+    [self.syncMOC performBlockAndWait:^{
+        phase = self.sut.currentPhase;
+    }];
+    XCTAssertEqual(phase, ZMClientRegistrationPhaseWaitingForPrekeys);
     [self.mockClientRegistrationDelegate verify];
 }
 
 - (void)testThatItResets_LocallyModifiedKeys_AfterUserSelectedClientToDelete
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = NSUUID.createUUID;
-    
-    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
-    client.remoteIdentifier = @"identifier";
-    client.user = selfUser;
-    [client setLocallyModifiedKeys:[NSSet setWithObject:@"numberOfKeysRemaining"]];
-    
-    [self.syncMOC setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];
-    
-    // when
-    [self.sut didDetectCurrentClientDeletion];
-    
-    // then
-    XCTAssertFalse([client hasLocalModificationsForKey:@"numberOfKeysRemaining"]);
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = NSUUID.createUUID;
+
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.remoteIdentifier = @"identifier";
+        client.user = selfUser;
+        [client setLocallyModifiedKeys:[NSSet setWithObject:@"numberOfKeysRemaining"]];
+
+        [self.syncMOC setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];
+
+        // when
+        [self.sut didDetectCurrentClientDeletion];
+
+        // then
+        XCTAssertFalse([client hasLocalModificationsForKey:@"numberOfKeysRemaining"]);
+    }];
 }
 
 - (void)testThatItInvalidatesSelfClientAndDeletesAndRecreatesCryptoBoxOnDidDetectCurrentClientDeletion
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    selfUser.remoteIdentifier = [NSUUID UUID];
-    selfUser.emailAddress = @"email@domain.com";
-    
-    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
-    client.user = selfUser;
-    [self.uiMOC saveOrRollback];
-    
-    // when
-    [self.sut didFailToRegisterClient:[self tooManyClientsError]];
-    [ZMClientUpdateNotification notifyFetchingClientsCompletedWithUserClients:@[client] context:self.uiMOC];
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.emailAddress = @"email@domain.com";
+        selfUser.handle = @"handle";
+
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.user = selfUser;
+        [self.syncMOC saveOrRollback];
+
+        // when
+        [self.sut didFailToRegisterClient:[self tooManyClientsError]];
+        [ZMClientUpdateNotification notifyFetchingClientsCompletedWithUserClients:@[client] context:self.uiMOC];
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForDeletion);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForDeletion);
+    }];
 }
 
 - (void)testThatItReturnsYESForNeedsToRegisterClientIfNoClientIdInMetadata
 {
-    [self.uiMOC setPersistentStoreMetadata:nil forKey:ZMPersistedClientIdKey];
-    XCTAssertTrue([ZMClientRegistrationStatus needsToRegisterClientInContext:self.uiMOC]);
+    [self.syncMOC performBlockAndWait:^{
+        [self.syncMOC setPersistentStoreMetadata:nil forKey:ZMPersistedClientIdKey];
+        XCTAssertTrue([ZMClientRegistrationStatus needsToRegisterClientInContext:self.syncMOC]);
+    }];
 }
 
 - (void)testThatItReturnsNOForNeedsToRegisterClientIfThereIsClientIdInMetadata
 {
-    [self.uiMOC setPersistentStoreMetadata:@"lala" forKey:ZMPersistedClientIdKey];
-    XCTAssertFalse([ZMClientRegistrationStatus needsToRegisterClientInContext:self.uiMOC]);
+    [self.syncMOC performBlockAndWait:^{
+        [self.syncMOC setPersistentStoreMetadata:@"lala" forKey:ZMPersistedClientIdKey];
+        XCTAssertFalse([ZMClientRegistrationStatus needsToRegisterClientInContext:self.syncMOC]);
+    }];
 }
 
 - (void)testThatItNotfiesCredentialProviderWhenClientIsRegistered
 {
-    //given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = [NSUUID new];
+    [self.syncMOC performBlockAndWait:^{
+        //given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID new];
 
-    //when
-    [self.sut prepareForClientRegistration];
+        //when
+        [self.sut prepareForClientRegistration];
 
-    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
-    client.remoteIdentifier = [NSUUID createUUID].transportString;
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.remoteIdentifier = [NSUUID createUUID].transportString;
 
-    [self.sut didRegisterClient:client];
+        [self.sut didRegisterProteusClient:client];
 
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseRegistered);
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseRegistered);
+    }];
 }
 
 - (void)testThatItNotfiesDelegateWhenClientIsRegistered
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    selfUser.remoteIdentifier = [NSUUID new];
-    
-    [self.sut prepareForClientRegistration];
-    
-    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
-    client.remoteIdentifier = [NSUUID createUUID].transportString;
-    [[self.mockClientRegistrationDelegate expect] didRegisterSelfUserClient:client];
-    
-    // when
-    [self.sut didRegisterClient:client];
-    
-    // then
-    [self.mockClientRegistrationDelegate verify];
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID new];
+
+        [self.sut prepareForClientRegistration];
+
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.remoteIdentifier = [NSUUID createUUID].transportString;
+        [[self.mockClientRegistrationDelegate expect] didRegisterSelfUserClient:client];
+
+        // when
+        [self.sut didRegisterProteusClient:client];
+
+        // then
+        [self.mockClientRegistrationDelegate verify];
+    }];
 }
 
 - (void)testThatItTransitionsFrom_WaitingForEmail_To_WaitingForPrekeys_WhenSelfUserChangesWithEmailAddress
 {
-    // given
-    
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = [NSUUID UUID];
-    selfUser.emailAddress = nil;
-    selfUser.phoneNumber = nil;
-    
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForEmailVerfication);
-    
-    // when
-    selfUser.emailAddress = @"me@example.com";
-    [self.sut didFetchSelfUser];
-    
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.handle = @"handle";
+        selfUser.emailAddress = nil;
+        selfUser.phoneNumber = nil;
+
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForEmailVerfication);
+
+        // when
+        selfUser.emailAddress = @"me@example.com";
+        [self.sut didFetchSelfUser];
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+    }];
 }
 
 
-- (void)testThatItDoesNotTransitionsFrom_WaitingForEmail_To_Unregistered_WhenSelfUserChangesWithoutEmailAddress
+- (void)testThatItIsWaitingForEmailVerfication_WhenSelfUserChangesWithoutEmailAddress
 {
-    // given
-    
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = [NSUUID UUID];
-    selfUser.emailAddress = nil;
-    selfUser.phoneNumber = nil;
-    
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForEmailVerfication);
-    
-    // when
-    selfUser.emailAddress = nil;
-    [self.sut didFetchSelfUser];
-    
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForEmailVerfication);
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.handle = @"handle";
+        selfUser.emailAddress = nil;
+        selfUser.phoneNumber = nil;
+
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForEmailVerfication);
+
+        // when
+        selfUser.emailAddress = nil;
+        [self.sut didFetchSelfUser];
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForEmailVerfication);
+    }];
+}
+
+- (void)testThatItIsWaitingForHandle_WhenSelfUserChangesWithoutHandle
+{
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.handle = nil;
+        selfUser.emailAddress = @"email@example.com";
+        selfUser.phoneNumber = nil;
+
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForHandle);
+
+        // when
+        [self.sut didFetchSelfUser];
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForHandle);
+    }];
 }
 
 - (void)testThatItResetsThePhaseToWaitingForLoginIfItNeedsPasswordToRegisterClient
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = [NSUUID UUID];
-    selfUser.emailAddress = @"email@domain.com";
-    [[[self.mockCookieStorage stub] andReturn:[NSData data]] authenticationCookieData];
-    self.sut.emailCredentials = nil;
-    
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.emailAddress = @"email@domain.com";
+        selfUser.handle = @"handle";
+        [[[self.mockCookieStorage stub] andReturn:[NSData data]] authenticationCookieData];
+        self.sut.emailCredentials = nil;
 
-    NSError *error = [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsPasswordToRegisterClient userInfo:nil];
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
 
-    // when
-    [self.sut didFailToRegisterClient:error];
-    
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForLogin);
-    
-    // and when
-    // the user entered the password, we can proceed trying to register the client
-    self.sut.emailCredentials = [ZMEmailCredentials credentialsWithEmail:@"john.doe@domain.com" password:@"12345789"];
-    
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+        NSError *error = [NSError errorWithDomain:@"ZMUserSession" code:ZMUserSessionNeedsPasswordToRegisterClient userInfo:nil];
+
+        // when
+        [self.sut didFailToRegisterClient:error];
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForLogin);
+
+        // and when
+        // the user entered the password, we can proceed trying to register the client
+        self.sut.emailCredentials = [ZMEmailCredentials credentialsWithEmail:@"john.doe@domain.com" password:@"12345789"];
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+    }];
 }
 
 - (void)testThatItDoesNotRequireEmailRegistrationForTeamUser
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = [NSUUID UUID];
-    selfUser.emailAddress = nil;
-    selfUser.phoneNumber = nil;
-    selfUser.usesCompanyLogin = YES;
-    
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
+        selfUser.handle = @"handle";
+        selfUser.emailAddress = nil;
+        selfUser.phoneNumber = nil;
+        selfUser.usesCompanyLogin = YES;
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseWaitingForPrekeys);
+    }];
 }
 
 @end
@@ -350,22 +417,24 @@
 
 - (void)testThatItNotifiesTheUIAboutSuccessfulRegistration
 {
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    selfUser.remoteIdentifier = self.userIdentifier;
-    [self.uiMOC saveOrRollback];
-    
-    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
-    client.remoteIdentifier = @"yay";
-    [[self.mockClientRegistrationDelegate expect] didRegisterSelfUserClient:client];
-    
-    // when
-    [self.sut didRegisterClient:client];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseRegistered);
-    [self.mockClientRegistrationDelegate verify];
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = self.userIdentifier;
+        [self.uiMOC saveOrRollback];
+
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.remoteIdentifier = @"yay";
+        [[self.mockClientRegistrationDelegate expect] didRegisterSelfUserClient:client];
+
+        // when
+        [self.sut didRegisterProteusClient:client];
+        WaitForAllGroupsToBeEmpty(0.5);
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, ZMClientRegistrationPhaseRegistered);
+        [self.mockClientRegistrationDelegate verify];
+    }];
 }
 
 - (void)testThatItNotifiesTheUIIfTheRegistrationFailsWithMissingEmailVerification
@@ -373,6 +442,7 @@
     // given
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = [NSUUID UUID];
+    selfUser.handle = @"handle";
     selfUser.emailAddress = nil;
     selfUser.phoneNumber = nil;
     [self.uiMOC saveOrRollback];
@@ -381,9 +451,34 @@
     [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: error];
     
     // when
-    [self.sut didFetchSelfUser];
+    [self.syncMOC performBlockAndWait:^{
+        [self.sut didFetchSelfUser];
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    // then
+    [self.mockClientRegistrationDelegate verify];
+}
+
+- (void)testThatItNotifiesTheUIIfTheRegistrationFailsWithMissingHandle
+{
+    // given
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = [NSUUID UUID];
+    selfUser.handle = nil;
+    selfUser.emailAddress = @"email@example.com";
+    selfUser.phoneNumber = nil;
+    [self.uiMOC saveOrRollback];
+
+    NSError *error = [self needToSetHandleError];
+    [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: error];
+
+    // when
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.sut didFetchSelfUser];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+
     // then
     [self.mockClientRegistrationDelegate verify];
 }
@@ -400,7 +495,9 @@
     [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: [OCMArg any]];
     
     // when
-    [self.sut didFailToRegisterClient:error];
+    [self.syncMOC performBlockAndWait:^{
+        [self.sut didFailToRegisterClient:error];
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -418,7 +515,9 @@
     [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: error];
     
     // when
-    [self.sut didFailToRegisterClient:error];
+    [self.syncMOC performBlockAndWait:^{
+        [self.sut didFailToRegisterClient:error];
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -432,8 +531,10 @@
     [[self.mockClientRegistrationDelegate expect] didFailToRegisterSelfUserClient: error];
     
     // when
-    [self.sut didFailToRegisterClient:error];
-    
+    [self.syncMOC performBlockAndWait:^{
+        [self.sut didFailToRegisterClient:error];
+    }];
+
     // then
     [self.mockClientRegistrationDelegate reject];
 }
@@ -441,17 +542,19 @@
 - (void)testThatItDeletesTheCookieIfFetchingClientsFailedWithError_SelfClientIsInvalid
 {
     // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = [NSUUID UUID];
-    
-    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
-    client.user = selfUser;
-    client.remoteIdentifier = @"identifer";
-    [self.syncMOC saveOrRollback];
-    [self.syncMOC setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];
+    [self.syncMOC performBlockAndWait:^{
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID UUID];
 
-    XCTAssertNotNil(selfUser.selfClient);
-    
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.user = selfUser;
+        client.remoteIdentifier = @"identifer";
+        [self.syncMOC saveOrRollback];
+        [self.syncMOC setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];
+
+        XCTAssertNotNil(selfUser.selfClient);
+    }];
+
     NSError *error = [NSError errorWithDomain:@"ClientManagement" code:ClientUpdateErrorSelfClientIsInvalid userInfo:nil];
 
     // expect
@@ -462,8 +565,10 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertNil([self.syncMOC persistentStoreMetadataForKey:ZMPersistedClientIdKey]);
-    [self.mockCookieStorage verify];
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertNil([self.syncMOC persistentStoreMetadataForKey:ZMPersistedClientIdKey]);
+        [self.mockCookieStorage verify];
+    }];
 }
 
 

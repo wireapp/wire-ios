@@ -24,14 +24,14 @@ import WireDataModel
  * An object that coordinates disclosing the legal hold state to the user.
  */
 
-final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
+final class LegalHoldDisclosureController: UserObserving {
 
     enum DisclosureState: Equatable {
         /// No legal hold status is being disclosed.
         case none
 
         /// The user is being warned about a pending legal hold alert.
-        case warningAboutPendingRequest(LegalHoldRequest)
+        case warningAboutPendingRequest(LegalHoldRequest, String)
 
         /// The user is waiting for the response on the legal hold acceptation.
         case acceptingRequest
@@ -83,7 +83,6 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
     init(selfUser: SelfUserType, userSession: UserSession, presenter: @escaping ViewControllerPresenter) {
         self.selfUser = selfUser
         self.presenter = presenter
-        super.init()
 
         configureObservers(userSession: userSession)
     }
@@ -144,8 +143,13 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
         // Do not present alert if we already in process of accepting the request
         if case .acceptingRequest = currentState { return }
 
+        Task {
+            let fingerprint = await selfUser.fingerprint ?? "<fingerprint unavailable>"
+            await MainActor.run(body: { currentState = .warningAboutPendingRequest(request, fingerprint) })
+        }
+
         // If there is a current alert, replace it with the latest disclosure
-        currentState = .warningAboutPendingRequest(request)
+
     }
 
     private func discloseDisabledStateIfPossible() {
@@ -190,8 +194,13 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
             alertController = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(for: selfUser, suggestedStateChangeHandler: assignState)
         case .warningAboutEnabled:
             alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(for: selfUser, suggestedStateChangeHandler: assignState)
-        case .warningAboutPendingRequest(let request):
-            alertController = LegalHoldAlertFactory.makeLegalHoldActivationAlert(for: request, user: selfUser, suggestedStateChangeHandler: assignState)
+        case .warningAboutPendingRequest(let request, let fingerprint):
+            alertController = LegalHoldAlertFactory.makeLegalHoldActivationAlert(
+                for: request,
+                fingerprint: fingerprint,
+                user: selfUser,
+                suggestedStateChangeHandler: assignState
+            )
         case .warningAboutAcceptationResult(let alert):
             alertController = alert
         case .acceptingRequest, .none:

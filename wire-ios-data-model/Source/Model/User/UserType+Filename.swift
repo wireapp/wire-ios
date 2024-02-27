@@ -42,8 +42,7 @@ public extension UserType {
 
         if let suffixUnwrapped = suffix {
             return "\(trimmedFilename)\(dateString)\(suffixUnwrapped)"
-        }
-        else {
+        } else {
             return "\(trimmedFilename)\(dateString)"
         }
     }

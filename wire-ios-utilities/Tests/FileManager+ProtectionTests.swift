@@ -135,14 +135,14 @@ extension FileManagerProtectionTests {
     }
 
     func existingLocalURLIsExcludedFromBackup(_ folder: URL) throws -> Bool {
-        let values = try folder.resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey))
+        let values = try folder.resourceValues(forKeys: [.isExcludedFromBackupKey])
         return values.isExcludedFromBackup == true
     }
 }
 
 /// This helper class is needed as the default file system will not report the value
 /// of the `FileAttributeKey.protectionKey` when reading file attributes
-class FileManagerThatRecordsFileProtectionAttributes: FileManager {
+final class FileManagerThatRecordsFileProtectionAttributes: FileManager {
 
     var recordedAttributes: [String: FileProtectionType] = [:]
 

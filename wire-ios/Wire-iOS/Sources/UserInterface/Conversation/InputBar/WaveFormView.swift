@@ -81,7 +81,9 @@ final class WaveFormView: UIView {
     }
 
     private func createConstraints() {
-        [visualizationView, leftGradient, rightGradient].prepareForLayout()
+        [visualizationView, leftGradient, rightGradient].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
             visualizationView.topAnchor.constraint(equalTo: topAnchor),
             visualizationView.bottomAnchor.constraint(equalTo: bottomAnchor),

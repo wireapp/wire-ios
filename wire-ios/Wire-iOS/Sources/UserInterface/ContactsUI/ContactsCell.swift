@@ -187,7 +187,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -buttonMargin)
         ])
 
-        [actionButton, buttonSpacer].prepareForLayout()
+        [actionButton, buttonSpacer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             buttonSpacer.topAnchor.constraint(equalTo: actionButton.topAnchor),
             buttonSpacer.bottomAnchor.constraint(equalTo: actionButton.bottomAnchor),
@@ -216,7 +216,13 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             return
         }
 
-        titleLabel.attributedText = user.nameIncludingAvailability(color: LabelColors.textDefault, selfUser: selfUser)
+        let userStatus = UserStatus(user: user, isCertified: false)
+        titleLabel.attributedText = userStatus.title(
+            color: LabelColors.textDefault,
+            includeAvailability: selfUser.isTeamMember,
+            includeVerificationStatus: false,
+            appendYouSuffix: false
+        )
     }
 
     @objc func actionButtonPressed(sender: Any?) {

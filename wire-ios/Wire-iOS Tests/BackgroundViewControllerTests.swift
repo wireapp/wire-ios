@@ -52,7 +52,9 @@ final class BackgroundViewControllerTests: XCTestCase {
         // make sure view is loaded
         _ = sut.view
         // WHEN
+        // swiftlint:disable todo_requires_jira_link
         // TODO: hacks to make below line passes
+        // swiftlint:enable todo_requires_jira_link
         selfUser.accentColorValue = selfUser.accentColorValue
 
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup], timeout: 10))

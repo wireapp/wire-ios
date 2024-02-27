@@ -90,7 +90,7 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
                     return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
                 }
 
-            case .v2, .v3, .v4, .v5:
+            case .v2, .v3, .v4, .v5, .v6:
                 // v2 assets are legacy and no longer supported in API v2
                 return nil
             }

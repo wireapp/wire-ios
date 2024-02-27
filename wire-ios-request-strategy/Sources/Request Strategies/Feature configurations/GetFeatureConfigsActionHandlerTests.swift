@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
+final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
     // MARK: - Helpers
 
@@ -36,10 +36,6 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             apiVersion: APIVersion.v0.rawValue
         )
     }
-
-    let successPayload: ZMTransportData = [
-
-    ] as ZMTransportData
 
     // MARK: - Request generation
 
@@ -58,14 +54,14 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
     // MARK: - Response handling
 
-    func test_ItHandlesResponse_200() throws {
-        syncMOC.performGroupedBlock {
+    func test_ItHandlesResponse_200() {
+        syncMOC.performAndWait {
             // Given
             let sut = GetFeatureConfigsActionHandler(context: self.syncMOC)
             var action = GetFeatureConfigsAction()
 
             // Expectation
-            let gotResult = self.expectation(description: "gotResult")
+            let gotResult = self.customExpectation(description: "gotResult")
 
             action.onResult { result in
                 switch result {
@@ -79,22 +75,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 gotResult.fulfill()
             }
 
-            let payload = GetFeatureConfigsActionHandler.ResponsePayload(
-                appLock: .init(status: .enabled, config: .init(enforceAppLock: true, inactivityTimeoutSecs: 11)),
-                classifiedDomains: .init(status: .enabled, config: .init(domains: ["foo"])),
-                conferenceCalling: .init(status: .enabled),
-                conversationGuestLinks: .init(status: .enabled),
-                digitalSignatures: .init(status: .enabled),
-                fileSharing: .init(status: .enabled),
-                mls: .init(status: .enabled, config: .init(defaultProtocol: .mls)),
-                selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
-            )
-
-            guard let payloadData = try? JSONEncoder().encode(payload),
-                  let payloadString = String(data: payloadData, encoding: .utf8) else {
-                XCTFail("failed to encode payload")
-                return
-            }
+            let payloadString = JSONPayload.valuesHTTPStatus200
 
             // When
             sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
@@ -131,6 +112,17 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
+
+            let mlsMigration = featureRepository.fetchMLSMigration()
+            XCTAssertEqual(mlsMigration.status, .enabled)
+            XCTAssertEqual(
+                mlsMigration.config.startTime?.transportString(),
+                "2024-02-19T11:59:27.542Z"
+            )
+            XCTAssertEqual(
+                mlsMigration.config.finaliseRegardlessAfter?.transportString(),
+                "2024-02-19T11:59:28.542Z"
+            )
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -143,7 +135,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             var action = GetFeatureConfigsAction()
 
             // Expectation
-            let gotResult = self.expectation(description: "gotResult")
+            let gotResult = self.customExpectation(description: "gotResult")
 
             action.onResult { result in
                 switch result {
@@ -157,22 +149,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 gotResult.fulfill()
             }
 
-            let payload = GetFeatureConfigsActionHandler.ResponsePayload(
-                appLock: nil,
-                classifiedDomains: nil,
-                conferenceCalling: nil,
-                conversationGuestLinks: nil,
-                digitalSignatures: nil,
-                fileSharing: nil,
-                mls: nil,
-                selfDeletingMessages: nil
-            )
-
-            guard let payloadData = try? JSONEncoder().encode(payload),
-                  let payloadString = String(data: payloadData, encoding: .utf8) else {
-                XCTFail("failed to encode payload")
-                return
-            }
+            let payloadString = JSONPayload.empty
 
             // When
             sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
@@ -208,6 +185,10 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
+
+            let mlsMigration = featureRepository.fetchMLSMigration()
+            XCTAssertEqual(mlsMigration.status, .disabled)
+            XCTAssertEqual(mlsMigration.config, .init())
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -219,7 +200,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -244,7 +225,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -269,7 +250,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -294,7 +275,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -319,7 +300,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         var action = GetFeatureConfigsAction()
 
         // Expectation
-        let gotResult = expectation(description: "gotResult")
+        let gotResult = customExpectation(description: "gotResult")
 
         action.onResult { result in
             switch result {
@@ -339,4 +320,68 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+}
+
+// MARK: - JSONPayload
+
+private enum JSONPayload {
+    static let empty = "{}"
+
+    static let valuesHTTPStatus200 =
+"""
+{
+    "conversationGuestLinks": {
+        "status": "enabled"
+    },
+    "mls": {
+        "status": "enabled",
+        "config": {
+            "supportedProtocols": [],
+            "defaultCipherSuite": 1,
+            "protocolToggleUsers": [],
+            "allowedCipherSuites": [
+                1
+            ],
+            "defaultProtocol": "mls"
+        }
+    },
+    "appLock": {
+        "config": {
+            "enforceAppLock": true,
+            "inactivityTimeoutSecs": 11
+        },
+        "status": "enabled"
+    },
+    "mlsMigration": {
+        "status": "enabled",
+        "config": {
+            "startTime": "2024-02-19T11:59:27.542Z",
+            "finaliseRegardlessAfter": "2024-02-19T11:59:28.542Z"
+        }
+    },
+    "conferenceCalling": {
+        "status": "enabled"
+    },
+    "fileSharing": {
+        "status": "enabled"
+    },
+    "digitalSignatures": {
+        "status": "enabled"
+    },
+    "classifiedDomains": {
+        "config": {
+            "domains": [
+                "foo"
+            ]
+        },
+        "status": "enabled"
+    },
+    "selfDeletingMessages": {
+        "status": "enabled",
+        "config": {
+            "enforcedTimeoutSeconds": 22
+        }
+    }
+}
+"""
 }

@@ -17,7 +17,9 @@
 //
 
 import XCTest
+
 @testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 class ClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -154,7 +156,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 
-            let expectation = self.expectation(description: "Notification fired")
+            let expectation = self.customExpectation(description: "Notification fired")
             token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: nil) {_ in
@@ -164,7 +166,7 @@ extension ClientMessageRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -191,7 +193,7 @@ extension ClientMessageRequestStrategyTests {
                 "conversation": self.groupConversation.remoteIdentifier!.transportString(),
                 "time": Date().transportString(),
                 "from": self.otherUser.remoteIdentifier.transportString()
-                ] as NSDictionary
+            ] as NSDictionary
             guard let event = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: eventPayload, uuid: nil, transient: false, source: .webSocket) else {
                 XCTFail("Failed to create event")
                 return

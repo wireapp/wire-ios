@@ -168,7 +168,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
     }
 
     private func createConstraints() {
-        [arrowIconImageView, titleLabel].prepareForLayout()
+        [arrowIconImageView, titleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         arrowIconImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
@@ -187,7 +187,6 @@ final class ConversationListHeaderView: UICollectionReusableView {
             badgeWidthConstraint!,
             badgeView.centerYAnchor.constraint(equalTo: centerYAnchor),
             badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -CGFloat.ConversationList.horizontalMargin)
-            ]
-        )
+        ])
     }
 }

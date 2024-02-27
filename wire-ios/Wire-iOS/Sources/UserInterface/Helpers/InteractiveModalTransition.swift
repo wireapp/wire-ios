@@ -29,7 +29,7 @@ fileprivate extension UIViewControllerContextTransitioning {
     }
 }
 
-final private class ModalPresentationTransition: NSObject, UIViewControllerAnimatedTransitioning {
+private final class ModalPresentationTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
     private let configuration: ModalPresentationConfiguration
 
@@ -69,7 +69,7 @@ final private class ModalPresentationTransition: NSObject, UIViewControllerAnima
 
 }
 
-final private class ModalDismissalTransition: NSObject, UIViewControllerAnimatedTransitioning {
+private final class ModalDismissalTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
     private let configuration: ModalPresentationConfiguration
 
@@ -108,7 +108,7 @@ final private class ModalDismissalTransition: NSObject, UIViewControllerAnimated
 
 }
 
-final private class ModalInteractionController: UIPercentDrivenInteractiveTransition {
+private final class ModalInteractionController: UIPercentDrivenInteractiveTransition {
     var interactionInProgress = false
     private var shouldCompleteTransition = false
     private weak var presentationViewController: ModalPresentationViewController!
@@ -197,7 +197,7 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
 
     private func createConstraints() {
         if let childViewControllerView = viewController.view {
-            [childViewControllerView, dimView].prepareForLayout()
+            [childViewControllerView, dimView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             NSLayoutConstraint.activate([
                 childViewControllerView.topAnchor.constraint(equalTo: view.topAnchor),
                 childViewControllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),

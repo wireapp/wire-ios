@@ -24,13 +24,16 @@ extension String {
         return components(separatedBy: .whitespaces).joined()
     }
 
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: We can use libPhoneNumberiOS to normalize phone numbers
+    // swiftlint:enable todo_requires_jira_link
+
     /// Auto detect country for phone numbers beginning with "+"
     ///
     /// Notice: When pastedString is copied from phone app (self phone number section), it contains right/left handling symbols: \u202A\u202B\u202C\u202D or \u{e2}
     /// e.g. @"\U0000202d+380 (00) 123 45 67\U0000202c"
     /// or  \u{e2}+49 123 12349999\u{e2}
     ///
-    /// TODO: We can use libPhoneNumberiOS to normalize phone numbers
     ///
     /// - Parameter presetCountry: the country preset if the phone number has no country code
     /// - Returns: If the number can be parsed, return a tuple of country and the phone number without country code. Otherwise return nil. country would be nil if self is a phone number without country

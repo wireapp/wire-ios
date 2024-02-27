@@ -139,18 +139,17 @@ extension KeySet {
         return backing.isEmpty
     }
     func filter(_ match: (StringKeyPath) -> Bool) -> KeySet {
-        return KeySet(backing.filter {match($0)})
+        return KeySet(backing.filter { match($0) })
     }
 }
 
 extension KeySet: CustomDebugStringConvertible {
     public var description: String {
         let a = [StringKeyPath](backing)
-        let ss = a.map { $0.rawValue }.sorted {
-            (lhs, rhs) in lhs < rhs
-        }
+        let ss = a.map { $0.rawValue }.sorted { (lhs, rhs) in lhs < rhs }
         return "KeySet {" + ss.joined(separator: " ") + "}"
     }
+
     public var debugDescription: String {
         return description
     }

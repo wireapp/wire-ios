@@ -56,7 +56,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var needsRichProfileUpdate: Bool = false
 
-    var availability: AvailabilityKind = .none
+    var availability: Availability = .none
 
     var teamName: String?
 
@@ -289,12 +289,12 @@ final class ServiceUserTests: IntegrationTest {
 
     func testThatItAddsServiceToExistingConversation() throws {
         // given
-        let jobIsDone = expectation(description: "service is added")
+        let jobIsDone = customExpectation(description: "service is added")
         let service = self.createService()
         let conversation = self.conversation(for: self.groupConversation)!
 
         // when
-        var result: Swift.Result<Void, Error>!
+        var result: Result<Void, Error>!
         conversation.add(serviceUser: service, in: userSession!) {
             result = $0
             jobIsDone.fulfill()
@@ -308,12 +308,17 @@ final class ServiceUserTests: IntegrationTest {
 
     func testThatItCreatesConversationAndAddsUser() {
         // given
-        let jobIsDone = expectation(description: "service is added")
+        let jobIsDone = customExpectation(description: "service is added")
         let service = self.createService()
 
         // when
-        service.createConversation(in: userSession!) { (result) in
-            XCTAssertNotNil(result.value)
+        service.createConversation(in: userSession!) { result in
+            switch result {
+            case .success:
+                break
+            case .failure:
+                XCTFail("expected '.success'")
+            }
             jobIsDone.fulfill()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

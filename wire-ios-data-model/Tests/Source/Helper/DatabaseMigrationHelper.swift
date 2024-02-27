@@ -21,6 +21,8 @@ import XCTest
 
 struct DatabaseMigrationHelper {
 
+    typealias MigrationAction = (NSManagedObjectContext) throws -> Void
+
     private let bundle = WireDataModelBundle.bundle
     private let dataModelName = "zmessaging"
 
@@ -32,6 +34,7 @@ struct DatabaseMigrationHelper {
             forResource: dataModelName,
             withExtension: "momd"
         ))
+
         let modelBundle = try XCTUnwrap(Bundle(url: modelURL))
 
         // Create the url for the given datamodel version
@@ -58,6 +61,65 @@ struct DatabaseMigrationHelper {
         )
 
         return container
+    }
+
+    // MARK: - Migration
+
+    func migrateStore(
+        sourceVersion: String,
+        destinationVersion: String,
+        mappingModel: NSMappingModel,
+        storeDirectory: URL,
+        preMigrationAction: MigrationAction,
+        postMigrationAction: MigrationAction,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        // GIVEN
+
+        // create versions models
+        let sourceModel = try createObjectModel(version: sourceVersion)
+        let destinationModel = try createObjectModel(version: destinationVersion)
+
+        let sourceStoreURL = storeDirectory.appendingPathComponent("\(sourceVersion).sqlite")
+        let destinationStoreURL = storeDirectory.appendingPathComponent("\(destinationVersion).sqlite")
+
+        // create container for initial version
+        let container = try createStore(model: sourceModel, at: sourceStoreURL)
+
+        // perform pre-migration action
+        try preMigrationAction(container.viewContext)
+
+        // create migration manager and mapping model
+        let migrationManager = NSMigrationManager(
+            sourceModel: sourceModel,
+            destinationModel: destinationModel
+        )
+
+        // WHEN
+
+        // perform migration
+        do {
+            try migrationManager.migrateStore(
+                from: sourceStoreURL,
+                sourceType: NSSQLiteStoreType,
+                options: nil,
+                with: mappingModel,
+                toDestinationURL: destinationStoreURL,
+                destinationType: NSSQLiteStoreType,
+                destinationOptions: nil
+            )
+        } catch {
+            XCTFail("Migration failed: \(error)", file: file, line: line)
+        }
+
+        // THEN
+
+        // create store
+        let migratedContainer = try createStore(model: destinationModel, at: destinationStoreURL)
+
+        // perform post migration action
+        try postMigrationAction(migratedContainer.viewContext)
     }
 
     // MARK: Fixture
@@ -108,8 +170,101 @@ struct DatabaseMigrationHelper {
         return name
     }
 
+    // MARK: - Migration Helpers
+
+    func migrateStoreToCurrentVersion(
+        sourceVersion: String,
+        preMigrationAction: MigrationAction,
+        postMigrationAction: MigrationAction,
+        for testCase: XCTestCase
+    ) throws {
+        // GIVEN
+        let accountIdentifier = UUID()
+        let applicationContainer = DatabaseBaseTest.applicationContainer
+
+        // copy given database as source
+        let storeFile = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: applicationContainer
+        ).appendingPersistentStoreLocation()
+
+        try createFixtureDatabase(
+            storeFile: storeFile,
+            versionName: sourceVersion
+        )
+
+        let sourceModel = try createObjectModel(version: sourceVersion)
+        var sourceContainer: NSPersistentContainer? = try createStore(model: sourceModel, at: storeFile)
+
+        // perform pre-migration action
+        if let sourceContainer {
+            try preMigrationAction(sourceContainer.viewContext)
+        }
+
+        // release store before actual test
+        guard let store = sourceContainer?.persistentStoreCoordinator.persistentStores.first else {
+            XCTFail("missing expected store")
+            return
+        }
+        try sourceContainer?.persistentStoreCoordinator.remove(store)
+        sourceContainer = nil
+
+        // WHEN
+        var stack: CoreDataStack? = try testCase.createStorageStackAndWaitForCompletion(
+            userID: accountIdentifier,
+            applicationContainer: applicationContainer
+        )
+
+        // THEN
+        // perform post migration action
+        if let stack {
+            try postMigrationAction(stack.syncContext)
+        }
+
+        // remove complete stack before removing files
+        stack = nil
+        try? FileManager.default.removeItem(at: applicationContainer)
+    }
 }
 
 private final class WireDataModelTestsBundle {
     static let bundle = Bundle(for: WireDataModelTestsBundle.self)
+}
+
+extension XCTestCase {
+    func createStorageStackAndWaitForCompletion(
+        userID: UUID,
+        applicationContainer: URL,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> CoreDataStack {
+
+        let account = Account(
+            userName: "",
+            userIdentifier: userID
+        )
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: applicationContainer,
+            inMemoryStore: false
+        )
+
+        let exp = self.expectation(description: "should wait for loadStores to finish")
+        var setupError: Error?
+        stack.setup(onStartMigration: {
+            // do nothing
+        }, onFailure: { error in
+            setupError = error
+            exp.fulfill()
+        }, onCompletion: { _ in
+            exp.fulfill()
+        })
+        wait(for: [exp], timeout: 5)
+
+        if let setupError {
+            throw setupError
+        }
+
+        return stack
+    }
 }

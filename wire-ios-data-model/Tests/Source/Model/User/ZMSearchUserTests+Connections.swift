@@ -29,7 +29,7 @@ class ZMSearchUserTests_Connections: ModelObjectsTests {
                                       remoteIdentifier: UUID())
 
         // expect
-        expectation(forNotification: ConnectToUserAction.notificationName, object: nil)
+        customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)
 
         // when
         searchUser.connect { (_) in }

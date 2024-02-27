@@ -53,13 +53,13 @@ extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChang
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let conversationsNeedingToVerifyClients = objects.compactMap({ $0 as? ZMConversation})
+        let conversationsNeedingToVerifyClients = objects.compactMap({ $0 as? ZMConversation })
 
         conversationSync.sync(identifiers: conversationsNeedingToVerifyClients)
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let conversationsNeedingToVerifyClients = object.compactMap({ $0 as? ZMConversation}).filter(\.needsToVerifyLegalHold)
+        let conversationsNeedingToVerifyClients = object.compactMap({ $0 as? ZMConversation }).filter(\.needsToVerifyLegalHold)
 
         if !conversationsNeedingToVerifyClients.isEmpty {
             conversationSync.sync(identifiers: conversationsNeedingToVerifyClients)

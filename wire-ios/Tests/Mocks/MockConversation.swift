@@ -19,7 +19,9 @@ import Foundation
 import WireRequestStrategy
 @testable import Wire
 
-/// TODO: rename to MockConversation after objc MockConversation is retired
+// swiftlint:disable todo_requires_jira_link
+// TODO: rename to MockConversation after objc MockConversation is retired
+// swiftlint:enable todo_requires_jira_link
 class SwiftMockConversation: NSObject, Conversation {
 
 	var relatedConnectionState: ZMConnectionStatus = .invalid

@@ -175,7 +175,7 @@ class PushNotificationStatusTests: MessagingTestBase {
     func testThatCompletionHandlerIsCalledAfterAllEventsHaveBeenFetched() {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
-        let expectation = self.expectation(description: "completion handler was called")
+        let expectation = self.customExpectation(description: "completion handler was called")
 
         // expect
         syncMOC.performGroupedBlockAndWait {
@@ -197,7 +197,7 @@ class PushNotificationStatusTests: MessagingTestBase {
     func testThatCompletionHandlerIsCalledEvenIfNoEventsWereDownloaded() {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
-        let expectation = self.expectation(description: "completion handler was called")
+        let expectation = self.customExpectation(description: "completion handler was called")
 
         // expect
         syncMOC.performGroupedBlockAndWait {
@@ -220,7 +220,7 @@ class PushNotificationStatusTests: MessagingTestBase {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
         lastEventIDRepository.storeLastEventID(eventId)
-        let expectation = self.expectation(description: "completion handler was called")
+        let expectation = self.customExpectation(description: "completion handler was called")
         syncMOC.performGroupedBlockAndWait {
             // when
             self.sut.fetch(eventId: eventId) {

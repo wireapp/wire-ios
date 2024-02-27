@@ -61,7 +61,7 @@ extern const NSTimeInterval ZMTransportRequestDefaultExpirationInterval;
 @end
 
 
-typedef NS_ENUM(uint8_t, ZMTransportRequestMethod) {
+typedef NS_CLOSED_ENUM(uint8_t, ZMTransportRequestMethod) {
     ZMTransportRequestMethodGet,
     ZMTransportRequestMethodDelete,
     ZMTransportRequestMethodPut,
@@ -69,14 +69,14 @@ typedef NS_ENUM(uint8_t, ZMTransportRequestMethod) {
     ZMTransportRequestMethodHead
 };
 
-typedef NS_ENUM(uint8_t, ZMTransportRequestAuth) {
+typedef NS_CLOSED_ENUM(uint8_t, ZMTransportRequestAuth) {
     ZMTransportRequestAuthNone, ///< Does not needs an access token and does not generate one
     ZMTransportRequestAuthNeedsAccess, ///< Needs an access token
     ZMTransportRequestAuthCreatesCookieAndAccessToken, ///< Does not need an access token, but the response will contain one
     ZMTransportRequestAuthNeedsCookieAndAccessToken, /// < Needs both the cookie and access token
 };
 
-typedef NS_ENUM(int8_t, ZMTransportAccept) {
+typedef NS_CLOSED_ENUM(int8_t, ZMTransportAccept) {
     ZMTransportAcceptAnything, ///< Maps to "Accept: */*" HTTP header
     ZMTransportAcceptTransportData, ///< Maps to "Accept: application/json" HTTP header
     ZMTransportAcceptImage, ///< Maps to "Accept: image/*" HTTP header

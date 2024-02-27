@@ -53,7 +53,7 @@ extension ConversationViewController {
     func createConstraints() {
         [conversationBarController.view,
          contentViewController.view,
-         inputBarController.view].forEach {$0?.translatesAutoresizingMaskIntoConstraints = false}
+         inputBarController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             conversationBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),

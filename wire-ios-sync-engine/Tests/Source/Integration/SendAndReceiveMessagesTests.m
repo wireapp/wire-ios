@@ -258,7 +258,7 @@
     
     //we block first request from finishing and check that no other requests are comming in
     __block ZMTransportRequest *firstRequest;
-    XCTestExpectation *firstRequestRecievedExpectation = [self expectationWithDescription:@"Recieved request to add first message"];
+    XCTestExpectation *firstRequestRecievedExpectation = [self customExpectationWithDescription:@"Recieved request to add first message"];
 
     ZM_WEAK(self);
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
@@ -312,7 +312,7 @@
     
     //we block first request from finishing and check that no other requests are comming in
     __block NSInteger recievedRequests = 0;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Recieved requests for both messages"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Recieved requests for both messages"];
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(__unused ZMTransportRequest *request) {
         //we should not recieve another request untill we finish this one
         if ([request.path.lastPathComponent containsString:@"messages"]) {

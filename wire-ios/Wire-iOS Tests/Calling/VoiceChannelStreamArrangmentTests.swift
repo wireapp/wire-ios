@@ -93,8 +93,8 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(streams.count, 2)
-        XCTAssertTrue(streams.contains(where: {$0.streamId.avsIdentifier == avsId1}))
-        XCTAssertTrue(streams.contains(where: {$0.streamId.avsIdentifier == avsId2}))
+        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier == avsId1 }))
+        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier == avsId2 }))
     }
 
     func testThatActiveStreams_ReturnsVideoStreams_ForParticipantsWithVideo() {

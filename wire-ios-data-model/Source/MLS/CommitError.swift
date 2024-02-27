@@ -21,7 +21,7 @@ import Foundation
 enum CommitError: Error, Equatable {
 
     case failedToGenerateCommit
-    case failedToSendCommit(recovery: RecoveryStrategy)
+    case failedToSendCommit(recovery: RecoveryStrategy, cause: SendCommitBundleAction.Failure)
     case failedToMergeCommit
     case failedToClearCommit
     case noPendingProposals

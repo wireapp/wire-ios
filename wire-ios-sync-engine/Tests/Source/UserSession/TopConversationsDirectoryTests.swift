@@ -208,7 +208,7 @@ class TopConversationsDirectoryTests: MessagingTest {
         let conv2 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
 
         // WHEN
-        conv1.connection?.status = .blocked
+        conv1.oneOnOneUser?.connection?.status = .blocked
         sut.refreshTopConversations()
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -335,13 +335,19 @@ extension TopConversationsDirectoryTests {
         old: Int = 0,
         file: StaticString = #file,
         line: UInt = #line
-        ) -> ZMConversation {
-
+    ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: managedObjectContext)
         conversation.remoteIdentifier = UUID.create()
         conversation.conversationType = .oneOnOne
-        conversation.connection = ZMConnection.insertNewObject(in: managedObjectContext)
-        conversation.connection?.status = .accepted
+
+        let user = ZMUser.insertNewObject(in: managedObjectContext)
+        user.remoteIdentifier = .create()
+        user.oneOnOneConversation = conversation
+
+        let connection = ZMConnection.insertNewObject(in: managedObjectContext)
+        connection.to = user
+        connection.status = .accepted
+
         fill(conversation, with: (new, old), file: file, line: line)
         managedObjectContext.saveOrRollback()
         return conversation

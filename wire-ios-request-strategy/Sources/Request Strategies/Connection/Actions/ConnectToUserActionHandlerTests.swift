@@ -119,7 +119,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
                                                transportSessionError: nil,
                                                apiVersion: APIVersion.v0.rawValue)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
@@ -141,7 +141,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             let domain = self.owningDomain
             var action = ConnectToUserAction(userID: userID, domain: domain)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .failure = result {
                     expectation.fulfill()
@@ -170,7 +170,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             let domain = self.owningDomain
             var action = ConnectToUserAction(userID: userID, domain: domain)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .failure(let error) = result {
                     if expectedError == error {

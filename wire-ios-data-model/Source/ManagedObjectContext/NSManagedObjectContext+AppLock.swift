@@ -27,7 +27,7 @@ extension NSManagedObjectContext {
             (persistentStoreMetadata(forKey: PersistentMetadataKey.appLock.rawValue) as? NSNumber)?.boolValue ?? false
         }
         set {
-            setPersistentStoreMetadata(NSNumber(booleanLiteral: newValue),
+            setPersistentStoreMetadata(NSNumber(value: newValue),
                                        key: PersistentMetadataKey.appLock.rawValue)
         }
     }

@@ -156,7 +156,7 @@ public struct ChangedIndexes<T: Hashable> {
         // This way the only items remaining will be inserted objects
         // We need to sort inserted indexes in ascending order to avoid out of bounds inserts
         let ascInsertedIndexes = insertedObjects.values.sorted()
-        ascInsertedIndexes.forEach {intermediateState.insert(end.array[$0], at: $0)}
+        ascInsertedIndexes.forEach { intermediateState.insert(end.array[$0], at: $0) }
 
         return (insertedObjects, deletedObjects, updatedIndexes, intermediateState)
     }
@@ -186,8 +186,7 @@ public struct ChangedIndexes<T: Hashable> {
                     }
                 }
             }
-        }
-        else if moveType == .uiTableView {
+        } else if moveType == .uiTableView {
             // Moved `from` indexes are referring to the index in the intermediate state
             // Moves must be calculated comparing the endState the immediately updated intermediate state
 

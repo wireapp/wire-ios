@@ -573,7 +573,7 @@ static XCTestCase *currentTestCase;
                 minTLSVersion:nil];
     
     self.sut.accessToken = self.validAccessToken;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     NSString *path = @"path/to/something/interesting";
     NSURL *expectedURL = [url URLByAppendingPathComponent:path];
@@ -670,7 +670,7 @@ static XCTestCase *currentTestCase;
         requestHeaders = request.allHTTPHeaderFields;
         return [TestResponse testResponse];
     }];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     // when
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodPost payload:@{} apiVersion:0];
@@ -695,7 +695,7 @@ static XCTestCase *currentTestCase;
         requestHeaders = request.allHTTPHeaderFields;
         return [TestResponse testResponse];
     }];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     // when
     ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
@@ -720,7 +720,7 @@ static XCTestCase *currentTestCase;
         requestHeaders = request.allHTTPHeaderFields;
         return [TestResponse testResponse];
     }];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     // when
     ZMTransportRequest *request = [ZMTransportRequest imageGetRequestFromPath:self.dummyPath apiVersion:0];
@@ -751,7 +751,7 @@ static XCTestCase *currentTestCase;
     // given
     self.sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     __block NSData *requestData;
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data) {
@@ -822,7 +822,7 @@ static XCTestCase *currentTestCase;
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         return [TestResponse testResponse];
     }];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     // when
     ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
@@ -841,7 +841,7 @@ static XCTestCase *currentTestCase;
     // given
     self.sut.accessToken = self.validAccessToken;
     NSArray *expectedPayload = @[@"this is my test data", @213143];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
@@ -869,7 +869,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     self.sut.accessToken = self.validAccessToken;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         XCTAssertEqualObjects([request valueForHTTPHeaderField:@"Content-Type"], @"image/jpeg");
@@ -902,7 +902,7 @@ static XCTestCase *currentTestCase;
     // given
     self.sut.accessToken = self.validAccessToken;
     NSInteger expectedStatusCode = 432;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
@@ -1125,7 +1125,7 @@ static XCTestCase *currentTestCase;
     }
     
     // This is what will get called on the ZMOperationLoop:
-    [self expectationForNotification:ZMTransportSessionNewRequestAvailableNotification object:nil handler:nil];
+    [self customExpectationForNotification:ZMTransportSessionNewRequestAvailableNotification object:nil handler:nil];
     
     // when
     // enqueuing max + 1 requests
@@ -1551,7 +1551,7 @@ static XCTestCase *currentTestCase;
     WaitForAllGroupsToBeEmpty(0.1);
     
     __block ZMTransportResponse *response;
-    XCTestExpectation *requestCompletedExpectation = [self expectationWithDescription:@"request completed"];
+    XCTestExpectation *requestCompletedExpectation = [self customExpectationWithDescription:@"request completed"];
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodPut payload:dummyPayload apiVersion:0];
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *r) {
         response = r;
@@ -1634,7 +1634,7 @@ static XCTestCase *currentTestCase;
     }];
     
     // when
-    XCTestExpectation *didRun = [self expectationWithDescription:@"completion handler"];
+    XCTestExpectation *didRun = [self customExpectationWithDescription:@"completion handler"];
     ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
     ZMPersistentCookieStorage *cookieStorage = self.sut.cookieStorage;
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeUIContext block:^(ZMTransportResponse * ZM_UNUSED r) {
@@ -1782,7 +1782,7 @@ static XCTestCase *currentTestCase;
                              @"Content-Type": @"image/jpeg"};
         return response;
     }];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
     // when
     ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
@@ -1811,7 +1811,7 @@ static XCTestCase *currentTestCase;
 
     
     [[(id)self.URLSession expect] setTimeoutTimer:OCMOCK_ANY forTask:dataTask];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"did cancel task"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"did cancel task"];
     
     // expect
     [[[(id)self.URLSession expect] andDo:^(NSInvocation * ZM_UNUSED i) {
@@ -1904,7 +1904,7 @@ static XCTestCase *currentTestCase;
         return response;
     }];
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     __block ZMTransportResponse *receivedResponse;
     
     // expect
@@ -1953,7 +1953,7 @@ static XCTestCase *currentTestCase;
 //        return YES;
 //    }]];
 //    
-//    XCTestExpectation *expectation = [self expectationWithDescription:@"did cancel task"];
+//    XCTestExpectation *expectation = [self customExpectationWithDescription:@"did cancel task"];
 //    
 //    // expect
 //    [[[(id)dataTask expect] andDo:^(NSInvocation * ZM_UNUSED i) {
@@ -2072,7 +2072,7 @@ static XCTestCase *currentTestCase;
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil apiVersion:0];
     
     // expect
-    XCTestExpectation *didComplete = [self expectationWithDescription:@"did complete response"];
+    XCTestExpectation *didComplete = [self customExpectationWithDescription:@"did complete response"];
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeUIContext block:^(ZMTransportResponse *response){
         XCTAssertEqualObjects(response.transportSessionError.domain, ZMTransportSessionErrorDomain);
         XCTAssertEqual(response.transportSessionError.code, ZMTransportSessionErrorCodeTryAgainLater);
@@ -2112,7 +2112,7 @@ static XCTestCase *currentTestCase;
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil apiVersion:0];
     
     // expect
-    XCTestExpectation *didComplete = [self expectationWithDescription:@"did complete response"];
+    XCTestExpectation *didComplete = [self customExpectationWithDescription:@"did complete response"];
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeUIContext block:^(ZMTransportResponse *response){
         FHAssertEqualObjects(fr, response.transportSessionError.domain, ZMTransportSessionErrorDomain);
         FHAssertEqual(fr, response.transportSessionError.code, ZMTransportSessionErrorCodeTryAgainLater);
@@ -2163,7 +2163,7 @@ static XCTestCase *currentTestCase;
     [self setAuthenticationCookieData];
     
     // expect
-    XCTestExpectation *accessToken = [self expectationWithDescription:@"access token requested"];
+    XCTestExpectation *accessToken = [self customExpectationWithDescription:@"access token requested"];
     [self mockURLSessionTaskWithResponseGenerator:^(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         XCTAssertEqualObjects(request.URL.path, @"/access");
         XCTAssertEqualObjects(request.HTTPMethod, @"POST");
@@ -2269,7 +2269,7 @@ static XCTestCase *currentTestCase;
     
     // expect (1)
     __block void(^countHandler)(NSUInteger);
-    XCTestExpectation *countExpectation = [self expectationWithDescription:@"get task count"];
+    XCTestExpectation *countExpectation = [self customExpectationWithDescription:@"get task count"];
     [[(id) self.URLSession stub] countTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         countHandler = obj;
         [countExpectation fulfill];
@@ -2279,7 +2279,7 @@ static XCTestCase *currentTestCase;
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
     
     // expect
-    XCTestExpectation *accessToken = [self expectationWithDescription:@"access token requested"];
+    XCTestExpectation *accessToken = [self customExpectationWithDescription:@"access token requested"];
     [self mockURLSessionTaskWithResponseGenerator:^(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         XCTAssertEqualObjects(request.URL.path, @"/access");
         XCTAssertEqualObjects(request.HTTPMethod, @"POST");
@@ -2304,7 +2304,7 @@ static XCTestCase *currentTestCase;
     
     // expect (1)
     __block void(^countHandler)(NSUInteger);
-    XCTestExpectation *countExpectation = [self expectationWithDescription:@"get task count"];
+    XCTestExpectation *countExpectation = [self customExpectationWithDescription:@"get task count"];
     [[(id) self.URLSession stub] countTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         countHandler = obj;
         [countExpectation fulfill];
@@ -2346,7 +2346,7 @@ static XCTestCase *currentTestCase;
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMURLSessionDelegate)];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name];
     ZMURLSession *session = [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.environment delegate:mockDelegate delegateQueue:self.queue identifier:@"test-session" userAgent:@"TestSession"];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"It should call the completion handler on the main thread"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"It should call the completion handler on the main thread"];
     
     // when
     [self.sut addCompletionHandlerForBackgroundSessionWithIdentifier:configuration.identifier handler:^{
@@ -2374,7 +2374,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItGetsTheCurrentTasksForTheBackgroundSession
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"It should get the resumed background session tasks"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"It should get the resumed background session tasks"];
     ZMTransportRequest *foregroundRequest = [ZMTransportRequest requestGetFromPath:@"/some/path/foreground" apiVersion:0];
     ZMTransportRequest *backgroundRequest = [ZMTransportRequest requestGetFromPath:@"/some/path/background" apiVersion:0];
 
@@ -2442,7 +2442,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItCompletesAnExpiredTransportRequestWithErrorCodeRequestExpired
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     __block ZMTransportResponse *receivedResponse;
         
     // when

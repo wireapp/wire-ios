@@ -106,7 +106,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         await proteusPerform(
             withProteusService: { proteusService in
                 do {
-                    let fingerprint = try proteusService.localFingerprint()
+                    let fingerprint = try await proteusService.localFingerprint()
                     fingerprintData = fingerprint.utf8Data
                 } catch {
                     WireLogger.proteus.error("Cannot fetch local fingerprint")
@@ -131,7 +131,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         await proteusPerform(
             withProteusService: { proteusService in
                 do {
-                    let fingerprint = try proteusService.remoteFingerprint(forSession: sessionId)
+                    let fingerprint = try await proteusService.remoteFingerprint(forSession: sessionId)
                     fingerprintData = fingerprint.utf8Data
                 } catch {
                     WireLogger.proteus.error("Cannot fetch remote fingerprint for \(userClient)")
@@ -150,11 +150,9 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
     // MARK: - Helpers
 
     private func proteusPerform<T>(
-        withProteusService proteusServiceBlock: @escaping ProteusServicePerformBlock<T>,
-        withKeyStore keyStoreBlock: @escaping KeyStorePerformBlock<T>
+        withProteusService proteusServiceBlock: @escaping ProteusServicePerformAsyncBlock<T>,
+        withKeyStore keyStoreBlock: @escaping KeyStorePerformAsyncBlock<T>
     ) async rethrows -> T {
-        return try await context.perform {
-            try self.proteusProvider.perform(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
-        }
+        return try await self.proteusProvider.performAsync(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
     }
 }

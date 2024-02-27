@@ -177,8 +177,4 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
     override var description: String {
         return String(format: "<\(type(of: self)): \(self), name \(token.title)>")
     }
-
-    var debugQuickLookObject: UIImage? {
-        return image
-    }
 }

@@ -136,11 +136,12 @@ extension SettingsCellDescriptorFactory {
             inverse: false
         )
 
+        // swiftlint:disable todo_requires_jira_link
         // FIXME: Headers
         // The header of the CallKit section is used as a generic "Calls" section header, not
         // only for the CallKit toggle but also for the other call settings. The CallKit toggle
         // is sometimes hidden, which means if it is, we need to add the header to the next section.
-
+        // swiftlint:enable todo_requires_jira_link
         return SettingsSectionDescriptor(
             cellDescriptors: [muteCallToggle],
             header: SecurityFlags.forceCallKitDisabled.isEnabled ? L10n.Localizable.Self.Settings.Callkit.title : .none,
@@ -371,26 +372,33 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var appLockSectionSubtitle: String {
-        let timeout = TimeInterval(settingsPropertyFactory.timeout)
-        guard let amount = SettingsCellDescriptorFactory.appLockFormatter.string(from: timeout) else { return "" }
-        let lockDescription = L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.lockDescription(amount)
-        let typeKey: String = {
-            switch AuthenticationType.current {
-            case .touchID: return "self.settings.privacy_security.lock_app.subtitle.touch_id"
-            case .faceID: return "self.settings.privacy_security.lock_app.subtitle.face_id"
-            default: return "self.settings.privacy_security.lock_app.subtitle.none"
-            }
-        }()
-
-        var components = [lockDescription, typeKey.localized]
+        guard let lockDescription = formattedLockDescription() else { return "" }
+        var components = [lockDescription, authenticationTypeDescription()]
 
         if AuthenticationType.current == .unavailable {
-            let reminderKey = "self.settings.privacy_security.lock_app.subtitle.custom_app_lock_reminder"
-            components.append(reminderKey.localized)
+            components.append(L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.customAppLockReminder)
         }
 
         return components.joined(separator: " ")
     }
+
+    private func formattedLockDescription() -> String? {
+        let timeout = TimeInterval(settingsPropertyFactory.timeout)
+        guard let amount = SettingsCellDescriptorFactory.appLockFormatter.string(from: timeout) else { return nil }
+        return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.lockDescription(amount)
+    }
+
+    private func authenticationTypeDescription() -> String {
+        switch AuthenticationType.current {
+        case .touchID:
+            return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.touchId
+        case .faceID:
+            return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.faceId
+        default:
+            return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.none
+        }
+    }
+
 }
 
 // MARK: - Helpers

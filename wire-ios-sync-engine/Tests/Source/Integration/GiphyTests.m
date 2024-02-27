@@ -36,7 +36,7 @@
     // given
     XCTAssertTrue([self login]);
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"callback called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"callback called"];
     NSArray *expectedPayload = @[@"bar"];
     NSString *path = @"/foo/bar/baz";
 

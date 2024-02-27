@@ -88,11 +88,40 @@ static id valueOrNSNull(id obj) {
 
     NSArray *sds = self.sortDescriptors;
     if (sds != nil) {
-        return (ZMManagedObject *)[self.pendingOperationSet firstObjectSortedByDescriptors:sds notInSet:forbiddenSet];
+        return [self firstObjectInSet:self.pendingOperationSet sortedByDescriptors:sds notInSet:forbiddenSet];
     } else {
-        return (ZMManagedObject *)[self.pendingOperationSet firstObjectNotInSet:forbiddenSet];
+        NSMutableOrderedSet *operations = [self.pendingOperationSet mutableCopy];
+        [operations minusSet:forbiddenSet];
+        return (ZMManagedObject*)operations.firstObject;
     }
 }
+
+- (ZMManagedObject *)firstObjectInSet:(NSMutableOrderedSet *)operationSet sortedByDescriptors:(NSArray *)descriptors notInSet:(nullable NSSet *)forbidden;
+{
+    NSComparator comparator = ^NSComparisonResult(id obj1, id obj2){
+        for (NSSortDescriptor *sd in descriptors) {
+            NSComparisonResult const r = [sd compareObject:obj1 toObject:obj2];
+            if (r != NSOrderedSame) {
+                return r;
+            }
+        }
+        return NSOrderedSame;
+    };
+
+    id best;
+    for (id candidate in operationSet) {
+        if ([forbidden containsObject:candidate]) {
+            continue;
+        }
+        if (best == nil) {
+            best = candidate;
+        } else if (comparator(best, candidate) == NSOrderedDescending) {
+            best = candidate;
+        }
+    }
+    return (ZMManagedObject *)best;
+}
+
 
 - (ZMSyncToken *)didStartSynchronizingKeys:(NSSet *)keys forObject:(ZMManagedObject *)mo;
 {

@@ -70,8 +70,7 @@ public extension ZMConversation {
 
             if selfUser.hasTeam {
                 return MutedMessageTypes(rawValue: mutedStatus)
-            }
-            else {
+            } else {
                 return mutedStatus == MutedMessageOptionValue.none.rawValue ? MutedMessageTypes.none : MutedMessageTypes.all
             }
         }
@@ -84,8 +83,7 @@ public extension ZMConversation {
 
             if selfUser.hasTeam {
                 mutedStatus = newValue.rawValue
-            }
-            else {
+            } else {
                 mutedStatus = (newValue == .none) ? MutedMessageOptionValue.none.rawValue : (MutedMessageOptionValue.all.rawValue)
             }
 

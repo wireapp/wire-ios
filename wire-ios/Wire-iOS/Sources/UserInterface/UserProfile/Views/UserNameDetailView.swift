@@ -158,7 +158,9 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
     }
 
     private func createConstraints() {
-        [subtitleLabel, correlationLabel].prepareForLayout()
+        [subtitleLabel, correlationLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
             subtitleLabel.topAnchor.constraint(equalTo: topAnchor),
             subtitleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),

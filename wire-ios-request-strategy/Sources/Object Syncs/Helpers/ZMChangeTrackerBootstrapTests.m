@@ -89,7 +89,7 @@
     self.connection1 = [ZMConnection insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.connection1.status = ZMConnectionStatusAccepted;
     self.user1.connection = self.connection1;
-    self.connection1.conversation = self.conversation1;
+    self.user1.oneOnOneConversation = self.conversation1;
     self.changeTracker1 = [[FakeChangeTracker alloc] init];
     self.changeTracker2 = [[FakeChangeTracker alloc] init];
     XCTAssert([self.coreDataStack.viewContext saveOrRollback]);
@@ -203,7 +203,7 @@
     
     NSString *entityName = ZMConversation.entityName;
     NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userDefinedName == %@", self.conversation1.userDefinedName];
-    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"connection != 0 && connection.status == %@", @(self.connection1.status)];
+    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"oneOnOneUser.connection != 0 && oneOnOneUser.connection.status == %@", @(self.connection1.status)];
     
     NSFetchRequest *request1 = [NSFetchRequest fetchRequestWithEntityName:entityName];
     request1.predicate = predicate1;

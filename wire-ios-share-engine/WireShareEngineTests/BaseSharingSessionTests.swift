@@ -25,7 +25,7 @@ import WireLinkPreview
 import WireDataModelSupport
 @testable import WireShareEngine
 
-class FakeAuthenticationStatus: AuthenticationStatusProvider {
+final class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
 }
 
@@ -190,7 +190,7 @@ class BaseTest: ZMTBaseTest {
             earService: earService,
             proteusService: mockProteusService,
             mlsDecryptionService: mockMLSDecryptionService,
-            sharedUserDefaults: .random()!
+            sharedUserDefaults: .temporary()
         )
     }
 

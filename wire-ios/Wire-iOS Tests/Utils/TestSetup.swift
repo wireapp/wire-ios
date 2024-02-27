@@ -22,7 +22,7 @@ import UIKit
 /// This class is set as NSPrincipalClass in test suite info.plist
 /// XCTest makes sure to initialise it only once and we can add all global
 /// test setup code here
-class TestSetup: NSObject {
+final class TestSetup: NSObject {
     override init() {
         super.init()
         // The snapshot tests expect to be run with CET time zone

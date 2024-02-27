@@ -31,7 +31,7 @@ extension ZMTBaseTest {
                      file: StaticString = #filePath,
                      line: UInt = #line,
                      forAsyncBlock block: @escaping () async throws -> Void) {
-        let expectation = self.expectation(description: "isDone")
+        let expectation = self.customExpectation(description: "isDone")
 
         Task {
             do {
@@ -45,5 +45,4 @@ extension ZMTBaseTest {
 
         XCTAssert(waitForCustomExpectations(withTimeout: timeout), file: file, line: line)
     }
-
 }

@@ -47,7 +47,7 @@ final class TextSearchResultsView: UIView {
     }
 
     private func createConstraints() {
-        [tableView, noResultsView].prepareForLayout()
+        [tableView, noResultsView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           tableView.topAnchor.constraint(equalTo: topAnchor),
           tableView.bottomAnchor.constraint(equalTo: bottomAnchor),

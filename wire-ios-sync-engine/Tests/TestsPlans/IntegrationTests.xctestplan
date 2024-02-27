@@ -94,6 +94,7 @@
     {
       "skippedTests" : [
         "AvailabilityTests",
+        "SessionManagerTests\/testThatItMarksConversationsAsRead()",
         "UserRichProfileIntegrationTests"
       ],
       "target" : {

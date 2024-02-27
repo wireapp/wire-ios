@@ -20,7 +20,7 @@ import UIKit
 import WireUtilities
 import WireDataModel
 
-protocol ConversationMessageCellDelegate: MessageActionResponder {
+protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
@@ -241,7 +241,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
  * A type erased box containing a conversation message cell description.
  */
 
-class AnyConversationMessageCellDescription: NSObject {
+final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
     private let viewGenerator: () -> UIView
     private let registrationBlock: (UITableView) -> Void

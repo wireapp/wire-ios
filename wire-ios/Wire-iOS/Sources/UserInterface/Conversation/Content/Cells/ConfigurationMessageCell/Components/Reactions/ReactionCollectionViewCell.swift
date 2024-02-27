@@ -20,7 +20,7 @@ import UIKit
 
 // MARK: - ReactionCollectionViewCell
 
-class ReactionCollectionViewCell: UICollectionViewCell {
+final class ReactionCollectionViewCell: UICollectionViewCell {
 
     // MARK: - Properties
 

@@ -18,7 +18,7 @@
 
 import XCTest
 
-class AvailabilityTests: IntegrationTest {
+final class AvailabilityTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()

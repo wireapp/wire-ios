@@ -99,7 +99,7 @@ final class SecurityLevelView: UIView {
     }
 
     private func createConstraints() {
-        [securityLevelLabel, iconImageView].prepareForLayout()
+        [securityLevelLabel, iconImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
           securityLevelLabel.centerXAnchor.constraint(equalTo: centerXAnchor),

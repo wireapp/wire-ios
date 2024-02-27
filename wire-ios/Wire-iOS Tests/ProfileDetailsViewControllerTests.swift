@@ -108,7 +108,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             .readReceiptsStatus(enabled: true)
-            ])
+        ])
     }
 
     func test_OneToOne_OtherUserIsPartner_SCIM() {
@@ -168,7 +168,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             .readReceiptsStatus(enabled: false)
-            ])
+        ])
     }
 
     func test_OneToOne_SelfUser_SCIM() {
@@ -263,7 +263,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             .richProfile(defaultRichProfile),
             .readReceiptsStatus(enabled: true)
-            ])
+        ])
     }
 
     func test_OneToOne_OtherUserIsPartner_ViewerIsPartner_SCIM() {
@@ -306,7 +306,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             .richProfile(defaultRichProfile),
             .readReceiptsStatus(enabled: true)
-            ])
+        ])
     }
 
     func test_OneToOne_OtherUserIsGuest_ViewerIsPartner_SCIM() {
@@ -372,7 +372,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: otherUser, viewer: guest, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: conversation, expectedContents: [
             .readReceiptsStatus(enabled: true)
-            ])
+        ])
     }
 
     func test_OneToOne_OtherUserIsPartner_ViewerIsGuest_SCIM() {
@@ -418,7 +418,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: otherUser, viewer: guest, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: conversation, expectedContents: [
             .readReceiptsStatus(enabled: true)
-            ])
+        ])
     }
 
     func test_OneToOne_OtherUserIsGuest_ViewerIsGuest_SCIM() {
@@ -464,7 +464,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: otherUser, viewer: guest, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: conversation, expectedContents: [
             .readReceiptsStatus(enabled: true)
-            ])
+        ])
     }
 
     // MARK: - Group Conversation
@@ -505,7 +505,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
             .richProfile([richProfileFieldWithEmail(for: otherUser)])
-            ])
+        ])
     }
 
     func test_Group_OtherUser_NoSCIM_NoEmail() {
@@ -560,7 +560,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
             .richProfile([richProfileFieldWithEmail(for: otherUser)])
-            ])
+        ])
     }
 
     func test_Group_OtherUserIsPartner_NoSCIM_NoEmail() {
@@ -581,7 +581,9 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [])
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // FIXME: can self user disable myself as admin? In this test since self user.isConnected == false we do not show it.
+    // swiftlint:enable todo_requires_jira_link
     func test_Group_SelfUser_SCIM() {
         // GIVEN
         selfUser.availability = .busy
@@ -678,7 +680,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
             .richProfile(defaultRichProfile)
-            ])
+        ])
     }
 
     func test_Group_OtherUserIsPartner_ViewerIsPartner_SCIM() {
@@ -717,7 +719,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
             .richProfile(defaultRichProfile)
-            ])
+        ])
     }
 
     func test_Group_OtherUserIsGuest_ViewerIsPartner_SCIM() {
@@ -926,7 +928,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         verifyProfile(user: guest, viewer: otherUser, conversation: group, context: .groupConversation)
         verifyContents(user: guest, viewer: otherUser, conversation: group, expectedContents: [
             .richProfile(defaultRichProfile)
-            ])
+        ])
     }
 
     // MARK: Conversation Roles

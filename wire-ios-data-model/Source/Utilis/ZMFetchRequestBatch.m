@@ -22,7 +22,7 @@
 #import "ZMFetchRequestBatch.h"
 #import "ZMMessage+Internal.h"
 #import "ZMConversation+Internal.h"
-
+#import <WireDataModel/WireDataModel-Swift.h>
 #import "NSManagedObjectContext+zmessaging.h"
 
 

@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class ZMUserSessionRelocationTests: ZMUserSessionTestsBase {
+final class ZMUserSessionRelocationTests: ZMUserSessionTestsBase {
 
     func testThatItMovesCaches() throws {
         // given

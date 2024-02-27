@@ -91,12 +91,14 @@ final class WireLogoInfoView: UIView {
     }
 
     private func createConstraints() {
-        [headerView,
-         contentView,
-         progressContainerView,
-         wireLogo,
-         titleLabel,
-         subtitleLabel].prepareForLayout()
+        [
+            headerView,
+            contentView,
+            progressContainerView,
+            wireLogo,
+            titleLabel,
+            subtitleLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             // header view

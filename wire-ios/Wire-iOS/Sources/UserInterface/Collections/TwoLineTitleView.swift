@@ -45,7 +45,7 @@ final class TwoLineTitleView: UIView {
         addSubview(titleLabel)
         addSubview(subtitleLabel)
 
-        [self, titleLabel, subtitleLabel].prepareForLayout()
+        [self, titleLabel, subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),

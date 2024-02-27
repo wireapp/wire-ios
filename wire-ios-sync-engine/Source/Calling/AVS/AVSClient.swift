@@ -79,6 +79,12 @@ extension AVSClient: Codable {
 
     }
 
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.userId = try container.decode(String.self, forKey: .userId)
+        self.clientId = try container.decode(String.self, forKey: .clientId)
+        self.isMemberOfSubconversation = try container.decodeIfPresent(Bool.self, forKey: .isMemberOfSubconversation) ?? false
+    }
 }
 
 extension AVSClient {

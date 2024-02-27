@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 #import <XCTest/XCTest.h>
 #import <WireTesting/ZMTFailureRecorder.h>
@@ -67,9 +66,14 @@ typedef BOOL(^VerificationBlock)(void);
 /// Wait for all dispatch groups to be empty
 - (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
 
+- (XCTestExpectation *_Nonnull)customExpectationWithDescription:(NSString *_Nonnull)description NS_SWIFT_NAME(customExpectation(description:));
+
+- (XCTestExpectation *_Nonnull)customExpectationForNotification:(NSNotificationName _Nonnull)notificationName object:(id _Nullable)objectToObserve handler:(XCNotificationExpectationHandler _Nullable)handlerOrNil;
+
+- (XCTestExpectation *_Nonnull)customKeyValueObservingExpectationForObject:(id _Nonnull)objectToObserve keyPath:(NSString *_Nonnull)keyPath expectedValue:(id  _Nullable)expectedValue;
+
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN;
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
-- (BOOL)verifyAllExpectationsNow ZM_MUST_USE_RETURN;
 
 /// perform operations while not considering ZMLogErrors as test failure
 - (void)performIgnoringZMLogError:(nonnull void(^)(void))block;
@@ -93,7 +97,7 @@ typedef BOOL(^VerificationBlock)(void);
 @property (nonatomic, strong, nonnull, readonly) id<ZMSGroupQueue> fakeUIContext;
 @property (nonatomic, strong, nonnull, readonly) id<ZMSGroupQueue> fakeSyncContext;
 
-@property (nonatomic, nonnull) NSUserDefaults *sharedUserDefaults;
+@property (nonatomic, null_unspecified) NSUserDefaults *sharedUserDefaults;
 
 
 @end

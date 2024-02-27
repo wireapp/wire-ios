@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-class ScalableView: UIView, UIGestureRecognizerDelegate {
+final class ScalableView: UIView, UIGestureRecognizerDelegate {
 
     let pinchGesture = UIPinchGestureRecognizer()
     let panGesture = UIPanGestureRecognizer()

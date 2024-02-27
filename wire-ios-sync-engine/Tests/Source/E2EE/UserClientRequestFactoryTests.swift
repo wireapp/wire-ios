@@ -25,7 +25,7 @@ import WireDataModel
 import WireDataModelSupport
 import Foundation
 
-class UserClientRequestFactoryTests: MessagingTest {
+final class UserClientRequestFactoryTests: MessagingTest {
 
     var sut: UserClientRequestFactory!
     var authenticationStatus: ZMAuthenticationStatus!
@@ -112,20 +112,23 @@ class UserClientRequestFactoryTests: MessagingTest {
         credentials: ZMEmailCredentials?,
         usingProteusService: Bool
     ) throws {
-        // given
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        let prekeys = [IdPrekeyTuple(id: 0, "prekey0")]
-        let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
+        let request = try syncMOC.performAndWait {
+            // given
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            let prekeys = [IdPrekeyTuple(id: 0, "prekey0")]
+            let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
 
-        // when
-        let request = try sut.registerClientRequest(
-            client,
-            credentials: credentials,
-            cookieLabel: "mycookie",
-            prekeys: prekeys,
-            lastRestortPrekey: lastRestortPrekey,
-            apiVersion: .v0
-        )
+            // when
+            return try sut.registerClientRequest(
+                client,
+                credentials: credentials,
+                cookieLabel: "mycookie",
+                prekeys: prekeys,
+                lastRestortPrekey: lastRestortPrekey,
+                apiVersion: .v0
+            )
+
+        }
 
         // then
         let transportRequest = try XCTUnwrap(request.transportRequest)
@@ -176,21 +179,24 @@ class UserClientRequestFactoryTests: MessagingTest {
         // given
         let emptyPrekeys: [IdPrekeyTuple] = []
         let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
-        let client = UserClient.insertNewObject(in: syncMOC)
         let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
 
-        // when
-        let request = try? sut.registerClientRequest(
-            client,
-            credentials: credentials,
-            cookieLabel: "mycookie",
-            prekeys: emptyPrekeys,
-            lastRestortPrekey: lastRestortPrekey,
-            apiVersion: .v0
-        )
+        syncMOC.performAndWait {
+            let client = UserClient.insertNewObject(in: syncMOC)
 
-        // then
-        XCTAssertNil(request)
+            // when
+            let request = try? sut.registerClientRequest(
+                client,
+                credentials: credentials,
+                cookieLabel: "mycookie",
+                prekeys: emptyPrekeys,
+                lastRestortPrekey: lastRestortPrekey,
+                apiVersion: .v0
+            )
+
+            // then
+            XCTAssertNil(request)
+        }
     }
 
     private enum PrekeyError: Error {
@@ -214,24 +220,27 @@ class UserClientRequestFactoryTests: MessagingTest {
         _ prekeyRangeMax: Int64,
         usingProteusService: Bool
     ) throws {
-        // given
-        let prekeys = [IdPrekeyTuple(id: 1, "prekey1")]
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        client.remoteIdentifier = UUID.create().transportString()
-        client.preKeysRangeMax = prekeyRangeMax
+        try syncMOC.performAndWait {
+            // given
+            let prekeys = [IdPrekeyTuple(id: 1, "prekey1")]
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = UUID.create().transportString()
+            client.preKeysRangeMax = prekeyRangeMax
 
-        // when
-        let request = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
+            // when
+            let request = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
 
-        // then
-        let transportRequest = try XCTUnwrap(request.transportRequest)
-        assertRequest(
-            transportRequest,
-            path: "/clients/\(client.remoteIdentifier!)",
-            method: .put
-        )
+            // then
+            let transportRequest = try XCTUnwrap(request.transportRequest)
+            let id = try XCTUnwrap(client.remoteIdentifier)
+            assertRequest(
+                transportRequest,
+                path: "/clients/\(id)",
+                method: .put
+            )
 
-        let payload = try XCTUnwrap(payload(from: transportRequest))
+            _ = try XCTUnwrap(payload(from: transportRequest))
+        }
     }
 
     func testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys() {
@@ -240,28 +249,32 @@ class UserClientRequestFactoryTests: MessagingTest {
     }
 
     func testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys(usingProteusService: Bool) {
-        // given
-        let emptyPrekeys: [IdPrekeyTuple] = []
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        client.remoteIdentifier = UUID.create().transportString()
+        syncMOC.performAndWait {
+            // given
+            let emptyPrekeys: [IdPrekeyTuple] = []
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = UUID.create().transportString()
 
-        // when
-        let request = try? sut.updateClientPreKeysRequest(client, prekeys: emptyPrekeys, apiVersion: .v0)
+            // when
+            let request = try? sut.updateClientPreKeysRequest(client, prekeys: emptyPrekeys, apiVersion: .v0)
 
-        // then
-        XCTAssertNil(request, "Should not return request if client fails to generate prekeys")
+            // then
+            XCTAssertNil(request, "Should not return request if client fails to generate prekeys")
+        }
     }
 
     func testThatItDoesNotReturnRequestIfClientIsNotSynced() {
         // given
         let prekeys = [IdPrekeyTuple(id: 1, "prekey1")]
-        let client = UserClient.insertNewObject(in: self.syncMOC)
+        syncMOC.performAndWait {
+            let client = UserClient.insertNewObject(in: self.syncMOC)
 
-        // when
-        do {
-            _ = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
-        } catch let error {
-            XCTAssertNotNil(error, "Should not return request if client does not have remoteIdentifier")
+            // when
+            do {
+                _ = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
+            } catch let error {
+                XCTAssertNotNil(error, "Should not return request if client does not have remoteIdentifier")
+            }
         }
 
     }
@@ -269,54 +282,60 @@ class UserClientRequestFactoryTests: MessagingTest {
     // MARK: - Deleting client
 
     func testThatItCreatesARequestToDeleteAClient() throws {
-        // given
-        let email = "foo@example.com"
-        let password = "gfsgdfgdfgdfgdfg"
-        let credentials = ZMEmailCredentials(email: email, password: password)
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        client.remoteIdentifier = "\(client.objectID)"
-        self.syncMOC.saveOrRollback()
+        try syncMOC.performAndWait {
+            // given
+            let email = "foo@example.com"
+            let password = "gfsgdfgdfgdfgdfg"
+            let credentials = ZMEmailCredentials(email: email, password: password)
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = "\(client.objectID)"
+            self.syncMOC.saveOrRollback()
 
-        // when
-        let nextRequest = sut.deleteClientRequest(client, credentials: credentials, apiVersion: .v0)
+            // when
+            let nextRequest = sut.deleteClientRequest(client, credentials: credentials, apiVersion: .v0)
 
-        // then
-        let transportRequest = try XCTUnwrap(nextRequest.transportRequest)
-        assertRequest(
-            transportRequest,
-            path: "/clients/\(client.remoteIdentifier!)",
-            method: .delete
-        )
+            // then
+            let transportRequest = try XCTUnwrap(nextRequest.transportRequest)
+            let id = try XCTUnwrap(client.remoteIdentifier)
+            assertRequest(
+                transportRequest,
+                path: "/clients/\(id)",
+                method: .delete
+            )
 
-        let payload = try XCTUnwrap(payload(from: transportRequest))
-        XCTAssertEqual(payload.password, password)
-        XCTAssertEqual(payload.email, email)
+            let payload = try XCTUnwrap(payload(from: transportRequest))
+            XCTAssertEqual(payload.password, password)
+            XCTAssertEqual(payload.email, email)
+        }
     }
 
     // MARK: - MLS public keys
 
     func test_ItGeneratesRequestToUploadMLSPublicKeys() throws {
         // Given
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        client.remoteIdentifier = "\(client.objectID)"
-        client.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "foo")
-        self.syncMOC.saveOrRollback()
+        try syncMOC.performAndWait {
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = "\(client.objectID)"
+            client.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "foo")
+            self.syncMOC.saveOrRollback()
 
-        // When
-        let request = try XCTUnwrap(sut.updateClientMLSPublicKeysRequest(client, apiVersion: .v1))
+            // When
+            let request = try XCTUnwrap(sut.updateClientMLSPublicKeysRequest(client, apiVersion: .v1))
 
-        // Then
-        XCTAssertEqual(request.keys, Set([UserClient.needsToUploadMLSPublicKeysKey]))
+            // Then
+            XCTAssertEqual(request.keys, Set([UserClient.needsToUploadMLSPublicKeysKey]))
 
-        let transportRequest = try XCTUnwrap(request.transportRequest)
-        assertRequest(
-            transportRequest,
-            path: "/v1/clients/\(client.remoteIdentifier!)",
-            method: .put
-        )
+            let transportRequest = try XCTUnwrap(request.transportRequest)
+            let id = try XCTUnwrap(client.remoteIdentifier)
+            assertRequest(
+                transportRequest,
+                path: "/v1/clients/\(id)",
+                method: .put
+            )
 
-        let payload = try XCTUnwrap(payload(from: transportRequest))
-        XCTAssertEqual(payload.mlsPublicKeys?.ed25519, "foo")
+            let payload = try XCTUnwrap(payload(from: transportRequest))
+            XCTAssertEqual(payload.mlsPublicKeys?.ed25519, "foo")
+        }
     }
 
     // MARK: - Helpers

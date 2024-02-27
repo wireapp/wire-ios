@@ -37,8 +37,7 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
     func testThatAddingAConversationToFavoritesMovesItToFavoriteConversationList() {
         // given
         let favoriteList = uiMOC.conversationListDirectory().favoriteConversations
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .oneOnOne
+        let conversation = insertValidOneOnOneConversation(in: uiMOC)
         conversation.lastModifiedDate = Date()
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertEqual(favoriteList.count, 0)
@@ -54,8 +53,7 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
     func testThatRemovingAConversationFromFavoritesRemovesItFromFavoriteConversationList() {
         // given
         let favoriteList = uiMOC.conversationListDirectory().favoriteConversations
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .oneOnOne
+        let conversation = insertValidOneOnOneConversation(in: uiMOC)
         conversation.lastModifiedDate = Date()
         conversation.isFavorite = true
         XCTAssertTrue(uiMOC.saveOrRollback())
@@ -72,8 +70,7 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
     func testThatAddingAConversationToFolderMovesItToFolderConversationList() {
         // given
         let folder = uiMOC.conversationListDirectory().createFolder("folder 1")!
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .oneOnOne
+        let conversation = insertValidOneOnOneConversation(in: uiMOC)
         conversation.lastModifiedDate = Date()
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertEqual(uiMOC.conversationListDirectory().conversations(by: .folder(folder)).count, 0)
@@ -89,8 +86,7 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
     func testThatRemovingAConversationFromAFolderRemovesItFromTheFolderConversationList() {
         // given
         let folder = uiMOC.conversationListDirectory().createFolder("folder 1")!
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .oneOnOne
+        let conversation = insertValidOneOnOneConversation(in: uiMOC)
         conversation.lastModifiedDate = Date()
         conversation.moveToFolder(folder)
         XCTAssertTrue(uiMOC.saveOrRollback())

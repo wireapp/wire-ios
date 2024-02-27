@@ -1,0 +1,65 @@
+//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Share Extension
+
+
+
+"general.ok" = "OK";
+
+"share_extension.conversation_selection.account" = "アカウント";
+"share_extension.conversation_selection.title" = "会話";
+"share_extension.send_button.title" = "送信";
+"share_extension.conversation_selection.empty.value" = "選択する";
+"share_extension.input.placeholder" = "メッセージを入力";
+"share_extension.sending_progress.title" = "送信中…";
+"share_extension.preparing.title" = "準備中…";
+"share_extension.no_internet_connection.title" = "インターネット接続がありません";
+"share_extension.not_signed_in.title" = "共有するためにはWireにサインインする必要があります";
+"share_extension.not_signed_in.close_button" = "閉じる";
+
+// Custom app lock - unlock
+"share_extension.unlock.title_label" = "Wireのロックを解除するためのパスコードを入力してください";
+"share_extension.unlock.submit_button.title" = "ロック解除";
+"share_extension.unlock.textfield.placeholder" = "パスコードを入力してください";
+"share_extension.unlock.hint_label" = "パスコード";
+"share_extension.unlock.error_label" = "パスコードが間違っています";
+"share_extension.unlock.alert.message" = "パスコードを作成するためにWireを開きます。";
+"share_extension.unlock.reveal_passcode" = "パスコードを表示";
+
+"share_extension.timeout.title" = "接続がタイムアウトしました。";
+"share_extension.timeout.message" = "インターネット接続を確認して、もう一度やり直してください。添付ファイルは会話に保存されました。";
+
+"content.file.too_big" = "%@ までのファイルを送信できます";
+"content.file.unsupported_attachment" = "サポートされない添付ファイルです";
+"share_extension.error.conversation_does_not_exist.message" = "共有する会話を選択してください";
+
+"share_extension.privacy_security.lock_app.description" = "Wireのロックを解除する";
+"share_extension.logged_out.title" = "このアカウントはログアウトされました。";
+"share_extension.logged_out.message" = "別のアカウントを選択してください";
+
+"conversation.displayname.emptygroup" = "誰もいないグループ";
+"meta.degraded.degradation_reason_message.singular" = "%@が新しいデバイスを使い始めました。";
+"meta.degraded.degradation_reason_message.plural" = "%@が新しいデバイスを使い始めました。";
+"meta.degraded.dialog_message" = "まだメッセージを送信しますか？";
+"meta.degraded.cancel_sending_button" = "送信しない";
+"meta.degraded.send_anyway_button" = "このまま送信";
+
+//Feature flag - File sharing
+"feature.flag.file_sharing.alert.title" = "ファイル共有制限";
+"feature.flag.file_sharing.alert.message" = "この機能が無効になっているため、このファイルを共有できません。";

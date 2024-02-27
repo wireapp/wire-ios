@@ -49,11 +49,11 @@ static NSString *const SessionObjectIDAsStringKey = @"SessionObjectID";
 static NSString *const SelfUserKey = @"ZMSelfUser";
 static NSString *const NormalizedNameKey = @"normalizedName";
 static NSString *const NormalizedEmailAddressKey = @"normalizedEmailAddress";
-static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
 
 static NSString *const ConversationsCreatedKey = @"conversationsCreated";
 static NSString *const ActiveCallConversationsKey = @"activeCallConversations";
 static NSString *const ConnectionKey = @"connection";
+static NSString *const OneOnOneConversationKey = @"oneOnOneConversation";
 static NSString *const EmailAddressKey = @"emailAddress";
 static NSString *const PhoneNumberKey = @"phoneNumber";
 static NSString *const NameKey = @"name";
@@ -97,6 +97,8 @@ static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 static NSString *const DomainKey = @"domain";
 static NSString *const IsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSendRecipient";
+static NSString *const PrimaryKey = @"primaryKey";
+
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -260,6 +262,7 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
 
 - (BOOL)isTeamMember
 {
+    // Note: `self.membership` only has a value for users of the same team as the self user.
     return nil != self.membership;
 }
 
@@ -327,6 +330,7 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
                                            ConversationsCreatedKey,
                                            ActiveCallConversationsKey,
                                            ConnectionKey,
+                                           OneOnOneConversationKey,
                                            ConversationsCreatedKey,
                                            ParticipantRolesKey,
                                            NormalizedEmailAddressKey,
@@ -354,6 +358,7 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
                                            LegalHoldRequestKey,
                                            NeedsToAcknowledgeLegalHoldStatusKey,
                                            NeedsToRefetchLabelsKey,
+                                           PrimaryKey,
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
                                            DomainKey,
                                            MessagesFailedToSendRecipientKey,
@@ -411,16 +416,6 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
     return [self fetchObjectsWithRemoteIdentifiers:UUIDs inManagedObjectContext:moc];
 }
 
-- (NSUUID *)remoteIdentifier;
-{
-    return [self transientUUIDForKey:@"remoteIdentifier"];
-}
-
-- (void)setRemoteIdentifier:(NSUUID *)remoteIdentifier;
-{
-    [self setTransientUUID:remoteIdentifier forKey:@"remoteIdentifier"];
-}
-
 - (NSUUID *)teamIdentifier;
 {
     return [self transientUUIDForKey:@"teamIdentifier"];
@@ -472,8 +467,8 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
     NSDictionary *qualifiedID = [transportData optionalDictionaryForKey:@"qualified_id"];
     if (qualifiedID != nil) {
         NSString *domain = [qualifiedID stringForKey:@"domain"];
-        NSUUID *remoteIdentifier = [qualifiedID[@"id"] UUID];
-        
+        NSUUID *remoteIdentifier = [NSUUID uuidWithTransportString:qualifiedID[@"id"]];
+
         if (self.domain == nil) {
             self.domain = domain;
         } else {
@@ -491,7 +486,7 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
         }
         
     } else {
-        NSUUID *remoteID = [transportData[@"id"] UUID];
+        NSUUID *remoteID = [NSUUID uuidWithTransportString:transportData[@"id"]];
         if (self.remoteIdentifier == nil) {
             self.remoteIdentifier = remoteID;
         } else {
@@ -543,7 +538,18 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
     
     NSArray *assets = [transportData optionalArrayForKey:@"assets"];
     [self updateAssetDataWith:assets authoritative:authoritative];
-    
+
+    NSArray<NSString *> *arrayProtocols = [transportData optionalArrayForKey:@"supported_protocols"];
+    if (arrayProtocols != nil) {
+        NSSet<NSString *> *supportedProtocols = [[NSSet alloc] initWithArray:arrayProtocols];
+        [self setSupportedProtocols:supportedProtocols];
+    } else {
+        // fallback to proteus as default supported protocol,
+        // we don't have swift constants here unfortunately.
+        [self setSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
+    }
+
+
     // We intentionally ignore the preview data.
     //
     // Need to see if we're changing the resolution, but it's currently way too small

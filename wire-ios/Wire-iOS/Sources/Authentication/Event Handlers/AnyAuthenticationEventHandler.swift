@@ -23,7 +23,7 @@ import WireUtilities
  * A box for authentication event handlers that have the same context type.
  */
 
-class AnyAuthenticationEventHandler<Context> {
+final class AnyAuthenticationEventHandler<Context> {
 
     /// The name of the handler.
     private(set) var name: String

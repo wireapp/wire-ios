@@ -74,7 +74,9 @@ class LaunchImageViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [contentView, loadingScreenLabel, activityIndicator].prepareForLayout()
+        [contentView, loadingScreenLabel, activityIndicator].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         var constraints: [NSLayoutConstraint] = []
 

@@ -107,7 +107,7 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         let item = items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
 
-        cell.title = item.localizationKey?.localized
+        cell.title = item.localizationKey
         cell.showCheckmark = item == conversation.mutedMessageTypes
         cell.showSeparator = indexPath.row < (items.count - 1)
 
@@ -180,11 +180,10 @@ extension ConversationNotificationOptionsViewController: ZMConversationObserver 
 extension MutedMessageTypes {
 
     var localizationKey: String? {
-        let base = "meta.menu.configure_notification.button_"
         switch self {
-        case .none:         return base + "everything"
-        case .regular:      return base + "mentions_and_replies"
-        case .all:          return base + "nothing"
+        case .none:         return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
+        case .regular:      return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
+        case .all:          return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
         default:            return nil
         }
     }

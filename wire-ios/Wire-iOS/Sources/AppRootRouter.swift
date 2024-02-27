@@ -22,7 +22,7 @@ import avs
 import WireCommonComponents
 
 // MARK: - AppRootRouter
-public class AppRootRouter: NSObject {
+public final class AppRootRouter: NSObject {
 
     // MARK: - Public Property
     let screenCurtain = ScreenCurtain()

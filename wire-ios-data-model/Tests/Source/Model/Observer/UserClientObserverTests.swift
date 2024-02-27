@@ -66,7 +66,7 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertEqual(clientObserver.receivedChangeInfo.count, changeCount, "Should not have changed further once")
 
             guard let changes = clientObserver.receivedChangeInfo.first else { return }
@@ -98,11 +98,12 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(client,
-                                                     modifier: { otherClient.ignoreClient($0) },
-                                                     expectedChangedFields: [
-                                                        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
-                                                        UserClientChangeInfoKey.TrustedByClientsChanged.rawValue
+        self.checkThatItNotifiesTheObserverOfAChange(
+            client,
+            modifier: { otherClient.ignoreClient($0) },
+            expectedChangedFields: [
+                UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
+                UserClientChangeInfoKey.TrustedByClientsChanged.rawValue
             ]
         )
 

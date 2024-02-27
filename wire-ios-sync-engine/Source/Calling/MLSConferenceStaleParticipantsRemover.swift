@@ -48,9 +48,18 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
         self.removalTimeout = removalTimeout
     }
 
+    deinit {
+        stopSubscribing()
+    }
+    private var subscription: Subscription?
     // MARK: - Subscriber implementation
+    func stopSubscribing() {
+        subscription?.cancel()
+        subscription = nil
+    }
 
     func receive(subscription: Subscription) {
+        self.subscription = subscription
         subscription.request(.unlimited)
     }
 
@@ -111,12 +120,20 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private func newAndChangedParticipants(between previous: [CallParticipant], and current: [CallParticipant]) -> [CallParticipant] {
         var newAndChanged = [CallParticipant]()
 
-        let previousStates = Dictionary(uniqueKeysWithValues: previous.map { ($0.userId, $0.state) })
+        // Object to uniquely identify and compare participant
+        struct UniqueKey: Hashable {
+            var clientId: String
+            var userId: AVSIdentifier
+        }
+
+        let previousStates = Dictionary(uniqueKeysWithValues: previous.map { (UniqueKey(clientId: $0.clientId, userId: $0.userId), $0.state) })
 
         current.forEach { participant in
-            if let previousState = previousStates[participant.userId], previousState != participant.state {
+            let participantUniqueKey = UniqueKey(clientId: participant.clientId,
+                                                 userId: participant.userId)
+            if let previousState = previousStates[participantUniqueKey], previousState != participant.state {
                 newAndChanged.append(participant)
-            } else if previousStates[participant.userId] == nil {
+            } else if previousStates[participantUniqueKey] == nil {
                 newAndChanged.append(participant)
             }
         }
@@ -207,9 +224,17 @@ private extension Array where Element == CallParticipant {
 
 private extension MLSClientID {
     init?(callParticipant: CallParticipant) {
+        // Note: callParticipant user comes from uiMoc and init is called from syncContext
+        guard let context = (callParticipant.user as? ZMUser)?.managedObjectContext else {
+            assertionFailure("expecting ZMUser's context")
+            return nil
+        }
+        let (remoteIdentifier, domain) = context.performAndWait {
+            (callParticipant.user.remoteIdentifier, callParticipant.user.domain)
+        }
         guard
-            let userID = callParticipant.user.remoteIdentifier?.transportString(),
-            let domain = callParticipant.user.domain
+            let userID = remoteIdentifier?.transportString(),
+            let domain = domain
         else {
             return nil
         }

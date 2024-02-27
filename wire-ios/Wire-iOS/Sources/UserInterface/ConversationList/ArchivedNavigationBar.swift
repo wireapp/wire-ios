@@ -59,7 +59,7 @@ final class ArchivedNavigationBar: UIView {
     }
 
     private func createConstraints() {
-        [titleLabel, dismissButton].prepareForLayout()
+        [titleLabel, dismissButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
 
             titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),

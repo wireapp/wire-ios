@@ -49,12 +49,15 @@ extension ZMUserSession {
     }
 
     static func initDebugCommands() -> [String: DebugCommand] {
-        return [
+        let commands = [
             DebugCommandLogEncryption(),
             DebugCommandShowIdentifiers(),
             DebugCommandHelp(),
             DebugCommandVariables()
-        ].dictionary { (key: $0.keyword, value: $0) }
+        ]
+        return commands.reduce(into: [:]) { partialResult, command in
+            partialResult[command.keyword] = command
+        }
     }
 
     func restoreDebugCommandsState() {
@@ -203,7 +206,9 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         let subject = arguments[1]
 
         userSession.syncManagedObjectContext.perform {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             guard let keyStore = userSession.syncManagedObjectContext.zm_cryptKeyStore else {
                 return onComplete(.failure(error: "No encryption context"))
             }

@@ -148,6 +148,14 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
     return nil;
 }
 
++ (instancetype)handleExistsErrorWithResponse:(ZMTransportResponse *)response
+{
+    if (response.HTTPStatus == 409 && [[response payloadLabel] isEqualToString:@"handle-exists"]) {
+        return [NSError userSessionErrorWithErrorCode:ZMUserSessionEmailIsAlreadyRegistered userInfo:nil];
+    }
+    return nil;
+}
+
 + (instancetype)invalidInvitationCodeWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 400 && [[response payloadLabel] isEqualToString:@"invalid-invitation-code"]) {

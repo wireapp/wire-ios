@@ -21,7 +21,7 @@ import WireSystem
 import WireDataModel
 import WireSyncEngine
 
-final public class AutomationEmailCredentials: NSObject {
+public final class AutomationEmailCredentials: NSObject {
     public var email: String
     public var password: String
     init(email: String, password: String) {
@@ -52,7 +52,9 @@ public final class AutomationHelper: NSObject {
     }
     /// Whether analytics should be used
     public var useAnalytics: Bool {
+    // swiftlint:disable todo_requires_jira_link
     // TODO: get it from xcconfig?
+    // swiftlint:enable todo_requires_jira_link
     // return UserDefaults.standard.bool(forKey: "UseAnalytics")
         return true
     }

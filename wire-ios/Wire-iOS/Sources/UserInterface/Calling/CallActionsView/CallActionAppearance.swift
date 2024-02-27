@@ -18,7 +18,9 @@
 
 import UIKit
 
+// swiftlint:disable todo_requires_jira_link
 // TODO: - [AGIS] Clean this up
+// swiftlint:enable todo_requires_jira_link
 enum CallActionAppearance: Equatable {
 
     case light, dark(blurred: Bool)

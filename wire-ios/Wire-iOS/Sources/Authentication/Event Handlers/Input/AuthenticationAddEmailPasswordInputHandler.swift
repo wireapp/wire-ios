@@ -23,7 +23,7 @@ import WireSyncEngine
  * Handles the input of the email after log in if the user doesn't have one.
  */
 
-class AuthenticationAddEmailPasswordInputHandler: AuthenticationEventHandler {
+final class AuthenticationAddEmailPasswordInputHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

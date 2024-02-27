@@ -56,12 +56,8 @@ public struct ProteusSessionID: Hashable, Equatable {
         self.init(userID: "", clientID: clientID)
     }
 
-    public var hashValue: Int {
-        return self.rawValue.hashValue
-    }
-
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(hashValue)
+        hasher.combine(rawValue)
     }
 
     public static func == (lhs: ProteusSessionID, rhs: ProteusSessionID) -> Bool {

@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,11 +23,11 @@ import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
-        oneToOneConversationWithUser(user, callback: { conversation in
-            guard let conversation = conversation else { return }
+        oneToOneConversationWithUser(user) { result in
+            guard case .success(let conversation) = result else { return }
 
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
-        })
+        }
     }
 
     func startUI(_ startUI: StartUIViewController, didSelect conversation: ZMConversation) {
@@ -44,16 +45,35 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         _ user: UserType,
         callback onConversationCreated: @escaping ConversationCreatedBlock
     ) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        if let conversation = user.oneToOneConversation {
+            onConversationCreated(.success(conversation))
+        } else {
+            createTeamOneOnOne(
+                user,
+                callback: onConversationCreated
+            )
+        }
+    }
+
+    private func createTeamOneOnOne(
+        _ user: UserType,
+        callback onConversationCreated: @escaping ConversationCreatedBlock
+    ) {
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
 
         viewController?.setState(.conversationList, animated: true) {
-            if let conversation = user.oneToOneConversation {
-                onConversationCreated(conversation)
-            } else {
-                user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
-                    onConversationCreated(conversation)
+            userSession.createTeamOneOnOne(with: user) {
+                switch $0 {
+                case .success(let conversation):
+                    onConversationCreated(.success(conversation))
+
+                case .failure(let error):
+                    onConversationCreated(.failure(error))
                 }
             }
         }
     }
+
 }

@@ -18,7 +18,7 @@
 
 import UIKit
 
-class CallHeaderBar: UIView {
+final class CallHeaderBar: UIView {
     private let verticalStackView = UIStackView(axis: .vertical)
     private let titleLabel = DynamicFontLabel(fontSpec: .normalSemiboldFont, color: SemanticColors.Label.textDefault)
     private let timeLabel = DynamicFontLabel(fontSpec: .smallRegularFont, color: SemanticColors.Label.textDefault)

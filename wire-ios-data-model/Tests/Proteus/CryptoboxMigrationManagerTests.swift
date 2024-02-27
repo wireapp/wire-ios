@@ -105,18 +105,18 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     // MARK: - Perform migration
 
-    func test_itPerformsMigrations() throws {
+    func test_itPerformsMigrations() async throws {
         // Given
-        let migrated = expectation(description: "Cryptobox was migrated")
+        let migrated = customExpectation(description: "Cryptobox was migrated")
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
-        mockSafeCoreCrypto.coreCrypto.mockProteusCryptoboxMigrate = { _ in
+        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
             migrated.fulfill()
         }
 
         // When
         do {
-            try sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)
+            try await sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)
         } catch {
             XCTFail("failed to perform migration: \(error.localizedDescription)")
         }
@@ -126,18 +126,18 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func test_itDoesNotPerformMigration_CoreCryptoError() {
+    func test_itDoesNotPerformMigration_CoreCryptoError() async {
         // Given
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
 
-        mockSafeCoreCrypto.coreCrypto.mockProteusCryptoboxMigrate = { _ in
+        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
             throw CryptoboxMigrationManager.Failure.failedToMigrateData
         }
 
         // When
-        XCTAssertThrowsError(try sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)) { error in
-            XCTAssertEqual(error as? CryptoboxMigrationManager.Failure, CryptoboxMigrationManager.Failure.failedToMigrateData)
+        await assertItThrows(error: CryptoboxMigrationManager.Failure.failedToMigrateData) {
+            try await self.sut.performMigration(accountDirectory: self.accountDirectory, coreCrypto: self.mockSafeCoreCrypto)
         }
 
         // Then

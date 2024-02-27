@@ -175,6 +175,13 @@ public enum Payload {
 
     public struct UserProfile: Codable {
 
+        enum MessageProtocol: String, Codable {
+
+            case proteus
+            case mls
+
+        }
+
         enum CodingKeys: String, CodingKey, CaseIterable {
             case id
             case qualifiedID = "qualified_id"
@@ -191,6 +198,7 @@ public enum Payload {
             case isDeleted = "deleted"
             case expiresAt = "expires_at"
             case legalholdStatus = "legalhold_status"
+            case supportedProtocols = "supported_protocols"
         }
 
         let id: UUID?
@@ -208,6 +216,7 @@ public enum Payload {
         let isDeleted: Bool?
         let expiresAt: Date?
         let legalholdStatus: LegalholdStatus?
+        let supportedProtocols: Set<MessageProtocol>?
 
         /// All keys which were present in the original payload even if they
         /// contained a null value.
@@ -231,6 +240,7 @@ public enum Payload {
              isDeleted: Bool? = nil,
              expiresAt: Date? = nil,
              legalholdStatus: LegalholdStatus? = nil,
+             supportedProtocols: Set<MessageProtocol>? = nil,
              updatedKeys: Set<CodingKeys>? = nil) {
 
             self.id = id
@@ -248,6 +258,7 @@ public enum Payload {
             self.isDeleted = isDeleted
             self.expiresAt = expiresAt
             self.legalholdStatus = legalholdStatus
+            self.supportedProtocols = supportedProtocols
             self.updatedKeys = updatedKeys ?? Set(CodingKeys.allCases)
         }
 
@@ -268,6 +279,7 @@ public enum Payload {
             self.isDeleted = try container.decodeIfPresent(Bool.self, forKey: .isDeleted)
             self.expiresAt = try container.decodeIfPresent(Date.self, forKey: .expiresAt)
             self.legalholdStatus = try container.decodeIfPresent(LegalholdStatus.self, forKey: .legalholdStatus)
+            self.supportedProtocols = try container.decodeIfPresent(Set<MessageProtocol>.self, forKey: .supportedProtocols)
             self.updatedKeys = Set(container.allKeys)
         }
     }

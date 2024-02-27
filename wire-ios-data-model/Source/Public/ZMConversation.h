@@ -40,7 +40,6 @@
 
 typedef NS_CLOSED_ENUM(int16_t, ZMConversationType) {
     ZMConversationTypeInvalid = 0,
-
     ZMConversationTypeSelf,
     ZMConversationTypeOneOnOne,
     ZMConversationTypeGroup,
@@ -62,9 +61,6 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
     ZMConversationListIndicatorPending
 };
 
-
-extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a range in an attributed string should be displayed dimmed.
-
 @interface ZMConversation : ZMManagedObject
 
 @property (nonatomic, copy, nullable) NSString *userDefinedName;
@@ -84,7 +80,6 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 @property (nonatomic, nonnull) NSSet<Label *> *labels;
 @property (nonatomic, nonnull) NSSet<ParticipantRole *> *participantRoles;
 @property (nonatomic, nonnull) NSSet<Role *> *nonTeamRoles;
-@property (nonatomic, nullable) NSString *domain;
 @property (nonatomic) BOOL isPendingMetadataRefresh;
 
 /// This will return @c nil if the last added by self user message has not yet been sync'd to this device, or if the conversation has no self editable message.

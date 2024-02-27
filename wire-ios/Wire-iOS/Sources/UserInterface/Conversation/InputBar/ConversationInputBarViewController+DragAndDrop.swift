@@ -60,13 +60,14 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                         )
 
                         let confirmImageViewController = ConfirmAssetViewController(context: context)
-                        confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback.localized
+                        confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback
                         self.present(confirmImageViewController, animated: true) {
                         }
                     }
                 })
-
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: it's a temporary solution to drag only one image, while we have no design for multiple images
+                // swiftlint:enable todo_requires_jira_link
                 break
             }
         }

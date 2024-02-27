@@ -69,18 +69,15 @@ public extension ZMUser {
 extension ZMUser {
 
     public var oneToOneConversation: ZMConversation? {
-        guard let moc = managedObjectContext else { return nil }
+        guard let moc = managedObjectContext else {
+            return nil
+        }
 
         if isSelfUser {
             return ZMConversation.selfConversation(in: moc)
-        } else if isTeamMember {
-            return ZMConversation.fetchOneToOneTeamConversation(moc: moc,
-                                                                participant: self,
-                                                                team: team)
         } else {
-            return connection?.conversation
+            return oneOnOneConversation
         }
-
     }
 
 }

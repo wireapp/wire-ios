@@ -42,7 +42,7 @@ extension ConversationInputBarViewController {
             // Don't crash on Simulator
         }
 
-        let presentController = {() -> Void in
+        let presentController = {
 
             let context = ImagePickerPopoverPresentationContext(presentViewController: rootViewController,
                                                                 sourceType: sourceType)

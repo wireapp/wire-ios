@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -129,15 +129,21 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     func openOneToOneConversation() {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
 
         if let conversation = user.oneToOneConversation {
             transition(to: conversation)
         } else {
-            user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
-                guard let conversation = conversation else { return }
+            userSession.createTeamOneOnOne(with: user) { [weak self] in
+                switch $0 {
+                case .success(let conversation):
+                    self?.transition(to: conversation)
 
-                self.transition(to: conversation)
+                case .failure(let error):
+                    WireLogger.conversation.error("failed to create team one on one from profile view: \(error)")
+                }
             }
         }
     }
@@ -216,11 +222,6 @@ final class ProfileViewControllerViewModel: NSObject {
 
     // MARK: - Factories
 
-    func makeUserNameDetailViewModel() -> UserNameDetailViewModel {
-        // TODO: add addressBookEntry to ZMUser
-        return UserNameDetailViewModel(user: user, fallbackName: user.name ?? "", addressBookName: (user as? ZMUser)?.addressBookEntry?.cachedName)
-    }
-
     var profileActionsFactory: ProfileActionsFactory {
         return ProfileActionsFactory(user: user, viewer: viewer, conversation: conversation, context: context)
     }
@@ -238,7 +239,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func acceptConnectionRequest() {
         user.accept { [weak self] error in
-            if let error = error as? ConnectToUserError {
+            if let error = error as? LocalizedError {
                 self?.viewModelDelegate?.presentError(error)
             } else {
                 self?.user.refreshData()
@@ -259,18 +260,12 @@ final class ProfileViewControllerViewModel: NSObject {
 
 }
 
-extension ProfileViewControllerViewModel: ZMUserObserver {
+extension ProfileViewControllerViewModel: UserObserving {
+
     func userDidChange(_ note: UserChangeInfo) {
-        if note.trustLevelChanged {
-            viewModelDelegate?.updateShowVerifiedShield()
-        }
 
         if note.legalHoldStatusChanged {
             viewModelDelegate?.setupNavigationItems()
-        }
-
-        if note.nameChanged {
-            viewModelDelegate?.updateTitleView()
         }
 
         if note.user.isAccountDeleted || note.connectionStateChanged {
@@ -280,16 +275,15 @@ extension ProfileViewControllerViewModel: ZMUserObserver {
 }
 
 extension ProfileViewControllerViewModel: BackButtonTitleDelegate {
+
     func suggestedBackButtonTitle(for controller: ProfileViewController?) -> String? {
         return user.name?.uppercasedWithCurrentLocale
     }
 }
 
 protocol ProfileViewControllerViewModelDelegate: AnyObject {
-    func updateShowVerifiedShield()
     func setupNavigationItems()
     func updateFooterViews()
-    func updateTitleView()
     func returnToPreviousScreen()
     func presentError(_ error: LocalizedError)
 }

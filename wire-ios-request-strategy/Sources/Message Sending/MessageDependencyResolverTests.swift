@@ -54,8 +54,8 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             // Sleeping in order to hit the code path where we start observing RequestAvailable
             try await Task.sleep(nanoseconds: 250_000_000)
 
-            syncMOC.performAndWait {
-                groupConversation.needsToBeUpdatedFromBackend = false
+            await syncMOC.perform {
+                self.groupConversation.needsToBeUpdatedFromBackend = false
             }
 
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)

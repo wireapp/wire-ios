@@ -24,8 +24,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertTrue(login())
 
         var conversation = self.conversation(for: mockConversation)
-        let selfUserSet: Set<AnyHashable> = [self.selfUser]
-        let otherUser = mockConversation.activeUsers.firstObjectNot(in: selfUserSet) as! MockUser
+        let otherUser = mockConversation.activeUsers.first { ($0 as? MockUser) != self.selfUser } as! MockUser
 
         // given
         let fromClient = otherUser.clients.anyObject() as! MockUserClient
@@ -90,16 +89,16 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         conversation = self.conversation(for: self.groupConversation!)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let objectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation}.map { $0.objectID }
+        let objectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation }.map { $0.objectID }
         XCTAssertTrue(objectIDs!.contains(conversationID!))
     }
 
-    func testThatDeletedConversationsStayDeletedAfterResyncing() {
+    func testThatDeletedConversationsStayDeletedAfterResyncing() throws {
         // given
         let messagesCount: UInt = 5
         loginAndFillConversationWithMessages(mockConversation: self.groupConversation, messagesCount: messagesCount)
 
-        var conversation = self.conversation(for: self.groupConversation!)
+        var conversation = conversation(for: try XCTUnwrap(self.groupConversation))
         XCTAssertEqual(conversation!.allMessages.count, 5)
 
         let conversationDirectory = self.userSession?.managedObjectContext.conversationListDirectory()
@@ -117,7 +116,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation!.allMessages.count, 0)
-        XCTAssertFalse(conversationDirectory!.conversationsIncludingArchived.contains(conversation))
+        XCTAssertFalse(conversationDirectory!.conversationsIncludingArchived.contains(conversation!))
 
         conversation = nil
         self.recreateSessionManagerAndDeleteLocalData()
@@ -130,9 +129,9 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         conversation = self.conversation(for: self.groupConversation!)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let conversationsIncludingArchivedObjectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation}.map { $0.objectID }
-        let archivedConversationsObjectIDs = conversationDirectory?.archivedConversations.compactMap { $0 as? ZMConversation}.map { $0.objectID }
-        let clearedConversationsObjectIDs = conversationDirectory?.clearedConversations.compactMap { $0 as? ZMConversation}.map { $0.objectID }
+        let conversationsIncludingArchivedObjectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation }.map { $0.objectID }
+        let archivedConversationsObjectIDs = conversationDirectory?.archivedConversations.compactMap { $0 as? ZMConversation }.map { $0.objectID }
+        let clearedConversationsObjectIDs = conversationDirectory?.clearedConversations.compactMap { $0 as? ZMConversation }.map { $0.objectID }
         XCTAssertFalse(conversationsIncludingArchivedObjectIDs!.contains(conversationID!))
         XCTAssertFalse(archivedConversationsObjectIDs!.contains(conversationID!))
         XCTAssertTrue(clearedConversationsObjectIDs!.contains(conversationID!))
@@ -156,7 +155,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let objectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation}.map { $0.objectID }
+        let objectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation }.map { $0.objectID }
         XCTAssertFalse(objectIDs!.contains(conversationID!))
     }
 
@@ -178,15 +177,15 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let objectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation}.map { $0.objectID }
+        let objectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation }.map { $0.objectID }
         XCTAssertFalse(objectIDs!.contains(conversationID!))
     }
 
-    func testThatRemotelyArchivedConversationIsIncludedInTheCorrectConversationLists() {
+    func testThatRemotelyArchivedConversationIsIncludedInTheCorrectConversationLists() throws {
         // given
         let messagesCount: UInt = 5
         loginAndFillConversationWithMessages(mockConversation: self.groupConversation, messagesCount: messagesCount)
-        let conversation = self.conversation(for: self.groupConversation!)
+        let conversation = try XCTUnwrap(conversation(for: self.groupConversation!))
 
         let conversationDirectory = self.userSession?.managedObjectContext.conversationListDirectory()
 
@@ -226,9 +225,9 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let conversationsIncludingArchivedObjectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation}.map { $0.objectID }
-        let archivedConversationsObjectIDs = conversationDirectory?.archivedConversations.compactMap { $0 as? ZMConversation}.map { $0.objectID }
-        let clearedConversationsObjectIDs = conversationDirectory?.clearedConversations.compactMap { $0 as? ZMConversation}.map { $0.objectID }
+        let conversationsIncludingArchivedObjectIDs = conversationDirectory?.conversationsIncludingArchived.compactMap { $0 as? ZMConversation }.map { $0.objectID }
+        let archivedConversationsObjectIDs = conversationDirectory?.archivedConversations.compactMap { $0 as? ZMConversation }.map { $0.objectID }
+        let clearedConversationsObjectIDs = conversationDirectory?.clearedConversations.compactMap { $0 as? ZMConversation }.map { $0.objectID }
         XCTAssertTrue(conversationsIncludingArchivedObjectIDs!.contains(conversationID!))
         XCTAssertTrue(archivedConversationsObjectIDs!.contains(conversationID!))
         XCTAssertFalse(clearedConversationsObjectIDs!.contains(conversationID!))

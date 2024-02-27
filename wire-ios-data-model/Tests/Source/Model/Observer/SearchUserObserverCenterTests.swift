@@ -71,7 +71,7 @@ class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
-        let expectation = self.expectation(description: "notified")
+        let expectation = self.customExpectation(description: "notified")
         self.token = NotificationInContext.addObserver(
             name: .SearchUserChange,
             context: self.uiMOC.notificationContext,
@@ -103,7 +103,7 @@ class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
-        let expectation = self.expectation(description: "notified")
+        let expectation = self.customExpectation(description: "notified")
         self.token = NotificationInContext.addObserver(
             name: .SearchUserChange,
             context: self.uiMOC.notificationContext,
@@ -138,7 +138,7 @@ class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
-        let expectation = self.expectation(description: "notified")
+        let expectation = self.customExpectation(description: "notified")
         self.token = NotificationInContext.addObserver(
             name: .SearchUserChange,
             context: self.uiMOC.notificationContext,
@@ -169,7 +169,7 @@ class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
-        let expectation = self.expectation(description: "notified")
+        let expectation = self.customExpectation(description: "notified")
         self.token = NotificationInContext.addObserver(
             name: .SearchUserChange,
             context: self.uiMOC.notificationContext,
@@ -257,7 +257,7 @@ class SearchUserObserverCenterTests: ModelObjectsTests {
         sut.addSearchUser(searchUser)
 
         // expect
-        let expectation = self.expectation(description: "notified")
+        let expectation = self.customExpectation(description: "notified")
         let token: Any? = NotificationInContext.addObserver(
             name: .SearchUserChange,
             context: self.uiMOC.notificationContext,
@@ -266,7 +266,7 @@ class SearchUserObserverCenterTests: ModelObjectsTests {
             expectation.fulfill()
         }
 
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             // when
             user.name = "Horst"
             let changeInfo = UserChangeInfo(object: user)
@@ -284,7 +284,7 @@ class SearchUserObserverCenterTests: ModelObjectsTests {
         sut.addSearchUser(searchUser)
 
         // expect
-        let expectation = self.expectation(description: "notified")
+        let expectation = self.customExpectation(description: "notified")
         let token = NotificationInContext.addObserver(
             name: .SearchUserChange,
             context: self.uiMOC.notificationContext,
@@ -295,7 +295,7 @@ class SearchUserObserverCenterTests: ModelObjectsTests {
             expectation.fulfill()
         }
 
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             // when
             searchUser.updateImageData(for: .complete, imageData: verySmallJPEGData())
 

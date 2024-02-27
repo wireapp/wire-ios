@@ -17,17 +17,7 @@
 // 
 
 
-#import <Foundation/Foundation.h>
-
-
-
-@interface NSData (ZMSorting)
-
-- (NSComparisonResult)compare:(NSData *)otherData;
-
-@end
-
-
+@import Foundation;
 
 @interface NSData (ZMHTTPCompression)
 

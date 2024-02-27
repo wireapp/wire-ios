@@ -103,7 +103,9 @@ import WireTransport
                 return
             }
 
+            // swiftlint:disable todo_requires_jira_link
             // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
+            // swiftlint:enable todo_requires_jira_link
             let fileCache = self.managedObjectContext.zm_fileAssetCache!
             fileCache.storeAssetData(assetClientMessage, encrypted: true, data: response.rawData!)
 
@@ -157,7 +159,7 @@ import WireTransport
 
             fatalError("Cannot generate request for \(object.safeForLoggingDescription)")
 
-        case .v2, .v3, .v4, .v5:
+        case .v2, .v3, .v4, .v5, .v6:
             return nil
         }
 

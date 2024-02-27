@@ -328,8 +328,8 @@ extension ZMClientMessageTests_Ephemeral {
         }
     }
 
-    func testThatItCreatesPayloadForEphemeralMessage() {
-        syncMOC.performGroupedBlockAndWait {
+    func testThatItCreatesPayloadForEphemeralMessage() async throws {
+        let textMessage = try await syncMOC.perform {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .oneOnOne
@@ -339,17 +339,18 @@ extension ZMClientMessageTests_Ephemeral {
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.syncUser1
             connection.status = .accepted
-            conversation.connection = connection
+            self.syncUser1.oneOnOneConversation = conversation
             conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
 
             self.syncMOC.saveOrRollback()
 
-            let textMessage = try! conversation.appendText(content: "foo", fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
-
-            // when
-            guard textMessage.encryptForTransport() != nil
-                else { return XCTFail()}
+            return try conversation.appendText(content: "foo", fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
         }
+        let message = try XCTUnwrap(textMessage)
+
+        // when
+        let encryptedMessage = await message.encryptForTransport()
+        XCTAssertNotNil(encryptedMessage)
     }
 }
 
@@ -406,8 +407,7 @@ extension ZMClientMessageTests_Ephemeral {
                 let genericMessage = clientMessage.underlyingMessage,
                 case .deleted? = genericMessage.content {
                 return true
-            }
-            else {
+            } else {
                 return false
             }
         }) as? ZMClientMessage
