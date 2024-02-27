@@ -933,14 +933,18 @@ extension WireCallCenterV3 {
     }
 
     private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
+        return conversationType(from: callEvent.conversationId)
+    }
+
+    private func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
         guard let context = uiMOC else { return nil }
 
         var conversationType: AVSConversationType?
 
         context.performAndWait {
             let conversation = ZMConversation.fetch(
-                with: callEvent.conversationId.identifier,
-                domain: callEvent.conversationId.domain,
+                with: conversationId.identifier,
+                domain: conversationId.domain,
                 in: context
             )
 
@@ -949,6 +953,15 @@ extension WireCallCenterV3 {
 
         return conversationType
     }
+
+    func generateConfInfo(conversationId: AVSIdentifier) -> MLSConferenceInfo? {
+        guard let type = conversationType(from: conversationId), type == .mlsConference else {
+            return nil
+        }
+
+        guard
+    }
+
 
     /// Handles a change in calling state.
     ///
