@@ -25,7 +25,11 @@ public protocol E2EIRepositoryInterface {
 
     func fetchFederationCertificate() async throws
 
-    func createEnrollment(context: NSManagedObjectContext) async throws -> E2EIEnrollmentInterface
+    func createEnrollment(
+        context: NSManagedObjectContext,
+        expirySec: UInt32?
+    ) async throws -> E2EIEnrollmentInterface
+
 }
 
 public final class E2EIRepository: E2EIRepositoryInterface {
@@ -72,7 +76,10 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         try await e2eiSetupService.registerFederationCertificate(federationCertificate)
     }
 
-    public func createEnrollment(context: NSManagedObjectContext) async throws -> E2EIEnrollmentInterface {
+    public func createEnrollment(
+        context: NSManagedObjectContext,
+        expirySec: UInt32?
+    ) async throws -> E2EIEnrollmentInterface {
         let (userName, userHandle, teamId, clientID, isUpgradingClient) = try await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
             let isUpgradingClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
@@ -90,7 +97,8 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             userName: userName,
             handle: userHandle,
             teamId: teamId,
-            isUpgradingClient: isUpgradingClient
+            isUpgradingClient: isUpgradingClient,
+            expirySec: expirySec
         )
 
         let e2eiService = E2EIService(e2eIdentity: e2eIdentity, coreCryptoProvider: coreCryptoProvider)

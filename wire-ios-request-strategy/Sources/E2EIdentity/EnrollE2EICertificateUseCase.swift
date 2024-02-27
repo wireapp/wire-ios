@@ -81,15 +81,21 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
     /// - Parameter authenticate: Block that performs OAUTH authentication
     /// - Returns: Chain of certificates for the clients
     /// - Description: **Visit the link below to understand the entire flow**  https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/800820113/Use+case+End-to-end+identity+enrollment#Detailed-enrolment-flow
-    ///
     public func invoke(authenticate: @escaping OAuthBlock) async throws -> String {
+        return try await invoke(authenticate: authenticate, expirySec: nil)
+    }
+
+    public func invoke(authenticate: @escaping OAuthBlock, expirySec: UInt32?) async throws -> String {
         do {
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
             logger.warn("failed to register trust anchor: \(error.localizedDescription)")
         }
 
-        let enrollment = try await e2eiRepository.createEnrollment(context: context)
+        let enrollment = try await e2eiRepository.createEnrollment(
+            context: context,
+            expirySec: expirySec
+        )
 
         let acmeNonce = try await enrollment.getACMENonce()
         let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)
