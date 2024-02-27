@@ -31,7 +31,7 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
         applicationStatus: ApplicationStatus
     ) {
 
-        actionSync = EntityActionSync(actionHandlers: [PushSupportedProtocolActionHandler(context: managedObjectContext)])
+        actionSync = EntityActionSync(actionHandlers: [PushSupportedProtocolsActionHandler(context: managedObjectContext)])
 
         super.init(
             withManagedObjectContext: managedObjectContext,

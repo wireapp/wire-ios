@@ -18,7 +18,7 @@
 
 import Foundation
 
-class PushSupportedProtocolActionHandler: ActionHandler<PushSupportedProtocolsAction> {
+final class PushSupportedProtocolsActionHandler: ActionHandler<PushSupportedProtocolsAction> {
 
     // MARK: - Request
 
