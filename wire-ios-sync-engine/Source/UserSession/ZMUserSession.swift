@@ -509,7 +509,7 @@ public final class ZMUserSession: NSObject {
             createMLSClientIfNeeded()
 
             if e2eiFeature.isEnabled {
-                observeMLSGroupVerificationStatus.invoke()
+                self.observeMLSGroupVerificationStatus.invoke()
                 self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
                     from: self.mlsService.onNewCRLsDistributionPoints()
                 )
