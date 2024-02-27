@@ -45,7 +45,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var thirdPartyServices: ThirdPartyServices!
     var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
-    var mockOneOnOneResolver: MockResolveOneOnOneConversationsUseCaseProtocol!
+    var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
@@ -87,7 +87,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.mediaManager = nil
         self.flowManagerMock = nil
         self.mockUseCaseFactory = nil
-        self.mockOneOnOneResolver = nil
+        self.mockResolveOneOnOneConversationUseCase = nil
         let sut = self.sut
         self.sut = nil
         sut?.tearDown()
@@ -101,13 +101,13 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockMLSService = MockMLSServiceInterface()
         mockUseCaseFactory = MockUseCaseFactoryProtocol()
-        mockOneOnOneResolver = MockResolveOneOnOneConversationsUseCaseProtocol()
+        mockResolveOneOnOneConversationUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
 
         mockUseCaseFactory.createResolveOneOnOneUseCase_MockMethod = {
-            return self.mockOneOnOneResolver
+            return self.mockResolveOneOnOneConversationUseCase
         }
 
-        mockOneOnOneResolver.invoke_MockMethod = { }
+        mockResolveOneOnOneConversationUseCase.invoke_MockMethod = { }
 
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
 
