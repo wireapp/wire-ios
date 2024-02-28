@@ -63,7 +63,7 @@ final class ResolveOneOnOneConversationUseCaseTests: XCTestCase {
 
     // MARK: - Unit Tests
 
-    func testInvoke_proteusToProteus_actionNotFiredAndOneOnOneNotResolved() async throws {
+    func test_SupportedProtocolsRemainProteusOnly() async throws {
         // GIVEN
         await syncContext.perform { [self] in
             let selfUser = ZMUser.selfUser(in: syncContext)
@@ -90,7 +90,7 @@ final class ResolveOneOnOneConversationUseCaseTests: XCTestCase {
         XCTAssertEqual(mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 0)
     }
 
-    func testInvoke_proteusToProteusAndMLS_actionFiredAndOneOnOneResolved() async throws {
+    func test_SupportedProtocolsChangeFromProteusToProteusAndMLS() async throws {
         // GIVEN
         await syncContext.perform { [self] in
             let selfUser = ZMUser.selfUser(in: syncContext)
@@ -119,7 +119,7 @@ final class ResolveOneOnOneConversationUseCaseTests: XCTestCase {
         XCTAssertEqual(mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 1)
     }
 
-    func testInvoke_proteusAndMLSToProteusAndMLS_actionNotFiredAndOneOnOneResolved() async throws {
+    func test_SupportedProtocolsRemainProteusAndMLS() async throws {
         // GIVEN
         await syncContext.perform { [self] in
             let selfUser = ZMUser.selfUser(in: syncContext)
