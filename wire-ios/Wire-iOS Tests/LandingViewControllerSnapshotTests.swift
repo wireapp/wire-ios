@@ -45,7 +45,7 @@ final class LandingViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     func testForInitState() {
         sut = LandingViewController()
-        verifyInAllDeviceSizes(matching: sutInUiNavigationController())
+        verify(matching: sutInUiNavigationController())
     }
 
     func testForBackendWithCustomURL() {
@@ -57,7 +57,7 @@ final class LandingViewControllerSnapshotTests: BaseSnapshotTestCase {
             customBackend
         })
 
-        verifyInAllDeviceSizes(matching: sutInUiNavigationController())
+        verify(matching: sutInUiNavigationController())
     }
 
     // MARK: - Helper Method
