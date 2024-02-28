@@ -44,6 +44,7 @@ struct ProfileDeviceDetailsView: View {
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         .padding(.top, ViewConstants.Padding.medium)
+        .frame(width: .infinity)
     }
 
     var proteusView: some View {
@@ -67,6 +68,7 @@ struct ProfileDeviceDetailsView: View {
                 DeviceDetailsBottomView(viewModel: viewModel, showRemoveDeviceButton: false)
             }
         }
+        .frame(maxWidth: .infinity)
     }
 
     var mlsView: some View {
@@ -75,6 +77,7 @@ struct ProfileDeviceDetailsView: View {
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
+        .frame(maxWidth: .infinity)
     }
 
     var showDeviceFingerPrintView: some View {
@@ -199,7 +202,7 @@ struct ProfileDeviceDetailsView: View {
         Text(title)
             .font(FontSpec.mediumRegularFont.swiftUIFont)
             .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-            .padding([.leading, .top], ViewConstants.Padding.standard)
+            .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
 
         if let description = description {
             VStack(alignment: .leading) {
@@ -209,7 +212,7 @@ struct ProfileDeviceDetailsView: View {
                     .font(UIFont.swiftUIFont(for: .subheadline))
                     .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
                     .frame(height: ViewConstants.View.Height.small)
-                    .padding([.leading, .top], ViewConstants.Padding.standard)
+                    .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
                 Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
                     .underline()
                     .font(UIFont.swiftUIFont(for: .subheadline).bold())

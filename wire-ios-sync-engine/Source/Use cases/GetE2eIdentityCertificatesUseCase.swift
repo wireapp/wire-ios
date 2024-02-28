@@ -19,7 +19,6 @@
 import Foundation
 import WireDataModel
 import WireCoreCrypto
-import ASN1Decoder
 
 // sourcery: AutoMockable
 public protocol GetE2eIdentityCertificatesUseCaseProtocol {
@@ -47,21 +46,18 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
         let identities = try await getWireIdentity(coreCrypto: coreCrypto,
                                                    conversationId: mlsGroupId.data,
                                                    clientIDs: clientIds)
-
         let identitiesAndStatus = await validateUserHandleAndName(for: identities)
 
-        return try identitiesAndStatus.compactMap { identity, status in
-            guard let certificateData = identity.certificate.data(using: .utf8) else {
-                return nil
-            }
+        return identitiesAndStatus.map { identity, status in
 
-            let x509Certificate = try X509Certificate(pem: certificateData)
-            return x509Certificate.toE2eIdenityCertificate(
-                clientId: identity.clientId,
-                certificateDetails: identity.certificate,
-                certificateStatus: status,
-                mlsThumbprint: identity.thumbprint
-            )
+            E2eIdentityCertificate(clientId: identity.clientId,
+                                   certificateDetails: identity.certificate,
+                                   mlsThumbprint: identity.thumbprint,
+                                   notValidBefore: Date(timeIntervalSince1970: Double(identity.notBefore)),
+                                   expiryDate: Date(timeIntervalSince1970: Double(identity.notAfter)),
+                                   certificateStatus: status,
+                                   serialNumber: identity.serialNumber,
+                                   comparedDate: Date.now)
         }
     }
 
@@ -75,12 +71,22 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                 return (identity, identity.status.e2eIdentityStatus)
             }
 
-            let (name, handle) = await syncContext.perform {
-                let client = UserClient.fetchExistingUserClient(with: identity.clientId, in: self.syncContext)
-                return (client?.user?.name, client?.user?.handle)
+            guard let mlsClientID = MLSClientID(rawValue: identity.clientId) else {
+                return (identity, .invalid)
             }
 
-            let isValid = identity.displayName == name && identity.handle == handle
+            let (name, handle, domain) = await syncContext.perform {
+                let client = UserClient.fetchExistingUserClient(with: mlsClientID.clientID, in: self.syncContext)
+                return (client?.user?.name, client?.user?.handle, client?.user?.domain)
+            }
+
+            guard let name, let handle, let domain else {
+                return (identity, .invalid)
+            }
+
+            let hasValidDisplayName = identity.displayName == name
+            let hasValidHandle = identity.handle.contains("\(handle)@\(domain)")
+            let isValid = hasValidDisplayName && hasValidHandle
             return (identity, isValid ? .valid : .invalid)
         }
     }
@@ -111,30 +117,4 @@ private extension DeviceStatus {
         }
     }
 
-}
-
-extension X509Certificate {
-    func toE2eIdenityCertificate(
-        clientId: String,
-        certificateDetails: String,
-        certificateStatus: E2EIdentityCertificateStatus,
-        mlsThumbprint: String
-    ) -> E2eIdentityCertificate? {
-        let serialNumber = serialNumber
-            .map { [UInt8]($0) }?
-            .map { String($0, radix: 16).uppercased() }
-            .joined(separator: "")
-        guard let notValidBefore = notBefore, let notValidAfter = notAfter, let serialNumber else {
-            return nil
-        }
-        return .init(
-            clientId: clientId,
-            certificateDetails: certificateDetails,
-            mlsThumbprint: mlsThumbprint,
-            notValidBefore: notValidBefore,
-            expiryDate: notValidAfter,
-            certificateStatus: certificateStatus,
-            serialNumber: serialNumber
-        )
-    }
 }
