@@ -47,17 +47,14 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
     // MARK: - Supported protocols
 
     func test_ItGeneratesARequest_WhenSupportedProtocolsChanges() throws {
-        syncMOC.performGroupedAndWait { context in
-            // Given
-            let selfUser = ZMUser.selfUser(in: context)
-            selfUser.needsToBeUpdatedFromBackend = false
-            selfUser.supportedProtocols = [.proteus, .mls]
+        // GIVEN
+        var action = PushSupportedProtocolsAction(supportedProtocols: [.proteus, .mls])
+        action.perform(in: syncMOC.notificationContext) { _ in }
 
-            self.sut.contextChangeTrackers.forEach {
-                $0.addTrackedObjects([selfUser])
-            }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-            // When
+        syncMOC.performGroupedAndWait { _ in
+            // WHEN
             guard let request = self.sut.nextRequest(for: .v4) else {
                 return XCTFail("expected a request")
             }
@@ -75,7 +72,7 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
 
             XCTAssertEqual(
                 Set(supportedProtocols),
-                Set(selfUser.supportedProtocols.map(\.rawValue))
+                Set(["mls", "proteus"])
             )
         }
 
