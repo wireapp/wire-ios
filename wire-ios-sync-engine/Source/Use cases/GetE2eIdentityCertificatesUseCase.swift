@@ -46,7 +46,6 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
         let identities = try await getWireIdentity(coreCrypto: coreCrypto,
                                                    conversationId: mlsGroupId.data,
                                                    clientIDs: clientIds)
-
         let identitiesAndStatus = await validateUserHandleAndName(for: identities)
 
         return identitiesAndStatus.map { identity, status in
