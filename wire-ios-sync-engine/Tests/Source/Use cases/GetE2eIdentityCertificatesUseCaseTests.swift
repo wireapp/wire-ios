@@ -63,22 +63,23 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     ) -> WireCoreCrypto.WireIdentity {
         return .init(
             clientId: clientID,
-            handle: handle,
+            handle: "wireapp://%40\(handle)",
             displayName: name,
             domain: "local.com",
             certificate: mockCertificate,
             status: status,
-            thumbprint: "thumbprint",
-            serialNumber: "serialNumber",
-            notBefore: 0,
-            notAfter: 0
+            thumbprint: "QrsvPI0PDiJyAgsF-p3HoSyWLGWjyKwMdqlL0zWZOew",
+            serialNumber: "00eac2d1d30f517a891231648a4322dfb2",
+            notBefore: 1709112038,
+            notAfter: 1716888038
         )
     }
 
     func test_CertificateNameAndHandleIsValidated() async throws {
         // Given
-        let selfUserHandle = "@foo"
+        let selfUserHandle = "foo"
         let selfUserName = "Ms Foo"
+        let domain = "local.com"
         let clientID1 = MLSClientID.random()
         let clientID2 = MLSClientID.random()
         let clientID3 = MLSClientID.random()
@@ -92,6 +93,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
             let selfUser = modelHelper.createSelfUser(in: self.stack.syncContext)
             selfUser.handle = selfUserHandle
             selfUser.name = selfUserName
+            selfUser.domain = domain
 
             modelHelper.createSelfClient(id: clientID1.clientID, in: self.stack.syncContext)
             modelHelper.createClient(id: clientID2.clientID, for: selfUser)
@@ -103,29 +105,29 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
 
         // Mock
         let validIdentity = mockIdentity(
-            clientID: clientID1.clientID,
-            handle: "@foo",
+            clientID: clientID1.rawValue,
+            handle: "\(selfUserHandle)@\(domain)",
             name: "Ms Foo",
             status: .valid
         )
 
         let identityWithInvalidHandle = mockIdentity(
-            clientID: clientID2.clientID,
-            handle: "@bar",
+            clientID: clientID2.rawValue,
+            handle: "bar@\(domain)",
             name: "Ms Foo",
             status: .valid
         )
 
         let identityWithInvalidName = mockIdentity(
-            clientID: clientID3.clientID,
-            handle: "@foo",
+            clientID: clientID3.rawValue,
+            handle: "\(selfUserHandle)@\(domain)",
             name: "Ms Bar",
             status: .valid
         )
 
         let identityWithInvalidStatus = mockIdentity(
-            clientID: clientID4.clientID,
-            handle: "@bar",
+            clientID: clientID4.rawValue,
+            handle: "bar@\(domain)",
             name: "Ms Bar",
             status: .revoked
         )
@@ -149,28 +151,28 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         XCTAssertEqual(certificates.count, 4)
 
         let certificate1 = try XCTUnwrap(certificates.first(where: {
-            $0.clientId == clientID1.clientID
+            $0.clientId == clientID1.rawValue
         }))
 
         // Name and handle matched, so it's valid.
         XCTAssertEqual(certificate1.status, .valid)
 
         let certificate2 = try XCTUnwrap(certificates.first(where: {
-            $0.clientId == clientID2.clientID
+            $0.clientId == clientID2.rawValue
         }))
 
         // Handle didn't match, invalid.
         XCTAssertEqual(certificate2.status, .invalid)
 
         let certificate3 = try XCTUnwrap(certificates.first(where: {
-            $0.clientId == clientID3.clientID
+            $0.clientId == clientID3.rawValue
         }))
 
         // Name didn't match, invalid.
         XCTAssertEqual(certificate3.status, .invalid)
 
         let certificate4 = try XCTUnwrap(certificates.first(where: {
-            $0.clientId == clientID4.clientID
+            $0.clientId == clientID4.rawValue
         }))
 
         // Status is revoked, further validation inrelevant.
