@@ -63,8 +63,7 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
                     guard let conversation = await syncContext.perform({
                         ZMConversation.fetch(with: groupID, in: syncContext)
                     }) else {
-                        WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
-                        return
+                        return WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
                     }
 
                     try await updateMLSGroupVerificationStatusUseCase.invoke(for: conversation, groupID: groupID)
@@ -74,5 +73,4 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
             }
         }
     }
-
 }

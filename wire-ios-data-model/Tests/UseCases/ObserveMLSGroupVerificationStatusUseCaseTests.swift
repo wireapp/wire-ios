@@ -53,23 +53,10 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
         super.tearDown()
     }
 
-    func testExample() async throws {
+    func testUpdateGroupVerificationStatusUseCaseIsCalled() throws {
         // Given
-        let mlsGroupID = try await context.perform { try XCTUnwrap(self.conversation.mlsGroupID) }
-
+        let mlsGroupID = try context.performAndWait { try XCTUnwrap(self.conversation.mlsGroupID) }
         mockMLSService.epochChanges_MockValue = .init { continuation in
-
-//            continuation.onTermination = { termination in
-//                            switch termination {
-//                            case .finished:
-//                                // continuation.finish() was called
-//                                print("Stream finished.")
-//                            case .cancelled:
-//                                // Task was cancelled
-//                                print("Stream cancelled.")
-//                            }
-//                        }
-
             continuation.yield(mlsGroupID)
             continuation.finish()
         }
@@ -77,10 +64,15 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
         // When
         sut.invoke()
 
-        fatalError("TODO: finish implementation")
-        if #available(iOS 16.0, *) {
-            try await Task.sleep(for: .seconds(10))
-        }
+        // Then
+        let useCase = try XCTUnwrap(mockUpdateMLSGroupVerificationStatusUseCase)
+        let predicate = NSPredicate { _, _ in useCase.invokeForGroupID_Invocations.count == 1 }
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: nil)
+        wait(for: [expectation], timeout: 5)
+
+        let invocation = try XCTUnwrap(useCase.invokeForGroupID_Invocations.first)
+        XCTAssert(invocation.conversation === conversation)
+        XCTAssertEqual(invocation.groupID, mlsGroupID)
     }
 
     private func setupConversation() {
