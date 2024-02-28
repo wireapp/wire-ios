@@ -519,6 +519,11 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
+        _ = MockActionHandler<GetFeatureConfigsAction>(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
+
         // MLS client has been registered
         self.syncMOC.performAndWait {
             let selfUserClient = createSelfClient()
@@ -529,6 +534,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             // when
             sut.didFinishQuickSync()
         }
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
