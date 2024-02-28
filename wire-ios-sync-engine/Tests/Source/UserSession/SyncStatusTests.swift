@@ -67,22 +67,11 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
     }
 
-    private var syncPhases: [SyncPhase] {
-        return [.fetchingLastUpdateEventID,
-                .fetchingTeams,
-                .fetchingTeamMembers,
-                .fetchingTeamRoles,
-                .fetchingConnections,
-                .fetchingConversations,
-                .fetchingUsers,
-                .fetchingSelfUser,
-                .fetchingLegalHoldStatus,
-                .fetchingLabels,
-                .fetchingMissedEvents]
-    }
-
     func testThatItGoesThroughTheStatesInSpecificOrder() {
         // given
+        var syncPhases = SyncPhase.allCases
+        syncPhases.removeLast() // last phase is '.done' and can not be finished
+
         sut.determineInitialSyncPhase()
 
         syncPhases.forEach { syncPhase in
@@ -142,6 +131,12 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
+        // when
+        sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
 
         // then
         XCTAssertNotNil(lastEventIDRepository.fetchLastEventID())
@@ -232,6 +227,12 @@ final class SyncStatusTests: MessagingTest {
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
         // when
+        sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
+        // when
+        sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
+        // when
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
 
         // then
@@ -291,10 +292,7 @@ final class SyncStatusTests: MessagingTest {
 
     }
 
-}
-
-// MARK: QuickSync
-extension SyncStatusTests {
+    // MARK: - QuickSync
 
     func testThatItStartsQuickSyncWhenPushChannelOpens_PreviousPhaseDone() {
         // given
@@ -498,6 +496,15 @@ extension SyncStatusTests {
         // when
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLabels)
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingFeatureConfig)
+        sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .updateSelfSupportedProtocols)
+        sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .evaluate1on1ConversationsForMLS)
+        sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
 
         // then
         XCTAssertEqual(lastEventIDRepository.fetchLastEventID(), newID)

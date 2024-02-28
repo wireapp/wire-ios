@@ -82,8 +82,8 @@ extension ZMUserSession {
             let response = await self.transportSession.enqueue(request, queue: self.syncManagedObjectContext)
 
             if response.httpStatus == 200 {
-                selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest)
                 _ = await self.syncContext.perform {
+                    selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest)
                     self.syncContext.saveOrRollback()
                 }
                 await MainActor.run {

@@ -175,7 +175,9 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
             return nil
         }
 
-        await context.perform { self.updateUnderlayingMessageBeforeSending(in: context) }
+        let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
+            return self.underlyingMessage
+        }
         return await underlyingMessage?.encryptForTransport(for: conversation, in: context)
     }
 

@@ -259,6 +259,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 sender: conversation.creator,
                 at: conversation.lastServerTimeStamp ?? Date()
             )
+            self.context.enqueueDelayedSave()
         }
     }
 

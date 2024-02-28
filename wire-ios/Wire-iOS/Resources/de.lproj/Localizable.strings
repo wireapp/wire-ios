@@ -1313,6 +1313,10 @@
 "self.settings.technical_report.privacy_warning" = "Detaillierte Protokolle können personenbezogene Daten enthalten.";
 "self.settings.technical_report.no_mail_alert" = "Kein Mail-Client erkannt. Wählen Sie \"OK\" und senden Sie die Protokolle manuell an: ";
 
+"self.settings.technical_report.mail_body.firstline" = "Please fill in the following";
+"self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
+"self.settings.technical_report.mail_body.section2" = "What Happened:";
+"self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
 // Password reset
 "self.settings.password_reset_menu.title" = "Passwort zurücksetzen";
 

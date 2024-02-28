@@ -538,7 +538,18 @@ static NSString *const PrimaryKey = @"primaryKey";
     
     NSArray *assets = [transportData optionalArrayForKey:@"assets"];
     [self updateAssetDataWith:assets authoritative:authoritative];
-    
+
+    NSArray<NSString *> *arrayProtocols = [transportData optionalArrayForKey:@"supported_protocols"];
+    if (arrayProtocols != nil) {
+        NSSet<NSString *> *supportedProtocols = [[NSSet alloc] initWithArray:arrayProtocols];
+        [self setSupportedProtocols:supportedProtocols];
+    } else {
+        // fallback to proteus as default supported protocol,
+        // we don't have swift constants here unfortunately.
+        [self setSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
+    }
+
+
     // We intentionally ignore the preview data.
     //
     // Need to see if we're changing the resolution, but it's currently way too small

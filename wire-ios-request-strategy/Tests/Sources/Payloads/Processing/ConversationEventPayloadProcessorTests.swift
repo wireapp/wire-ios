@@ -57,6 +57,81 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         super.tearDown()
     }
 
+    // MARK: - Process NewConversation Event
+
+    func testProcessPayload_NewConversation_IgnoredWhenConversationAlreadyExists() async throws {
+        // Given
+        let initialName = "foo"
+        let qualifiedID = await syncMOC.perform {
+            BackendInfo.isFederationEnabled = true
+            self.groupConversation.userDefinedName = initialName
+            return self.groupConversation.qualifiedID!
+        }
+        let conversationPayload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            name: "bar"
+        )
+        let eventPayload = Payload.ConversationEvent.stub(
+            data: conversationPayload,
+            qualifiedID: qualifiedID
+        )
+
+        // When
+        await sut.processPayload(eventPayload, in: syncMOC)
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertEqual(self.groupConversation.userDefinedName, initialName)
+        }
+    }
+
+    func testProcessPayload_NewConversation_IgnoredWhenConversationIDIsMissing() async throws {
+        // Given
+        let qualifiedID = QualifiedID.random()
+        let conversationPayload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group
+        )
+        let eventPayload = Payload.ConversationEvent.stub(
+            data: conversationPayload,
+            qualifiedID: nil
+        )
+
+        // When
+        disableZMLogError(true)
+        await sut.processPayload(eventPayload, in: syncMOC)
+        disableZMLogError(false)
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertNil(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
+        }
+    }
+
+    func testProcessPayload_NewConversation_IgnoredWhenTimestampIsMissing() async throws {
+        // Given
+        let qualifiedID = QualifiedID.random()
+        let conversationPayload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group
+        )
+        let eventPayload = Payload.ConversationEvent.stub(
+            data: conversationPayload,
+            timestamp: nil
+        )
+
+        // When
+        disableZMLogError(true)
+        await sut.processPayload(eventPayload, in: syncMOC)
+        disableZMLogError(false)
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertNil(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
+        }
+    }
+
     // MARK: - Group conversations
 
     func testUpdateOrCreateConversation_Group_UpdatesQualifiedID() async throws {

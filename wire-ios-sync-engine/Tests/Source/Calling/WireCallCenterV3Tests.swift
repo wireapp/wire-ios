@@ -1956,6 +1956,22 @@ extension WireCallCenterV3Tests {
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
     }
 
+    func test_SystemMessageIsAppended_WhenProtocolChangesToMLS() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [ZMConversation.messageProtocolKey]
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        let lastMessage = try XCTUnwrap(groupConversation.lastMessage)
+        XCTAssertTrue(lastMessage.isSystem)
+        let systemMessageData = try XCTUnwrap(lastMessage.systemMessageData)
+        XCTAssertEqual(systemMessageData.systemMessageType, .mlsMigrationOngoingCall)
+    }
+
     func test_CallIsClosed_WhenConversationIsDeleted() throws {
         // Given
         groupConversation.isDeletedRemotely = true

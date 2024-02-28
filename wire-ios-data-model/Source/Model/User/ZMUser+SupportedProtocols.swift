@@ -26,8 +26,19 @@ extension ZMUser {
     @NSManaged
     private var primitiveSupportedProtocols: [Int16]?
 
-    /// The messaging protocols that this user can communicate with.
+    /// Objc-C helper method because enum 'MessageProtocol' is not available.
+    @objc(setSupportedProtocols:)
+    func _setSupportedProtocols(_ protocols: Set<String>) {
+        supportedProtocols = Set(protocols.compactMap {
+            guard let messageProtocol = MessageProtocol(rawValue: $0) else {
+                assertionFailure("can not map value \($0) as MessageProtocol!")
+                return nil
+            }
+            return messageProtocol
+        })
+    }
 
+    /// The messaging protocols that this user can communicate with.
     public var supportedProtocols: Set<MessageProtocol> {
         get {
             willAccessValue(forKey: Self.supportedProtocolsKey)

@@ -32,7 +32,7 @@
 "share_extension.input.placeholder" = "Skriv ett meddelande";
 "share_extension.sending_progress.title" = "Skickar…";
 "share_extension.preparing.title" = "Förbereder…";
-"share_extension.no_internet_connection.title" = "Ingen Internet anslutning";
+"share_extension.no_internet_connection.title" = "Ingen internetanslutning";
 "share_extension.not_signed_in.title" = "Du måste logga in på Wire innan du kan dela något";
 "share_extension.not_signed_in.close_button" = "Stäng";
 
@@ -65,7 +65,7 @@
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ har börjat använda flera nya enheter.";
 "share_extension.meta.degraded.dialog_message" = "Vill du skicka ditt meddelande?";
 "share_extension.meta.degraded.cancel_sending_button" = "Do not send";
-"share_extension.meta.degraded.send_anyway_button" = "Send anyway";
+"share_extension.meta.degraded.send_anyway_button" = "Skicka ändå";
 
 "share_extension.meta.legalhold.send_alert_title" = "The conversation is now subject to legal hold.";
 

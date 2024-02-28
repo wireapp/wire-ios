@@ -24,8 +24,9 @@ enum ConsentType: Int {
     case marketing = 2
 }
 
-enum ConsentRequestError: Error {
+public enum ConsentRequestError: Error {
     case unknown
+    case notAvailable
 }
 
 extension ZMUser {
@@ -76,6 +77,10 @@ extension ZMUser {
             guard 200 ... 299 ~= response.httpStatus,
                   let payload = response.payload
             else {
+                if response.httpStatus == 404 {
+                    completion(.failure(ConsentRequestError.notAvailable))
+                    return
+                }
                 let error = response.transportSessionError ?? ConsentRequestError.unknown
                 zmLog.debug("Error fetching consent status: \(error)")
                 completion(.failure(error))
