@@ -139,7 +139,7 @@ final class ResolveOneOnOneConversationUseCaseTests: XCTestCase {
             context: syncContext.notificationContext
         )
 
-        mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_MockMethod = { _ in }
+        
 
         // WHEN
         try await sut.invoke()
