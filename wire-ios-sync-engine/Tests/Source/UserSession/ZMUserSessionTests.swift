@@ -289,7 +289,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // GIVEN
         XCTAssertEqual(thirdPartyServices.uploadCount, 0)
 
-        _ = MockActionHandler<GetFeatureConfigsAction>(
+        let handler = MockActionHandler<GetFeatureConfigsAction>(
             result: .success(()),
             context: syncMOC.notificationContext
         )
@@ -302,7 +302,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 1)
+        withExtendedLifetime(handler) {
+            XCTAssertEqual(thirdPartyServices.uploadCount, 1)
+        }
     }
 
     func testThatItOnlyNotifiesThirdPartyServicesOnce() {
@@ -543,7 +545,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
-        _ = MockActionHandler<GetFeatureConfigsAction>(
+        let handler = MockActionHandler<GetFeatureConfigsAction>(
             result: .success(()),
             context: syncMOC.notificationContext
         )
@@ -562,9 +564,11 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
+        withExtendedLifetime(handler) {
+            XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
+            XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
+            XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
+            XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
+        }
     }
 }
