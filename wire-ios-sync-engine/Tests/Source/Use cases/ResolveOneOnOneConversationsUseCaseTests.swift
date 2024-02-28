@@ -21,7 +21,7 @@ import WireRequestStrategySupport
 import XCTest
 @testable import WireSyncEngine
 
-final class ResolveOneOnOneConversationUseCaseTests: XCTestCase {
+final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -72,11 +72,6 @@ final class ResolveOneOnOneConversationUseCaseTests: XCTestCase {
         }
 
         // Mocks
-        _ = MockActionHandler<GetFeatureConfigsAction>(
-            result: .success(()),
-            context: syncContext.notificationContext
-        )
-
         let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
             result: .success(()),
             context: syncContext.notificationContext
@@ -99,11 +94,6 @@ final class ResolveOneOnOneConversationUseCaseTests: XCTestCase {
         }
 
         // Mocks
-        _ = MockActionHandler<GetFeatureConfigsAction>(
-            result: .success(()),
-            context: syncContext.notificationContext
-        )
-
         let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
             result: .success(()),
             context: syncContext.notificationContext
@@ -128,11 +118,6 @@ final class ResolveOneOnOneConversationUseCaseTests: XCTestCase {
         }
 
         // Mocks
-        _ = MockActionHandler<GetFeatureConfigsAction>(
-            result: .success(()),
-            context: syncContext.notificationContext
-        )
-
         let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
             result: .success(()),
             context: syncContext.notificationContext

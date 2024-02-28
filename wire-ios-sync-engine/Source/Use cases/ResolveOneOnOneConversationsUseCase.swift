@@ -32,9 +32,6 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
     let resolver: OneOnOneResolverInterface
 
     func invoke() async throws {
-        var getFeatureConfigAction = GetFeatureConfigsAction()
-        try await getFeatureConfigAction.perform(in: context.notificationContext)
-
         let (oldProtocols, newProtocols) = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
             let oldProtocols = selfUser.supportedProtocols
