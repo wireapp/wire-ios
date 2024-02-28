@@ -20,7 +20,7 @@ import WireDataModel
 
 // MARK: - Initial sync
 
-@objc public protocol ZMInitialSyncCompletionObserver {
+@objc public protocol ZMInitialSyncCompletionObserver: NSObjectProtocol {
     func initialSyncCompleted()
 }
 

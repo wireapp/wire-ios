@@ -34,11 +34,13 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         mockConversation.securityLevel = .notSecure
 
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
+        mockSelfUser.remoteIdentifier = .init()
         mockSelfUser.handle = nil
 
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
 
         otherUser = MockUserType.createUser(name: "Bruno")
+        otherUser.remoteIdentifier = .init()
         otherUser.isConnected = true
         otherUser.handle = "bruno"
         otherUser.accentColorValue = .brightOrange
