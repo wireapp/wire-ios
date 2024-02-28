@@ -155,7 +155,7 @@ final class ZMUserConsentTests: DatabaseTest {
         }
 
         let receivedError = customExpectation(description: "received error")
-
+// WHEN
         selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
             switch result {
             case .failure(let error):
