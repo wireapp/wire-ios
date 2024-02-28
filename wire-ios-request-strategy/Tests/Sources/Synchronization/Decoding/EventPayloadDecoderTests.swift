@@ -30,7 +30,21 @@ final class EventPayloadDecoderTests: XCTestCase {
 
         // then
         XCTAssertEqual(book.title, "Hello World!")
-        XCTAssertEqual(book.published.description, "2024-01-04 10:34:56 +0000")
+        let expectedPublished = try XCTUnwrap(
+            Calendar.current.date(
+                from: .init(
+                    timeZone: .init(secondsFromGMT: 0),
+                    year: 2024,
+                    month: 1,
+                    day: 4,
+                    hour: 10,
+                    minute: 34,
+                    second: 56,
+                    nanosecond: 780_000_000
+                )
+            )
+        )
+        XCTAssertEqual(book.published.timeIntervalSince1970, expectedPublished.timeIntervalSince1970, accuracy: 0.0001)
     }
 
     func testDecodeDataFails() throws {
@@ -54,7 +68,21 @@ final class EventPayloadDecoderTests: XCTestCase {
 
         // then
         XCTAssertEqual(book.title, "Hello World!")
-        XCTAssertEqual(book.published.description, "2024-01-04 10:34:56 +0000")
+        let expectedPublished = try XCTUnwrap(
+            Calendar.current.date(
+                from: .init(
+                    timeZone: .init(secondsFromGMT: 0),
+                    year: 2024,
+                    month: 1,
+                    day: 4,
+                    hour: 10,
+                    minute: 34,
+                    second: 56,
+                    nanosecond: 780_000_000
+                )
+            )
+        )
+        XCTAssertEqual(book.published.timeIntervalSince1970, expectedPublished.timeIntervalSince1970, accuracy: 0.0001)
     }
 
     func testDecodeDictionaryFails() throws {

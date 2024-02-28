@@ -24,7 +24,7 @@ class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGe
     let context: NSManagedObjectContext
 
     private var pendingActions: [Action] = []
-    private var token: Any?
+    private var token: NSObjectProtocol?
 
     init(context: NSManagedObjectContext) {
         self.context = context

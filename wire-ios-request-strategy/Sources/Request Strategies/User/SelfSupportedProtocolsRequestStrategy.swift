@@ -61,17 +61,6 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
         WireLogger.sync.info("start slow sync phase: \(syncPhase.description)")
 
-        // Update supported protocols on user self.
-        // Unfortunately this method is called often and we only want to update once, so we check the status.
-        if requestSync.status != .inProgress {
-            WireLogger.sync.info("slow sync now updates supported protocols")
-            let service = SupportedProtocolsService(
-                featureRepository: FeatureRepository(context: managedObjectContext),
-                userRepository: userRepository
-            )
-            service.updateSupportedProtocols()
-        }
-
         requestSync.readyForNextRequestIfNotBusy()
         return requestSync.nextRequest(for: apiVersion)
     }
@@ -83,12 +72,17 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             return nil
         }
 
-        let supportedProtocols = userRepository.selfUser().supportedProtocols
-        assert(!supportedProtocols.isEmpty, "expected supported protocols to be set before updating")
+        let service = SupportedProtocolsService(
+            featureRepository: FeatureRepository(context: managedObjectContext),
+            userRepository: userRepository
+        )
+
+        let calculatedProtocols = service.calculateSupportedProtocols()
+        assert(!calculatedProtocols.isEmpty, "calculated empty supported protocols to be set before updating")
 
         let transportBuilder = SelfSupportedProtocolsRequestBuilder(
             apiVersion: apiVersion,
-            supportedProtocols: supportedProtocols
+            supportedProtocols: calculatedProtocols
         )
 
         guard let request = transportBuilder.buildTransportRequest() else {
@@ -109,8 +103,15 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             return
         }
 
+        let service = SupportedProtocolsService(
+            featureRepository: FeatureRepository(context: managedObjectContext),
+            userRepository: userRepository
+        )
+
         switch response.result {
         case .success:
+            let selfUser = userRepository.selfUser()
+            selfUser.supportedProtocols = service.calculateSupportedProtocols()
             finishSlowSync()
         default:
             failSlowSync()

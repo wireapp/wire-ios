@@ -61,7 +61,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         // Mock
-        _ = MockActionHandler<SyncMLSOneToOneConversationAction>(
+        let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
             result: .success(mlsGroupID),
             context: uiMOC.notificationContext
         )
@@ -89,6 +89,7 @@ final class OneOnOneMigratorTests: XCTestCase {
             XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
             XCTAssertNil(proteusConversation.oneOnOneUser)
         }
+        withExtendedLifetime(handler) {}
     }
 
     func test_migrateToMLS_conversationAlreadyExists() async throws {
@@ -107,7 +108,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         // Mock
-        _ = MockActionHandler<SyncMLSOneToOneConversationAction>(
+        let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
             result: .success(mlsGroupID),
             context: uiMOC.notificationContext
         )
@@ -131,6 +132,7 @@ final class OneOnOneMigratorTests: XCTestCase {
             XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
             XCTAssertNil(proteusConversation.oneOnOneUser)
         }
+        withExtendedLifetime(handler) {}
     }
 
     func test_migrateToMLS_moveMessages() async throws {
@@ -149,7 +151,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         // Mock
-        _ = MockActionHandler<SyncMLSOneToOneConversationAction>(
+        let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
             result: .success(mlsGroupID),
             context: uiMOC.notificationContext
         )
@@ -189,6 +191,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
             XCTAssertNil(proteusConversation.lastMessage)
         }
+        withExtendedLifetime(handler) {}
     }
 
     // MARK: - Core Data Objects

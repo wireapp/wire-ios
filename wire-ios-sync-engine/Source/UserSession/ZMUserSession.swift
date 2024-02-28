@@ -50,9 +50,9 @@ public protocol UserSessionLogoutDelegate: NSObjectProtocol {
 }
 
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
-    & UserSessionSelfUserClientDelegate
-    & UserSessionLogoutDelegate
-    & UserSessionAppLockDelegate
+& UserSessionSelfUserClientDelegate
+& UserSessionLogoutDelegate
+& UserSessionAppLockDelegate
 
 @objcMembers
 public final class ZMUserSession: NSObject {
@@ -238,6 +238,8 @@ public final class ZMUserSession: NSObject {
         }
     }
 
+    let useCaseFactory: UseCaseFactoryProtocol
+
     weak var delegate: UserSessionDelegate?
 
     // TODO remove this property and move functionality to separate protocols under UserSessionDelegate
@@ -366,10 +368,11 @@ public final class ZMUserSession: NSObject {
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
+        sharedUserDefaults: UserDefaults,
+        useCaseFactory: UseCaseFactoryProtocol? = nil,
         cRLsChecker: CertificateRevocationListsChecker? = nil,
         cRLsDistributionPointsObserver: CRLsDistributionPointsObserver? = nil,
-        observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol? = nil,
-        sharedUserDefaults: UserDefaults
+        observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol? = nil
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -440,6 +443,9 @@ public final class ZMUserSession: NSObject {
             userID: userId
         )
 
+        self.useCaseFactory = useCaseFactory ?? UseCaseFactory(context: coreDataStack.syncContext,
+                                                               supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
+                                                               oneOnOneResolver: OneOnOneResolver(mlsService: self.mlsService))
         let e2eIVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         self.updateMLSGroupVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
             e2eIVerificationStatusService: e2eIVerificationStatusService,
@@ -526,23 +532,6 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
-        updateSupportedProtocolsIfNeeded()
-    }
-
-    private func updateSupportedProtocolsIfNeeded() {
-        let recurringAction = RecurringAction(
-            id: "\(account.userIdentifier).updateSupportedProtocols",
-            interval: .oneDay
-        ) { [weak self] in
-            guard let context = self?.syncContext else { return }
-
-            context.perform {
-                let service = SupportedProtocolsService(context: context)
-                service.updateSupportedProtocols()
-            }
-        }
-
-        recurringActionService.registerAction(recurringAction)
     }
 
     private func configureTransportSession() {
@@ -890,7 +879,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         mlsService.commitPendingProposalsIfNeeded()
-        fetchFeatureConfigs()
+
+        WaitingGroupTask(context: syncContext) { [self] in
+            do {
+                var getFeatureConfigAction = GetFeatureConfigsAction()
+                try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
+                try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+            } catch {
+                WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+            }
+        }
+
         recurringActionService.performActionsIfNeeded()
 
         Task {
@@ -947,27 +946,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
-    }
-
-    private func fetchFeatureConfigs() {
-        let action = GetFeatureConfigsAction { [weak self] result in
-            switch result {
-            case .success:
-                guard let context = self?.syncContext else {
-                    return
-                }
-
-                context.perform {
-                    let service = SupportedProtocolsService(context: context)
-                    service.updateSupportedProtocols()
-                }
-
-            case .failure(let reason):
-                Logging.network.error("Failed to fetch feature configs: \(String(describing: reason))")
-            }
-        }
-
-        action.send(in: syncContext.notificationContext)
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {

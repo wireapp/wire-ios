@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireDataModelSupport
 @testable import WireRequestStrategy
 
 class ProteusConversationParticipantsServiceTests: MessagingTestBase {
@@ -68,7 +69,7 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_Fails() async {
         // GIVEN
-        _ = MockActionHandler<AddParticipantAction>(
+        let handler = MockActionHandler<AddParticipantAction>(
             result: .failure(.unknown),
             context: uiMOC.notificationContext
         )
@@ -78,13 +79,14 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
             // WHEN
             try await sut.addParticipants([user], to: conversation)
         }
+        withExtendedLifetime(handler) {}
     }
 
     func test_AddParticipants_MapsFederationErrors_UnreachableDomains() async {
         // GIVEN
         let domains = Set(["domain.com"])
 
-        _ = MockActionHandler<AddParticipantAction>(
+        let handler = MockActionHandler<AddParticipantAction>(
             result: .failure(.unreachableDomains(domains)),
             context: uiMOC.notificationContext
         )
@@ -94,13 +96,14 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
             // WHEN
             try await sut.addParticipants([user], to: conversation)
         }
+        withExtendedLifetime(handler) {}
     }
 
     func test_AddParticipants_MapsFederationErrors_NonFederatingDomains() async {
         // GIVEN
         let domains = Set(["domain.com"])
 
-        _ = MockActionHandler<AddParticipantAction>(
+        let handler = MockActionHandler<AddParticipantAction>(
             result: .failure(.nonFederatingDomains(domains)),
             context: uiMOC.notificationContext
         )
@@ -110,6 +113,7 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
             // WHEN
             try await sut.addParticipants([user], to: conversation)
         }
+        withExtendedLifetime(handler) {}
     }
 
     // MARK: - Remove Participant
@@ -130,7 +134,7 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_RemoveParticipant_Fails() async {
         // GIVEN
-        _ = MockActionHandler<RemoveParticipantAction>(
+        let handler = MockActionHandler<RemoveParticipantAction>(
             result: .failure(.unknown),
             context: uiMOC.notificationContext
         )
@@ -140,6 +144,7 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
             // WHEN
             try await sut.removeParticipant(user, from: conversation)
         }
+        withExtendedLifetime(handler) {}
     }
 
 }
