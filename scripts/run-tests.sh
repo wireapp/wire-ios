@@ -24,10 +24,17 @@ XCODEBUILD="xcrun xcodebuild"
 
 # script is work-in-progress, it just runs the sync-engine tests for now
 
+SCHEMES=(WireSystem WireTesting WireUtilities WireCryptobox WireTransport WireLinkPreview WireImages WireProtos WireMockTransport WireDataModel WireRequestStrategy WireShareEngine WireSyncEngine Wire-iOS)
+
+# TEMP
+SCHEMES=(WireSystem WireUtilities WireTransport WireDataModel WireRequestStrategy WireShareEngine WireSyncEngine Wire-iOS)
+
+for SCHEME in ${SCHEMES[@]}; do
 (
     cd "$REPO_ROOT"
-    echo "Building WireSyncEngine..."
-    xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 14'
-    echo "Testing WireSyncEngine..."
-    xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 14'
+    echo "Building $SCHEME ..."
+    xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme $SCHEME -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 14'
+    echo "Testing $SCHEME ..."
+    xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme $SCHEME -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 14'
 )
+done
