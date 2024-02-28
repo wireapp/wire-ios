@@ -68,6 +68,8 @@
 @property (nonatomic) id token;
 @end
 
+// TODO [WPB-765]: flaky?
+
 @implementation ClientManagementTests
 
 - (void)setUp

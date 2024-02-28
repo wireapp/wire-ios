@@ -19,6 +19,8 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
+// TODO [WPB-765]: flaky?
+
 final class PasscodeSetupViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: Properties
