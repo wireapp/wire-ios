@@ -100,7 +100,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     private var loginObservers: [Any] = []
     private var unauthenticatedSessionObserver: Any?
     private var postLoginObservers: [Any] = []
-    private var initialSyncObserver: Any?
     private var pendingAlert: AuthenticationCoordinatorAlert?
     private var registrationStatus: RegistrationStatus {
         return unauthenticatedSession.registrationStatus
@@ -151,7 +150,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         loginObservers.removeAll()
         unauthenticatedSessionObserver = nil
         postLoginObservers.removeAll()
-        initialSyncObserver = nil
         isTornDown = true
     }
 
@@ -215,7 +213,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
     func sessionManagerCreated(userSession: ZMUserSession) {
         log.info("Session manager created session: \(userSession)")
         currentPostRegistrationFields().apply(sendPostRegistrationFields)
-        initialSyncObserver = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
@@ -234,11 +231,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
         loginObservers = [
             sessionManager.addSessionManagerCreatedSessionObserver(self)
         ]
-
-        if let userSession = SessionManager.shared?.activeUserSession {
-            initialSyncObserver = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
-        }
-
         sessionManager.loginDelegate = self
         registrationStatus.delegate = self
     }

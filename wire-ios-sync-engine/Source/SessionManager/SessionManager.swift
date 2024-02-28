@@ -60,6 +60,7 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
+    func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?)
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
@@ -1308,6 +1309,12 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
         let account = accountManager.account(with: accountId)
         guard account == accountManager.selectedAccount else { return }
         delegate?.sessionManagerDidFailToLogin(error: error)
+    }
+
+    public func clientCompletedInitialSync(accountId: UUID) {
+        let account = accountManager.account(with: accountId)
+        guard account == accountManager.selectedAccount else { return }
+        delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
     }
 }
 

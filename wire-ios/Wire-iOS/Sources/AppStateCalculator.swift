@@ -229,6 +229,12 @@ extension AppStateCalculator: SessionManagerDelegate {
     func sessionManagerAsksToRetryStart() {
         transition(to: .retryStart)
     }
+
+    func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession))
+        }
+    }
 }
 
 // MARK: - AuthenticationCoordinatorDelegate

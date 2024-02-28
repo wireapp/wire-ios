@@ -182,6 +182,19 @@ final class AppStateCalculatorTests: XCTestCase {
         XCTAssertTrue(delegate.wasNotified)
     }
 
+    func testThatAppStateChanges_OnDidCompleteInitialSync() {
+        // GIVEN
+        let userSession = UserSessionMock()
+        sut.applicationDidBecomeActive()
+
+        // WHEN
+        sut.sessionManagerDidCompleteInitialSync(for: userSession)
+
+        // THEN
+        XCTAssertEqual(sut.appState, .authenticated(userSession))
+        XCTAssertTrue(delegate.wasNotified)
+    }
+
     // MARK: - Tests AppState Changes
 
     func testApplicationDontTransit_WhenAppStateDontChanges() {
