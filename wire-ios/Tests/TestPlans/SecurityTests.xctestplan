@@ -84,8 +84,9 @@
         "value" : ""
       },
       {
+        "enabled" : false,
         "key" : "RECORDING_SNAPSHOTS",
-        "value" : "NO"
+        "value" : "YES"
       },
       {
         "key" : "IMAGE_DIFF_DIR",

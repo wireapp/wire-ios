@@ -76,4 +76,5 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             action.fail(with: .unknown(status: status, label: label ?? ""))
         }
     }
+
 }
