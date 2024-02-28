@@ -36,6 +36,7 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
         setupConversation()
         mockMLSService = .init()
         mockUpdateMLSGroupVerificationStatusUseCase = .init()
+        mockUpdateMLSGroupVerificationStatusUseCase.invokeForGroupID_MockMethod = { _, _ in }
         sut = .init(
             mlsService: mockMLSService,
             updateMLSGroupVerificationStatusUseCase: mockUpdateMLSGroupVerificationStatusUseCase,
@@ -69,15 +70,16 @@ final class ObserveMLSGroupVerificationStatusUseCaseTests: ZMBaseManagedObjectTe
 //                            }
 //                        }
 
-            continuation.yield(conversation.mlsGroupID!)
+            continuation.yield(mlsGroupID)
             continuation.finish()
         }
 
         // When
         sut.invoke()
 
+        fatalError("TODO: finish implementation")
         if #available(iOS 16.0, *) {
-            try await Task.sleep(for: .seconds(1000))
+            try await Task.sleep(for: .seconds(10))
         }
     }
 
