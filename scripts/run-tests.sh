@@ -22,13 +22,7 @@ set -Eeuo pipefail
 REPO_ROOT=$(git rev-parse --show-toplevel)
 XCODEBUILD="xcrun xcodebuild"
 
-# script is work-in-progress, it just runs the sync-engine tests for now
-
 SCHEMES=(WireSystem WireTesting WireUtilities WireCryptobox WireTransport WireLinkPreview WireImages WireProtos WireMockTransport WireDataModel WireRequestStrategy WireShareEngine WireSyncEngine Wire-iOS)
-
-# TEMP
-SCHEMES=(WireSystem WireUtilities WireTransport WireDataModel WireRequestStrategy WireShareEngine WireSyncEngine Wire-iOS)
-
 for SCHEME in ${SCHEMES[@]}; do
 (
     cd "$REPO_ROOT"
