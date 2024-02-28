@@ -28,24 +28,25 @@ extension WireCallCenterV3: ZMConversationObserver {
     public func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         handleSecurityLevelChange(changeInfo)
         handleActiveParticipantsChange(changeInfo)
+        informMLSMigrationFinalizedIfNeeded(changeInfo)
         endCallIfNeeded(changeInfo)
     }
 
     private func handleSecurityLevelChange(_ changeInfo: ConversationChangeInfo) {
         guard
-            changeInfo.securityLevelChanged,
+            changeInfo.securityLevelChanged || changeInfo.mlsVerificationStatusChanged,
             let conversationId = changeInfo.conversation.avsIdentifier,
             let previousSnapshot = callSnapshots[conversationId]
         else {
             return
         }
 
-        if changeInfo.conversation.securityLevel == .secureWithIgnored, isActive(conversationId: conversationId) {
+        if changeInfo.conversation.isDegraded, isActive(conversationId: conversationId) {
             // If an active call degrades we end it immediately
             return closeCall(conversationId: conversationId, reason: .securityDegraded)
         }
 
-        let updatedCallState = previousSnapshot.callState.update(withSecurityLevel: changeInfo.conversation.securityLevel)
+        let updatedCallState = previousSnapshot.callState.update(isConversationDegraded: changeInfo.conversation.isDegraded)
 
         if updatedCallState != previousSnapshot.callState {
             callSnapshots[conversationId] = previousSnapshot.update(with: updatedCallState)
@@ -72,6 +73,23 @@ extension WireCallCenterV3: ZMConversationObserver {
         }
 
         handleClientsRequest(conversationId: conversationId, completion: completion)
+    }
+
+    private func informMLSMigrationFinalizedIfNeeded(_ changeInfo: ConversationChangeInfo) {
+        let conversation = changeInfo.conversation
+
+        guard
+            changeInfo.messageProtocolChanged,
+            conversation.messageProtocol == .mls,
+            let context = conversation.managedObjectContext
+        else {
+            return
+        }
+
+        conversation.appendMLSMigrationOngoingCallSystemMessage(
+            sender: ZMUser.selfUser(in: context),
+            at: .now
+        )
     }
 
     private func endCallIfNeeded(_ changeInfo: ConversationChangeInfo) {
@@ -124,7 +142,7 @@ extension WireCallCenterV3 {
             let isDegraded = self.isDegraded(conversationId: conversationId)
             let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
             let members = [AVSCallMember(client: client)]
-            let isConferenceCall = conversationType == .conference
+            let isConferenceCall = conversationType.isConference
 
             self.createSnapshot(callState: callState, members: members, callStarter: client.avsIdentifier, video: isVideoCall, for: conversationId, isConferenceCall: isConferenceCall)
             self.handle(callState: callState, conversationId: conversationId)

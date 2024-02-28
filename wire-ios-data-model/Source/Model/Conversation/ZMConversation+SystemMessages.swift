@@ -134,6 +134,24 @@ extension ZMConversation {
                             domains: domains)
     }
 
+    // MARK: - Conversation verification status
+
+    public func appendConversationVerifiedSystemMessage(sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(type: .conversationIsVerified,
+                            sender: sender,
+                            users: nil,
+                            clients: nil,
+                            timestamp: timestamp)
+    }
+
+    public func appendConversationDegradedSystemMessage(sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(type: .conversationIsDegraded,
+                            sender: sender,
+                            users: nil,
+                            clients: nil,
+                            timestamp: timestamp)
+    }
+
     // MARK: - MLS Migration
 
     public func appendMLSMigrationFinalizedSystemMessage(
@@ -164,14 +182,13 @@ extension ZMConversation {
     }
 
     public func appendMLSMigrationOngoingCallSystemMessage(
-        users: Set<ZMUser>,
         sender: ZMUser,
         at timestamp: Date
     ) {
         appendSystemMessage(
             type: .mlsMigrationOngoingCall,
             sender: sender,
-            users: users,
+            users: nil,
             clients: nil,
             timestamp: timestamp
         )

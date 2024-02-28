@@ -27,7 +27,7 @@ protocol ActiveCallRouterProtocol: AnyObject {
     func minimizeCall(animated: Bool, completion: Completion?)
     func showCallTopOverlay(for conversation: ZMConversation)
     func hideCallTopOverlay()
-    func presentSecurityDegradedAlert(degradedUser: UserType?)
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason)
     func presentUnsupportedVersionAlert()
 }
 
@@ -150,9 +150,15 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     // MARK: - Alerts
-    func presentSecurityDegradedAlert(degradedUser: UserType?) {
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason) {
         executeOrSchedulePostCallAction { [weak self] in
-            let alert = UIAlertController.degradedCall(degradedUser: degradedUser, callEnded: true)
+            let alert: UIAlertController
+            switch reason {
+            case .degradedUser(user: let user):
+                alert = UIAlertController.degradedCall(degradedUser: user?.value, callEnded: true)
+            case .invalidCertificate:
+                alert = UIAlertController.degradedMLSConference(conferenceEnded: true)
+            }
             self?.rootViewController.present(alert, animated: true)
         }
     }

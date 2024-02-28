@@ -21,8 +21,6 @@ import WireDataModel
 import WireSystem
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "ProfileViewControllerViewModel")
-
 enum ProfileViewControllerContext {
     case search
     case groupConversation
@@ -48,7 +46,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     weak var backButtonTitleDelegate: BackButtonTitleDelegate?
 
-    private var observerToken: Any?
+    private var observerToken: NSObjectProtocol?
     weak var viewModelDelegate: ProfileViewControllerViewModelDelegate?
 
     init(user: UserType,
@@ -222,13 +220,6 @@ final class ProfileViewControllerViewModel: NSObject {
 
     // MARK: - Factories
 
-    func makeUserNameDetailViewModel() -> UserNameDetailViewModel {
-        // swiftlint:disable todo_requires_jira_link
-        // TODO: add addressBookEntry to ZMUser
-        // swiftlint:enable todo_requires_jira_link
-        return UserNameDetailViewModel(user: user, fallbackName: user.name ?? "", addressBookName: (user as? ZMUser)?.addressBookEntry?.cachedName)
-    }
-
     var profileActionsFactory: ProfileActionsFactory {
         return ProfileActionsFactory(user: user, viewer: viewer, conversation: conversation, context: context)
     }
@@ -268,17 +259,11 @@ final class ProfileViewControllerViewModel: NSObject {
 }
 
 extension ProfileViewControllerViewModel: UserObserving {
+
     func userDidChange(_ note: UserChangeInfo) {
-        if note.trustLevelChanged {
-            viewModelDelegate?.updateShowVerifiedShield()
-        }
 
         if note.legalHoldStatusChanged {
             viewModelDelegate?.setupNavigationItems()
-        }
-
-        if note.nameChanged {
-            viewModelDelegate?.updateTitleView()
         }
 
         if note.user.isAccountDeleted || note.connectionStateChanged {
@@ -288,16 +273,15 @@ extension ProfileViewControllerViewModel: UserObserving {
 }
 
 extension ProfileViewControllerViewModel: BackButtonTitleDelegate {
+
     func suggestedBackButtonTitle(for controller: ProfileViewController?) -> String? {
         return user.name?.uppercasedWithCurrentLocale
     }
 }
 
 protocol ProfileViewControllerViewModelDelegate: AnyObject {
-    func updateShowVerifiedShield()
     func setupNavigationItems()
     func updateFooterViews()
-    func updateTitleView()
     func returnToPreviousScreen()
     func presentError(_ error: LocalizedError)
 }

@@ -52,7 +52,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         mockEncryptionService = MockMLSEncryptionServiceInterface()
         mockDecryptionService = MockMLSDecryptionServiceInterface()
         mockMLSActionExecutor = MockMLSActionExecutor()
@@ -65,6 +65,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         privateUserDefaults = PrivateUserDefaults(userID: userIdentifier, storage: userDefaultsTestSuite)
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
 
+        mockCoreCrypto.e2eiIsEnabledCiphersuite_MockValue = false
         mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             return 100
         }
@@ -512,7 +513,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 0.5)
         XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
-        XCTAssertEqual(sut.backendPublicKeys, backendPublicKeys)
     }
 
     // MARK: - Adding participants
@@ -1078,14 +1078,18 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subgroupInvocations.first?.type, .conference)
         XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
 
-        // Then we try to commit pending propsoals twice, once for the subgroup, once for the parent
+        // Then we try to commit pending proposals twice, once for the subgroup, once for the parent
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
         let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
-        XCTAssertEqual(id1, subgroupID)
+
+        // there is no guarantee which proposal is finished first
+        XCTAssertTrue([subgroupID, parentGroupdID].contains(id1))
         XCTAssertEqual(commitTime1.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
         let (id2, commitTime2) = try XCTUnwrap(mockCommitPendingProposalArguments.last)
-        XCTAssertEqual(id2, parentGroupdID)
+
+        // there is no guarantee which proposal is finished first
+        XCTAssertTrue([subgroupID, parentGroupdID].contains(id2))
         XCTAssertEqual(commitTime2.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
         await uiMOC.perform {
@@ -1758,6 +1762,44 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
     }
 
+    func test_ProcessWelcomeMessage_PublishesNewDistributionPoints() async throws {
+        // Given
+        let distributionPoint = "example.domain.com"
+        let message = Data.random().base64EncodedString()
+
+        // Mock processing welcome message return new distribution point
+        mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
+            return .init(
+                id: .random(),
+                crlNewDistributionPoints: [distributionPoint]
+            )
+        }
+
+        // Mock valid key packages count
+        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
+            return UInt64(self.sut.targetUnclaimedKeyPackageCount)
+        }
+
+        // Mock new distribution points publishers
+        mockDecryptionService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>().eraseToAnyPublisher()
+
+        mockMLSActionExecutor.mockOnNewCRLsDistributionPoints = PassthroughSubject<CRLsDistributionPoints, Never>().eraseToAnyPublisher
+
+        // Expect to receive new distribution point value
+        let expectation = XCTestExpectation(description: "received value")
+        let cancellable = sut.onNewCRLsDistributionPoints().sink { value in
+            XCTAssertEqual(value, CRLsDistributionPoints(from: [distributionPoint]))
+            expectation.fulfill()
+        }
+
+        // When
+        _ = try await sut.processWelcomeMessage(welcomeMessage: message)
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 0.5)
+        cancellable.cancel()
+    }
+
     // MARK: - Update key material
 
     func test_UpdateKeyMaterial() async throws {
@@ -2054,6 +2096,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subgroupID = MLSGroupID.random()
         let epoch = 0
         let epochTimestamp = Date()
+        let externalSender = Data.random()
 
         mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
             return MLSSubgroup(
@@ -2066,7 +2109,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
 
-        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, _ in
+        mockCoreCrypto.getExternalSenderConversationId_MockMethod = { groupID in
+            XCTAssertEqual(groupID, parentID.data)
+            return externalSender
+        }
+
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, config in
+            XCTAssertEqual(config.externalSenders, [externalSender])
             XCTAssertEqual(groupID, subgroupID.data)
         }
 
@@ -2120,6 +2169,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subgroupID = MLSGroupID.random()
         let epoch = 1
         let epochTimestamp = Date(timeIntervalSinceNow: -.oneDay)
+        let externalSender = Data.random()
 
         mockActionsProvider.deleteSubgroupConversationIDDomainSubgroupTypeContext_MockMethod = { _, _, _, _ in
             // no-op
@@ -2136,7 +2186,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
 
-        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, _ in
+        mockCoreCrypto.getExternalSenderConversationId_MockMethod = { groupID in
+            XCTAssertEqual(groupID, parentID.data)
+            return externalSender
+        }
+
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, config in
+            XCTAssertEqual(config.externalSenders, [externalSender])
             XCTAssertEqual(groupID, subgroupID.data)
         }
 
@@ -2540,6 +2596,40 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         XCTAssertEqual(receivedConferenceInfo, expectedConferenceInfo)
+    }
+
+    // MARK: - On new distribution points
+
+    func test_OnNewDistributionPoints_InterleavesSources() throws {
+        // Given
+        let dp1 = try XCTUnwrap(CRLsDistributionPoints(from: ["acme.dp1.com"]))
+        let dp2 = try XCTUnwrap(CRLsDistributionPoints(from: ["acme.dp2.com"]))
+        let dp3 = try XCTUnwrap(CRLsDistributionPoints(from: ["acme.dp3.com"]))
+
+        // Mock new distribution points
+        let newDistributionPointsFromDecryptionService = PassthroughSubject<CRLsDistributionPoints, Never>()
+        mockDecryptionService.onNewCRLsDistributionPoints_MockValue = newDistributionPointsFromDecryptionService.eraseToAnyPublisher()
+
+        let newDistributionPointsFromActionExecutor = PassthroughSubject<CRLsDistributionPoints, Never>()
+        mockMLSActionExecutor.mockOnNewCRLsDistributionPoints = newDistributionPointsFromActionExecutor.eraseToAnyPublisher
+
+        // Collect sent values
+        var receivedDPs = [CRLsDistributionPoints]()
+        let expectation = XCTestExpectation(description: "received new distribution points")
+        let cancellable = sut.onNewCRLsDistributionPoints().collect(3).sink {
+            receivedDPs = $0
+            expectation.fulfill()
+        }
+
+        // When
+        newDistributionPointsFromDecryptionService.send(dp1)
+        newDistributionPointsFromActionExecutor.send(dp2)
+        newDistributionPointsFromDecryptionService.send(dp3)
+
+        // Then
+        wait(for: [expectation], timeout: 0.5)
+        cancellable.cancel()
+        XCTAssertEqual(receivedDPs, [dp1, dp2, dp3])
     }
 
     // MARK: - Self group

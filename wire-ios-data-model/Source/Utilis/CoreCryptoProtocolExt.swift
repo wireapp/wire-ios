@@ -47,6 +47,8 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func conversationExists(conversationId: Data) async -> Bool
 
+    func getExternalSender(conversationId: Data) async throws -> Data
+
     func createConversation(conversationId: Data, creatorCredentialType: WireCoreCrypto.MlsCredentialType, config: WireCoreCrypto.ConversationConfiguration) async throws
 
     func decryptMessage(conversationId: Data, payload: Data) async throws -> WireCoreCrypto.DecryptedMessage
