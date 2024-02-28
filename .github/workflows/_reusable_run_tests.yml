@@ -258,9 +258,10 @@ jobs:
           echo "Building Wire-iOS..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | bundle exec xcpretty
           echo "Testing Wire-iOS..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan AllTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild.log |  bundle exec xcpretty --report junit --output build/reports/Wire-iOS-EN.junit
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan GermanLocaleTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild_de.log |  bundle exec xcpretty --report junit --output build/reports/Wire-iOS-DE.junit
-          exit ${PIPESTATUS[0]}
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan AllTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS-EN.junit
+          FIRST_STATUS = ${PIPESTATUS[0]}
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan GermanLocaleTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild_de.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS-DE.junit
+          exit $FIRST_STATUS || ${PIPESTATUS[0]}
 
       - name: Upload Failed snapshots
         uses: actions/upload-artifact@v3
