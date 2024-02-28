@@ -67,8 +67,6 @@ public final class AVSWrapper: AVSWrapperType {
         return {}
     }()
 
-
-    var getConferenceInfo: (mlsConversation: Bool, MLSConferenceInfo?)?
     private static let logger = Logger(subsystem: "VoIP Push", category: "AVSWrapper")
 
     /// Creates the wrapper around `wcall`.
@@ -395,25 +393,18 @@ public final class AVSWrapper: AVSWrapperType {
 
     private let requestClientsHandler: Handler.RequestClients = { handle, conversationIdRef, contextRef in
         AVSWrapper.withCallCenter(contextRef, conversationIdRef) { (callCenter, conversationId: String) in
-            
+
             // This handler is called once per call, but the participants may be added or removed from the
             // conversation during this time. Therefore we store the completion so that it can be re-invoked
             // with an updated client list.
             let conversationId = AVSIdentifier.from(string: conversationId)
 
             let completion: (String) -> Void = { (clients: String) in
-                callCenter.
-                let conversationIsMLS, conferenceInfo = callCenter.getConferenceInfo?(conversationId) ?? (false, nil)
-
-                if conversationIsMLS {
-                    let info = MLSConferenceInfo(epoch: <#T##UInt64#>, keyData: <#T##Data#>, members: <#T##[MLSConferenceInfo.Member]#>)
-                    setMLSConferenceInfo(conversationId: conversationId, info: info)
-                } else {
+                if !callCenter.setMLSConferanceInfoIfNeeded(for: conversationId) {
                     // PROTEUS
                     wcall_set_clients_for_conv(handle, conversationIdRef, clients)
                 }
             }
-
 
             callCenter.clientsRequestCompletionsByConversationId[conversationId] = completion
             callCenter.handleClientsRequest(conversationId: conversationId, completion: completion)

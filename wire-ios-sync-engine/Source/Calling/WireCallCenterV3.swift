@@ -954,14 +954,49 @@ extension WireCallCenterV3 {
         return conversationType
     }
 
-    func generateConfInfo(conversationId: AVSIdentifier) -> MLSConferenceInfo? {
-        guard let type = conversationType(from: conversationId), type == .mlsConference else {
-            return nil
+    func setMLSConferanceInfoIfNeeded(for conversationId: AVSIdentifier) -> Bool {
+        guard conversationType(from: conversationId), 
+        guard let syncContext = uiMOC?.zm_sync else {
+            return (false, nil)
+        }
+
+        let result: (MLSServiceInterface?, QualifiedID?, MLSGroupID?) = await syncContext.perform {
+            let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: syncContext
+            )
+            guard let conversation, conversation.avsConversationType == .mlsConference else {
+                return (nil, nil, nil)
+            }
+            return (syncContext.mlsService,
+                    conversation.qualifiedID,
+                    conversation.mlsGroupID)
         }
 
         guard
-    }
+            let mlsService = result.0,
+            let parentQualifiedID = result.1,
+            let parentGroupID = result.2
+        else {
+            return (false, nil)
+        }
 
+        do {
+            let subgroupID = try await mlsService.createOrJoinSubgroup(
+                parentQualifiedID: parentQualifiedID,
+                parentID: parentGroupID
+            )
+
+            let conferenceInfo = try await mlsService.generateConferenceInfo(
+                parentGroupID: parentGroupID,
+                subconversationGroupID: subgroupID
+            )
+            return (true, conferenceInfo)
+        } catch {
+            return (true, nil)
+        }
+    }
 
     /// Handles a change in calling state.
     ///
