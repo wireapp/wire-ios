@@ -1379,8 +1379,11 @@ extension SessionManager {
         CompanyLoginVerificationToken.flushIfNeeded()
 
         if let session = activeUserSession {
-            // The session lock may have changed so inform the delegate in case.
-            self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+            // If the user isn't logged in it's because they still need
+            // to complete the login flow, which will be handle elsewhere.
+            if session.isLoggedIn {
+                self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+            }
         }
     }
 
