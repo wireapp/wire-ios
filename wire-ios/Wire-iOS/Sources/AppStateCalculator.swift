@@ -23,7 +23,7 @@ enum AppState: Equatable {
     case retryStart
     case headless
     case locked(UserSession)
-    case authenticated(UserSession, completedRegistration: Bool)
+    case authenticated(UserSession)
     case unauthenticated(error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
@@ -204,13 +204,13 @@ extension AppStateCalculator: SessionManagerDelegate {
         if session.isLocked {
             transition(to: .locked(session))
         } else {
-            transition(to: .authenticated(session, completedRegistration: false))
+            transition(to: .authenticated(session))
         }
     }
 
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         if let activeSession {
-            transition(to: .authenticated(activeSession, completedRegistration: false))
+            transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
             transition(to: .unauthenticated(error: error))
@@ -219,7 +219,7 @@ extension AppStateCalculator: SessionManagerDelegate {
 
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         if let activeSession {
-            transition(to: .authenticated(activeSession, completedRegistration: false))
+            transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
             transition(to: .unauthenticated(error: error))
@@ -233,11 +233,11 @@ extension AppStateCalculator: SessionManagerDelegate {
 
 // MARK: - AuthenticationCoordinatorDelegate
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
-    func userAuthenticationDidComplete(userSession: UserSession, addedAccount: Bool) {
+    func userAuthenticationDidComplete(userSession: UserSession) {
         if userSession.isLocked {
             transition(to: .locked(userSession))
         } else {
-            transition(to: .authenticated(userSession, completedRegistration: addedAccount))
+            transition(to: .authenticated(userSession))
         }
     }
 }

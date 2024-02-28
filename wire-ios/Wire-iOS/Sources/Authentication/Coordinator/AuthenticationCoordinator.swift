@@ -28,11 +28,9 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
 
     /**
      * The coordinator finished authenticating the user.
-     * - parameter addedAccount: Whether the authentication action added a new account
-     * to this device.
      */
 
-    func userAuthenticationDidComplete(userSession: UserSession, addedAccount: Bool)
+    func userAuthenticationDidComplete(userSession: UserSession)
 
 }
 
@@ -111,9 +109,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     private var isTornDown = false
 
     var pendingModal: UIViewController?
-
-    /// Whether an account was added.
-    var addedAccount: Bool = false
 
     /// The user session to use before authentication has finished.
     var unauthenticatedSession: UnauthenticatedSession {
@@ -307,14 +302,12 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case .completeLoginFlow:
                 delegate?.userAuthenticationDidComplete(
-                    userSession: statusProvider.sharedUserSession!,
-                    addedAccount: addedAccount
+                    userSession: statusProvider.sharedUserSession!
                 )
 
             case .completeRegistrationFlow:
                 delegate?.userAuthenticationDidComplete(
-                    userSession: statusProvider.sharedUserSession!,
-                    addedAccount: true
+                    userSession: statusProvider.sharedUserSession!
                 )
 
             case .startPostLoginFlow:
