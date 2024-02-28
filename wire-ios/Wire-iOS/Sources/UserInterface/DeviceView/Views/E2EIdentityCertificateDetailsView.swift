@@ -52,7 +52,8 @@ struct E2EIdentityCertificateDetailsView: View {
                         Image(.close)
                             .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
                     }
-                ).padding(.all, ViewConstants.Padding.standard)
+                )
+                .padding(.all, ViewConstants.Padding.standard)
             }
         }
     }
