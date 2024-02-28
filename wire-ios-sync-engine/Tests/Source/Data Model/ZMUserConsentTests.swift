@@ -146,6 +146,32 @@ final class ZMUserConsentTests: DatabaseTest {
         mockTransportSession.resetReceivedRequests()
     }
 
+    func testThatItFailsOn404_get() {
+        // given
+        mockTransportSession.responseGeneratorBlock = { request in
+            guard request.path == "/self/consent" else { return nil }
+
+            return ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        }
+
+        let receivedError = customExpectation(description: "received error")
+        // when
+
+        selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
+            switch result {
+            case .failure(let error):
+                XCTAssertEqual(error as! WireSyncEngine.ConsentRequestError, WireSyncEngine.ConsentRequestError.notAvailable)
+                receivedError.fulfill()
+            case .success:
+                XCTFail()
+            }
+        }
+
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        mockTransportSession.responseGeneratorBlock = nil
+        mockTransportSession.resetReceivedRequests()
+    }
+
     func testThatItCanSetTheState() {
         // given
         mockTransportSession.responseGeneratorBlock = { request in
