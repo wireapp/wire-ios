@@ -213,6 +213,35 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
 
 }
 
+public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneConversationsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> Void)?
+
+    public func invoke() async throws {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        try await mock()
+    }
+
+}
+
 class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
 
     // MARK: - Life cycle
@@ -260,35 +289,6 @@ class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderPr
         } else {
             fatalError("no mock for `getCertificate`")
         }
-    }
-
-}
-
-public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneConversationsUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockError: Error?
-    public var invoke_MockMethod: (() async throws -> Void)?
-
-    public func invoke() async throws {
-        invoke_Invocations.append(())
-
-        if let error = invoke_MockError {
-            throw error
-        }
-
-        guard let mock = invoke_MockMethod else {
-            fatalError("no mock for `invoke`")
-        }
-
-        try await mock()
     }
 
 }
@@ -500,6 +500,54 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
 
 }
 
+public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() async -> Void)?
+
+    public func invoke() async {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        await mock()
+    }
+
+}
+
+public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificateEnrollmentSnoozerUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() -> Void)?
+
+    public func invoke() {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
 
     // MARK: - Life cycle
@@ -523,25 +571,6 @@ public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
         } else {
             fatalError("no mock for `createResolveOneOnOneUseCase`")
         }
-      
-    // MARK: - invoke
-
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() async -> Void)?
-
-    public func invoke() async {
-        invoke_Invocations.append(())
-
-        guard let mock = invoke_MockMethod else {
-            fatalError("no mock for `invoke`")
-        }
-
-        await mock()
-    }
-
-}
-
-
     }
 
 }
