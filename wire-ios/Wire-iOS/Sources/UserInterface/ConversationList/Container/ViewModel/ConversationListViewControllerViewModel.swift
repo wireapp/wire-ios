@@ -146,10 +146,16 @@ extension ConversationListViewController.ViewModel {
 
             selfUser.fetchMarketingConsent(in: userSession, completion: {[weak self] result in
                 switch result {
-                case .failure:
-                    self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
-                        selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
-                    })
+                case .failure(let error):
+                    switch error {
+                    case ConsentRequestError.notAvailable:
+                        // don't show the alert there is no consent to show
+                        break
+                    default:
+                        self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
+                            selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
+                        })
+                    }
                 case .success:
                     // The user already gave a marketing consent, no need to ask for it again.
                     return
