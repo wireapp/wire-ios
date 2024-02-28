@@ -289,10 +289,16 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // given
         XCTAssertEqual(thirdPartyServices.uploadCount, 0)
 
+        _ = MockActionHandler<GetFeatureConfigsAction>(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
+
         // when
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
         }
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -303,12 +309,18 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // given
         XCTAssertEqual(thirdPartyServices.uploadCount, 0)
 
+        var mock = MockActionHandler<GetFeatureConfigsAction>(
+            results: [.success(()), .success(())],
+            context: syncMOC.notificationContext
+        )
+
         // when
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
             sut.didStartQuickSync()
             sut.didFinishQuickSync()
         }
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -344,7 +356,12 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // given
         XCTAssertEqual(thirdPartyServices.uploadCount, 0)
 
-        // when
+        var mock = MockActionHandler<GetFeatureConfigsAction>(
+            results: [.success(()), .success(())],
+            context: syncMOC.notificationContext
+        )
+
+        // whe
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
         }
@@ -355,6 +372,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(thirdPartyServices.uploadCount, 1)
 
         sut.applicationWillEnterForeground(nil)
+
         syncMOC.performAndWait {
             sut.didStartQuickSync()
             sut.didFinishQuickSync()
@@ -369,6 +387,12 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     func testThatWeDoNotSetUserSessionToSyncDoneWhenSyncIsDoneIfWeWereNotSynchronizing() {
         // when
         sut.didGoOffline()
+
+        var mock = MockActionHandler<GetFeatureConfigsAction>(
+            results: [.success(())],
+            context: syncMOC.notificationContext
+        )
+
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
         }

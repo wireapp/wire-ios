@@ -45,6 +45,8 @@ public class MockActionHandler<T: EntityAction>: EntityActionHandler {
             action.notifyResult(result)
             performedActions.append(action)
             results.removeFirst()
+        } else {
+            assertionFailure("no expected result set")
         }
     }
 
