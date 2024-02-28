@@ -22,13 +22,18 @@ set -Eeuo pipefail
 REPO_ROOT=$(git rev-parse --show-toplevel)
 XCODEBUILD="xcrun xcodebuild"
 
-SCHEMES=(WireSystem WireTesting WireUtilities WireCryptobox WireTransport WireLinkPreview WireImages WireProtos WireMockTransport WireDataModel WireRequestStrategy WireShareEngine WireSyncEngine Wire-iOS)
+SCHEMES=(WireSystem WireTesting WireUtilities WireCryptobox WireTransport WireLinkPreview WireImages WireProtos WireMockTransport WireDataModel WireRequestStrategy WireShareEngine WireSyncEngine Wire-iOS WireNotificationEngine)
 for SCHEME in ${SCHEMES[@]}; do
 (
     cd "$REPO_ROOT"
     echo "Building $SCHEME ..."
     xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme $SCHEME -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 14'
     echo "Testing $SCHEME ..."
-    xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme $SCHEME -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 14'
+    if [[ $SCHEME != 'Wire-iOS' ]]; then
+        xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme $SCHEME -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 14'
+    else
+        xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme $SCHEME -testPlan AllTests -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 14'
+        xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme $SCHEME -testPlan GermanLocaleTests -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 14'
+    fi
 )
 done
