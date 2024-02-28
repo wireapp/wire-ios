@@ -46,11 +46,14 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
+    var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
 
     override func setUp() {
         super.setUp()
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3Mock.self
+
+        mockGetFeatureConfigsActionHandler = .init(result: .success(()), context: syncMOC.notificationContext)
 
         self.thirdPartyServices = ThirdPartyServices()
         self.dataChangeNotificationsCount = 0
@@ -90,6 +93,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.mockResolveOneOnOneConversationUseCase = nil
         let sut = self.sut
         self.sut = nil
+        mockGetFeatureConfigsActionHandler = nil
         sut?.tearDown()
 
         super.tearDown()

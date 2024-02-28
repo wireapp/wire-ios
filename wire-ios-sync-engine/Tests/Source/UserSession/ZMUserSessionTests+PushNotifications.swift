@@ -28,18 +28,6 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction
     typealias CallAction = WireSyncEngine.CallNotificationAction
 
-    private var getFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
-
-    override func setUp() {
-        super.setUp()
-        getFeatureConfigsActionHandler = .init(result: .success(()), context: syncMOC.notificationContext)
-    }
-
-    override func tearDown() {
-        getFeatureConfigsActionHandler = nil
-        super.tearDown()
-    }
-
     func testThatItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {
         // when
         handle(conversationAction: nil, category: .conversation, userInfo: NotificationUserInfo())
