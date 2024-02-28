@@ -38,16 +38,22 @@ struct E2EIdentityCertificateDetailsView: View {
             Text(L10n.Localizable.Device.Details.CertificateDetails.title)
                 .font(FontSpec.headerSemiboldFont.swiftUIFont)
             Spacer()
-            SwiftUI.Button(
-                action: {
-                    dismiss()
-                    didDismiss?()
-                },
-                label: {
-                    Image(.close)
-                        .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
-                }
-            ).padding(.all, ViewConstants.Padding.standard)
+        }
+        .padding(.all, ViewConstants.Padding.standard)
+        .overlay {
+            HStack {
+                Spacer()
+                SwiftUI.Button(
+                    action: {
+                        dismiss()
+                        didDismiss?()
+                    },
+                    label: {
+                        Image(.close)
+                            .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                    }
+                ).padding(.all, ViewConstants.Padding.standard)
+            }
         }
     }
 
