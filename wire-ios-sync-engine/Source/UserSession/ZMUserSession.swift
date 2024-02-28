@@ -208,8 +208,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-     lazy var supportedProtocolService = SupportedProtocolsService(context: syncContext)
-     lazy var oneOnOneResolver = OneOnOneResolver(syncContext: syncContext)
+   
      let useCaseFactory: UseCaseFactoryProtocol
 
     weak var delegate: UserSessionDelegate?
