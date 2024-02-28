@@ -85,15 +85,6 @@ struct FeatureConfigsPayloadProcessor {
             )
         }
 
-        if let mlsMigration = payload.mlsMigration {
-            repository.storeMLSMigration(
-                Feature.MLSMigration(
-                    status: mlsMigration.status,
-                    config: mlsMigration.config
-                )
-            )
-        }
-
         if let selfDeletingMessages = payload.selfDeletingMessages {
             repository.storeSelfDeletingMessages(
                 Feature.SelfDeletingMessages(
@@ -108,6 +99,15 @@ struct FeatureConfigsPayloadProcessor {
                 Feature.MLSMigration(
                     status: mlsMigration.status,
                     config: mlsMigration.config
+                )
+            )
+        }
+
+        if let e2ei = payload.mlsE2EId {
+            repository.storeE2EI(
+                Feature.E2EI(
+                    status: e2ei.status,
+                    config: e2ei.config
                 )
             )
         }
@@ -154,6 +154,10 @@ struct FeatureConfigsPayloadProcessor {
         case .mlsMigration:
             let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.MLSMigration.Config>.self, from: data)
             repository.storeMLSMigration(.init(status: response.status, config: response.config))
+
+        case .e2ei:
+            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
+            repository.storeE2EI(.init(status: response.status, config: response.config))
         }
     }
 }

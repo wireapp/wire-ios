@@ -103,6 +103,13 @@ protocol GroupDetailsConversation {
     var messageProtocol: MessageProtocol { get }
 
     var mlsGroupID: MLSGroupID? { get }
+
+    var mlsVerificationStatus: MLSVerificationStatus? { get }
+
+    var securityLevel: ZMConversationSecurityLevel { get }
+
+    var isE2EIEnabled: Bool { get }
+
 }
 
 typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation
@@ -117,6 +124,25 @@ extension ZMConversation: GroupDetailsConversation {
 
     var syncedMessageDestructionTimeout: TimeInterval {
         return messageDestructionTimeoutValue(for: .groupConversation).rawValue
+    }
+
+    var isE2EIEnabled: Bool {
+        guard let context = managedObjectContext else { return false }
+        let feature = FeatureRepository(context: context).fetchE2EI()
+        return feature.status == .enabled
+    }
+
+}
+
+extension GroupDetailsConversation {
+
+    var isVerified: Bool {
+        switch messageProtocol {
+        case .proteus, .mixed:
+            return securityLevel == .secure
+        case .mls:
+            return isE2EIEnabled && mlsVerificationStatus == .verified
+        }
     }
 
 }

@@ -52,36 +52,27 @@ extension ConversationViewController {
 
     // MARK: - Alert
 
-    /// Presents an alert in response to a change in privacy (legal hold and/or client verification).
+    private typealias AlertContent = (title: String, message: String, actions: [PrivacyAlertAction])
+
+    /// Presents an alert in response to a change in privacy (legal hold or client verification or e2ei).
     func presentPrivacyWarningAlert(for changeInfo: ConversationChangeInfo) {
-        let title: String
-        let message = L10n.Localizable.Meta.Degraded.dialogMessage
-        var actions: [PrivacyAlertAction] = []
+        let alertContent: AlertContent
 
         if conversation.legalHoldStatus == .pendingApproval {
-            title = L10n.Localizable.Meta.Legalhold.sendAlertTitle
-            actions.append(.legalHoldDetails)
-
-            if conversation.securityLevel == .secureWithIgnored {
-                actions.append(.verifyDevices)
-            }
-
-            actions += [.sendAnyway, .cancel]
+            alertContent = legalHoldPrivacyWarningAlertContent()
+        } else if conversation.mlsVerificationStatus == .degraded {
+            alertContent = e2eIPrivacyWarningAlertContent()
         } else if conversation.securityLevel == .secureWithIgnored {
-            let users = changeInfo.usersThatCausedConversationToDegrade
-            let names = changeInfo.usersThatCausedConversationToDegrade.compactMap(\.name).joined(separator: ", ")
-            let keySuffix = users.count <= 1 ? "singular" : "plural"
-            title = "meta.degraded.degradation_reason_message.\(keySuffix)".localized(args: names)
-
-            actions += [.verifyDevices, .sendAnyway, .cancel]
+            alertContent = clientVerificationPrivacyWarningAlertContent(
+                degradedUsers: changeInfo.usersThatCausedConversationToDegrade)
         } else {
             // no-op: there is no privacy warning
             return
         }
 
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: alertContent.title, message: alertContent.message, preferredStyle: .alert)
 
-        for action in actions {
+        for action in alertContent.actions {
             let alertAction = UIAlertAction(title: action.localizedTitle, style: action.preferredStyle) { [weak self] _ in
                 self?.performPrivacyAction(action)
             }
@@ -90,6 +81,42 @@ extension ConversationViewController {
         }
 
         present(alert, animated: true)
+    }
+
+    private func clientVerificationPrivacyWarningAlertContent(degradedUsers: Set<ZMUser>) -> AlertContent {
+        typealias DegradationReasonMessage = L10n.Localizable.Meta.Degraded.DegradationReasonMessage
+
+        let names = degradedUsers.compactMap(\.name).joined(separator: ", ")
+        let title = degradedUsers.count <= 1
+                    ? DegradationReasonMessage.singular(names)
+                    : DegradationReasonMessage.plural(names)
+        let message = L10n.Localizable.Meta.Degraded.dialogMessage
+
+        let actions: [PrivacyAlertAction] = [.verifyDevices, .sendAnyway, .cancel]
+
+        return (title, message, actions)
+    }
+
+    private func legalHoldPrivacyWarningAlertContent() -> AlertContent {
+        let title = L10n.Localizable.Meta.Legalhold.sendAlertTitle
+        let message = L10n.Localizable.Meta.Degraded.dialogMessage
+        var actions: [PrivacyAlertAction] = [.legalHoldDetails]
+
+        if conversation.securityLevel == .secureWithIgnored {
+            actions.append(.verifyDevices)
+        }
+        actions += [.sendAnyway, .cancel]
+
+        return (title, message, actions)
+    }
+
+    private func e2eIPrivacyWarningAlertContent() -> AlertContent {
+        let title = L10n.Localizable.Meta.Mls.Degraded.Alert.title
+        let message = L10n.Localizable.Meta.Mls.Degraded.Alert.message
+
+        let actions: [PrivacyAlertAction] = [.sendAnyway, .cancel]
+
+        return (title, message, actions)
     }
 
     // MARK: - Handling the Result

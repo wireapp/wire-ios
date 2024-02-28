@@ -277,13 +277,11 @@ extension ConversationListTopBarViewController: UIViewControllerTransitioningDel
 
 extension ConversationListTopBarViewController: UserObserving {
 
-    func userDidChange(_ changes: UserChangeInfo) {
-
-        if changes.nameChanged || changes.teamsChanged {
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.nameChanged || changeInfo.teamsChanged {
             updateAccountView()
         }
-
-        if changes.legalHoldStatusChanged {
+        if changeInfo.legalHoldStatusChanged {
             updateLegalHoldIndictor()
         }
     }

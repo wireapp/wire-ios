@@ -25,7 +25,10 @@
 @protocol UpdateEventProcessor;
 
 @class ZMPersistentCookieStorage;
-@class ApplicationStatusDirectory;
+@class OperationStatus;
+@class SyncStatus;
+@class PushNotificationStatus;
+@class CallEventStatus;
 @class ZMSyncStrategy;
 
 extern NSString * const ZMPushChannelIsOpenKey;
@@ -39,7 +42,10 @@ extern NSString * const ZMPushChannelIsOpenKey;
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
                          requestStrategy:(id<RequestStrategy>)requestStrategy
                     updateEventProcessor:(id<UpdateEventProcessor>)updateEventProcessor
-              applicationStatusDirectory:(ApplicationStatusDirectory *)applicationStatusDirectory
+                         operationStatus:(OperationStatus *)operationStatus
+                              syncStatus:(SyncStatus *)syncStatus
+                  pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
+                         callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC;
 

@@ -62,6 +62,10 @@ final class RecurringActionService: RecurringActionServiceInterface {
         persistLastCheckDate(for: id)
     }
 
+    public func removeAction(id: String) {
+        actionsByID.removeValue(forKey: id)
+    }
+
     // MARK: - Helpers
 
     private func key(for actionID: String) -> String {

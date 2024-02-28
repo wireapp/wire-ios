@@ -20,10 +20,15 @@ import Foundation
 import UIKit
 import WireDataModel
 
+enum CallDegradationReason: Equatable {
+    case invalidCertificate
+    case degradedUser(user: HashBoxUser?)
+}
+
 enum CallDegradationState: Equatable {
     case none
-    case incoming(degradedUser: HashBoxUser?)
-    case outgoing(degradedUser: HashBoxUser?)
+    case incoming(reason: CallDegradationReason)
+    case outgoing(reason: CallDegradationReason)
 }
 
 protocol CallDegradationControllerDelegate: AnyObject {
@@ -51,10 +56,17 @@ final class CallDegradationController: UIViewController {
 
     fileprivate func updateState() {
         switch state {
-        case .outgoing(degradedUser: let degradeduser):
-            visibleAlertController = UIAlertController.degradedCall(degradedUser: degradeduser?.value, confirmationBlock: { [weak self] (continueDegradedCall) in
-                continueDegradedCall ? self?.delegate?.continueDegradedCall(): self?.delegate?.cancelDegradedCall()
-            })
+        case .outgoing(reason: let degradationReason):
+            switch degradationReason {
+            case .invalidCertificate:
+                visibleAlertController = UIAlertController.degradedMLSConference(confirmationBlock: { [weak self] (continueDegradedCall) in
+                    continueDegradedCall ? self?.delegate?.continueDegradedCall(): self?.delegate?.cancelDegradedCall()
+                })
+            case .degradedUser(user: let degradeduser):
+                visibleAlertController = UIAlertController.degradedCall(degradedUser: degradeduser?.value, confirmationBlock: { [weak self] (continueDegradedCall) in
+                    continueDegradedCall ? self?.delegate?.continueDegradedCall(): self?.delegate?.cancelDegradedCall()
+                })
+            }
         case .none, .incoming:
             return
         }

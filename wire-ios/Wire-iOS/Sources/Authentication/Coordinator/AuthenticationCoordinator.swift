@@ -413,6 +413,12 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                         self?.eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     }
                 }
+
+            case .startE2EIEnrollment:
+                startE2EIdentityEnrollment()
+
+            case .completeE2EIEnrollment:
+                completeE2EIdentityEnrollment()
             }
         }
     }
@@ -855,6 +861,47 @@ extension AuthenticationCoordinator {
         }
 
         stateController.unwindState()
+    }
+
+    // MARK: - End-to-end Identity
+
+    private func startE2EIdentityEnrollment() {
+        typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
+
+        guard let session = statusProvider.sharedUserSession else { return }
+        let e2eiCertificateUseCase = session.enrollE2EICertificate
+        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+            return
+        }
+        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+
+        Task {
+            do {
+                let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+                await MainActor.run {
+                    executeActions([
+                        .hideLoadingView,
+                        .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
+                    ])
+                }
+            } catch {
+                await MainActor.run {
+                    executeActions([
+                        .hideLoadingView,
+                        .presentAlert(
+                            .init(title: E2ei.Error.Alert.title,
+                                  message: E2ei.Error.Alert.message,
+                                  actions: [.ok]))
+                    ])
+                }
+            }
+        }
+    }
+
+    private func completeE2EIdentityEnrollment() {
+        executeActions([.showLoadingView])
+        guard let session = statusProvider.sharedUserSession else { return }
+        session.reportEndToEndIdentityEnrollmentSuccess()
     }
 
     private func showAlertWithNoInternetConnectionError() {

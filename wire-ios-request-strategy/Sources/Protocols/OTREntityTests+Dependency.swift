@@ -118,10 +118,11 @@ class OTREntityTests_Dependency: MessagingTestBase {
             message.markAsSent()
 
             let nextMessage = try! self.groupConversation.appendText(content: "bar") as! ZMClientMessage
-            // nextMessage.serverTimestamp = timeZero.addingTimeInterval(100) // this ensures the sorting
+            nextMessage.serverTimestamp = timeZero.addingTimeInterval(1) // this ensures the sorting
 
             // WHEN
             let lastMessage = try! self.groupConversation.appendText(content: "zoo") as! ZMClientMessage
+            lastMessage.serverTimestamp = timeZero.addingTimeInterval(2) // this ensures the sorting
 
             // THEN
             let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing

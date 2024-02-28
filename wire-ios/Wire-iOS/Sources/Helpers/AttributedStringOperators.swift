@@ -1,7 +1,7 @@
 // 
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -32,8 +32,8 @@ func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedStri
 }
 
 func + (left: String, right: NSAttributedString) -> NSAttributedString {
-    var range: NSRange? = NSRange(location: 0, length: 0)
-    let attributes = right.length > 0 ? right.attributes(at: 0, effectiveRange: &range!) : [:]
+    var range = NSRange(location: 0, length: 0)
+    let attributes = right.length > 0 ? right.attributes(at: 0, effectiveRange: &range) : [:]
 
     let result = NSMutableAttributedString()
     result.append(NSAttributedString(string: left, attributes: attributes))
@@ -117,7 +117,7 @@ func && (left: NSAttributedString, right: [NSAttributedString.Key: Any]) -> NSAt
 extension String {
 
     var attributedString: NSAttributedString {
-        return NSAttributedString(string: self)
+        .init(string: self)
     }
 }
 
@@ -239,25 +239,6 @@ extension NSAttributedString {
 
     func adding(font: UIFont, to substring: String) -> NSAttributedString {
         return addAttributes([.font: font], toSubstring: substring)
-    }
-}
-
-extension Sequence where Iterator.Element == NSAttributedString {
-    func joined(separator: NSAttributedString? = nil) -> NSAttributedString {
-        let result = NSMutableAttributedString()
-
-        var first = true
-
-        for string in self {
-            if !first, let separator = separator {
-                result.append(separator)
-            }
-            result.append(string)
-
-            first = false
-        }
-
-        return NSAttributedString(attributedString: result)
     }
 }
 

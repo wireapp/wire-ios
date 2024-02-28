@@ -113,6 +113,11 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
 
+            let e2ei = featureRepository.fetchE2EI()
+            XCTAssertEqual(e2ei.status, .enabled)
+            XCTAssertEqual(e2ei.config.acmeDiscoveryUrl, "https://example.com")
+            XCTAssertEqual(e2ei.config.verificationExpiration, 70)
+
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .enabled)
             XCTAssertEqual(
@@ -185,6 +190,10 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
+
+            let e2ei = featureRepository.fetchE2EI()
+            XCTAssertEqual(e2ei.status, .disabled)
+            XCTAssertEqual(e2ei.config, .init())
 
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .disabled)
@@ -357,6 +366,13 @@ private enum JSONPayload {
         "config": {
             "startTime": "2024-02-19T11:59:27.542Z",
             "finaliseRegardlessAfter": "2024-02-19T11:59:28.542Z"
+        }
+    },
+    "mlsE2EId": {
+        "status": "enabled",
+        "config": {
+            "acmeDiscoveryUrl": "https://example.com",
+            "verificationExpiration": 70
         }
     },
     "conferenceCalling": {

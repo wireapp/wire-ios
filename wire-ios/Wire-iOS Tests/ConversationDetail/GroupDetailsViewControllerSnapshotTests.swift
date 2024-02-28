@@ -34,11 +34,13 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         mockConversation.securityLevel = .notSecure
 
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
+        mockSelfUser.remoteIdentifier = .init()
         mockSelfUser.handle = nil
 
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
 
         otherUser = MockUserType.createUser(name: "Bruno")
+        otherUser.remoteIdentifier = .init()
         otherUser.isConnected = true
         otherUser.handle = "bruno"
         otherUser.accentColorValue = .brightOrange
@@ -81,7 +83,11 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         createGroupConversation()
 
-        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
 
         // THEN
         verify(matching: sut)
@@ -96,7 +102,11 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         createGroupConversation()
 
-        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
 
         // THEN
         verify(matching: sut)
@@ -118,7 +128,11 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         mockConversation.allowGuests = true
         mockConversation.allowServices = true
 
-        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
 
         // THEN
         verify(matching: sut)
@@ -133,7 +147,11 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         createGroupConversation()
         mockConversation.teamRemoteIdentifier = mockSelfUser.teamIdentifier
 
-        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
 
         // THEN
         verify(matching: sut)
@@ -147,7 +165,11 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
 
-        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
 
         // THEN
         verify(matching: sut)
@@ -163,8 +185,70 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         mockConversation.sortedOtherParticipants = [mockSelfUser]
         mockConversation.displayName = "Empty group conversation"
 
-        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
 
         verify(matching: sut)
     }
+
+    func testForMlsConversation_withVerifiedStatus() throws {
+        // GIVEN & WHEN
+        setSelfUserInTeam()
+        mockSelfUser.teamRole = .admin
+        mockConversation.sortedOtherParticipants = [mockSelfUser]
+
+        mockConversation.messageProtocol = .mls
+        mockConversation.mlsVerificationStatus = .verified
+
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
+
+        // THEN
+        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+    }
+
+    func testForMlsConversation_withNotVerifiedStatus() throws {
+        // GIVEN & WHEN
+        setSelfUserInTeam()
+        mockSelfUser.teamRole = .admin
+        mockConversation.sortedOtherParticipants = [mockSelfUser]
+
+        mockConversation.messageProtocol = .mls
+        mockConversation.mlsVerificationStatus = .notVerified
+
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
+
+        // THEN
+        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+    }
+
+    func testForProteusConversation_withVerifiedStatus() throws {
+        // GIVEN & WHEN
+        setSelfUserInTeam()
+        mockSelfUser.teamRole = .admin
+        mockConversation.sortedOtherParticipants = [mockSelfUser]
+
+        mockConversation.messageProtocol = .proteus
+        mockConversation.securityLevel = .secure
+
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
+
+        // THEN
+        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+    }
+
 }

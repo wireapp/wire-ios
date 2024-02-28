@@ -73,16 +73,18 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         let listString = AvailabilityStringBuilder.titleForUser(
             name: otherUser.name ?? "",
             availability: otherUser.availability,
-            isCertified: false,
-            isVerified: false,
+            isE2EICertified: false,
+            isProteusVerified: false,
+            appendYouSuffix: false,
             style: .list,
             color: .black
         )
         let participantsString = AvailabilityStringBuilder.titleForUser(
             name: otherUser.name ?? "",
             availability: otherUser.availability,
-            isCertified: false,
-            isVerified: false,
+            isE2EICertified: false,
+            isProteusVerified: false,
+            appendYouSuffix: false,
             style: .participants,
             color: .black
         )
@@ -107,16 +109,18 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         let listString = AvailabilityStringBuilder.titleForUser(
             name: otherUser.name ?? "",
             availability: otherUser.availability,
-            isCertified: false,
-            isVerified: false,
+            isE2EICertified: false,
+            isProteusVerified: false,
+            appendYouSuffix: false,
             style: .list,
             color: .black
         )
         let participantsString = AvailabilityStringBuilder.titleForUser(
             name: otherUser.name ?? "",
             availability: otherUser.availability,
-            isCertified: false,
-            isVerified: false,
+            isE2EICertified: false,
+            isProteusVerified: false,
+            appendYouSuffix: false,
             style: .participants,
             color: .black
         )
@@ -137,16 +141,18 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         let listString = AvailabilityStringBuilder.titleForUser(
             name: selfUser.name ?? "",
             availability: selfUser.availability,
-            isCertified: false,
-            isVerified: false,
+            isE2EICertified: false,
+            isProteusVerified: false,
+            appendYouSuffix: false,
             style: .list,
             color: .black
         )
         let participantsString = AvailabilityStringBuilder.titleForUser(
             name: selfUser.name ?? "",
             availability: selfUser.availability,
-            isCertified: false,
-            isVerified: false,
+            isE2EICertified: false,
+            isProteusVerified: false,
+            appendYouSuffix: false,
             style: .participants,
             color: .black
         )

@@ -213,8 +213,23 @@ public protocol UserSession: AnyObject {
     var networkState: ZMNetworkState { get }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
+    var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol { get }
+    var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
+
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
+
+    var e2eiFeature: Feature.E2EI { get }
+
+    var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol { get }
+
+    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
+
+    func fetchAllClients()
+
 }
 
 extension ZMUserSession: UserSession {
@@ -489,6 +504,22 @@ extension ZMUserSession: UserSession {
         }
 
         return isClassified ? .classified : .notClassified
+    }
+
+    public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
+        IsUserE2EICertifiedUseCase(
+            schedule: .immediate,
+            coreCryptoProvider: coreCryptoProvider,
+            featureRepository: FeatureRepository(context: syncContext),
+            featureRepositoryContext: syncContext
+        )
+    }
+
+    public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
+        IsSelfUserE2EICertifiedUseCase(
+            context: syncContext,
+            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
+        )
     }
 }
 

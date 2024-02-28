@@ -29,6 +29,7 @@ struct FeatureConfigsPayload: Decodable {
     let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
     let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
     let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
+    let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
 
 }
 

@@ -66,7 +66,7 @@ public enum IconStringsBuilder {
         }
 
         // Add a padding and combine the final attributed string
-        let attributedTitle = NSMutableAttributedString(attributedString: components.joined(separator: .init("  ")))
+        let attributedTitle = NSMutableAttributedString(attributedString: components.joined(separator: .init(string: "  ")))
         let totalRange = NSRange(location: 0, length: attributedTitle.length)
         attributedTitle.addAttributes([.foregroundColor: color], range: totalRange)
         return NSAttributedString(attributedString: attributedTitle)

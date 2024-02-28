@@ -122,6 +122,9 @@ final class DeveloperToolsViewModel: ObservableObject {
         sections.append(Section(
             header: "Actions",
             items: [
+                .destination(DestinationItem(title: "E2E Identity", makeView: {
+                    AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
+                })),
                 .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
                     AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
                 })),
@@ -210,7 +213,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.button(ButtonItem(title: "Stop federating with Foma", action: stopFederatingFoma)))
         items.append(.button(ButtonItem(title: "Stop federating with Bella", action: stopFederatingBella)))
         items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: stopBellaFomaFederating)))
-
         return Section(
             header: header,
             items: items

@@ -55,19 +55,19 @@ extension AssetCollectionMulticastDelegate: AssetCollectionDelegate {
 }
 
 final class AssetCollectionWrapper: NSObject {
-    let conversation: ConversationLike
+    let conversation: GroupDetailsConversationType
     let assetCollection: ZMCollection
     let assetCollectionDelegate: AssetCollectionMulticastDelegate
     let matchingCategories: [CategoryMatch]
 
-    init(conversation: ConversationLike, assetCollection: ZMCollection, assetCollectionDelegate: AssetCollectionMulticastDelegate, matchingCategories: [CategoryMatch]) {
+    init(conversation: GroupDetailsConversationType, assetCollection: ZMCollection, assetCollectionDelegate: AssetCollectionMulticastDelegate, matchingCategories: [CategoryMatch]) {
         self.conversation = conversation
         self.assetCollection = assetCollection
         self.assetCollectionDelegate = assetCollectionDelegate
         self.matchingCategories = matchingCategories
     }
 
-    convenience init(conversation: ConversationLike,
+    convenience init(conversation: GroupDetailsConversationType,
                      matchingCategories: [CategoryMatch]) {
         let assetCollection: ZMCollection
         let delegate = AssetCollectionMulticastDelegate()

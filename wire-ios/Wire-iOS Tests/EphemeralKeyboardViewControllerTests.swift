@@ -40,6 +40,7 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
     }
 
     func testThatItRendersCorrectInitially() {
+        sut.overrideUserInterfaceStyle = .light
         verify(view: sut.prepareForSnapshots())
     }
 

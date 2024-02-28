@@ -194,6 +194,11 @@ extension URL {
     static var selfUserProfileLink: URL? {
         BackendEnvironment.selfUserProfileLink
     }
+
+    static var wr_e2eiLearnMore: URL {
+        return wr_support.appendingPathComponent("hc/articles/9211300150685-End-to-end-identity")
+    }
+
 }
 
 // MARK: - BackendEnvironment Standard URLs
@@ -224,4 +229,5 @@ private extension BackendEnvironment {
         }
         return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID)")
     }
+
 }

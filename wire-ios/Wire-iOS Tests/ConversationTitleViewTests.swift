@@ -23,11 +23,11 @@ import SnapshotTesting
 final class ConversationTitleViewTests: BaseSnapshotTestCase {
 
     var sut: ConversationTitleView!
-    var conversation: SwiftMockConversation!
+    var conversation: MockGroupDetailsConversation!
 
     override func setUp() {
         super.setUp()
-        conversation = SwiftMockConversation()
+        conversation = MockGroupDetailsConversation()
         conversation.relatedConnectionState = .accepted
         conversation.displayName = "Alan Turing"
     }
@@ -39,7 +39,7 @@ final class ConversationTitleViewTests: BaseSnapshotTestCase {
         super.tearDown()
     }
 
-    private func createSut(conversation: SwiftMockConversation) -> ConversationTitleView {
+    private func createSut(conversation: MockGroupDetailsConversation) -> ConversationTitleView {
         let view = ConversationTitleView(conversation: conversation, interactive: true)
         view.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
         view.backgroundColor = .white
@@ -71,6 +71,16 @@ final class ConversationTitleViewTests: BaseSnapshotTestCase {
     func testThatItUpdatesTheTitleViewAndRendersTheVerifiedShieldCorrectly() {
         // when
         conversation.securityLevel = .secure
+        sut = createSut(conversation: conversation)
+
+        // then
+        verify(matching: sut)
+    }
+
+    func testThatItUpdatesTheTitleViewAndRendersValidCertificate() {
+        // when
+        conversation.messageProtocol = .mls
+        conversation.mlsVerificationStatus = .verified
         sut = createSut(conversation: conversation)
 
         // then

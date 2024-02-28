@@ -21,8 +21,6 @@ import WireDataModel
 import WireSystem
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "ProfileViewControllerViewModel")
-
 enum ProfileViewControllerContext {
     case search
     case groupConversation
@@ -48,7 +46,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     weak var backButtonTitleDelegate: BackButtonTitleDelegate?
 
-    private var observerToken: Any?
+    private var observerToken: NSObjectProtocol?
     weak var viewModelDelegate: ProfileViewControllerViewModelDelegate?
 
     init(user: UserType,

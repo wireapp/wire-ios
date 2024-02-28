@@ -217,20 +217,18 @@ public enum CallState: Equatable {
 
     /**
      * Updates the state of the call when the security level changes.
-     * - parameter securityLevel: The new security level of the conversation for the call.
+     * - parameter isConversationDegraded: Has conversation been degraded?
      * - returns: The current status, updated with the appropriate degradation information.
      */
 
-    func update(withSecurityLevel securityLevel: ZMConversationSecurityLevel) -> CallState {
-        let degraded = securityLevel == .secureWithIgnored
-
+    func update(isConversationDegraded: Bool) -> CallState {
         switch self {
         case .incoming(video: let video, shouldRing: let shouldRing, degraded: _):
-            return .incoming(video: video, shouldRing: shouldRing, degraded: degraded)
+            return .incoming(video: video, shouldRing: shouldRing, degraded: isConversationDegraded)
         case .outgoing:
-            return .outgoing(degraded: degraded)
+            return .outgoing(degraded: isConversationDegraded)
         case .answered:
-            return .answered(degraded: degraded)
+            return .answered(degraded: isConversationDegraded)
         default:
             return self
         }

@@ -21,10 +21,10 @@ import WireCommonComponents
 import WireDataModel
 
 final class ConversationTitleView: TitleView {
-    var conversation: ConversationLike
+    var conversation: GroupDetailsConversationType
     var interactive: Bool = true
 
-    init(conversation: ConversationLike, interactive: Bool = true) {
+    init(conversation: GroupDetailsConversationType, interactive: Bool = true) {
         self.conversation = conversation
         self.interactive = interactive
         super.init()
@@ -47,8 +47,8 @@ final class ConversationTitleView: TitleView {
             leadingIcons.append(.legalHold())
         }
 
-        if conversation.securityLevel == .secure {
-            trailingIcons.append(.proteusVerifiedShield())
+        if conversation.isVerified {
+            trailingIcons.append(verifiedShield)
         }
 
         var subtitle: String?
@@ -70,13 +70,22 @@ final class ConversationTitleView: TitleView {
         setupAccessibility()
     }
 
+    private var verifiedShield: NSTextAttachment {
+        switch conversation.messageProtocol {
+        case .proteus, .mixed:
+            return .proteusVerifiedShield()
+        case .mls:
+            return .e2eiVerifiedShield()
+        }
+    }
+
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
 
         var components: [String] = []
         components.append(conversation.displayNameWithFallback)
 
-        if conversation.securityLevel == .secure {
+        if conversation.isVerified {
             components.append(Conversation.VerifiedIcon.description)
         }
 
