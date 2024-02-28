@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
+
+@testable import WireRequestStrategy
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
@@ -24,6 +27,18 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
     typealias Category = WireSyncEngine.PushNotificationCategory
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction
     typealias CallAction = WireSyncEngine.CallNotificationAction
+
+    private var getFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
+
+    override func setUp() {
+        super.setUp()
+        getFeatureConfigsActionHandler = .init(result: .success(()), context: syncMOC.notificationContext)
+    }
+
+    override func tearDown() {
+        getFeatureConfigsActionHandler = nil
+        super.tearDown()
+    }
 
     func testThatItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {
         // when
