@@ -18,8 +18,6 @@
 
 import XCTest
 
-// TODO [WPB-765]: flaky?
-
 class UserTests_AccountDeletion: IntegrationTest {
 
     override func setUp() {

@@ -19,8 +19,6 @@
 import Foundation
 @testable import WireSyncEngine
 
-// TODO [WPB-765]: flaky?
-
 final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
     override func setUp() {
