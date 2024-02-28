@@ -47,6 +47,7 @@ struct DeviceDetailsView: View {
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         .padding(.top, ViewConstants.Padding.medium)
+        .frame(maxWidth: .infinity)
     }
 
     var proteusView: some View {
@@ -63,6 +64,7 @@ struct DeviceDetailsView: View {
                 DeviceDetailsBottomView(viewModel: viewModel)
             }
         }
+        .frame(maxWidth: .infinity)
     }
 
     var mlsView: some View {
@@ -71,6 +73,7 @@ struct DeviceDetailsView: View {
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
+        .frame(maxWidth: .infinity)
     }
 
     var body: some View {
