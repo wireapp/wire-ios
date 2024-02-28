@@ -94,11 +94,10 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
         let showSeparator = (viewModel.participants.count - 1) != indexPath.row
 
-        if let user = SelfUser.provider?.providedSelfUser {
+        if let selfUser = SelfUser.provider?.providedSelfUser {
             cell.configure(
                 user: participant,
-                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-                isSelfUserPartOfATeam: user.hasTeam,
+                isSelfUserPartOfATeam: selfUser.hasTeam,
                 conversation: conversation
             )
         } else {

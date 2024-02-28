@@ -512,7 +512,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 0.5)
         XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
-        XCTAssertEqual(sut.backendPublicKeys, backendPublicKeys)
     }
 
     // MARK: - Adding participants
@@ -1078,14 +1077,18 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subgroupInvocations.first?.type, .conference)
         XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
 
-        // Then we try to commit pending propsoals twice, once for the subgroup, once for the parent
+        // Then we try to commit pending proposals twice, once for the subgroup, once for the parent
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
         let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
-        XCTAssertEqual(id1, subgroupID)
+
+        // there is no guarantee which proposal is finished first
+        XCTAssertTrue([subgroupID, parentGroupdID].contains(id1))
         XCTAssertEqual(commitTime1.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
         let (id2, commitTime2) = try XCTUnwrap(mockCommitPendingProposalArguments.last)
-        XCTAssertEqual(id2, parentGroupdID)
+
+        // there is no guarantee which proposal is finished first
+        XCTAssertTrue([subgroupID, parentGroupdID].contains(id2))
         XCTAssertEqual(commitTime2.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
         await uiMOC.perform {
@@ -2054,6 +2057,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subgroupID = MLSGroupID.random()
         let epoch = 0
         let epochTimestamp = Date()
+        let externalSender = Data.random()
 
         mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
             return MLSSubgroup(
@@ -2066,7 +2070,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
 
-        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, _ in
+        mockCoreCrypto.getExternalSenderConversationId_MockMethod = { groupID in
+            XCTAssertEqual(groupID, parentID.data)
+            return externalSender
+        }
+
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, config in
+            XCTAssertEqual(config.externalSenders, [externalSender])
             XCTAssertEqual(groupID, subgroupID.data)
         }
 
@@ -2120,6 +2130,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subgroupID = MLSGroupID.random()
         let epoch = 1
         let epochTimestamp = Date(timeIntervalSinceNow: -.oneDay)
+        let externalSender = Data.random()
 
         mockActionsProvider.deleteSubgroupConversationIDDomainSubgroupTypeContext_MockMethod = { _, _, _, _ in
             // no-op
@@ -2136,7 +2147,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
 
-        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, _ in
+        mockCoreCrypto.getExternalSenderConversationId_MockMethod = { groupID in
+            XCTAssertEqual(groupID, parentID.data)
+            return externalSender
+        }
+
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { groupID, _, config in
+            XCTAssertEqual(config.externalSenders, [externalSender])
             XCTAssertEqual(groupID, subgroupID.data)
         }
 

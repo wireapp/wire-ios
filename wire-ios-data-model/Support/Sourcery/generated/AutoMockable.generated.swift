@@ -415,6 +415,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
+    // MARK: - getExternalSender
+
+    public var getExternalSenderConversationId_Invocations: [Data] = []
+    public var getExternalSenderConversationId_MockError: Error?
+    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
+    public var getExternalSenderConversationId_MockValue: Data?
+
+    public func getExternalSender(conversationId: Data) async throws -> Data {
+        getExternalSenderConversationId_Invocations.append(conversationId)
+
+        if let error = getExternalSenderConversationId_MockError {
+            throw error
+        }
+
+        if let mock = getExternalSenderConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = getExternalSenderConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getExternalSenderConversationId`")
+        }
+    }
+
     // MARK: - createConversation
 
     public var createConversationConversationIdCreatorCredentialTypeConfig_Invocations: [(conversationId: Data, creatorCredentialType: WireCoreCrypto.MlsCredentialType, config: WireCoreCrypto.ConversationConfiguration)] = []
@@ -863,29 +886,6 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `getDeviceIdentitiesConversationIdDeviceIds`")
-        }
-    }
-
-    // MARK: - getExternalSender
-
-    public var getExternalSenderConversationId_Invocations: [Data] = []
-    public var getExternalSenderConversationId_MockError: Error?
-    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
-    public var getExternalSenderConversationId_MockValue: Data?
-
-    public func getExternalSender(conversationId: Data) async throws -> Data {
-        getExternalSenderConversationId_Invocations.append(conversationId)
-
-        if let error = getExternalSenderConversationId_MockError {
-            throw error
-        }
-
-        if let mock = getExternalSenderConversationId_MockMethod {
-            return try await mock(conversationId)
-        } else if let mock = getExternalSenderConversationId_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getExternalSenderConversationId`")
         }
     }
 
@@ -3623,6 +3623,26 @@ public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
 
     public init() {}
 
+
+    // MARK: - resolveAllOneOnOneConversations
+
+    public var resolveAllOneOnOneConversationsIn_Invocations: [NSManagedObjectContext] = []
+    public var resolveAllOneOnOneConversationsIn_MockError: Error?
+    public var resolveAllOneOnOneConversationsIn_MockMethod: ((NSManagedObjectContext) async throws -> Void)?
+
+    public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
+        resolveAllOneOnOneConversationsIn_Invocations.append(context)
+
+        if let error = resolveAllOneOnOneConversationsIn_MockError {
+            throw error
+        }
+
+        guard let mock = resolveAllOneOnOneConversationsIn_MockMethod else {
+            fatalError("no mock for `resolveAllOneOnOneConversationsIn`")
+        }
+
+        try await mock(context)
+    }
 
     // MARK: - resolveOneOnOneConversation
 

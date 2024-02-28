@@ -575,8 +575,8 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Network
 
-    public func requestSlowSync() {
-        applicationStatusDirectory.requestSlowSync()
+    public func requestResyncResources() {
+        applicationStatusDirectory.requestResyncResources()
     }
 
     // MARK: - Access Token
@@ -711,15 +711,15 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     public func didFinishSlowSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
-            self?.hasCompletedInitialSync = true
-            self?.notificationDispatcher.isEnabled = true
+            guard let self else { return }
 
-            if let context = self?.managedObjectContext {
-                ZMUserSession.notifyInitialSyncCompleted(context: context)
-            }
+            self.hasCompletedInitialSync = true
+            self.notificationDispatcher.isEnabled = true
+            ZMUserSession.notifyInitialSyncCompleted(context: managedObjectContext)
         }
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
+
         if selfClient?.hasRegisteredMLSClient == true {
             Task {
                 await mlsService.repairOutOfSyncConversations()

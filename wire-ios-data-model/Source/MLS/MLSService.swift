@@ -129,7 +129,6 @@ public final class MLSService: MLSServiceInterface {
         case keyPackageQueriedTime
     }
 
-    var backendPublicKeys = BackendMLSPublicKeys()
     var pendingProposalCommitTimers = [MLSGroupID: Timer]()
 
     let targetUnclaimedKeyPackageCount = 100
@@ -233,18 +232,19 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Public keys
 
-    private func fetchBackendPublicKeys() async {
+    private func fetchBackendPublicKeys() async -> BackendMLSPublicKeys? {
         logger.info("fetching backend public keys")
 
         guard let notificationContext = context?.notificationContext else {
             logger.warn("can't fetch backend public keys: notification context is missing")
-            return
+            return nil
         }
 
         do {
-            backendPublicKeys = try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
+            return try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
         } catch {
             logger.warn("failed to fetch backend public keys: \(String(describing: error))")
+            return nil
         }
     }
 
@@ -411,6 +411,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Group creation
 
     enum MLSGroupCreationError: Error, Equatable {
+        case failedToGetExternalSenders
         case failedToCreateGroup
     }
 
@@ -435,14 +436,32 @@ public final class MLSService: MLSServiceInterface {
         try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
     }
 
-    func createGroup(for groupID: MLSGroupID) async throws {
+    func createGroup(
+        for groupID: MLSGroupID,
+        parentGroupID: MLSGroupID? = nil
+    ) async throws {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
-        await fetchBackendPublicKeys()
 
         do {
+            let externalSenders: [Data]
+            if let parentGroupID {
+                // Anyone in the parent conversation can create a subconversation,
+                // even people from different domains. We need to make sure that
+                // the external senders is the same as the parent, otherwise we
+                // won't be able to decrypt external remove proposals from the
+                // owning domain.
+                externalSenders = try await coreCrypto.perform {
+                    [try await $0.getExternalSender(conversationId: parentGroupID.data)]
+                }
+            } else if let backendPublicKeys = await fetchBackendPublicKeys() {
+                externalSenders = backendPublicKeys.ed25519Keys
+            } else {
+                throw MLSGroupCreationError.failedToGetExternalSenders
+            }
+
             let config = ConversationConfiguration(
                 ciphersuite: CiphersuiteName.default.rawValue,
-                externalSenders: backendPublicKeys.ed25519Keys,
+                externalSenders: externalSenders,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
@@ -1305,23 +1324,28 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("\(groupsWithPendingCommits.count) groups with scheduled pending proposals")
 
-        for (groupID, timestamp) in groupsWithPendingCommits {
-            if timestamp.isInThePast {
-                logger.info("commit scheduled in the past, committing...")
-                try await commitPendingProposals(in: groupID)
-            } else {
-                logger.info("commit scheduled in the future, waiting...")
-                // Committing proposals for each group is independent and should not wait for
-                // each other.
-                await withTaskGroup(of: Void.self) { group in
-                    group.addTask { [self] in
-                        do {
-                            try await Task.sleep(nanoseconds: timestamp.timeIntervalSinceNow.nanoseconds)
+        // Committing proposals for each group is independent and should not wait for
+        // each other.
+        await withTaskGroup(of: Void.self) { taskGroup in
+            for (groupID, timestamp) in groupsWithPendingCommits {
+                taskGroup.addTask { [self] in
+                    do {
+                        if timestamp.isInThePast {
+                            logger.info("commit scheduled in the past, committing...")
+                            try await commitPendingProposals(in: groupID)
+                        } else {
+                            logger.info("commit scheduled in the future, waiting...")
+
+                            let timeIntervalSinceNow = timestamp.timeIntervalSinceNow
+                            if timeIntervalSinceNow > 0 {
+                                try await Task.sleep(nanoseconds: timeIntervalSinceNow.nanoseconds)
+                            }
                             logger.info("scheduled commit is ready, committing...")
                             try await commitPendingProposals(in: groupID)
-                        } catch {
-                            logger.error("failed to commit pending proposals: \(String(describing: error))")
                         }
+
+                    } catch {
+                        logger.error("failed to commit pending proposals: \(String(describing: error))")
                     }
                 }
             }
@@ -1495,13 +1519,19 @@ public final class MLSService: MLSServiceInterface {
             )
 
             if subgroup.epoch <= 0 {
-                try await createSubgroup(with: subgroup.groupID)
+                try await createSubgroup(
+                    with: subgroup.groupID,
+                    parentID: parentID
+                )
             } else if let epochAge = subgroup.epochTimestamp?.ageInDays, epochAge >= 1 {
                 try await deleteSubgroup(
                     parentID: parentQualifiedID,
                     context: notificationContext
                 )
-                try await createSubgroup(with: subgroup.groupID)
+                try await createSubgroup(
+                    with: subgroup.groupID,
+                    parentID: parentID
+                )
             } else {
                 try await joinSubgroup(
                     parentID: parentID,
@@ -1540,10 +1570,13 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func createSubgroup(with id: MLSGroupID) async throws {
+    private func createSubgroup(
+        with id: MLSGroupID,
+        parentID: MLSGroupID
+    ) async throws {
         do {
             logger.info("creating subgroup with id (\(id.safeForLoggingDescription))")
-            try await createGroup(for: id)
+            try await createGroup(for: id, parentGroupID: parentID)
             try await updateKeyMaterial(for: id)
         } catch {
             logger.error("failed to create subgroup with id (\(id.safeForLoggingDescription)): \(String(describing: error))")

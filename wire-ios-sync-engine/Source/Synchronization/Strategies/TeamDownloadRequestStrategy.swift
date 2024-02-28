@@ -58,10 +58,8 @@ extension TeamPayload {
             return nil
         }
 
-        if created {
-            let selfUser = ZMUser.selfUser(in: managedObjectContext)
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: managedObjectContext)
-        }
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        _ = Member.getOrUpdateMember(for: selfUser, in: team, context: managedObjectContext)
 
         updateTeam(team, in: managedObjectContext)
 
@@ -84,7 +82,7 @@ extension TeamPayload {
 fileprivate extension Team {
 
     static var predicateForObjectsNeedingToBeUpdated: NSPredicate = {
-        NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToBeUpdatedFromBackend), Team.remoteIdentifierDataKey()!)
+        NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToBeUpdatedFromBackend), Team.remoteIdentifierDataKey())
     }()
 
 }
