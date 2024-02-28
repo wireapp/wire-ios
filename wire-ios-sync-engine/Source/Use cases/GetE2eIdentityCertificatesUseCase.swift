@@ -75,12 +75,22 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                 return (identity, identity.status.e2eIdentityStatus)
             }
 
-            let (name, handle) = await syncContext.perform {
-                let client = UserClient.fetchExistingUserClient(with: identity.clientId, in: self.syncContext)
-                return (client?.user?.name, client?.user?.handle)
+            guard let mlsClientID = MLSClientID(rawValue: identity.clientId) else {
+                return (identity, .invalid)
             }
 
-            let isValid = identity.displayName == name && identity.handle == handle
+            let (name, handle, domain) = await syncContext.perform {
+                let client = UserClient.fetchExistingUserClient(with: mlsClientID.clientID, in: self.syncContext)
+                return (client?.user?.name, client?.user?.handle, client?.user?.domain)
+            }
+
+            guard let name, let handle, let domain else {
+                return (identity, .invalid)
+            }
+
+            let hasValidDisplayName = identity.displayName == name
+            let hasValidHandle = identity.handle.contains("\(handle)@\(domain)")
+            let isValid = hasValidDisplayName && hasValidHandle
             return (identity, isValid ? .valid : .invalid)
         }
     }
