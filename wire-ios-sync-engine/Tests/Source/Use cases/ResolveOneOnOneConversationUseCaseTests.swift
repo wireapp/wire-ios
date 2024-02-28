@@ -94,7 +94,6 @@ final class ResolveOneOnOneConversationUseCaseTests: XCTestCase {
         // GIVEN
         await syncContext.perform { [self] in
             let selfUser = ZMUser.selfUser(in: syncContext)
-            let conversation = selfUser.oneOnOneConversation
             selfUser.supportedProtocols = [.proteus]
             mockSupportedProtocolService.calculateSupportedProtocols_MockValue = [.proteus, .mls]
         }
