@@ -147,7 +147,7 @@ final class ZMUserConsentTests: DatabaseTest {
     }
 
     func testThatItFailsOn404_get() {
-        // given
+        // GIVEN
         mockTransportSession.responseGeneratorBlock = { request in
             guard request.path == "/self/consent" else { return nil }
 
@@ -155,7 +155,7 @@ final class ZMUserConsentTests: DatabaseTest {
         }
 
         let receivedError = customExpectation(description: "received error")
-// WHEN
+        // WHEN
         selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
             switch result {
             case .failure(let error):
