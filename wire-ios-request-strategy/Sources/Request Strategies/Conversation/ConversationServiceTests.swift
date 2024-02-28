@@ -615,7 +615,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let didSync = customExpectation(description: "didSync")
 
         // Mock
-        _ = MockActionHandler<SyncConversationAction>(
+        let handler = MockActionHandler<SyncConversationAction>(
             result: .success(()),
             context: uiMOC.notificationContext
         )
@@ -626,7 +626,9 @@ final class ConversationServiceTests: MessagingTestBase {
         }
 
         // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        withExtendedLifetime(handler) {
+            XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        }
     }
 
 }

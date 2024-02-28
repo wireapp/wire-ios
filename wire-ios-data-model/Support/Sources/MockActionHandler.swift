@@ -24,7 +24,7 @@ public class MockActionHandler<T: EntityAction>: EntityActionHandler {
     public typealias Action = T
 
     var results: [Result<Action.Result, Action.Failure>]
-    var token: Any?
+    var token: NSObjectProtocol?
     public var didPerformAction: Bool {
         return results.isEmpty
     }
