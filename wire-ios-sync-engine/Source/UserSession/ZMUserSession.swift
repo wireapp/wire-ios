@@ -208,8 +208,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-   
-     let useCaseFactory: UseCaseFactoryProtocol
+    let useCaseFactory: UseCaseFactoryProtocol
 
     weak var delegate: UserSessionDelegate?
 
@@ -356,8 +355,8 @@ public final class ZMUserSession: NSObject {
         )
 
         self.useCaseFactory = useCaseFactory ?? UseCaseFactory(context: coreDataStack.syncContext,
-                                             supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
-                                             oneOnOneResolver: OneOnOneResolver(mlsService: self.mlsService))
+                                                               supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
+                                                               oneOnOneResolver: OneOnOneResolver(mlsService: self.mlsService))
 
         super.init()
 
