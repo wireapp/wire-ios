@@ -35,20 +35,11 @@ final class AuthenticationInitialSyncEventHandler: NSObject, AuthenticationEvent
         }
 
         // Do not ask for credentials again (slow sync can be called multiple times)
-        guard case let .pendingInitialSync(nextRegistrationStep) = currentStep else {
+        guard .pendingInitialSync == currentStep else {
             return [.hideLoadingView]
         }
 
-        // Build the list of actions
-        var actions: [AuthenticationCoordinatorAction] = [.hideLoadingView]
-
-        if let nextStep = nextRegistrationStep {
-            actions.append(.transition(nextStep, mode: .reset))
-        } else {
-            actions.append(postAction)
-        }
-
-        return actions
+        return [.hideLoadingView, .completeLoginFlow]
     }
 
 }

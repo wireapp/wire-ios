@@ -305,11 +305,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     userSession: statusProvider.sharedUserSession!
                 )
 
-            case .completeRegistrationFlow:
-                delegate?.userAuthenticationDidComplete(
-                    userSession: statusProvider.sharedUserSession!
-                )
-
             case .startPostLoginFlow:
                 registerPostLoginObserversIfNeeded()
 
