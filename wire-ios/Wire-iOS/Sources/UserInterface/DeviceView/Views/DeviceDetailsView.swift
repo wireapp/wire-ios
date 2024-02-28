@@ -44,7 +44,8 @@ struct DeviceDetailsView: View {
                 viewModel: viewModel,
                 isCertificateViewPresented: $isCertificateViewPresented
             )
-        }.background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        }
+        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         .padding(.top, ViewConstants.Padding.medium)
         .frame(maxWidth: .infinity)
     }
