@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,25 +17,29 @@
 //
 
 import Foundation
+import WireDataModel
 
-class MockActionHandler<T: EntityAction>: EntityActionHandler {
+public class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
-    typealias Action = T
+    public typealias Action = T
 
     var results: [Result<Action.Result, Action.Failure>]
     var token: Any?
-    var performedActions = [Action]()
+    public var didPerformAction: Bool {
+        return results.isEmpty
+    }
+    public var performedActions: [Action] = []
 
-    init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
+    public init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
         self.results = results
         token = Action.registerHandler(self, context: context)
     }
 
-    convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
+    public convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
         self.init(results: [result], context: context)
     }
 
-    func performAction(_ action: Action) {
+    public func performAction(_ action: Action) {
         var action = action
         if let result = results.first {
             action.notifyResult(result)

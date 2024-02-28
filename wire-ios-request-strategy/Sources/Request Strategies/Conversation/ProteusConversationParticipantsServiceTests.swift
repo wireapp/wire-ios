@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireDataModelSupport
 @testable import WireRequestStrategy
 
 class ProteusConversationParticipantsServiceTests: MessagingTestBase {
