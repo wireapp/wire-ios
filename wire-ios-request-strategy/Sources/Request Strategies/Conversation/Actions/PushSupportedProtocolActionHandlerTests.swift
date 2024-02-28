@@ -44,14 +44,13 @@ final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Push
         try await super.tearDown()
     }
 
-    func testActionHandlerCreatesValidRequest_APIVersionFour() {
-        let request = self.handler.request(for: self.action, apiVersion: .v4)
-        XCTAssertNotNil(request, "Handler should create a valid request for supported API versions and protocols")
-    }
-
-    func testActionHandlerDoesNotCreateValidRequest_APIVersionThree() {
-        let request = self.handler.request(for: self.action, apiVersion: .v3)
-        XCTAssertNil(request, "Handler should not create a valid request for supported API versions and protocols")
+    func testPushSupportedProtocolsRequestGeneration_APIV4() throws {
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/v4/self/supported-protocols",
+            expectedMethod: .put,
+            apiVersion: .v4
+        )
     }
 
     func testActionHandlerHandlesSuccessResponse() {
