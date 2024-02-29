@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 extension UIFont {
 
@@ -66,6 +67,7 @@ extension UIFont {
         case bodyTwoSemibold
         case buttonSmallSemibold
         case buttonBigSemibold
+        case bigHeadline
     }
 
     public static func font(for style: FontStyle) -> UIFont {
@@ -103,7 +105,50 @@ extension UIFont {
             return UIFontMetrics.default.scaledFont(for: baseFont.withWeight(.semibold))
 
         case .buttonBigSemibold:
-            return  .preferredFont(forTextStyle: .title3).withWeight(.bold)
+            return .preferredFont(forTextStyle: .title3).withWeight(.bold)
+
+        case .bigHeadline:
+            return UIFont.preferredFont(forTextStyle: .body).withSize(36)
+        }
+    }
+
+    public static func swiftUIFont(for style: UIFont.FontStyle) -> Font {
+        switch style {
+        case .title3:
+            return .title3
+
+        case .headline:
+            return .headline
+
+        case .body:
+            return .body
+
+        case .subheadline:
+            return .subheadline
+
+        case .caption1:
+            return .caption
+
+        case .title3Bold:
+            return .title3.bold()
+
+        case .calloutBold:
+            return .callout.bold()
+
+        case .footnoteSemibold:
+            return .footnote.weight(.semibold)
+
+        case .bodyTwoSemibold:
+            return .system(size: 16, weight: .semibold)
+
+        case .buttonSmallSemibold:
+            return .system(size: 14, weight: .semibold)
+
+        case .buttonBigSemibold:
+                return .title3.bold()
+
+        case .bigHeadline:
+            return .system(size: 36)
         }
     }
 

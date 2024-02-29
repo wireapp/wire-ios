@@ -18,16 +18,23 @@
 
 import Foundation
 import LocalAuthentication
-@testable import Wire
 import WireSyncEngineSupport
+import WireDataModelSupport
+import WireRequestStrategySupport
+
+@testable import Wire
 
 final class UserSessionMock: UserSession {
+    var isE2eIdentityEnabled  = false
+    var certificate = E2eIdentityCertificate.mockNotActivated
     typealias Preference = AppLockPasscodePreference
     typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
 
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
-        mock.invokeUserClient_MockMethod = { _ in return "102030405060708090102030405060708090102030405060708090".data(using: .utf8) }
+        mock.invokeUserClient_MockMethod = { _ in
+            return "102030405060708090102030405060708090102030405060708090".data(using: .utf8)
+        }
         return mock
     }()
 
@@ -248,7 +255,39 @@ final class UserSessionMock: UserSession {
         mockGetUserClientFingerprintUseCaseProtocol
     }
 
+    lazy var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol = {
+        let mock = MockIsUserE2EICertifiedUseCaseProtocol()
+        mock.invokeConversationUser_MockValue = false
+        return mock
+    }()
+
+    lazy var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol = {
+        let mock = MockIsSelfUserE2EICertifiedUseCaseProtocol()
+        mock.invoke_MockValue = false
+        return mock
+    }()
+
     var selfUserClient: UserClient? {
         return nil
     }
+
+    var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol {
+        MockEnrollE2EICertificateUseCaseProtocol()
+    }
+
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol {
+        MockGetIsE2EIdentityEnabledUseCaseProtocol()
+    }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol {
+        MockGetE2eIdentityCertificatesUseCaseProtocol()
+    }
+
+    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
+        MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
+    }
+
+    var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
+
+    func fetchAllClients() {}
 }
