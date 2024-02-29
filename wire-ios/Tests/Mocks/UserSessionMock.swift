@@ -232,9 +232,9 @@ final class UserSessionMock: UserSession {
     }
 
     func classification(
-        with users: [UserType],
+        users: [UserType],
         conversationDomain: String?
-    ) -> SecurityClassification {
+    ) -> SecurityClassification? {
         return .none
     }
 
