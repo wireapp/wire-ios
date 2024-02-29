@@ -83,7 +83,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             )
         }
 
-        switch await protocolSelector.getProtocolForUser(
+        switch try await protocolSelector.getProtocolForUser(
             with: userID,
             in: syncContext
         ) {
