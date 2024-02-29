@@ -109,7 +109,7 @@ final class SecurityLevelView: UIView {
             iconImageView.widthAnchor.constraint(equalToConstant: 11.0),
             iconImageView.heightAnchor.constraint(equalToConstant: 11.0),
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            securityLevelLabel.trailingAnchor.constraint(equalTo: iconImageView.leadingAnchor, constant: 4)
+            securityLevelLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 4)
         ])
     }
 
