@@ -20,8 +20,8 @@ import Foundation
 
 public enum MLSVerificationStatus: Int16 {
 
+    case notVerified = 1
     case verified
-    case notVerified
     case degraded
 
 }
