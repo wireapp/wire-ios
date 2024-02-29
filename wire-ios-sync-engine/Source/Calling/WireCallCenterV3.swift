@@ -954,8 +954,8 @@ extension WireCallCenterV3 {
         return conversationType
     }
 
-    /// Set MLSConferanceInfo to AVSWrapper in case this is a MLS conference
-    func setMLSConferanceInfoIfNeeded(for conversationId: AVSIdentifier, completion: @escaping (Bool) -> Void) {
+    /// Set MLSConferenceInfo to AVSWrapper in case this is a MLS conference
+    func setMLSConferenceInfoIfNeeded(for conversationId: AVSIdentifier, completion: @escaping (Bool) -> Void) {
         Task {
             guard let syncContext = await self.uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
 
