@@ -46,7 +46,8 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
     var actionController: ConversationMessageActionController?
 
     init(messageType: ZMSystemMessageType) {
-        let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
+        let icon = Asset.Images.attention.image
+        icon.imageView.tintColor = SemanticColors.Icon.backgroundDefault
         let content = Self.makeAttributedString(messageType: messageType)
 
         configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
