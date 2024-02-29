@@ -188,7 +188,7 @@ extension SearchTask {
 
                 let result = SearchResult(
                     contacts: searchConnectedUsers,
-                    teamMembers: searchTeamMembers, // searchOne2oneConversationUsers,
+                    teamMembers: searchTeamMembers,
                     addressBook: [],
                     directory: [],
                     conversations: conversations,
