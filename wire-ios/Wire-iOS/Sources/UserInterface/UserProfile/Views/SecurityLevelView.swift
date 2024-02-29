@@ -16,22 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
 
 final class SecurityLevelView: UIView {
-    static let SecurityLevelViewHeight = 24.0
+
+    // MARK: - Constants
+
+    private static let SecurityLevelViewHeight = 24.0
+
+    // MARK: - Properties
+
     private let securityLevelLabel = UILabel()
     private let iconImageView = UIImageView()
     private let topBorder = UIView()
     private let bottomBorder = UIView()
-    typealias SecurityLocalization = L10n.Localizable.SecurityClassification
 
+    typealias SecurityLocalization = L10n.Localizable.SecurityClassification
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
+
+    // MARK: - Initializers
 
     init() {
         super.init(frame: .zero)
@@ -46,6 +54,8 @@ final class SecurityLevelView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Methods
 
     func configure(with classification: SecurityClassification?) {
         securityLevelLabel.font = FontSpec.smallSemiboldFont.font!
@@ -92,14 +102,14 @@ final class SecurityLevelView: UIView {
         [securityLevelLabel, iconImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-          securityLevelLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-          securityLevelLabel.topAnchor.constraint(equalTo: topAnchor),
-          securityLevelLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-          securityLevelLabel.heightAnchor.constraint(equalToConstant: SecurityLevelView.SecurityLevelViewHeight),
-          iconImageView.widthAnchor.constraint(equalToConstant: 11.0),
-          iconImageView.heightAnchor.constraint(equalToConstant: 11.0),
-          iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-          iconImageView.trailingAnchor.constraint(equalTo: securityLevelLabel.leadingAnchor, constant: -4.0)
+            securityLevelLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            securityLevelLabel.topAnchor.constraint(equalTo: topAnchor),
+            securityLevelLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            securityLevelLabel.heightAnchor.constraint(equalToConstant: SecurityLevelView.SecurityLevelViewHeight),
+            iconImageView.widthAnchor.constraint(equalToConstant: 11.0),
+            iconImageView.heightAnchor.constraint(equalToConstant: 11.0),
+            iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            securityLevelLabel.trailingAnchor.constraint(equalTo: iconImageView.leadingAnchor, constant: 4)
         ])
     }
 
@@ -109,13 +119,15 @@ final class SecurityLevelView: UIView {
         case .classified:
             securityLevelLabel.textColor = LabelColors.textSecurityEnabled
             backgroundColor = ViewColors.backgroundSecurityEnabled
-            iconImageView.image = Asset.Images.check.image.withTintColor(IconColors.backgroundSecurityEnabledCheckMark)
+            iconImageView.image = .init(resource: .check)
+            iconImageView.tintColor = IconColors.backgroundSecurityEnabledCheckMark
             topBorder.backgroundColor = ViewColors.borderSecurityEnabled
 
         case .notClassified:
             securityLevelLabel.textColor = LabelColors.textDefaultWhite
             backgroundColor = ViewColors.backgroundSecurityDisabled
-            iconImageView.image = Asset.Images.attention.image.withTintColor(IconColors.foregroundCheckMarkSelected)
+            iconImageView.image = .init(resource: .attention)
+            iconImageView.tintColor = IconColors.foregroundCheckMarkSelected
             topBorder.backgroundColor = .clear
 
         case .none:
@@ -145,9 +157,10 @@ final class SecurityLevelView: UIView {
             isHidden = true
             assertionFailure("should not reach this point")
         }
-
     }
 }
+
+// MARK: - SecurityClassification Extension
 
 private extension SecurityClassification {
 
@@ -155,27 +168,53 @@ private extension SecurityClassification {
 
     var levelText: String? {
         switch self {
+
         case .classified:
-            return SecurityClassificationLevel.bund
+            SecurityClassificationLevel.bund
 
         case .notClassified:
-            return L10n.Localizable.SecurityClassification.Level.notClassified
-
-        default:
-            return nil
+            L10n.Localizable.SecurityClassification.Level.notClassified
         }
     }
 
     var accessibilitySuffix: String {
         switch self {
         case .classified:
-            return "Classified"
+            "Classified" // TODO: missing localization?
 
         case .notClassified:
-            return "Unclassified"
-
-        default:
-            return ""
+            "Unclassified"
         }
+    }
+}
+
+// MARK: - Previews
+
+struct SecurityLevelView_Previews: PreviewProvider {
+
+    static var previews: some View {
+        Group {
+            SecurityLevelViewRepresentable(classification: .classified)
+                .previewDisplayName("Classified")
+            SecurityLevelViewRepresentable(classification: .notClassified)
+                .previewDisplayName("Unclassified")
+        }
+    }
+}
+
+private struct SecurityLevelViewRepresentable: UIViewRepresentable {
+
+    @State var classification: SecurityClassification?
+
+    func makeUIView(context: Context) -> SecurityLevelView {
+        FontScheme.configure(with: .large)
+
+        let view = SecurityLevelView()
+        view.configure(with: classification)
+        return view
+    }
+
+    func updateUIView(_ view: SecurityLevelView, context: Context) {
+        view.configure(with: classification)
     }
 }
