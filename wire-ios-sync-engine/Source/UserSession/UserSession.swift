@@ -195,9 +195,9 @@ public protocol UserSession: AnyObject {
     )
 
     func classification(
-        with users: [UserType],
+        users: [UserType],
         conversationDomain: String?
-    ) -> SecurityClassification
+    ) -> SecurityClassification?
 
     var maxVideoLength: TimeInterval { get }
 
@@ -253,12 +253,8 @@ extension ZMUserSession: UserSession {
     }
 
     public var isAppLockActive: Bool {
-        get {
-            appLockController.isActive
-        }
-        set {
-            appLockController.isActive = newValue
-        }
+        get { appLockController.isActive }
+        set { appLockController.isActive = newValue }
     }
 
     public var isAppLockAvailable: Bool {
@@ -486,24 +482,6 @@ extension ZMUserSession: UserSession {
             in: self,
             completion: completion
         )
-    }
-
-    public func classification(
-        with users: [UserType],
-        conversationDomain: String?
-    ) -> SecurityClassification {
-        guard isSelfClassified else { return .none }
-
-        if let conversationDomain = conversationDomain,
-           classifiedDomainsFeature.config.domains.contains(conversationDomain) == false {
-            return .notClassified
-        }
-
-        let isClassified = users.allSatisfy {
-            classification(with: $0) == .classified
-        }
-
-        return isClassified ? .classified : .notClassified
     }
 
     public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {

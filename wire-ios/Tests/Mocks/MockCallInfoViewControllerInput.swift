@@ -40,7 +40,7 @@ struct MockCallInfoViewControllerInput: CallInfoViewControllerInput {
     var networkQuality: NetworkQuality
     var userEnabledCBR: Bool
     var isForcedCBR: Bool
-    var classification: SecurityClassification
+    var classification: SecurityClassification?
 }
 
 extension MockCallInfoViewControllerInput: CustomDebugStringConvertible {}

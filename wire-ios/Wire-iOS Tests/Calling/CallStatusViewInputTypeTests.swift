@@ -27,7 +27,7 @@ struct MockCallStatusViewInputType: CallStatusViewInputType {
     var isVideoCall: Bool
     var userEnabledCBR: Bool
     var isForcedCBR: Bool
-    var classification: SecurityClassification
+    var classification: SecurityClassification?
 }
 
 extension MockCallStatusViewInputType {

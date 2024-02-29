@@ -26,7 +26,7 @@ struct MockStatusViewConfiguration: CallStatusViewInputType {
     let title: String
     let userEnabledCBR: Bool
     let isForcedCBR: Bool
-    var classification: SecurityClassification
+    var classification: SecurityClassification?
 }
 
 final class CallStatusViewTests: BaseSnapshotTestCase {

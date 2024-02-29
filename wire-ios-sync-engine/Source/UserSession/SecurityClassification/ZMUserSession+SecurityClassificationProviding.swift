@@ -16,26 +16,40 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+extension ZMUserSession: SecurityClassificationProviding {
 
-public enum SecurityClassification {
-    case none
-    case classified
-    case notClassified
-}
-
-extension ZMUserSession {
-
-    func classification(with user: UserType) -> SecurityClassification {
+    public func classification(
+        users: [UserType],
+        conversationDomain: String?
+    ) -> SecurityClassification? {
         guard isSelfClassified else { return .none }
 
-        guard let otherDomain = domain(for: user),
-              user.isTemporaryUser == false else { return .notClassified }
+        if let conversationDomain = conversationDomain,
+           classifiedDomainsFeature.config.domains.contains(conversationDomain) == false {
+            return .notClassified
+        }
 
-        return classifiedDomainsFeature.config.domains.contains(otherDomain) ? .classified : .notClassified
+        let isClassified = users.allSatisfy { user in
+            classification(user: user) == .classified
+        }
+
+        return isClassified ? .classified : .notClassified
     }
 
-     var isSelfClassified: Bool {
+    func classification(user: UserType) -> SecurityClassification? {
+        guard isSelfClassified else {
+            return .none
+        }
+        guard let otherDomain = domain(for: user), !user.isTemporaryUser else {
+            return .notClassified
+        }
+
+        return classifiedDomainsFeature.config.domains.contains(otherDomain)
+        ? .classified
+        : .notClassified
+    }
+
+    var isSelfClassified: Bool {
         classifiedDomainsFeature.status == .enabled && providedSelfUser.domain != nil
     }
 

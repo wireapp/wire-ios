@@ -39,10 +39,8 @@ final class CallViewController: UIViewController {
     private let hapticsController = CallHapticsController()
     private let isOverlayEnabled: Bool
 
-    private var classification: SecurityClassification = .none {
-        didSet {
-            updateConfiguration()
-        }
+    private var classification: SecurityClassification? = .none {
+        didSet { updateConfiguration() }
     }
 
     private var voiceChannelObserverTokens: [Any] = []
@@ -89,7 +87,7 @@ final class CallViewController: UIViewController {
         self.userSession = userSession
 
         if let participants = voiceChannel.conversation?.participants {
-            classification = userSession.classification(with: participants, conversationDomain: nil)
+            classification = userSession.classification(users: participants, conversationDomain: nil)
         }
 
         callInfoConfiguration = CallInfoConfiguration(voiceChannel: voiceChannel,
@@ -416,7 +414,7 @@ extension CallViewController: ZMConversationObserver {
             return
         }
 
-        classification = userSession.classification(with: participants, conversationDomain: nil)
+        classification = userSession.classification(users: participants, conversationDomain: nil)
     }
 }
 

@@ -44,7 +44,7 @@ final class ConversationInputBarViewController: UIViewController,
     let conversation: InputBarConversationType
     weak var delegate: ConversationInputBarViewControllerDelegate?
 
-    private let classificationProvider: ClassificationProviding?
+    private let classificationProvider: SecurityClassificationProviding?
 
     private(set) var inputController: UIViewController? {
         willSet {
@@ -327,7 +327,7 @@ final class ConversationInputBarViewController: UIViewController,
     init(
         conversation: InputBarConversationType,
         userSession: UserSession,
-        classificationProvider: ClassificationProviding? = ZMUserSession.shared()
+        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared()
     ) {
         self.conversation = conversation
         self.classificationProvider = classificationProvider

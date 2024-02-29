@@ -73,7 +73,7 @@ final class ProfileViewController: UIViewController {
         viewer: UserType,
         conversation: ZMConversation? = nil,
         context: ProfileViewControllerContext? = nil,
-        classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
+        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession
     ) {
