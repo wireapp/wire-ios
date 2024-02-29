@@ -178,7 +178,7 @@ private extension SecurityClassification {
     var accessibilitySuffix: String {
         switch self {
         case .classified:
-            "Classified" // TODO: missing localization?
+            "Classified"
 
         case .notClassified:
             "Unclassified"
