@@ -88,8 +88,6 @@ final class SecurityLevelView: UIView {
     }
 
     private func setupViews() {
-        translatesAutoresizingMaskIntoConstraints = false
-
         securityLevelLabel.textAlignment = .center
         iconImageView.contentMode = .scaleAspectFit
         [topBorder, securityLevelLabel, iconImageView, bottomBorder].forEach { addSubview($0) }
