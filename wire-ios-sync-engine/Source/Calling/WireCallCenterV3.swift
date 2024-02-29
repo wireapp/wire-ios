@@ -997,7 +997,7 @@ extension WireCallCenterV3 {
 
                 self.avsWrapper.setMLSConferenceInfo(conversationId: conversationId, info: conferenceInfo)
             } catch {
-                WireLogger.mls.error("error while setMLSConferanceInfo: \(error.localizedDescription)")
+                WireLogger.mls.error("error while setMLSConferenceInfo: \(error.localizedDescription)")
             }
 
             await MainActor.run {
