@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,24 @@
 
 import Foundation
 
-@objcMembers
-public final class SelfUnregisteringNotificationCenterToken: NSObject {
+public final class PushSupportedProtocolsAction: EntityAction {
 
-    private let token: NSObjectProtocol
+    public typealias Result = Void
 
-    public init(_ token: NSObjectProtocol) {
-        self.token = token
+    public enum Failure: Error, Equatable {
+        case unknownError(code: Int, label: String, message: String)
+        case requestEndpointUnavailable
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(token)
+    public let supportedProtocols: Set<MessageProtocol>
+    public var resultHandler: ResultHandler?
+
+    public init(
+        supportedProtocols: Set<MessageProtocol>,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.supportedProtocols = supportedProtocols
+        self.resultHandler = resultHandler
     }
+
 }
