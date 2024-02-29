@@ -131,7 +131,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                 }
             } catch {
                 logger.warn("failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))")
-                continue
             }
         }
     }

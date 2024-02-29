@@ -17,33 +17,36 @@
 //
 
 import Foundation
+import WireDataModel
 
-class MockActionHandler<T: EntityAction>: EntityActionHandler {
+public class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
-    typealias Action = T
+    public typealias Action = T
 
     var results: [Result<Action.Result, Action.Failure>]
-    var token: Any?
-    var didPerformAction: Bool {
+    var token: NSObjectProtocol?
+    public var didPerformAction: Bool {
         return results.isEmpty
     }
-    var performedActions: [Action] = []
+    public var performedActions: [Action] = []
 
-    init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
+    public init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
         self.results = results
         token = Action.registerHandler(self, context: context)
     }
 
-    convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
+    public convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
         self.init(results: [result], context: context)
     }
 
-    func performAction(_ action: Action) {
+    public func performAction(_ action: Action) {
         var action = action
         if let result = results.first {
             action.notifyResult(result)
             performedActions.append(action)
             results.removeFirst()
+        } else {
+            assertionFailure("no expected result set")
         }
     }
 

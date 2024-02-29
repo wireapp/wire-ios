@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,25 @@
 
 import Foundation
 
-@objcMembers
-public final class SelfUnregisteringNotificationCenterToken: NSObject {
+// sourcery: AutoMockable
+public protocol UseCaseFactoryProtocol {
 
-    private let token: NSObjectProtocol
+    func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol
 
-    public init(_ token: NSObjectProtocol) {
-        self.token = token
+}
+
+struct UseCaseFactory: UseCaseFactoryProtocol {
+
+    var context: NSManagedObjectContext
+    var supportedProtocolService: SupportedProtocolsServiceInterface
+    var oneOnOneResolver: OneOnOneResolverInterface
+
+    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
+        ResolveOneOnOneConversationsUseCase(
+            context: context,
+            supportedProtocolService: supportedProtocolService,
+            resolver: oneOnOneResolver
+        )
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(token)
-    }
 }
