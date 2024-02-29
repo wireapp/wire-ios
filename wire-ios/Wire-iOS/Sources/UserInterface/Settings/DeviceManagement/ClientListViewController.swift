@@ -72,7 +72,7 @@ final class ClientListViewController: UIViewController,
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
     private var deviceInfoViewModel: DeviceInfoViewModel?
-    
+
     var sortedClients: [UserClient] = []
 
     var selfClient: UserClient?
@@ -217,9 +217,10 @@ final class ClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
         viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
-            self?.updateAllClients() {
+            self?.updateAllClients {
                 self?.updateE2EIdentityCertificateInDetailsView()
             }
+
             let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
             successEnrollmentViewController.certificateDetails = certificateChain
             successEnrollmentViewController.onOkTapped = { viewController in
