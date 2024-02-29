@@ -92,7 +92,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
-        let messageProtocol = await protocolSelector.getProtocolForUser(
+        let messageProtocol = try await protocolSelector.getProtocolForUser(
             with: userID,
             in: context
         )

@@ -116,7 +116,7 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
     let callState: CallStateExtending
     let videoGridPresentationMode: VideoGridPresentationMode
     let allowPresentationModeUpdates: Bool
-    let classification: SecurityClassification
+    let classification: SecurityClassification?
 
     private let voiceChannelSnapshot: VoiceChannelSnapshot
 
@@ -127,7 +127,7 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         cameraType: CaptureDevice,
         mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
         userEnabledCBR: Bool,
-        classification: SecurityClassification = .none,
+        classification: SecurityClassification? = .none,
         selfUser: UserType) {
             self.permissions = permissions
             self.cameraType = cameraType
