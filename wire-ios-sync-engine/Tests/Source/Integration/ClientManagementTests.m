@@ -118,13 +118,15 @@
     
     // then
     ZMUser *selfUser = [self userForMockUser:self.selfUser];
-    NSArray *selfUserClients = selfUser.clients.allObjects;
+    NSSet<UserClient*> *selfUserClients = selfUser.clients;
     XCTAssertEqual(selfUserClients.count, 3u);
 
     NSArray *fetchedClients = self.observer.fetchedClients;
-    
-    XCTAssertNotEqualObjects(fetchedClients, selfUserClients);
     XCTAssertEqual(fetchedClients.count, 3u);
+
+    for (UserClient* client in fetchedClients) {
+        XCTAssertTrue([selfUserClients containsObject:client]);
+    }
     XCTAssertNil(self.observer.fetchError);
     XCTAssertTrue(self.observer.finishedFetching);
 }
