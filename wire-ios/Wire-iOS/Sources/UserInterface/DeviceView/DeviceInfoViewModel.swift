@@ -22,6 +22,7 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
+// sourcery: AutoMockable
 protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
