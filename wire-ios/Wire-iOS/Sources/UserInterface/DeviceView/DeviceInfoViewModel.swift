@@ -126,7 +126,6 @@ final class DeviceInfoViewModel: ObservableObject {
         do {
             let certificateChain = try await actionsHandler.enrollClient()
             showCertificateUpdateSuccess?(certificateChain)
-            e2eIdentityCertificate = userClient.e2eIdentityCertificate
         } catch {
             showEnrollmentCertificateError = true
         }

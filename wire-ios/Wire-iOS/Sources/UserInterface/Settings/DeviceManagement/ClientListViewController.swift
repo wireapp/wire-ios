@@ -71,6 +71,8 @@ final class ClientListViewController: UIViewController,
     private let clientFilter: (UserClient) -> Bool
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
+    private var deviceInfoViewModel: DeviceInfoViewModel?
+    
     var sortedClients: [UserClient] = []
 
     var selfClient: UserClient?
@@ -215,7 +217,9 @@ final class ClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
         viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
-            self?.updateAllClients()
+            self?.updateAllClients() {
+                self?.updateE2EIdentityCertificateInDetailsView()
+            }
             let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
             successEnrollmentViewController.certificateDetails = certificateChain
             successEnrollmentViewController.onOkTapped = { viewController in
@@ -223,6 +227,7 @@ final class ClientListViewController: UIViewController,
             }
             successEnrollmentViewController.presentTopmost()
         }
+        deviceInfoViewModel = viewModel
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
         }
@@ -560,7 +565,7 @@ final class ClientListViewController: UIViewController,
         }
     }
 
-    private func updateAllClients() {
+    private func updateAllClients(completed: (() -> Void)? = nil) {
         guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
             return
         }
@@ -569,12 +574,24 @@ final class ClientListViewController: UIViewController,
             self.clients = results
             self.selfClient = results.first(where: { $0.isSelfClient() })
             refreshViews()
+            completed?()
         }
     }
 
     @MainActor
-    func refreshViews() {
+    func refreshViews(shouldUpdateDetails: Bool = false) {
         clientsTableView?.reloadData()
+    }
+
+    private func updateE2EIdentityCertificateInDetailsView() {
+        if deviceInfoViewModel?.isSelfClient  == true {
+            deviceInfoViewModel?.e2eIdentityCertificate = selfClient?.e2eIdentityCertificate
+        } else {
+            deviceInfoViewModel?.e2eIdentityCertificate = clients.first(
+                where: {
+                $0.clientId == deviceInfoViewModel?.userClient.clientId
+            })?.e2eIdentityCertificate
+        }
     }
 }
 
