@@ -382,8 +382,8 @@ extension XCTestCase {
 
     func verify(matching value: UIView,
                 named name: String? = nil,
-                precision: Float = 0,
-                perceptualPrecision: Float = 0,
+                precision: Float = 1,
+                perceptualPrecision: Float = 1,
                 file: StaticString = #file,
                 testName: String = #function,
                 line: UInt = #line) {
