@@ -400,9 +400,10 @@ public final class AVSWrapper: AVSWrapperType {
             let conversationId = AVSIdentifier.from(string: conversationId)
 
             let completion: (String) -> Void = { (clients: String) in
-                if !callCenter.setMLSConferanceInfoIfNeeded(for: conversationId) {
-                    // PROTEUS
-                    wcall_set_clients_for_conv(handle, conversationIdRef, clients)
+                callCenter.setMLSConferanceInfoIfNeeded(for: conversationId) { isMLSConversation in
+                    if !isMLSConversation {
+                        wcall_set_clients_for_conv(handle, conversationIdRef, clients)
+                    }
                 }
             }
 
