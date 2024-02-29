@@ -180,4 +180,22 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         mockOnEpochChangedCount += 1
         return mock()
     }
+
+    // MARK: - On new CRLs distribution points
+
+    typealias OnNewCRLsDistributionPointsMock = () -> AnyPublisher<CRLsDistributionPoints, Never>
+    private var mockOnNewCRLsDistributionPoints_: OnNewCRLsDistributionPointsMock?
+    var mockOnNewCRLsDistributionPoints: OnNewCRLsDistributionPointsMock? {
+        get { serialQueue.sync { mockOnNewCRLsDistributionPoints_ } }
+        set { serialQueue.sync { mockOnNewCRLsDistributionPoints_ = newValue } }
+    }
+
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        guard let mock = mockOnNewCRLsDistributionPoints else {
+            fatalError("no mock for `onNewCRLsDistributionPoints`")
+        }
+
+        return mock()
+    }
+
 }

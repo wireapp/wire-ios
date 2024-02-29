@@ -40,6 +40,7 @@
 @property (nonatomic) PushNotificationStatus *pushNotificationStatus;
 @property (nonatomic) CallEventStatus *callEventStatus;
 @property (nonatomic) SyncStatus *syncStatus;
+@property (nonatomic) OperationStatus *operationStatus;
 @property (nonatomic) MockRequestStrategy *mockRequestStrategy;
 @property (nonatomic) MockUpdateEventProcessor *mockUpdateEventProcessor;
 @property (nonatomic) MockRequestCancellation *mockRequestCancellation;

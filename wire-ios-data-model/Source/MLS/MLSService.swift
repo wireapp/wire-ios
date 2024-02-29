@@ -65,6 +65,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         subConversationGroupID: MLSGroupID
     ) -> AsyncThrowingStream<MLSConferenceInfo, Error>
 
+    func epochChanges() -> AsyncStream<MLSGroupID>
+
     func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID,
@@ -118,10 +120,11 @@ public final class MLSService: MLSServiceInterface {
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let syncStatus: SyncStatusProtocol
+    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
-            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 
@@ -216,7 +219,10 @@ public final class MLSService: MLSServiceInterface {
         self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
 
-        self.encryptionService = encryptionService ?? MLSEncryptionService(coreCryptoProvider: coreCryptoProvider)
+        self.encryptionService = encryptionService ?? MLSEncryptionService(
+            coreCryptoProvider: coreCryptoProvider
+        )
+
         self.decryptionService = decryptionService ?? MLSDecryptionService(
             context: context,
             mlsActionExecutor: self.mlsActionExecutor,
@@ -339,6 +345,17 @@ public final class MLSService: MLSServiceInterface {
 
         return AsyncThrowingStream {
             try await sequence.next()
+        }
+    }
+
+    public func epochChanges() -> AsyncStream<MLSGroupID> {
+        var sequence = onEpochChanged()
+            .buffer(size: Self.epochChangeBufferSize, prefetch: .keepFull, whenFull: .dropOldest)
+            .values
+            .makeAsyncIterator()
+
+        return AsyncStream {
+            await sequence.next()
         }
     }
 
@@ -466,9 +483,10 @@ public final class MLSService: MLSServiceInterface {
             )
 
             try await coreCrypto.perform {
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.default.rawValue)
                 try await $0.createConversation(
                     conversationId: groupID.data,
-                    creatorCredentialType: .basic,
+                    creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
                     config: config
                 )
             }
@@ -732,7 +750,13 @@ public final class MLSService: MLSServiceInterface {
         var keyPackages = [Data]()
 
         do {
-            keyPackages = try await coreCrypto.perform { try await $0.clientKeypackages(ciphersuite: CiphersuiteName.default.rawValue, credentialType: .basic, amountRequested: amountRequested) }
+            keyPackages = try await coreCrypto.perform {
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.default.rawValue)
+                return try await $0.clientKeypackages(
+                    ciphersuite: CiphersuiteName.default.rawValue,
+                    credentialType: e2eiIsEnabled ? .x509 : .basic,
+                    amountRequested: amountRequested
+                ) }
 
         } catch let error {
             logger.warn("failed to generate new key packages: \(String(describing: error))")
@@ -799,6 +823,13 @@ public final class MLSService: MLSServiceInterface {
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
                 )
             }
+
+            if let newDistributionPoints = CRLsDistributionPoints(
+                from: welcomeBundle.crlNewDistributionPoints
+            ) {
+                onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+            }
+
             let groupID = MLSGroupID(welcomeBundle.id)
             await uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
@@ -1723,6 +1754,14 @@ public final class MLSService: MLSServiceInterface {
     public func generateNewEpoch(groupID: MLSGroupID) async throws {
         logger.info("generating new epoch in subconveration (\(groupID.safeForLoggingDescription))")
         try await updateKeyMaterial(for: groupID)
+    }
+
+    // MARK: - CRLs distribution points
+
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        decryptionService.onNewCRLsDistributionPoints()
+            .merge(with: onNewCRLsDistributionPointsSubject, mlsActionExecutor.onNewCRLsDistributionPoints())
+            .eraseToAnyPublisher()
     }
 
     // MARK: - Proteus to MLS Migration

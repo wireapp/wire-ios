@@ -210,12 +210,12 @@ class CallKitManagerTest: DatabaseTest {
     }
 
     func createOneOnOneConversation(user: ZMUser) {
-        let oneToOne = ZMConversation.insertNewObject(in: self.uiMOC)
+        let oneToOne = ZMConversation.insertNewObject(in: uiMOC)
         oneToOne.conversationType = .oneOnOne
         oneToOne.remoteIdentifier = UUID()
         oneToOne.oneOnOneUser = user
 
-        let connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
         connection.status = .accepted
         connection.to = user
     }
