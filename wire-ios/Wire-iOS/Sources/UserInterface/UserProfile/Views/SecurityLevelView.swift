@@ -119,13 +119,15 @@ final class SecurityLevelView: UIView {
         case .classified:
             securityLevelLabel.textColor = LabelColors.textSecurityEnabled
             backgroundColor = ViewColors.backgroundSecurityEnabled
-            iconImageView.image = Asset.Images.check.image.withTintColor(IconColors.backgroundSecurityEnabledCheckMark)
+            iconImageView.image = Asset.Images.check.image
+            iconImageView.tintColor = IconColors.backgroundSecurityEnabledCheckMark
             topBorder.backgroundColor = ViewColors.borderSecurityEnabled
 
         case .notClassified:
             securityLevelLabel.textColor = LabelColors.textDefaultWhite
             backgroundColor = ViewColors.backgroundSecurityDisabled
-            iconImageView.image = Asset.Images.attention.image.withTintColor(IconColors.foregroundCheckMarkSelected)
+            iconImageView.image = Asset.Images.attention.image
+            iconImageView.tintColor = IconColors.foregroundCheckMarkSelected
             topBorder.backgroundColor = .clear
 
         case .none:
