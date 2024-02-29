@@ -580,7 +580,7 @@ final class ClientListViewController: UIViewController,
     }
 
     @MainActor
-    func refreshViews(shouldUpdateDetails: Bool = false) {
+    func refreshViews() {
         clientsTableView?.reloadData()
     }
 
@@ -636,9 +636,6 @@ extension ClientListViewController: UserObserving {
 
 private extension UserClient {
 
-    var resolvedTitle: String {
-        client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? "")
-    }
     var resolvedMLSThumbprint: String? {
         e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
     }
