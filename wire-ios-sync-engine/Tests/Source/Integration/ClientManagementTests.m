@@ -121,12 +121,10 @@
     NSSet<UserClient*> *selfUserClients = selfUser.clients;
     XCTAssertEqual(selfUserClients.count, 3u);
 
-    NSArray *fetchedClients = self.observer.fetchedClients;
+    NSSet<UserClient*> *fetchedClients = [NSSet setWithArray:self.observer.fetchedClients];
     XCTAssertEqual(fetchedClients.count, 3u);
 
-    for (UserClient* client in fetchedClients) {
-        XCTAssertTrue([selfUserClients containsObject:client]);
-    }
+    XCTAssertEqualObjects(fetchedClients, selfUserClients);
     XCTAssertNil(self.observer.fetchError);
     XCTAssertTrue(self.observer.finishedFetching);
 }
