@@ -133,7 +133,7 @@ extension SearchTask {
             options.updateForSelfUserTeamRole(selfUser: selfUser)
 
             /// search for the local user with matching user ID and active
-            let one2oneGroupConversationUsers = oneToOneGroupConversationUsers(selfUser: selfUser)
+            let one2oneGroupConversationUsers = oneToOneGroupConversationUsers(selfUser: selfUser, matchingQuery: "").filter { $0.remoteIdentifier == userId }
             let connectedUsers = connectedUsers(matchingQuery: "").filter { $0.remoteIdentifier == userId }
 
             contextProvider.viewContext.performGroupedBlock { [self] in
@@ -166,7 +166,7 @@ extension SearchTask {
 
             let selfUser = ZMUser.selfUser(in: searchContext)
             let connectedUsers = request.searchOptions.contains(.contacts) ? connectedUsers(matchingQuery: request.normalizedQuery) : []
-            let one2oneGroupConversationUsers = oneToOneGroupConversationUsers(selfUser: selfUser)
+            let one2oneGroupConversationUsers = oneToOneGroupConversationUsers(selfUser: selfUser, matchingQuery: request.normalizedQuery)
             let conversations = request.searchOptions.contains(.conversations) ? conversations(matchingQuery: request.query, selfUser: selfUser) : []
 
             contextProvider.viewContext.performGroupedBlock { [self] in
@@ -216,14 +216,28 @@ extension SearchTask {
         return searchContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
     }
 
-    func oneToOneGroupConversationUsers(selfUser: ZMUser) -> Set<ZMUser> {
+    func oneToOneGroupConversationUsers(selfUser: ZMUser, matchingQuery query: String) -> [ZMUser] {
         let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicateForTeamOneToOneConversation())
         let conversations = searchContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
+
         return conversations
             .reduce(Set()) { users, conversation in
                 users.union(conversation.localParticipants)
             }
             .subtracting([selfUser])
+            .filter { user in
+                let predicate = ZMUser.predicateForAllUsers(withSearch: query)
+                return predicate.evaluate(with: user)
+            }.sorted {
+                guard
+                    let lhsName = $0.normalizedName,
+                    let rhsName = $1.normalizedName
+                else {
+                    return false
+                }
+
+                return lhsName.lexicographicallyPrecedes(rhsName)
+            }
     }
 
     func conversations(matchingQuery query: SearchRequest.Query, selfUser: ZMUser) -> [ZMConversation] {

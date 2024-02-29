@@ -163,6 +163,24 @@ public struct ModelHelper {
     }
 
     @discardableResult
+    public func createProteusTeamOneOnOne(
+        with user: ZMUser,
+        team: Team,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let selfUser = ZMUser.selfUser(in: context)
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = UUID()
+        conversation.team = team
+        conversation.conversationType = .group
+        conversation.messageProtocol = .proteus
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        conversation.oneOnOneUser = user
+        return conversation
+    }
+
+    @discardableResult
     public func createSelfMLSConversation(
         id: UUID = .init(),
         mlsGroupID: MLSGroupID? = nil,

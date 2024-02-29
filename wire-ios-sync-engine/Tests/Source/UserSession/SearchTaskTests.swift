@@ -17,7 +17,7 @@
 //
 
 import Foundation
-
+import WireDataModelSupport
 @testable import WireSyncEngine
 
 final class SearchTaskTests: DatabaseTest {
@@ -233,6 +233,54 @@ final class SearchTaskTests: DatabaseTest {
         task.addResultHandler { (result, _) in
             resultArrived.fulfill()
             XCTAssertEqual(result.contacts.compactMap(\.user), [user1, user2])
+        }
+
+        // when
+        task.performLocalSearch()
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItFindsTeamOneOnOneUsers() throws {
+        // given
+        let helper = ModelHelper()
+        let team = helper.createTeam(in: uiMOC)
+
+        let user1 = helper.createUser(in: uiMOC)
+        user1.name = "Grant"
+
+        let user2 = helper.createUser(in: uiMOC)
+        user2.name = "Greg"
+
+        let user3 = helper.createUser(in: uiMOC)
+        user3.name = "Bob"
+
+        helper.addUsers([user1, user2, user3], to: team, in: uiMOC)
+
+        let conversation1 = helper.createProteusTeamOneOnOne(with: user1, team: team, in: uiMOC)
+        XCTAssertEqual(conversation1.conversationType, .oneOnOne)
+
+        let conversation2 = helper.createProteusTeamOneOnOne(with: user2, team: team, in: uiMOC)
+        XCTAssertEqual(conversation2.conversationType, .oneOnOne)
+
+        let conversation3 = helper.createProteusTeamOneOnOne(with: user3, team: team, in: uiMOC)
+        XCTAssertEqual(conversation3.conversationType, .oneOnOne)
+
+        try uiMOC.save()
+
+        let resultArrived = customExpectation(description: "received result")
+        let request = SearchRequest(query: "Gr", searchOptions: [])
+
+        let task = SearchTask(
+            request: request,
+            searchContext: searchMOC,
+            contextProvider: coreDataStack!,
+            transportSession: mockTransportSession
+        )
+
+        // expect
+        task.addResultHandler { (result, _) in
+            resultArrived.fulfill()
+            XCTAssertEqual(result.teamMembers.compactMap(\.user), [user1, user2])
         }
 
         // when
