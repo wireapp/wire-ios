@@ -21,12 +21,6 @@ import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
 
-protocol ClassificationProviding {
-    func classification(with users: [UserType], conversationDomain: String?) -> SecurityClassification
-}
-
-extension ZMUserSession: ClassificationProviding {}
-
 final class SecurityLevelView: UIView {
     static let SecurityLevelViewHeight = 24.0
     private let securityLevelLabel = UILabel()
@@ -53,14 +47,10 @@ final class SecurityLevelView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with classification: SecurityClassification) {
+    func configure(with classification: SecurityClassification?) {
         securityLevelLabel.font = FontSpec.smallSemiboldFont.font!
-        guard
-            classification != .none,
-            let levelText = classification.levelText
-        else {
-            isHidden = true
-            return
+        guard let classification, let levelText = classification.levelText else {
+            return isHidden = true
         }
 
         configureCallingUI(with: classification)
@@ -76,10 +66,10 @@ final class SecurityLevelView: UIView {
     func configure(
         with otherUsers: [UserType],
         conversationDomain: String?,
-        provider: ClassificationProviding? = ZMUserSession.shared()
+        provider: SecurityClassificationProviding? = ZMUserSession.shared()
     ) {
 
-        guard let classification = provider?.classification(with: otherUsers, conversationDomain: conversationDomain) else {
+        guard let classification = provider?.classification(users: otherUsers, conversationDomain: conversationDomain) else {
             isHidden = true
             return
         }
@@ -113,7 +103,7 @@ final class SecurityLevelView: UIView {
         ])
     }
 
-    private func configureCallingUI(with classification: SecurityClassification) {
+    private func configureCallingUI(with classification: SecurityClassification?) {
         switch classification {
 
         case .classified:
@@ -134,7 +124,7 @@ final class SecurityLevelView: UIView {
         }
     }
 
-    private func configureLegacyCallingUI(with classification: SecurityClassification) {
+    private func configureLegacyCallingUI(with classification: SecurityClassification?) {
         switch classification {
 
         case .classified:
