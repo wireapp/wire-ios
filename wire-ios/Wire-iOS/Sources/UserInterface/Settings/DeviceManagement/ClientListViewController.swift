@@ -585,13 +585,21 @@ final class ClientListViewController: UIViewController,
     }
 
     private func updateE2EIdentityCertificateInDetailsView() {
+        let updateViewModel: (E2eIdentityCertificate?, String?) -> Void = {[weak self] certificate, mlsThumbprint in
+            self?.deviceInfoViewModel?.e2eIdentityCertificate = certificate
+            self?.deviceInfoViewModel?.mlsThumbprint = mlsThumbprint?.splitStringIntoLines(charactersPerLine: 16)
+        }
+
         if deviceInfoViewModel?.isSelfClient  == true {
-            deviceInfoViewModel?.e2eIdentityCertificate = selfClient?.e2eIdentityCertificate
+            updateViewModel(deviceInfoViewModel?.e2eIdentityCertificate,
+                            selfClient?.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16))
         } else {
-            deviceInfoViewModel?.e2eIdentityCertificate = clients.first(
+            let client = clients.first(
                 where: {
                 $0.clientId == deviceInfoViewModel?.userClient.clientId
-            })?.e2eIdentityCertificate
+            })
+            updateViewModel(deviceInfoViewModel?.e2eIdentityCertificate,
+                            selfClient?.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16))
         }
     }
 }
@@ -628,6 +636,9 @@ extension ClientListViewController: UserObserving {
 
 private extension UserClient {
 
+    var resolvedTitle: String {
+        client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? "")
+    }
     var resolvedMLSThumbprint: String? {
         e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
     }

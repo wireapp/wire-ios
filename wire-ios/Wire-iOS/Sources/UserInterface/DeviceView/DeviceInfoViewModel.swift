@@ -42,8 +42,9 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     let userClient: UserClient
     let gracePeriod: TimeInterval
-    let mlsThumbprint: String?
     let isFromConversation: Bool
+
+    var mlsThumbprint: String?
     var title: String
     var isSelfClient: Bool
 
