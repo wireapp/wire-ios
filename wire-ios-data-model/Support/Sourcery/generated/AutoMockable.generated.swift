@@ -4426,14 +4426,19 @@ public class MockOneOnOneProtocolSelectorInterface: OneOnOneProtocolSelectorInte
     // MARK: - getProtocolForUser
 
     public var getProtocolForUserWithIn_Invocations: [(id: QualifiedID, context: NSManagedObjectContext)] = []
-    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async -> MessageProtocol?)?
+    public var getProtocolForUserWithIn_MockError: Error?
+    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> MessageProtocol?)?
     public var getProtocolForUserWithIn_MockValue: MessageProtocol??
 
-    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) async -> MessageProtocol? {
+    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) async throws -> MessageProtocol? {
         getProtocolForUserWithIn_Invocations.append((id: id, context: context))
 
+        if let error = getProtocolForUserWithIn_MockError {
+            throw error
+        }
+
         if let mock = getProtocolForUserWithIn_MockMethod {
-            return await mock(id, context)
+            return try await mock(id, context)
         } else if let mock = getProtocolForUserWithIn_MockValue {
             return mock
         } else {
