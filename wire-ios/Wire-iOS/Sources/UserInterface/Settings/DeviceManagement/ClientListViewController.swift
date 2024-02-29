@@ -590,7 +590,7 @@ final class ClientListViewController: UIViewController,
             self?.deviceInfoViewModel?.mlsThumbprint = mlsThumbprint?.splitStringIntoLines(charactersPerLine: 16)
         }
 
-        if deviceInfoViewModel?.isSelfClient  == true {
+        if deviceInfoViewModel?.isSelfClient == true {
             updateViewModel(deviceInfoViewModel?.e2eIdentityCertificate,
                             selfClient?.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16))
         } else {
@@ -599,7 +599,7 @@ final class ClientListViewController: UIViewController,
                 $0.clientId == deviceInfoViewModel?.userClient.clientId
             })
             updateViewModel(deviceInfoViewModel?.e2eIdentityCertificate,
-                            selfClient?.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16))
+                            client?.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16))
         }
     }
 }
