@@ -3913,6 +3913,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID, users)
     }
 
+    // MARK: - createGroup
+
+    public var createGroupForParentGroupID_Invocations: [(groupID: MLSGroupID, parentGroupID: MLSGroupID?)] = []
+    public var createGroupForParentGroupID_MockError: Error?
+    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID?) async throws -> Void)?
+
+    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws {
+        createGroupForParentGroupID_Invocations.append((groupID: groupID, parentGroupID: parentGroupID))
+
+        if let error = createGroupForParentGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = createGroupForParentGroupID_MockMethod else {
+            fatalError("no mock for `createGroupForParentGroupID`")
+        }
+
+        try await mock(groupID, parentGroupID)
+    }
+
     // MARK: - conversationExists
 
     public var conversationExistsGroupID_Invocations: [MLSGroupID] = []
@@ -4426,14 +4446,19 @@ public class MockOneOnOneProtocolSelectorInterface: OneOnOneProtocolSelectorInte
     // MARK: - getProtocolForUser
 
     public var getProtocolForUserWithIn_Invocations: [(id: QualifiedID, context: NSManagedObjectContext)] = []
-    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async -> MessageProtocol?)?
+    public var getProtocolForUserWithIn_MockError: Error?
+    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> MessageProtocol?)?
     public var getProtocolForUserWithIn_MockValue: MessageProtocol??
 
-    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) async -> MessageProtocol? {
+    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) async throws -> MessageProtocol? {
         getProtocolForUserWithIn_Invocations.append((id: id, context: context))
 
+        if let error = getProtocolForUserWithIn_MockError {
+            throw error
+        }
+
         if let mock = getProtocolForUserWithIn_MockMethod {
-            return await mock(id, context)
+            return try await mock(id, context)
         } else if let mock = getProtocolForUserWithIn_MockValue {
             return mock
         } else {

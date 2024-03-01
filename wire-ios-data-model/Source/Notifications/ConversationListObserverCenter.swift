@@ -33,8 +33,10 @@ extension NSManagedObjectContext {
     @objc public var conversationListObserverCenter: ConversationListObserverCenter {
         // swiftlint:disable todo_requires_jira_link
         // FIXME: Uncomment and fix crash when running tests
+        // when the assert is check, all userInfo of context have been torn down so we can't check this property
+        // nevertheless tearDown seems to be expected to happen on mainThread
         // swiftlint:enable todo_requires_jira_link
-        // assert(zm_isUserInterfaceContext, "ConversationListObserver does not exist in syncMOC")
+//        assert(zm_isUserInterfaceContext, "ConversationListObserver does not exist in syncMOC")
 
         if let observer = self.userInfo[NSManagedObjectContext.ConversationListObserverCenterKey] as? ConversationListObserverCenter {
             return observer
