@@ -936,7 +936,7 @@ extension WireCallCenterV3 {
         return conversationType(from: callEvent.conversationId)
     }
 
-    private func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
+    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
         guard let context = uiMOC else { return nil }
 
         var conversationType: AVSConversationType?
@@ -955,7 +955,7 @@ extension WireCallCenterV3 {
     }
 
     /// Set MLSConferenceInfo to AVSWrapper in case this is a MLS conference
-    func setMLSConferenceInfoIfNeeded(for conversationId: AVSIdentifier, completion: @escaping (Bool) -> Void) {
+    func setMLSConferenceInfoIfNeeded(for conversationId: AVSIdentifier) {
         Task {
             guard let syncContext = await self.uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
 
@@ -978,9 +978,6 @@ extension WireCallCenterV3 {
                 let parentQualifiedID = result.1,
                 let parentGroupID = result.2
             else {
-                await MainActor.run {
-                    completion(false)
-                }
                 return
             }
 
@@ -998,10 +995,6 @@ extension WireCallCenterV3 {
                 self.avsWrapper.setMLSConferenceInfo(conversationId: conversationId, info: conferenceInfo)
             } catch {
                 WireLogger.mls.error("error while setMLSConferenceInfo: \(error.localizedDescription)")
-            }
-
-            await MainActor.run {
-                completion(true)
             }
         }
     }
