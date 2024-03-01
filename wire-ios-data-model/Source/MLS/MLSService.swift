@@ -34,6 +34,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws
 
+    func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws
+
     func conversationExists(groupID: MLSGroupID) async -> Bool
 
     func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID
@@ -453,7 +455,7 @@ public final class MLSService: MLSServiceInterface {
         try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
     }
 
-    func createGroup(
+    public func createGroup(
         for groupID: MLSGroupID,
         parentGroupID: MLSGroupID? = nil
     ) async throws {

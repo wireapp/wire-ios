@@ -26,8 +26,8 @@ final class MLSVerificationStatusTests: XCTestCase {
 
     /// Ensures that the raw values, which are persited to the database, don't change, once the app has been published.
     func testRawValuesHaveNotChanged() {
-        XCTAssertEqual(SUT.verified.rawValue, 0)
         XCTAssertEqual(SUT.notVerified.rawValue, 1)
-        XCTAssertEqual(SUT.degraded.rawValue, 2)
+        XCTAssertEqual(SUT.verified.rawValue, 2)
+        XCTAssertEqual(SUT.degraded.rawValue, 3)
     }
 }

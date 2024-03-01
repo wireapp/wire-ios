@@ -3913,6 +3913,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID, users)
     }
 
+    // MARK: - createGroup
+
+    public var createGroupForParentGroupID_Invocations: [(groupID: MLSGroupID, parentGroupID: MLSGroupID?)] = []
+    public var createGroupForParentGroupID_MockError: Error?
+    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID?) async throws -> Void)?
+
+    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws {
+        createGroupForParentGroupID_Invocations.append((groupID: groupID, parentGroupID: parentGroupID))
+
+        if let error = createGroupForParentGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = createGroupForParentGroupID_MockMethod else {
+            fatalError("no mock for `createGroupForParentGroupID`")
+        }
+
+        try await mock(groupID, parentGroupID)
+    }
+
     // MARK: - conversationExists
 
     public var conversationExistsGroupID_Invocations: [MLSGroupID] = []
