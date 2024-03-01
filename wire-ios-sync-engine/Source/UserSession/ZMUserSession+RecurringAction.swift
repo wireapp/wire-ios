@@ -80,4 +80,21 @@ extension ZMUserSession {
             }
         }
     }
+
+    var refreshFederationCertificatesAction: RecurringAction {
+        .init(id: #function, interval: .oneDay) { [weak self] in
+            guard
+                let self,
+                viewContext.performAndWait({ self.e2eiFeature.isEnabled })
+            else { return }
+
+            Task {
+                do {
+                    try await self.e2eiRepository.fetchFederationCertificate()
+                } catch {
+                    WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
+                }
+            }
+        }
+    }
 }

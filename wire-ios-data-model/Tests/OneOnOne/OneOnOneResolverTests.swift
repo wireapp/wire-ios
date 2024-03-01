@@ -267,6 +267,6 @@ final class OneOnOneResolverTests: XCTestCase {
 
 // MARK: - Mock Error
 
-enum MockOneOnOneResolverError: Error {
+private enum MockOneOnOneResolverError: Error {
     case failed
 }

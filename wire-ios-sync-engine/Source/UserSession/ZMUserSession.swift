@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireSystem
+import WireRequestStrategy
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -49,9 +50,9 @@ public protocol UserSessionLogoutDelegate: NSObjectProtocol {
 }
 
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
-    & UserSessionSelfUserClientDelegate
-    & UserSessionLogoutDelegate
-    & UserSessionAppLockDelegate
+& UserSessionSelfUserClientDelegate
+& UserSessionLogoutDelegate
+& UserSessionAppLockDelegate
 
 @objcMembers
 public final class ZMUserSession: NSObject {
@@ -60,33 +61,33 @@ public final class ZMUserSession: NSObject {
     private var tokens: [Any] = []
     private var tornDown: Bool = false
 
-    var isNetworkOnline: Bool = true
-    var isPerformingSync: Bool = true {
+    private(set) var isNetworkOnline = true
+    var isPerformingSync = true {
         willSet {
             notificationDispatcher.operationMode = newValue ? .economical : .normal
         }
     }
     var hasNotifiedThirdPartyServices: Bool = false
 
-    var coreDataStack: CoreDataStack!
+    private(set) var coreDataStack: CoreDataStack!
     let application: ZMApplication
     let flowManager: FlowManagerType
-    var mediaManager: MediaManagerType
-    var analytics: AnalyticsType?
-    var transportSession: TransportSessionType
+    private(set) var mediaManager: MediaManagerType
+    private(set) var analytics: AnalyticsType?
+    private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
-    var updateEventProcessor: UpdateEventProcessor?
-    var strategyDirectory: StrategyDirectoryProtocol?
-    var syncStrategy: ZMSyncStrategy?
-    var operationLoop: ZMOperationLoop?
-    var notificationDispatcher: NotificationDispatcher
-    var localNotificationDispatcher: LocalNotificationDispatcher?
+    private(set) var updateEventProcessor: UpdateEventProcessor?
+    private(set) var strategyDirectory: StrategyDirectoryProtocol?
+    private(set) var syncStrategy: ZMSyncStrategy?
+    private(set) var operationLoop: ZMOperationLoop?
+    private(set) var notificationDispatcher: NotificationDispatcher
+    private(set) var localNotificationDispatcher: LocalNotificationDispatcher?
     let applicationStatusDirectory: ApplicationStatusDirectory
-    var callStateObserver: CallStateObserver?
+    private(set) var callStateObserver: CallStateObserver?
     var messageReplyObserver: ManagedObjectContextChangeObserver?
     var likeMesssageObserver: ManagedObjectContextChangeObserver?
-    var urlActionProcessors: [URLActionProcessor]?
+    private(set) var urlActionProcessors: [URLActionProcessor]?
     let debugCommands: [String: DebugCommand]
     let eventProcessingTracker: EventProcessingTracker = EventProcessingTracker()
     let legacyHotFix: ZMHotFix
@@ -99,11 +100,16 @@ public final class ZMUserSession: NSObject {
     ) as RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
-    var coreCryptoProvider: CoreCryptoProvider
-    lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
-    var mlsService: MLSServiceInterface
-    var proteusProvider: ProteusProviding!
+    private(set) var coreCryptoProvider: CoreCryptoProvider
+    private(set) lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
+    private(set) var mlsService: MLSServiceInterface
+    private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
+    let cRLsChecker: CertificateRevocationListsChecking
+    let cRLsDistributionPointsObserver: CRLsDistributionPointsObserving
+    let mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating
+    let observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol
+    public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
 
     public var syncStatus: SyncStatusProtocol {
         return applicationStatusDirectory.syncStatus
@@ -134,6 +140,30 @@ public final class ZMUserSession: NSObject {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchClassifiedDomains()
     }
+
+    public var e2eiFeature: Feature.E2EI {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchE2EI()
+    }
+
+    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
+        let selfClientCertificateProvider = SelfClientCertificateProvider(
+            getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
+            context: syncContext)
+
+        return SnoozeCertificateEnrollmentUseCase(
+            e2eiFeature: e2eiFeature,
+            gracePeriodRepository: gracePeriodRepository,
+            recurringActionService: recurringActionService,
+            selfClientCertificateProvider: selfClientCertificateProvider,
+            accountId: account.userIdentifier)
+    }()
+
+    public lazy var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol = {
+        return StopCertificateEnrollmentSnoozerUseCase(
+            recurringActionService: recurringActionService,
+            accountId: account.userIdentifier)
+    }()
 
     public var hasCompletedInitialSync: Bool = false
 
@@ -208,6 +238,8 @@ public final class ZMUserSession: NSObject {
         }
     }
 
+    let useCaseFactory: UseCaseFactoryProtocol
+
     weak var delegate: UserSessionDelegate?
 
     // TODO remove this property and move functionality to separate protocols under UserSessionDelegate
@@ -254,15 +286,66 @@ public final class ZMUserSession: NSObject {
     }
 
     /// - Note: this is safe if coredataStack and proteus are ready
-    public lazy var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol = {
-        GetUserClientFingerprintUseCase(syncContext: coreDataStack.syncContext,
-                                        transportSession: transportSession,
-                                        proteusProvider: proteusProvider)
+    public var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
+        GetUserClientFingerprintUseCase(
+            syncContext: coreDataStack.syncContext,
+            transportSession: transportSession,
+            proteusProvider: proteusProvider
+        )
+    }
+
+    lazy var e2eiRepository: E2EIRepositoryInterface = {
+        let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl ?? ""
+        let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+
+        let apiProvider = APIProvider(httpClient: httpClient)
+
+        let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider)
+
+        let keyRotator = E2EIKeyPackageRotator(
+            coreCryptoProvider: coreCryptoProvider,
+            conversationEventProcessor: conversationEventProcessor,
+            context: syncContext
+        )
+
+        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+            from: keyRotator.onNewCRLsDistributionPoints()
+        )
+
+        return E2EIRepository(
+            acmeApi: acmeApi,
+            apiProvider: apiProvider,
+            e2eiSetupService: e2eiSetupService,
+            keyRotator: keyRotator,
+            coreCryptoProvider: coreCryptoProvider
+        )
+    }()
+
+    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol = {
+        return EnrollE2EICertificateUseCase(
+            e2eiRepository: e2eiRepository,
+            context: syncContext)
+    }()
+
+    public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
+        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
+    }()
+
+    public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
+        return GetE2eIdentityCertificatesUseCase(
+            coreCryptoProvider: coreCryptoProvider,
+            syncContext: syncContext
+        )
     }()
 
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
+    public let gracePeriodRepository: GracePeriodRepository
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
@@ -285,7 +368,11 @@ public final class ZMUserSession: NSObject {
         mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        useCaseFactory: UseCaseFactoryProtocol? = nil,
+        cRLsChecker: CertificateRevocationListsChecker? = nil,
+        cRLsDistributionPointsObserver: CRLsDistributionPointsObserver? = nil,
+        observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol? = nil
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -318,12 +405,16 @@ public final class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
+        self.gracePeriodRepository = GracePeriodRepository(
+            userID: userId,
+            sharedUserDefaults: sharedUserDefaults)
         self.applicationStatusDirectory = ApplicationStatusDirectory(
             withManagedObjectContext: self.coreDataStack.syncContext,
             cookieStorage: transportSession.cookieStorage,
             requestCancellation: transportSession,
             application: application,
             lastEventIDRepository: lastEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
             analytics: analytics
         )
         self.earService = earService ?? EARService(
@@ -342,7 +433,8 @@ public final class ZMUserSession: NSObject {
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             userDefaults: .standard,
             syncStatus: applicationStatusDirectory.syncStatus,
-            userID: coreDataStack.account.userIdentifier)
+            userID: coreDataStack.account.userIdentifier
+        )
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
@@ -350,6 +442,37 @@ public final class ZMUserSession: NSObject {
             context: coreDataStack.syncContext,
             userID: userId
         )
+
+        self.useCaseFactory = useCaseFactory ?? UseCaseFactory(context: coreDataStack.syncContext,
+                                                               supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
+                                                               oneOnOneResolver: OneOnOneResolver(mlsService: self.mlsService))
+        let e2eIVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+        self.updateMLSGroupVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
+            e2eIVerificationStatusService: e2eIVerificationStatusService,
+            context: coreDataStack.syncContext,
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext))
+
+        self.mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
+            updateMLSGroupVerificationStatus: updateMLSGroupVerificationStatus,
+            syncContext: coreDataStack.syncContext
+        )
+
+        self.cRLsChecker = cRLsChecker ?? CertificateRevocationListsChecker(
+            userID: userId,
+            crlAPI: CertificateRevocationListAPI(),
+            mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
+            coreCryptoProvider: coreCryptoProvider,
+            context: coreDataStack.syncContext
+        )
+
+        self.cRLsDistributionPointsObserver = cRLsDistributionPointsObserver ?? CRLsDistributionPointsObserver(
+            cRLsChecker: self.cRLsChecker
+        )
+
+        self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatus ?? ObserveMLSGroupVerificationStatusUseCase(
+            mlsService: self.mlsService,
+            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
+            syncContext: coreDataStack.syncContext)
 
         super.init()
 
@@ -390,6 +513,13 @@ public final class ZMUserSession: NSObject {
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
             createMLSClientIfNeeded()
+
+            if e2eiFeature.isEnabled {
+                self.observeMLSGroupVerificationStatus.invoke()
+                self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+                    from: self.mlsService.onNewCRLsDistributionPoints()
+                )
+            }
         }
 
         registerForCalculateBadgeCountNotification()
@@ -402,23 +532,6 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
-        updateSupportedProtocolsIfNeeded()
-    }
-
-    private func updateSupportedProtocolsIfNeeded() {
-        let recurringAction = RecurringAction(
-            id: "\(account.userIdentifier).updateSupportedProtocols",
-            interval: .oneDay
-        ) { [weak self] in
-            guard let context = self?.syncContext else { return }
-
-            context.perform {
-                let service = SupportedProtocolsService(context: context)
-                service.updateSupportedProtocols()
-            }
-        }
-
-        recurringActionService.registerAction(recurringAction)
     }
 
     private func configureTransportSession() {
@@ -492,7 +605,7 @@ public final class ZMUserSession: NSObject {
     private func createSyncStrategy() -> ZMSyncStrategy {
         return ZMSyncStrategy(contextProvider: coreDataStack,
                               notificationsDispatcher: notificationDispatcher,
-                              applicationStatusDirectory: applicationStatusDirectory,
+                              operationStatus: applicationStatusDirectory.operationStatus,
                               application: application,
                               strategyDirectory: strategyDirectory!,
                               eventProcessingTracker: eventProcessingTracker)
@@ -502,7 +615,10 @@ public final class ZMUserSession: NSObject {
         return ZMOperationLoop(transportSession: transportSession,
                                requestStrategy: syncStrategy,
                                updateEventProcessor: updateEventProcessor!,
-                               applicationStatusDirectory: applicationStatusDirectory,
+                               operationStatus: applicationStatusDirectory.operationStatus,
+                               syncStatus: applicationStatusDirectory.syncStatus,
+                               pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
+                               callEventStatus: applicationStatusDirectory.callEventStatus,
                                uiMOC: managedObjectContext,
                                syncMOC: syncManagedObjectContext)
     }
@@ -512,6 +628,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
+        recurringActionService.registerAction(refreshFederationCertificatesAction)
     }
 
     func startRequestLoopTracker() {
@@ -562,10 +679,12 @@ public final class ZMUserSession: NSObject {
     func createMLSClientIfNeeded() {
         // TODO: [WPB-6198] refactor out - [jacob]
         if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
+            guard let mlsClientID = MLSClientID(user: ZMUser.selfUser(in: syncContext)) else {
+                fatal("Needs to register MLS client but can't retrieve qualified client ID")
+            }
             WaitingGroupTask(context: syncContext) { [self] in
                 do {
-                    // Make sure MLS client exists, mls public keys will be generated upon creation
-                    _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+                    _ = try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
                 } catch {
                     WireLogger.mls.error("Failed to create MLS client: \(error)")
                 }
@@ -680,7 +799,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
         networkState = state
     }
-
 }
 // swiftlint:disable todo_requires_jira_link
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
@@ -761,8 +879,22 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         mlsService.commitPendingProposalsIfNeeded()
-        fetchFeatureConfigs()
+
+        WaitingGroupTask(context: syncContext) { [self] in
+            do {
+                var getFeatureConfigAction = GetFeatureConfigsAction()
+                try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
+                try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+            } catch {
+                WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+            }
+        }
+
         recurringActionService.performActionsIfNeeded()
+
+        Task {
+            await self.cRLsChecker.checkExpiringCRLs()
+        }
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
@@ -814,27 +946,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
-    }
-
-    private func fetchFeatureConfigs() {
-        let action = GetFeatureConfigsAction { [weak self] result in
-            switch result {
-            case .success:
-                guard let context = self?.syncContext else {
-                    return
-                }
-
-                context.perform {
-                    let service = SupportedProtocolsService(context: context)
-                    service.updateSupportedProtocols()
-                }
-
-            case .failure(let reason):
-                Logging.network.error("Failed to fetch feature configs: \(String(describing: reason))")
-            }
-        }
-
-        action.send(in: syncContext.notificationContext)
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
