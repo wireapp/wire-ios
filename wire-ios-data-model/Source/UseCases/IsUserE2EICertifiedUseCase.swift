@@ -64,9 +64,8 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         guard let mlsGroupID else {
             throw Error.failedToGetMLSGroupID(conversationID)
         }
-        let (userID, clientCount) = await userContext.perform(schedule: schedule) {
-            let userID = user.remoteIdentifier.transportString()
-            return (userID, user.allClients.count)
+        let userID = await userContext.perform(schedule: schedule) {
+            user.remoteIdentifier.transportString()
         }
 
         // make the call to Core Crypto
@@ -83,7 +82,7 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
             return identities
         }
 
-        return !identities.isEmpty && identities.count == clientCount && identities.allSatisfy { $0.status == .valid }
+        return !identities.isEmpty && identities.allSatisfy { $0.status == .valid }
     }
 }
 
