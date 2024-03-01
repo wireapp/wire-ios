@@ -43,10 +43,6 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
 
     init() {
         let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore), style: .systemMessage)
-//        let title = NSAttributedString(
-//            string: L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore),
-//            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
-//        )
 
         configuration = View.Configuration(
             icon: Asset.Images.certificateValid.image,
