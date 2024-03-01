@@ -71,17 +71,16 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
         let usersIDs = try await fetchUserIdsWithOneOnOneConversation(in: context)
 
-        // There are potentially many one on ones to resolve, each may require several
-        // network requests. If we resolve each conversation in parallel, then we risk
-        // to make a large number of requests to the same endpoints which would likely
-        // be rate limited. Resolving serially is the slowest but also the least likely
-        // way to hit rate limits.
-        for userID in usersIDs {
-            do {
-                try await self.resolveOneOnOneConversation(with: userID, in: context)
-            } catch {
-                // skip conversation migration for this user
-                WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
+        await withTaskGroup(of: Void.self) { group in
+            for userID in usersIDs {
+                group.addTask {
+                    do {
+                        try await self.resolveOneOnOneConversation(with: userID, in: context)
+                    } catch {
+                        // skip conversation migration for this user
+                        WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
+                    }
+                }
             }
         }
     }
