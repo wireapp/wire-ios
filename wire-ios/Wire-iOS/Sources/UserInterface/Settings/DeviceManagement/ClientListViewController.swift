@@ -71,7 +71,7 @@ final class ClientListViewController: UIViewController,
     private let clientFilter: (UserClient) -> Bool
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
-    private var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
+    private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
     var sortedClients: [UserClient] = []
 
