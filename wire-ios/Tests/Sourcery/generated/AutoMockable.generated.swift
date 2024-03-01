@@ -31,8 +31,9 @@ import UIKit
 import AppKit
 #endif
 
+import WireDataModel
 
-@testable import WireDataModel
+@testable import Wire
 
 
 

@@ -71,7 +71,7 @@ final class ClientListViewController: UIViewController,
     private let clientFilter: (UserClient) -> Bool
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
-    private var deviceInfoViewModel: DeviceInfoViewModel?
+    private var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
     var sortedClients: [UserClient] = []
 
@@ -228,7 +228,7 @@ final class ClientListViewController: UIViewController,
             }
             successEnrollmentViewController.presentTopmost()
         }
-        deviceInfoViewModel = viewModel
+        selectedDeviceInfoViewModel = viewModel
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
         }
@@ -585,22 +585,17 @@ final class ClientListViewController: UIViewController,
     }
 
     private func updateE2EIdentityCertificateInDetailsView() {
-        let updateViewModel: (E2eIdentityCertificate?, String?) -> Void = {[weak self] certificate, mlsThumbprint in
-            self?.deviceInfoViewModel?.e2eIdentityCertificate = certificate
-            self?.deviceInfoViewModel?.mlsThumbprint = mlsThumbprint?.splitStringIntoLines(charactersPerLine: 16)
-        }
 
-        if deviceInfoViewModel?.isSelfClient == true {
-            updateViewModel(deviceInfoViewModel?.e2eIdentityCertificate,
-                            selfClient?.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16))
+        let client = if selectedDeviceInfoViewModel?.isSelfClient == true {
+            selfClient
         } else {
-            let client = clients.first(
+            clients.first(
                 where: {
-                $0.clientId == deviceInfoViewModel?.userClient.clientId
+                $0.clientId == selectedDeviceInfoViewModel?.userClient.clientId
             })
-            updateViewModel(deviceInfoViewModel?.e2eIdentityCertificate,
-                            client?.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16))
         }
+        guard let client else { return }
+        selectedDeviceInfoViewModel?.update(from: client)
     }
 }
 
@@ -634,7 +629,7 @@ extension ClientListViewController: UserObserving {
 
 }
 
-private extension UserClient {
+extension UserClient {
 
     var resolvedMLSThumbprint: String? {
         e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519

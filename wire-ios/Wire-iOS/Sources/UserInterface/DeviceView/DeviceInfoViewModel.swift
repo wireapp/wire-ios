@@ -41,13 +41,13 @@ protocol DeviceDetailsViewActions {
 final class DeviceInfoViewModel: ObservableObject {
     let addedDate: String
     let proteusID: String
-    let userClient: UserClient
     let gracePeriod: TimeInterval
     let isFromConversation: Bool
 
     var mlsThumbprint: String?
     var title: String
     var isSelfClient: Bool
+    var userClient: UserClient
 
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
@@ -120,6 +120,12 @@ final class DeviceInfoViewModel: ObservableObject {
                 self?.isActionInProgress = isProcessing
             }
         }
+    }
+
+    func update(from userClient: UserClient) {
+        e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        mlsThumbprint = userClient.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16)
+        self.userClient = userClient
     }
 
     @MainActor
