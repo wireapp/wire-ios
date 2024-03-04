@@ -139,7 +139,11 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
                 guard let conversation = conversation as? ZMConversation else { continue }
                 do {
                     let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
-                    userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
+                    if userStatuses.keys.contains(user.remoteIdentifier) {
+                        userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
+                    } else {
+                        userStatuses[user.remoteIdentifier] = userStatuses[user.remoteIdentifier] ?? .init(user: user, isE2EICertified: isE2EICertified)
+                    }
                 } catch {
                     WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
                 }
