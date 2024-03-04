@@ -53,7 +53,7 @@ final class CustomBackendView: UIView {
         self.addSubview(backendLabel)
 
         // Horizontal
-        backendLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: -imageSize/2).isActive = true
+        backendLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: -imageSize / 2).isActive = true
         backendLabel.leadingAnchor.constraint(greaterThanOrEqualTo: self.leadingAnchor).isActive = true
         backendLabel.trailingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: -2).isActive = true
         imageView.trailingAnchor.constraint(lessThanOrEqualTo: self.trailingAnchor).isActive = true

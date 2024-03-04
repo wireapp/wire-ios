@@ -101,7 +101,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        if let message =  conversationUI.lastMessage as? ZMSystemMessage {
+        if let message = conversationUI.lastMessage as? ZMSystemMessage {
             XCTAssertEqual(message.systemMessageType, .missedCall)
             XCTAssertFalse(message.relevantForConversationStatus)
             XCTAssertEqual(message.sender, senderUI)
@@ -161,7 +161,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        if let message =  conversationUI.lastMessage as? ZMSystemMessage {
+        if let message = conversationUI.lastMessage as? ZMSystemMessage {
             XCTAssertEqual(message.systemMessageType, .missedCall)
             XCTAssertTrue(message.relevantForConversationStatus)
             XCTAssertEqual(message.sender, senderUI)
@@ -263,7 +263,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         mockCallCenter = WireCallCenterV3Mock(userId: AVSIdentifier.stub, clientId: "1234567", uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock())
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(.establishedDataChannel, conversationId: avsIdentifier, callerId: mockCallCenter!.selfUserId, isVideo: false)
-        uiMOC.zm_callCenter  = mockCallCenter
+        uiMOC.zm_callCenter = mockCallCenter
 
         // expect
         customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
