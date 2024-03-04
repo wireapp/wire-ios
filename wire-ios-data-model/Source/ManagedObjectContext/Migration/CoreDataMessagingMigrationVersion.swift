@@ -130,4 +130,229 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
             subdirectory: Constant.modelDirectory
         )
     }
+
+    var preMigrationAction: CoreDataAction? {
+        switch self {
+        case .version2_111:
+            return RemoveDuplicatePreAction()
+
+        default:
+            return nil
+        }
+    }
+
+    var postMigrationAction: CoreDataAction? {
+        switch self {
+        case .version2_111:
+            return PrefillPrimaryKeyAction()
+
+        default:
+            return nil
+        }
+    }
+}
+
+private let dataModelName = "zmessaging"
+private let bundle = WireDataModelBundle.bundle
+
+extension CoreDataMessagingMigrationStep {
+
+    func runPreMigrationStep(for storeURL: URL) throws {
+        guard let action = self.destinationVersion.preMigrationAction else { return }
+
+        let container = try createStore(model: self.sourceModel, at: storeURL)
+        try action.perform(with: container)
+    }
+
+    func runPostMigrationStep(for storeURL: URL) throws {
+        guard let action = self.destinationVersion.postMigrationAction else { return }
+
+        let container = try createStore(model: self.destinationModel, at: storeURL)
+        try action.perform(with: container)
+    }
+
+    private func createObjectModel(version: String) -> NSManagedObjectModel? {
+        let modelVersion = "\(dataModelName)\(version)"
+
+        // Get the compiled datamodel file bundle
+        let modelURL = bundle.url(
+            forResource: dataModelName,
+            withExtension: "momd"
+        )!
+
+        let modelBundle = Bundle(url: modelURL)
+
+        let modelVersionURL = modelBundle?.url(
+            forResource: modelVersion,
+            withExtension: "mom"
+        )
+
+        return modelVersionURL.flatMap { NSManagedObjectModel(contentsOf: $0) }
+    }
+
+    private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
+        let container = NSPersistentContainer(
+            name: dataModelName,
+            managedObjectModel: model
+        )
+
+        try container.persistentStoreCoordinator.addPersistentStore(
+            ofType: NSSQLiteStoreType,
+            configurationName: nil,
+            at: storeURL,
+            options: nil
+        )
+
+        return container
+    }
+}
+
+class CoreDataAction {
+
+    private func loadStores(for persistentContainer: NSPersistentContainer) throws {
+        persistentContainer.persistentStoreDescriptions.first?.shouldAddStoreAsynchronously = false
+
+        var loadError: Error?
+        persistentContainer.loadPersistentStores { description, error in
+            loadError =  error
+        }
+        if let loadError {
+            throw loadError
+        }
+    }
+
+    func perform(with persistentContainer: NSPersistentContainer) throws {
+
+        try loadStores(for: persistentContainer)
+
+        let context = persistentContainer.newBackgroundContext()
+        var savedError: Error?
+        context.performAndWait {
+            do {
+                try self.execute(in: context)
+                try context.save()
+            } catch {
+                savedError = error
+            }
+        }
+        if let savedError {
+            throw savedError
+        }
+    }
+
+
+    func execute(in context: NSManagedObjectContext) throws {
+        // to be overiden by subclasses
+    }
+}
+
+class PrefillPrimaryKeyAction: CoreDataAction, CoreDataAction2111 {
+
+    private enum Keys: String {
+        case primaryKey
+    }
+
+    let entityNames = [ZMUser.entityName(), ZMConversation.entityName()]
+
+    override func execute(in context: NSManagedObjectContext) throws {
+        entityNames.forEach { entityName in
+            fillPrimaryKeys(for: entityName, context: context)
+        }
+    }
+
+    private func fillPrimaryKeys(for entityName: String, context: NSManagedObjectContext) {
+        do {
+            let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
+            request.fetchBatchSize = 200
+            let objects = try context.fetch(request)
+
+            objects.forEach { object in
+
+                let uniqueKey = self.primaryKey(for: object, entityName: entityName)
+                object.setValue(uniqueKey, forKey: Keys.primaryKey.rawValue)
+            }
+        } catch {
+            WireLogger.localStorage.error("error fetching data \(entityName): \(error.localizedDescription)")
+        }
+    }
+}
+
+class RemoveDuplicatePreAction: CoreDataAction, CoreDataAction2111 {
+
+    private enum Keys: String {
+        case needsToBeUpdatedFromBackend
+        case primaryKey
+    }
+
+    let entityNames = [ZMUser.entityName(), ZMConversation.entityName(), Team.entityName()]
+
+    override func execute(in context: NSManagedObjectContext) {
+        entityNames.forEach { entityName in
+            removeDuplicates(for: entityName, context: context)
+        }
+    }
+
+    private func removeDuplicates(for entityName: String, context: NSManagedObjectContext) {
+        let duplicateObjects: [Data: [NSManagedObject]] = context.findDuplicated(
+            entityName: entityName,
+            by: ZMManagedObject.remoteIdentifierDataKey()
+        )
+
+        var duplicates = [String: [NSManagedObject]]()
+
+        duplicateObjects.forEach { (remoteIdentifierData: Data, objects: [NSManagedObject]) in
+            objects.forEach { object in
+
+                let uniqueKey = self.primaryKey(for: object, entityName: entityName)
+                if duplicates[uniqueKey] == nil {
+                    duplicates[uniqueKey] = []
+                }
+                duplicates[uniqueKey]?.append(object)
+            }
+        }
+
+        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate \(entityName)")
+
+        duplicates.forEach { (key, objects: [NSManagedObject]) in
+            guard objects.count > 1 else {
+                WireLogger.localStorage.info("skipping object with different domain if any: \(key)")
+                return
+            }
+            WireLogger.localStorage.debug("processing \(key)")
+            // for now we just keep one object and mark to sync and drop the rest.
+            // Marking needsToBeUpdatedFromBackend will recover the data from backend
+            objects.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
+            objects.dropFirst().forEach(context.delete)
+
+            WireLogger.localStorage.warn("removed  \(objects.count - 1) occurence of duplicate users", attributes: .safePublic)
+        }
+
+    }
+}
+
+protocol CoreDataAction2111 {
+    func primaryKey(for object: NSManagedObject, entityName: String) -> String
+}
+
+extension CoreDataAction2111 {
+
+    func primaryKey(for object: NSManagedObject, entityName: String) -> String {
+
+        let remoteIdentifierData = object.value(forKey: ZMManagedObject.remoteIdentifierDataKey()) as? Data
+
+        switch entityName {
+        case ZMUser.entityName(), ZMConversation.entityName():
+            let path = entityName == ZMUser.entityName() ? #keyPath(ZMUser.domain) : #keyPath(ZMConversation.domain)
+
+            let domain = object.value(forKeyPath: path) as? String
+            return ZMManagedObject.primaryKey(from: remoteIdentifierData.flatMap(UUID.init(data: )), domain: domain)
+
+        case Team.entityName():
+
+            return remoteIdentifierData.flatMap { UUID(data: $0)?.uuidString } ?? "<nil>"
+        default:
+            fatal("Entity named \(entityName) is not supported")
+        }
+    }
+
 }

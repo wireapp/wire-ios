@@ -97,6 +97,9 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
         var currentURL = storeURL
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
+
+           try migrationStep.runPreMigrationStep(for: storeURL)
+
             let logMessage = "messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
             WireLogger.localStorage.info(logMessage, attributes: .safePublic)
 
@@ -137,6 +140,8 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             currentURL = destinationURL
             
             WireLogger.localStorage.info("finish migration step", attributes: .safePublic)
+
+            try migrationStep.runPostMigrationStep(for: currentURL)
         }
         WireLogger.localStorage.debug("replace store \(storeURL), with \(currentURL)")
         try replaceStore(at: storeURL, withStoreAt: currentURL)
