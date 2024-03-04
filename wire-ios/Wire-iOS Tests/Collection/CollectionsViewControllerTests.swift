@@ -62,7 +62,7 @@ final class CollectionsViewControllerTests: BaseSnapshotTestCase {
 
         userSession = UserSessionMock()
 
-        let conversation = MockConversation() as Any as! ZMConversation
+        let conversation = MockGroupDetailsConversation()
         let assetCollection = MockCollection.empty
         let delegate = AssetCollectionMulticastDelegate()
         emptyCollection = AssetCollectionWrapper(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: [])
@@ -212,7 +212,7 @@ extension CollectionsViewControllerTests {
     // MARK: - Helper method
 
     func createController(showingCollection assetCollection: MockCollection) -> CollectionsViewController {
-        let conversation = MockConversation() as Any as! ZMConversation
+        let conversation = MockGroupDetailsConversation()
         let delegate = AssetCollectionMulticastDelegate()
         let collection = AssetCollectionWrapper(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: [])
 

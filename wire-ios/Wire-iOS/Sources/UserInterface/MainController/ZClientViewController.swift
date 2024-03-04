@@ -56,26 +56,22 @@ final class ZClientViewController: UIViewController {
     private var pendingInitialStateRestore = false
 
     /// init method for testing allows injecting an Account object and self user
-    ///
-    /// - Parameters:
-    ///   - account: an Account object
-    ///   - selfUser: a SelfUserType object
     required init(
         account: Account,
         userSession: UserSession
     ) {
         self.userSession = userSession
+
         backgroundViewController = BackgroundViewController(
             user: userSession.selfUser,
             userSession: userSession as? ZMUserSession
         )
-
         conversationListViewController = ConversationListViewController(
             account: account,
             selfUser: userSession.selfLegalHoldSubject,
-            userSession: userSession
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
-
         colorSchemeController = ColorSchemeController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
@@ -358,7 +354,11 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
-        let controller = GroupDetailsViewController(conversation: conversation, userSession: userSession)
+        let controller = GroupDetailsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
         let navController = controller.wrapInNavigationController(setBackgroundColor: true)
         navController.modalPresentationStyle = .formSheet
 

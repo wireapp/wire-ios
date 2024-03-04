@@ -440,7 +440,14 @@ extension AppRootRouter {
             userSession: userSession,
             isComingFromRegistration: isComingFromRegistration,
             needToShowDataUsagePermissionDialog: needToShowDialog,
-            featureRepositoryProvider: userSession
+            featureRepositoryProvider: userSession,
+            featureChangeActionsHandler: E2EINotificationActionsHandler(
+                enrollCertificateUseCase: userSession.enrollE2EICertificate,
+                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
+                stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
+                gracePeriodRepository: userSession.gracePeriodRepository,
+                targetVC: rootViewController),
+            gracePeriodRepository: userSession.gracePeriodRepository
         )
     }
 }

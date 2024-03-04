@@ -35,7 +35,7 @@ extension ZMUserSession {
 
     var refreshUsersMissingMetadataAction: RecurringAction {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
-
+            // TODO: [WPB-6737] check why do we refreshData on main and block main thread here?
             guard let context = self?.managedObjectContext else { return }
             context.performGroupedAndWait { context in
 
@@ -77,6 +77,23 @@ extension ZMUserSession {
 
                 guard let team = ZMUser.selfUser(in: context).team else { return }
                 team.refreshMetadata()
+            }
+        }
+    }
+
+    var refreshFederationCertificatesAction: RecurringAction {
+        .init(id: #function, interval: .oneDay) { [weak self] in
+            guard
+                let self,
+                viewContext.performAndWait({ self.e2eiFeature.isEnabled })
+            else { return }
+
+            Task {
+                do {
+                    try await self.e2eiRepository.fetchFederationCertificate()
+                } catch {
+                    WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
+                }
             }
         }
     }
