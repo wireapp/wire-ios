@@ -445,14 +445,19 @@ public final class MLSService: MLSServiceInterface {
     public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
         guard let context else { return }
 
-        try await createGroup(for: groupID)
-        let mlsSelfUser = await context.perform {
-            let selfUser = ZMUser.selfUser(in: context)
-            return MLSUser(from: selfUser)
-        }
+        do {
+            try await createGroup(for: groupID)
+            let mlsSelfUser = await context.perform {
+                let selfUser = ZMUser.selfUser(in: context)
+                return MLSUser(from: selfUser)
+            }
 
-        let usersWithSelfUser = users + [mlsSelfUser]
-        try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
+            let usersWithSelfUser = users + [mlsSelfUser]
+            try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
+        } catch {
+            try await self.wipeGroup(groupID)
+            throw error
+        }
     }
 
     public func createGroup(
