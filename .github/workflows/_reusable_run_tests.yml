@@ -310,7 +310,7 @@ jobs:
             
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v2
-        if: failure()
+        if: always()
         with:
           name: derived-data-xcode
           path: |

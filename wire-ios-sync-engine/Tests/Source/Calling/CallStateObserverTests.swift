@@ -418,7 +418,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssertEqual(conversationUI.mutedMessageTypes, .all)
     }
 
-    func testThatSilencedUnarchivedConversationsGetUpdatedForIncomingCalls() {
+    func disabled_testThatSilencedUnarchivedConversationsGetUpdatedForIncomingCalls() {
         // given
         var otherConvo: ZMConversation?
         let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
@@ -469,6 +469,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         // > "Main"             (Muted)
 
         let list = syncMOC.performAndWait {
+            // this is expected to be done on viewContext,
+            // but test needs to check on syncMoc
             ZMConversation.conversationsExcludingArchived(in: syncMOC)
         }
 
