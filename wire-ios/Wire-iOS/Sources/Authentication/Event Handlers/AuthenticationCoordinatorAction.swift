@@ -33,7 +33,6 @@ enum AuthenticationCoordinatorAction {
     case presentErrorAlert(AuthenticationCoordinatorErrorAlert)
     case completeBackupStep
     case completeLoginFlow
-    case completeRegistrationFlow
     case startPostLoginFlow
     case transition(AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
     case performPhoneLoginFromRegistration(phoneNumber: String)

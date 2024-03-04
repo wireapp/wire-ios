@@ -423,14 +423,12 @@
 		5E8DA74D211AEB9E00360979 /* AuthenticationEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA74C211AEB9E00360979 /* AuthenticationEventHandler.swift */; };
 		5E8DA74F211AEE3D00360979 /* AuthenticationCoordinatorAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA74E211AEE3D00360979 /* AuthenticationCoordinatorAction.swift */; };
 		5E8DA751211AEFC800360979 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA750211AEFC800360979 /* AuthenticationStatusProvider.swift */; };
-		5E8DA755211AF8E200360979 /* AuthenticationInitialSyncEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA754211AF8E200360979 /* AuthenticationInitialSyncEventHandler.swift */; };
 		5E8DA758211B055100360979 /* AuthenticationClientLimitErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA757211B055100360979 /* AuthenticationClientLimitErrorHandler.swift */; };
 		5E8DA75A211B075E00360979 /* AuthenticationNoCredentialsErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA759211B075E00360979 /* AuthenticationNoCredentialsErrorHandler.swift */; };
 		5E8DA75C211B085A00360979 /* AnyAuthenticationEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA75B211B085A00360979 /* AnyAuthenticationEventHandler.swift */; };
 		5E8DA75E211B0E5800360979 /* AuthenticationNeedsReauthenticationErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA75D211B0E5800360979 /* AuthenticationNeedsReauthenticationErrorHandler.swift */; };
 		5E8DA762211B286900360979 /* AuthenticationBackupReadyEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA761211B286900360979 /* AuthenticationBackupReadyEventHandler.swift */; };
 		5E8DA768211B2D9A00360979 /* AuthenticationSuccessEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA767211B2D9A00360979 /* AuthenticationSuccessEventHandler.swift */; };
-		5E8DA76A211B2E8700360979 /* AuthenticationCoordinator+InitialSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA769211B2E8700360979 /* AuthenticationCoordinator+InitialSync.swift */; };
 		5E8DA76C211B2EC200360979 /* AuthenticationEventResponderChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA76B211B2EC200360979 /* AuthenticationEventResponderChain.swift */; };
 		5E8DA76F211B422D00360979 /* AuthenticationStartReauthenticateErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA76E211B422D00360979 /* AuthenticationStartReauthenticateErrorHandler.swift */; };
 		5E8DA774211B452100360979 /* AuthenticationFlowStep+ClientsDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8DA773211B452100360979 /* AuthenticationFlowStep+ClientsDeletion.swift */; };
@@ -2480,14 +2478,12 @@
 		5E8DA74C211AEB9E00360979 /* AuthenticationEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEventHandler.swift; sourceTree = "<group>"; };
 		5E8DA74E211AEE3D00360979 /* AuthenticationCoordinatorAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationCoordinatorAction.swift; sourceTree = "<group>"; };
 		5E8DA750211AEFC800360979 /* AuthenticationStatusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatusProvider.swift; sourceTree = "<group>"; };
-		5E8DA754211AF8E200360979 /* AuthenticationInitialSyncEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationInitialSyncEventHandler.swift; sourceTree = "<group>"; };
 		5E8DA757211B055100360979 /* AuthenticationClientLimitErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationClientLimitErrorHandler.swift; sourceTree = "<group>"; };
 		5E8DA759211B075E00360979 /* AuthenticationNoCredentialsErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationNoCredentialsErrorHandler.swift; sourceTree = "<group>"; };
 		5E8DA75B211B085A00360979 /* AnyAuthenticationEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAuthenticationEventHandler.swift; sourceTree = "<group>"; };
 		5E8DA75D211B0E5800360979 /* AuthenticationNeedsReauthenticationErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationNeedsReauthenticationErrorHandler.swift; sourceTree = "<group>"; };
 		5E8DA761211B286900360979 /* AuthenticationBackupReadyEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationBackupReadyEventHandler.swift; sourceTree = "<group>"; };
 		5E8DA767211B2D9A00360979 /* AuthenticationSuccessEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationSuccessEventHandler.swift; sourceTree = "<group>"; };
-		5E8DA769211B2E8700360979 /* AuthenticationCoordinator+InitialSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationCoordinator+InitialSync.swift"; sourceTree = "<group>"; };
 		5E8DA76B211B2EC200360979 /* AuthenticationEventResponderChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEventResponderChain.swift; sourceTree = "<group>"; };
 		5E8DA76E211B422D00360979 /* AuthenticationStartReauthenticateErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStartReauthenticateErrorHandler.swift; sourceTree = "<group>"; };
 		5E8DA773211B452100360979 /* AuthenticationFlowStep+ClientsDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationFlowStep+ClientsDeletion.swift"; sourceTree = "<group>"; };
@@ -4939,7 +4935,6 @@
 			children = (
 				5EE73BF4212419ED0032986D /* AuthenticationCoordinator+Registration.swift */,
 				5E8DA787211C499900360979 /* AuthenticationCoordinator+LoginDelegate.swift */,
-				5E8DA769211B2E8700360979 /* AuthenticationCoordinator+InitialSync.swift */,
 				5E8C38AD212DC44E002AE12B /* AuthenticationCoordinator+Navigation.swift */,
 				5E8C38AF212DC472002AE12B /* AuthenticationCoordinator+LandingScreen.swift */,
 				5E65A79D21303F97008BFCC0 /* AuthenticationCoordinator+UserChange.swift */,
@@ -4980,21 +4975,12 @@
 				5E8DA76B211B2EC200360979 /* AuthenticationEventResponderChain.swift */,
 				5EE73BE92123078B0032986D /* Registration */,
 				5E8DA76D211B41FC00360979 /* Flow Start */,
-				5E8DA752211AF7A000360979 /* Initial Sync */,
 				5E8DA780211C3B7200360979 /* Pre-Login */,
 				5E8DA756211B04EA00360979 /* Post-Login */,
 				5EFD914021C9063E00080599 /* Input */,
 				EE98A0A3296ED4930055E981 /* Device Configuration */,
 			);
 			path = "Event Handlers";
-			sourceTree = "<group>";
-		};
-		5E8DA752211AF7A000360979 /* Initial Sync */ = {
-			isa = PBXGroup;
-			children = (
-				5E8DA754211AF8E200360979 /* AuthenticationInitialSyncEventHandler.swift */,
-			);
-			path = "Initial Sync";
 			sourceTree = "<group>";
 		};
 		5E8DA753211AF7BA00360979 /* Delegates */ = {
@@ -9161,7 +9147,6 @@
 				A9CBBEBA24CED5C9006543D4 /* StyleKitIcon+Const.swift in Sources */,
 				87240380215B8EBA0094363B /* Collection+MentionSearch.swift in Sources */,
 				0685008126B35E7A00721F80 /* AudioMessageRestrictionView.swift in Sources */,
-				5E8DA755211AF8E200360979 /* AuthenticationInitialSyncEventHandler.swift in Sources */,
 				5E672C922179C3E300522E61 /* BadgeUserImageView.swift in Sources */,
 				EEF71F6321B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift in Sources */,
 				E989695728EC430B0088F0CE /* SecondaryButtonDescription.swift in Sources */,
@@ -9172,7 +9157,6 @@
 				EEF28EED1F16692A007642E2 /* InputBarSecondaryButtonsView.swift in Sources */,
 				EF58B557218B463F00750A2B /* ConversationInputBarViewController+KeyCommand.swift in Sources */,
 				EEF6E3C428D86408001C1799 /* MessageProtocolSectionController.swift in Sources */,
-				5E8DA76A211B2E8700360979 /* AuthenticationCoordinator+InitialSync.swift in Sources */,
 				A9CBBEBE24CF09ED006543D4 /* PasscodeSetupInteractor.swift in Sources */,
 				1648EEF12049A69800CC6B37 /* GroupConversationSectionController.swift in Sources */,
 				BF515F941D9D1C1900C786FB /* EmojiSectionViewController.swift in Sources */,

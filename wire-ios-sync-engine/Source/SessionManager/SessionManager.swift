@@ -60,6 +60,7 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
+    func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?)
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
@@ -1309,6 +1310,12 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
         guard account == accountManager.selectedAccount else { return }
         delegate?.sessionManagerDidFailToLogin(error: error)
     }
+
+    public func clientCompletedInitialSync(accountId: UUID) {
+        let account = accountManager.account(with: accountId)
+        guard account == accountManager.selectedAccount else { return }
+        delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+    }
 }
 
 extension SessionManager: AccountDeletedObserver {
@@ -1379,8 +1386,11 @@ extension SessionManager {
         CompanyLoginVerificationToken.flushIfNeeded()
 
         if let session = activeUserSession {
-            // The session lock may have changed so inform the delegate in case.
-            self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+            // If the user isn't logged in it's because they still need
+            // to complete the login flow, which will be handle elsewhere.
+            if session.isLoggedIn {
+                self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+            }
         }
     }
 

@@ -58,7 +58,6 @@ final class AuthenticatedRouter: NSObject {
         rootViewController: RootViewController,
         account: Account,
         userSession: UserSession,
-        isComingFromRegistration: Bool,
         needToShowDataUsagePermissionDialog: Bool,
         featureRepositoryProvider: FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,

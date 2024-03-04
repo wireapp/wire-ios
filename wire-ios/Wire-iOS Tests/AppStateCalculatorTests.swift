@@ -144,17 +144,15 @@ final class AppStateCalculatorTests: XCTestCase {
     func testThatAppStateChanges_OnUserAuthenticationDidComplete() {
         // GIVEN
         let userSession = UserSessionMock()
-        let addedAccount = false
         sut.applicationDidBecomeActive()
 
         // WHEN
         sut.userAuthenticationDidComplete(
-            userSession: userSession,
-            addedAccount: addedAccount
+            userSession: userSession
         )
 
         // THEN
-        XCTAssertEqual(sut.appState, .authenticated(userSession, completedRegistration: addedAccount))
+        XCTAssertEqual(sut.appState, .authenticated(userSession))
         XCTAssertTrue(delegate.wasNotified)
     }
 
@@ -173,7 +171,7 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         if let userSession {
-            XCTAssertEqual(sut.appState, .authenticated(userSession, completedRegistration: false))
+            XCTAssertEqual(sut.appState, .authenticated(userSession))
         } else {
             guard case let .unauthenticated(error: error) = sut.appState else {
                 return XCTFail("Error - unauthenticated")
@@ -181,6 +179,19 @@ final class AppStateCalculatorTests: XCTestCase {
 
             XCTAssertEqual(error?.userSessionErrorCode, .needsAuthenticationAfterMigration)
         }
+        XCTAssertTrue(delegate.wasNotified)
+    }
+
+    func testThatAppStateChanges_OnDidCompleteInitialSync() {
+        // GIVEN
+        let userSession = UserSessionMock()
+        sut.applicationDidBecomeActive()
+
+        // WHEN
+        sut.sessionManagerDidCompleteInitialSync(for: userSession)
+
+        // THEN
+        XCTAssertEqual(sut.appState, .authenticated(userSession))
         XCTAssertTrue(delegate.wasNotified)
     }
 
