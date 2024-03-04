@@ -125,9 +125,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
                     return continuation.resume(throwing: OAuthError.missingIdToken)
                 }
 
-                guard let refreshToken = authState?.lastTokenResponse?.refreshToken else {
-                    return continuation.resume(throwing: OAuthError.missingRefreshToken)
-                }
+                let refreshToken = authState?.lastTokenResponse?.refreshToken
 
                 return continuation.resume(returning: OAuthResponse(idToken: idToken, refreshToken: refreshToken))
             })
@@ -144,6 +142,5 @@ enum OAuthError: Error {
     case missingServiceConfiguration
     case missingOIDExternalUserAgent
     case missingIdToken
-    case missingRefreshToken
 
 }
