@@ -32,7 +32,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws
+    func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws
 
     func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws
 
@@ -434,7 +434,7 @@ public final class MLSService: MLSServiceInterface {
         case failedToCreateGroup
     }
 
-    /// Create an MLS group with the given group id.
+    /// Establish an MLS group with the given group id.
     ///
     /// - Parameters:
     ///   - groupID the id representing the MLS group.
@@ -442,7 +442,7 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
         guard let context else { return }
 
         do {
