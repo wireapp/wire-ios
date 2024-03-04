@@ -27,6 +27,8 @@ enum AppState: Equatable {
     case unauthenticated(error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
+    case pendingCertificateUpdate
+    case pendingCertificateEnroll
     case databaseFailure(reason: Error)
     case migrating
     case loading(account: Account, from: Account?)
@@ -44,6 +46,10 @@ enum AppState: Equatable {
         case let (.blacklisted(reason1), .blacklisted(reason2)):
             return reason1 == reason2
         case (jailbroken, jailbroken):
+            return true
+        case (pendingCertificateUpdate, pendingCertificateUpdate):
+            return true
+        case (pendingCertificateEnroll, pendingCertificateEnroll):
             return true
         case (databaseFailure, databaseFailure):
             return true
@@ -177,6 +183,14 @@ extension AppStateCalculator: SessionManagerDelegate {
 
     func sessionManagerDidBlacklistJailbrokenDevice() {
         transition(to: .jailbroken)
+    }
+
+    func sessionManagerPendingCertificateUpdate() {
+        transition(to: .pendingCertificateUpdate)
+    }
+
+    func sessionManagerPendingCertificateEnroll() {
+        transition(to: .pendingCertificateEnroll)
     }
 
     func sessionManagerDidFailToLoadDatabase(error: Error) {

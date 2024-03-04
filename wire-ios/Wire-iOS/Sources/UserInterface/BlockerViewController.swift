@@ -26,6 +26,8 @@ enum BlockerViewControllerContext {
     case jailbroken
     case databaseFailure
     case backendNotSupported
+    case updateCertificate
+    case getCertificate
 }
 
 final class BlockerViewController: LaunchImageViewController {
@@ -67,10 +69,14 @@ final class BlockerViewController: LaunchImageViewController {
             showDatabaseFailureMessage()
         case .backendNotSupported:
             showBackendNotSupportedMessage()
+        case .updateCertificate:
+            showUpdateCertificateMessage()
+        case .getCertificate:
+            showGetCertificateMessage()
         }
     }
 
-    func showBackendNotSupportedMessage() {
+    private func showBackendNotSupportedMessage() {
         typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
 
         presentAlertWithOKButton(
@@ -79,7 +85,7 @@ final class BlockerViewController: LaunchImageViewController {
         )
     }
 
-    func showBlacklistMessage() {
+    private func showBlacklistMessage() {
 
         presentAlertWithOKButton(title: L10n.Localizable.Force.Update.title,
                                  message: L10n.Localizable.Force.Update.message) { _ in
@@ -87,12 +93,73 @@ final class BlockerViewController: LaunchImageViewController {
         }
     }
 
-    func showJailbrokenMessage() {
+    private func showJailbrokenMessage() {
         presentAlertWithOKButton(title: L10n.Localizable.Jailbrokendevice.Alert.title,
                                  message: L10n.Localizable.Jailbrokendevice.Alert.message)
     }
 
-    func showDatabaseFailureMessage() {
+    private func showUpdateCertificateMessage() {
+        typealias UpdateCertificate = L10n.Localizable.UpdateCertificate
+
+        let updateCertificateAlert = UIAlertController(
+            title: UpdateCertificate.Alert.title,
+            message: UpdateCertificate.Alert.message,
+            preferredStyle: .alert
+        )
+
+        let learnMoreAction = UIAlertAction(
+            title: UpdateCertificate.Button.learnMore,
+            style: .default,
+            handler: { _ in
+                UIApplication.shared.open(URL.wr_e2eiLearnMore)
+            }
+        )
+
+        let updateCertificateAction = UIAlertAction(
+            title: UpdateCertificate.Button.updateCertificate,
+            style: .default,
+            handler: { [weak self] _ in
+                self?.sessionManager?.retryStart()
+               // sessionManager?.activeUserSession?.enrollE2EICertificate.invoke(authenticate: <#T##OAuthBlock##OAuthBlock##(OAuthParameters) async throws -> OAuthResponse#>)
+            }
+        )
+
+        updateCertificateAlert.addAction(learnMoreAction)
+        updateCertificateAlert.addAction(updateCertificateAction)
+        present(updateCertificateAlert, animated: true)
+    }
+
+    private func showGetCertificateMessage() {
+        typealias E2EI = L10n.Localizable.Registration.Signin.E2ei
+
+        let getCertificateAlert = UIAlertController(
+            title: E2EI.title,
+            message: E2EI.subtitle,
+            preferredStyle: .alert
+        )
+
+        let learnMoreAction = UIAlertAction(
+            title: L10n.Localizable.UpdateCertificate.Button.learnMore,
+            style: .default,
+            handler: { _ in
+                UIApplication.shared.open(URL.wr_e2eiLearnMore)
+            }
+        )
+
+        let getCertificateAction = UIAlertAction(
+            title: E2EI.GetCertificateButton.title,
+            style: .default,
+            handler: { [weak self] _ in
+                self?.sessionManager?.clearPreviousBackups()
+            }
+        )
+
+        getCertificateAlert.addAction(learnMoreAction)
+        getCertificateAlert.addAction(getCertificateAction)
+        present(getCertificateAlert, animated: true)
+    }
+
+    private func showDatabaseFailureMessage() {
         let message = L10n.Localizable.Databaseloadingfailure.Alert.message(error?.localizedDescription ?? "-")
 
         let databaseFailureAlert = UIAlertController(
@@ -135,7 +202,7 @@ final class BlockerViewController: LaunchImageViewController {
         present(databaseFailureAlert, animated: true)
     }
 
-    func showConfirmationDatabaseDeletionAlert() {
+    private func showConfirmationDatabaseDeletionAlert() {
         let deleteDatabaseConfirmationAlert = UIAlertController(
             title: L10n.Localizable.Databaseloadingfailure.Alert.deleteDatabase,
             message: L10n.Localizable.Databaseloadingfailure.Alert.DeleteDatabase.message,

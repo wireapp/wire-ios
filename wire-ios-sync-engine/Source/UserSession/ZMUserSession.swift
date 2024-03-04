@@ -146,11 +146,13 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
-    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
-        let selfClientCertificateProvider = SelfClientCertificateProvider(
+    lazy var selfClientCertificateProvider: SelfClientCertificateProvider = {
+        return SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
             context: syncContext)
+    }()
 
+    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
         return SnoozeCertificateEnrollmentUseCase(
             e2eiFeature: e2eiFeature,
             gracePeriodRepository: gracePeriodRepository,

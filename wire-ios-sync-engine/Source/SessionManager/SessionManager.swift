@@ -57,6 +57,8 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
+    func sessionManagerPendingCertificateUpdate()
+    func sessionManagerPendingCertificateEnroll()
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
@@ -533,6 +535,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         callCenterObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
 
         checkJailbreakIfNeeded()
+//        Task {
+//            await updateOrEnrollCertificateIfNeeded()
+//        }
     }
 
     private func configureBlacklistDownload() {
@@ -1116,7 +1121,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    internal func checkJailbreakIfNeeded() {
+    func checkJailbreakIfNeeded() {
         guard configuration.blockOnJailbreakOrRoot || configuration.wipeOnJailbreakOrRoot else { return }
 
         if jailbreakDetector?.isJailbroken() == true {
@@ -1131,6 +1136,29 @@ public final class SessionManager: NSObject, SessionManagerType {
             // anymore by setting the delegate to nil.
             self.delegate = nil
         }
+    }
+
+    private func updateOrEnrollCertificateIfNeeded() async {
+        guard let userSession = activeUserSession,
+              userSession.e2eiFeature.isEnabled,
+              let gracePeriodEndDate = userSession.gracePeriodRepository.fetchGracePeriodEndDate(),
+              gracePeriodEndDate.isInThePast
+        else {
+            return
+        }
+
+        let selfClientHasCertificate = await userSession.selfClientCertificateProvider.hasCertificate
+        if selfClientHasCertificate {
+            delegate?.sessionManagerPendingCertificateUpdate()
+        } else {
+            delegate?.sessionManagerPendingCertificateEnroll()
+        }
+    }
+
+    public func updateCertificateIfNeeded() async {
+        guard let userSession = activeUserSession else { return }
+       
+        let _ = try? await userSession.enrollE2EICertificate.invoke(authenticate: <#T##OAuthBlock##OAuthBlock##(OAuthParameters) async throws -> OAuthResponse#>)
     }
 
     func shouldPerformPostRebootLogout() -> Bool {
@@ -1374,6 +1402,9 @@ extension SessionManager {
 
         updateAllUnreadCounts()
         checkJailbreakIfNeeded()
+        Task {
+            await updateOrEnrollCertificateIfNeeded()
+        }
 
         // Delete expired url scheme verification tokens
         CompanyLoginVerificationToken.flushIfNeeded()

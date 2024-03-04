@@ -423,6 +423,36 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock()
     }
 
+    // MARK: - sessionManagerPendingCertificateUpdate
+
+    public var sessionManagerPendingCertificateUpdate_Invocations: [Void] = []
+    public var sessionManagerPendingCertificateUpdate_MockMethod: (() -> Void)?
+
+    public func sessionManagerPendingCertificateUpdate() {
+        sessionManagerPendingCertificateUpdate_Invocations.append(())
+
+        guard let mock = sessionManagerPendingCertificateUpdate_MockMethod else {
+            fatalError("no mock for `sessionManagerPendingCertificateUpdate`")
+        }
+
+        mock()
+    }
+
+    // MARK: - sessionManagerPendingCertificateEnroll
+
+    public var sessionManagerPendingCertificateEnroll_Invocations: [Void] = []
+    public var sessionManagerPendingCertificateEnroll_MockMethod: (() -> Void)?
+
+    public func sessionManagerPendingCertificateEnroll() {
+        sessionManagerPendingCertificateEnroll_Invocations.append(())
+
+        guard let mock = sessionManagerPendingCertificateEnroll_MockMethod else {
+            fatalError("no mock for `sessionManagerPendingCertificateEnroll`")
+        }
+
+        mock()
+    }
+
     // MARK: - sessionManagerDidPerformFederationMigration
 
     public var sessionManagerDidPerformFederationMigrationActiveSession_Invocations: [UserSession?] = []

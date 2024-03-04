@@ -202,6 +202,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
             showJailbroken(completion: completionBlock)
+        case .pendingCertificateUpdate:
+            showCertificateUpdateRequest(completion: completionBlock)
+        case .pendingCertificateEnroll:
+            showCertificateEnrollRequest(completion: completionBlock)
         case .databaseFailure(let error):
             showDatabaseLoadingFailure(error: error, completion: completionBlock)
         case .migrating:
@@ -278,6 +282,18 @@ extension AppRootRouter {
 
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: .jailbroken)
+        rootViewController.set(childViewController: blockerViewController,
+                               completion: completion)
+    }
+
+    private func showCertificateUpdateRequest(completion: @escaping () -> Void) {
+        let blockerViewController = BlockerViewController(context: .updateCertificate)
+        rootViewController.set(childViewController: blockerViewController,
+                               completion: completion)
+    }
+
+    private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
+        let blockerViewController = BlockerViewController(context: .getCertificate)
         rootViewController.set(childViewController: blockerViewController,
                                completion: completion)
     }
