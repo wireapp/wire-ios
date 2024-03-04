@@ -51,6 +51,17 @@ public struct ModelHelper {
         return user
     }
 
+    @discardableResult
+    public func createUser(
+        qualifiedID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) -> ZMUser {
+        let user = ZMUser.insertNewObject(in: context)
+        user.remoteIdentifier = qualifiedID.uuid
+        user.domain = qualifiedID.domain
+        return user
+    }
+
     // MARK: - Clients
 
     @discardableResult
@@ -100,11 +111,12 @@ public struct ModelHelper {
     ) -> (Team, Set<ZMUser>) {
         let team = createTeam(id: id, in: context)
 
-        var users = (0..<numberOfUsers).map { _ in
-            let user = self.createUser(in: context)
-            addUser(user, to: team, in: context)
-            return user
-        }
+        let users = (0..<numberOfUsers)
+            .map { _ in
+                let user = self.createUser(in: context)
+                addUser(user, to: team, in: context)
+                return user
+            }
 
         return (team, Set(users))
     }
@@ -143,6 +155,29 @@ public struct ModelHelper {
         member.user = user
         member.team = team
         return member
+    }
+
+    // MARK: - Connection
+
+    @discardableResult
+    public func createConnection(
+        status: ZMConnectionStatus,
+        to user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> (ZMConnection, ZMConversation) {
+        let connection = ZMConnection.insertNewObject(in: context)
+        connection.to = user
+        connection.status = status
+        connection.message = "Connect to me"
+        connection.lastUpdateDate = .now
+
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .connection
+        conversation.remoteIdentifier = UUID()
+        conversation.domain = "local@domain.com"
+        user.oneOnOneConversation = conversation
+
+        return (connection, conversation)
     }
 
     // MARK: - Conversations
