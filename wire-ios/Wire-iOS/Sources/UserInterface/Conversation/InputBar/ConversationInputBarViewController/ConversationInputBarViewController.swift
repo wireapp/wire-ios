@@ -868,7 +868,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         viewController.delegate = self
         viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
 
-        parent?.present(viewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
+        parent?.present(viewController.wrapInNavigationController(), animated: true)
     }
 }
 
