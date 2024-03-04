@@ -38,6 +38,9 @@ public protocol UserSessionSelfUserClientDelegate: NSObjectProtocol {
 
     /// Invoked when there was an error registering the client
     func clientRegistrationDidFail(_ error: NSError, accountId: UUID)
+
+    /// Invoked when the client has completed the initial sync
+    func clientCompletedInitialSync(accountId: UUID)
 }
 
 @objc(UserSessionLogoutDelegate)
@@ -833,6 +836,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             self.hasCompletedInitialSync = true
             self.notificationDispatcher.isEnabled = true
+            delegate?.clientCompletedInitialSync(accountId: account.userIdentifier)
             ZMUserSession.notifyInitialSyncCompleted(context: managedObjectContext)
         }
 

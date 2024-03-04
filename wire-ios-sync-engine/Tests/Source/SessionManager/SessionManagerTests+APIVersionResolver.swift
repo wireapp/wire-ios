@@ -89,6 +89,7 @@ final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 }
 
 private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
+
     var didCallDidPerformFederationMigration: Bool = false
     var expectation: XCTestExpectation?
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
@@ -142,6 +143,10 @@ private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
     }
 
     public func sessionManagerAsksToRetryStart() {
+        // no op
+    }
+
+    func sessionManagerDidCompleteInitialSync(for activeSession: WireSyncEngine.UserSession?) {
         // no op
     }
 
