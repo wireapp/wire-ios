@@ -29,7 +29,7 @@ public protocol CertificateRevocationListAPIProtocol {
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
     func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async
-    func checkExpiringCRLs() async
+    func checkExpiredCRLs() async
 }
 
 public class CertificateRevocationListsChecker: CertificateRevocationListsChecking {
@@ -92,9 +92,9 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         await checkCertificateRevocationLists(from: newDistributionPoints)
     }
 
-    public func checkExpiringCRLs() async {
+    public func checkExpiredCRLs() async {
 
-        WireLogger.e2ei.info("checking expiring CRLs")
+        WireLogger.e2ei.info("checking expired CRLs")
 
         let distributionPointsOfExpiringCRLs = crlExpirationDatesRepository
             .fetchAllCRLExpirationDates()
