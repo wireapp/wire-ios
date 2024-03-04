@@ -163,7 +163,7 @@ class SearchTaskTests: DatabaseTest {
     func testThatItDoesFindUsersContainingButNotBeginningWithSearchString() {
         // given
         let resultArrived = customExpectation(description: "received result")
-        let user = createConnectedUser(withName: "userA")
+        _ = createConnectedUser(withName: "userA")
 
         let request = SearchRequest(query: "serA", searchOptions: [.contacts])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
