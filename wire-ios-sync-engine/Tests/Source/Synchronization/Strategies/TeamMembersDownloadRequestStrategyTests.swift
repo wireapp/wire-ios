@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-class TeamMembersDownloadRequestStrategyTests: MessagingTest {
+final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
     var sut: TeamMembersDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -79,7 +79,7 @@ class TeamMembersDownloadRequestStrategyTests: MessagingTest {
         selfUser.teamIdentifier = teamID
         let team = Team.insertNewObject(in: syncMOC)
         team.remoteIdentifier = teamID
-        _ = Member.getOrCreateMember(for: selfUser, in: team, context: syncMOC)
+        _ = Member.getOrUpdateMember(for: selfUser, in: team, context: syncMOC)
 
         return team
     }

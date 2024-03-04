@@ -40,6 +40,7 @@ public class Feature: ZMManagedObject {
         case classifiedDomains
         case digitalSignature
         case mls
+        case e2ei = "mlsE2EId"
         case mlsMigration
 
     }
@@ -174,7 +175,7 @@ public class Feature: ZMManagedObject {
         let hasStatusChanged = oldStatus != newStatus
 
         switch name {
-        case .conferenceCalling:
+        case .conferenceCalling, .e2ei:
             needsToNotifyUser = hasStatusChanged && newStatus == .enabled
 
         case .fileSharing, .selfDeletingMessages, .conversationGuestLinks:
@@ -217,7 +218,14 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
-        case .conferenceCalling, .fileSharing, .conversationGuestLinks, .classifiedDomains, .digitalSignature, .mls, .mlsMigration:
+        case .conferenceCalling,
+                .fileSharing,
+                .conversationGuestLinks,
+                .classifiedDomains,
+                .digitalSignature,
+                .mls,
+                .mlsMigration,
+                .e2ei:
             break
         }
     }

@@ -36,7 +36,7 @@
 @property (nonatomic) ZMSyncStrategy *sut;
 
 @property (nonatomic) MockSyncStateDelegate *syncStateDelegate;
-@property (nonatomic) ApplicationStatusDirectory *applicationStatusDirectory;
+@property (nonatomic) OperationStatus *operationStatus;
 
 @property (nonatomic) MockEventConsumer *mockEventConsumer;
 @property (nonatomic) MockContextChangeTracker *mockContextChangeTracker;

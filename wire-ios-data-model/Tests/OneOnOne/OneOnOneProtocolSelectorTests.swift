@@ -48,7 +48,7 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let result = await sut.getProtocolForUser(
+        let result = try await sut.getProtocolForUser(
             with: userID,
             in: uiMOC
         )
@@ -70,7 +70,7 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let result = await sut.getProtocolForUser(
+        let result = try await sut.getProtocolForUser(
             with: userID,
             in: uiMOC
         )
@@ -92,13 +92,35 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let result = await sut.getProtocolForUser(
+        let result = try await sut.getProtocolForUser(
             with: userID,
             in: uiMOC
         )
 
         // Then
         XCTAssertNil(result)
+    }
+
+    func test_GetProtocolForUser_DefaultsToProteus() async throws {
+        // Given
+        let userID = QualifiedID.random()
+
+        await uiMOC.perform { [self] in
+            let user = createUser(id: userID, in: uiMOC)
+            user.supportedProtocols = []
+
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            selfUser.supportedProtocols = [.proteus, .mls]
+        }
+
+        // When
+        let result = try await sut.getProtocolForUser(
+            with: userID,
+            in: uiMOC
+        )
+
+        // Then
+        XCTAssertEqual(result, .proteus)
     }
 
 }
