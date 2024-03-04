@@ -21,6 +21,10 @@
 		0191513A29ACB3CA00920D04 /* SpyUserClientKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191513929ACB3CA00920D04 /* SpyUserClientKeyStore.swift */; };
 		0191513C29ACB46000920D04 /* MockProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191513B29ACB46000920D04 /* MockProteusProvider.swift */; };
 		01A2D62F2A153118000EFC9C /* MockSafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A2D62E2A153118000EFC9C /* MockSafeCoreCrypto.swift */; };
+		01AD5C942B960C3400D35D33 /* RemoveDuplicatePreAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AD5C932B960C3400D35D33 /* RemoveDuplicatePreAction.swift */; };
+		01AD5C962B960C4800D35D33 /* CoreDataAction2111.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AD5C952B960C4800D35D33 /* CoreDataAction2111.swift */; };
+		01AD5C982B960C6100D35D33 /* PrefillPrimaryKeyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AD5C972B960C6100D35D33 /* PrefillPrimaryKeyAction.swift */; };
+		01AD5C9A2B960C7800D35D33 /* CoreDataAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AD5C992B960C7800D35D33 /* CoreDataAction.swift */; };
 		01B7A5752B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B7A5742B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift */; };
 		01E3C8552B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E3C8542B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift */; };
 		06034B6D26A8D36E003624B4 /* Feature.FileSharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */; };
@@ -803,6 +807,10 @@
 		0191513929ACB3CA00920D04 /* SpyUserClientKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpyUserClientKeyStore.swift; path = Tests/Source/Helper/SpyUserClientKeyStore.swift; sourceTree = SOURCE_ROOT; };
 		0191513B29ACB46000920D04 /* MockProteusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProteusProvider.swift; sourceTree = "<group>"; };
 		01A2D62E2A153118000EFC9C /* MockSafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSafeCoreCrypto.swift; sourceTree = "<group>"; };
+		01AD5C932B960C3400D35D33 /* RemoveDuplicatePreAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveDuplicatePreAction.swift; sourceTree = "<group>"; };
+		01AD5C952B960C4800D35D33 /* CoreDataAction2111.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataAction2111.swift; sourceTree = "<group>"; };
+		01AD5C972B960C6100D35D33 /* PrefillPrimaryKeyAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrefillPrimaryKeyAction.swift; sourceTree = "<group>"; };
+		01AD5C992B960C7800D35D33 /* CoreDataAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataAction.swift; sourceTree = "<group>"; };
 		01B7A5742B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoreDataMessagingMigrationVersionTests.swift; path = Migrations/CoreDataMessagingMigrationVersionTests.swift; sourceTree = "<group>"; };
 		01D017A62B6311EA0065CCD6 /* zmessaging2.111.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.111.0.xcdatamodel; sourceTree = "<group>"; };
 		01E3C8542B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+ServerTimestamp.swift"; sourceTree = "<group>"; };
@@ -1643,6 +1651,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		01AD5C922B960C1000D35D33 /* 2.110-2.111 */ = {
+			isa = PBXGroup;
+			children = (
+				01AD5C932B960C3400D35D33 /* RemoveDuplicatePreAction.swift */,
+				01AD5C972B960C6100D35D33 /* PrefillPrimaryKeyAction.swift */,
+				01AD5C952B960C4800D35D33 /* CoreDataAction2111.swift */,
+			);
+			path = "2.110-2.111";
+			sourceTree = "<group>";
+		};
 		06034B6B26A8D31F003624B4 /* FileSharing */ = {
 			isa = PBXGroup;
 			children = (
@@ -2039,8 +2057,10 @@
 		E6A5BBA22B0E329800ACC236 /* Migration */ = {
 			isa = PBXGroup;
 			children = (
+				01AD5C922B960C1000D35D33 /* 2.110-2.111 */,
 				E62EE7F62B3447A3002A54EF /* 2.106-2.107 */,
 				E6A5BBA52B0E33DB00ACC236 /* CoreDataMessagingMigrationVersion.swift */,
+				01AD5C992B960C7800D35D33 /* CoreDataAction.swift */,
 				E6A5BBA72B0E355A00ACC236 /* CoreDataMessagingMigrator.swift */,
 				E6A5BBA92B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift */,
 			);
@@ -3522,6 +3542,7 @@
 				F9C348921E2E3FF60015D69D /* SnapshotCenter.swift in Sources */,
 				0651D00623FC481B00411A22 /* ZMAssetClientMessage+Confirmations.swift in Sources */,
 				54E3EE471F61A78B00A261E3 /* ZMAssetClientMessage+Deletion.swift in Sources */,
+				01AD5C982B960C6100D35D33 /* PrefillPrimaryKeyAction.swift in Sources */,
 				F9331C781CB4165100139ECC /* NSString+ZMPersonName.m in Sources */,
 				63B1335529A503D100009D84 /* ProteusService.swift in Sources */,
 				BF6EA4D21E2512E800B7BD4B /* ZMConversation+DisplayName.swift in Sources */,
@@ -3565,6 +3586,7 @@
 				F9A706831CAEE01D00C2F5FE /* ZMOTRMessage.m in Sources */,
 				165DC51F21491C0400090B7B /* Mention.swift in Sources */,
 				F9A706531CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.m in Sources */,
+				01AD5C942B960C3400D35D33 /* RemoveDuplicatePreAction.swift in Sources */,
 				6312162F287DB7D900FF9A56 /* String+Bytes.swift in Sources */,
 				16B5B33126FDC5D2001A3216 /* ZMConnection+Actions.swift in Sources */,
 				F110503D2220439900F3EB62 /* ZMUser+RichProfile.swift in Sources */,
@@ -3695,6 +3717,7 @@
 				63B1335F29A503D100009D84 /* MessageProtocol.swift in Sources */,
 				16E6F24824B36D550015B249 /* NSManagedObjectContext+EncryptionAtRest.swift in Sources */,
 				F90D99A51E02DC6B00034070 /* AssetCollectionBatched.swift in Sources */,
+				01AD5C962B960C4800D35D33 /* CoreDataAction2111.swift in Sources */,
 				54FB03AF1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift in Sources */,
 				70E77B7D273188150021EE70 /* ZMConversation+Role.swift in Sources */,
 				63370CC9242E3B990072C37F /* ZMMessage+Conversation.swift in Sources */,
@@ -3782,6 +3805,7 @@
 				06D33FCB2524E402004B9BC1 /* ZMConversation+UnreadCount.swift in Sources */,
 				EE22F80929DD818B0053E1C6 /* BaseEARKeyDescription.swift in Sources */,
 				F9A706901CAEE01D00C2F5FE /* ZMUser.m in Sources */,
+				01AD5C9A2B960C7800D35D33 /* CoreDataAction.swift in Sources */,
 				F14B7AFF2220302B00458624 /* ZMUser+Predicates.swift in Sources */,
 				066A96FF25A88E510083E317 /* BiometricsState.swift in Sources */,
 				EEFC3EE72208311200D3091A /* ZMConversation+HasMessages.swift in Sources */,
