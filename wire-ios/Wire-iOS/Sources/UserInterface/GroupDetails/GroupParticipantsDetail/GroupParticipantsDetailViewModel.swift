@@ -142,7 +142,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
                     if userStatuses.keys.contains(user.remoteIdentifier) {
                         userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
                     } else {
-                        userStatuses[user.remoteIdentifier] = userStatuses[user.remoteIdentifier] ?? .init(user: user, isE2EICertified: isE2EICertified)
+                        userStatuses[user.remoteIdentifier] = .init(user: user, isE2EICertified: isE2EICertified)
                     }
                 } catch {
                     WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
