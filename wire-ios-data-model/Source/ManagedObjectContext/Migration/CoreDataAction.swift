@@ -55,6 +55,6 @@ class CoreDataAction {
 
 
     func execute(in context: NSManagedObjectContext) throws {
-        // to be overiden by subclasses
+        // to be overriden by subclasses
     }
 }
