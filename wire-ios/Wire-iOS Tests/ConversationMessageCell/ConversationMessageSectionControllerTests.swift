@@ -106,7 +106,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let context = ConversationMessageContext(isSameSenderAsPrevious: false)
 
         // When
-        let section  = ConversationMessageSectionController(
+        let section = ConversationMessageSectionController(
             message: message,
             context: context,
             userSession: userSession
@@ -130,7 +130,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
                                                  isTimestampInSameMinuteAsPreviousMessage: true)
 
         // WHEN
-        let section  = ConversationMessageSectionController(
+        let section = ConversationMessageSectionController(
             message: message,
             context: context,
             userSession: userSession
@@ -152,7 +152,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let context = ConversationMessageContext(previousMessageIsKnock: true)
 
         // When
-        let section  = ConversationMessageSectionController(
+        let section = ConversationMessageSectionController(
             message: message,
             context: context, userSession: userSession
         )
@@ -174,7 +174,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let context = ConversationMessageContext(isSameSenderAsPrevious: true,
                                                  isTimestampInSameMinuteAsPreviousMessage: false)
         // WHEN
-        let section  = ConversationMessageSectionController(
+        let section = ConversationMessageSectionController(
             message: message,
             context: context,
             userSession: userSession

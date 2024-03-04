@@ -240,7 +240,7 @@ extension ConversationContentViewController: SignatureObserver {
         }
         let navigationController = UINavigationController(rootViewController: digitalSignatureVerification)
         present(navigationController, animated: true, completion: { [weak self] in
-            self?.isDigitalSignatureVerificationShown =  true
+            self?.isDigitalSignatureVerificationShown = true
         })
     }
 
@@ -273,7 +273,7 @@ extension ConversationContentViewController: SignatureObserver {
 
     private func dismissDigitalSignatureVerification(completion: (() -> Void)? = nil) {
         dismiss(animated: true, completion: { [weak self] in
-            self?.isDigitalSignatureVerificationShown =  false
+            self?.isDigitalSignatureVerificationShown = false
             completion?()
         })
     }

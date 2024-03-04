@@ -76,7 +76,7 @@ public class CircularProgressView: UIView {
     }
 
     private func createPath() {
-        self.shapeLayer.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.bounds.width/2).cgPath
+        self.shapeLayer.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.bounds.width / 2).cgPath
     }
 
     override public class var layerClass: AnyClass {

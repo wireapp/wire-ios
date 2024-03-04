@@ -111,7 +111,7 @@ final class InputBar: UIView {
     private let textViewFont = FontSpec.normalRegularFont.font!
 
     let textView = MarkdownTextView(with: DownStyle.compact)
-    let leftAccessoryView  = UIView()
+    let leftAccessoryView = UIView()
     let rightAccessoryStackView: UIStackView = {
         let stackView = UIStackView()
 
@@ -276,7 +276,7 @@ final class InputBar: UIView {
             buttonInnerContainer
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        let rightAccessoryViewWidthConstraint =  rightAccessoryStackView.widthAnchor.constraint(equalToConstant: 0)
+        let rightAccessoryViewWidthConstraint = rightAccessoryStackView.widthAnchor.constraint(equalToConstant: 0)
         rightAccessoryViewWidthConstraint.priority = .defaultHigh
 
         NSLayoutConstraint.activate([

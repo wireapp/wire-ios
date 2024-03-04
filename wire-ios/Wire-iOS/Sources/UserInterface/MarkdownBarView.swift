@@ -29,7 +29,7 @@ final class MarkdownBarView: UIView {
 
     weak var delegate: MarkdownBarViewDelegate?
 
-    private let stackView =  UIStackView()
+    private let stackView = UIStackView()
 
     private let enabledStateIconColor = SemanticColors.Button.textInputBarItemEnabled
     private let highlightedStateIconColor = SemanticColors.Button.textInputBarItemHighlighted

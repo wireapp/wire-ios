@@ -501,7 +501,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesObserversWhenThereIsAnUnreadPingInAConversation() {
         // given
-        let conversation =  ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
 
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
@@ -532,7 +532,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func assertThatItNotifiesObserversWhenTheEstimatedUnreadCountChanges(team: Team? = nil, file: StaticString = #file, line: UInt = #line) {
         // given
-        let conversation =  ZMConversation.insertNewObject(in: uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         conversation.lastServerTimeStamp = Date()
         conversation.team = team
@@ -677,7 +677,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         // given
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
 
-        let conversation =  ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
         conversation.mutableMessages.add(message)
         self.uiMOC.saveOrRollback()
@@ -754,7 +754,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         // given
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
 
-        let conversation =  ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
         conversation.mutableMessages.add(message)
         self.uiMOC.saveOrRollback()

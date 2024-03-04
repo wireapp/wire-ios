@@ -30,7 +30,7 @@ private func scalar(_ spl: Double) -> Double {
 }
 
 private func spl(_ amplitude: Double) -> Double {
-    return 20.0 * log10(pascal(amplitude)/minPascal)
+    return 20.0 * log10(pascal(amplitude) / minPascal)
 }
 
 private func pascal(_ amplitude: Double) -> Double {

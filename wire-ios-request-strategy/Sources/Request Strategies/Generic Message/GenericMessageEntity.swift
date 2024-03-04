@@ -45,7 +45,7 @@ import Foundation
     }
 
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
-        guard let conversation  = conversation else { return nil }
+        guard let conversation = conversation else { return nil }
 
         return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
     }

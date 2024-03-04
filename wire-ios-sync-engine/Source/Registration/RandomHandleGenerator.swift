@@ -34,16 +34,16 @@ struct RandomHandleGenerator {
 
         if let normalized = normalized {
             possibleHandles.append(normalized)
-            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength-1).appendAllDigits())
-            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength-2).appendRandomDigits(numberOfDigits: 2, variations: 4))
-            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength-3).appendRandomDigits(numberOfDigits: 3, variations: 4))
-            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength-4).appendRandomDigits(numberOfDigits: 4, variations: 6))
+            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 1).appendAllDigits())
+            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 2).appendRandomDigits(numberOfDigits: 2, variations: 4))
+            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 3).appendRandomDigits(numberOfDigits: 3, variations: 4))
+            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 4).appendRandomDigits(numberOfDigits: 4, variations: 6))
         }
 
         possibleHandles.append(contentsOf: alternativeNames)
-        possibleHandles.append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength-2).appendRandomDigits(numberOfDigits: 2, variations: 2) }.flatMap { $0 })
-        possibleHandles.append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength-3).appendRandomDigits(numberOfDigits: 3, variations: 2) }.flatMap { $0 })
-        possibleHandles.append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength-4).appendRandomDigits(numberOfDigits: 4, variations: 2) }.flatMap { $0 })
+        possibleHandles.append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 2).appendRandomDigits(numberOfDigits: 2, variations: 2) }.flatMap { $0 })
+        possibleHandles.append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 3).appendRandomDigits(numberOfDigits: 3, variations: 2) }.flatMap { $0 })
+        possibleHandles.append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 4).appendRandomDigits(numberOfDigits: 4, variations: 2) }.flatMap { $0 })
 
         return possibleHandles
     }
@@ -57,13 +57,13 @@ extension RandomHandleGenerator {
         let list1 = self.loadWords(file: "random1", ext: "txt")
         let list2 = self.loadWords(file: "random2", ext: "txt")
 
-        guard (list1.count * list2.count) > count*20 else {
+        guard (list1.count * list2.count) > count * 20 else {
             fatal("Won't generate that many random words \(count) with this little dictionary \(list1.count * list2.count)")
         }
 
         var generated = Set<String>()
         while (generated.count) < count {
-            generated.insert(list1.random!+list2.random!)
+            generated.insert(list1.random! + list2.random!)
         }
 
         return Array(generated)

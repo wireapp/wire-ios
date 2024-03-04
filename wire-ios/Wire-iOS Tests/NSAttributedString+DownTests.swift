@@ -27,7 +27,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = "#"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -39,7 +39,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = "##"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -50,7 +50,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = "###"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -61,7 +61,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = "####"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -72,7 +72,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = "#####"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -83,7 +83,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = "######"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -94,7 +94,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = ">"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -105,7 +105,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = ">>"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -116,7 +116,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = ">>>"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -127,7 +127,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = ">>>>"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -138,7 +138,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = "**"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -149,7 +149,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = "***"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
@@ -160,7 +160,7 @@ final class NSAttributedStringDownTests: XCTestCase {
         let plainTextSymbol = "****"
 
         // WHEN
-        let sut  = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
+        let sut = NSMutableAttributedString.markdown(from: plainTextSymbol, style: NSAttributedString.style)
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)

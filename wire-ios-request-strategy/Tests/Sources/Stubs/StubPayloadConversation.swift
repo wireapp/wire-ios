@@ -22,7 +22,7 @@ import Foundation
 extension Payload.Conversation {
     static func stub(
         qualifiedID: QualifiedID? = nil,
-        id: UUID?  = nil,
+        id: UUID? = nil,
         type: BackendConversationType? = nil,
         creator: UUID? = nil,
         access: [String]? = nil,

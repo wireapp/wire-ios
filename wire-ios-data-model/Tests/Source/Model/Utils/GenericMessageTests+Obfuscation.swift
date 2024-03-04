@@ -39,7 +39,7 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
             $0.tag = "bar"
         })
         let preview = WireProtos.Asset.Preview(size: 2000, mimeType: "video", remoteData: remoteData, imageMetadata: imageMetaData)
-        let asset  = WireProtos.Asset(original: original, preview: preview)
+        let asset = WireProtos.Asset(original: original, preview: preview)
         return asset
     }
 
@@ -154,7 +154,7 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let genericMessage = GenericMessage(content: messageText, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when
-        let obfuscated =  genericMessage.obfuscatedMessage()
+        let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
         guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else { return XCTFail()}
@@ -202,7 +202,7 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let genericMessage = GenericMessage(content: obfuscatedText, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when
-        let obfuscated =  genericMessage.obfuscatedMessage()
+        let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
         guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else { return XCTFail()}
@@ -247,7 +247,7 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let genericMessage = GenericMessage(content: obfuscatedText, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when
-        let obfuscated =  genericMessage.obfuscatedMessage()
+        let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
         guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else { return XCTFail()}
@@ -263,11 +263,11 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
 
     func testThatItObfuscatesAssetsImageContent() {
         // given
-        let asset  = assetWithImage()
+        let asset = assetWithImage()
         let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when
-        let obfuscated =  genericMessage.obfuscatedMessage()
+        let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
         guard let obfuscatedAsset = obfuscated?.asset else { return XCTFail()}
@@ -298,11 +298,11 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
             })
         })
 
-        let asset  = WireProtos.Asset(original: original, preview: nil)
+        let asset = WireProtos.Asset(original: original, preview: nil)
         let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when
-        let obfuscated =  genericMessage.obfuscatedMessage()
+        let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
         guard let obfuscatedAsset = obfuscated?.asset else { return XCTFail()}
@@ -331,11 +331,11 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
             })
         })
 
-        let asset  = WireProtos.Asset(original: original, preview: nil)
+        let asset = WireProtos.Asset(original: original, preview: nil)
         let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when
-        let obfuscated =  genericMessage.obfuscatedMessage()
+        let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
         guard let obfuscatedAsset = obfuscated?.asset else { return XCTFail()}
@@ -353,7 +353,7 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
 
     func testThatItObfuscatesLocationMessages() {
         // given
-        let location  = Location(latitude: 2.0, longitude: 3.0)
+        let location = Location(latitude: 2.0, longitude: 3.0)
         let message = GenericMessage(content: location, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when

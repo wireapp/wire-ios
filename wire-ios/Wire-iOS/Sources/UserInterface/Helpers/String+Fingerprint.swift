@@ -57,7 +57,7 @@ extension String {
             if temp.count < charactersPerLine {
                 temp += "\(char)"
             } else {
-                result += temp.fingerprintStringWithSpaces  + "\n"
+                result += temp.fingerprintStringWithSpaces + "\n"
                 temp = "\(char)"
             }
         }

@@ -33,10 +33,10 @@ public extension NSUUID {
         var result: UInt64 = 0
         for i in 0..<len {
             var readData: UInt8 = 0
-            let finalOctetIndex = len-i-1
-            let range = Range((Int(start+i))...(Int(start+i)))
+            let finalOctetIndex = len - i - 1
+            let range = Range((Int(start + i))...(Int(start + i)))
             data?.copyBytes(to: &readData, from: range)
-            let shiftedData = UInt64(readData) << UInt64(8*finalOctetIndex)
+            let shiftedData = UInt64(readData) << UInt64(8 * finalOctetIndex)
             result = result | shiftedData
         }
         return result
@@ -60,7 +60,7 @@ public extension NSUUID {
         // extracting fields
         let time_low = self.readOctectsReverted(0, len: 4)
         let time_mid = self.readOctectsReverted(4, len: 2)
-        let time_high_and_variant = self.readOctectsReverted(4+2, len: 2)
+        let time_high_and_variant = self.readOctectsReverted(4 + 2, len: 2)
         let time_high = (time_high_and_variant & 0x0fff)
 
         // calculting time

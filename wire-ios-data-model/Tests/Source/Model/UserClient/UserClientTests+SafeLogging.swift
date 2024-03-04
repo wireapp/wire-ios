@@ -21,7 +21,7 @@ import XCTest
 
 class UserClientTestsSafeLogging: ZMBaseManagedObjectTest {
     func testThatSafeRemoteIdentifierReturnsReadableHashOfRemoteIdentifier() {
-        let uuid =  UUID.create().transportString()
+        let uuid = UUID.create().transportString()
         self.syncMOC.performGroupedBlockAndWait {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = uuid

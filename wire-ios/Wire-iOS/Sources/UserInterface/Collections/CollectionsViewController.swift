@@ -481,7 +481,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             return UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
 
-        return elements(for: section).isEmpty ? .zero: UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 16)
+        return elements(for: section).isEmpty ? .zero : UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 16)
     }
 
     // MARK: - Data Source

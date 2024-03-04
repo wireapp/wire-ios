@@ -80,8 +80,8 @@ extension ZMClientMessage {
 
     public func fetchLinkPreviewImageData(with queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void) {
         guard let cache = managedObjectContext?.zm_fileAssetCache else { return }
-        let originalKey =  FileAssetCache.cacheKeyForAsset(self, format: .original)
-        let mediumKey =  FileAssetCache.cacheKeyForAsset(self, format: .medium)
+        let originalKey = FileAssetCache.cacheKeyForAsset(self, format: .original)
+        let mediumKey = FileAssetCache.cacheKeyForAsset(self, format: .medium)
 
         queue.async {
             completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache.assetData($0) }).first)

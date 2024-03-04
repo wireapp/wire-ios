@@ -67,7 +67,7 @@ class EventProcessorTests: MessagingTest {
 
     // MARK: - Helpers
 
-    func createSampleEvents(conversationID: UUID  = UUID(), messageNonce: UUID = UUID()) -> [ZMUpdateEvent] {
+    func createSampleEvents(conversationID: UUID = UUID(), messageNonce: UUID = UUID()) -> [ZMUpdateEvent] {
         let payload1: [String: Any] = ["type": "conversation.member-join",
                                        "conversation": conversationID]
         let payload2: [String: Any] = ["type": "conversation.message-add",

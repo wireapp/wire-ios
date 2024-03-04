@@ -683,7 +683,7 @@ extension CallingV3Tests {
 
         // then
         // we receive a systemMessage that we missed a call
-        XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount+1)
+        XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount + 1)
         guard let systemMessage = conversationUnderTest.recentMessages.last as? ZMSystemMessage
         else {
             return XCTFail("Did not insert a system message")
@@ -714,7 +714,7 @@ extension CallingV3Tests {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount+1)
+        XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount + 1)
         XCTAssertFalse(conversationUnderTest.isArchived)
     }
 
@@ -733,7 +733,7 @@ extension CallingV3Tests {
         closeCall(user: user, reason: .canceled)
 
         // we receive a performed call systemMessage
-        XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount+1)
+        XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount + 1)
         guard let systemMessage = conversationUnderTest.recentMessages.last as? ZMSystemMessage
             else {
                 return XCTFail("Did not insert a system message")
@@ -764,7 +764,7 @@ extension CallingV3Tests {
         closeCall(user: user, reason: .canceled)
 
         // the conversation is unarchived
-        XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount+1)
+        XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount + 1)
         XCTAssertFalse(conversationUnderTest.isArchived)
     }
 

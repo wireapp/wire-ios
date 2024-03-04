@@ -95,7 +95,7 @@ extension ZMMessage: Shareable {
                 }
             }
         } else if isVideo || isAudio || isFile {
-            let url  = fileMessageData!.fileURL!
+            let url = fileMessageData!.fileURL!
             FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
                 ZMUserSession.shared()?.perform {
                     conversations.forEachNonEphemeral {

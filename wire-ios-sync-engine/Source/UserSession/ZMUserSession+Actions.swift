@@ -195,7 +195,7 @@ import Foundation
         }
 
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
-            guard let `self` =  self else { return }
+            guard let `self` = self else { return }
 
             self.likeMesssageObserver = nil
             if result == .failed {

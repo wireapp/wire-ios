@@ -76,7 +76,7 @@ extension Payload {
             self.target = target
             self.qualifiedTarget = qualifiedTarget
             self.service = service
-            self.mutedStatus  = mutedStatus
+            self.mutedStatus = mutedStatus
             self.mutedReference = mutedReference
             self.archived = archived
             self.archivedReference = archivedReference

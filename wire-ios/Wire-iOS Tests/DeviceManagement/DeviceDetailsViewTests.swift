@@ -31,7 +31,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     override func setUp() {
         super.setUp()
         coreDataFixture = CoreDataFixture()
-        let otherYearFormatter =  WRDateFormatter.otherYearFormatter
+        let otherYearFormatter = WRDateFormatter.otherYearFormatter
         XCTAssertEqual(
             otherYearFormatter.locale.identifier,
             "en_US", "otherYearFormatter.locale.identifier is \(otherYearFormatter.locale.identifier)"

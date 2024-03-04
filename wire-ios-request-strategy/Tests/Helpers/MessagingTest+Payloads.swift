@@ -81,7 +81,7 @@ extension MessagingTestBase {
         timestamp: Date? = nil
     ) -> ZMUpdateEvent {
 
-        let event  = conversationEventPayload(
+        let event = conversationEventPayload(
             from: data,
             conversationID: conversationID,
             senderID: senderID,

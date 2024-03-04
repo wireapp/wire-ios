@@ -266,7 +266,7 @@ public final class Canvas: UIView {
             }
         }
 
-        bufferImage =  UIGraphicsGetImageFromCurrentImageContext()
+        bufferImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         flattenIndex = upTo
     }
@@ -311,7 +311,7 @@ public final class Canvas: UIView {
                     }
                 }
 
-                image =  UIGraphicsGetImageFromCurrentImageContext()
+                image = UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
             } else {
                 let drawBounds = self.bounds.intersection(self.drawBounds).integral
@@ -329,7 +329,7 @@ public final class Canvas: UIView {
                     }
                 }
 
-                image =  UIGraphicsGetImageFromCurrentImageContext()
+                image = UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
             }
 
@@ -385,7 +385,7 @@ extension Canvas: UIGestureRecognizerDelegate {
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
         addGestureRecognizer(panGestureRecognizer)
 
-        let pinchGestureRecognizer =  UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture))
+        let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture))
         addGestureRecognizer(pinchGestureRecognizer)
         pinchGestureRecognizer.delegate = self
 

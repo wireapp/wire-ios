@@ -118,17 +118,17 @@ final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
         let numberOfUsers = MockUserType.usernames.count
 
         // go to top most
-        for _ in 0..<numberOfUsers+5 {
+        for _ in 0..<numberOfUsers + 5 {
             sut.selectPreviousUser()
         }
 
         // go to bottom most
-        for _ in 0..<numberOfUsers+5 {
+        for _ in 0..<numberOfUsers + 5 {
             sut.selectNextUser()
         }
 
         // go to middle
-        for _ in 0..<numberOfUsers/2 {
+        for _ in 0..<numberOfUsers / 2 {
             sut.selectPreviousUser()
         }
 

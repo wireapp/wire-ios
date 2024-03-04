@@ -247,7 +247,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         XCTAssertFalse(sync.hasOutstandingItems)
 
         syncMOC.performAndWait {
-            self.syncMOC.saveOrRollback()
+            _ = self.syncMOC.saveOrRollback()
         }
 
         // WHEN
@@ -272,7 +272,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         XCTAssertFalse(sync.hasOutstandingItems)
 
         syncMOC.performAndWait {
-            self.syncMOC.saveOrRollback()
+            _ = self.syncMOC.saveOrRollback()
         }
 
         // WHEN

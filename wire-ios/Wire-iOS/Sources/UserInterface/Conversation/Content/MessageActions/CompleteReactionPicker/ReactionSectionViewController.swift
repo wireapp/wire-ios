@@ -127,7 +127,7 @@ final class ReactionSectionViewController: UIViewController {
 
     private func createConstraints() {
         let count = CGFloat(sectionButtons.count)
-        let fullSpacing = view.bounds.width -  iconSize
+        let fullSpacing = view.bounds.width - iconSize
         let padding: CGFloat = fullSpacing / count
 
         var constraints = [NSLayoutConstraint]()

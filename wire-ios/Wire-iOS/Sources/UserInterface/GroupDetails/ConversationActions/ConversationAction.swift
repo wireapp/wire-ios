@@ -182,7 +182,7 @@ extension ZMConversation.Action {
         case .block(isBlocked: let blocked):
             return blocked ? ProfileLocale.unblockButtonTitle : ProfileLocale.blockButtonTitle
         case .favorite(isFavorite: let favorited):
-            return favorited ? ProfileLocale.unfavoriteButtonTitle: ProfileLocale.favoriteButtonTitle
+            return favorited ? ProfileLocale.unfavoriteButtonTitle : ProfileLocale.favoriteButtonTitle
         case .duplicateConversation:
             // no localization needed, this is debug
             return "⚠️ DEBUG - Duplicate Conversation"

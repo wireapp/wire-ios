@@ -156,7 +156,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
 
-    let isFullWidth: Bool  = false
+    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

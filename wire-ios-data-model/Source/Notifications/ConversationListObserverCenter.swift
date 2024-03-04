@@ -146,11 +146,21 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     /// Handles updated conversations, updates lists and notifies observers
     public func conversationDidChange(_ changes: ConversationChangeInfo) {
-        guard    changes.nameChanged              || changes.connectionStateChanged  || changes.isArchivedChanged
-              || changes.mutedMessageTypesChanged || changes.lastModifiedDateChanged || changes.conversationListIndicatorChanged
-              || changes.clearedChanged           || changes.securityLevelChanged    || changes.teamChanged
-              || changes.messagesChanged          || changes.labelsChanged           || changes.mlsStatusChanged
-        else { return }
+        let hasChanged = changes.nameChanged
+            || changes.connectionStateChanged
+            || changes.isArchivedChanged
+            || changes.mutedMessageTypesChanged
+            || changes.lastModifiedDateChanged
+            || changes.conversationListIndicatorChanged
+            || changes.clearedChanged
+            || changes.securityLevelChanged
+            || changes.teamChanged
+            || changes.messagesChanged
+            || changes.labelsChanged
+            || changes.mlsStatusChanged
+
+        guard hasChanged else { return }
+
         zmLog.debug("conversationDidChange with changes \(changes.customDebugDescription)")
         forwardToSnapshots { $0.processConversationChanges(changes) }
     }

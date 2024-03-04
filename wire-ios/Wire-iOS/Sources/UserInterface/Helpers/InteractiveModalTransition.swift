@@ -50,7 +50,7 @@ private final class ModalPresentationTransition: NSObject, UIViewControllerAnima
 
         let animations = { [configuration] in
             toVC.dimView.backgroundColor = .init(white: 0, alpha: configuration.alpha)
-            toVC.viewController.view.transform  = .identity
+            toVC.viewController.view.transform = .identity
         }
 
         if !transitionContext.isAnimated {
@@ -87,7 +87,7 @@ private final class ModalDismissalTransition: NSObject, UIViewControllerAnimated
         guard let toVC = transitionContext.viewController(forKey: .to) else { preconditionFailure("No view controller to present") }
 
         let animations = {
-            toVC.view.transform  = .identity
+            toVC.view.transform = .identity
             fromVC.viewController.view.transform = CGAffineTransform(translationX: 0, y: fromVC.viewController.view.bounds.height)
             fromVC.dimView.backgroundColor = .clear
         }

@@ -744,7 +744,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
         // given
         BackendInfo.isFederationEnabled = true
-        let qualifiedID =  QualifiedID(uuid: .create(), domain: owningDomain)
+        let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
 
         let (payload, selfUser) = await syncMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -780,7 +780,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_OneToOne_DoesntAssignDomain_WhenFederationIsDisabled() async throws {
         // given
         BackendInfo.isFederationEnabled = false
-        let qualifiedID =  QualifiedID(uuid: .create(), domain: owningDomain)
+        let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
 
         let (payload, selfUser) = await syncMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: syncMOC)

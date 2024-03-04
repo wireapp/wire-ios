@@ -644,7 +644,7 @@ public extension WireDataModel.Mention {
 
             guard let domain = user.domain else { return }
 
-            $0.qualifiedUserID =  WireProtos.QualifiedUserId.with {
+            $0.qualifiedUserID = WireProtos.QualifiedUserId.with {
                 $0.id = userID
                 $0.domain = domain
             }
