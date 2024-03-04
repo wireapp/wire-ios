@@ -392,17 +392,14 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         configureBlacklistDownload()
 
-        self.memoryWarningObserver = NotificationCenter.default.addObserver(
+        memoryWarningObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.didReceiveMemoryWarningNotification,
             object: nil,
-            queue: nil,
-            using: { [weak self] _ in
-                guard let self else {
-                    return
-                }
-                log.debug("Received memory warning, tearing down background user sessions.")
-                self.tearDownAllBackgroundSessions()
-            })
+            queue: nil
+        ) { [weak self] _ in
+            log.debug("Received memory warning, tearing down background user sessions.")
+            self?.tearDownAllBackgroundSessions()
+        }
 
         NotificationCenter
             .default
@@ -1047,13 +1044,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     // Tears down and releases all background user sessions.
     internal func tearDownAllBackgroundSessions() {
-        let backgroundSessions = backgroundUserSessions.filter { (_, session) -> Bool in
-            return activeUserSession != session
+        let backgroundSessions = backgroundUserSessions.filter { _, session in
+            activeUserSession != session
         }
 
-        backgroundSessions.keys.forEach({ sessionID in
-            tearDownBackgroundSession(for: sessionID)
-        })
+        backgroundSessions.keys.forEach {
+            tearDownBackgroundSession(for: $0)
+        }
     }
 
     fileprivate func tearDownObservers(account: UUID) {
@@ -1067,6 +1064,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         blacklistVerificator?.tearDown()
         unauthenticatedSession?.tearDown()
         reachability.tearDown()
+
+        if let memoryWarningObserver {
+            NotificationCenter.default.removeObserver(memoryWarningObserver)
+        }
     }
 
     public var isUserSessionActive: Bool {
