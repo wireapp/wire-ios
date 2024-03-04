@@ -100,6 +100,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             .fetchAllCRLExpirationDates()
             .filter {
                 // We give 10 seconds delay to allow time for the certificate to be renewed by the server
+                // see https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/950010018/Use+case+revocation+expiration+of+an+E2EI+certificate
                 hasCRLExpiredAtLeastTenSecondsAgo(expirationDate: $0.value)
             }
             .keys
@@ -139,13 +140,11 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     }
 
     private func hasCRLExpiredAtLeastTenSecondsAgo(expirationDate: Date) -> Bool {
-        let now = Date.now
-
         guard let tenSecondsAfterExpiration = tenSecondsAfter(date: expirationDate) else {
-            return now > expirationDate
+            return expirationDate.isInThePast
         }
 
-        return now > tenSecondsAfterExpiration
+        return tenSecondsAfterExpiration.isInThePast
     }
 
     private func tenSecondsAfter(date: Date) -> Date? {
