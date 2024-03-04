@@ -149,21 +149,21 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         XCTAssertTrue(mockConversationVerificationStatusUpdater.updateAllStatuses_Invocations.isEmpty)
     }
 
-    // MARK: - Check Expiring CRLs
+    // MARK: - Check Expired CRLs
 
-    func testCheckExpiringCRLs_RefetchesExpiringCRLs() async throws {
+    func testCheckExpiredCRLs_RefetchesExpiredCRLs() async throws {
         // GIVEN
         // set up 1st distribution point with CRL expiring now
         let dp1 = "dp1.example.com"
         let dp1Url = try XCTUnwrap(URL(string: dp1))
         let crl1Expiration = Date.now
 
-        // set up 2nd distribution point with CRL expiring in 30 minutes
+        // set up 2nd distribution point with CRL expired more than 10 seconds ago
         let dp2 = "dp2.example.com"
         let dp2Url = try XCTUnwrap(URL(string: dp2))
         let crl2Expiration = try XCTUnwrap(Calendar.current.date(
-            byAdding: .minute,
-            value: 30,
+            byAdding: .second,
+            value: -15,
             to: .now
         ))
 
@@ -181,7 +181,6 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
 
         // mock the results of CRL registration
         mockCRLRegistration(with: [
-            dp1: (dirty: false, expiration: Date.distantFuture),
             dp2: (dirty: true, expiration: Date.distantFuture)
         ])
 
@@ -189,36 +188,36 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         mockDummies()
 
         // WHEN
-        await sut.checkExpiringCRLs()
+        await sut.checkExpiredCRLs()
 
         // THEN
         // It fetches the expiring CRLs
-        XCTAssertEqual(mockCRLAPI.getRevocationListFrom_Invocations.count, 2)
+        XCTAssertEqual(mockCRLAPI.getRevocationListFrom_Invocations.count, 1)
         XCTAssertEqual(
             Set(mockCRLAPI.getRevocationListFrom_Invocations.map(\.absoluteString)),
-            Set([dp1, dp2])
+            Set([dp2])
         )
 
         // It registers the fetched CRLs with core crypto
-        XCTAssertEqual(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 2)
+        XCTAssertEqual(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 1)
         XCTAssertEqual(
             Set(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.map(\.crlDp)),
-            Set([dp1, dp2])
+            Set([dp2])
         )
 
-        // It stores the expiration dates for dp1 and dp2
-        XCTAssertEqual(mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.count, 2)
+        // It stores the expiration dates for dp2
+        XCTAssertEqual(mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.count, 1)
         XCTAssertEqual(
             Set(mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.map(
                 \.distributionPoint.absoluteString
             )),
-            Set([dp1, dp2])
+            Set([dp2])
         )
         XCTAssertEqual(
             mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.map({
                 String(reflecting: $0.expirationDate)
             }),
-            [Date.distantFuture, Date.distantFuture].map({
+            [Date.distantFuture].map({
                 String(reflecting: $0)
             })
         )

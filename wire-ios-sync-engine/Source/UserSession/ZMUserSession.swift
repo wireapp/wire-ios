@@ -893,7 +893,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         recurringActionService.performActionsIfNeeded()
 
         Task {
-            await self.cRLsChecker.checkExpiringCRLs()
+            await self.cRLsChecker.checkExpiredCRLs()
         }
 
         managedObjectContext.performGroupedBlock { [weak self] in
