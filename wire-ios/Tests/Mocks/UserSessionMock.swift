@@ -25,7 +25,7 @@ import WireRequestStrategySupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
-    var isE2eIdentityEnabled  = false
+    var isE2eIdentityEnabled = false
     var certificate = E2eIdentityCertificate.mockNotActivated
     typealias Preference = AppLockPasscodePreference
     typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void

@@ -125,7 +125,7 @@ class AcmeAPITests: ZMTBaseTest {
 
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
-        let requestBody =  Data()
+        let requestBody = Data()
 
         // mock
         let mockResponse = HTTPURLResponse(

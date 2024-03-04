@@ -218,7 +218,7 @@ extension SearchTask {
     }
 
     func teamMembers(matchingQuery query: String, team: Team?, searchOptions: SearchOptions) -> [Member] {
-        var result =  team?.members(matchingQuery: query) ?? []
+        var result = team?.members(matchingQuery: query) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
             result = filterNonActiveTeamMembers(members: result)
