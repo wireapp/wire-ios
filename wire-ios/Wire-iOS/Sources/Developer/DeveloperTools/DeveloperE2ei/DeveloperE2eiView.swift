@@ -35,9 +35,9 @@ struct DeveloperE2eiView: View {
 
             Section("Certificate Revocation Lists") {
                 toggleRow(
-                    title: "Force CRL expiry after 30 minutes",
-                    description: "Sets the CRL expiration time to 30 minutes. Enable to force refresh the CRLs when the app comes to the foreground.",
-                    binding: binding(for: .forceCRLExpiryAfterThirtyMinutes)
+                    title: "Force CRL expiry after 1 minute",
+                    description: "Sets the CRL expiration time to 1 minute. Enable to force refresh the CRLs when the app comes to the foreground (at least one minute after the CRL has been fetched the 1st time).",
+                    binding: binding(for: .forceCRLExpiryAfterOneMinute)
                 )
                 VStack(alignment: .leading) {
                     SwiftUI.Button("Clear CRL expiration dates", action: { viewModel.removeAllExpirationDates() })

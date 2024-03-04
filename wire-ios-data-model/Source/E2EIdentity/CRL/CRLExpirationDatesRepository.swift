@@ -69,9 +69,9 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
 
         storeDistributionPointIfNeeded(dpString)
 
-        if DeveloperFlag.forceCRLExpiryAfterThirtyMinutes.isOn {
+        if DeveloperFlag.forceCRLExpiryAfterOneMinute.isOn {
             storage.set(
-                Calendar.current.date(byAdding: .minute, value: 30, to: .now)!,
+                Calendar.current.date(byAdding: .minute, value: 1, to: .now)!,
                 forKey: expirationDateKey
             )
         } else {

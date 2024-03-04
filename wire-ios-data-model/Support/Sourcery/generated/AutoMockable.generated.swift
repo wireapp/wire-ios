@@ -171,16 +171,16 @@ public class MockCertificateRevocationListsChecking: CertificateRevocationListsC
         await mock(distributionPoints)
     }
 
-    // MARK: - checkExpiringCRLs
+    // MARK: - checkExpiredCRLs
 
-    public var checkExpiringCRLs_Invocations: [Void] = []
-    public var checkExpiringCRLs_MockMethod: (() async -> Void)?
+    public var checkExpiredCRLs_Invocations: [Void] = []
+    public var checkExpiredCRLs_MockMethod: (() async -> Void)?
 
-    public func checkExpiringCRLs() async {
-        checkExpiringCRLs_Invocations.append(())
+    public func checkExpiredCRLs() async {
+        checkExpiredCRLs_Invocations.append(())
 
-        guard let mock = checkExpiringCRLs_MockMethod else {
-            fatalError("no mock for `checkExpiringCRLs`")
+        guard let mock = checkExpiredCRLs_MockMethod else {
+            fatalError("no mock for `checkExpiredCRLs`")
         }
 
         await mock()
