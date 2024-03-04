@@ -52,7 +52,7 @@ class RemoveDuplicatePreAction: CoreDataAction, CoreDataAction2111 {
             }
         }
 
-        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate \(entityName)")
+        WireLogger.localStorage.info("found \(duplicates.count) different duplicate(s) of \(entityName)")
 
         var needsSlowSync = false
 
@@ -67,7 +67,7 @@ class RemoveDuplicatePreAction: CoreDataAction, CoreDataAction2111 {
             objects.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             objects.dropFirst().forEach(context.delete)
 
-            WireLogger.localStorage.warn("removed  \(objects.count - 1) occurence of duplicate users", attributes: .safePublic)
+            WireLogger.localStorage.warn("removed \(objects.count - 1) occurence of duplicate \(entityName) for key \(key)", attributes: .safePublic)
 
             if !needsSlowSync {
                 needsSlowSync = true
