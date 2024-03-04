@@ -98,7 +98,10 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
         let distributionPointsOfExpiringCRLs = crlExpirationDatesRepository
             .fetchAllCRLExpirationDates()
-            .filter { isCRLExpiringSoon(expirationDate: $0.value) }
+            .filter {
+                // We give 10 seconds delay to allow time for the certificate to be renewed by the server
+                hasCRLExpiredAtLeastTenSecondsAgo(expirationDate: $0.value)
+            }
             .keys
 
         await checkCertificateRevocationLists(from: Set(distributionPointsOfExpiringCRLs))
@@ -135,18 +138,20 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         }
     }
 
-    private func isCRLExpiringSoon(expirationDate: Date) -> Bool {
-        guard let oneHourBeforeExpiration = oneHourBefore(date: expirationDate) else {
-           return false
+    private func hasCRLExpiredAtLeastTenSecondsAgo(expirationDate: Date) -> Bool {
+        let now = Date.now
+
+        guard let tenSecondsAfterExpiration = tenSecondsAfter(date: expirationDate) else {
+            return now > expirationDate
         }
 
-        return .now > oneHourBeforeExpiration
+        return now > tenSecondsAfterExpiration
     }
 
-    private func oneHourBefore(date: Date) -> Date? {
+    private func tenSecondsAfter(date: Date) -> Date? {
         Calendar.current.date(
-            byAdding: .hour,
-            value: -1,
+            byAdding: .second,
+            value: 10,
             to: date
         )
     }
