@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 /// Removes UserClient duplicates and invalid ParticipantRoles
@@ -66,6 +65,5 @@ class CleanupModels2_107PreAction: CoreDataMigrationAction {
             clients.dropFirst().forEach(context.delete)
             WireLogger.localStorage.info("removed 1 occurence of duplicate clients", attributes: .safePublic)
         }
-
     }
 }
