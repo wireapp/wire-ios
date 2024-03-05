@@ -453,6 +453,21 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock()
     }
 
+    // MARK: - sessionManagerDidUpdateCertificate
+
+    public var sessionManagerDidUpdateCertificateFor_Invocations: [UserSession?] = []
+    public var sessionManagerDidUpdateCertificateFor_MockMethod: ((UserSession?) -> Void)?
+
+    public func sessionManagerDidUpdateCertificate(for activeSession: UserSession?) {
+        sessionManagerDidUpdateCertificateFor_Invocations.append(activeSession)
+
+        guard let mock = sessionManagerDidUpdateCertificateFor_MockMethod else {
+            fatalError("no mock for `sessionManagerDidUpdateCertificateFor`")
+        }
+
+        mock(activeSession)
+    }
+
     // MARK: - sessionManagerDidPerformFederationMigration
 
     public var sessionManagerDidPerformFederationMigrationActiveSession_Invocations: [UserSession?] = []

@@ -59,6 +59,7 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidBlacklistJailbrokenDevice()
     func sessionManagerWillUpdateCertificate()
     func sessionManagerWillEnrollCertificate()
+    func sessionManagerDidUpdateCertificate(for activeSession: UserSession?)
 
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
@@ -534,9 +535,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         callCenterObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
 
         checkJailbreakIfNeeded()
-        Task {
-            await updateOrEnrollCertificateIfNeeded()
-        }
     }
 
     private func configureBlacklistDownload() {
@@ -1400,9 +1398,6 @@ extension SessionManager {
 
         updateAllUnreadCounts()
         checkJailbreakIfNeeded()
-        Task {
-            await updateOrEnrollCertificateIfNeeded()
-        }
 
         // Delete expired url scheme verification tokens
         CompanyLoginVerificationToken.flushIfNeeded()
@@ -1418,6 +1413,9 @@ extension SessionManager {
 
     @objc func applicationWillResignActive(_ note: Notification) {
         activeUserSession?.appLockController.beginTimer()
+        Task {
+            await updateOrEnrollCertificateIfNeeded()
+        }
     }
 
     @objc fileprivate func applicationDidBecomeActive(_ note: Notification) {
@@ -1495,6 +1493,16 @@ extension SessionManager {
     /// The timestamp when the user initiated the request.
     public static var companyLoginRequestTimestampKey: String {
         return "WireCompanyLoginTimesta;p"
+    }
+
+}
+
+// MARK: - End-to-end Identity
+
+extension SessionManager {
+
+    public func didUpdateCertificateSuccessfully() {
+        delegate?.sessionManagerDidUpdateCertificate(for: activeUserSession)
     }
 
 }

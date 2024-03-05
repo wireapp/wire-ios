@@ -193,6 +193,12 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .pendingCertificateEnroll)
     }
 
+    func sessionManagerDidUpdateCertificate(for activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession))
+        }
+    }
+
     func sessionManagerDidFailToLoadDatabase(error: Error) {
         transition(to: .databaseFailure(reason: error))
     }
