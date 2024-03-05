@@ -234,8 +234,8 @@ public class CoreDataStack: NSObject, ContextProvider {
                     }
                     return
                 }
-                if tp?.warnIfLongerThanInterval() != true {
-                    WireLogger.localStorage.debug("time spent in migration only: \(tp?.elapsedTime)")
+                if tp.warnIfLongerThanInterval() == false {
+                    WireLogger.localStorage.debug("time spent in migration only: \(tp.elapsedTime)")
                 }
             }
 
