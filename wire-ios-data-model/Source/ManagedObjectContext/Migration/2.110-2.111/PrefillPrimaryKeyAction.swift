@@ -18,12 +18,13 @@
 
 import Foundation
 
-class PrefillPrimaryKeyAction: CoreDataAction, CoreDataAction2111 {
+class PrefillPrimaryKeyAction: CoreDataMigrationAction {
 
     private enum Keys: String {
         case primaryKey
     }
 
+    let batchSize = 200
     let entityNames = [ZMUser.entityName(), ZMConversation.entityName()]
 
     override func execute(in context: NSManagedObjectContext) throws {
@@ -35,12 +36,12 @@ class PrefillPrimaryKeyAction: CoreDataAction, CoreDataAction2111 {
     private func fillPrimaryKeys(for entityName: String, context: NSManagedObjectContext) {
         do {
             let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
-            request.fetchBatchSize = 200
+            request.fetchBatchSize = batchSize
             let objects = try context.fetch(request)
 
             objects.forEach { object in
 
-                let uniqueKey = self.primaryKey(for: object, entityName: entityName)
+                let uniqueKey = PrimaryKeyGenerator.generateKey(for: object, entityName: entityName)
                 object.setValue(uniqueKey, forKey: Keys.primaryKey.rawValue)
             }
         } catch {

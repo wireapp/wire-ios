@@ -20,9 +20,9 @@
 import Foundation
 
 /// Action to perform on a given persistentContainer
-class CoreDataAction {
+class CoreDataMigrationAction {
 
-    private func loadStores(for persistentContainer: NSPersistentContainer) throws {
+    private func loadStore(for persistentContainer: NSPersistentContainer) throws {
         persistentContainer.persistentStoreDescriptions.first?.shouldAddStoreAsynchronously = false
 
         var loadError: Error?
@@ -34,11 +34,12 @@ class CoreDataAction {
         }
     }
 
-    func perform(with persistentContainer: NSPersistentContainer) throws {
+    func perform(on storeURL: URL, with model: NSManagedObjectModel) throws {
+        let container = try createStore(model: model, at: storeURL)
 
-        try loadStores(for: persistentContainer)
+        try loadStore(for: container)
 
-        let context = persistentContainer.newBackgroundContext()
+        let context = container.newBackgroundContext()
         var savedError: Error?
         context.performAndWait {
             do {
@@ -51,10 +52,37 @@ class CoreDataAction {
         if let savedError {
             throw savedError
         }
+
+        try removeStore(for: container)
     }
 
 
+    func removeStore(for container: NSPersistentContainer) throws {
+        if let store = container.persistentStoreCoordinator.persistentStores.first {
+            try container.persistentStoreCoordinator.remove(store)
+        }
+    }
+
     func execute(in context: NSManagedObjectContext) throws {
         // to be overriden by subclasses
+    }
+
+
+    private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
+
+        let dataModelName = "zmessaging"
+        let container = NSPersistentContainer(
+            name: dataModelName,
+            managedObjectModel: model
+        )
+
+        try container.persistentStoreCoordinator.addPersistentStore(
+            ofType: NSSQLiteStoreType,
+            configurationName: nil,
+            at: storeURL,
+            options: nil
+        )
+
+        return container
     }
 }

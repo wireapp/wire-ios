@@ -18,7 +18,7 @@
 
 import Foundation
 
-class RemoveDuplicatePreAction: CoreDataAction, CoreDataAction2111 {
+class RemoveDuplicatePreAction: CoreDataMigrationAction {
 
     private enum Keys: String {
         case needsToBeUpdatedFromBackend
@@ -41,10 +41,10 @@ class RemoveDuplicatePreAction: CoreDataAction, CoreDataAction2111 {
 
         var duplicates = [String: [NSManagedObject]]()
 
-        duplicateObjects.forEach { (remoteIdentifierData: Data, objects: [NSManagedObject]) in
+        duplicateObjects.forEach { (_, objects: [NSManagedObject]) in
             objects.forEach { object in
 
-                let uniqueKey = self.primaryKey(for: object, entityName: entityName)
+                let uniqueKey = PrimaryKeyGenerator.generateKey(for: object, entityName: entityName)
                 if duplicates[uniqueKey] == nil {
                     duplicates[uniqueKey] = []
                 }

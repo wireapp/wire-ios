@@ -98,7 +98,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
 
-           try migrationStep.runPreMigrationStep(for: currentURL)
+            try self.runPreMigrationStep(migrationStep, for: currentURL)
 
             let logMessage = "messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
             WireLogger.localStorage.info(logMessage, attributes: .safePublic)
@@ -141,7 +141,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             
             WireLogger.localStorage.info("finish migration step", attributes: .safePublic)
 
-            try migrationStep.runPostMigrationStep(for: currentURL)
+            try self.runPostMigrationStep(migrationStep, for: currentURL)
         }
         WireLogger.localStorage.debug("replace store \(storeURL), with \(currentURL)")
         try replaceStore(at: storeURL, withStoreAt: currentURL)
@@ -281,4 +281,24 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             throw CoreDataMessagingMigratorError.failedToDestroyPersistentStore(storeURL: storeURL)
         }
     }
+
+    // MARK: - CoreDataMigration Actions
+    // TODO: add unit tests for CoreDataMigrationActionFactory
+    func runPreMigrationStep(_ step: CoreDataMessagingMigrationStep, for storeURL: URL) throws {
+        guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else { return }
+
+        try action.perform(on: storeURL,
+                           with: step.sourceModel)
+    }
+
+    func runPostMigrationStep(_ step: CoreDataMessagingMigrationStep, for storeURL: URL) throws {
+
+        guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion) else { return }
+
+
+        try action.perform(on: storeURL,
+                           with: step.destinationModel)
+    }
+
+   
 }

@@ -16,26 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
-protocol CoreDataAction2111 {
-    func primaryKey(for object: NSManagedObject, entityName: String) -> String
-}
+struct PrimaryKeyGenerator {
 
-extension CoreDataAction2111 {
-
-    func primaryKey(for object: NSManagedObject, entityName: String) -> String {
+    static func generateKey(for object: NSManagedObject, entityName: String) -> String {
 
         let remoteIdentifierData = object.value(forKey: ZMManagedObject.remoteIdentifierDataKey()) as? Data
 
         switch entityName {
-        case ZMUser.entityName(), ZMConversation.entityName():
-            let path = entityName == ZMUser.entityName() ? #keyPath(ZMUser.domain) : #keyPath(ZMConversation.domain)
+        case ZMUser.entityName():
+            let remoteIdentifier = remoteIdentifierData.flatMap(UUID.init(data:))
+            let domain = object.value(forKeyPath: #keyPath(ZMUser.domain)) as? String
 
-            let domain = object.value(forKeyPath: path) as? String
-            return ZMManagedObject.primaryKey(from: remoteIdentifierData.flatMap(UUID.init(data: )), domain: domain)
+            return ZMUser.primaryKey(from: remoteIdentifier, domain: domain)
+        case ZMConversation.entityName():
+            let remoteIdentifier = remoteIdentifierData.flatMap(UUID.init(data:))
+            let domain = object.value(forKeyPath: #keyPath(ZMConversation.domain)) as? String
 
+            return ZMConversation.primaryKey(from: remoteIdentifier, domain: domain)
         case Team.entityName():
 
             return remoteIdentifierData.flatMap { UUID(data: $0)?.uuidString } ?? "<nil>"
