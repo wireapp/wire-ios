@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		010328512B7634FA00BDB140 /* NSManagedObjectContext+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010328502B7634F900BDB140 /* NSManagedObjectContext+Migration.swift */; };
 		0105B0FF2B97311700A872DA /* CoreDataMigrationActionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0105B0FE2B97311700A872DA /* CoreDataMigrationActionFactory.swift */; };
+		011803542B97591C00BAB56A /* CleanupModels2_107PreAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011803532B97591C00BAB56A /* CleanupModels2_107PreAction.swift */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
 		014DD8BC2B699429007ECFD1 /* DatabaseMigrationTests+UserUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8BB2B699429007ECFD1 /* DatabaseMigrationTests+UserUniqueness.swift */; };
@@ -797,6 +798,7 @@
 /* Begin PBXFileReference section */
 		010328502B7634F900BDB140 /* NSManagedObjectContext+Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Migration.swift"; sourceTree = "<group>"; };
 		0105B0FE2B97311700A872DA /* CoreDataMigrationActionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMigrationActionFactory.swift; sourceTree = "<group>"; };
+		011803532B97591C00BAB56A /* CleanupModels2_107PreAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupModels2_107PreAction.swift; sourceTree = "<group>"; };
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
 		014DD8BB2B699429007ECFD1 /* DatabaseMigrationTests+UserUniqueness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+UserUniqueness.swift"; sourceTree = "<group>"; };
@@ -2052,6 +2054,7 @@
 			isa = PBXGroup;
 			children = (
 				6391A7F62A6FD66A00832665 /* DuplicateClientsMigrationPolicy.swift */,
+				011803532B97591C00BAB56A /* CleanupModels2_107PreAction.swift */,
 				6391A7F92A6FD6FC00832665 /* MappingModel_2.106-2.107.xcmappingmodel */,
 				E62EE7F72B3447E9002A54EF /* RemoveZombieParticipantRolesMigrationPolicy.swift */,
 			);
@@ -3515,6 +3518,7 @@
 				F9B71F091CB264DF001DB03F /* ZMConversationList.m in Sources */,
 				EEBFA2E829D1D94B0004E8B4 /* ProteusError.swift in Sources */,
 				55C40BCE22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift in Sources */,
+				011803542B97591C00BAB56A /* CleanupModels2_107PreAction.swift in Sources */,
 				EE5E2C1926DFC67900C3928A /* MessageDestructionTimeoutValue.swift in Sources */,
 				5EFE9C0A2126BF9D007932A6 /* ZMPropertyNormalizationResult.m in Sources */,
 				63F65F01246B073900534A69 /* GenericMessage+Content.swift in Sources */,
