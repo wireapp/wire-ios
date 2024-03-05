@@ -225,7 +225,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
     func testThatPostsANewRequestAvailableNotificationAfterCompletingARunningRequest() {
         // given && then
         _ = customExpectation(
-            forNotification: NSNotification.Name(rawValue: NSNotification.Name.ZMTransportSessionNewRequestAvailable.rawValue),
+            forNotification: .requestAvailableNotification,
             object: nil,
             handler: nil
         )

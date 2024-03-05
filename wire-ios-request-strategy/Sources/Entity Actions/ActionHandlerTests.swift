@@ -78,7 +78,9 @@ class ActionHandlerTests: MessagingTestBase {
         let action = MockAction()
         action.send(in: uiMOC.notificationContext)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         _ = self.sut.nextRequest(for: .v0)
+        XCTAssertTrue(sut.pendingActions.isEmpty)
         sut.calledRequestForAction = false
 
         // when
@@ -93,14 +95,60 @@ class ActionHandlerTests: MessagingTestBase {
         let action = MockAction()
         action.send(in: uiMOC.notificationContext)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let request = self.sut.nextRequest(for: .v0)
+
+        let request = try XCTUnwrap(self.sut.nextRequest(for: .v0))
 
         // when
-        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request.complete(with: response(httpStatus: 200, apiVersion: .v0))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertTrue(sut.calledHandleResponse)
+    }
+
+    func testItReturnsActionToPendingIfRateLimited_420Response() throws {
+        // given
+        let action = MockAction()
+        action.send(in: uiMOC.notificationContext)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        let request = try XCTUnwrap(self.sut.nextRequest(for: .v0))
+        XCTAssertTrue(sut.pendingActions.isEmpty)
+
+        // when
+        request.complete(with: response(httpStatus: 420, apiVersion: .v0))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(sut.pendingActions, [action])
+        XCTAssertFalse(sut.calledHandleResponse)
+    }
+
+    func testItReturnsActionToPendingIfRateLimited_429Response() throws {
+        // given
+        let action = MockAction()
+        action.send(in: uiMOC.notificationContext)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        let request = try XCTUnwrap(self.sut.nextRequest(for: .v0))
+        XCTAssertTrue(sut.pendingActions.isEmpty)
+
+        // when
+        request.complete(with: response(httpStatus: 429, apiVersion: .v0))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(sut.pendingActions, [action])
+        XCTAssertFalse(sut.calledHandleResponse)
+    }
+
+    private func response(httpStatus: Int, apiVersion: APIVersion) -> ZMTransportResponse {
+        return ZMTransportResponse(
+            payload: nil,
+            httpStatus: httpStatus,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
 }

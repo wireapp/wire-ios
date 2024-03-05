@@ -19,7 +19,9 @@
 import Foundation
 
 public extension NSNotification.Name {
-    static let requestAvailableNotification = NSNotification.Name(rawValue: "RequestAvailableNotification")
+
+    static let requestAvailableNotification = RequestAvailableNotification.name
+
 }
 
 @objc(ZMRequestAvailableObserver) public protocol RequestAvailableObserver: NSObjectProtocol {
@@ -33,16 +35,34 @@ public extension NSNotification.Name {
 @objc(ZMRequestAvailableNotification)
 public final class RequestAvailableNotification: NSObject {
 
-    @objc public static func notifyNewRequestsAvailable(_ sender: NSObjectProtocol?) {
-        NotificationCenter.default.post(name: .requestAvailableNotification, object: nil)
+    @objc
+    public static let name = NSNotification.Name(rawValue: "RequestAvailableNotification")
+
+    @objc
+    public static func notifyNewRequestsAvailable(_ sender: NSObjectProtocol?) {
+        NotificationCenter.default.post(
+            name: name,
+            object: nil
+        )
     }
 
-    @objc public static func addObserver(_ observer: RequestAvailableObserver) {
-        NotificationCenter.default.addObserver(observer, selector: #selector(RequestAvailableObserver.newRequestsAvailable), name: .requestAvailableNotification, object: nil)
+    @objc
+    public static func addObserver(_ observer: RequestAvailableObserver) {
+        NotificationCenter.default.addObserver(
+            observer,
+            selector: #selector(RequestAvailableObserver.newRequestsAvailable),
+            name: name,
+            object: nil
+        )
     }
 
-    @objc public static func removeObserver(_ observer: RequestAvailableObserver) {
-        NotificationCenter.default.removeObserver(observer, name: .requestAvailableNotification, object: nil)
+    @objc
+    public static func removeObserver(_ observer: RequestAvailableObserver) {
+        NotificationCenter.default.removeObserver(
+            observer,
+            name: name,
+            object: nil
+        )
     }
 
 }
