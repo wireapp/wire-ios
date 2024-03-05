@@ -32,14 +32,23 @@ extension ZMUserSession {
         applicationStatusDirectory.clientRegistrationStatus.emailCredentials = emailCredentials
     }
 
+    public func reportEndToEndIdentityEnrollmentSuccess() {
+        syncManagedObjectContext.performAndWait {
+            applicationStatusDirectory.clientRegistrationStatus.didEnrollIntoEndToEndIdentity()
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        }
+    }
+
     /// `True` if the session is ready to be used.
     ///
     /// NOTE: This property should only be called on the main queue.
 
     public var isLoggedIn: Bool { // TODO jacob we don't want this to be public
         let needsToRegisterClient = ZMClientRegistrationStatus.needsToRegisterClient(in: managedObjectContext)
+        let needsToRegisterMLSClient = ZMClientRegistrationStatus.needsToRegisterMLSClient(in: managedObjectContext)
+        let waitingToRegisterMLSClient =  needsToRegisterMLSClient && !hasCompletedInitialSync
 
-        return isAuthenticated && !needsToRegisterClient
+        return isAuthenticated && !needsToRegisterClient && !waitingToRegisterMLSClient
     }
 
     /// `True` if the session has a valid authentication cookie

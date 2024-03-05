@@ -1,0 +1,62 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import WireCoreCrypto
+
+/// A wrapper use case around `IsUserE2EICertifiedUseCaseProtocol` which gets the
+/// self-user and the self-mls-conversation from a managed object context in order to pass it to
+/// the wrapped use case and provide an argument-less `invoke` method.
+public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
+
+    private let context: NSManagedObjectContext
+    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+
+    /// - Parameters:
+    ///   - context: A managed object context to retrieve the self-user and the self-mls-conversation from.
+    ///   - isUserE2EICertifiedUseCase: The use case which contains the actual business logic.
+    public init(
+        context: NSManagedObjectContext,
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+    ) {
+        self.context = context
+        self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
+    }
+
+    public func invoke() async throws -> Bool {
+
+        let (selfUser, selfMLSConversation) = await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            let selfMLSConversation = ZMConversation.fetchSelfMLSConversation(in: context)
+            return (selfUser, selfMLSConversation)
+        }
+        guard let selfMLSConversation else { throw Error.failedToGetTheSelfMLSConversation }
+
+        return try await isUserE2EICertifiedUseCase.invoke(
+            conversation: selfMLSConversation,
+            user: selfUser
+        )
+    }
+}
+
+extension IsSelfUserE2EICertifiedUseCase {
+
+    enum Error: Swift.Error {
+        case failedToGetTheSelfMLSConversation
+    }
+}

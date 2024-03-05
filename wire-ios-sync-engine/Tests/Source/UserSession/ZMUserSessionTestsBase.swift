@@ -17,6 +17,8 @@
 //
 
 import WireDataModelSupport
+import WireSyncEngineSupport
+import WireRequestStrategySupport
 
 final class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
 
@@ -42,22 +44,26 @@ class ZMUserSessionTestsBase: MessagingTest {
     var dataChangeNotificationsCount: UInt = 0
     var thirdPartyServices: ThirdPartyServices!
     var mockSyncStateDelegate: MockSyncStateDelegate!
+    var mockUseCaseFactory: MockUseCaseFactoryProtocol!
+    var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
+    var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
 
     override func setUp() {
         super.setUp()
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3Mock.self
 
+        mockGetFeatureConfigsActionHandler = .init(result: .success(()), context: syncMOC.notificationContext)
+
         self.thirdPartyServices = ThirdPartyServices()
         self.dataChangeNotificationsCount = 0
-        self.baseURL =  URL(string: "http://bar.example.com")
+        self.baseURL = URL(string: "http://bar.example.com")
         self.cookieStorage = ZMPersistentCookieStorage(forServerName: "usersessiontest.example.com", userIdentifier: .create(), useCache: true)
         self.mockPushChannel = MockPushChannel()
         self.transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
-        self.mockSessionManager =  MockSessionManager()
+        self.mockSessionManager = MockSessionManager()
         self.mediaManager = MockMediaManager()
         self.flowManagerMock = FlowManagerMock()
-
         createSut()
 
         self.sut.thirdPartyServicesDelegate = self.thirdPartyServices
@@ -83,8 +89,11 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.transportSession = nil
         self.mediaManager = nil
         self.flowManagerMock = nil
+        self.mockUseCaseFactory = nil
+        self.mockResolveOneOnOneConversationUseCase = nil
         let sut = self.sut
         self.sut = nil
+        mockGetFeatureConfigsActionHandler = nil
         sut?.tearDown()
 
         super.tearDown()
@@ -95,7 +104,17 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockUpdateEventProcessor = MockUpdateEventProcessor()
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockMLSService = MockMLSServiceInterface()
+        mockUseCaseFactory = MockUseCaseFactoryProtocol()
+        mockResolveOneOnOneConversationUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
+
+        mockUseCaseFactory.createResolveOneOnOneUseCase_MockMethod = {
+            return self.mockResolveOneOnOneConversationUseCase
+        }
+
+        mockResolveOneOnOneConversationUseCase.invoke_MockMethod = { }
+
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
+
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
         sut = ZMUserSession(
             userId: coreDataStack.account.userIdentifier,
@@ -113,7 +132,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             configuration: .init(),
             mlsService: mockMLSService,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            useCaseFactory: mockUseCaseFactory
         )
     }
 

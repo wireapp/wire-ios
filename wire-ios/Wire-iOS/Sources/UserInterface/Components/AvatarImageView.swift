@@ -173,7 +173,7 @@ class AvatarImageView: UIView {
         case .rectangle:
             container.shape = .rectangle
         case .relative:
-            container.shape = .relative(multiplier: 1/6, dimension: .height)
+            container.shape = .relative(multiplier: 1 / 6, dimension: .height)
         }
     }
 
