@@ -3893,21 +3893,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID)
     }
 
-    // MARK: - createGroup
+    // MARK: - establishGroup
 
-    public var createGroupForWith_Invocations: [(groupID: MLSGroupID, users: [MLSUser])] = []
-    public var createGroupForWith_MockError: Error?
-    public var createGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> Void)?
+    public var establishGroupForWith_Invocations: [(groupID: MLSGroupID, users: [MLSUser])] = []
+    public var establishGroupForWith_MockError: Error?
+    public var establishGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> Void)?
 
-    public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
-        createGroupForWith_Invocations.append((groupID: groupID, users: users))
+    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+        establishGroupForWith_Invocations.append((groupID: groupID, users: users))
 
-        if let error = createGroupForWith_MockError {
+        if let error = establishGroupForWith_MockError {
             throw error
         }
 
-        guard let mock = createGroupForWith_MockMethod else {
-            fatalError("no mock for `createGroupForWith`")
+        guard let mock = establishGroupForWith_MockMethod else {
+            fatalError("no mock for `establishGroupForWith`")
         }
 
         try await mock(groupID, users)

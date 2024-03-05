@@ -48,7 +48,7 @@ final class OneOnOneMigratorTests: XCTestCase {
     func test_migrateToMLS() async throws {
         // Given
         let mockMLSService = MockMLSServiceInterface()
-        mockMLSService.createGroupForWith_MockMethod = { _, _ in }
+        mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
 
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID = QualifiedID.random()
@@ -80,8 +80,8 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         // Then
-        XCTAssertEqual(mockMLSService.createGroupForWith_Invocations.count, 1)
-        let createGroupInvocation = try XCTUnwrap(mockMLSService.createGroupForWith_Invocations.first)
+        XCTAssertEqual(mockMLSService.establishGroupForWith_Invocations.count, 1)
+        let createGroupInvocation = try XCTUnwrap(mockMLSService.establishGroupForWith_Invocations.first)
         XCTAssertEqual(createGroupInvocation.groupID, mlsGroupID)
         XCTAssertEqual(createGroupInvocation.users, [MLSUser(userID)])
 
@@ -125,7 +125,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         // Then
-        XCTAssertTrue(mockMLSService.createGroupForWith_Invocations.isEmpty)
+        XCTAssertTrue(mockMLSService.establishGroupForWith_Invocations.isEmpty)
         XCTAssertTrue(mockMLSService.addMembersToConversationWithFor_Invocations.isEmpty)
 
         await uiMOC.perform {
