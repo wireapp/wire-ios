@@ -1144,13 +1144,13 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func updateOrEnrollCertificateIfNeeded() async {
         guard let userSession = activeUserSession else { return }
 
-//        if await userSession.needsToUpdateCertificate {
-//            if await userSession.selfClientCertificateProvider.hasCertificate {
+        if await userSession.needsToUpdateCertificate {
+            if await userSession.selfClientCertificateProvider.hasCertificate {
                 delegate?.sessionManagerWillUpdateCertificate()
-//            } else {
-//                delegate?.sessionManagerWillEnrollCertificate()
-//            }
-//        }
+            } else {
+                delegate?.sessionManagerWillEnrollCertificate()
+            }
+        }
     }
 
     func shouldPerformPostRebootLogout() -> Bool {
