@@ -214,13 +214,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             screenCurtain.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completionBlock)
-        case let .authenticated(userSession, completedRegistration):
+        case let .authenticated(userSession):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
             screenCurtain.userSession = userSession
             showAuthenticated(
                 userSession: userSession,
-                isComingFromRegistration: completedRegistration,
                 completion: completionBlock
             )
         case .headless:
@@ -368,15 +367,13 @@ extension AppRootRouter {
 
     private func showAuthenticated(
         userSession: UserSession,
-        isComingFromRegistration: Bool,
         completion: @escaping () -> Void
     ) {
         guard
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
             let authenticatedRouter = buildAuthenticatedRouter(
                 account: selectedAccount,
-                userSession: userSession,
-                isComingFromRegistration: isComingFromRegistration
+                userSession: userSession
             )
         else {
             completion()
@@ -439,8 +436,7 @@ extension AppRootRouter {
 
     private func buildAuthenticatedRouter(
         account: Account,
-        userSession: UserSession,
-        isComingFromRegistration: Bool
+        userSession: UserSession
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
@@ -458,7 +454,6 @@ extension AppRootRouter {
             rootViewController: rootViewController,
             account: account,
             userSession: userSession,
-            isComingFromRegistration: isComingFromRegistration,
             needToShowDataUsagePermissionDialog: needToShowDialog,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(

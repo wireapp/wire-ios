@@ -443,7 +443,7 @@ final class ConversationViewController: UIViewController {
 
     private func updateVerificationStatusIfNeeded() {
         guard
-            conversation.conversationType == .group,
+            conversation.conversationType.isOne(of: .group, .oneOnOne),
             conversation.messageProtocol == .mls
         else {
             return

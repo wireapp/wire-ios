@@ -498,6 +498,21 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock()
     }
 
+    // MARK: - sessionManagerDidCompleteInitialSync
+
+    public var sessionManagerDidCompleteInitialSyncFor_Invocations: [UserSession?] = []
+    public var sessionManagerDidCompleteInitialSyncFor_MockMethod: ((UserSession?) -> Void)?
+
+    public func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?) {
+        sessionManagerDidCompleteInitialSyncFor_Invocations.append(activeSession)
+
+        guard let mock = sessionManagerDidCompleteInitialSyncFor_MockMethod else {
+            fatalError("no mock for `sessionManagerDidCompleteInitialSyncFor`")
+        }
+
+        mock(activeSession)
+    }
+
     // MARK: - sessionManagerDidChangeActiveUserSession
 
     public var sessionManagerDidChangeActiveUserSessionUserSession_Invocations: [ZMUserSession] = []

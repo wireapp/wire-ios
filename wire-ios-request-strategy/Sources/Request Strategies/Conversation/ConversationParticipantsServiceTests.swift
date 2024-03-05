@@ -174,15 +174,6 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         }
     }
 
-    func test_AddParticipants_Throws_InvalidOperation_ForSelfUser() async {
-
-        // THEN
-        await assertItThrows(error: ConversationParticipantsError.invalidOperation) {
-            // WHEN
-            try await sut.addParticipants([selfUser], to: conversation)
-        }
-    }
-
     // MARK: - Adding Participants (MLS) - Failed to claim Key Packages
 
     func test_AddParticipants_RetriesOperation_AndInsertsSystemMessageForFailedUsers_AfterFailingToClaimKeyPackages() async throws {

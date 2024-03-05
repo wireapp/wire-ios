@@ -554,7 +554,7 @@ extension UserClientTests {
 
         // given
         let selfClient = createSelfClient()
-        selfClient.apsVerificationKey =  Data()
+        selfClient.apsVerificationKey = Data()
         selfClient.apsDecryptionKey = Data()
 
         XCTAssertNotNil(selfClient.apsVerificationKey)
