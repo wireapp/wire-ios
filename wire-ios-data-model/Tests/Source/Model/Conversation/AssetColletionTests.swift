@@ -139,7 +139,7 @@ class AssetColletionTests: ModelObjectsTests {
         let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 90)
 
-        guard let lastMessage =  delegate.messagesByFilter.last?[self.defaultMatchPair]?.last,
+        guard let lastMessage = delegate.messagesByFilter.last?[self.defaultMatchPair]?.last,
               let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -161,7 +161,7 @@ class AssetColletionTests: ModelObjectsTests {
         let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 100)
 
-        guard let lastMessage =  delegate.messagesByFilter.last?[self.defaultMatchPair]?.last,
+        guard let lastMessage = delegate.messagesByFilter.last?[self.defaultMatchPair]?.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -186,7 +186,7 @@ class AssetColletionTests: ModelObjectsTests {
         let receivedMessages = delegate.allMessages(for: defaultMatchPair)
         XCTAssertEqual(receivedMessages.count, 1000)
 
-        guard let lastMessage =  receivedMessages.last,
+        guard let lastMessage = receivedMessages.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }

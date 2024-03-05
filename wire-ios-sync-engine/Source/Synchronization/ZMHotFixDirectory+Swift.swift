@@ -121,7 +121,7 @@ import Foundation
         let fetchRequest = ZMConversation.sortedFetchRequest()
 
         guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
-        let filteredConversations =  conversations.filter { $0.conversationType == .oneOnOne || $0.conversationType == .group }
+        let filteredConversations = conversations.filter { $0.conversationType == .oneOnOne || $0.conversationType == .group }
 
         // update "you are using this device" message
         filteredConversations.forEach {
@@ -135,7 +135,7 @@ import Foundation
         let PINCacheFolders = ["com.pinterest.PINDiskCache.images", "com.pinterest.PINDiskCache.largeUserImages", "com.pinterest.PINDiskCache.smallUserImages"]
 
         PINCacheFolders.forEach { PINCacheFolder in
-            let cacheDirectory =  cachesDirectory.appendingPathComponent(PINCacheFolder, isDirectory: true)
+            let cacheDirectory = cachesDirectory.appendingPathComponent(PINCacheFolder, isDirectory: true)
             try? fileManager.removeItem(at: cacheDirectory)
         }
     }

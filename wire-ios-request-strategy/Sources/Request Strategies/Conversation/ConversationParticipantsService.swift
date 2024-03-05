@@ -183,11 +183,10 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         users: [ZMUser],
         conversation: ZMConversation
     ) async throws {
-        try await context.perform { [self] in
+        try await context.perform {
             guard
                 conversation.conversationType == .group,
-                !users.isEmpty,
-                !users.contains(ZMUser.selfUser(in: context))
+                !users.isEmpty
             else {
                 throw ConversationParticipantsError.invalidOperation
             }
