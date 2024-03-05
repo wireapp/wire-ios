@@ -1,5 +1,3 @@
-<svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Iconography / Certificate valid">
-<path id="Color" fill-rule="evenodd" clip-rule="evenodd" d="M15 8.5V2.37197L8 0.5L1 2.5V8.5C1 12.5 4.00718 15.5977 8 16.5C12.0344 15.5977 15 12.5 15 8.5ZM13 5.84572L6.85214 12.5L3 8.34605L4.23094 7.00033L6.85214 9.80856L11.7691 4.5L13 5.84572Z" fill="#1D7833"/>
-</g>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15 8V1.87197L8 0L1 2V8C1 12 4.00718 15.0977 8 16C12.0344 15.0977 15 12 15 8ZM13 5.34572L6.85214 12L3 7.84605L4.23094 6.50033L6.85214 9.30856L11.7691 4L13 5.34572Z" fill="#1D7833"/>
 </svg>
