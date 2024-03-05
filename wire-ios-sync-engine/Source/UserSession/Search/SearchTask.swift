@@ -218,7 +218,7 @@ extension SearchTask {
     }
 
     func teamMembers(matchingQuery query: String, team: Team?, searchOptions: SearchOptions) -> [Member] {
-        var result =  team?.members(matchingQuery: query) ?? []
+        var result = team?.members(matchingQuery: query) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
             result = filterNonActiveTeamMembers(members: result)
@@ -291,7 +291,7 @@ extension SearchTask {
         tasksRemaining += 1
 
         searchContext.performGroupedBlock { [self] in
-            let request  = type(of: self).searchRequestForUser(withUUID: userId, apiVersion: apiVersion)
+            let request = type(of: self).searchRequestForUser(withUUID: userId, apiVersion: apiVersion)
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
                 defer {

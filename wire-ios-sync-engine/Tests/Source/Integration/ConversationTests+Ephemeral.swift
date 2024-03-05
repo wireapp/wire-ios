@@ -101,7 +101,7 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         spinMainQueue(withTimeout: 0.5)
         XCTAssertTrue(ephemeral.isObfuscated)
-        XCTAssertEqual(conversation.allMessages.count, messageCount+1)
+        XCTAssertEqual(conversation.allMessages.count, messageCount + 1)
 
         // when
         // other client deletes ephemeral message
@@ -159,7 +159,7 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
                 return XCTFail()
         }
         XCTAssertEqual(genMessage.ephemeral.expireAfterMillis, 100)
-        XCTAssertEqual(conversation.allMessages.count, messageCount+1)
+        XCTAssertEqual(conversation.allMessages.count, messageCount + 1)
         mockTransportSession?.resetReceivedRequests()
 
         // when

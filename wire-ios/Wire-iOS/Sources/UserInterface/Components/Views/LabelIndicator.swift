@@ -93,7 +93,7 @@ final class LabelIndicator: UIView {
         titleLabel.textAlignment = .left
         titleLabel.text = context.title.capitalized
 
-        indicatorIcon.accessibilityIdentifier =  "img." + accessibilityString
+        indicatorIcon.accessibilityIdentifier = "img." + accessibilityString
 
         indicatorIcon.setTemplateIcon(context.icon, size: .nano)
         indicatorIcon.tintColor = SemanticColors.Icon.foregroundDefault

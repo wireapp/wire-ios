@@ -31,7 +31,7 @@ extension ZMAssetClientMessage {
     }
 
     static func keyPathsForValuesAffectingMediumGenericMessage() -> Set<String> {
-        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet)+".data"])
+        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet) + ".data"])
     }
 
     public var previewGenericMessage: GenericMessage? {
@@ -39,7 +39,7 @@ extension ZMAssetClientMessage {
     }
 
     static func keyPathsForValuesAffectingPreviewGenericMessage() -> Set<String> {
-        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet)+".data"])
+        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet) + ".data"])
     }
 
     public var underlyingMessage: GenericMessage? {
