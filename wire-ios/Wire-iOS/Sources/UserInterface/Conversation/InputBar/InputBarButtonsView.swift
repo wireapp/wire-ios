@@ -22,7 +22,7 @@ import WireCommonComponents
 
 // MARK: - InputBarRowConstants
 
-private struct InputBarRowConstants {
+private enum InputBarRowConstants {
     static let titleTopMargin: CGFloat = 10
     static let minimumButtonWidthIPhone5: CGFloat = 53
     static let minimumButtonWidth: CGFloat = 56
