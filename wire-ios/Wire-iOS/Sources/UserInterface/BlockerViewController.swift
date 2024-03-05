@@ -26,8 +26,8 @@ enum BlockerViewControllerContext {
     case jailbroken
     case databaseFailure
     case backendNotSupported
-    case updateCertificate
-    case getCertificate
+    case pendingCertificateUpdate
+    case pendingCertificateEnroll
 }
 
 final class BlockerViewController: LaunchImageViewController {
@@ -69,9 +69,9 @@ final class BlockerViewController: LaunchImageViewController {
             showDatabaseFailureMessage()
         case .backendNotSupported:
             showBackendNotSupportedMessage()
-        case .updateCertificate:
+        case .pendingCertificateUpdate:
             showUpdateCertificateMessage()
-        case .getCertificate:
+        case .pendingCertificateEnroll:
             showGetCertificateMessage()
         }
     }
@@ -118,9 +118,11 @@ final class BlockerViewController: LaunchImageViewController {
         let updateCertificateAction = UIAlertAction(
             title: UpdateCertificate.Button.updateCertificate,
             style: .default,
-            handler: { [weak self] _ in
-                self?.sessionManager?.retryStart()
-               // sessionManager?.activeUserSession?.enrollE2EICertificate.invoke(authenticate: <#T##OAuthBlock##OAuthBlock##(OAuthParameters) async throws -> OAuthResponse#>)
+            handler: { _ in
+                Task {
+                    await self.enrollCertificateAction()
+                }
+
             }
         )
 
@@ -150,7 +152,9 @@ final class BlockerViewController: LaunchImageViewController {
             title: E2EI.GetCertificateButton.title,
             style: .default,
             handler: { [weak self] _ in
-                self?.sessionManager?.clearPreviousBackups()
+                Task {
+                    await self?.enrollCertificateAction()
+                }
             }
         )
 
@@ -251,3 +255,45 @@ extension BlockerViewController: ApplicationStateObserving {
 }
 
 extension BlockerViewController: SendTechnicalReportPresenter {}
+
+// MARK: - Certificate enrollment
+
+extension BlockerViewController {
+
+    private func enrollCertificateAction() async {
+        do {
+            try await enrollCertificate()
+        } catch {
+            WireLogger.e2ei.warn("failed to enroll certificate: \(error)")
+
+            let alert = UIAlertController.getCertificateFailed(canCancel: false) {
+                Task {
+                    await self.enrollCertificateAction()
+                }
+            }
+        }
+
+    }
+
+    private func enrollCertificate() async throws {
+        guard
+            let activeUserSession = sessionManager?.activeUserSession,
+            let rootViewController = AppDelegate.shared.window?.rootViewController
+        else {
+            return
+        }
+        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+
+        let certificateChain = try await activeUserSession
+            .enrollE2EICertificate
+            .invoke(authenticate: oauthUseCase.invoke)
+
+        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+        successEnrollmentViewController.certificateDetails = certificateChain
+        successEnrollmentViewController.onOkTapped = { viewController in
+            viewController.dismiss(animated: true)
+        }
+        successEnrollmentViewController.presentTopmost()
+    }
+
+}

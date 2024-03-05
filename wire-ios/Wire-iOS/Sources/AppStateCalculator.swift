@@ -185,11 +185,11 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .jailbroken)
     }
 
-    func sessionManagerPendingCertificateUpdate() {
+    func sessionManagerWillUpdateCertificate() {
         transition(to: .pendingCertificateUpdate)
     }
 
-    func sessionManagerPendingCertificateEnroll() {
+    func sessionManagerWillEnrollCertificate() {
         transition(to: .pendingCertificateEnroll)
     }
 

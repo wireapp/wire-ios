@@ -124,11 +124,11 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
 }
 
-private extension UIAlertController {
+extension UIAlertController {
 
     static func getCertificateFailed(
         canCancel: Bool,
-        completion: @escaping () -> Void) -> UIAlertController {
+        onRetry: @escaping () -> Void) -> UIAlertController {
             typealias Alert = L10n.Localizable.FailetToGetCertificate.Alert
             typealias Button = L10n.Localizable.FailetToGetCertificate.Button
 
@@ -143,7 +143,7 @@ private extension UIAlertController {
             let tryAgainAction = UIAlertAction(
                 title: Button.retry,
                 style: .default,
-                handler: { _ in completion() }
+                handler: { _ in onRetry() }
             )
 
             controller.addAction(tryAgainAction)

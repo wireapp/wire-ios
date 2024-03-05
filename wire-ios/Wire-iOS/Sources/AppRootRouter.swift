@@ -287,13 +287,17 @@ extension AppRootRouter {
     }
 
     private func showCertificateUpdateRequest(completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(context: .updateCertificate)
+        let blockerViewController = BlockerViewController(
+            context: .pendingCertificateUpdate,
+            sessionManager: sessionManager)
         rootViewController.set(childViewController: blockerViewController,
                                completion: completion)
     }
 
     private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(context: .getCertificate)
+        let blockerViewController = BlockerViewController(
+            context: .pendingCertificateEnroll,
+            sessionManager: sessionManager)
         rootViewController.set(childViewController: blockerViewController,
                                completion: completion)
     }

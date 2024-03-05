@@ -423,31 +423,31 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock()
     }
 
-    // MARK: - sessionManagerPendingCertificateUpdate
+    // MARK: - sessionManagerWillUpdateCertificate
 
-    public var sessionManagerPendingCertificateUpdate_Invocations: [Void] = []
-    public var sessionManagerPendingCertificateUpdate_MockMethod: (() -> Void)?
+    public var sessionManagerWillUpdateCertificate_Invocations: [Void] = []
+    public var sessionManagerWillUpdateCertificate_MockMethod: (() -> Void)?
 
-    public func sessionManagerPendingCertificateUpdate() {
-        sessionManagerPendingCertificateUpdate_Invocations.append(())
+    public func sessionManagerWillUpdateCertificate() {
+        sessionManagerWillUpdateCertificate_Invocations.append(())
 
-        guard let mock = sessionManagerPendingCertificateUpdate_MockMethod else {
-            fatalError("no mock for `sessionManagerPendingCertificateUpdate`")
+        guard let mock = sessionManagerWillUpdateCertificate_MockMethod else {
+            fatalError("no mock for `sessionManagerWillUpdateCertificate`")
         }
 
         mock()
     }
 
-    // MARK: - sessionManagerPendingCertificateEnroll
+    // MARK: - sessionManagerWillEnrollCertificate
 
-    public var sessionManagerPendingCertificateEnroll_Invocations: [Void] = []
-    public var sessionManagerPendingCertificateEnroll_MockMethod: (() -> Void)?
+    public var sessionManagerWillEnrollCertificate_Invocations: [Void] = []
+    public var sessionManagerWillEnrollCertificate_MockMethod: (() -> Void)?
 
-    public func sessionManagerPendingCertificateEnroll() {
-        sessionManagerPendingCertificateEnroll_Invocations.append(())
+    public func sessionManagerWillEnrollCertificate() {
+        sessionManagerWillEnrollCertificate_Invocations.append(())
 
-        guard let mock = sessionManagerPendingCertificateEnroll_MockMethod else {
-            fatalError("no mock for `sessionManagerPendingCertificateEnroll`")
+        guard let mock = sessionManagerWillEnrollCertificate_MockMethod else {
+            fatalError("no mock for `sessionManagerWillEnrollCertificate`")
         }
 
         mock()

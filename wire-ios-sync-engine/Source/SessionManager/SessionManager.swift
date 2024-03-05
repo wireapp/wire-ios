@@ -57,8 +57,9 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
-    func sessionManagerPendingCertificateUpdate()
-    func sessionManagerPendingCertificateEnroll()
+    func sessionManagerWillUpdateCertificate()
+    func sessionManagerWillEnrollCertificate()
+
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
@@ -535,9 +536,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         callCenterObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
 
         checkJailbreakIfNeeded()
-//        Task {
-//            await updateOrEnrollCertificateIfNeeded()
-//        }
+        Task {
+            await updateOrEnrollCertificateIfNeeded()
+        }
     }
 
     private func configureBlacklistDownload() {
@@ -1139,26 +1140,15 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private func updateOrEnrollCertificateIfNeeded() async {
-        guard let userSession = activeUserSession,
-              userSession.e2eiFeature.isEnabled,
-              let gracePeriodEndDate = userSession.gracePeriodRepository.fetchGracePeriodEndDate(),
-              gracePeriodEndDate.isInThePast
-        else {
-            return
-        }
-
-        let selfClientHasCertificate = await userSession.selfClientCertificateProvider.hasCertificate
-        if selfClientHasCertificate {
-            delegate?.sessionManagerPendingCertificateUpdate()
-        } else {
-            delegate?.sessionManagerPendingCertificateEnroll()
-        }
-    }
-
-    public func updateCertificateIfNeeded() async {
         guard let userSession = activeUserSession else { return }
-       
-        let _ = try? await userSession.enrollE2EICertificate.invoke(authenticate: <#T##OAuthBlock##OAuthBlock##(OAuthParameters) async throws -> OAuthResponse#>)
+
+//        if await userSession.needsToUpdateCertificate {
+//            if await userSession.selfClientCertificateProvider.hasCertificate {
+                delegate?.sessionManagerWillUpdateCertificate()
+//            } else {
+//                delegate?.sessionManagerWillEnrollCertificate()
+//            }
+//        }
     }
 
     func shouldPerformPostRebootLogout() -> Bool {
