@@ -42,7 +42,6 @@
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
-NSString * const ZMTransportSessionNewRequestAvailableNotification = @"ZMTransportSessionNewRequestAvailable";
 NSString * const ZMTransportSessionReachabilityIsEnabled = @"ZMTransportSessionReachabilityIsEnabled";
 
 static NSString * const TaskTimerKey = @"task";
