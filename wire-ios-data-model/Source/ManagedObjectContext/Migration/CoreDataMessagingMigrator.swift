@@ -283,7 +283,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     }
 
     // MARK: - CoreDataMigration Actions
-    // TODO: add unit tests for CoreDataMigrationActionFactory
+
     func runPreMigrationStep(_ step: CoreDataMessagingMigrationStep, for storeURL: URL) throws {
         guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else { return }
 
@@ -295,10 +295,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
         guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion) else { return }
 
-
         try action.perform(on: storeURL,
                            with: step.destinationModel)
     }
-
-   
 }
