@@ -157,6 +157,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         if (BackendInfo.apiVersion ?? .v0) < .v5 {
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
+
         if !DeveloperFlag.enableMLSSupport.isOn {
             return .cannotStart(reason: .clientDoesntSupportMLS)
         }
@@ -175,7 +176,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return .cannotStart(reason: .mlsMigrationIsNotEnabled)
         }
 
-        if let startTime = features.mlsMigration.config.startTime, startTime.isInTheFuture {
+        guard let startTime = features.mlsMigration.config.startTime, startTime.isInThePast else {
             return .cannotStart(reason: .startTimeHasNotBeenReached)
         }
 
