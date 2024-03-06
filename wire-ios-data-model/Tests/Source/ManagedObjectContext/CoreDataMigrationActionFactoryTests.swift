@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 @testable import WireDataModel
 import XCTest
 
 final class CoreDataMigrationActionFactoryTests: XCTestCase {
 
-    // add version with actions here
-    let excludedVersions: [CoreDataMessagingMigrationVersion] = [.version2_111]
+    // add version with actions here - aka custom migration
+    let excludedVersions: [CoreDataMessagingMigrationVersion] = [.version2_111, .version2_107]
 
     func test_ItReturnsPreActionForVersion211() {
         let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .version2_111)
@@ -35,6 +34,18 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
         let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: .version2_111)
 
         XCTAssertNotNil(action)
+    }
+
+    func test_ItReturnsPreActionForVersion207() {
+        let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .version2_107)
+
+        XCTAssertNotNil(action)
+    }
+
+    func test_ItReturnsNoPostActionForVersion207() {
+        let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: .version2_107)
+
+        XCTAssertNil(action)
     }
 
     func test_ItReturnsNoPostActionForAllOtherVersions() {
