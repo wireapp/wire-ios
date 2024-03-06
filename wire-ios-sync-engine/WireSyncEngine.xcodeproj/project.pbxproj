@@ -535,6 +535,7 @@
 		E6C6C6B72B87745F007585DF /* TeamMembersDownloadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C6C6B22B877404007585DF /* TeamMembersDownloadRequestStrategy.swift */; };
 		E6C983EC2B98627200D55177 /* GetFeatureConfigUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C983EB2B98627200D55177 /* GetFeatureConfigUseCase.swift */; };
 		E6C983EE2B986ABA00D55177 /* ZMUserSession+UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C983ED2B986ABA00D55177 /* ZMUserSession+UserSession.swift */; };
+		E6D1B1F22B988166001CA68B /* GetMLSFeatureUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D1B1F12B988166001CA68B /* GetMLSFeatureUseCaseTests.swift */; };
 		E98CAC052B8CC27A00CC81DE /* UseCaseFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98CAC042B8CC27A00CC81DE /* UseCaseFactory.swift */; };
 		E98E5DFC2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */; };
 		E9A96E7E2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */; };
@@ -1296,6 +1297,7 @@
 		E6C6C6B42B87741D007585DF /* TeamMembersDownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMembersDownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		E6C983EB2B98627200D55177 /* GetFeatureConfigUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetFeatureConfigUseCase.swift; sourceTree = "<group>"; };
 		E6C983ED2B986ABA00D55177 /* ZMUserSession+UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+UserSession.swift"; sourceTree = "<group>"; };
+		E6D1B1F12B988166001CA68B /* GetMLSFeatureUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMLSFeatureUseCaseTests.swift; sourceTree = "<group>"; };
 		E98CAC042B8CC27A00CC81DE /* UseCaseFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCaseFactory.swift; sourceTree = "<group>"; };
 		E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCaseTests.swift; sourceTree = "<group>"; };
 		E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCase.swift; sourceTree = "<group>"; };
@@ -1570,10 +1572,11 @@
 		018A3DBD2B0799CA00EB3D6B /* Use cases */ = {
 			isa = PBXGroup;
 			children = (
-				018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */,
-				EE8B934D2B838AFD00D5E670 /* GetE2eIdentityCertificatesUseCaseTests.swift */,
 				16D74BF52B5A961800160298 /* ChangeUsernameUseCaseTests.swift */,
 				EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */,
+				EE8B934D2B838AFD00D5E670 /* GetE2eIdentityCertificatesUseCaseTests.swift */,
+				E6D1B1F12B988166001CA68B /* GetMLSFeatureUseCaseTests.swift */,
+				018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */,
 				E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */,
 				061F791D2B76828500E8827B /* SnoozeCertificateEnrollmentUseCaseTests.swift */,
 			);
@@ -3455,6 +3458,7 @@
 				3E1858BC1951D6DA005FE78F /* MemoryLeaksObserver.m in Sources */,
 				F905C47F1E79A86A00AF34A5 /* WireCallCenterV3Tests.swift in Sources */,
 				1636EAFF23F6FCCC00CD9527 /* MockPresentationDelegate.swift in Sources */,
+				E6D1B1F22B988166001CA68B /* GetMLSFeatureUseCaseTests.swift in Sources */,
 				872C99601DB6722C006A3BDE /* CallKitDelegateTests+Mocking.m in Sources */,
 				061F791C2B767B3D00E8827B /* SelfClientCertificateProviderTests.swift in Sources */,
 				164C29A51ECF47D80026562A /* SearchDirectoryTests.swift in Sources */,
