@@ -1413,13 +1413,13 @@ extension SessionManager {
 
     @objc func applicationWillResignActive(_ note: Notification) {
         activeUserSession?.appLockController.beginTimer()
-        Task {
-            await updateOrEnrollCertificateIfNeeded()
-        }
     }
 
     @objc fileprivate func applicationDidBecomeActive(_ note: Notification) {
         notificationsTracker?.dispatchEvent()
+        Task {
+            await updateOrEnrollCertificateIfNeeded()
+        }
     }
 
 }
