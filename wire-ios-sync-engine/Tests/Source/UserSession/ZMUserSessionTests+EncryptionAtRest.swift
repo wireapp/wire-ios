@@ -38,6 +38,8 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 
     func clientRegistrationDidFail(_ error: NSError, accountId: UUID) { }
 
+    func clientCompletedInitialSync(accountId: UUID) { }
+
     var calleduserDidLogout: (Bool, UUID)?
     func userDidLogout(accountId: UUID) {
         calleduserDidLogout = (true, accountId)

@@ -44,7 +44,7 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
 
     // MARK: - Helpers
 
-    typealias Actions =  L10n.Localizable.Self.Settings.AccountSection.ProfileLink.Actions
+    typealias Actions = L10n.Localizable.Self.Settings.AccountSection.ProfileLink.Actions
 
     let copiedLink: CellConfiguration = .iconAction(title: Actions.copiedLink,
                                                     icon: .checkmark,
