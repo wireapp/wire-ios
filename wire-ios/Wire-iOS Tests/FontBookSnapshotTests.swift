@@ -17,7 +17,7 @@
 //
 
 import SnapshotTesting
-import WireCommonComponents
+@testable import WireCommonComponents
 import XCTest
 @testable import Wire
 
