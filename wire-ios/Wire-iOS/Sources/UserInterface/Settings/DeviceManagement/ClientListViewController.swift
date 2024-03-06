@@ -585,17 +585,22 @@ final class ClientListViewController: UIViewController,
     }
 
     private func updateE2EIdentityCertificateInDetailsView() {
-
-        let client = if selectedDeviceInfoViewModel?.isSelfClient == true {
+        guard let selectedDeviceInfoViewModel = selectedDeviceInfoViewModel else {
+            return
+        }
+        let client = if selectedDeviceInfoViewModel.isSelfClient == true {
             selfClient
         } else {
             clients.first(
                 where: {
-                $0.clientId == selectedDeviceInfoViewModel?.userClient.clientId
+                    guard let userClient = selectedDeviceInfoViewModel.userClient as? UserClient else {
+                        return false
+                    }
+                return $0.clientId == userClient.clientId
             })
         }
         guard let client else { return }
-        selectedDeviceInfoViewModel?.update(from: client)
+        selectedDeviceInfoViewModel.update(from: client)
     }
 }
 
@@ -630,10 +635,6 @@ extension ClientListViewController: UserObserving {
 }
 
 extension UserClient {
-
-    var resolvedMLSThumbprint: String? {
-        e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
-    }
 
     func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
         guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {

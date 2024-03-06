@@ -93,6 +93,44 @@ class MockBackupSource: BackupSource {
 
 }
 
+class MockConversationUserClientDetailsActions: ConversationUserClientDetailsActions {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - showMyDevice
+
+    var showMyDevice_Invocations: [Void] = []
+    var showMyDevice_MockMethod: (() -> Void)?
+
+    func showMyDevice() {
+        showMyDevice_Invocations.append(())
+
+        guard let mock = showMyDevice_MockMethod else {
+            fatalError("no mock for `showMyDevice`")
+        }
+
+        mock()
+    }
+
+    // MARK: - howToDoThat
+
+    var howToDoThat_Invocations: [Void] = []
+    var howToDoThat_MockMethod: (() -> Void)?
+
+    func howToDoThat() {
+        howToDoThat_Invocations.append(())
+
+        guard let mock = howToDoThat_MockMethod else {
+            fatalError("no mock for `howToDoThat`")
+        }
+
+        mock()
+    }
+
+}
+
 class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
 
     // MARK: - Life cycle

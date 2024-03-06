@@ -47,7 +47,7 @@ final class DeviceInfoViewModel: ObservableObject {
     var mlsThumbprint: String?
     var title: String
     var isSelfClient: Bool
-    var userClient: UserClient
+    var userClient: UserClientType
 
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
@@ -92,7 +92,7 @@ final class DeviceInfoViewModel: ObservableObject {
         proteusID: String,
         mlsThumbprint: String?,
         isProteusVerificationEnabled: Bool,
-        userClient: UserClient,
+        userClient: UserClientType,
         isSelfClient: Bool,
         gracePeriod: TimeInterval,
         isFromConversation: Bool,
@@ -122,7 +122,7 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
-    func update(from userClient: UserClient) {
+    func update(from userClient: UserClientType) {
         e2eIdentityCertificate = userClient.e2eIdentityCertificate
         mlsThumbprint = userClient.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16)
         self.userClient = userClient
