@@ -76,7 +76,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     fileprivate func createFileMessageWithAssetId(
         in conversation: ZMConversation,
         otrKey: Data = Data.randomEncryptionKey(),
-        sha: Data  = Data.randomEncryptionKey()
+        sha: Data = Data.randomEncryptionKey()
     ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, domain: String?)? {
 
         let isFederationEnabled = apiVersion > .v0

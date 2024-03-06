@@ -44,7 +44,7 @@ final class CountryCodeTableViewController: UITableViewController, UISearchContr
 
         for idx in 0..<sectionTitlesCount {
             let objectsForSection = mutableSections[idx]
-            if let countries =  UILocalizedIndexedCollation.current().sortedArray(from: objectsForSection, collationStringSelector: selector) as? [Country] {
+            if let countries = UILocalizedIndexedCollation.current().sortedArray(from: objectsForSection, collationStringSelector: selector) as? [Country] {
 
                 mutableSections[idx] = countries
             }

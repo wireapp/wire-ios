@@ -628,7 +628,7 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
 
             if systemMessage.userTypes.contains(where: { ($0 as? UserType)?.isSelfUser == true }) {
                 let fullName = sender.name ?? ""
-                let result =  L10n.Localizable.Conversation.Status.youWasAdded(fullName) && type(of: self).regularStyle
+                let result = L10n.Localizable.Conversation.Status.youWasAdded(fullName) && type(of: self).regularStyle
                 return self.addEmphasis(to: result, for: fullName)
             }
         }
