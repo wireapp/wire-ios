@@ -21,6 +21,7 @@ import WireDataModel
 
 public protocol GetMLSFeatureUseCaseProtocol {
     func invoke() -> Feature.MLS
+    func invoke() async -> Feature.MLS
 }
 
 public struct GetMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol {
@@ -33,5 +34,9 @@ public struct GetMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol {
 
     public func invoke() -> Feature.MLS {
         featureRepository.fetchMLS()
+    }
+
+    public func invoke() async -> Feature.MLS {
+        await featureRepository.fetchMLS()
     }
 }
