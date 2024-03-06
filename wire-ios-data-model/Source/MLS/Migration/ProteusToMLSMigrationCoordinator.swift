@@ -183,11 +183,13 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     private func fetchFeatures() async -> (mls: Feature.MLS, mlsMigration: Feature.MLSMigration) {
-        return await context.perform { [featureRepository] in
-            let mlsFeature = featureRepository.fetchMLS()
-            let mlsMigrationFeature = featureRepository.fetchMLSMigration()
-            return (mls: mlsFeature, mlsMigration: mlsMigrationFeature)
+        let mlsFeature = await featureRepository.fetchMLS()
+
+        let mlsMigrationFeature = await context.perform { [featureRepository] in
+            featureRepository.fetchMLSMigration()
         }
+
+        return (mls: mlsFeature, mlsMigration: mlsMigrationFeature)
     }
 
     private func isMLSEnabledOnBackend() async -> Bool {
