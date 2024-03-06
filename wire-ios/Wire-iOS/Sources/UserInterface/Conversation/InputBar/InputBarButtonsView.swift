@@ -477,9 +477,7 @@ final class InputBarButtonsView: UIView {
         }
     }
 
-}
-
-extension InputBarButtonsView {
+    // MARK: - Actions
 
     private func anyButtonPressed() {
         showRow(0, animated: true)
@@ -488,4 +486,5 @@ extension InputBarButtonsView {
     private func ellipsisButtonPressed() {
         showRow(currentRow == 0 ? 1 : 0, animated: true)
     }
+
 }
