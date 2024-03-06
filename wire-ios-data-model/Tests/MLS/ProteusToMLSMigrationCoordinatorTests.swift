@@ -166,6 +166,62 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(startedMigration)
     }
 
+    func test_ItDoesntStartMigration_IfStartTimeIsInTheFuture() async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+
+        setMockValues(
+            isAPIV5Supported: true,
+            isClientSupportingMLS: true,
+            isBackendSupportingMLS: true,
+            isMLSProtocolSupported: true,
+            isMLSMigrationFeatureEnabled: true,
+            startTime: .distantFuture
+        )
+
+        mockStorage.underlyingMigrationStatus = .notStarted
+
+        var startedMigration = false
+        mockMLSService.startProteusToMLSMigration_MockMethod = {
+            startedMigration = true
+        }
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)
+        XCTAssertFalse(startedMigration)
+    }
+
+    func test_ItStartsMigration_IfStartTimeIsInThePast() async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+
+        setMockValues(
+            isAPIV5Supported: true,
+            isClientSupportingMLS: true,
+            isBackendSupportingMLS: true,
+            isMLSProtocolSupported: true,
+            isMLSMigrationFeatureEnabled: true,
+            startTime: .distantPast
+        )
+
+        mockStorage.underlyingMigrationStatus = .notStarted
+
+        var startedMigration = false
+        mockMLSService.startProteusToMLSMigration_MockMethod = {
+            startedMigration = true
+        }
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
+        XCTAssertTrue(startedMigration)
+    }
+
     func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfAPIV5NotSupported() async throws {
         try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isAPIV5Supported: false)
     }
