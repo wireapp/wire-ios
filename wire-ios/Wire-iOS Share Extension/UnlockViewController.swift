@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireCommonComponents
@@ -208,7 +207,7 @@ extension UnlockViewController {
         let attributedString = NSMutableAttributedString(string: L10n.ShareExtension.Unlock.errorLabel)
         attributedString.addAttributes([.font: hintFont], range: NSRange(location: 0, length: attributedString.length))
         attributedString.insert(.init(attachment: textAttachment), at: 0)
-        errorLabel.attributedText = attributedString
+        errorLabel.attributedText = .init(attributedString)
         unlockButton.isEnabled = false
     }
 
