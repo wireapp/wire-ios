@@ -86,7 +86,10 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 }
             }
 
-            completion()
+            await managedObjectContext.perform {
+                // make sure completion is called on same calling thread so syncContext
+                completion()
+            }
             managedObjectContext.leaveAllGroups(groups)
         }
     }
