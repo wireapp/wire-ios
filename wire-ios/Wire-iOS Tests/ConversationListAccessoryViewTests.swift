@@ -27,7 +27,7 @@ final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        userSession  = UserSessionMock()
+        userSession = UserSessionMock()
         self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(name: "test", userSession: userSession))
         accentColor = .violet
     }

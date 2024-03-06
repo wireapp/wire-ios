@@ -26,7 +26,7 @@ private let ZMPushStringEphemeralTitle      = "ephemeral.title"
 private let ZMPushStringEphemeral           = "ephemeral"
 
 // Title with team name
-private let ZMPushStringTitle               = "title"                // "[conversationName] in [teamName]
+private let ZMPushStringTitle = "title"                // "[conversationName] in [teamName]
 
 // 1 user, 1 conversation, 1 string
 // %1$@    %2$@            %3$@

@@ -118,7 +118,7 @@ final class SketchToolbar: UIView {
         ]
 
         for i in 1..<centerButtons.count {
-            let previousButton = centerButtons[i-1]
+            let previousButton = centerButtons[i - 1]
             let button = centerButtons[i]
 
             [button, previousButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }

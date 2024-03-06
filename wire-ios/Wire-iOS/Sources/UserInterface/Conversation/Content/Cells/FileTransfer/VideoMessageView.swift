@@ -100,7 +100,7 @@ final class VideoMessageView: UIView, TransferView {
             loadingView
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        let sizeConstraint = widthAnchor.constraint(equalTo: heightAnchor, constant: 4/3)
+        let sizeConstraint = widthAnchor.constraint(equalTo: heightAnchor, constant: 4 / 3)
 
         sizeConstraint.priority = UILayoutPriority(750)
 

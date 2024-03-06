@@ -150,7 +150,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         }
 
         // Get and categorize next batch
-        let messagesToAnalyze = Array(allMessages[offset..<(offset+numberToAnalyze)])
+        let messagesToAnalyze = Array(allMessages[offset..<(offset + numberToAnalyze)])
         let newAssets = AssetCollectionBatched.messageMap(messages: messagesToAnalyze, matchingCategories: self.matchingCategories)
         managedObjectContext.enqueueDelayedSave()
 
@@ -212,7 +212,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
     static func categorizedMessages<T: ZMMessage>(for conversation: ZMConversation, matchPairs: [CategoryMatch]) -> [T] {
         precondition(conversation.managedObjectContext!.zm_isSyncContext, "Fetch should only be performed on the sync context")
         let request = T.fetchRequestMatching(matchPairs: matchPairs, conversation: conversation)
-        let excludedCategoryPredicate =  NSPredicate(format: "%K & %d == 0", ZMMessageCachedCategoryKey, MessageCategory.excludedFromCollection.rawValue)
+        let excludedCategoryPredicate = NSPredicate(format: "%K & %d == 0", ZMMessageCachedCategoryKey, MessageCategory.excludedFromCollection.rawValue)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [request.predicate!, excludedCategoryPredicate])
         request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
 

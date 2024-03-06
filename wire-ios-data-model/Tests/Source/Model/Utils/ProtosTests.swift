@@ -127,7 +127,7 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.messageID, nonce.transportString())
         XCTAssertEqual(message.lastRead.conversationID, conversationID.uuid.transportString())
         XCTAssertEqual(message.lastRead.lastReadTimestamp, Int64(timeStamp.timeIntervalSince1970 * 1000))
-        let storedDate = NSDate(timeIntervalSince1970: Double(message.lastRead.lastReadTimestamp/1000))
+        let storedDate = NSDate(timeIntervalSince1970: Double(message.lastRead.lastReadTimestamp / 1000))
         XCTAssertEqual(storedDate, timeStamp)
     }
 
@@ -142,7 +142,7 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.messageID, nonce.transportString())
         XCTAssertEqual(message.cleared.conversationID, conversationID.transportString())
         XCTAssertEqual(message.cleared.clearedTimestamp, Int64(timeStamp.timeIntervalSince1970 * 1000))
-        let storedDate = NSDate(timeIntervalSince1970: Double(message.cleared.clearedTimestamp/1000))
+        let storedDate = NSDate(timeIntervalSince1970: Double(message.cleared.clearedTimestamp / 1000))
         XCTAssertEqual(storedDate, timeStamp)
     }
 

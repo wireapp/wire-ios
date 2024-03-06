@@ -44,9 +44,6 @@
 @property (nonatomic, readonly, nonnull) NSMutableDictionary<NSManagedObjectID *, ZMConversationList *> *listsByFolder;
 @property (nonatomic, readonly, nonnull) NSArray<id<LabelType>> *allFolders;
 
-- (nonnull NSArray<ZMConversationList *> *)allConversationLists;
-
-
 
 /// Refetches all conversation lists and resets the snapshots
 /// Call this when the app re-enters the foreground

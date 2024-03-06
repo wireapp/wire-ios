@@ -57,11 +57,11 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         self.thirdPartyServices = ThirdPartyServices()
         self.dataChangeNotificationsCount = 0
-        self.baseURL =  URL(string: "http://bar.example.com")
+        self.baseURL = URL(string: "http://bar.example.com")
         self.cookieStorage = ZMPersistentCookieStorage(forServerName: "usersessiontest.example.com", userIdentifier: .create(), useCache: true)
         self.mockPushChannel = MockPushChannel()
         self.transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
-        self.mockSessionManager =  MockSessionManager()
+        self.mockSessionManager = MockSessionManager()
         self.mediaManager = MockMediaManager()
         self.flowManagerMock = FlowManagerMock()
         createSut()

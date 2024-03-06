@@ -68,7 +68,7 @@ final class MarkdownTextView: NextResponderTextView {
                 #selector(UIResponderStandardEditActions.select(_:)),
                 #selector(UIResponderStandardEditActions.selectAll(_:))
             ]
-            return text.isEmpty ? false: validActions.contains(action)
+            return text.isEmpty ? false : validActions.contains(action)
         } else {
             return super.canPerformAction(action, withSender: sender)
         }

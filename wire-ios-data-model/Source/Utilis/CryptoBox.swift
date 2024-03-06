@@ -102,7 +102,7 @@ public enum UserClientKeyStoreError: Error {
 open class UserClientKeysStore: NSObject {
 
     /// Maximum possible ID for prekey
-    public static let MaxPreKeyID: UInt16 = UInt16.max-1
+    public static let MaxPreKeyID: UInt16 = UInt16.max - 1
 
     open var encryptionContext: EncryptionContext
 
@@ -175,7 +175,7 @@ open class UserClientKeysStore: NSObject {
     }
 
     fileprivate func preKeysRange(_ count: UInt16, start: UInt16) -> CountableRange<UInt16> {
-        if start >= UserClientKeysStore.MaxPreKeyID-count {
+        if start >= UserClientKeysStore.MaxPreKeyID - count {
             return 0 ..< count
         }
         return start ..< (start + count)

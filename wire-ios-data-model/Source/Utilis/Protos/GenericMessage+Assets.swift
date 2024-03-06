@@ -135,7 +135,7 @@ public extension WireProtos.Asset.Original {
             }
             $0.audio = WireProtos.Asset.AudioMetaData.with {
                 $0.durationInMillis = UInt64(audioDurationInMillis)
-                let loudnessArray = normalizedLoudness.map { UInt8(roundf($0*255)) }
+                let loudnessArray = normalizedLoudness.map { UInt8(roundf($0 * 255)) }
                 $0.normalizedLoudness = Data(bytes: loudnessArray, count: loudnessArray.count)
             }
         }
@@ -152,11 +152,11 @@ public extension WireProtos.Asset.Original {
         return offsets
             .map { offset -> UInt8 in
                 var number: UInt8 = 0
-                data.copyBytes(to: &number, from: (0 + offset)..<(MemoryLayout<UInt8>.size+offset))
+                data.copyBytes(to: &number, from: (0 + offset)..<(MemoryLayout<UInt8>.size + offset))
                 return number
             }
             .map {
-                Float(Float($0)/255.0)
+                Float(Float($0) / 255.0)
             }
     }
 }

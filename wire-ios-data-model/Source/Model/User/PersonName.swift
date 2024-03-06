@@ -141,7 +141,7 @@
             let substring = fullName[substringRange]
             if let aComponent = component {
                 if let lastRangeBound = lastRange?.upperBound, lastRangeBound == substringRange.lowerBound {
-                    component = aComponent+substring
+                    component = aComponent + substring
                     return
                 }
                 components.append(aComponent)

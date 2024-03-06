@@ -24,7 +24,7 @@ class OtrBaseTest: XCTestCase {
         super.setUp()
 
         // clean stored cryptobox files
-        if let items =  (try? FileManager.default.contentsOfDirectory(at: OtrBaseTest.sharedContainerURL, includingPropertiesForKeys: nil, options: [])) {
+        if let items = (try? FileManager.default.contentsOfDirectory(at: OtrBaseTest.sharedContainerURL, includingPropertiesForKeys: nil, options: [])) {
             items.forEach { try? FileManager.default.removeItem(at: $0) }
         }
     }

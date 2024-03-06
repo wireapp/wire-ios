@@ -60,8 +60,8 @@ final class Job: NSObject, Loggable {
 
         let session = try networkSession ?? NetworkSession(userID: userID)
         self.networkSession = session
-        self.accessAPIClient = accessAPIClient ??  AccessAPIClient(networkSession: session)
-        self.notificationsAPIClient = notificationsAPIClient ??  NotificationsAPIClient(networkSession: session)
+        self.accessAPIClient = accessAPIClient ?? AccessAPIClient(networkSession: session)
+        self.notificationsAPIClient = notificationsAPIClient ?? NotificationsAPIClient(networkSession: session)
         super.init()
     }
 

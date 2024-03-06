@@ -28,9 +28,9 @@ final class DeviceConfigurationEventHandler: AuthenticationEventHandler {
         switch currentStep {
         case .configureDevice, .deleteClient:
             if statusProvider?.sharedUserSession?.hasCompletedInitialSync == true {
-                return [.hideLoadingView, postAction]
+                return [.hideLoadingView, .completeLoginFlow]
             } else {
-                return [.transition(.pendingInitialSync(next: nil), mode: .normal)]
+                return [.transition(.pendingInitialSync, mode: .normal)]
             }
 
         default:

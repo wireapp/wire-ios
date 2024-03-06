@@ -64,7 +64,7 @@ final class WipeDatabaseViewController: UIViewController {
             .paragraphStyle: paragraphStyle,
             .foregroundColor: textColor]
 
-        let headingText =  NSAttributedString(string: WipeDatabase.infoLabel) &&
+        let headingText = NSAttributedString(string: WipeDatabase.infoLabel) &&
                                 UIFont.normalRegularFont &&
                                 baseAttributes
         let highlightText = NSAttributedString(string: WipeDatabase.InfoLabel.highlighted) &&

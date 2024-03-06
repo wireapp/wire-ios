@@ -26,7 +26,7 @@ class PrekeyGenerator {
     static var _test_overrideNumberOfKeys: UInt16?
 
     let proteusProvider: ProteusProviding
-    let keyCount: UInt16 = _test_overrideNumberOfKeys ??  100
+    let keyCount: UInt16 = _test_overrideNumberOfKeys ?? 100
 
     init(proteusProvider: ProteusProviding) {
         self.proteusProvider = proteusProvider

@@ -88,7 +88,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
             existingClient.isSelfClient()
         }
 
-        let canPerform  = await context.perform {
+        let canPerform = await context.perform {
             self.proteusProvider.canPerform
         }
 

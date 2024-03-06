@@ -133,7 +133,7 @@ enum DebugActions {
 
         func sendNext(count: Int) {
             userSession.enqueue {
-                try! conversation.appendText(content: "Message #\(count+1), series \(nonce)")
+                try! conversation.appendText(content: "Message #\(count + 1), series \(nonce)")
             }
             guard count + 1 < amount else { return }
             DispatchQueue.main.asyncAfter(

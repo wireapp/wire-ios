@@ -188,7 +188,7 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
         merge(changes: notification, intoContext: syncContext)
 
         let insertedObjectsIds = insertedObjects.map({ $0.objectID })
-        let updatedObjectsIds  =  updatedObjects.map({ $0.objectID })
+        let updatedObjectsIds = updatedObjects.map({ $0.objectID })
 
         syncContext.performGroupedBlock {
             let insertedObjects = insertedObjectsIds.compactMap(self.syncContext.object)

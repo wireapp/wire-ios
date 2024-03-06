@@ -225,7 +225,7 @@ final class TokenField: UIView {
         let maxHeight = fontLineHeight * CGFloat(numberOfLines) + lineSpacing * CGFloat(numberOfLines - 1) + textView.textContainerInset.top + textView.textContainerInset.bottom
         let minHeight = fontLineHeight + textView.textContainerInset.top + textView.textContainerInset.bottom
 
-        return CGSize(width: UIView.noIntrinsicMetric, height: isCollapsed ? minHeight: max(min(height, maxHeight), minHeight))
+        return CGSize(width: UIView.noIntrinsicMetric, height: isCollapsed ? minHeight : max(min(height, maxHeight), minHeight))
     }
 
     override func layoutSubviews() {

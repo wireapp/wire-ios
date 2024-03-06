@@ -29,7 +29,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             let userConnection = ZMConnection.insertNewSentConnection(to: user)
             userConnection.status = .accepted
             userClient.user = user
-            user.name = "createdUser \(i+1)"
+            user.name = "createdUser \(i + 1)"
             return user
         }
     }
@@ -400,7 +400,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         self.creationCounter += 1
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         let client = UserClient.insertNewObject(in: moc)
-        client.user  = user
+        client.user = user
         if userIsTrusted {
             selfClient.trustClient(client)
         } else {

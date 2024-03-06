@@ -60,6 +60,7 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
+    func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?)
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
@@ -392,17 +393,14 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         configureBlacklistDownload()
 
-        self.memoryWarningObserver = NotificationCenter.default.addObserver(
+        memoryWarningObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.didReceiveMemoryWarningNotification,
             object: nil,
-            queue: nil,
-            using: { [weak self] _ in
-                guard let self else {
-                    return
-                }
-                log.debug("Received memory warning, tearing down background user sessions.")
-                self.tearDownAllBackgroundSessions()
-            })
+            queue: nil
+        ) { [weak self] _ in
+            log.debug("Received memory warning, tearing down background user sessions.")
+            self?.tearDownAllBackgroundSessions()
+        }
 
         NotificationCenter
             .default
@@ -1047,13 +1045,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     // Tears down and releases all background user sessions.
     internal func tearDownAllBackgroundSessions() {
-        let backgroundSessions = backgroundUserSessions.filter { (_, session) -> Bool in
-            return activeUserSession != session
+        let backgroundSessions = backgroundUserSessions.filter { _, session in
+            activeUserSession != session
         }
 
-        backgroundSessions.keys.forEach({ sessionID in
-            tearDownBackgroundSession(for: sessionID)
-        })
+        backgroundSessions.keys.forEach {
+            tearDownBackgroundSession(for: $0)
+        }
     }
 
     fileprivate func tearDownObservers(account: UUID) {
@@ -1067,6 +1065,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         blacklistVerificator?.tearDown()
         unauthenticatedSession?.tearDown()
         reachability.tearDown()
+
+        if let memoryWarningObserver {
+            NotificationCenter.default.removeObserver(memoryWarningObserver)
+        }
     }
 
     public var isUserSessionActive: Bool {
@@ -1309,6 +1311,12 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
         guard account == accountManager.selectedAccount else { return }
         delegate?.sessionManagerDidFailToLogin(error: error)
     }
+
+    public func clientCompletedInitialSync(accountId: UUID) {
+        let account = accountManager.account(with: accountId)
+        guard account == accountManager.selectedAccount else { return }
+        delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+    }
 }
 
 extension SessionManager: AccountDeletedObserver {
@@ -1379,8 +1387,11 @@ extension SessionManager {
         CompanyLoginVerificationToken.flushIfNeeded()
 
         if let session = activeUserSession {
-            // The session lock may have changed so inform the delegate in case.
-            self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+            // If the user isn't logged in it's because they still need
+            // to complete the login flow, which will be handle elsewhere.
+            if session.isLoggedIn {
+                self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+            }
         }
     }
 

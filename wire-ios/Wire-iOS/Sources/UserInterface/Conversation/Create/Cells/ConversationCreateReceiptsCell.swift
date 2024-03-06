@@ -31,11 +31,8 @@ final class ConversationCreateReceiptsCell: IconToggleCell {
     }
 
     private func setupIconForCell() {
-        let color = SemanticColors.Icon.foregroundDefault
-        icon = StyleKitIcon.eye.makeImage(
-            size: .tiny,
-            color: color).withRenderingMode(.alwaysTemplate)
-        iconColor = color
+        icon = Asset.Images.readReceipts.image.withRenderingMode(.alwaysTemplate)
+        iconColor = SemanticColors.Icon.foregroundDefault
     }
 }
 

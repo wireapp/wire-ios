@@ -288,7 +288,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
-        return context.isTimeIntervalSinceLastMessageSignificant ||  context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
+        return context.isTimeIntervalSinceLastMessageSignificant || context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {

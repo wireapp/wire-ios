@@ -177,11 +177,12 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         connectingLabel.text = L10n.Localizable.Call.Status.connecting
 
         // accessoryIconView
+
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
         accessoryIconView.accessibilityIdentifier = nil
         accessoryIconView.isHidden = true
-        accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
+        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
 
         // titleLabel

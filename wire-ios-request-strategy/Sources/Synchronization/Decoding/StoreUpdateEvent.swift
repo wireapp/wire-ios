@@ -22,7 +22,7 @@ import CoreData
 @objc(StoredUpdateEvent)
 public final class StoredUpdateEvent: NSManagedObject {
 
-    private static let entityName =  "StoredUpdateEvent"
+    private static let entityName = "StoredUpdateEvent"
     private static let SortIndexKey = "sortIndex"
 
     /// The key under which the event payload is encrypted by the public key.

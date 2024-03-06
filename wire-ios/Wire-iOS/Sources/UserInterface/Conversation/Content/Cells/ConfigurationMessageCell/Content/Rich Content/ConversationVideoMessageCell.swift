@@ -80,7 +80,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
         if object.isObfuscated {
             setup(obfuscationView)
         } else if !object.message.canBeShared {
-            setup(restrictionView, heightMultiplier: 9/16)
+            setup(restrictionView, heightMultiplier: 9 / 16)
             restrictionView.configure()
         } else {
             transferView.configure(for: object.message, isInitial: false)

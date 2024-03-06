@@ -149,7 +149,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             guard
                 let callerId = callerId,
                 let conversationId = conversationId,
-                let conversation =  ZMConversation.fetch(with: conversationId, in: self.syncContext),
+                let conversation = ZMConversation.fetch(with: conversationId, in: self.syncContext),
                 let caller = ZMUser.fetch(with: callerId, in: self.syncContext)
                 else {
                     return

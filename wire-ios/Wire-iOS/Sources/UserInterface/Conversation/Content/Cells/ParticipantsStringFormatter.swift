@@ -227,7 +227,7 @@ final class ParticipantsStringFormatter {
                 // "you/z, "
                 result.append(names.last! + ", ", with: attrsForLastName)
                 // "and X others
-                let linkText =  L10n.Localizable.Content.System.StartedConversation.TruncatedPeople.others(nameList.collapsed)
+                let linkText = L10n.Localizable.Content.System.StartedConversation.TruncatedPeople.others(nameList.collapsed)
                 let linkPart = L10n.Localizable.Content.System.StartedConversation.truncatedPeople(linkText)
                 result.append(linkPart, with: normalAttributes)
                 result.define(linkAttributes, forComponent: linkText)

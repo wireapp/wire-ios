@@ -56,7 +56,7 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let mockConversation = await syncMOC.perform { [syncMOC] in
-            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.mlsGroupID = groupID
             conversation.mlsVerificationStatus = .notVerified
             return conversation
@@ -84,7 +84,7 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let mockConversation = await syncMOC.perform { [syncMOC] in
-            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.mlsGroupID = groupID
             conversation.mlsVerificationStatus = .verified
             return conversation
@@ -112,7 +112,7 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let mockConversation = await syncMOC.perform { [syncMOC] in
-            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.mlsGroupID = groupID
             conversation.mlsVerificationStatus = .notVerified
             return conversation
@@ -135,7 +135,7 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let mockConversation = await syncMOC.perform { [syncMOC] in
-            let conversation =  ZMConversation.insertNewObject(in: syncMOC)
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.mlsGroupID = groupID
             conversation.mlsVerificationStatus = nil
             return conversation

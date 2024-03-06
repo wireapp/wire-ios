@@ -51,7 +51,7 @@ import UserNotifications
     /// Unarchives all previously created notifications that haven't been cancelled yet
     func unarchiveOldNotifications() {
         guard let archive = keyValueStore.storedValue(key: archivingKey) as? Data,
-        let unarchivedNotes =  NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
+        let unarchivedNotes = NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
             else { return }
         self.oldNotifications = unarchivedNotes
     }
