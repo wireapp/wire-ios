@@ -408,9 +408,7 @@ final class InputBarButtonsView: UIView {
                 )
             } else {
                 constraints.append(
-                    current.widthAnchor.constraint(
-                        equalTo: previous.widthAnchor
-                    )
+                    current.widthAnchor.constraint(equalTo: previous.widthAnchor)
                 )
             }
 
