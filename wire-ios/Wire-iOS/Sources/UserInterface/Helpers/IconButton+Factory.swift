@@ -28,8 +28,8 @@ extension IconButton {
         return .init(
             icon: .phone,
             accessibilityId: "AcceptButton",
-            backgroundColor: [.normal: SemanticColors.Button.backgroundPickUp],
-            iconColor: [.normal: .white],
+            backgroundColor: [UIControl.State.normal.rawValue: SemanticColors.Button.backgroundPickUp],
+            iconColor: [UIControl.State.normal.rawValue: .white],
             width: IconButton.width
         )
     }
@@ -39,8 +39,8 @@ extension IconButton {
             icon: .endCall,
             size: .small,
             accessibilityId: "LeaveCallButton",
-            backgroundColor: [.normal: SemanticColors.Button.backgroundHangUp],
-            iconColor: [.normal: .white],
+            backgroundColor: [UIControl.State.normal.rawValue: SemanticColors.Button.backgroundHangUp],
+            iconColor: [UIControl.State.normal.rawValue: .white],
             width: IconButton.width
         )
     }
@@ -52,12 +52,12 @@ extension IconButton {
         let sendButton = IconButton(
             icon: .send,
             accessibilityId: "sendButton",
-            backgroundColor: [.normal: UIColor.accent(),
-                              .highlighted: UIColor.accentDarken,
-                              .disabled: SemanticColors.Button.backgroundSendDisabled],
-            iconColor: [.normal: sendButtonIconColor,
-                        .highlighted: sendButtonIconColor,
-                        .disabled: sendButtonIconColor]
+            backgroundColor: [UIControl.State.normal.rawValue: UIColor.accent(),
+                              UIControl.State.highlighted.rawValue: UIColor.accentDarken,
+                              UIControl.State.disabled.rawValue: SemanticColors.Button.backgroundSendDisabled],
+            iconColor: [UIControl.State.normal.rawValue: sendButtonIconColor,
+                        UIControl.State.highlighted.rawValue: sendButtonIconColor,
+                        UIControl.State.disabled.rawValue: sendButtonIconColor]
         )
 
         return sendButton
@@ -67,8 +67,8 @@ extension IconButton {
         icon: StyleKitIcon,
         size: StyleKitIcon.Size = .tiny,
         accessibilityId: String,
-        backgroundColor: [UIControl.State: UIColor],
-        iconColor: [UIControl.State: UIColor],
+        backgroundColor: [UIControl.State.RawValue: UIColor],
+        iconColor: [UIControl.State.RawValue: UIColor],
         width: CGFloat? = nil
     ) {
         self.init(fontSpec: .smallLightFont)
@@ -78,11 +78,11 @@ extension IconButton {
         translatesAutoresizingMaskIntoConstraints = false
 
         for (state, color) in backgroundColor {
-            setBackgroundImageColor(color, for: state)
+            setBackgroundImageColor(color, for: .init(rawValue: state))
         }
 
         for (state, color) in iconColor {
-            setIconColor(color, for: state)
+            setIconColor(color, for: .init(rawValue: state))
         }
 
         borderWidth = 0
@@ -93,10 +93,4 @@ extension IconButton {
         }
     }
 
-}
-
-extension UIControl.State: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.rawValue)
-    }
 }
