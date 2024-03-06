@@ -36,11 +36,8 @@ final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
         title = L10n.Localizable.GroupDetails.ServicesOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
+        icon = Asset.Images.services.image.withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
-        guard let iconColor = iconColor else { return }
-
-        icon = StyleKitIcon.bot.makeImage(size: .tiny,
-                                          color: iconColor).withRenderingMode(.alwaysTemplate)
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
