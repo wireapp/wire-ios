@@ -84,9 +84,11 @@ final class Navigator: NSObject, NavigatorProtocol {
         })
     }
 
-    func present(_ viewController: UIViewController,
-                        animated: Bool,
-                        onComplete: (() -> Void)?) {
+    func present(
+        _ viewController: UIViewController,
+        animated: Bool,
+        onComplete: (() -> Void)?
+    ) {
         navigationController.present(viewController, animated: animated, completion: onComplete)
     }
 
@@ -96,8 +98,10 @@ final class Navigator: NSObject, NavigatorProtocol {
         navigationController.viewControllers = [viewController]
     }
 
-    func addNavigateBack(closure: @escaping NavigateBackClosure,
-                                for viewController: UIViewController) {
+    func addNavigateBack(
+        closure: @escaping NavigateBackClosure,
+        for viewController: UIViewController
+    ) {
         print("adding closure for \(viewController)")
         closures.updateValue(closure, forKey: viewController)
     }
@@ -112,9 +116,11 @@ final class Navigator: NSObject, NavigatorProtocol {
 }
 
 extension Navigator: UINavigationControllerDelegate {
-    func navigationController(_ navigationController: UINavigationController,
-                                     didShow viewController: UIViewController,
-                                     animated: Bool) {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
         guard
             let previousController = navigationController.transitionCoordinator?.viewController(forKey: .from),
             !navigationController.viewControllers.contains(previousController)
