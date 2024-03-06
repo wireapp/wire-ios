@@ -22,13 +22,13 @@ import WireSystem
 import WireUtilities
 import WireRequestStrategy
 
-public protocol OAuthUseCaseInterface {
+protocol OAuthUseCaseInterface {
 
     func invoke(parameters: OAuthParameters) async throws -> OAuthResponse
 
 }
 
-public class OAuthUseCase: OAuthUseCaseInterface {
+class OAuthUseCase: OAuthUseCaseInterface {
 
     private let logger = WireLogger.e2ei
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
@@ -38,7 +38,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         self.rootViewController = rootViewController
     }
 
-    public func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
+    func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
         logger.info("invoke authentication flow")
 
         guard let bundleID = Bundle.main.bundleIdentifier,

@@ -65,7 +65,7 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     // MARK: - Public Properties
 
-    // These two views are public for testing purposes
+    // These two views are for testing purposes
     var maximizedView: BaseCallParticipantView?
     var hintView = CallGridHintNotificationLabel()
 
@@ -191,7 +191,7 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     // MARK: - Public Interface
 
-    public func handleDoubleTap(gesture: UIGestureRecognizer) {
+    func handleDoubleTap(gesture: UIGestureRecognizer) {
         let location = gesture.location(in: gridView)
         toggleMaximized(view: streamView(at: location))
     }

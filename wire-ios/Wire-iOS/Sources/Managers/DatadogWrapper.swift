@@ -101,7 +101,7 @@ public final class DatadogWrapper {
         }
     }
 
-    public func startMonitoring() {
+    func startMonitoring() {
         Global.rum = RUMMonitor.initialize()
         Global.sharedTracer = Tracer.initialize(
             configuration: Tracer.Configuration(
@@ -117,7 +117,7 @@ public final class DatadogWrapper {
         )
     }
 
-    public func log(
+    func log(
         level: LogLevel,
         message: String,
         error: Error? = nil,
@@ -137,7 +137,7 @@ public final class DatadogWrapper {
 
 extension DatadogWrapper: RemoteLogger {
 
-    public func log(
+    func log(
         message: String,
         error: Error?,
         attributes: [String: Encodable]?,
@@ -189,7 +189,7 @@ public final class DatadogWrapper {
 
     public static let shared: DatadogWrapper? = nil
 
-    public init() {}
+    init() {}
 
     public func log(
         level: LogLevel,
@@ -200,7 +200,7 @@ public final class DatadogWrapper {
 
     public func startMonitoring() {}
 
-    public var datadogUserId: String = "NONE"
+    public let datadogUserId: String = "NONE"
 }
 #endif
 

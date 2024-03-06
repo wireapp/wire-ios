@@ -29,7 +29,7 @@ final class ExtensionBackupExcluder: BackupExcluder {
         (.libraryDirectory, ".")
     ]
 
-    static func exclude() {
+    public static func exclude() {
         do {
             try ExtensionBackupExcluder.exclude(filesToExclude: filesToExclude)
         } catch let error {

@@ -50,7 +50,7 @@ final class FolderCreationController: UIViewController {
 
     weak var delegate: FolderCreationControllerDelegate?
 
-    public init(conversation: ZMConversation, directory: ConversationDirectoryType) {
+    init(conversation: ZMConversation, directory: ConversationDirectoryType) {
         self.conversation = conversation
         self.conversationDirectory = directory
         super.init(nibName: nil, bundle: nil)
@@ -61,7 +61,7 @@ final class FolderCreationController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -75,7 +75,7 @@ final class FolderCreationController: UIViewController {
         }
     }
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         nameSection.becomeFirstResponder()
     }

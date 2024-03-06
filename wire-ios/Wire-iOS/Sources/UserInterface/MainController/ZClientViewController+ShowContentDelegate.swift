@@ -31,13 +31,13 @@ extension ZClientViewController {
         })
     }
 
-    public func showConnectionRequest(userId: UUID) {
+    func showConnectionRequest(userId: UUID) {
         let searchUserViewConroller = SearchUserViewController(userId: userId, profileViewControllerDelegate: self, userSession: userSession)
 
         wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
     }
 
-    public func showUserProfile(user: UserType) {
+    func showUserProfile(user: UserType) {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
@@ -49,7 +49,7 @@ extension ZClientViewController {
         wrapInNavigationControllerAndPresent(viewController: profileViewController)
     }
 
-    public func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {
+    func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {
         switch conversation.conversationType {
         case .connection:
             selectIncomingContactRequestsAndFocus(onView: true)
@@ -64,7 +64,7 @@ extension ZClientViewController {
         }
     }
 
-    public func showConversationList() {
+    func showConversationList() {
         transitionToList(animated: true, completion: nil)
     }
 

@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 
 extension ZMConversationMessage {
-    public func isFileDownloaded() -> Bool {
+    func isFileDownloaded() -> Bool {
         if self.fileMessageData?.fileURL != nil {
             return true
         } else {
@@ -28,7 +28,7 @@ extension ZMConversationMessage {
         }
     }
 
-    public func videoCanBeSavedToCameraRoll() -> Bool {
+    func videoCanBeSavedToCameraRoll() -> Bool {
         if self.isFileDownloaded(),
             let fileMessageData = self.fileMessageData,
             let fileURL = fileMessageData.fileURL,

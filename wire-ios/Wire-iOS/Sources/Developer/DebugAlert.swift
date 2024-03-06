@@ -170,7 +170,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         }
     }
 
-    public func mailComposeController(_ controller: MFMailComposeViewController,
+    func mailComposeController(_ controller: MFMailComposeViewController,
                                       didFinishWith result: MFMailComposeResult,
                                       error: Error?) {
         self.mailViewController = nil

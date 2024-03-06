@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
 import SwiftUI
 
 public enum FontTextStyle: String {
@@ -85,7 +83,7 @@ extension FontWeight {
         return mapping[self]!
     }
 
-    public init(weight: UIFont.Weight) {
+    init(weight: UIFont.Weight) {
         self = (type(of: self).weightMapping.filter {
             $0.value == weight
             }.first?.key) ?? FontWeight.regular
@@ -94,14 +92,14 @@ extension FontWeight {
 
 extension UIFont {
     public static func systemFont(ofSize size: CGFloat, contentSizeCategory: UIContentSizeCategory, weight: FontWeight) -> UIFont {
-        return self.systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)), weight: weight.fontWeight())
+        systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)), weight: weight.fontWeight())
     }
 }
 
 public struct FontSpec: Hashable {
     let size: FontSize
-    public let weight: FontWeight?
-    public let fontTextStyle: FontTextStyle?
+    let weight: FontWeight?
+    let fontTextStyle: FontTextStyle?
 
     /// init method of FontSpec
     ///
@@ -252,7 +250,7 @@ public enum FontScheme {
         fontsByFontSpec[FontSpec(.buttonBig, .semibold, .none)] = .systemFont(ofSize: 20, contentSizeCategory: contentSizeCategory, weight: .semibold)
     }
 
-    public static func font(for fontType: FontSpec) -> UIFont? {
+    static func font(for fontType: FontSpec) -> UIFont? {
         if FontScheme.fontsByFontSpec[fontType] == nil {
            assertionFailure("missing uifont for fontspec \(fontType), got: \(FontScheme.fontsByFontSpec)")
         }

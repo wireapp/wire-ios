@@ -281,7 +281,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         })
     }
 
-    public func recreateCellDescriptions(in context: ConversationMessageContext) {
+    func recreateCellDescriptions(in context: ConversationMessageContext) {
         self.context = context
         createCellDescriptions(in: context)
         updateDelegates()

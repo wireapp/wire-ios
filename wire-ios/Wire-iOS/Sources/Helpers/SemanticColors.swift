@@ -27,16 +27,16 @@ import SwiftUI
 ///
 ///  "<usage>.<context/role>.<state?>"
 /// The last part is optional
-public enum SemanticColors {
+enum SemanticColors {
 
-    public enum Switch {
+    enum Switch {
         static let backgroundOnStateEnabled = UIColor(light: Asset.Colors.green600Light, dark: Asset.Colors.green700Dark)
         static let backgroundOffStateEnabled = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray70)
         static let borderOnStateEnabled = UIColor(light: Asset.Colors.green600Light, dark: Asset.Colors.green500Dark)
         static let borderOffStateEnabled = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
     }
 
-    public enum Label {
+    enum Label {
         static let textDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let textDefaultWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
         static let textWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.white)
@@ -69,7 +69,7 @@ public enum SemanticColors {
         static let textCertificateVerified = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
     }
 
-    public enum SearchBar {
+    enum SearchBar {
         static let textInputView = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let textInputViewPlaceholder = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
         static let backgroundInputView = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
@@ -77,7 +77,7 @@ public enum SemanticColors {
         static let backgroundButton = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
     }
 
-    public enum Icon {
+    enum Icon {
         static let backgroundDefault = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
         static let foregroundPlainCheckMark = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let foregroundCheckMarkSelected = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
@@ -126,7 +126,7 @@ public enum SemanticColors {
         static let backgroundLegalHold = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
     }
 
-    public enum View {
+    enum View {
         static let backgroundDefault = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
         static let backgroundDefaultBlack = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let backgroundDefaultWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
@@ -174,16 +174,16 @@ public enum SemanticColors {
 
     }
 
-    public enum TabBar {
+    enum TabBar {
         static let backgroundSeperatorSelected = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let backgroundSeparator = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
     }
 
-    public enum PageIndicator {
+    enum PageIndicator {
         static let backgroundDefault = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray90)
     }
 
-    public enum Button {
+    enum Button {
         static let backgroundBarItem = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray90)
         static let backgroundSecondaryEnabled = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray95)
         static let backgroundSecondaryInConversationViewEnabled = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray100)
@@ -247,7 +247,7 @@ public enum SemanticColors {
         static let backgroundScrollToBottonEnabled = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
     }
 
-    public enum DrawingColors {
+    enum DrawingColors {
         static let black = UIColor(light: Asset.Colors.black, dark: Asset.Colors.black)
         static let white = UIColor(light: Asset.Colors.white, dark: Asset.Colors.white)
         static let blue = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Light)
@@ -277,7 +277,7 @@ extension UIColor {
     }
 }
 
-public extension UIColor {
+extension UIColor {
     var swiftUIColor: Color {
         return Color(uiColor: self)
     }

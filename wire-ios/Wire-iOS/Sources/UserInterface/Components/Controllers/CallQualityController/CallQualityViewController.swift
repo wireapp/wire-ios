@@ -287,7 +287,7 @@ final class QualityScoreSelectorView: UIView {
 
     weak var delegate: CallQualityViewControllerDelegate?
 
-    public let onScoreSet: ((Int) -> Void)
+    let onScoreSet: ((Int) -> Void)
 
     init(onScoreSet: @escaping (Int) -> Void) {
         self.onScoreSet = onScoreSet

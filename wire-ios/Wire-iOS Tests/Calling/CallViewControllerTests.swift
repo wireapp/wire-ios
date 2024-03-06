@@ -20,7 +20,7 @@ import XCTest
 @testable import Wire
 
 extension XCTestCase {
-    public func verifyDeallocation<T: AnyObject>(of instanceGenerator: () -> (T)) {
+    func verifyDeallocation<T: AnyObject>(of instanceGenerator: () -> (T)) {
         weak var weakInstance: T?
         var instance: T?
 

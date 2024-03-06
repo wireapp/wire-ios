@@ -24,7 +24,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     var certificateDetails: String = ""
     // MARK: - Properties
 
-    public var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
+    var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
 
     private let titleLabel: UILabel = {
         let label = DynamicFontLabel(

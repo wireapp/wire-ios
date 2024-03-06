@@ -110,12 +110,12 @@ final class EphemeralKeyboardViewController: UIViewController {
 
     fileprivate let timeouts: [MessageDestructionTimeoutValue?]
 
-    public let titleLabel = DynamicFontLabel(text: L10n.Localizable.Input.Ephemeral.title,
+    let titleLabel = DynamicFontLabel(text: L10n.Localizable.Input.Ephemeral.title,
                                              fontSpec: .mediumSemiboldFont,
                                              color: SemanticColors.Label.textDefault)
-    public var pickerFont: UIFont? = .normalSemiboldFont
-    public var pickerColor: UIColor? = SemanticColors.Label.textDefault
-    public var separatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
+    var pickerFont: UIFont? = .normalSemiboldFont
+    var pickerColor: UIColor? = SemanticColors.Label.textDefault
+    var separatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
 
     private let conversation: ZMConversation!
     private let picker = PickerView()
@@ -124,7 +124,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     /// Allow conversation argument is nil for testing
     ///
     /// - Parameter conversation: nil for testing only
-    public init(conversation: ZMConversation!) {
+    init(conversation: ZMConversation!) {
         self.conversation = conversation
         if Bundle.developerModeEnabled {
             timeouts = MessageDestructionTimeoutValue.all + [nil]
@@ -140,7 +140,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 
     // MARK: - Override methods
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         createConstraints()
@@ -149,7 +149,7 @@ final class EphemeralKeyboardViewController: UIViewController {
         UIAccessibility.post(notification: .layoutChanged, argument: self)
     }
 
-    public override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         let currentTimeout = conversation.messageDestructionTimeoutValue(for: .selfUser)
@@ -286,19 +286,19 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
 // MARK: - UIPickerViewDelegate & UIPickerViewDataSource
 extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 
-    public func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
+    func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
         return 35
     }
 
-    public func numberOfComponents(in pickerView: UIPickerView) -> Int {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
 
-    public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return timeouts.count
     }
 
-    public func pickerView(_ pickerView: UIPickerView,
+    func pickerView(_ pickerView: UIPickerView,
                            attributedTitleForRow row: Int,
                            forComponent component: Int) -> NSAttributedString? {
         guard let font = pickerFont, let color = pickerColor else { return nil }
@@ -310,7 +310,7 @@ extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDat
         }
     }
 
-    public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         let timeout = timeouts[row]
 
         if let actualTimeout = timeout {

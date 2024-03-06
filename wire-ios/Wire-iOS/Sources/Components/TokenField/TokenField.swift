@@ -285,7 +285,7 @@ final class TokenField: UIView {
 
         if !isCollapsed {
             textView.attributedText = string(forTokens: tokens)
-            // Calling -insertText: forces textView to update its contentSize, while other public methods do not.
+            // Calling -insertText: forces textView to update its contentSize, while other methods do not.
             // Broken contentSize leads to broken scrolling to bottom of input field.
             textView.insertText("")
 

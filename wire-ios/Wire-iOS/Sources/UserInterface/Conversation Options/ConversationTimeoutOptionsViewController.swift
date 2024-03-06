@@ -61,7 +61,7 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
 
     // MARK: - Initialization
 
-    public init(conversation: ZMConversation, userSession: ZMUserSession) {
+    init(conversation: ZMConversation, userSession: ZMUserSession) {
         self.conversation = conversation
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)

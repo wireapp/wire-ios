@@ -20,9 +20,9 @@ import UIKit
 
 // MARK: - NavigatorProtocol
 
-public typealias NavigateBackClosure = () -> Void
+typealias NavigateBackClosure = () -> Void
 
-public protocol NavigatorProtocol {
+protocol NavigatorProtocol {
     var navigationController: UINavigationController { get }
 
     func push(_ viewController: UIViewController, animated: Bool, onNavigateBack: NavigateBackClosure?)
@@ -34,7 +34,7 @@ public protocol NavigatorProtocol {
     func addNavigateBack(closure: @escaping NavigateBackClosure, for viewController: UIViewController)
 }
 
-public extension NavigatorProtocol {
+extension NavigatorProtocol {
     func push(_ viewController: UIViewController) {
         push(viewController, animated: true, onNavigateBack: nil)
     }
@@ -52,17 +52,17 @@ public extension NavigatorProtocol {
     }
 }
 
-public class Navigator: NSObject, NavigatorProtocol {
-    public let navigationController: UINavigationController
+final class Navigator: NSObject, NavigatorProtocol {
+    let navigationController: UINavigationController
     private var closures: [UIViewController: NavigateBackClosure] = [:]
 
-    public init(_ navigationController: UINavigationController) {
+    init(_ navigationController: UINavigationController) {
         self.navigationController = navigationController
         super.init()
         navigationController.delegate = self
     }
 
-    public func push(_ viewController: UIViewController,
+    func push(_ viewController: UIViewController,
                      animated: Bool,
                      onNavigateBack: NavigateBackClosure? = nil) {
         if let closure = onNavigateBack {
@@ -71,30 +71,30 @@ public class Navigator: NSObject, NavigatorProtocol {
         navigationController.pushViewController(viewController, animated: animated)
     }
 
-    public func pop(_ animated: Bool) {
+    func pop(_ animated: Bool) {
         let vc = navigationController.popViewController(animated: animated)
         vc.flatMap { runCompletion(for: $0) }
     }
 
-    public func dismiss(_ viewController: UIViewController, animated: Bool) {
+    func dismiss(_ viewController: UIViewController, animated: Bool) {
         viewController.dismiss(animated: animated, completion: { [weak self] in
             self?.runCompletion(for: viewController)
         })
     }
 
-    public func present(_ viewController: UIViewController,
+    func present(_ viewController: UIViewController,
                         animated: Bool,
                         onComplete: (() -> Void)?) {
         navigationController.present(viewController, animated: animated, completion: onComplete)
     }
 
-    public func setRoot(_ viewController: UIViewController, animated: Bool) {
+    func setRoot(_ viewController: UIViewController, animated: Bool) {
         closures.forEach { $0.value() }
         closures = [:]
         navigationController.viewControllers = [viewController]
     }
 
-    public func addNavigateBack(closure: @escaping NavigateBackClosure,
+    func addNavigateBack(closure: @escaping NavigateBackClosure,
                                 for viewController: UIViewController) {
         print("adding closure for \(viewController)")
         closures.updateValue(closure, forKey: viewController)
@@ -110,7 +110,7 @@ public class Navigator: NSObject, NavigatorProtocol {
 }
 
 extension Navigator: UINavigationControllerDelegate {
-    public func navigationController(_ navigationController: UINavigationController,
+    func navigationController(_ navigationController: UINavigationController,
                                      didShow viewController: UIViewController,
                                      animated: Bool) {
         guard
@@ -125,19 +125,19 @@ extension Navigator: UINavigationControllerDelegate {
 
 // MARK: - NoBackTitleNavigationController
 
-public final class NoBackTitleNavigationController: UINavigationController {
-    public override var viewControllers: [UIViewController] {
+final class NoBackTitleNavigationController: UINavigationController {
+    override var viewControllers: [UIViewController] {
         didSet {
             viewControllers.forEach(hideBackButton(for:))
         }
     }
 
-    public override func pushViewController(_ viewController: UIViewController, animated: Bool) {
+    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         super.pushViewController(viewController, animated: animated)
         hideBackButton(for: viewController)
     }
 
-    public override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
+    override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
         super.setViewControllers(viewControllers, animated: animated)
         viewControllers.forEach(hideBackButton(for:))
     }

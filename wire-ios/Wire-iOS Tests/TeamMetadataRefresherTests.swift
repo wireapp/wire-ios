@@ -127,7 +127,7 @@ class TeamMetadataRefresherTests: XCTestCase {
 
 extension TeamMetadataRefresherTests: SelfUserProvider {
 
-    public var providedSelfUser: UserType & ZMEditableUser {
+    var providedSelfUser: UserType & ZMEditableUser {
         return mockSelfUser
     }
 

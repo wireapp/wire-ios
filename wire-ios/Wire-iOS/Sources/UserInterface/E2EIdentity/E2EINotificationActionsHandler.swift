@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 import WireSystem
 
-public protocol E2EINotificationActions {
+protocol E2EINotificationActions {
 
     func getCertificate() async
     func updateCertificate() async
@@ -53,7 +53,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             self.targetVC = targetVC
         }
 
-    public func getCertificate() async {
+    func getCertificate() async {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
         do {
             let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
@@ -66,11 +66,11 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         }
     }
 
-    public func updateCertificate() async {
+    func updateCertificate() async {
         // TODO: [WPB-3324] update certificate
     }
 
-    public func snoozeReminder() async {
+    func snoozeReminder() async {
         guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate(),
               endOfGracePeriod.timeIntervalSinceNow > 0,
               let formattedDuration = durationFormatter.string(from: endOfGracePeriod.timeIntervalSinceNow) else {

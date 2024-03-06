@@ -28,7 +28,7 @@ final class SessionManagerLifeCycleObserver {
     private var soundEventListeners = [UUID: SoundEventListener]()
 
     // MARK: - Initialization
-    public init(sessionManager: SessionManager? = nil) {
+    init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
     }
 
