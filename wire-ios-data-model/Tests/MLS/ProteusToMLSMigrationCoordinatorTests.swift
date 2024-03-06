@@ -138,6 +138,34 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(startedMigration)
     }
 
+    func test_ItDoesntStartMigration_IfStartTimeIsNil() async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+
+        setMockValues(
+            isAPIV5Supported: true,
+            isClientSupportingMLS: true,
+            isBackendSupportingMLS: true,
+            isMLSProtocolSupported: true,
+            isMLSMigrationFeatureEnabled: true,
+            startTime: nil
+        )
+
+        mockStorage.underlyingMigrationStatus = .notStarted
+
+        var startedMigration = false
+        mockMLSService.startProteusToMLSMigration_MockMethod = {
+            startedMigration = true
+        }
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)
+        XCTAssertFalse(startedMigration)
+    }
+
     func test_UpdateMigrationStatusDoesntFetchFeaturesConfig_IfAPIV5NotSupported() async throws {
         try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isAPIV5Supported: false)
     }
@@ -380,6 +408,24 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         isMLSMigrationFeatureEnabled: Bool,
         hasStartTimeBeenReached: Bool
     ) {
+        setMockValues(
+            isAPIV5Supported: isAPIV5Supported,
+            isClientSupportingMLS: isClientSupportingMLS,
+            isBackendSupportingMLS: isBackendSupportingMLS,
+            isMLSProtocolSupported: isMLSProtocolSupported,
+            isMLSMigrationFeatureEnabled: isMLSMigrationFeatureEnabled,
+            startTime: hasStartTimeBeenReached ? .distantPast : .distantFuture
+        )
+    }
+
+    private func setMockValues(
+        isAPIV5Supported: Bool,
+        isClientSupportingMLS: Bool,
+        isBackendSupportingMLS: Bool,
+        isMLSProtocolSupported: Bool,
+        isMLSMigrationFeatureEnabled: Bool,
+        startTime: Date?
+    ) {
         // Set APIVersion
         BackendInfo.apiVersion = isAPIV5Supported ? .v5 : .v0
 
@@ -403,7 +449,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         )
 
         // Set MLS Migration feature
-        let startTime: Date = hasStartTimeBeenReached ? .distantPast : .distantFuture
         mockFeatureRepository.fetchMLSMigration_MockValue = Feature.MLSMigration(
             status: isMLSMigrationFeatureEnabled ? .enabled : .disabled,
             config: .init(startTime: startTime)
