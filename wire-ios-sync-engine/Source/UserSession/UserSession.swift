@@ -230,6 +230,10 @@ public protocol UserSession: AnyObject {
 
     func fetchAllClients()
 
+    // MARK: Use Cases
+
+    func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
+
 }
 
 extension ZMUserSession: UserSession {
@@ -498,6 +502,13 @@ extension ZMUserSession: UserSession {
             context: syncContext,
             isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
+    }
+
+    // MARK: Use Cases
+
+    public func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
+        let featureRepository = FeatureRepository(context: syncContext)
+        return GetMLSFeatureUseCase(featureRepository: featureRepository)
     }
 }
 
