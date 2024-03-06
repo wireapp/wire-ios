@@ -39,7 +39,7 @@ extension UIAlertAction {
     static func link(
         title: String,
         url: URL,
-        presenter: UIViewController
+        presenter: UIViewController?
     ) -> Self {
         return .init(
             title: title,

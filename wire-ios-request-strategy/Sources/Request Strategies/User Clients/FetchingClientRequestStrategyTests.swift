@@ -150,7 +150,7 @@ extension FetchClientRequestStrategyTests {
             self.otherUser.domain = nil
             let clientUUID = UUID()
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
-            let clientSet: Set<NSManagedObject> =  [client]
+            let clientSet: Set<NSManagedObject> = [client]
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true

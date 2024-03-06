@@ -216,7 +216,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             return
         }
 
-        let userStatus = UserStatus(user: user, isCertified: false)
+        let userStatus = UserStatus(user: user, isE2EICertified: false)
         titleLabel.attributedText = userStatus.title(
             color: LabelColors.textDefault,
             includeAvailability: selfUser.isTeamMember,

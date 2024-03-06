@@ -753,6 +753,10 @@ extension IntegrationTest: SessionManagerDelegate {
     public func sessionManagerAsksToRetryStart() {
         // no op
     }
+
+    public func sessionManagerDidCompleteInitialSync(for activeSession: WireSyncEngine.UserSession?) {
+        // no op
+    }
 }
 
 @objcMembers

@@ -125,7 +125,7 @@ public extension String {
 
     func truncated(_ maxCharacters: Int) -> String {
         let result = String(prefix(maxCharacters))
-        let fillCount =  count - result.count
+        let fillCount = count - result.count
         return result + "*".repeat(fillCount)
     }
 }

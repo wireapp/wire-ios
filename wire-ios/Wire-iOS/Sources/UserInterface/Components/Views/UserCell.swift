@@ -177,11 +177,12 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         connectingLabel.text = L10n.Localizable.Call.Status.connecting
 
         // accessoryIconView
+
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
         accessoryIconView.accessibilityIdentifier = nil
         accessoryIconView.isHidden = true
-        accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
+        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
 
         // titleLabel
@@ -296,12 +297,19 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             content += ", \(userType)"
         }
 
-        if userStatus.isCertified {
-            // TODO [WPB-765]: add accessibility label for shield after merging into `epic/e2ei`
-            // content += ", " + <?>
+        if userStatus.isE2EICertified {
+            if userIsSelfUser {
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesHaveValidCertificates
+            } else {
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allDevicesHaveValidCertificates
+            }
         }
-        if userStatus.isVerified {
-            content += ", " + ClientsList.DeviceVerified.description
+        if userStatus.isProteusVerified {
+            if userIsSelfUser {
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesProteusVerified
+            } else {
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allDevicesProteusVerified
+            }
         }
 
         if !microphoneIconView.isHidden {
@@ -346,7 +354,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         titleLabel.attributedText = userStatus.title(
             color: SemanticColors.Label.textDefault,
             includeAvailability: isSelfUserPartOfATeam,
-            includeVerificationStatus: isSelfUserPartOfATeam,
+            includeVerificationStatus: true,
             appendYouSuffix: userIsSelfUser
         )
     }
@@ -401,13 +409,13 @@ extension UserCell {
     @available(*, deprecated, message: "Use `configure(userStatus:userIsSelfUser:isSelfUserPartOfATeam:subtitle:conversation:) instead!")
     func configure(
         user: UserType,
-        isCertified: Bool = false, // Just use `false` when the verification status is not needed
+        isE2EICertified: Bool = false, // Use `false` when the verification status is not needed
         isSelfUserPartOfATeam: Bool,
         subtitle overrideSubtitle: NSAttributedString? = nil,
         conversation: GroupDetailsConversationType? = nil
     ) {
         configure(
-            userStatus: .init(user: user, isCertified: isCertified),
+            userStatus: .init(user: user, isE2EICertified: isE2EICertified),
             user: user,
             userIsSelfUser: user.isSelfUser,
             isSelfUserPartOfATeam: isSelfUserPartOfATeam,
