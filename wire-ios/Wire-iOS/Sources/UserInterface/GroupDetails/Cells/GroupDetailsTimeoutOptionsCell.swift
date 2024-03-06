@@ -28,10 +28,8 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
         title = L10n.Localizable.GroupDetails.TimeoutOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
+        icon = Asset.Images.selfDeletingMessages.image.withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
-        guard let iconColor = iconColor else { return }
-        icon = StyleKitIcon.hourglass.makeImage(size: .tiny,
-                                                color: iconColor).withRenderingMode(.alwaysTemplate)
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
