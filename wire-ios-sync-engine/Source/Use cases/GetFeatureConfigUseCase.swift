@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 
+// sourcery: AutoMockable
 public protocol GetMLSFeatureUseCaseProtocol {
     func invoke() -> Feature.MLS
     func invoke() async -> Feature.MLS
