@@ -22,7 +22,7 @@ class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
 
     var encryptionProtocol: String {
         get {
-            return label.text ?? EncryptionProtocol.proteus.rawValue
+            return label.text ?? "" // TODO: [WPB-6205] use localized string? before: EncryptionProtocol.proteus.rawValue
         }
 
         set {

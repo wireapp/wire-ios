@@ -134,9 +134,15 @@ final class ConversationCreationController: UIViewController {
         preSelectedParticipants: UserSet?,
         userSession: UserSession
     ) {
-        self.userSession = userSession
-        self.values = ConversationCreationValues(selfUser: userSession.selfUser)
         self.preSelectedParticipants = preSelectedParticipants
+        self.userSession = userSession
+
+        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
+        self.values = ConversationCreationValues(
+            encryptionProtocol: mlsFeature.config.defaultProtocol,
+            selfUser: userSession.selfUser
+        )
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -295,22 +301,24 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 .union([userSession.selfUser])
                 .materialize(in: userSession.viewContext)
 
+            let messageProtocol: MessageProtocol = values.encryptionProtocol == .mls ? .mls : .proteus
+
             service.createGroupConversation(
                 name: values.name,
                 users: Set(users),
                 allowGuests: values.allowGuests,
                 allowServices: values.allowServices,
                 enableReceipts: values.enableReceipts,
-                messageProtocol: values.encryptionProtocol == .proteus ? .proteus : .mls
-            ) { [weak self] in
-                guard let self = self else {
+                messageProtocol: messageProtocol
+            ) { [weak self] result in
+                guard let self else {
                     assertionFailure("expect ConversationCreationController not to be <nil>")
                     return
                 }
 
                 addParticipantsViewController.setLoadingView(isVisible: false)
 
-                switch $0 {
+                switch result {
                 case .success(let conversation):
                     delegate?.conversationCreationController(
                         self,
@@ -465,7 +473,7 @@ extension ConversationCreationController {
 
 extension ConversationCreationController {
 
-    func presentEncryptionProtocolPicker(_ completion: @escaping (EncryptionProtocol) -> Void) {
+    func presentEncryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) {
         let alertViewController = encryptionProtocolPicker { type in
             completion(type)
         }
@@ -474,23 +482,32 @@ extension ConversationCreationController {
         present(alertViewController, animated: true)
     }
 
-    func encryptionProtocolPicker(_ completion: @escaping (EncryptionProtocol) -> Void) -> UIAlertController {
-        let alert = UIAlertController(title: L10n.Localizable.Conversation.Create.Mls.pickerTitle, message: nil, preferredStyle: .actionSheet)
+    func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) -> UIAlertController {
+        let alert = UIAlertController(
+            title: L10n.Localizable.Conversation.Create.Mls.pickerTitle,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
 
-        for encryptionProtocol in EncryptionProtocol.allCases {
-            alert.addAction(UIAlertAction(title: encryptionProtocol.rawValue, style: .default, handler: { _ in
-                completion(encryptionProtocol)
-            }))
-        }
+        // TODO: [WPB-6205] localize title?
+        alert.addAction(UIAlertAction(title: "Proteus (default)", style: .default, handler: { _ in
+            completion(.proteus)
+        }))
 
-        alert.popoverPresentationController?.permittedArrowDirections = [ .up, .down ]
-        alert.addAction(UIAlertAction(title: L10n.Localizable.Conversation.Create.Mls.cancel, style: .cancel, handler: nil))
+        // TODO: [WPB-6205] localize title?
+        alert.addAction(UIAlertAction(title: "MLS", style: .default, handler: { _ in
+            completion(.mls)
+        }))
+
+        alert.popoverPresentationController?.permittedArrowDirections = [
+            .up,
+            .down
+        ]
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.Conversation.Create.Mls.cancel,
+            style: .cancel
+        ))
 
         return alert
     }
-}
-
-enum EncryptionProtocol: String, CaseIterable {
-    case proteus = "Proteus (default)"
-    case mls = "MLS"
 }
