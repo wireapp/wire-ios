@@ -138,6 +138,18 @@ private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
         // no op
     }
 
+    func sessionManagerWillUpdateCertificate() {
+        // no-op
+    }
+
+    func sessionManagerWillEnrollCertificate() {
+        // no-op
+    }
+
+    func sessionManagerDidUpdateCertificate(for activeSession: UserSession?) {
+        // no-op
+    }
+
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         // no op
     }

@@ -731,6 +731,18 @@ extension IntegrationTest: SessionManagerDelegate {
         // no-op
     }
 
+    public func sessionManagerWillUpdateCertificate() {
+        // no-op
+    }
+
+    public func sessionManagerWillEnrollCertificate() {
+        // no-op
+    }
+
+    public func sessionManagerDidUpdateCertificate(for activeSession: UserSession?) {
+        // no-op
+    }
+
     public func sessionManagerDidFailToLoadDatabase(error: Error) {
         // no-op
     }
