@@ -22,7 +22,8 @@ class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
 
     var encryptionProtocol: String {
         get {
-            return label.text ?? "" // TODO: [WPB-6205] use localized string? before: EncryptionProtocol.proteus.rawValue
+            // TODO: [WPB-6205] is this always proteus or can it be influenced by Feature.MLS.Config default protocol?
+            return label.text ?? L10n.Localizable.Conversation.Create.ProtocolSelection.proteus
         }
 
         set {
