@@ -85,9 +85,8 @@ class LegacyButton: ButtonWithLargerHitArea {
 
     var textTransform: TextTransform = .none {
         didSet {
-            for(state, title) in originalTitles {
-                let state = UIControl.State(rawValue: state)
-                setTitle(title, for: state)
+            for (state, title) in originalTitles {
+                setTitle(title, for: .init(rawValue: state))
             }
         }
     }

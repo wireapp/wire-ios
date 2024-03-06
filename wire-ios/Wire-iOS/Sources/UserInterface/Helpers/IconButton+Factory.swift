@@ -78,13 +78,11 @@ extension IconButton {
         translatesAutoresizingMaskIntoConstraints = false
 
         for (state, color) in backgroundColor {
-            let state = UIControl.State(rawValue: state)
-            setBackgroundImageColor(color, for: state)
+            setBackgroundImageColor(color, for: .init(rawValue: state))
         }
 
         for (state, color) in iconColor {
-            let state = UIControl.State(rawValue: state)
-            setIconColor(color, for: state)
+            setIconColor(color, for: .init(rawValue: state))
         }
 
         borderWidth = 0
