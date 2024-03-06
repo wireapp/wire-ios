@@ -22,7 +22,7 @@ import SnapshotTesting
 import UIKit
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
-private let precision: Float  = 1
+private let precision: Float = 1
 private let perceptualPrecision: Float = 1
 
 extension ViewImageConfig: Hashable {
@@ -113,6 +113,8 @@ extension XCTestCase {
                         widths: Set<CGFloat>,
                         snapshotBackgroundColor: UIColor,
                         configuration: ((UIView) -> Swift.Void)? = nil,
+                        precision: Float? = nil,
+                        perceptualPrecision: Float? = nil,
                         named name: String? = nil,
                         file: StaticString = #file,
                         testName: String = #function,
@@ -128,6 +130,8 @@ extension XCTestCase {
 
             verifyWithWidthInName(matching: container,
                                   width: width,
+                                  precision: precision,
+                                  perceptualPrecision: perceptualPrecision,
                                   named: name,
                                   file: file,
                                   testName: testName,
@@ -137,6 +141,8 @@ extension XCTestCase {
 
     private func verifyWithWidthInName(matching value: UIView,
                                        width: CGFloat,
+                                       precision: Float? = nil,
+                                       perceptualPrecision: Float? = nil,
                                        named name: String? = nil,
                                        file: StaticString = #file,
                                        testName: String = #function,
@@ -150,6 +156,8 @@ extension XCTestCase {
 
         verify(matching: value,
                named: nameWithProperty,
+               precision: precision ?? 1,
+               perceptualPrecision: perceptualPrecision ?? 1,
                file: file,
                testName: testName,
                line: line)
@@ -175,6 +183,8 @@ extension XCTestCase {
 
     func verifyInAllPhoneWidths(matching value: UIView,
                                 snapshotBackgroundColor: UIColor? = nil,
+                                precision: Float? = nil,
+                                perceptualPrecision: Float? = nil,
                                 configuration: ((UIView) -> Swift.Void)? = nil,
                                 named name: String? = nil,
                                 file: StaticString = #file,
@@ -184,6 +194,8 @@ extension XCTestCase {
                        widths: phoneWidths(),
                        snapshotBackgroundColor: snapshotBackgroundColor ?? (ColorScheme.default.variant == .light ? .white : .black),
                        configuration: configuration,
+                       precision: precision,
+                       perceptualPrecision: perceptualPrecision,
                        named: name,
                        file: file,
                        testName: testName,

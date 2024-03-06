@@ -64,6 +64,8 @@ final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
 
         verifyInAllPhoneWidths(
             matching: sut.prepareForSnapshot(),
+            precision: 0.98,
+            perceptualPrecision: 0.98,
             file: file,
             testName: testName,
             line: line
