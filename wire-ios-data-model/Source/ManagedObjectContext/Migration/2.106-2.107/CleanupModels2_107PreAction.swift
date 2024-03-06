@@ -51,7 +51,7 @@ class CleanupModels2_107PreAction: CoreDataMigrationAction {
 
         let duplicates: [String: [NSManagedObject]] = context.findDuplicated(
             entityName: UserClient.entityName(),
-            by: ZMUserClientRemoteIdentifierKey
+            by: #keyPath(UserClient.remoteIdentifier)
         )
 
         WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate clients", attributes: .safePublic)
