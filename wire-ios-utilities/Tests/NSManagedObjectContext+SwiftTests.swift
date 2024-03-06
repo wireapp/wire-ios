@@ -81,8 +81,13 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
         XCTAssertNil(result)
     }
 
-    func testThatItReturnsNonOptionalValue_Throwing() {
+    func testThatItReturnsNonOptionalValue_Throwing() throws {
         // given
+        let expectation = self.expectation(description: "wait for group to be left on error")
+        let group = try XCTUnwrap(sut.dispatchGroup)
+        group.notify(on: DispatchQueue.main) {
+            expectation.fulfill()
+        }
         let closure: () throws -> Int = {
             throw TestError()
         }
@@ -97,6 +102,8 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
             // then
             XCTAssert(error is TestError)
         }
+
+        wait(for: [expectation])
     }
 
     func testThatItReturnsOptionalValue_Throwing() {
