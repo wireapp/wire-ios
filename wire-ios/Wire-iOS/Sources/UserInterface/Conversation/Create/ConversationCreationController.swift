@@ -483,30 +483,39 @@ extension ConversationCreationController {
     }
 
     func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) -> UIAlertController {
+        typealias Localizable = L10n.Localizable.Conversation.Create
+
+        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
+        let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection.proteusDefault : Localizable.ProtocolSelection.proteus
+        let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable.ProtocolSelection.mls
+
         let alert = UIAlertController(
-            title: L10n.Localizable.Conversation.Create.Mls.pickerTitle,
+            title: Localizable.Mls.pickerTitle,
             message: nil,
             preferredStyle: .actionSheet
         )
-
-        // TODO: [WPB-6205] localize title?
-        alert.addAction(UIAlertAction(title: "Proteus (default)", style: .default, handler: { _ in
-            completion(.proteus)
-        }))
-
-        // TODO: [WPB-6205] localize title?
-        alert.addAction(UIAlertAction(title: "MLS", style: .default, handler: { _ in
-            completion(.mls)
-        }))
-
+        alert.addAction(UIAlertAction(
+            title: proteus,
+            style: .default,
+            handler: { _ in
+                completion(.proteus)
+            }
+        ))
+        alert.addAction(UIAlertAction(
+            title: mls,
+            style: .default,
+            handler: { _ in
+                completion(.mls)
+            }
+        ))
+        alert.addAction(UIAlertAction(
+            title: Localizable.Mls.cancel,
+            style: .cancel
+        ))
         alert.popoverPresentationController?.permittedArrowDirections = [
             .up,
             .down
         ]
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.Conversation.Create.Mls.cancel,
-            style: .cancel
-        ))
 
         return alert
     }
