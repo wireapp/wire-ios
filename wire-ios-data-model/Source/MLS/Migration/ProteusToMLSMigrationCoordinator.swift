@@ -175,7 +175,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return .cannotStart(reason: .mlsMigrationIsNotEnabled)
         }
 
-        if features.mlsMigration.config.startTime > .now {
+        if let startTime = features.mlsMigration.config.startTime, startTime.isInThePast {
             return .cannotStart(reason: .startTimeHasNotBeenReached)
         }
 
