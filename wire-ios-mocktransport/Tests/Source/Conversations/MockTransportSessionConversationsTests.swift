@@ -429,7 +429,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         XCTAssertEqual(sut.generatedPushEvents.count, previousNotificationCount + 3)
         if sut.generatedPushEvents.count > 4 {
-            let otrEvents = sut.generatedPushEvents.subarray(with: NSRange(location: sut.generatedPushEvents.count-3, length: 3)) as! [MockPushEvent]
+            let otrEvents = sut.generatedPushEvents.subarray(with: NSRange(location: sut.generatedPushEvents.count - 3, length: 3)) as! [MockPushEvent]
 
             for event in otrEvents {
                 let eventPayload = event.payload.asDictionary()

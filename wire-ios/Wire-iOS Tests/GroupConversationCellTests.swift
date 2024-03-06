@@ -93,7 +93,7 @@ final class GroupConversationCellTests: XCTestCase {
         let groupConversation = createGroupConversation()
 
         // WHEN
-        groupConversation.displayName  = "Loooooooooooooooooooooooooong name"
+        groupConversation.displayName = "Loooooooooooooooooooooooooong name"
 
         // THEN
         verify(conversation: groupConversation)

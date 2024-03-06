@@ -41,7 +41,7 @@ final class IncomingConnectionView: UIView {
     private let ignoreButton = Button(style: .secondaryTextButtonStyle,
                                       cornerRadius: 16,
                                       fontSpec: .normalSemiboldFont)
-    private let classificationProvider: ClassificationProviding?
+    private let classificationProvider: SecurityClassificationProviding?
 
     var user: UserType {
         didSet {
@@ -57,7 +57,7 @@ final class IncomingConnectionView: UIView {
 
     init(
         user: UserType,
-        classificationProvider: ClassificationProviding? = ZMUserSession.shared()
+        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared()
     ) {
         self.user = user
         self.classificationProvider = classificationProvider

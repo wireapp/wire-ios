@@ -131,7 +131,7 @@ extension AVAsset {
                         continue
                     }
 
-                    let i16bufptr = UnsafeBufferPointer(start: data.assumingMemoryBound(to: Int16.self), count: Int(buffer.mDataByteSize)/Int(MemoryLayout<Int16>.size))
+                    let i16bufptr = UnsafeBufferPointer(start: data.assumingMemoryBound(to: Int16.self), count: Int(buffer.mDataByteSize) / Int(MemoryLayout<Int16>.size))
 
                     for sample in Array(i16bufptr) {
                         sampleSkipCounter += 1

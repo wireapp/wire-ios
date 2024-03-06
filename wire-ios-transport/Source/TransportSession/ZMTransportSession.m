@@ -42,7 +42,6 @@
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
-NSString * const ZMTransportSessionNewRequestAvailableNotification = @"ZMTransportSessionNewRequestAvailable";
 NSString * const ZMTransportSessionReachabilityIsEnabled = @"ZMTransportSessionReachabilityIsEnabled";
 
 static NSString * const TaskTimerKey = @"task";
@@ -511,8 +510,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 + (void)notifyNewRequestsAvailable:(id<NSObject>)sender
 {
-    NOT_USED(sender);
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionNewRequestAvailableNotification object:self];
+    [ZMRequestAvailableNotification notifyNewRequestsAvailable:sender];
 }
 
 - (ZMTransportResponse *)transportResponseFromURLResponse:(NSURLResponse *)URLResponse data:(NSData *)data error:(NSError *)error apiVersion:(int)apiVersion;

@@ -34,7 +34,7 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        XCTAssertEqual(conversation?.allMessages.count, messageCount+1)
+        XCTAssertEqual(conversation?.allMessages.count, messageCount + 1)
         let receivedMessage = conversation?.lastMessage as? ZMClientMessage
         XCTAssertEqual(receivedMessage?.textMessageData?.messageText, "Foo")
         guard let messageNonce = receivedMessage?.nonce else {
@@ -53,7 +53,7 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // THEN
-        XCTAssertEqual(conversation?.allMessages.count, messageCount+1)
+        XCTAssertEqual(conversation?.allMessages.count, messageCount + 1)
         let editedMessage = conversation?.lastMessage as? ZMClientMessage
         XCTAssertEqual(editedMessage?.textMessageData?.messageText, "Bar")
     }

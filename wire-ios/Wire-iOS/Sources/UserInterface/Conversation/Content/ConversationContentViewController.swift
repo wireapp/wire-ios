@@ -47,10 +47,13 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     /// It appears when the user has scrolled up past a certain point in the conversation.
     lazy var scrollToBottomButton: Button = {
         let button = Button(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
-        let image = Asset.Images.downArrow.image.withTintColor(SemanticColors.Icon.foregroundDefaultWhite)
+        let icon = Asset.Images.downArrow.image
 
-        button.setImage(image, for: .normal)
-        button.setImage(image, for: .highlighted)
+        button.setImage(icon, for: .normal)
+        button.setImage(icon, for: .highlighted)
+
+        button.tintColor = SemanticColors.Icon.foregroundDefaultWhite
+
         button.translatesAutoresizingMaskIntoConstraints = false
 
         button.accessibilityLabel = L10n.Accessibility.Conversation.ScrollToBottomButton.description

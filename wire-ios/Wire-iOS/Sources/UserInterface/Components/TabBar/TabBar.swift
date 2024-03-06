@@ -176,7 +176,7 @@ final class TabBar: UIView {
     @objc func itemSelected(_ sender: AnyObject) {
         guard
             let tab = sender as? Tab,
-            let selectedIndex =  self.tabs.firstIndex(of: tab)
+            let selectedIndex = self.tabs.firstIndex(of: tab)
         else {
             return
         }

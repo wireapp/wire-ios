@@ -146,7 +146,7 @@ class PopUpIconButtonView: UIView {
         // BL corner
         point.x += smallRadius
         path.addArc(withCenter: point, radius: smallRadius,
-                    startAngle: .pi, endAngle: .pi*0.5, clockwise: false)
+                    startAngle: .pi, endAngle: .pi * 0.5, clockwise: false)
 
         // line to BR corner
         point.x += lowerRect.width - 2 * smallRadius

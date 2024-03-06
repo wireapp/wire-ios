@@ -23,7 +23,7 @@ class ConversationStatusStrategyTests: MessagingTest {
     override func setUp() {
         super.setUp()
         syncMOC.performAndWait {
-            let syncSelfUser =  ZMUser.selfUser(in: self.syncMOC)
+            let syncSelfUser = ZMUser.selfUser(in: self.syncMOC)
             syncSelfUser.remoteIdentifier = UUID.create()
             selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
             selfConversation.remoteIdentifier = syncSelfUser.remoteIdentifier

@@ -53,7 +53,7 @@ class CallingActionsView: UIView {
     private let cameraButton = CallingActionButton.cameraButton()
     private let speakerButton = CallingActionButton.speakerButton()
     private let flipCameraButton = CallingActionButton.flipCameraButton()
-    private let endCallButton =  EndCallButton.endCallButton()
+    private let endCallButton = EndCallButton.endCallButton()
     private let handleView = AccessibilityActionView()
     private let handleContainerView = UIView()
     private let largePickUpButton = PickUpButton.bigPickUpButton()

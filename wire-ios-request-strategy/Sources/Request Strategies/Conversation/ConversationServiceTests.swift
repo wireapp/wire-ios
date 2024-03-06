@@ -295,8 +295,12 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForWith_MockMethod = { _, _ in
+        mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
             // no op
+        }
+
+        let selfUserSync = syncMOC.performAndWait {
+            ZMUser.selfUser(in: syncMOC)
         }
 
         let user1Sync = try syncMOC.performAndWait {
@@ -335,16 +339,16 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(mockActionHandler.performedActions.count, 1)
 
         // Then we created the mls group once with no users.
-        let createGroupCalls = mlsService.createGroupForWith_Invocations
+        let createGroupCalls = mlsService.createGroupForParentGroupID_Invocations
         XCTAssertEqual(createGroupCalls.count, 1)
         XCTAssertEqual(createGroupCalls.first?.groupID, groupID)
-        XCTAssertEqual(createGroupCalls.first?.users, [])
+        XCTAssertEqual(createGroupCalls.first?.parentGroupID, nil)
 
         // Then we only added the user.
         let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
         XCTAssertEqual(addParticipantCalls.count, 1)
         XCTAssertEqual(addParticipantCalls.first?.conversation, groupConversation)
-        XCTAssertEqual(addParticipantCalls.first?.users, [user1Sync])
+        XCTAssertEqual(addParticipantCalls.first?.users, [user1Sync, selfUserSync])
     }
 
     func test_CreateGroupConversation_CreatesMLSGroup_WithOnlyReachableUsers() throws {
@@ -371,8 +375,12 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForWith_MockMethod = { _, _ in
+        mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
             // no op
+        }
+
+        let selfUserSync = syncMOC.performAndWait {
+            ZMUser.selfUser(in: syncMOC)
         }
 
         let user1Sync = try syncMOC.performAndWait {
@@ -410,17 +418,17 @@ final class ConversationServiceTests: MessagingTestBase {
         // Then we tried to create the group twice.
         XCTAssertEqual(mockActionHandler.performedActions.count, 2)
 
-        // Then we created the mls group once with no users.
-        let createGroupCalls = mlsService.createGroupForWith_Invocations
+        // Then we created the mls group
+        let createGroupCalls = mlsService.createGroupForParentGroupID_Invocations
         XCTAssertEqual(createGroupCalls.count, 1)
         XCTAssertEqual(createGroupCalls.first?.groupID, groupID)
-        XCTAssertEqual(createGroupCalls.first?.users, [])
+        XCTAssertEqual(createGroupCalls.first?.parentGroupID, nil)
 
         // Then we only added the reachable user.
         let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
         XCTAssertEqual(addParticipantCalls.count, 1)
         XCTAssertEqual(addParticipantCalls.first?.conversation, groupConversation)
-        XCTAssertEqual(addParticipantCalls.first?.users, [user1Sync])
+        XCTAssertEqual(addParticipantCalls.first?.users, [user1Sync, selfUserSync])
     }
 
     func test_CreateGroupConversation_WithUsersWithNoPackages_IsSuccessful() {
@@ -449,8 +457,7 @@ final class ConversationServiceTests: MessagingTestBase {
         }
 
         let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForWith_MockMethod = { groupId, users in
-            XCTAssertTrue(users.isEmpty)
+        mlsService.createGroupForParentGroupID_MockMethod = { groupId, _ in
             self.syncMOC.performAndWait {
                 XCTAssertEqual(groupId, self.groupConversation.mlsGroupID)
             }

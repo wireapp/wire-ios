@@ -120,7 +120,7 @@ extension ArticleMetadata {
 
 extension FoursquareLocationMetadata {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
-        guard openGraphData.type  == OpenGraphTypeType.foursquare.rawValue && openGraphData.siteName == .foursquare else { return nil }
+        guard openGraphData.type == OpenGraphTypeType.foursquare.rawValue && openGraphData.siteName == .foursquare else { return nil }
 
         self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
         title = openGraphData.title

@@ -49,7 +49,7 @@ final class ConversationImageMessageCell: UIView,
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
 
-    var containerColor: UIColor? =  SemanticColors.View.backgroundCollectionCell
+    var containerColor: UIColor? = SemanticColors.View.backgroundCollectionCell
     var containerHeightConstraint: NSLayoutConstraint!
 
     weak var message: ZMConversationMessage?
@@ -115,7 +115,7 @@ final class ConversationImageMessageCell: UIView,
         aspectConstraint.apply({ containerView.removeConstraint($0) })
         let isRestricted = (!object.message.canBeShared && !object.isObfuscated)
         aspectConstraint = containerView.heightAnchor.constraint(equalTo: containerView.widthAnchor,
-                                                                 multiplier: !isRestricted ? imageAspectRatio : 9/16)
+                                                                 multiplier: !isRestricted ? imageAspectRatio : 9 / 16)
         aspectConstraint?.isActive = true
         widthConstraint?.constant = imageSize.width
         heightConstraint?.constant = imageSize.height

@@ -24,7 +24,13 @@ public protocol OneOnOneProtocolSelectorInterface {
     func getProtocolForUser(
         with id: QualifiedID,
         in context: NSManagedObjectContext
-    ) async -> MessageProtocol?
+    ) async throws -> MessageProtocol?
+
+}
+
+public enum OneOnOneProtocolSelectorError: Error {
+
+    case userNotFound
 
 }
 
@@ -35,14 +41,24 @@ public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
     public func getProtocolForUser(
         with id: QualifiedID,
         in context: NSManagedObjectContext
-    ) async -> MessageProtocol? {
+    ) async throws -> MessageProtocol? {
 
-        let commonProtocols = await context.perform {
+        let commonProtocols = try await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
-            let otherUser = ZMUser.fetch(with: id, in: context)
-
             let selfProtocols = selfUser.supportedProtocols
-            let otherProtocols = otherUser?.supportedProtocols ?? []
+
+            guard let otherUser = ZMUser.fetch(with: id, in: context) else {
+                throw OneOnOneProtocolSelectorError.userNotFound
+            }
+
+            var otherProtocols = otherUser.supportedProtocols
+
+            if otherProtocols.isEmpty {
+                // If other users haven't pushed their supported protocols yet,
+                // (maybe because they're on old versions of the app), then we
+                // assume they support proteus.
+                otherProtocols.insert(.proteus)
+            }
 
             return selfProtocols.intersection(otherProtocols)
         }

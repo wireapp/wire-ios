@@ -31,7 +31,7 @@ final class WireLogoInfoView: UIView {
     let progressContainerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 40
-        view.backgroundColor = UIColor(red: 50/255, green: 54/255, blue: 57/255, alpha: 1)
+        view.backgroundColor = UIColor(red: 50 / 255, green: 54 / 255, blue: 57 / 255, alpha: 1)
         view.layer.shadowOffset = .zero
         view.layer.shadowRadius = 5
         view.layer.shadowOpacity = 0.29

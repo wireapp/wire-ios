@@ -21,6 +21,18 @@ import XCTest
 
 final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnapshotTestCase {
 
+    // MARK: MLS Verification
+
+    func test_mlsConversationVerified() {
+        let message = makeMessage(messageType: .conversationIsVerified)
+        verify(message: message)
+    }
+
+    func test_mlsConversationDegraded() {
+        let message = makeMessage(messageType: .conversationIsDegraded)
+        verify(message: message)
+    }
+
     // MARK: MLS Migration
 
     func test_mlsMigrationFinalized() {

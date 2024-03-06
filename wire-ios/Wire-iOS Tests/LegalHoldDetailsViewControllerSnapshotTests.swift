@@ -68,7 +68,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         conversation.sortedActiveParticipantsUserTypes = [selfUser]
 
         // WHEN
-        let sut =  setUpLegalHoldDetailsViewController(conversation: conversation)
+        let sut = setUpLegalHoldDetailsViewController(conversation: conversation)
 
         // THEN
         verifyInAllColorSchemes(createSut: sut)

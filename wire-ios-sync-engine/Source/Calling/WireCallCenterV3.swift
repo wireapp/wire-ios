@@ -84,7 +84,7 @@ public class WireCallCenterV3: NSObject {
     var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
 
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
-    var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)]  = []
+    var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)] = []
 
     /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to AVS.
     var isReady: Bool = false {
@@ -933,14 +933,18 @@ extension WireCallCenterV3 {
     }
 
     private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
+        return conversationType(from: callEvent.conversationId)
+    }
+
+    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
         guard let context = uiMOC else { return nil }
 
         var conversationType: AVSConversationType?
 
         context.performAndWait {
             let conversation = ZMConversation.fetch(
-                with: callEvent.conversationId.identifier,
-                domain: callEvent.conversationId.domain,
+                with: conversationId.identifier,
+                domain: conversationId.domain,
                 in: context
             )
 
@@ -948,6 +952,51 @@ extension WireCallCenterV3 {
         }
 
         return conversationType
+    }
+
+    /// Set MLSConferenceInfo to AVSWrapper in case this is a MLS conference
+    func setMLSConferenceInfoIfNeeded(for conversationId: AVSIdentifier) {
+        Task {
+            guard let syncContext = await self.uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
+
+            let result: (MLSServiceInterface?, QualifiedID?, MLSGroupID?) = await syncContext.perform {
+                let conversation = ZMConversation.fetch(
+                    with: conversationId.identifier,
+                    domain: conversationId.domain,
+                    in: syncContext
+                )
+                guard let conversation, conversation.avsConversationType == .mlsConference else {
+                    return (nil, nil, nil)
+                }
+                return (syncContext.mlsService,
+                        conversation.qualifiedID,
+                        conversation.mlsGroupID)
+            }
+
+            guard
+                let mlsService = result.0,
+                let parentQualifiedID = result.1,
+                let parentGroupID = result.2
+            else {
+                return
+            }
+
+            do {
+                let subgroupID = try await mlsService.createOrJoinSubgroup(
+                    parentQualifiedID: parentQualifiedID,
+                    parentID: parentGroupID
+                )
+
+                let conferenceInfo = try await mlsService.generateConferenceInfo(
+                    parentGroupID: parentGroupID,
+                    subconversationGroupID: subgroupID
+                )
+
+                self.avsWrapper.setMLSConferenceInfo(conversationId: conversationId, info: conferenceInfo)
+            } catch {
+                WireLogger.mls.error("error while setMLSConferenceInfo: \(error.localizedDescription)")
+            }
+        }
     }
 
     /// Handles a change in calling state.

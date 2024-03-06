@@ -85,8 +85,8 @@ class LegacyButton: ButtonWithLargerHitArea {
 
     var textTransform: TextTransform = .none {
         didSet {
-            for(state, title) in originalTitles {
-                setTitle(title, for: state)
+            for (state, title) in originalTitles {
+                setTitle(title, for: .init(rawValue: state))
             }
         }
     }
@@ -99,9 +99,9 @@ class LegacyButton: ButtonWithLargerHitArea {
 
     private(set) var variant: ColorSchemeVariant = ColorScheme.default.variant
 
-    private var originalTitles: [UIControl.State: String] = [:]
+    private var originalTitles: [UIControl.State.RawValue: String] = [:]
 
-    private var borderColorByState: [UIControl.State: UIColor] = [:]
+    private var borderColorByState: [UIControl.State.RawValue: UIColor] = [:]
 
     override init(fontSpec: FontSpec = .normalRegularFont) {
         super.init(fontSpec: fontSpec)
@@ -180,7 +180,7 @@ class LegacyButton: ButtonWithLargerHitArea {
     }
 
     func borderColor(for state: UIControl.State) -> UIColor? {
-        return borderColorByState[state] ?? borderColorByState[.normal]
+        return borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
     private func updateBorderColor() {
@@ -228,9 +228,9 @@ class LegacyButton: ButtonWithLargerHitArea {
         var title = title
         state.expanded.forEach { expandedState in
             if title != nil {
-                originalTitles[expandedState] = title
+                originalTitles[expandedState.rawValue] = title
             } else {
-                originalTitles[expandedState] = nil
+                originalTitles[expandedState.rawValue] = nil
             }
         }
 
@@ -244,7 +244,7 @@ class LegacyButton: ButtonWithLargerHitArea {
     func setBorderColor(_ color: UIColor?, for state: UIControl.State) {
         state.expanded.forEach { expandedState in
             if color != nil {
-                borderColorByState[expandedState] = color
+                borderColorByState[expandedState.rawValue] = color
             }
         }
 

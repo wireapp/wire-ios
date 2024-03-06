@@ -391,18 +391,27 @@ public final class AVSWrapper: AVSWrapperType {
         }
     }
 
-    private let requestClientsHandler: Handler.RequestClients = { handle, conversationIdRef, contextRef in
+    private let requestClientsHandler: Handler.RequestClients = { handle, conversationIdRef, contextRef in // thread 11
         AVSWrapper.withCallCenter(contextRef, conversationIdRef) { (callCenter, conversationId: String) in
-            let completion: (String) -> Void = { (clients: String) in
-                wcall_set_clients_for_conv(handle, conversationIdRef, clients)
-            }
 
-            // This handler is called once per call, but the participants may be added or removed from the
-            // conversation during this time. Therefore we store the completion so that it can be re-invoked
-            // with an updated client list.
             let conversationId = AVSIdentifier.from(string: conversationId)
-            callCenter.clientsRequestCompletionsByConversationId[conversationId] = completion
-            callCenter.handleClientsRequest(conversationId: conversationId, completion: completion)
+            let isMLSConference = callCenter.conversationType(from: conversationId) == .mlsConference
+
+            if isMLSConference {
+                callCenter.setMLSConferenceInfoIfNeeded(for: conversationId)
+            } else {
+
+                // This handler is called once per call, but the participants may be added or removed from the
+                // conversation during this time. Therefore we store the completion so that it can be re-invoked
+                // with an updated client list.
+                let completion: (String) -> Void = { (clients: String) in
+                    wcall_set_clients_for_conv(handle, conversationIdRef, clients)
+                }
+
+                callCenter.clientsRequestCompletionsByConversationId[conversationId] = completion
+                callCenter.handleClientsRequest(conversationId: conversationId, completion: completion)
+
+            }
         }
     }
 

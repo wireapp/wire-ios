@@ -24,7 +24,7 @@ protocol CallStatusViewInputType: CallTypeProvider, CBRSettingProvider {
     var state: CallStatusViewState { get }
     var isConstantBitRate: Bool { get }
     var title: String { get }
-    var classification: SecurityClassification { get }
+    var classification: SecurityClassification? { get }
 }
 
 protocol CallTypeProvider {

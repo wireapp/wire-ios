@@ -30,11 +30,11 @@ public struct OAuthParameters {
 public struct OAuthResponse {
 
     let idToken: String
-    let refreshToken: String
+    let refreshToken: String?
 
     public init(
         idToken: String,
-        refreshToken: String) {
+        refreshToken: String?) {
             self.idToken = idToken
             self.refreshToken = refreshToken
         }
@@ -138,8 +138,6 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             clientId: selfClientId ?? "",
             dpopToken: dpopToken)
 
-        let refreshTokenFromCC = try? await enrollment.getOAuthRefreshToken()
-
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(
             accessToken: wireAccessToken.token,
             prevNonce: authorizations.nonce,
@@ -147,7 +145,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(
             idToken: oAuthResponse.idToken,
-            refreshToken: refreshTokenFromCC ?? oAuthResponse.refreshToken,
+            refreshToken: oAuthResponse.refreshToken ?? " ",
             prevNonce: dpopChallengeResponse.nonce,
             acmeChallenge: oidcAuthorization.challenge)
 

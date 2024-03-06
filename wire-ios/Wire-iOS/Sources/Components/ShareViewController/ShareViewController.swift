@@ -96,7 +96,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         fatalError("init(coder:) has not been implemented")
     }
 
-    let containerView  = UIView()
+    let containerView = UIView()
     var shareablePreviewView: UIView?
     var shareablePreviewWrapper: UIView?
     let searchIcon = UIImageView()

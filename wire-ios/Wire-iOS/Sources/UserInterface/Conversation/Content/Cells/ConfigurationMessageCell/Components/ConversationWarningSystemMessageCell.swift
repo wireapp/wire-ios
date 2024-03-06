@@ -50,7 +50,8 @@ final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Con
         bottomContentView.addSubview(sensitiveInfoLabel)
 
         lineView.isHidden = true
-        imageView.image =  Asset.Images.attention.image
+
+        imageView.image = Asset.Images.attention.image
         imageView.tintColor = IconColors.backgroundDefault
     }
 

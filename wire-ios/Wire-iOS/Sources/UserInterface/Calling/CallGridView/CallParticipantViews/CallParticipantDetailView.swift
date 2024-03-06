@@ -52,9 +52,9 @@ final class CallParticipantDetailsView: RoundedBlurView {
             switch callState {
             case .unconnectedButMayConnect, .connecting:
                 connectingLabel.isHidden = false
-                nameLabel.textColor =  SemanticColors.Label.textInactive
+                nameLabel.textColor = SemanticColors.Label.textInactive
             default:
-                nameLabel.textColor =  SemanticColors.Label.textWhite
+                nameLabel.textColor = SemanticColors.Label.textWhite
                 connectingLabel.isHidden = true
             }
         }
