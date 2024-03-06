@@ -272,6 +272,8 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    // MARK: Use Cases
+
     public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         IsUserE2EICertifiedUseCase(
             schedule: .immediate,
@@ -287,8 +289,6 @@ extension ZMUserSession: UserSession {
             isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
     }
-
-    // MARK: Use Cases
 
     public func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let featureRepository = FeatureRepository(context: syncContext)

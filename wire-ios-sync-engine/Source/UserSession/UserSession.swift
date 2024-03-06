@@ -212,28 +212,29 @@ public protocol UserSession: AnyObject {
 
     var networkState: ZMNetworkState { get }
 
-    var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
-    var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol { get }
-    var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }
-
     var selfUserClient: UserClient? { get }
 
-    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
-
-    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
-
     var e2eiFeature: Feature.E2EI { get }
-
-    var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol { get }
-
-    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
 
     func fetchAllClients()
 
     // MARK: Use Cases
 
-    func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
+    var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 
+    var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol { get }
+
+    var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }
+
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
+
+    var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol { get }
+
+    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
+
+    func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
 }
 
 extension UInt64 {
