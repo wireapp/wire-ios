@@ -588,7 +588,7 @@ final class ClientListViewController: UIViewController,
         guard let selectedDeviceInfoViewModel = selectedDeviceInfoViewModel else {
             return
         }
-        let client = if selectedDeviceInfoViewModel.isSelfClient == true {
+        let client = if selectedDeviceInfoViewModel.isSelfClient {
             selfClient
         } else {
             clients.first(
