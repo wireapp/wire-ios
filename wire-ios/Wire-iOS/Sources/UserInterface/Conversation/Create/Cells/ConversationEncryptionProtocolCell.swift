@@ -20,17 +20,6 @@ import UIKit
 
 class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
 
-    var encryptionProtocol: String {
-        get {
-            // TODO: [WPB-6205] is this always proteus or can it be influenced by Feature.MLS.Config default protocol?
-            return label.text ?? L10n.Localizable.Conversation.Create.ProtocolSelection.proteus
-        }
-
-        set {
-            return label.text = newValue
-        }
-    }
-
     let label: UILabel = {
         let label = DynamicFontLabel(fontSpec: .normalRegularFont, color: SemanticColors.Label.textDefault)
         label.textAlignment = .right
@@ -39,7 +28,6 @@ class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
 
     override func setUp() {
         super.setUp()
-        label.text = encryptionProtocol
         contentStackView.insertArrangedSubview(label, at: contentStackView.arrangedSubviews.count)
     }
 }
