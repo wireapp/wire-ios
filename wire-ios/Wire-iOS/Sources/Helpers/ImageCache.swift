@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 
 // swiftlint:disable todo_requires_jira_link
-// TODO: remove after MockUser is convert to Swift
+// TODO: remove public after MockUser is convert to Swift
 // swiftlint:enable todo_requires_jira_link
 final class ImageCache<T: AnyObject> {
     var cache: NSCache<NSString, T> = NSCache()
