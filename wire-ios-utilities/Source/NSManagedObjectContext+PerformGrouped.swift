@@ -59,6 +59,9 @@ public extension NSManagedObjectContext {
         }
 
         if let error = thrownError {
+            groups.apply {
+                dispatchGroupContext?.leave($0)
+            }
             throw error
         } else {
             return result
