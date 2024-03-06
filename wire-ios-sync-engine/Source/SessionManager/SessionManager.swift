@@ -835,6 +835,9 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
+                Task {
+                    await self.updateOrEnrollCertificateIfNeeded()
+                }
             }
         }
     }
@@ -1407,6 +1410,9 @@ extension SessionManager {
             // to complete the login flow, which will be handle elsewhere.
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+                Task {
+                    await self.updateOrEnrollCertificateIfNeeded()
+                }
             }
         }
     }
@@ -1417,9 +1423,6 @@ extension SessionManager {
 
     @objc fileprivate func applicationDidBecomeActive(_ note: Notification) {
         notificationsTracker?.dispatchEvent()
-        Task {
-            await updateOrEnrollCertificateIfNeeded()
-        }
     }
 
 }
