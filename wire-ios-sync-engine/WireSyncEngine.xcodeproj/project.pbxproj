@@ -534,6 +534,7 @@
 		E6C6C6B62B877429007585DF /* TeamMembersDownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C6C6B42B87741D007585DF /* TeamMembersDownloadRequestStrategyTests.swift */; };
 		E6C6C6B72B87745F007585DF /* TeamMembersDownloadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C6C6B22B877404007585DF /* TeamMembersDownloadRequestStrategy.swift */; };
 		E6C983EC2B98627200D55177 /* GetFeatureConfigUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C983EB2B98627200D55177 /* GetFeatureConfigUseCase.swift */; };
+		E6C983EE2B986ABA00D55177 /* ZMUserSession+UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C983ED2B986ABA00D55177 /* ZMUserSession+UserSession.swift */; };
 		E98CAC052B8CC27A00CC81DE /* UseCaseFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98CAC042B8CC27A00CC81DE /* UseCaseFactory.swift */; };
 		E98E5DFC2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */; };
 		E9A96E7E2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */; };
@@ -1294,6 +1295,7 @@
 		E6C6C6B22B877404007585DF /* TeamMembersDownloadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMembersDownloadRequestStrategy.swift; sourceTree = "<group>"; };
 		E6C6C6B42B87741D007585DF /* TeamMembersDownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMembersDownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		E6C983EB2B98627200D55177 /* GetFeatureConfigUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetFeatureConfigUseCase.swift; sourceTree = "<group>"; };
+		E6C983ED2B986ABA00D55177 /* ZMUserSession+UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+UserSession.swift"; sourceTree = "<group>"; };
 		E98CAC042B8CC27A00CC81DE /* UseCaseFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCaseFactory.swift; sourceTree = "<group>"; };
 		E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCaseTests.swift; sourceTree = "<group>"; };
 		E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCase.swift; sourceTree = "<group>"; };
@@ -2178,6 +2180,7 @@
 				F9AB00211F0CDAF00037B437 /* FileRelocator.swift */,
 				166B2B5D23E86522003E8581 /* ZMUserSession.swift */,
 				EE51FBED2AE1305B002B503B /* UserSession.swift */,
+				E6C983ED2B986ABA00D55177 /* ZMUserSession+UserSession.swift */,
 				EEE186B3259CC92D008707CA /* ZMUserSession+AppLock.swift */,
 				EE419B57256FEA3D004618E2 /* ZMUserSession.Configuration.swift */,
 				06E0979B2A261E5D00B38C4A /* ZMUserSession+RecurringAction.swift */,
@@ -3549,6 +3552,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1660AA0B1ECCAF4E0056D403 /* SearchRequest.swift in Sources */,
+				E6C983EE2B986ABA00D55177 /* ZMUserSession+UserSession.swift in Sources */,
 				0664F2E62A0E25C200E5C34E /* RecurringActionService.swift in Sources */,
 				878ACB4620ADBBAA0016E68A /* Blacklist.swift in Sources */,
 				166A8BF91E02C7D500F5EEEA /* ZMHotFix+PendingChanges.swift in Sources */,
