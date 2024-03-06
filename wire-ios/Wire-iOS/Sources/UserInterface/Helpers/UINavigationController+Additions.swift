@@ -30,9 +30,11 @@ extension UINavigationController {
         return nil
     }
 
-    func pushViewController(_ viewController: UIViewController,
-                                   animated: Bool,
-                                   completion: (() -> Void)?) {
+    func pushViewController(
+        _ viewController: UIViewController,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) {
         pushViewController(viewController, animated: animated)
 
         if animated, let coordinator = transitionCoordinator {

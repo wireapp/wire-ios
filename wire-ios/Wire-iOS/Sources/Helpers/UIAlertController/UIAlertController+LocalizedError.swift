@@ -33,8 +33,10 @@ extension UIAlertController {
 extension UIAlertController {
 
     @objc
-    static func showErrorAlert(title: String,
-                                      message: String) {
+    static func showErrorAlert(
+        title: String,
+        message: String
+    ) {
         let alertController = UIAlertController(title: title,
                                                 message: message,
                                                 alertAction: .ok(style: .cancel))

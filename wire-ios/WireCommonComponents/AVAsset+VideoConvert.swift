@@ -152,8 +152,11 @@ extension AVURLAsset {
 }
 
 extension AVAssetExportSession {
-    func exportVideo(exportURL: URL,
-                            completion: @escaping (URL?, Error?) -> Void) {
+
+    func exportVideo(
+        exportURL: URL,
+        completion: @escaping (URL?, Error?) -> Void
+    ) {
         if FileManager.default.fileExists(atPath: exportURL.path) {
             do {
                 try FileManager.default.removeItem(at: exportURL)

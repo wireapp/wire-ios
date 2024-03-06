@@ -61,10 +61,12 @@ class BottomSheetContainerViewController: UIViewController {
     }()
 
     // MARK: - Initialization
-    init(contentViewController: UIViewController,
-                bottomSheetViewController: UIViewController,
-                bottomSheetConfiguration: BottomSheetConfiguration) {
 
+    init(
+        contentViewController: UIViewController,
+        bottomSheetViewController: UIViewController,
+        bottomSheetConfiguration: BottomSheetConfiguration
+    ) {
         self.contentViewController = contentViewController
         self.bottomSheetViewController = bottomSheetViewController
         self.configuration = bottomSheetConfiguration

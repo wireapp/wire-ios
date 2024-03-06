@@ -62,9 +62,11 @@ final class Navigator: NSObject, NavigatorProtocol {
         navigationController.delegate = self
     }
 
-    func push(_ viewController: UIViewController,
-                     animated: Bool,
-                     onNavigateBack: NavigateBackClosure? = nil) {
+    func push(
+        _ viewController: UIViewController,
+        animated: Bool,
+        onNavigateBack: NavigateBackClosure? = nil
+    ) {
         if let closure = onNavigateBack {
             addNavigateBack(closure: closure, for: viewController)
         }

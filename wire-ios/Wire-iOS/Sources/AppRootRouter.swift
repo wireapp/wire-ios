@@ -106,8 +106,10 @@ final class AppRootRouter: NSObject {
         return urlActionRouter.open(url: deepLinkURL)
     }
 
-    func performQuickAction(for shortcutItem: UIApplicationShortcutItem,
-                                   completionHandler: ((Bool) -> Void)?) {
+    func performQuickAction(
+        for shortcutItem: UIApplicationShortcutItem,
+        completionHandler: ((Bool) -> Void)?
+    ) {
         quickActionsManager.performAction(for: shortcutItem, completionHandler: completionHandler)
     }
 

@@ -43,9 +43,11 @@ extension UIAlertController {
         return alert
     }
 
-    public convenience init(title: String? = nil,
-                     message: String,
-                     alertAction: UIAlertAction) {
+    public convenience init(
+        title: String? = nil,
+        message: String,
+        alertAction: UIAlertAction
+    ) {
         self.init(title: title,
                   message: message,
                   preferredStyle: .alert)

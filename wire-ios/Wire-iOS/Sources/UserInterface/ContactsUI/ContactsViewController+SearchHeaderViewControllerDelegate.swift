@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension ContactsViewController: SearchHeaderViewControllerDelegate {
 
-    func searchHeaderViewController(_ searchHeaderViewController: SearchHeaderViewController,
-                                           updatedSearchQuery query: String) {
+    func searchHeaderViewController(
+        _ searchHeaderViewController: SearchHeaderViewController,
+        updatedSearchQuery query: String
+    ) {
         dataSource.searchQuery = query
     }
 

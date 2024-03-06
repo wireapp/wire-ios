@@ -298,9 +298,11 @@ extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDat
         return timeouts.count
     }
 
-    func pickerView(_ pickerView: UIPickerView,
-                           attributedTitleForRow row: Int,
-                           forComponent component: Int) -> NSAttributedString? {
+    func pickerView(
+        _ pickerView: UIPickerView,
+        attributedTitleForRow row: Int,
+        forComponent component: Int
+    ) -> NSAttributedString? {
         guard let font = pickerFont, let color = pickerColor else { return nil }
         let timeout = timeouts[row]
         if let actualTimeout = timeout, let title = actualTimeout.displayString {
