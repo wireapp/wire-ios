@@ -75,7 +75,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
     /// Create a new `CompanyLoginController` instance using the standard detector and requester.
     convenience init?(withDefaultEnvironment: ()) {
         guard CompanyLoginController.isCompanyLoginEnabled,
-            let callbackScheme = Bundle.ssoURLScheme else { return nil } // Disable on builds
+            let callbackScheme = Bundle.ssoURLScheme else { return nil } // Disable on public builds
 
         requireInternal(nil != Bundle.ssoURLScheme, "no valid callback scheme")
 

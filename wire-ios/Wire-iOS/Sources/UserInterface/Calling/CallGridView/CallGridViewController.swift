@@ -65,7 +65,7 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     // MARK: - Public Properties
 
-    // These two views are for testing purposes
+    // These two views are public for testing purposes
     var maximizedView: BaseCallParticipantView?
     var hintView = CallGridHintNotificationLabel()
 
