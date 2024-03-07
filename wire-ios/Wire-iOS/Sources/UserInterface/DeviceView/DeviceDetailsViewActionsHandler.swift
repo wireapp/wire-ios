@@ -72,8 +72,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func removeDevice() async -> Bool {
-        print("##>## removeDevice()")
-        return await withCheckedContinuation { [weak self] continuation in
+        print("##>## removeDevice() 0")
+        let result = await withCheckedContinuation { [weak self] continuation in
             guard let self = self else {
                 return // TODO: continuation
             }
@@ -84,7 +84,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
                 userClientToDelete: userClient,
                 delegate: self,
                 credentials: credentials,
-                completion: { error in
+                completion: { [weak self] error in
                     defer {
                         if optionalContinuation == nil {
                             print("##>## why?")
@@ -93,12 +93,14 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
                     }
                     optionalContinuation?.resume(returning: error == nil)
                     if let error = error {
-                        self.logger.error(error.localizedDescription)
+                        self?.logger.error(error.localizedDescription)
                     }
                 }
             )
             clientRemovalObserver?.startRemoval()
         }
+        print("##>## removeDevice() 1")
+        return result
     }
 
     func resetSession() {
