@@ -252,7 +252,7 @@ extension DeviceInfoViewModel {
 }
 
 extension E2eIdentityCertificate {
-
+//
     // current default days the certificate is retained on server
     private var kServerRetainedDays: Double { 28 * 24 * 60 * 60 }
 

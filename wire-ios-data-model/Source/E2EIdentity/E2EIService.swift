@@ -41,6 +41,7 @@ public protocol E2EIServiceInterface {
     func finalizeResponse(finalize: Data) async throws -> String
     func certificateRequest(nonce: String) async throws -> Data
     func createNewClient(certificateChain: String) async throws
+    func getClientIdentity(conversationId: Data, clientID: Data) async throws -> [WireIdentity]
 
     var e2eIdentity: E2eiEnrollmentProtocol { get }
 
@@ -158,6 +159,17 @@ public final class E2EIService: E2EIServiceInterface {
             enrollment: enrollment,
             certificateChain: certificateChain
         )
+    }
+
+    public func getClientIdentity(
+        conversationId: Data,
+        clientID: Data
+    ) async throws -> [WireIdentity] {
+        return try await coreCrypto.perform {
+            return try await $0.getDeviceIdentities(
+                conversationId: conversationId,
+                deviceIds: [clientID])
+        }
     }
 
     enum E2EIServiceFailure: Error {

@@ -171,6 +171,8 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
                 enrollment: enrollment,
                 certificateChain: certificateChain)
 
+            try await updateGracePeriodEndDate(enrollment: enrollment)
+
             return certificateChain
         } catch {
             throw Failure.failedToEnrollCertificate(error)
@@ -180,13 +182,22 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
     private func rollingOutCertificate(
         isUpgradingMLSClient: Bool,
         enrollment: E2EIEnrollmentInterface,
-        certificateChain: String) async throws {
-            if isUpgradingMLSClient {
-                try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
-            } else {
-                try await enrollment.createMLSClient(certificateChain: certificateChain)
-            }
+        certificateChain: String
+    ) async throws {
+        if isUpgradingMLSClient {
+            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+        } else {
+            try await enrollment.createMLSClient(certificateChain: certificateChain)
         }
+    }
+
+    private func updateGracePeriodEndDate(enrollment: E2EIEnrollmentInterface) async throws {
+        let test = try await enrollment.getClientIdentity(conversationId: <#T##Data#>, clientID: <#T##Data#>)
+        // 1. Certificate duration ?
+        // 2. create 28 ?
+        // 3. store end grace period
+
+    }
 
     private func extractClientId(from path: String) -> String? {
         guard let urlComponents = URLComponents(string: path),

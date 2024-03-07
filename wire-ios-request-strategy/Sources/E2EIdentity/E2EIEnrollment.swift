@@ -87,6 +87,8 @@ public protocol E2EIEnrollmentInterface {
     /// Create new MLS client with e2e identity
     func createMLSClient(certificateChain: String) async throws
 
+    func getClientIdentity(conversationId: Data, clientID: Data) async throws -> [WireIdentity]
+
     /// Fetch the OIDC refresh token.
     func getOAuthRefreshToken()  async throws -> String?
 
@@ -389,6 +391,10 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
 
     public func createMLSClient(certificateChain: String) async throws {
         try await e2eiService.createNewClient(certificateChain: certificateChain)
+    }
+
+    public func getClientIdentity(conversationId: Data, clientID: Data) async throws -> [WireIdentity] {
+        try await e2eiService.getClientIdentity(conversationId: conversationId, clientID: clientID)
     }
 
     public func getOAuthRefreshToken()  async throws -> String? {
