@@ -1790,11 +1790,14 @@
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
 "feature_config.alert.mls_e2ei.message" = "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\nEnter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.";
 "feature_config.alert.mls_e2ei.button.get_certificate" = "Get Certificate";
+"feature_config.alert.mls_e2ei.button.update_certificate" = "Update Certificate";
 "feature_config.alert.mls_e2ei.button.remind_me_later" = "Remind Me Later";
 "feature_config.alert.mls_e2ei.button.learn_more" = "Learn More";
 "feature_config.alert.mls_e2ei.button.ok" = "OK";
 "feature_config.alert.mls_e2ei.reminder_message" = "You can get the certificate in your 'Wire Settings' during the next %@. Open 'Devices' and select 'Get Certificate' for your current device.";
-
+"feature_config.alert.mls_e2ei.update_message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.
+Enter your identity provider’s credentials in the next step to update the certificate automatically.";
+"feature_config.alert.mls_e2ei.alert.update_certificate.title" = "End-to-end identity certificate";
 "failet_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
 "failet_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
 "failet_to_get_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";

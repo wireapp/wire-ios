@@ -3165,6 +3165,15 @@ internal enum L10n {
           }
           /// End-to-end identity certificate
           internal static let title = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.title", fallback: "End-to-end identity certificate")
+          /// The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.
+          /// Enter your identity provider’s credentials in the next step to update the certificate automatically.
+          internal static let updateMessage = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.update_message", fallback: "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.\nEnter your identity provider’s credentials in the next step to update the certificate automatically.")
+          internal enum Alert {
+            internal enum UpdateCertificate {
+              /// End-to-end identity certificate
+              internal static let title = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.alert.update_certificate.title", fallback: "End-to-end identity certificate")
+            }
+          }
           internal enum Button {
             /// Get Certificate
             internal static let getCertificate = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.get_certificate", fallback: "Get Certificate")
@@ -3174,6 +3183,8 @@ internal enum L10n {
             internal static let ok = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.ok", fallback: "OK")
             /// Remind Me Later
             internal static let remindMeLater = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.remind_me_later", fallback: "Remind Me Later")
+            /// Update Certificate
+            internal static let updateCertificate = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.update_certificate", fallback: "Update Certificate")
           }
         }
         internal enum SelfDeletingMessages {

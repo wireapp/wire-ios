@@ -31,41 +31,50 @@ final class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpd
 
     private let isE2EIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol
     private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
-    private let mlsGroupID: MLSGroupID
-    private let mlsClientID: MLSClientID
     private let gracePeriod: TimeInterval
+    private let serverStoragePeriod: TimeInterval
+    private let randomPeriod: TimeInterval
     private let lastAlertDate: Date?
 
     init(
         isE2EIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
         e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
-        mlsGroupID: MLSGroupID,
-        mlsClientID: MLSClientID,
         gracePeriod: TimeInterval,
+        serverStoragePeriod: TimeInterval = 28 * 24 * 60 * 60, // default server storage time
+        randomPeriod: TimeInterval = Double((0..<(60 * 60 * 24)).randomElement() ?? 0), // Random time in a day
         lastAlertDate: Date?
     ) {
         self.isE2EIdentityEnabled = isE2EIdentityEnabled
         self.e2eCertificateForCurrentClient = e2eCertificateForCurrentClient
-        self.mlsGroupID = mlsGroupID
-        self.mlsClientID = mlsClientID
         self.gracePeriod = gracePeriod
         self.lastAlertDate = lastAlertDate
+        self.serverStoragePeriod = serverStoragePeriod
+        self.randomPeriod = randomPeriod
     }
 
+    // TODO: Check if feature flag has e2ei is enabled.
     func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        let isE2EIdentityEnabled = try await isE2EIdentityEnabled.invoke()
-        if isE2EIdentityEnabled,
+        guard let mlsClientID = fetchMLSClientID(),
+              let mlsGroupID = fetchMLSGroupID() else {
+            return .noAction
+        }
+        if try await isE2EIdentityEnabled.invoke(),
            let certificate = try await e2eCertificateForCurrentClient.invoke(
             mlsGroupId: mlsGroupID,
             clientIds: [mlsClientID]
            ).first {
-            let timeLeft = certificate.expiryDate.timeIntervalSinceNow
-            let calendar = Calendar.current
+
             if certificate.expiryDate.isInThePast {
                 return .block
             }
+            let timeLeft = certificate.expiryDate.timeIntervalSinceNow - serverStoragePeriod - gracePeriod - randomPeriod
+            let calendar = Calendar.current
             let fourHours = .oneHour * 4
             let fifteenMinutes = .fiveMinutes * 3
+
+            if timeLeft <= 0 {
+                return .block
+            }
 
             switch timeLeft {
             case  .oneDay ..< .oneWeek:
@@ -94,13 +103,19 @@ final class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpd
                     return .noAction
                 }
                 return .reminder
-            case 0:
-                return .block
             default:
                 return .noAction
             }
 
         }
         return .noAction
+    }
+
+    func fetchMLSGroupID() -> MLSGroupID? {
+        return nil
+    }
+
+    func fetchMLSClientID() -> MLSClientID? {
+        return nil
     }
 }

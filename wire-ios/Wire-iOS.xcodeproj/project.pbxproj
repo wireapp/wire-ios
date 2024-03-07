@@ -272,6 +272,8 @@
 		2577CB632B18A406007D3443 /* E2EIdentityCertificateStatus+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB622B18A406007D3443 /* E2EIdentityCertificateStatus+Extensions.swift */; };
 		2577CB7B2B1DC787007D3443 /* DeviceMLSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */; };
 		2577CB822B1DFF66007D3443 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB812B1DFF66007D3443 /* ViewConstants.swift */; };
+		259AAAE52B98D06400B13A7C /* E2EIdentityCertificateUpdateStatusUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259AAAE42B98D06400B13A7C /* E2EIdentityCertificateUpdateStatusUseCase.swift */; };
+		259AAAE92B98D70300B13A7C /* E2EIdentityCertificateUpdateStatusUserCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259AAAE62B98D06F00B13A7C /* E2EIdentityCertificateUpdateStatusUserCaseTests.swift */; };
 		259BB5D32B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259BB5D12B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift */; };
 		259BB5D42B7FC04100F1B552 /* ProfileDeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsView.swift */; };
 		25A7E62C2B67FB55002451A4 /* ClientTableViewCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A7E62B2B67FB55002451A4 /* ClientTableViewCellTests.swift */; };
@@ -2322,6 +2324,8 @@
 		2577CB622B18A406007D3443 /* E2EIdentityCertificateStatus+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "E2EIdentityCertificateStatus+Extensions.swift"; sourceTree = "<group>"; };
 		2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceMLSView.swift; sourceTree = "<group>"; };
 		2577CB812B1DFF66007D3443 /* ViewConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstants.swift; sourceTree = "<group>"; };
+		259AAAE42B98D06400B13A7C /* E2EIdentityCertificateUpdateStatusUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2EIdentityCertificateUpdateStatusUseCase.swift; sourceTree = "<group>"; };
+		259AAAE62B98D06F00B13A7C /* E2EIdentityCertificateUpdateStatusUserCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2EIdentityCertificateUpdateStatusUserCaseTests.swift; sourceTree = "<group>"; };
 		259BB5D12B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift"; sourceTree = "<group>"; };
 		259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileDeviceDetailsView.swift; sourceTree = "<group>"; };
 		25A7E62B2B67FB55002451A4 /* ClientTableViewCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTableViewCellTests.swift; sourceTree = "<group>"; };
@@ -4140,6 +4144,7 @@
 		061F34142B1A4F190099CBAB /* E2EIdentity */ = {
 			isa = PBXGroup;
 			children = (
+				259AAAE42B98D06400B13A7C /* E2EIdentityCertificateUpdateStatusUseCase.swift */,
 				061F34152B1A4F360099CBAB /* OAuthUseCase.swift */,
 				06D93B462B56F64F00A0A512 /* E2EIFeatureChange.swift */,
 				060C06642B73DFC700B484C6 /* E2EINotificationActionsHandler.swift */,
@@ -7090,6 +7095,7 @@
 				87DE06B21D26632E0009411F /* AudioEffectsPickerViewControllerTests.swift */,
 				EF29E89B212302CD0023B80C /* AudioMessageViewTests.swift */,
 				162E8C621CF5D68A004B4F45 /* AudioProcessingTests.swift */,
+				259AAAE62B98D06F00B13A7C /* E2EIdentityCertificateUpdateStatusUserCaseTests.swift */,
 				E916CE8B2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift */,
 				8732670C1D2D0C49005A62C1 /* AudioRecordKeyboardViewControllerTests.swift */,
 				BFAF4CAE1CEB791B00780537 /* AudioRecordViewControllerTests.swift */,
@@ -9262,6 +9268,7 @@
 				F93D58451D7DA865003AE972 /* ZMConversation+Analytics.swift in Sources */,
 				87AB6DB61D9AB47400ADAD38 /* SettingsStyleNavigationController.swift in Sources */,
 				E9559B4927B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift in Sources */,
+				259AAAE52B98D06400B13A7C /* E2EIdentityCertificateUpdateStatusUseCase.swift in Sources */,
 				16F6BB101EDDA0BA009EA803 /* AddParticipantsViewController.swift in Sources */,
 				252183202B4C00DF000C4325 /* SaveFileManager.swift in Sources */,
 				5E90418921F230A900C3B413 /* AuthenticationCredentialsViewController.swift in Sources */,
@@ -10737,6 +10744,7 @@
 				E6C25FCF2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */,
 				E6579E5D2AFFA024004E7FD8 /* MockUserClient.swift in Sources */,
 				E6579E6B2AFFA024004E7FD8 /* MockUser+Service.swift in Sources */,
+				259AAAE92B98D70300B13A7C /* E2EIdentityCertificateUpdateStatusUserCaseTests.swift in Sources */,
 				E6C25FF02B027C0200406A1C /* ZMUserMentionsTest.swift in Sources */,
 				E6579E672AFFA024004E7FD8 /* MockUser+MockUserArray.swift in Sources */,
 				E6C25FC82AFFABBF00406A1C /* PhoneNumberTests.swift in Sources */,

@@ -437,6 +437,11 @@ extension AppRootRouter {
             needToShowDataUsagePermissionDialog: needToShowDialog,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
+                updateCertificateUseCase: E2EIdentityCertificateUpdateStatusUseCase(
+                    isE2EIdentityEnabled: userSession.getIsE2eIdentityEnabled,
+                    e2eCertificateForCurrentClient: userSession.getE2eIdentityCertificates,
+                    gracePeriod: 10, // TODO: @arun change this
+                    lastAlertDate: nil),
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
