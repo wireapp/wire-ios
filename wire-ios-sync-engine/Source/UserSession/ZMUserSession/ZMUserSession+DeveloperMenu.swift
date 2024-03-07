@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,28 +17,17 @@
 //
 
 import Foundation
+import WireDataModel
 
 extension ZMUserSession {
 
-    var needsToUpdateCertificate: Bool {
-        get async {
-            guard let gracePeriodEndDate = gracePeriodRepository.fetchGracePeriodEndDate(),
-                  gracePeriodEndDate.isInThePast,
-                  e2eiFeature.isEnabled
-            else {
-                return false
-            }
+    public func setBogusLastEventID() {
+        let uuidV1 = UUID(uuidString: "0747b970-472d-11ee-be56-0242ac120002")
+        lastEventIDRepository.storeLastEventID(uuidV1)
+    }
 
-            do {
-                if let certificateStatus = try await selfClientCertificateProvider.getCertificate() {
-                    return certificateStatus.status != .valid
-                } else {
-                    return true
-                }
-            } catch {
-                return false
-            }
-        }
+    public func updateMLSMigrationStatus() async throws {
+        try await proteusToMLSMigrationCoordinator.updateMigrationStatus()
     }
 
 }

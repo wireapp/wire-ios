@@ -529,6 +529,7 @@ extension WireCallCenterV3 {
             break
 
         case .mls:
+            guard conversation.avsConversationType == .mlsConference else { return }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -609,6 +610,7 @@ extension WireCallCenterV3 {
         case .proteus, .mixed:
             break
         case .mls:
+            guard conversationType == .mlsConference else { return }
             try setUpMLSConference(in: conversation)
         }
     }
