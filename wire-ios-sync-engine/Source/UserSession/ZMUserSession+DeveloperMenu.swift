@@ -26,4 +26,8 @@ extension ZMUserSession {
         lastEventIDRepository.storeLastEventID(uuidV1)
     }
 
+    public func updateMLSMigrationStatus() async throws {
+        try await proteusToMLSMigrationCoordinator.updateMigrationStatus()
+    }
+
 }

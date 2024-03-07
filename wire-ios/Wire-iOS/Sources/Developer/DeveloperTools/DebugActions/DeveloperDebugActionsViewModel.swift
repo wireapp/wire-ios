@@ -42,7 +42,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Perform quick sync", action: performQuickSync),
             .init(title: "Break next quick sync", action: breakNextQuickSync),
             .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
-            .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS)
+            .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
+            .init(title: "Update MLS migration status", action: updateMLSMigrationStatus)
         ]
     }
 
@@ -63,6 +64,16 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
         Task {
             await userSession.syncStatus.performQuickSync()
+        }
+    }
+
+    // MARK: Proteus to MLS migration
+
+    private func updateMLSMigrationStatus() {
+        guard let userSession = userSession else { return }
+
+        Task {
+            try await userSession.updateMLSMigrationStatus()
         }
     }
 
