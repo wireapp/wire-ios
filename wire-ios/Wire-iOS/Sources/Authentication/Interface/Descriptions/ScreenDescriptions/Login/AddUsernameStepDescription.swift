@@ -26,7 +26,7 @@ final class AddUsernameStepDescription: DefaultValidatingStepDescription {
     let backButton: BackButtonDescription?
     var mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription? = nil
     let initialValidation: ValueValidation
     let footerView: AuthenticationFooterViewDescription? = nil
@@ -40,7 +40,7 @@ final class AddUsernameStepDescription: DefaultValidatingStepDescription {
         mainView = textField
         backButton = BackButtonDescription()
         headline = Username.title
-        subtext = Username.message
+        subtext = .markdown(from: Username.message, style: .login)
         initialValidation = .info(HandleChange.footer)
     }
 }
