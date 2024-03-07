@@ -73,7 +73,9 @@ import WireUtilities
 
     /// Post notification in default notification center
     public func post() {
+        // print("##>## 6")
         NotificationCenter.default.post(self.notification)
+        // print("##>## 7")
     }
 
     public func post(on notificationQueue: NotificationQueue) {
@@ -101,7 +103,9 @@ import WireUtilities
                                                                                                queue: queue) { note in
             let notificationInContext = NotificationInContext(notification: note)
             guard object == nil || object! === notificationInContext.object else { return }
+            // print("##>## 8 name: \(name)")
             using(notificationInContext)
+            // print("##>## 9")
         })
     }
 }

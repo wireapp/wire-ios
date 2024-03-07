@@ -56,6 +56,10 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.e2eiCertificateEnrollment = e2eiCertificateEnrollment
     }
 
+    deinit {
+        print("##>## DeviceDetailsViewActionsHandler.deinit")
+    }
+
     @MainActor
     func enrollClient() async throws -> String {
         do {
@@ -68,9 +72,10 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func removeDevice() async -> Bool {
-        return await withCheckedContinuation {[weak self] continuation in
+        print("##>## removeDevice()")
+        return await withCheckedContinuation { [weak self] continuation in
             guard let self = self else {
-                return
+                return // TODO: continuation
             }
             // (Continuation)[https://developer.apple.com/documentation/swift/checkedcontinuation]
             // Using the same continuation twice results in a crash.
@@ -81,6 +86,9 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
                 credentials: credentials,
                 completion: { error in
                     defer {
+                        if optionalContinuation == nil {
+                            print("##>## why?")
+                        }
                         optionalContinuation = nil
                     }
                     optionalContinuation?.resume(returning: error == nil)

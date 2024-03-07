@@ -178,7 +178,9 @@ public enum ClientUpdateError: NSInteger {
             } else if  errorCode == .invalidCredentials {
                 isWaitingToDeleteClients = false
                 internalCredentials = nil
+                // print("##>## 2")
                 ZMClientUpdateNotification.notifyDeletionFailed(error: error, context: syncManagedObjectContext)
+                // print("##>## 3")
             }
         }
     }

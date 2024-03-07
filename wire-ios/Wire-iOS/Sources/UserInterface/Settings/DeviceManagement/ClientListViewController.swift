@@ -75,7 +75,7 @@ final class ClientListViewController: UIViewController,
     var selfClient: UserClient?
     let detailedView: Bool
     var credentials: ZMEmailCredentials?
-    var clientsObserverToken: Any?
+    var clientsObserverToken: NSObjectProtocol?
     var userObserverToken: NSObjectProtocol?
 
     var leftBarButtonItem: UIBarButtonItem? {
@@ -128,7 +128,7 @@ final class ClientListViewController: UIViewController,
         self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
         self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
         if let user = ZMUser.selfUser(), let session = userSession as? ZMUserSession {
-            self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
+            // self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
         }
 
         if clientsList == nil {
@@ -137,6 +137,18 @@ final class ClientListViewController: UIViewController,
             }
             userSession?.fetchAllClients()
         }
+    }
+
+    deinit {
+        print("##>## ClientListViewController.deinit")
+        /*
+        print("##>## clientsObserverToken", clientsObserverToken)
+        weak var weakClientsObserverToken = clientsObserverToken
+        print("##>## weakClientsObserverToken", weakClientsObserverToken)
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+            print("##>## weakClientsObserverToken", weakClientsObserverToken)
+        }
+         */
     }
 
     @available(*, unavailable)
