@@ -176,8 +176,7 @@ final class ConversationListViewController: UIViewController {
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
 
-        // TODO [WPB-6969]: update verification status topBarViewController.selfUserStatus = viewModel.selfUserStatus
-        // also enterForeground notification?
+        viewModel.updateE2EICertifiedStatus()
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
